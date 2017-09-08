@@ -67,11 +67,342 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     case 0:
                         DicConsole.WriteLine("Returning to SCSI commands menu...");
                         return;
+                    case 1:
+                        ReadLong(devPath, dev);
+                        continue;
+                    case 2:
+                        ReadSectorLocation(devPath, dev);
+                        continue;
                     default:
                         DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
                         continue;
                 }
+            }
+        }
+
+        static void ReadLong(string devPath, Device dev)
+        {
+            bool relative = false;
+            uint address = 0;
+            ushort length = 1;
+            ushort bps = 512;
+            bool physical = false;
+            bool sectorCount = true;
+            string strDev;
+            int item;
+
+        parameters:
+            while(true)
+            {
+                System.Console.Clear();
+                DicConsole.WriteLine("Device: {0}", devPath);
+                DicConsole.WriteLine("Parameters for READ LONG command:");
+                DicConsole.WriteLine("{0} Block Address: {1}", physical ? "Physical" : "Logical", address);
+                DicConsole.WriteLine("Relative?: {0}", relative);
+                DicConsole.WriteLine("Will transfer {0} {1}", length, sectorCount ? "sectors" : "bytes");
+                if(sectorCount)
+                    DicConsole.WriteLine("Expected sector size: {0} bytes", bps);
+                DicConsole.WriteLine();
+                DicConsole.WriteLine("Choose what to do:");
+                DicConsole.WriteLine("1.- Change parameters.");
+                DicConsole.WriteLine("2.- Send command with these parameters.");
+                DicConsole.WriteLine("0.- Return to Plasmon vendor commands menu.");
+
+                strDev = System.Console.ReadLine();
+                if(!int.TryParse(strDev, out item))
+                {
+                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    System.Console.ReadKey();
+                    continue;
+                }
+
+                switch(item)
+                {
+                    case 0:
+                        DicConsole.WriteLine("Returning to Plasmon vendor commands menu...");
+                        return;
+                    case 1:
+                        DicConsole.Write("Physical address?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!bool.TryParse(strDev, out physical))
+                        {
+                            DicConsole.WriteLine("Not a boolean. Press any key to continue...");
+                            physical = false;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        DicConsole.Write("Relative address?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!bool.TryParse(strDev, out relative))
+                        {
+                            DicConsole.WriteLine("Not a boolean. Press any key to continue...");
+                            relative = false;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        DicConsole.Write("{0} Block Address?: ", physical ? "Physical" : "Logical");
+                        strDev = System.Console.ReadLine();
+                        if(!uint.TryParse(strDev, out address))
+                        {
+                            DicConsole.WriteLine("Not a numbr. Press any key to continue...");
+                            address = 0;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        DicConsole.Write("Transfer sectors?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!bool.TryParse(strDev, out sectorCount))
+                        {
+                            DicConsole.WriteLine("Not a boolean. Press any key to continue...");
+                            sectorCount = true;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        DicConsole.Write("How many {0} to transfer?: ", sectorCount ? "sectors" : "bytes");
+                        strDev = System.Console.ReadLine();
+                        if(!ushort.TryParse(strDev, out length))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            length = (ushort)(sectorCount ? 1 : 512);
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        if(sectorCount)
+                        {
+                            DicConsole.Write("How many bytes to expect per sector?");
+                            strDev = System.Console.ReadLine();
+                            if(!ushort.TryParse(strDev, out bps))
+                            {
+                                DicConsole.WriteLine("Not a numbr. Press any key to continue...");
+                                bps = 512;
+                                System.Console.ReadKey();
+                                continue;
+                            }
+                        }
+                        break;
+                    case 2:
+                        goto start;
+                }
+            }
+
+        start:
+            System.Console.Clear();
+            bool sense = dev.PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, relative, address, length, bps, physical, sectorCount, dev.Timeout, out double duration);
+
+        menu:
+            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Sending READ LONG to the device:");
+            DicConsole.WriteLine("Command took {0} ms.", duration);
+            DicConsole.WriteLine("Sense is {0}.", sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+            DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            DicConsole.WriteLine();
+            DicConsole.WriteLine("Choose what to do:");
+            DicConsole.WriteLine("1.- Print buffer.");
+            DicConsole.WriteLine("2.- Print sense buffer.");
+            DicConsole.WriteLine("3.- Decode sense buffer.");
+            DicConsole.WriteLine("4.- Send command again.");
+            DicConsole.WriteLine("5.- Change parameters.");
+            DicConsole.WriteLine("0.- Return to Plasmon vendor commands menu.");
+            DicConsole.Write("Choose: ");
+
+            strDev = System.Console.ReadLine();
+            if(!int.TryParse(strDev, out item))
+            {
+                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                goto menu;
+            }
+
+            switch(item)
+            {
+                case 0:
+                    DicConsole.WriteLine("Returning to Plasmon vendor commands menu...");
+                    return;
+                case 1:
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("READ LONG response:");
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+                    DicConsole.WriteLine("Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    goto menu;
+                case 2:
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("READ LONG sense:");
+                    if(senseBuffer != null)
+                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    DicConsole.WriteLine("Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    goto menu;
+                case 3:
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("READ LONG decoded sense:");
+                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.WriteLine("Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    goto menu;
+                case 4:
+                    goto start;
+                case 5:
+                    goto parameters;
+                default:
+                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    goto menu;
+            }
+        }
+
+        static void ReadSectorLocation(string devPath, Device dev)
+        {
+            uint address = 0;
+            bool physical = false;
+            string strDev;
+            int item;
+
+        parameters:
+            while(true)
+            {
+                System.Console.Clear();
+                DicConsole.WriteLine("Device: {0}", devPath);
+                DicConsole.WriteLine("Parameters for READ SECTOR LOCATION command:");
+                DicConsole.WriteLine("{0} Block Address: {1}", physical ? "Physical" : "Logical", address);
+                DicConsole.WriteLine();
+                DicConsole.WriteLine("Choose what to do:");
+                DicConsole.WriteLine("1.- Change parameters.");
+                DicConsole.WriteLine("2.- Send command with these parameters.");
+                DicConsole.WriteLine("0.- Return to Plasmon vendor commands menu.");
+
+                strDev = System.Console.ReadLine();
+                if(!int.TryParse(strDev, out item))
+                {
+                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    System.Console.ReadKey();
+                    continue;
+                }
+
+                switch(item)
+                {
+                    case 0:
+                        DicConsole.WriteLine("Returning to Plasmon vendor commands menu...");
+                        return;
+                    case 1:
+                        DicConsole.Write("Physical address?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!bool.TryParse(strDev, out physical))
+                        {
+                            DicConsole.WriteLine("Not a boolean. Press any key to continue...");
+                            physical = false;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        DicConsole.Write("{0} Block Address?: ", physical ? "Physical" : "Logical");
+                        strDev = System.Console.ReadLine();
+                        if(!uint.TryParse(strDev, out address))
+                        {
+                            DicConsole.WriteLine("Not a numbr. Press any key to continue...");
+                            address = 0;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        break;
+                    case 2:
+                        goto start;
+                }
+            }
+
+        start:
+            System.Console.Clear();
+            bool sense = dev.PlasmonReadSectorLocation(out byte[] buffer, out byte[] senseBuffer, address, physical, dev.Timeout, out double duration);
+
+        menu:
+            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Sending READ SECTOR LOCATION to the device:");
+            DicConsole.WriteLine("Command took {0} ms.", duration);
+            DicConsole.WriteLine("Sense is {0}.", sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+            DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            DicConsole.WriteLine();
+            DicConsole.WriteLine("Choose what to do:");
+            DicConsole.WriteLine("1.- Print buffer.");
+            DicConsole.WriteLine("2.- Print sense buffer.");
+            DicConsole.WriteLine("3.- Decode sense buffer.");
+            DicConsole.WriteLine("4.- Send command again.");
+            DicConsole.WriteLine("5.- Change parameters.");
+            DicConsole.WriteLine("0.- Return to Plasmon vendor commands menu.");
+            DicConsole.Write("Choose: ");
+
+            strDev = System.Console.ReadLine();
+            if(!int.TryParse(strDev, out item))
+            {
+                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                goto menu;
+            }
+
+            switch(item)
+            {
+                case 0:
+                    DicConsole.WriteLine("Returning to Plasmon vendor commands menu...");
+                    return;
+                case 1:
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("READ SECTOR LOCATION response:");
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+                    DicConsole.WriteLine("Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    goto menu;
+                case 2:
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("READ SECTOR LOCATION sense:");
+                    if(senseBuffer != null)
+                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    DicConsole.WriteLine("Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    goto menu;
+                case 3:
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("READ SECTOR LOCATION decoded sense:");
+                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.WriteLine("Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    goto menu;
+                case 4:
+                    goto start;
+                case 5:
+                    goto parameters;
+                default:
+                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    goto menu;
             }
         }
     }
