@@ -43,7 +43,7 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        public bool ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout, out double duration)
         {
             buffer = new byte[3];
             byte[] cdb = new byte[6];
@@ -51,6 +51,9 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.Archive_RequestBlockAddress;
+            cdb[1] = (byte)((lba & 0x1F0000) >> 16);
+            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[3] = (byte)(lba & 0xFF);
             cdb[4] = 3;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
