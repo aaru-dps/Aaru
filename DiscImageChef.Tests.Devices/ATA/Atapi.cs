@@ -38,7 +38,6 @@
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
 using DiscImageChef.Decoders.ATA;
-using System.Threading;
 
 namespace DiscImageChef.Tests.Devices.ATA
 {
@@ -83,11 +82,11 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending IDENTIFY PACKET DEVICE to the device:");
             bool sense = dev.AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters, out double duration);
 
             menu:
+            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Sending IDENTIFY PACKET DEVICE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
