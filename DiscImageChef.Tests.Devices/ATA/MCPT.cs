@@ -37,6 +37,7 @@
 // //$Id$
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Tests.Devices.ATA
 {
@@ -66,11 +67,106 @@ namespace DiscImageChef.Tests.Devices.ATA
                     case 0:
                         DicConsole.WriteLine("Returning to ATA commands menu...");
                         return;
+                    case 1:
+                        CheckMediaCardType(devPath, dev);
+                        continue;
                     default:
                         DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
                         continue;
                 }
+            }
+        }
+
+        public static void CheckMediaCardType(string devPath, Device dev)
+        {
+            byte feature = 0;
+            string strDev;
+            int item;
+
+        parameters:
+            while(true)
+            {
+                System.Console.Clear();
+                DicConsole.WriteLine("Device: {0}", devPath);
+                DicConsole.WriteLine("Parameters for CHECK MEDIA CARD TYPE command:");
+                DicConsole.WriteLine("Feature: {0}", feature);
+                DicConsole.WriteLine();
+                DicConsole.WriteLine("Choose what to do:");
+                DicConsole.WriteLine("1.- Change parameters.");
+                DicConsole.WriteLine("2.- Send command with these parameters.");
+                DicConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
+
+                strDev = System.Console.ReadLine();
+                if(!int.TryParse(strDev, out item))
+                {
+                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    System.Console.ReadKey();
+                    continue;
+                }
+
+                switch(item)
+                {
+                    case 0:
+                        DicConsole.WriteLine("Returning to Media Card Pass Through commands menu...");
+                        return;
+                    case 1:
+                        DicConsole.Write("Feature?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!byte.TryParse(strDev, out feature))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            feature = 0;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        break;
+                    case 2:
+                        goto start;
+                }
+            }
+
+        start:
+            System.Console.Clear();
+            bool sense = dev.CheckMediaCardType(feature, out AtaErrorRegistersCHS errorRegisters, dev.Timeout, out double duration);
+
+        menu:
+            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Sending CHECK MEDIA CARD TYPE to the device:");
+            DicConsole.WriteLine("Command took {0} ms.", duration);
+            DicConsole.WriteLine("Sense is {0}.", sense);
+            DicConsole.WriteLine("CHECK MEDIA CARD TYPE status registers:");
+            DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+            DicConsole.WriteLine();
+            DicConsole.WriteLine("Choose what to do:");
+            DicConsole.WriteLine("1.- Send command again.");
+            DicConsole.WriteLine("2.- Change parameters.");
+            DicConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
+            DicConsole.Write("Choose: ");
+
+            strDev = System.Console.ReadLine();
+            if(!int.TryParse(strDev, out item))
+            {
+                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                goto menu;
+            }
+
+            switch(item)
+            {
+                case 0:
+                    DicConsole.WriteLine("Returning to Media Card Pass Through commands menu...");
+                    return;
+                case 1:
+                    goto start;
+                case 2:
+                    goto parameters;
+                default:
+                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    goto menu;
             }
         }
     }

@@ -848,7 +848,6 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-
         public static void Seek(string devPath, Device dev)
         {
             ushort cylinder = 0;

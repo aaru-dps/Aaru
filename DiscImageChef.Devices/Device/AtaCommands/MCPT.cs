@@ -39,30 +39,22 @@ namespace DiscImageChef.Devices
     {
         public bool EnableMediaCardPassThrough(out AtaErrorRegistersCHS statusRegisters, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
-            AtaRegistersCHS registers = new AtaRegistersCHS();
-            bool sense;
-
-            registers.command = (byte)AtaCommands.CheckMediaCardType;
-            registers.feature = 1;
-
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                       ref buffer, timeout, false, out duration, out sense);
-            error = lastError != 0;
-
-            DicConsole.DebugWriteLine("ATA Device", "CHECK MEDIA CARD TYPE took {0} ms.", duration);
-
-            return sense;
+            return CheckMediaCardType(1, out statusRegisters, timeout, out duration);
         }
 
         public bool DisableMediaCardPassThrough(out AtaErrorRegistersCHS statusRegisters, uint timeout, out double duration)
+        {
+            return CheckMediaCardType(0, out statusRegisters, timeout, out duration);
+        }
+
+        public bool CheckMediaCardType(byte feature, out AtaErrorRegistersCHS statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
             AtaRegistersCHS registers = new AtaRegistersCHS();
             bool sense;
 
             registers.command = (byte)AtaCommands.CheckMediaCardType;
-            registers.feature = 0;
+            registers.feature = feature;
 
             lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
                                        ref buffer, timeout, false, out duration, out sense);
