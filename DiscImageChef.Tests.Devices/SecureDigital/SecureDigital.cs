@@ -49,11 +49,14 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
                 DicConsole.WriteLine("Send a SecureDigital command to the device:");
-                DicConsole.WriteLine("1.- Send SD_SEND_OP_COND command.");
-                DicConsole.WriteLine("2.- Send SD_STATUS command.");
-                DicConsole.WriteLine("3.- Send SEND_CID command.");
-                DicConsole.WriteLine("4.- Send SEND_CSD command.");
-                DicConsole.WriteLine("5.- Send SEND_SCR command.");
+                DicConsole.WriteLine("1.- Send READ_MULTIPLE_BLOCK command.");
+                DicConsole.WriteLine("2.- Send READ_SINGLE_BLOCK command.");
+                DicConsole.WriteLine("3.- Send SD_SEND_OP_COND command.");
+                DicConsole.WriteLine("4.- Send SD_STATUS command.");
+                DicConsole.WriteLine("5.- Send SEND_CID command.");
+                DicConsole.WriteLine("6.- Send SEND_CSD command.");
+                DicConsole.WriteLine("7.- Send SEND_SCR command.");
+                DicConsole.WriteLine("8.- Send SET_BLOCKLEN command.");
                 DicConsole.WriteLine("0.- Return to SecureDigital/MultiMediaCard commands menu.");
                 DicConsole.Write("Choose: ");
 
@@ -71,25 +74,191 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                         DicConsole.WriteLine("Returning to SecureDigital/MultiMediaCard commands menu...");
                         return;
                     case 1:
-                        SendOpCond(devPath, dev);
+                        Read(devPath, dev, true);
                         continue;
                     case 2:
-                        Status(devPath, dev);
+                        Read(devPath, dev, false);
                         continue;
                     case 3:
-                        SendCID(devPath, dev);
+                        SendOpCond(devPath, dev);
                         continue;
                     case 4:
-                        SendCSD(devPath, dev);
+                        Status(devPath, dev);
                         continue;
                     case 5:
+                        SendCID(devPath, dev);
+                        continue;
+                    case 6:
+                        SendCSD(devPath, dev);
+                        continue;
+                    case 7:
                         SendSCR(devPath, dev);
+                        continue;
+                    case 8:
+                        SetBlockLength(devPath, dev);
                         continue;
                     default:
                         DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
                         continue;
                 }
+            }
+        }
+
+        static void Read(string devPath, Device dev, bool multiple)
+        {
+            uint address = 0;
+            uint blockSize = 512;
+            uint count = 1;
+            bool byteAddr = false;
+            string strDev;
+            int item;
+
+        parameters:
+            while(true)
+            {
+                System.Console.Clear();
+                DicConsole.WriteLine("Device: {0}", devPath);
+                DicConsole.WriteLine("Parameters for READ_{0}_BLOCK command:", multiple ? "MULTIPLE" : "SINGLE");
+                DicConsole.WriteLine("Read from {1}: {0}", address, byteAddr ? "byte" : "block");
+                DicConsole.WriteLine("Expected block size: {0} bytes", blockSize);
+                if(multiple)
+                    DicConsole.WriteLine("Will read {0} blocks", count);
+                DicConsole.WriteLine();
+                DicConsole.WriteLine("Choose what to do:");
+                DicConsole.WriteLine("1.- Change parameters.");
+                DicConsole.WriteLine("2.- Send command with these parameters.");
+                DicConsole.WriteLine("0.- Return to SecureDigital commands menu.");
+
+                strDev = System.Console.ReadLine();
+                if(!int.TryParse(strDev, out item))
+                {
+                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    System.Console.ReadKey();
+                    continue;
+                }
+
+                switch(item)
+                {
+                    case 0:
+                        DicConsole.WriteLine("Returning to SecureDigital commands menu...");
+                        return;
+                    case 1:
+                        DicConsole.Write("Use byte addressing?: ");
+                        strDev = System.Console.ReadLine();
+                        if(!bool.TryParse(strDev, out byteAddr))
+                        {
+                            DicConsole.WriteLine("Not a boolean. Press any key to continue...");
+                            byteAddr = false;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        DicConsole.Write("Read from {0}?: ", byteAddr ? "byte" : "block");
+                        strDev = System.Console.ReadLine();
+                        if(!uint.TryParse(strDev, out address))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            address = 0;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        if(multiple)
+                        {
+                            DicConsole.Write("How many blocks to read?");
+                            strDev = System.Console.ReadLine();
+                            if(!uint.TryParse(strDev, out count))
+                            {
+                                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                                count = 1;
+                                System.Console.ReadKey();
+                                continue;
+                            }
+                        }
+                        DicConsole.Write("How many bytes to expect in a block?");
+                        strDev = System.Console.ReadLine();
+                        if(!uint.TryParse(strDev, out blockSize))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            blockSize = 512;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        break;
+                    case 2:
+                        goto start;
+                }
+            }
+
+            start:
+            System.Console.Clear();
+            bool sense = dev.Read(out byte[] buffer, out uint[] response, address, blockSize, multiple ? count : 1, byteAddr, dev.Timeout, out double duration);
+
+        menu:
+            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Sending READ_{0}_BLOCK to the device:", multiple ? "MULTIPLE" : "SINGLE");
+            DicConsole.WriteLine("Command took {0} ms.", duration);
+            DicConsole.WriteLine("Sense is {0}.", sense);
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
+            DicConsole.WriteLine();
+            DicConsole.WriteLine("Choose what to do:");
+            DicConsole.WriteLine("1.- Print buffer.");
+            DicConsole.WriteLine("2.- Print response buffer.");
+            DicConsole.WriteLine("3.- Send command again.");
+            DicConsole.WriteLine("4.- Change parameters.");
+            DicConsole.WriteLine("0.- Return to SecureDigital commands menu.");
+            DicConsole.Write("Choose: ");
+
+            strDev = System.Console.ReadLine();
+            if(!int.TryParse(strDev, out item))
+            {
+                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                goto menu;
+            }
+
+            switch(item)
+            {
+                case 0:
+                    DicConsole.WriteLine("Returning to SecureDigital commands menu...");
+                    return;
+                case 1:
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("READ_{0}_BLOCK buffer:", multiple ? "MULTIPLE" : "SINGLE");
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+                    DicConsole.WriteLine("Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    goto menu;
+                case 2:
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    DicConsole.WriteLine("READ_{0}_BLOCK response:", multiple ? "MULTIPLE" : "SINGLE");
+                    if(response != null)
+                    {
+                        foreach(uint res in response)
+                            DicConsole.Write("0x{0:x8} ", res);
+                        DicConsole.WriteLine();
+                    }
+                    DicConsole.WriteLine("Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    DicConsole.WriteLine("Device: {0}", devPath);
+                    goto menu;
+                case 3:
+                    goto start;
+                case 4:
+                    goto parameters;
+                default:
+                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    goto menu;
             }
         }
 
@@ -176,7 +345,6 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     goto menu;
             }
         }
-
 
         static void Status(string devPath, Device dev)
         {
@@ -494,6 +662,104 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     goto menu;
                 case 4:
                     goto start;
+                default:
+                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    System.Console.ReadKey();
+                    System.Console.Clear();
+                    goto menu;
+            }
+        }
+
+        static void SetBlockLength(string devPath, Device dev)
+        {
+            uint blockSize = 512;
+            string strDev;
+            int item;
+
+        parameters:
+            while(true)
+            {
+                System.Console.Clear();
+                DicConsole.WriteLine("Device: {0}", devPath);
+                DicConsole.WriteLine("Parameters for SET BLOCK LENGTH command:");
+                DicConsole.WriteLine("Set block length to: {0} bytes", blockSize);
+                DicConsole.WriteLine();
+                DicConsole.WriteLine("Choose what to do:");
+                DicConsole.WriteLine("1.- Change parameters.");
+                DicConsole.WriteLine("2.- Send command with these parameters.");
+                DicConsole.WriteLine("0.- Return to SecureDigital commands menu.");
+
+                strDev = System.Console.ReadLine();
+                if(!int.TryParse(strDev, out item))
+                {
+                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    System.Console.ReadKey();
+                    continue;
+                }
+
+                switch(item)
+                {
+                    case 0:
+                        DicConsole.WriteLine("Returning to SecureDigital commands menu...");
+                        return;
+                    case 1:
+                        DicConsole.Write("Set block length to?");
+                        strDev = System.Console.ReadLine();
+                        if(!uint.TryParse(strDev, out blockSize))
+                        {
+                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            blockSize = 512;
+                            System.Console.ReadKey();
+                            continue;
+                        }
+                        break;
+                    case 2:
+                        goto start;
+                }
+            }
+
+        start:
+            System.Console.Clear();
+            bool sense = dev.SetBlockLength(blockSize, out uint[] response, dev.Timeout, out double duration);
+
+        menu:
+            DicConsole.WriteLine("Device: {0}", devPath);
+            DicConsole.WriteLine("Sending SET BLOCK LENGTH to the device:");
+            DicConsole.WriteLine("Command took {0} ms.", duration);
+            DicConsole.WriteLine("Sense is {0}.", sense);
+            DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
+            DicConsole.WriteLine("SET BLOCK LENGTH response:");
+            if(response != null)
+            {
+                foreach(uint res in response)
+                    DicConsole.Write("0x{0:x8} ", res);
+                DicConsole.WriteLine();
+            }
+            DicConsole.WriteLine();
+            DicConsole.WriteLine("Choose what to do:");
+            DicConsole.WriteLine("1.- Send command again.");
+            DicConsole.WriteLine("2.- Change parameters.");
+            DicConsole.WriteLine("0.- Return to SecureDigital commands menu.");
+            DicConsole.Write("Choose: ");
+
+            strDev = System.Console.ReadLine();
+            if(!int.TryParse(strDev, out item))
+            {
+                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                goto menu;
+            }
+
+            switch(item)
+            {
+                case 0:
+                    DicConsole.WriteLine("Returning to SecureDigital commands menu...");
+                    return;
+                case 1:
+                    goto start;
+                case 2:
+                    goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
