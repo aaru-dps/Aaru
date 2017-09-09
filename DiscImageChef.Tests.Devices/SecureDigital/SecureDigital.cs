@@ -681,7 +681,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             {
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Parameters for SET BLOCK LENGTH command:");
+                DicConsole.WriteLine("Parameters for SET_BLOCKLEN command:");
                 DicConsole.WriteLine("Set block length to: {0} bytes", blockSize);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
@@ -724,11 +724,11 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
 
         menu:
             DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending SET BLOCK LENGTH to the device:");
+            DicConsole.WriteLine("Sending SET_BLOCKLEN to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
-            DicConsole.WriteLine("SET BLOCK LENGTH response:");
+            DicConsole.WriteLine("SET_BLOCKLEN response:");
             if(response != null)
             {
                 foreach(uint res in response)
