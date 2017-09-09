@@ -716,7 +716,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
             bool fua = false;
             bool fuaNv = false;
             byte groupNumber = 0;
-            bool relative = false;
             bool streaming = false;
             string strDev;
             int item;
