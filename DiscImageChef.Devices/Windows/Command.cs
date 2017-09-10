@@ -133,7 +133,6 @@ namespace DiscImageChef.Devices.Windows
                         SectorCount = registers.sectorCount,
                         SectorNumber = registers.sector
                     },
-                    DataTransferLength = (uint)buffer.Length
                 },
                 dataBuffer = new byte[64 * 512]
             };
@@ -207,6 +206,7 @@ namespace DiscImageChef.Devices.Windows
                     TimeOutValue = timeout,
                     DataBuffer = (IntPtr)offsetForBuffer,
                     Length = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
+                    DataTransferLength = (uint)buffer.Length,
                     PreviousTaskFile = new AtaTaskFile(),
                     CurrentTaskFile = new AtaTaskFile
                     {
@@ -218,7 +218,6 @@ namespace DiscImageChef.Devices.Windows
                         SectorCount = registers.sectorCount,
                         SectorNumber = registers.lbaLow
                     },
-                    DataTransferLength = (uint)buffer.Length
                 },
                 dataBuffer = new byte[64 * 512]
             };
@@ -292,6 +291,7 @@ namespace DiscImageChef.Devices.Windows
                     TimeOutValue = timeout,
                     DataBuffer = (IntPtr)offsetForBuffer,
                     Length = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
+                    DataTransferLength = (uint)buffer.Length,
                     PreviousTaskFile = new AtaTaskFile
                     {
                         CylinderHigh = (byte)((registers.lbaHigh & 0xFF00) >> 8),
@@ -310,7 +310,6 @@ namespace DiscImageChef.Devices.Windows
                         SectorCount = (byte)(registers.sectorCount & 0xFF),
                         SectorNumber = (byte)(registers.lbaLow & 0xFF)
                     },
-                    DataTransferLength = (uint)buffer.Length
                 },
                 dataBuffer = new byte[64 * 512]
             };
