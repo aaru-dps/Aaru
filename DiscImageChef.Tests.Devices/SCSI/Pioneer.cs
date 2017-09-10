@@ -273,7 +273,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             {
                 System.Console.Clear();
                 DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Parameters for READ CD-DA command:");
+                DicConsole.WriteLine("Parameters for READ CD-DA MSF command:");
                 DicConsole.WriteLine("Start: {0:D2}:{1:D2}:{2:D2}", startMinute, startSecond, startFrame);
                 DicConsole.WriteLine("End: {0:D2}:{1:D2}:{2:D2}", endMinute, endSecond, endFrame);
                 DicConsole.WriteLine("Subchannel mode: {0}", subchan);
