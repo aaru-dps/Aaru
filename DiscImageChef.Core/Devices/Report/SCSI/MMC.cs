@@ -183,6 +183,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     {
                                         report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandard = ftr0001.Value.PhysicalInterfaceStandard;
                                         report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandardSpecified = true;
+                                        if((uint)ftr0001.Value.PhysicalInterfaceStandard > 0x8)
+                                        {
+                                            report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandardNumber = (uint)ftr0001.Value.PhysicalInterfaceStandard;
+                                            report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandardNumberSpecified = true;
+                                            report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandard = Decoders.SCSI.MMC.PhysicalInterfaces.Unspecified;
+                                        }
                                         report.SCSI.MultiMediaDevice.Features.SupportsDeviceBusyEvent = ftr0001.Value.DBE;
                                     }
                                 }

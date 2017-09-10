@@ -649,6 +649,7 @@ namespace DiscImageChef.Metadata
         public uint LogicalBlockSize { get; set; }
         public bool MultiRead { get; set; }
         public Decoders.SCSI.MMC.PhysicalInterfaces PhysicalInterfaceStandard { get; set; }
+        public uint PhysicalInterfaceStandardNumber { get; set; }
         public bool PreventJumper { get; set; }
         public bool SupportsAACS { get; set; }
         public bool SupportsBusEncryption { get; set; }
@@ -671,6 +672,8 @@ namespace DiscImageChef.Metadata
 
         [XmlIgnore]
         public bool PhysicalInterfaceStandardSpecified { get; set; }
+        [XmlIgnore]
+        public bool PhysicalInterfaceStandardNumberSpecified { get; set; }
         [XmlIgnore]
         public bool AACSVersionSpecified { get; set; }
         [XmlIgnore]
