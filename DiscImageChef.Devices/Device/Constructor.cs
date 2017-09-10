@@ -196,8 +196,6 @@ namespace DiscImageChef.Devices
                             break;
                     }
 
-                    System.Console.WriteLine("{0}", type);
-
                     if(type == DeviceType.SCSI || type == DeviceType.ATAPI)
                         scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
                     else if(type == DeviceType.ATA)
@@ -212,6 +210,8 @@ namespace DiscImageChef.Devices
                             if (ATAID.HasValue)
                                 scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
                         }
+                        else
+                            manufacturer = "ATA";
                     }
                 }
 
@@ -449,7 +449,7 @@ namespace DiscImageChef.Devices
                 }
             }
 
-            if((scsiSense && (usb || firewire)) || manufacturer == "ATA")
+            if ((scsiSense && (usb || firewire)) || manufacturer == "ATA")
             {
                 bool ataSense = AtaIdentify(out ataBuf, out errorRegisters);
                 if(!ataSense)
