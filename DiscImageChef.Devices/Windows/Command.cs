@@ -363,6 +363,124 @@ namespace DiscImageChef.Devices.Windows
 
             return error;
         }
+
+        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersCHS registers, out AtaErrorRegistersCHS errorRegisters,
+                                           AtaProtocol protocol, ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        {
+            duration = 0;
+            sense = false;
+            errorRegisters = new AtaErrorRegistersCHS();
+
+            if(buffer == null || buffer.Length > 512)
+                return -1;
+
+            IdePassThroughDirect iptd = new IdePassThroughDirect
+            {
+                CurrentTaskFile = new AtaTaskFile
+                {
+                    Command = registers.command,
+                    CylinderHigh = registers.cylinderHigh,
+                    CylinderLow = registers.cylinderLow,
+                    DeviceHead = registers.deviceHead,
+                    Features = registers.feature,
+                    SectorCount = registers.sectorCount,
+                    SectorNumber = registers.sector
+                },
+                DataBufferSize = 512,
+                DataBuffer = new byte[512],
+            };
+
+            uint k = 0;
+            int error = 0;
+
+            Array.Copy(buffer, 0, iptd.DataBuffer, 0, buffer.Length);
+
+            DateTime start = DateTime.Now;
+            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IOCTL_IDE_PASS_THROUGH, ref iptd, (uint)Marshal.SizeOf(iptd), ref iptd,
+                            (uint)Marshal.SizeOf(iptd), ref k, IntPtr.Zero);
+            DateTime end = DateTime.Now;
+
+            if(sense)
+                error = Marshal.GetLastWin32Error();
+
+            buffer = new byte[k - 12];
+            Array.Copy(iptd.DataBuffer, 0, buffer, 0, buffer.Length);
+
+            duration = (end - start).TotalMilliseconds;
+
+            errorRegisters.command = iptd.CurrentTaskFile.Command;
+            errorRegisters.cylinderHigh = iptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.cylinderLow = iptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.deviceHead = iptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.error = iptd.CurrentTaskFile.Error;
+            errorRegisters.sector = iptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.sectorCount = iptd.CurrentTaskFile.SectorCount;
+            errorRegisters.status = iptd.CurrentTaskFile.Status;
+
+            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
+
+            return error;
+        }
+
+        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersLBA28 registers, out AtaErrorRegistersLBA28 errorRegisters,
+                                           AtaProtocol protocol, ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        {
+            duration = 0;
+            sense = false;
+            errorRegisters = new AtaErrorRegistersLBA28();
+
+            if(buffer == null)
+                return -1;
+
+            uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughDirect)) + Marshal.SizeOf(typeof(uint)));
+
+            IdePassThroughDirect iptd = new IdePassThroughDirect
+            {
+                CurrentTaskFile = new AtaTaskFile
+                {
+                    Command = registers.command,
+                    CylinderHigh = registers.lbaHigh,
+                    CylinderLow = registers.lbaMid,
+                    DeviceHead = registers.deviceHead,
+                    Features = registers.feature,
+                    SectorCount = registers.sectorCount,
+                    SectorNumber = registers.lbaLow
+                },
+                DataBufferSize = 512,
+                DataBuffer = new byte[512],
+            };
+
+            uint k = 0;
+            int error = 0;
+
+            Array.Copy(buffer, 0, iptd.DataBuffer, 0, buffer.Length);
+
+            DateTime start = DateTime.Now;
+            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IOCTL_IDE_PASS_THROUGH, ref iptd, (uint)Marshal.SizeOf(iptd), ref iptd,
+                            (uint)Marshal.SizeOf(iptd), ref k, IntPtr.Zero);
+            DateTime end = DateTime.Now;
+
+            if(sense)
+                error = Marshal.GetLastWin32Error();
+
+            buffer = new byte[k - 12];
+            Array.Copy(iptd.DataBuffer, 0, buffer, 0, buffer.Length);
+
+            duration = (end - start).TotalMilliseconds;
+
+            errorRegisters.command = iptd.CurrentTaskFile.Command;
+            errorRegisters.lbaHigh = iptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.lbaMid = iptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.deviceHead = iptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.error = iptd.CurrentTaskFile.Error;
+            errorRegisters.lbaLow = iptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.sectorCount = iptd.CurrentTaskFile.SectorCount;
+            errorRegisters.status = iptd.CurrentTaskFile.Status;
+
+            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
+
+            return error;
+        }
     }
 }
 

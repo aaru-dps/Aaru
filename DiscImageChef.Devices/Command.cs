@@ -144,6 +144,23 @@ namespace DiscImageChef.Devices
             {
                 case Interop.PlatformID.Win32NT:
                     {
+                        if(
+                           ( // Windows XP <= SP1
+                            Environment.OSVersion.Version.Major == 5 &&
+                            Environment.OSVersion.Version.Minor == 1 &&
+                            (Environment.OSVersion.ServicePack == "Service Pack 1" || Environment.OSVersion.ServicePack == "")) ||
+                            ( // Windows 2000
+                             Environment.OSVersion.Version.Major == 5 &&
+                             Environment.OSVersion.Version.Minor == 0)
+                          )
+                            return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
+                                      protocol, ref buffer, timeout, out duration, out sense);
+                        // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
+                        if(
+                            Environment.OSVersion.Version.Major <= 4
+                          )
+                            throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
+
                         return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
                     }
@@ -177,6 +194,23 @@ namespace DiscImageChef.Devices
             {
                 case Interop.PlatformID.Win32NT:
                     {
+                        if(
+                           ( // Windows XP <= SP1
+                            Environment.OSVersion.Version.Major == 5 &&
+                            Environment.OSVersion.Version.Minor == 1 &&
+                            (Environment.OSVersion.ServicePack == "Service Pack 1" || Environment.OSVersion.ServicePack == "")) ||
+                            ( // Windows 2000
+                             Environment.OSVersion.Version.Major == 5 &&
+                             Environment.OSVersion.Version.Minor == 0)
+                          )
+                            return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
+                                      protocol, ref buffer, timeout, out duration, out sense);
+                        // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
+                        if(
+                            Environment.OSVersion.Version.Major <= 4
+                          )
+                            throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
+
                         return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
                     }
@@ -210,6 +244,7 @@ namespace DiscImageChef.Devices
             {
                 case Interop.PlatformID.Win32NT:
                     {
+                        // No check for Windows version. A 48-bit ATA disk simply does not work on earlier systems
                         return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
                     }

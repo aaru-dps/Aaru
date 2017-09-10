@@ -270,6 +270,7 @@ namespace DiscImageChef.Devices.Windows
         /// </summary>
         IOCTL_SCSI_GET_ADDRESS = 0x41018,
         IOCTL_STORAGE_QUERY_PROPERTY = 0x2D1400,
+        IOCTL_IDE_PASS_THROUGH = 0x4D028,
     }
 
     [Flags]

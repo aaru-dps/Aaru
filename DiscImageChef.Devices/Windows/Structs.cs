@@ -194,5 +194,23 @@ namespace DiscImageChef.Devices.Windows
         public uint RawPropertiesLength;
         public byte[] RawDeviceProperties;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct IdePassThroughDirect
+    {
+        /// <summary>
+        /// ATA registers
+        /// </summary>
+        public AtaTaskFile CurrentTaskFile;
+        /// <summary>
+        /// Size of data buffer
+        /// </summary>
+        public uint DataBufferSize;
+        /// <summary>
+        /// Data buffer
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
+        public byte[] DataBuffer;
+    }
 }
 

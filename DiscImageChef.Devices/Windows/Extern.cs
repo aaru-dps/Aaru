@@ -84,7 +84,19 @@ namespace DiscImageChef.Devices.Windows
            uint nOutBufferSize,
            ref uint pBytesReturned,
            IntPtr Overlapped
-       );
+        );
+
+        [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
+        internal static extern bool DeviceIoControlIde(
+            SafeFileHandle hDevice,
+            WindowsIoctl IoControlCode,
+            ref IdePassThroughDirect InBuffer,
+            uint nInBufferSize,
+            ref IdePassThroughDirect OutBuffer,
+            uint nOutBufferSize,
+            ref uint pBytesReturned,
+            IntPtr Overlapped
+        );
 
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         internal static extern bool CloseHandle(SafeFileHandle hDevice);
