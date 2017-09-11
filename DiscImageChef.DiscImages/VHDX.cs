@@ -602,7 +602,6 @@ namespace DiscImageChef.ImagePlugins
             {
                 parentImage = new VHDX();
                 bool parentWorks = false;
-                FiltersList filtersList = new FiltersList();
                 Filter parentFilter;
 
                 foreach(VHDXParentLocatorEntry parentEntry in vPars)
@@ -621,7 +620,7 @@ namespace DiscImageChef.ImagePlugins
 
                         try
                         {
-                            parentFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
+                            parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
                             if(parentFilter != null && parentImage.OpenImage(parentFilter))
                             {
                                 parentWorks = true;
@@ -634,7 +633,7 @@ namespace DiscImageChef.ImagePlugins
 
                         try
                         {
-                            parentFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), relEntry));
+                            parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), relEntry));
                             if(parentFilter != null && parentImage.OpenImage(parentFilter))
                             {
                                 parentWorks = true;
@@ -653,7 +652,7 @@ namespace DiscImageChef.ImagePlugins
 
                         try
                         {
-                            parentFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
+                            parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
                             if(parentFilter != null && parentImage.OpenImage(parentFilter))
                             {
                                 parentWorks = true;

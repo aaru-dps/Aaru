@@ -590,13 +590,14 @@ namespace DiscImageChef.ImagePlugins
             else
                 DicConsole.ErrorWriteLine("BlindWrite5 image ends after expected position. Probably new version with different data. Errors may occur.");
 
-            FiltersList filtersList = new FiltersList();
+			FiltersList filtersList;
 
             filePaths = new List<DataFileCharacteristics>();
             foreach(BW5_DataFile dataFile in dataFiles)
             {
                 DataFileCharacteristics chars = new DataFileCharacteristics();
                 string path = Path.Combine(dataPath, dataFile.filename);
+				filtersList = new FiltersList();
 
                 if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                 {

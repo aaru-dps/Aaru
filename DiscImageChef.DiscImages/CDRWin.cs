@@ -597,15 +597,17 @@ namespace DiscImageChef.ImagePlugins
 
                             if(currenttrack.sequence != 0)
                             {
-                                currentfile.sequence = currenttrack.sequence;
+								currentfile.sequence = currenttrack.sequence;
                                 currenttrack.trackfile = currentfile;
                                 currenttrack.sectors = ((ulong)currentfile.datafilter.GetLength() - currentfile.offset) / CDRWinTrackTypeToBytesPerSector(currenttrack.tracktype);
                                 cuetracks[currenttrack.sequence - 1] = currenttrack;
                                 intrack = false;
                                 currenttrack = new CDRWinTrack();
-                            }
+								currentfile = new CDRWinTrackFile();
+								filtersList = new FiltersList();
+							}
 
-
+							//currentfile = new CDRWinTrackFile();
                             string datafile = MatchFile.Groups[1].Value;
                             currentfile.filetype = MatchFile.Groups[2].Value;
 
@@ -674,7 +676,7 @@ namespace DiscImageChef.ImagePlugins
                             }
 
                             // File does exist, process it
-                            DicConsole.DebugWriteLine("CDRWin plugin", "File \"{0}\" found", currentfile.datafilter);
+							DicConsole.DebugWriteLine("CDRWin plugin", "File \"{0}\" found", currentfile.datafilter.GetFilename());
 
                             switch(currentfile.filetype)
                             {
@@ -1026,7 +1028,7 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has SCMS");
 
                     DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                        discimage.tracks[i].trackfile.datafilter, discimage.tracks[i].trackfile.filetype, discimage.tracks[i].trackfile.offset);
+					                          discimage.tracks[i].trackfile.datafilter.GetFilename(), discimage.tracks[i].trackfile.filetype, discimage.tracks[i].trackfile.offset);
 
                     DicConsole.DebugWriteLine("CDRWin plugin", "\t\tIndexes:");
                     foreach(KeyValuePair<int, ulong> kvp in discimage.tracks[i].indexes)

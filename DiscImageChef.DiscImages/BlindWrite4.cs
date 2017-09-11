@@ -583,6 +583,8 @@ namespace DiscImageChef.ImagePlugins
 
             if(!string.IsNullOrEmpty(header.subchannelFile))
             {
+				filtersList = new FiltersList();
+
                 do
                 {
                     subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),

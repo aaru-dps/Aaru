@@ -327,8 +327,6 @@ namespace DiscImageChef.DiscImages
             extents = new Dictionary<ulong, VMwareExtent>();
             ulong currentSector = 0;
 
-            FiltersList filtersList = new FiltersList();
-
 			bool matchedCyls = false, matchedHds = false, matchedSpt = false;
 
 			if(cowD)
@@ -347,7 +345,7 @@ namespace DiscImageChef.DiscImages
                     if(!File.Exists(curPath))
                         break;
 
-                    Filter extentFilter = filtersList.GetFilter(curPath);
+					Filter extentFilter = new FiltersList().GetFilter(curPath);
                     Stream extentStream = extentFilter.GetDataForkStream();
 
                     if(stream.Length > Marshal.SizeOf(vmCHdr))
@@ -450,7 +448,7 @@ namespace DiscImageChef.DiscImages
 						VMwareExtent newExtent = new VMwareExtent();
 						newExtent.access = MatchExtent.Groups["access"].Value;
 						if(!embedded)
-							newExtent.filter = filtersList.GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.GetBasePath()), MatchExtent.Groups["filename"].Value));
+							newExtent.filter = new FiltersList().GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.GetBasePath()), MatchExtent.Groups["filename"].Value));
 						else
 							newExtent.filter = imageFilter;
 						uint.TryParse(MatchExtent.Groups["offset"].Value, out newExtent.offset);
@@ -672,7 +670,7 @@ namespace DiscImageChef.DiscImages
 
             if(hasParent)
             {
-                Filter parentFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentName));
+				Filter parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentName));
                 if(parentFilter == null)
                     throw new Exception(string.Format("Cannot find parent \"{0}\".", parentName));
 

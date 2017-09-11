@@ -823,7 +823,7 @@ namespace DiscImageChef.ImagePlugins
                         int currentLocator = 0;
                         bool locatorFound = false;
                         string parentPath = null;
-                        FiltersList filters = new FiltersList();
+						FiltersList filters;
 
                         while(!locatorFound && currentLocator < 8)
                         {
@@ -852,7 +852,7 @@ namespace DiscImageChef.ImagePlugins
                             if(parentPath != null)
                             {
                                 DicConsole.DebugWriteLine("VirtualPC plugin", "Possible parent path: \"{0}\"", parentPath);
-                                Filter parentFilter = filters.GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
+								Filter parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
 
                                 if(parentFilter != null)
                                     locatorFound = true;
@@ -868,7 +868,7 @@ namespace DiscImageChef.ImagePlugins
                         else
                         {
                             parentImage = new VHD();
-                            Filter parentFilter = filters.GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
+                            Filter parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
 
                             if(parentFilter == null)
                                 throw new ImageNotSupportedException("(VirtualPC plugin): Cannot find parent image filter");

@@ -228,7 +228,7 @@ namespace DiscImageChef.ImagePlugins
                 GDITrack currentTrack;
                 densitySeparationSectors = 0;
 
-                FiltersList filtersList = new FiltersList();
+				FiltersList filtersList;
 
                 while(gdiStream.Peek() >= 0)
                 {
@@ -253,6 +253,7 @@ namespace DiscImageChef.ImagePlugins
                             TrackMatch.Groups["track"].Value, TrackMatch.Groups["start"].Value, TrackMatch.Groups["flags"].Value,
                             TrackMatch.Groups["type"].Value, TrackMatch.Groups["filename"].Value, TrackMatch.Groups["offset"].Value, line);
 
+						filtersList = new FiltersList();
                         currentTrack = new GDITrack();
                         currentTrack.bps = ushort.Parse(TrackMatch.Groups["type"].Value);
                         currentTrack.flags = (byte)(byte.Parse(TrackMatch.Groups["flags"].Value) * 0x10);

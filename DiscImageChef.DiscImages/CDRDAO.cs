@@ -615,6 +615,7 @@ namespace DiscImageChef.ImagePlugins
                     {
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found AUDIOFILE \"{1}\" at line {0}", line, MatchAudioFile.Groups["filename"].Value);
 
+						filtersList = new FiltersList();
                         currenttrack.trackfile = new CDRDAOTrackFile();
                         currenttrack.trackfile.datafilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), MatchAudioFile.Groups["filename"].Value));
                         currenttrack.trackfile.datafile = MatchAudioFile.Groups["filename"].Value;
@@ -645,7 +646,8 @@ namespace DiscImageChef.ImagePlugins
                     {
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found DATAFILE \"{1}\" at line {0}", line, MatchFile.Groups["filename"].Value);
 
-                        currenttrack.trackfile = new CDRDAOTrackFile();
+						filtersList = new FiltersList();
+						currenttrack.trackfile = new CDRDAOTrackFile();
                         currenttrack.trackfile.datafilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), MatchFile.Groups["filename"].Value));
                         currenttrack.trackfile.datafile = MatchAudioFile.Groups["filename"].Value;
                         currenttrack.trackfile.offset = MatchFile.Groups["base_offset"].Value != "" ? ulong.Parse(MatchFile.Groups["base_offset"].Value) : 0;
