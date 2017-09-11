@@ -57,7 +57,7 @@ namespace DiscImageChef.Core
                 {
                     OperatingSystems = new List<OsStats>
                     {
-                        new OsStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1, version = Environment.OSVersion.Version.ToString() }
+                        new OsStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1, version = Interop.DetectOS.GetVersion() }
                     },
                     Versions = new List<NameValueStats>
                     {
@@ -76,7 +76,7 @@ namespace DiscImageChef.Core
                 {
                     OperatingSystems = new List<OsStats>
                     {
-                        new OsStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1, version = Environment.OSVersion.Version.ToString() }
+                        new OsStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1, version = Interop.DetectOS.GetVersion() }
                     },
                     Versions = new List<NameValueStats>
                     {
@@ -102,7 +102,7 @@ namespace DiscImageChef.Core
                     OsStats old = null;
                     foreach(OsStats nvs in AllStats.OperatingSystems)
                     {
-                        if(nvs.name == Interop.DetectOS.GetRealPlatformID().ToString() && nvs.version == Environment.OSVersion.Version.ToString())
+                        if(nvs.name == Interop.DetectOS.GetRealPlatformID().ToString() && nvs.version == Interop.DetectOS.GetVersion())
                         {
                             count = nvs.Value + 1;
                             old = nvs;
@@ -114,7 +114,7 @@ namespace DiscImageChef.Core
                         AllStats.OperatingSystems.Remove(old);
 
                     count++;
-                    AllStats.OperatingSystems.Add(new OsStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = count, version = Environment.OSVersion.Version.ToString() });
+                    AllStats.OperatingSystems.Add(new OsStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = count, version = Interop.DetectOS.GetVersion() });
                 }
                 else if(CurrentStats != null)
                     AllStats.OperatingSystems = CurrentStats.OperatingSystems;
