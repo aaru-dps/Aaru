@@ -101,11 +101,14 @@ namespace DiscImageChef.Devices.Linux
 
                 if(string.IsNullOrEmpty(devices[i].vendor) || devices[i].vendor == "ATA")
                 {
-                    string[] pieces = devices[i].model.Split(' ');
-                    if(pieces.Length > 1)
+                    if(devices[i].model != null)
                     {
-                        devices[i].vendor = pieces[0];
-                        devices[i].model = devices[i].model.Substring(pieces[0].Length + 1);
+                        string[] pieces = devices[i].model.Split(' ');
+                        if(pieces.Length > 1)
+                        {
+                            devices[i].vendor = pieces[0];
+                            devices[i].model = devices[i].model.Substring(pieces[0].Length + 1);
+                        }
                     }
                 }
 
