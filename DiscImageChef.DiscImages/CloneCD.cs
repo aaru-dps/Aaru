@@ -765,8 +765,8 @@ namespace DiscImageChef.DiscImages
 
 					Partition partition = new Partition();
 					partition.Description = track.TrackDescription;
-					partition.Size = (track.TrackEndSector - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector;
-					partition.Length = (track.TrackEndSector - track.TrackStartSector);
+					partition.Size = ((track.TrackEndSector - track.TrackStartSector) + 1) * (ulong)track.TrackRawBytesPerSector;
+					partition.Length = (track.TrackEndSector - track.TrackStartSector) + 1;
 					ImageInfo.sectors += partition.Length;
 					partition.Sequence = track.TrackSequence;
 					partition.Offset = track.TrackFileOffset;
@@ -959,8 +959,8 @@ namespace DiscImageChef.DiscImages
 			if(_track.TrackSequence == 0)
 				throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-			if(length + sectorAddress > (_track.TrackEndSector))
-				throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks", length + sectorAddress, _track.TrackEndSector));
+			if((length + sectorAddress) - 1 > _track.TrackEndSector)
+				throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0} {2}) than present in track ({1}), won't cross tracks", length + sectorAddress, _track.TrackEndSector, sectorAddress));
 
 			uint sector_offset;
 			uint sector_size;
@@ -1046,7 +1046,7 @@ namespace DiscImageChef.DiscImages
 			if(_track.TrackSequence == 0)
 				throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-			if(length + sectorAddress > (_track.TrackEndSector))
+			if((length + sectorAddress) - 1 > (_track.TrackEndSector))
 				throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks", length + sectorAddress, _track.TrackEndSector));
 
 			if(_track.TrackType == TrackType.Data)
@@ -1298,7 +1298,7 @@ namespace DiscImageChef.DiscImages
 					{
 						if(track.TrackSequence == kvp.Key)
 						{
-							if((sectorAddress - kvp.Value) < (track.TrackEndSector - track.TrackStartSector))
+							if((sectorAddress - kvp.Value) < ((track.TrackEndSector - track.TrackStartSector) + 1))
 								return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
 						}
 					}
@@ -1326,7 +1326,7 @@ namespace DiscImageChef.DiscImages
 			if(_track.TrackSequence == 0)
 				throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-			if(length + sectorAddress > (_track.TrackEndSector))
+			if((length + sectorAddress) - 1 > (_track.TrackEndSector))
 				throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks", length + sectorAddress, _track.TrackEndSector));
 
 			byte[] buffer = new byte[2352 * length];
