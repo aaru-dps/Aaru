@@ -268,14 +268,28 @@ namespace DiscImageChef.ImagePlugins
 				}
 
 				tocStream = new StreamReader(imageFilter.GetDataForkStream());
-                string _line = tocStream.ReadLine();
+				string _line;
 
-                Regex Dr = new Regex(DiskTypeRegEx);
-                Match Dm;
+				Regex Cr = new Regex(CommentRegEx);
+				Regex Dr = new Regex(DiskTypeRegEx);
+				Match Dm;
+				Match Cm;
 
-                Dm = Dr.Match(_line);
+				while(tocStream.Peek() >= 0)
+				{
+					_line = tocStream.ReadLine();
 
-                return Dm.Success;
+					Dm = Dr.Match(_line);
+					Cm = Cr.Match(_line);
+
+					// Skip comments at start of file
+					if(Cm.Success)
+						continue;
+
+					return Dm.Success;
+				}
+
+				return false;
             }
             catch(Exception ex)
             {
@@ -376,20 +390,35 @@ namespace DiscImageChef.ImagePlugins
                 StringBuilder commentBuilder = new StringBuilder();
 
                 tocStream = new StreamReader(this.imageFilter.GetDataForkStream());
-                string _line = tocStream.ReadLine();
+				string _line;
 
-                MatchDiskType = RegexDiskType.Match(_line);
+				while(tocStream.Peek() >= 0)
+				{
+					line++;
+					_line = tocStream.ReadLine();
 
-                if(!MatchDiskType.Success)
-                {
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "Not a CDRDAO TOC or TOC type not in first line.");
-                    return false;
-                }
+					MatchDiskType = RegexDiskType.Match(_line);
+					MatchComment = RegexComment.Match(_line);
+
+					// Skip comments at start of file
+					if(MatchComment.Success)
+						continue;
+
+					if(!MatchDiskType.Success)
+					{
+						DicConsole.DebugWriteLine("CDRDAO plugin", "Not a CDRDAO TOC or TOC type not in line {0}.", line);
+						return false;
+					}
+
+					break;
+				}
 
                 tocStream = new StreamReader(this.imageFilter.GetDataForkStream());
                 FiltersList filtersList = new FiltersList();
+				line = 0;
 
-                while(tocStream.Peek() >= 0)
+				tocStream.BaseStream.Position = 0;
+				while(tocStream.Peek() >= 0)
                 {
                     line++;
                     _line = tocStream.ReadLine();
@@ -617,7 +646,7 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found DATAFILE \"{1}\" at line {0}", line, MatchFile.Groups["filename"].Value);
 
                         currenttrack.trackfile = new CDRDAOTrackFile();
-                        currenttrack.trackfile.datafilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), MatchAudioFile.Groups["filename"].Value));
+                        currenttrack.trackfile.datafilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), MatchFile.Groups["filename"].Value));
                         currenttrack.trackfile.datafile = MatchAudioFile.Groups["filename"].Value;
                         currenttrack.trackfile.offset = MatchFile.Groups["base_offset"].Value != "" ? ulong.Parse(MatchFile.Groups["base_offset"].Value) : 0;
 
@@ -781,7 +810,7 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack has pre-emphasis applied");
 
                     DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                        discimage.tracks[i].trackfile.datafilter, discimage.tracks[i].trackfile.filetype, discimage.tracks[i].trackfile.offset);
+					                          discimage.tracks[i].trackfile.datafilter.GetFilename(), discimage.tracks[i].trackfile.filetype, discimage.tracks[i].trackfile.offset);
 
                     DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tIndexes:");
                     foreach(KeyValuePair<int, ulong> kvp in discimage.tracks[i].indexes)
