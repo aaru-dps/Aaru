@@ -471,7 +471,14 @@ namespace DiscImageChef.Server
                     if(_line[0] == '\t')
                         continue;
 
-                    number = Convert.ToUInt16(_line.Substring(0, 4), 16);
+                    try
+                    {
+                        number = Convert.ToUInt16(_line.Substring(0, 4), 16);
+                    }
+                    catch(FormatException)
+                    {
+                        continue;
+                    }
 
                     if(number == vendor)
                     {
