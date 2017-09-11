@@ -490,6 +490,10 @@ namespace DiscImageChef.Metadata
                     DiscType = "3.5\" floppy";
                     DiscSubType = "Acorn Archimedes";
                     break;
+                case CommonTypes.MediaType.ACORN_35_DS_HD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Acorn Archimedes high-density";
+                    break;
                 case CommonTypes.MediaType.ATARI_525_SD:
                     DiscType = "5.25\" floppy";
                     DiscSubType = "Atari single-density";
@@ -534,6 +538,10 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.NEC_8_DD:
                     DiscType = "8\" floppy";
                     DiscSubType = "NEC double-sided";
+                    break;
+                case CommonTypes.MediaType.NEC_525_SS:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "NEC single-sided";
                     break;
                 case CommonTypes.MediaType.NEC_525_HD:
                     DiscType = "5.25\" floppy";
