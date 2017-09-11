@@ -214,7 +214,7 @@ namespace DiscImageChef.Interop
             return IntPtr.Size == 4;
         }
 
-        public static string GetPlatformName(PlatformID id)
+        public static string GetPlatformName(PlatformID id, string version = null)
         {
             switch(id)
             {
@@ -277,10 +277,41 @@ namespace DiscImageChef.Interop
                 case PlatformID.WiiU:
                     return "Nintendo Wii U";
                 case PlatformID.Win32NT:
+                    if(string.IsNullOrEmpty(version))
+                        return "Windows NT/2000/XP/Vista/7/10";
+                    if(version.StartsWith("3.", StringComparison.Ordinal) ||
+                       version.StartsWith("4.", StringComparison.Ordinal))
+                        return "Windows NT";
+                    if(version.StartsWith("5.0", StringComparison.Ordinal))
+                        return "Windows 2000";
+                    if(version.StartsWith("5.1", StringComparison.Ordinal))
+                        return "Windows XP";
+                    if(version.StartsWith("5.2", StringComparison.Ordinal))
+                        return "Windows 2003";
+                    if(version.StartsWith("6.0", StringComparison.Ordinal))
+                        return "Windows Vista";
+                    if(version.StartsWith("6.1", StringComparison.Ordinal))
+                        return "Windows 7";
+                    if(version.StartsWith("6.1", StringComparison.Ordinal))
+                        return "Windows 8";
+                    if(version.StartsWith("6.3", StringComparison.Ordinal))
+                        return "Windows 8.1";
+                    if(version.StartsWith("10.0", StringComparison.Ordinal))
+                        return "Windows 10";
                     return "Windows NT/2000/XP/Vista/7/10";
                 case PlatformID.Win32S:
                     return "Windows 3.x with win32s";
                 case PlatformID.Win32Windows:
+                    if(string.IsNullOrEmpty(version))
+                        return "Windows 9x/Me";
+                    if(version.StartsWith("4.0", StringComparison.Ordinal))
+                        return "Windows 95";
+                    if(version.StartsWith("4.10.2222", StringComparison.Ordinal))
+                        return "Windows 98 SE";
+                    if(version.StartsWith("4.1", StringComparison.Ordinal))
+                        return "Windows 98";
+                    if(version.StartsWith("4.9", StringComparison.Ordinal))
+                        return "Windows Me";
                     return "Windows 9x/Me";
                 case PlatformID.WinCE:
                     return "Windows CE/Mobile";
