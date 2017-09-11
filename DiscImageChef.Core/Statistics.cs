@@ -55,9 +55,9 @@ namespace DiscImageChef.Core
                 AllStats = new Stats();
                 CurrentStats = new Stats()
                 {
-                    OperatingSystems = new List<NameValueStats>
+                    OperatingSystems = new List<OsStats>
                     {
-                        new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1 }
+                        new OsStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1, version = Environment.OSVersion.Version.ToString() }
                     },
                     Versions = new List<NameValueStats>
                     {
@@ -74,9 +74,9 @@ namespace DiscImageChef.Core
                 AllStats = new Stats();
                 CurrentStats = new Stats()
                 {
-                    OperatingSystems = new List<NameValueStats>
+                    OperatingSystems = new List<OsStats>
                     {
-                        new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1 }
+                        new OsStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1, version = Environment.OSVersion.Version.ToString() }
                     },
                     Versions = new List<NameValueStats>
                     {
@@ -99,10 +99,10 @@ namespace DiscImageChef.Core
                 {
                     long count = 0;
 
-                    NameValueStats old = null;
-                    foreach(NameValueStats nvs in AllStats.OperatingSystems)
+                    OsStats old = null;
+                    foreach(OsStats nvs in AllStats.OperatingSystems)
                     {
-                        if(nvs.name == Interop.DetectOS.GetRealPlatformID().ToString())
+                        if(nvs.name == Interop.DetectOS.GetRealPlatformID().ToString() && nvs.version == Environment.OSVersion.Version.ToString())
                         {
                             count = nvs.Value + 1;
                             old = nvs;
@@ -114,7 +114,7 @@ namespace DiscImageChef.Core
                         AllStats.OperatingSystems.Remove(old);
 
                     count++;
-                    AllStats.OperatingSystems.Add(new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = count });
+                    AllStats.OperatingSystems.Add(new OsStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = count, version = Environment.OSVersion.Version.ToString() });
                 }
                 else if(CurrentStats != null)
                     AllStats.OperatingSystems = CurrentStats.OperatingSystems;

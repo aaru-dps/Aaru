@@ -120,16 +120,16 @@ namespace DiscImageChef.Server.Controllers
                         oldStats.OperatingSystems = newStats.OperatingSystems;
                     else
                     {
-                        foreach(NameValueStats newNvs in newStats.OperatingSystems)
+                        foreach(OsStats newNvs in newStats.OperatingSystems)
                         {
-                            NameValueStats removeNvs = null;
-                            NameValueStats addNvs = null;
+                            OsStats removeNvs = null;
+                            OsStats addNvs = null;
 
-                            foreach(NameValueStats oldNvs in oldStats.OperatingSystems)
+                            foreach(OsStats oldNvs in oldStats.OperatingSystems)
                             {
-                                if(oldNvs.name == newNvs.name)
+                                if(oldNvs.name == newNvs.name && oldNvs.version == newNvs.version)
                                 {
-                                    addNvs = new NameValueStats { name = oldNvs.name, Value = oldNvs.Value + newNvs.Value };
+                                    addNvs = new OsStats { name = oldNvs.name, Value = oldNvs.Value + newNvs.Value, version = oldNvs.version };
                                     removeNvs = oldNvs;
                                     break;
                                 }
@@ -148,20 +148,20 @@ namespace DiscImageChef.Server.Controllers
                 else
                 {
                     if(oldStats.OperatingSystems == null)
-                        oldStats.OperatingSystems = new System.Collections.Generic.List<NameValueStats>
+                        oldStats.OperatingSystems = new System.Collections.Generic.List<OsStats>
                         {
-                            new NameValueStats { name = "Linux", Value = 1 }
+                            new OsStats { name = "Linux", Value = 1 }
                         };
                     else
                     {
-                        NameValueStats removeNvs = null;
-                        NameValueStats addNvs = null;
+                        OsStats removeNvs = null;
+                        OsStats addNvs = null;
 
-                        foreach(NameValueStats oldNvs in oldStats.OperatingSystems)
+                        foreach(OsStats oldNvs in oldStats.OperatingSystems)
                         {
                             if(oldNvs.name == "Linux")
                             {
-                                addNvs = new NameValueStats { name = oldNvs.name, Value = oldNvs.Value + 1 };
+                                addNvs = new OsStats { name = oldNvs.name, Value = oldNvs.Value + 1, version = oldNvs.version };
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -173,7 +173,7 @@ namespace DiscImageChef.Server.Controllers
                             oldStats.OperatingSystems.Add(addNvs);
                         }
                         else
-                            oldStats.OperatingSystems.Add(new NameValueStats { name = "Linux", Value = 1 });
+                            oldStats.OperatingSystems.Add(new OsStats { name = "Linux", Value = 1 });
                     }
                 }
 

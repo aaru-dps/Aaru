@@ -39,7 +39,7 @@ namespace DiscImageChef.Metadata
     public class Stats
     {
         [XmlArrayItem("OperatingSystem")]
-        public List<NameValueStats> OperatingSystems { get; set; }
+        public List<OsStats> OperatingSystems { get; set; }
         [XmlArrayItem("Version")]
         public List<NameValueStats> Versions { get; set; }
         public CommandsStats Commands;
@@ -162,6 +162,16 @@ namespace DiscImageChef.Metadata
     {
         [XmlAttribute]
         public string name { get; set; }
+        [XmlText]
+        public long Value { get; set; }
+    }
+
+    public class OsStats
+    {
+        [XmlAttribute]
+        public string name { get; set; }
+        [XmlAttribute]
+        public string version { get; set; }
         [XmlText]
         public long Value { get; set; }
     }

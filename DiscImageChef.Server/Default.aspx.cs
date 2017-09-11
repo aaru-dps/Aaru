@@ -62,8 +62,10 @@ namespace DiscImageChef.Server
                 if(statistics.OperatingSystems != null)
                 {
                     operatingSystems = new List<NameValueStats>();
-                    foreach(NameValueStats nvs in statistics.OperatingSystems)
-                        operatingSystems.Add(new NameValueStats { name = Interop.DetectOS.GetPlatformName((Interop.PlatformID)Enum.Parse(typeof(Interop.PlatformID), nvs.name)), Value = nvs.Value });
+                    foreach(OsStats nvs in statistics.OperatingSystems)
+                        operatingSystems.Add(new NameValueStats { name = string.Format("{0}{1}{2}", Interop.DetectOS.GetPlatformName((Interop.PlatformID)Enum.Parse(typeof(Interop.PlatformID), nvs.name), nvs.version),
+                                                                                string.IsNullOrEmpty(nvs.version) ? "" : " ", nvs.version), Value = nvs.Value });
+                        //operatingSystems.Add(new OsStats { name = Interop.DetectOS.GetPlatformName((Interop.PlatformID)Enum.Parse(typeof(Interop.PlatformID), nvs.name), nvs.version), Value = nvs.Value, version = nvs.version });
                     repOperatingSystems.DataSource = operatingSystems.OrderBy(os => os.name).ToList();
                     repOperatingSystems.DataBind();
                 }
