@@ -1068,7 +1068,7 @@ namespace DiscImageChef.DiscImages
 					buffer = new byte[96 * length];
 					subStream.Seek((long)(_track.TrackSubchannelOffset + sectorAddress * 96), SeekOrigin.Begin);
 					subStream.Read(buffer, 0, buffer.Length);
-					break;
+					return buffer;
 				default:
 					throw new ArgumentException("Unsupported tag requested", nameof(tag));
 			}
