@@ -286,8 +286,6 @@ namespace DiscImageChef.ImagePlugins
             }
         }
 
-        #region Not implemented methods
-
         public override bool OpenImage(Filter imageFilter)
         {
             if(imageFilter == null)
@@ -1589,12 +1587,6 @@ namespace DiscImageChef.ImagePlugins
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
-        public override List<Session> GetSessions()
-        {
-            // TODO
-            throw new NotImplementedException();
-        }
-
         public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
@@ -1674,11 +1666,19 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        #endregion
+		#region Not implemented methods
 
-        #region Private methods
+		public override List<Session> GetSessions()
+		{
+			// TODO
+			throw new NotImplementedException();
+		}
 
-        static ushort CDRDAOTrackTypeToBytesPerSector(string trackType)
+		#endregion
+
+		#region Private methods
+
+		static ushort CDRDAOTrackTypeToBytesPerSector(string trackType)
         {
             switch(trackType)
             {
