@@ -118,7 +118,7 @@ namespace DiscImageChef.PartPlugins
                             Length = (ulong)((ddm.sbMap[i].ddSize * 512) / sector_size),
                             Sequence = sequence,
                             Offset = ddm.sbMap[i].ddBlock * sector_size,
-                            Start = ddm.sbMap[i].ddBlock,
+                            Start = ddm.sbMap[i].ddBlock + sectorOffset,
                             Type = "Apple_Driver"
                         };
 
@@ -279,7 +279,7 @@ namespace DiscImageChef.PartPlugins
                             Name = StringHandlers.CToString(entry.name),
                             Offset = entry.start * entry_size,
                             Size = entry.sectors * entry_size,
-                            Start = (entry.start * entry_size) / sector_size,
+                            Start = ((entry.start * entry_size) / sector_size) + sectorOffset,
                             Length = (entry.sectors * entry_size) / sector_size,
                             Scheme = Name
                         };
