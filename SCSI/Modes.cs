@@ -4998,7 +4998,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.RotationControlSelected = (byte)(pageResponse[27] & 0x03);
             decoded.CurrentWriteSpeedSelected = (ushort)((pageResponse[28] << 8) + pageResponse[29]);
 
-            ushort descriptors = (ushort)((pageResponse[30] << 8) + pageResponse[31]);
+            ushort descriptors = (ushort)((pageResponse.Length - 32) / 4);
             decoded.WriteSpeedPerformanceDescriptors = new ModePage_2A_WriteDescriptor[descriptors];
 
             for(int i = 0; i < descriptors; i++)
