@@ -107,6 +107,27 @@ namespace DiscImageChef.Core.Devices.Scanning
                                 return results;
                             }
                         }
+                        // These should be trapped by the OS but seems in some cases they're not
+                        else if(decSense.Value.ASC == 0x28)
+                        {
+                            int leftRetries = 10;
+                            while(leftRetries > 0)
+                            {
+                                DicConsole.WriteLine("\rWaiting for drive to become ready");
+                                System.Threading.Thread.Sleep(2000);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                                if(!sense)
+                                    break;
+
+                                leftRetries--;
+                            }
+
+                            if(sense)
+                            {
+                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                return results;
+                            }
+                        }
                         else
                         {
                             DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));

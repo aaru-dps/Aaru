@@ -805,6 +805,23 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                                 mediaTest.MediaIsRecognized &= !sense;
                             }
+                            // These should be trapped by the OS but seems in some cases they're not
+                            else if(decSense.Value.ASC == 0x28)
+                            {
+                                int leftRetries = 20;
+                                while(leftRetries > 0)
+                                {
+                                    DicConsole.Write("\rWaiting for drive to become ready");
+                                    System.Threading.Thread.Sleep(2000);
+                                    sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
+                                    if(!sense)
+                                        break;
+
+                                    leftRetries--;
+                                }
+
+                                mediaTest.MediaIsRecognized &= !sense;
+                            }
                             else
                                 mediaTest.MediaIsRecognized = false;
                         }
