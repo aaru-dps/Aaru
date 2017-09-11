@@ -38,6 +38,8 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.IO;
 
 namespace DiscImageChef.Interop
 {
@@ -214,6 +216,33 @@ namespace DiscImageChef.Interop
             return IntPtr.Size == 4;
         }
 
+        public static string GetVersion()
+        {
+            string environ = Environment.OSVersion.Version.ToString();
+
+            switch(GetRealPlatformID())
+            {
+                case PlatformID.MacOSX:
+                    if(Environment.OSVersion.Version.Major == 1)
+                    {
+                        if(Environment.OSVersion.Version.Minor == 3)
+                            return "10.0";
+                        if(Environment.OSVersion.Version.Minor == 4)
+                            return "10.1";
+                        goto default;
+                    }
+                    return string.Format("10.{0}.{1}", Environment.OSVersion.Version.Major - 4, Environment.OSVersion.Version.Minor);
+                case PlatformID.Win32NT:
+                    // From Windows 8.1 the reported version is simply falsified...
+                    if((Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Major >= 2) ||
+                       Environment.OSVersion.Version.Major > 6)
+                        return FileVersionInfo.GetVersionInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "KERNEL32.DLL")).ProductVersion;
+                    return environ;
+                default:
+                    return environ;
+            }
+        }
+
         public static string GetPlatformName(PlatformID id, string version = null)
         {
             switch(id)
@@ -239,6 +268,18 @@ namespace DiscImageChef.Interop
                 case PlatformID.Linux:
                     return "Linux";
                 case PlatformID.MacOSX:
+                    if(!string.IsNullOrEmpty(version))
+                    {
+                        string[] pieces = version.Split(new [] { '.' });
+                        if(pieces.Length >= 2 && int.TryParse(pieces[1], out int minor))
+                        {
+                            if(minor >= 12)
+                                return "macOS";
+                            if(minor >= 8)
+                                return "OS X";
+                            return "Mac OS X";
+                        }
+                    }
                     return "macOS";
                 case PlatformID.Minix:
                     return "MINIX";
@@ -292,7 +333,7 @@ namespace DiscImageChef.Interop
                         return "Windows Vista";
                     if(version.StartsWith("6.1", StringComparison.Ordinal))
                         return "Windows 7";
-                    if(version.StartsWith("6.1", StringComparison.Ordinal))
+                    if(version.StartsWith("6.2", StringComparison.Ordinal))
                         return "Windows 8";
                     if(version.StartsWith("6.3", StringComparison.Ordinal))
                         return "Windows 8.1";
