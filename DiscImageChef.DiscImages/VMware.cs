@@ -543,11 +543,11 @@ namespace DiscImageChef.DiscImages
                     if(extentHdr.magic != VMwareExtentMagic)
                         throw new Exception(string.Format("{0} is not an VMware extent.", extent.filter));
 
-                    if(extentHdr.capacity != extent.sectors)
+                    if(extentHdr.capacity < extent.sectors)
                         throw new Exception(string.Format("Extent contains incorrect number of sectors, {0}. {1} were expected", extentHdr.capacity, extent.sectors));
 
-                    // TODO: Support compressed extents
-                    if(extentHdr.compression != CompressionNone)
+					// TODO: Support compressed extents
+					if(extentHdr.compression != CompressionNone)
                         throw new ImageNotSupportedException("Compressed extents are not yet supported.");
 
                     if(!vmEHdrSet)
