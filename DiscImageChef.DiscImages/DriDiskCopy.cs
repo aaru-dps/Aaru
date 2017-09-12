@@ -249,8 +249,6 @@ namespace DiscImageChef.ImagePlugins
 			Regex RegexSignature = new Regex(DRIRegEx);
 			Match MatchSignature = RegexSignature.Match(sig);
 
-			DicConsole.DebugWriteLine("DRI DiskCopy plugin", "MatchSignature.Success? = {0}", MatchSignature.Success);
-
 			if(!MatchSignature.Success)
 				return false;
 
