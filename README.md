@@ -51,6 +51,7 @@ Supported disk image formats
 * CPCEMU Disk file and Extended Disk File
 * CopyQM
 * Dave Dunfield IMD
+* Digital Research DiskCopy
 * DiscJuggler images
 * Dreamcast GDI
 * IBM SaveDskF
