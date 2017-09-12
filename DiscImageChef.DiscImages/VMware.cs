@@ -592,7 +592,7 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", vmEHdr.compression);
 
                 grainSize = vmEHdr.grainSize;
-                grains = (uint)(ImageInfo.sectors / vmEHdr.grainSize);
+                grains = (uint)(ImageInfo.sectors / vmEHdr.grainSize) + 1;
                 gdEntries = grains / vmEHdr.GTEsPerGT;
                 GTEsPerGT = vmEHdr.GTEsPerGT;
 
@@ -621,7 +621,7 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", vmCHdr.uncleanShutdown);
 
                 grainSize = vmCHdr.grainSize;
-                grains = (uint)(ImageInfo.sectors / vmCHdr.grainSize);
+                grains = (uint)(ImageInfo.sectors / vmCHdr.grainSize) + 1;
                 gdEntries = vmCHdr.numGDEntries;
                 gdOffset = vmCHdr.gdOffset;
                 GTEsPerGT = grains / gdEntries;
