@@ -370,7 +370,7 @@ namespace DiscImageChef.DiscImages
                         newExtent.sectors = extHdrCow.sectors;
                         newExtent.type = "SPARSE";
 
-                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filter, newExtent.offset);
+						DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filename, newExtent.offset);
 
                         extents.Add(currentSector, newExtent);
                         currentSector += newExtent.sectors;
@@ -454,7 +454,7 @@ namespace DiscImageChef.DiscImages
 						uint.TryParse(MatchExtent.Groups["offset"].Value, out newExtent.offset);
 						uint.TryParse(MatchExtent.Groups["sectors"].Value, out newExtent.sectors);
 						newExtent.type = MatchExtent.Groups["type"].Value;
-						DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filter, newExtent.offset);
+						DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filename, newExtent.offset);
 
 						extents.Add(currentSector, newExtent);
 						currentSector += newExtent.sectors;
@@ -516,7 +516,7 @@ namespace DiscImageChef.DiscImages
             foreach(VMwareExtent extent in extents.Values)
             {
                 if(extent.filter == null)
-                    throw new Exception(string.Format("Extent file {0} not found.", extent.filter));
+					throw new Exception(string.Format("Extent file {0} not found.", extent.filename));
 
                 if(extent.access == "NOACCESS")
                     throw new Exception("Cannot access NOACCESS extents ;).");
@@ -530,7 +530,7 @@ namespace DiscImageChef.DiscImages
                     extentStream.Seek(0, SeekOrigin.Begin);
 
                     if(extentStream.Length < sectorSize)
-                        throw new Exception(string.Format("Extent {0} is too small.", extent.filter));
+						throw new Exception(string.Format("Extent {0} is too small.", extent.filename));
 
                     VMwareExtentHeader extentHdr = new VMwareExtentHeader();
                     byte[] extentHdr_b = new byte[Marshal.SizeOf(extentHdr)];
@@ -754,7 +754,7 @@ namespace DiscImageChef.DiscImages
             if(currentExtent.type == "FLAT" || currentExtent.type == "VMFS")
             {
                 dataStream = currentExtent.filter.GetDataForkStream();
-                dataStream.Seek((long)(currentExtent.offset + ((sectorAddress - extentStartSector) * sectorSize)), SeekOrigin.Begin);
+				dataStream.Seek((long)((currentExtent.offset + (sectorAddress - extentStartSector)) * sectorSize), SeekOrigin.Begin);
                 sector = new byte[sectorSize];
                 dataStream.Read(sector, 0, sector.Length);
 
