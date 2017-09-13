@@ -153,11 +153,11 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Lowest structure in the volume is Level {0}, revision {1}", (homeblock.lowstruclev & 0xFF00) >> 8, homeblock.lowstruclev & 0xFF).AppendLine();
             sb.AppendFormat("Highest structure in the volume is Level {0}, revision {1}", (homeblock.highstruclev & 0xFF00) >> 8, homeblock.highstruclev & 0xFF).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512).AppendLine();
-            sb.AppendFormat("This home block is on sector {0} (cluster {1})", homeblock.homelbn, homeblock.homevbn).AppendLine();
-            sb.AppendFormat("Secondary home block is on sector {0} (cluster {1})", homeblock.alhomelbn, homeblock.alhomevbn).AppendLine();
-            sb.AppendFormat("Volume bitmap starts in sector {0} (cluster {1})", homeblock.ibmaplbn, homeblock.ibmapvbn).AppendLine();
+            sb.AppendFormat("This home block is on sector {0} (VBN {1})", homeblock.homelbn, homeblock.homevbn).AppendLine();
+            sb.AppendFormat("Secondary home block is on sector {0} (VBN {1})", homeblock.alhomelbn, homeblock.alhomevbn).AppendLine();
+            sb.AppendFormat("Volume bitmap starts in sector {0} (VBN {1})", homeblock.ibmaplbn, homeblock.ibmapvbn).AppendLine();
             sb.AppendFormat("Volume bitmap runs for {0} sectors ({1} bytes)", homeblock.ibmapsize, homeblock.ibmapsize * 512).AppendLine();
-            sb.AppendFormat("Backup INDEXF.SYS;1 is in sector {0} (cluster {1})", homeblock.altidxlbn, homeblock.altidxvbn).AppendLine();
+            sb.AppendFormat("Backup INDEXF.SYS;1 is in sector {0} (VBN {1})", homeblock.altidxlbn, homeblock.altidxvbn).AppendLine();
             sb.AppendFormat("{0} maximum files on the volume", homeblock.maxfiles).AppendLine();
             sb.AppendFormat("{0} reserved files", homeblock.resfiles).AppendLine();
             if(homeblock.rvn > 0 && homeblock.setcount > 0 && StringHandlers.CToString(homeblock.strucname) != "            ")
@@ -267,7 +267,7 @@ namespace DiscImageChef.Filesystems
             {
                 Type = "FILES-11",
                 ClusterSize = homeblock.cluster * 512,
-                Clusters = homeblock.cluster,
+                Clusters = (long)(partition.Size) / (homeblock.cluster * 512),
                 VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding),
                 VolumeSerial = string.Format("{0:X8}", homeblock.serialnum)
             };
