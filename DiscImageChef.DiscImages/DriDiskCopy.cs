@@ -178,7 +178,6 @@ namespace DiscImageChef.ImagePlugins
 			byte[] buffer = new byte[Marshal.SizeOf(typeof(DRIFooter))];
 			stream.Seek(-buffer.Length, SeekOrigin.End);
 			stream.Read(buffer, 0, buffer.Length);
-			DicConsole.DebugWriteLine("DRI DiskCopy plugin", "{0} {1}", buffer[0], buffer[1]);
 
 			DRIFooter tmp_footer = new DRIFooter();
 			IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
@@ -339,7 +338,7 @@ namespace DiscImageChef.ImagePlugins
 						ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
 					else if(ImageInfo.heads == 2 && ImageInfo.cylinders == 80 && ImageInfo.sectorsPerTrack == 8 && ImageInfo.sectorSize == 512)
 						ImageInfo.mediaType = MediaType.DOS_35_DS_DD_8;
-					if(ImageInfo.heads == 1 && ImageInfo.cylinders == 80 && ImageInfo.sectorsPerTrack == 9 && ImageInfo.sectorSize == 512)
+					else if(ImageInfo.heads == 1 && ImageInfo.cylinders == 80 && ImageInfo.sectorsPerTrack == 9 && ImageInfo.sectorSize == 512)
 						ImageInfo.mediaType = MediaType.DOS_35_SS_DD_9;
 					else if(ImageInfo.heads == 1 && ImageInfo.cylinders == 80 && ImageInfo.sectorsPerTrack == 8 && ImageInfo.sectorSize == 512)
 						ImageInfo.mediaType = MediaType.DOS_35_SS_DD_8;
