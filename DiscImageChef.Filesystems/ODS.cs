@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems
 {
@@ -81,7 +82,29 @@ namespace DiscImageChef.Filesystems
             Array.Copy(hb_sector, 0x1F0, magic_b, 0, 12);
             magic = Encoding.ASCII.GetString(magic_b);
 
-            return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
+            DicConsole.DebugWriteLine("Files-11 plugin", "magic: \"{0}\"", magic);
+
+            if(magic == "DECFILE11A  " || magic == "DECFILE11B  ")
+                return true;
+
+            // Optical disc
+            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+            {
+                if(hb_sector.Length < 0x400)
+                    return false;
+
+                hb_sector = imagePlugin.ReadSector(partition.Start);
+
+                Array.Copy(hb_sector, 0x3F0, magic_b, 0, 12);
+                magic = Encoding.ASCII.GetString(magic_b);
+
+                DicConsole.DebugWriteLine("Files-11 plugin", "unaligned magic: \"{0}\"", magic);
+
+                if(magic == "DECFILE11A  " || magic == "DECFILE11B  ")
+                    return true;
+            }
+
+            return false;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
@@ -99,6 +122,26 @@ namespace DiscImageChef.Filesystems
             GCHandle handle = GCHandle.Alloc(hb_sector, GCHandleType.Pinned);
             homeblock = (ODSHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ODSHomeBlock));
             handle.Free();
+
+            // Optical disc
+            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc &&
+              StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
+              StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
+            {
+                if(hb_sector.Length < 0x400)
+                    return;
+
+                byte[] tmp = imagePlugin.ReadSector(partition.Start);
+                hb_sector = new byte[0x200];
+                Array.Copy(tmp, 0x200, hb_sector, 0, 0x200);
+
+                handle = GCHandle.Alloc(hb_sector, GCHandleType.Pinned);
+                homeblock = (ODSHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ODSHomeBlock));
+                handle.Free();
+
+                if(StringHandlers.CToString(homeblock.format) != "DECFILE11A  " && StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
+                    return;
+            }
 
             if((homeblock.struclev & 0xFF00) != 0x0200 || (homeblock.struclev & 0xFF) != 1 || StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
                 sb.AppendLine("The following information may be incorrect for this volume.");
