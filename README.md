@@ -135,6 +135,7 @@ Supported file systems for identification and information only
 * Flash-Friendly File System (F2FS)
 * Fossil file system (from Plan9)
 * HAMMER file system
+* HP Logical Interchange Format
 * IBM Journaling File System (JFS)
 * ISO9660
 * Linux extended file system

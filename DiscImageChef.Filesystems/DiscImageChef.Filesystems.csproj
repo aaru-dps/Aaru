@@ -133,6 +133,7 @@
     <Compile Include="RBF.cs" />
     <Compile Include="AODOS.cs" />
     <Compile Include="RT11.cs" />
+    <Compile Include="LIF.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

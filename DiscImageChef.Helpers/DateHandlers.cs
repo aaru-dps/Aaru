@@ -230,7 +230,7 @@ namespace DiscImageChef
 
             if(offset == -2047)
                 return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified).AddTicks(ticks);
-            
+
             if(offset < -1440 || offset > 1440)
                 offset = 0;
 
@@ -259,6 +259,38 @@ namespace DiscImageChef
             }
 
             return os9date;
+        }
+
+        public static DateTime LifToDateTime(byte[] date)
+        {
+            if(date == null || date.Length != 6)
+                return new DateTime(1970, 1, 1, 0, 0, 0);
+
+            return LifToDateTime(date[0], date[1], date[2], date[3], date[4], date[5]);
+        }
+
+        public static DateTime LifToDateTime(byte year, byte month, byte day, byte hour, byte minute, byte second)
+        {
+            try
+            {
+                int iyear = ((year >> 4) * 10 + (year & 0xF));
+                int imonth = (month >> 4) * 10 + (month & 0xF);
+                int iday = (day >> 4) * 10 + (day & 0xF);
+                int iminute = (minute >> 4) * 10 + (minute & 0xF);
+                int ihour = (hour >> 4) * 10 + (hour & 0xF);
+                int isecond = (second >> 4) * 10 + (second & 0xF);
+
+                if(iyear >= 70)
+                    iyear += 1900;
+                else
+                    iyear += 2000;
+
+                return new DateTime(iyear, imonth, iday, ihour, iminute, isecond);
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                return new DateTime(1970, 1, 1, 0, 0, 0);
+            }
         }
     }
 }
