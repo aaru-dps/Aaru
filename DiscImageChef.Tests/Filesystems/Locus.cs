@@ -65,11 +65,11 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            720, 1440,
+            180, 360,
         };
 
         readonly int[] clustersize = {
-            1024, 1024,
+            4096, 4096,
         };
 
         readonly string[] volumename = {
@@ -87,8 +87,6 @@ namespace DiscImageChef.Tests.Filesystems
         [Test]
         public void Test()
         {
-            throw new NotImplementedException("Locus filesystem is not yet implemented");
-            /*
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "locus", testfiles[i]);
@@ -102,19 +100,19 @@ namespace DiscImageChef.Tests.Filesystems
                 Filesystem fs = new DiscImageChef.Filesystems.Locus();
                 Partition wholePart = new Partition
                 {
-                    PartitionName = "Whole device",
-                    PartitionSectors = image.ImageInfo.sectors,
-                    PartitionLength = image.ImageInfo.sectors * image.ImageInfo.sectorSize
+                    Name = "Whole device",
+                    Length = image.ImageInfo.sectors,
+                    Size = image.ImageInfo.sectors * image.ImageInfo.sectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Locus", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("Locus filesystem", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
                 Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
-            }*/
+            }
         }
     }
 }
