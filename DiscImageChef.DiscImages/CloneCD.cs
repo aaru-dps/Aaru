@@ -911,7 +911,7 @@ namespace DiscImageChef.DiscImages
 					{
 						if(_track.TrackSequence == kvp.Key)
 						{
-							if(sectorAddress < _track.TrackEndSector)
+							if(sectorAddress <= _track.TrackEndSector)
 								return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
 						}
 					}
@@ -931,7 +931,7 @@ namespace DiscImageChef.DiscImages
 					{
 						if(_track.TrackSequence == kvp.Key)
 						{
-							if(sectorAddress < _track.TrackEndSector)
+							if(sectorAddress <= _track.TrackEndSector)
 								return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
 						}
 					}
