@@ -52,6 +52,8 @@ namespace DiscImageChef.PartPlugins
         {
             partitions = new List<Partition>();
             uint nSectors = 2048 / imagePlugin.GetSectorSize();
+            if(2048 % imagePlugin.GetSectorSize() > 0)
+                nSectors++;
 
             if(sectorOffset + nSectors >= imagePlugin.GetSectors())
                 return false;
