@@ -307,7 +307,7 @@ namespace DiscImageChef.DiscImages
 								DicConsole.DebugWriteLine("CloneCD plugin", "Found Version at line {0}", line);
 
 								ImageInfo.imageVersion = CCD_VerMatch.Groups["value"].Value;
-								if(ImageInfo.imageVersion != "2")
+								if(ImageInfo.imageVersion != "2" && ImageInfo.imageVersion != "3")
 									DicConsole.ErrorWriteLine("(CloneCD plugin): Warning! Unknown CCD image version {0}, may not work!", ImageInfo.imageVersion);
 							}
 						}
