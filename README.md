@@ -131,6 +131,7 @@ Supported file systems for identification and information only
 * Cram file system
 * DEC RT-11 file system
 * DEC Files-11 (only checked with On Disk Structure 2, ODS-2)
+* dump(8) (Old historic BSD, AIX, UFS and UFS2 types)
 * ECMA-67: 130mm Flexible Disk Cartridge Labelling and File Structure for Information Interchange
 * Flash-Friendly File System (F2FS)
 * Fossil file system (from Plan9)

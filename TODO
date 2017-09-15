@@ -2,7 +2,6 @@
 --- Add support for DiscFerret images
 --- Add support for Kryoflux images
 --- Add support for XPACK images
---- Add support for dump(8) images
 
 Filesystem plugins:
 --- Add support for NwFS
