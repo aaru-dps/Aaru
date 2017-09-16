@@ -66,6 +66,7 @@ Supported disk image formats
 * Quasi88 disk images (.D77/.D88)
 * RS-IDE hard disk images
 * Sector by sector copies of Microsoft's DMF floppies
+* Spectrum floppy disk image (.FDI)
 * T98 hard disk images (.THD)
 * T98-Next hard disk images (.NHD)
 * TeleDisk (without compression)
