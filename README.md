@@ -64,6 +64,7 @@ Supported disk image formats
 * QEMU Copy-On-Write versions 1, 2 and 3 (QCOW and QCOW2)
 * QEMU Enhanced Disk (QED)
 * Quasi88 disk images (.D77/.D88)
+* RS-IDE hard disk images
 * Sector by sector copies of Microsoft's DMF floppies
 * T98 hard disk images (.THD)
 * T98-Next hard disk images (.NHD)
