@@ -179,8 +179,6 @@ namespace DiscImageChef.ImagePlugins
 				sectorsOff[cyl] = new uint[hdr.heads][];
 				sectorsData[cyl] = new byte[hdr.heads][][];
 
-				bool emptyCyl = false;
-
 				for(ushort head = 0; head < hdr.heads; head++)
 				{
 					byte[] sct_b = new byte[4];
@@ -199,8 +197,6 @@ namespace DiscImageChef.ImagePlugins
 
 					if(sectors < spt && sectors > 0)
 						spt = sectors;
-
-					emptyCyl |= sectors == 0;
 
 					for(ushort sec = 0; sec < sectors; sec++)
 					{
@@ -228,15 +224,13 @@ namespace DiscImageChef.ImagePlugins
 							ImageInfo.sectorSize = (uint)(128 << n);
 					}
 				}
-
-				// TODO: What happens if there is an empty cylinder in the middle?
-				if(emptyCyl)
-					ImageInfo.cylinders--;
 			}
 
 			// Read sectors
 			for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
 			{
+				bool emptyCyl = false;
+
 				for(ushort head = 0; head < hdr.heads; head++)
 				{
 					for(ushort sec = 0; sec < sectorsOff[cyl][head].Length; sec++)
@@ -244,7 +238,28 @@ namespace DiscImageChef.ImagePlugins
 						stream.Seek(sectorsOff[cyl][head][sec], SeekOrigin.Begin);
 						stream.Read(sectorsData[cyl][head][sec], 0, sectorsData[cyl][head][sec].Length);
 					}
+
+					// For empty cylinders
+					if(sectorsOff[cyl][head].Length == 0)
+					{
+						// Last cylinder
+						if(cyl + 1 == hdr.cylinders ||
+						   // Next cylinder is also empty
+						   sectorsOff[cyl + 1][head].Length == 0
+						  )
+							emptyCyl = true;
+						// Create empty sectors
+						else
+						{
+							sectorsData[cyl][head] = new byte[spt][];
+							for(int i = 0; i < spt; i++)
+								sectorsData[cyl][head][i] = new byte[ImageInfo.sectorSize];
+						}
+					}
 				}
+
+				if(emptyCyl)
+					ImageInfo.cylinders--;
 			}
 
 			// TODO: What about double sided, half track pitch compact floppies?
