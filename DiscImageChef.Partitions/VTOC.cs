@@ -62,6 +62,7 @@ namespace DiscImageChef.PartPlugins
             ulong pdloc = 0;
             byte[] pdsector = null;
             bool magic_found = false;
+            bool absolute = false;
 
             foreach(ulong i in new ulong[] {0, 1, 8, 29})
             {
@@ -305,6 +306,17 @@ namespace DiscImageChef.PartPlugins
                 timestamps = vtoc.timestamp;
             }
 
+            // Check for a partition describing the VTOC whose start is the same as the start we know.
+            // This means partition starts are absolute, not relative, to the VTOC position
+            for(int i = 0; i < V_NUMPAR; i++)
+            {
+                if(parts[i].p_tag == pTag.V_BACKUP && (ulong)parts[i].p_start == sectorOffset)
+                {
+                    absolute = true;
+                    break;
+                }
+            }
+
             for(int i = 0; i < V_NUMPAR; i++)
             {
                 if(parts[i].p_tag != pTag.V_UNUSED)
@@ -322,7 +334,7 @@ namespace DiscImageChef.PartPlugins
                     string info = "";
 
                     // Apparently old ones are absolute :?
-                    if(!useOld)
+                    if(!useOld && !absolute)
                     {
                         part.Start += sectorOffset;
                         part.Offset += sectorOffset * imagePlugin.GetSectorSize();
