@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes;
 namespace DiscImageChef.Filesystems
 {
     // Information from the Linux kernel
+    // TODO: Get documentation, test files, and rewrite this mess
     public class SysVfs : Filesystem
     {
         const uint XENIX_MAGIC = 0x002B5544;
@@ -433,54 +434,28 @@ namespace DiscImageChef.Filesystems
 
                 SystemVRelease4SuperBlock sysv_sb = new SystemVRelease4SuperBlock();
 
-                // Common offsets
                 sysv_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
                 sysv_sb.s_state = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F4);
                 sysv_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F8);
                 sysv_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x1FC);
-
-                if(sysvr4)
-                {
-                    sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x004);
-                    sysv_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x008);
-                    sysv_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D4);
-                    sysv_sb.s_flock = sb_sector[0x1A0];
-                    sysv_sb.s_ilock = sb_sector[0x1A1];
-                    sysv_sb.s_fmod = sb_sector[0x1A2];
-                    sysv_sb.s_ronly = sb_sector[0x1A3];
-                    sysv_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x1A4);
-                    sysv_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
-                    sysv_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AA);
-                    sysv_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AC);
-                    sysv_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE);
-                    sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1B0);
-                    sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1B4);
-                    Array.Copy(sb_sector, 0x1B8, sysv_strings, 0, 6);
-                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, CurrentEncoding);
-                    Array.Copy(sb_sector, 0x1BE, sysv_strings, 0, 6);
-                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
-                }
-                else
-                {
-                    sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
-                    sysv_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
-                    sysv_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D0);
-                    sysv_sb.s_flock = sb_sector[0x19A];
-                    sysv_sb.s_ilock = sb_sector[0x19B];
-                    sysv_sb.s_fmod = sb_sector[0x19C];
-                    sysv_sb.s_ronly = sb_sector[0x19D];
-                    sysv_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x19E);
-                    sysv_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A2);
-                    sysv_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A4);
-                    sysv_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A6);
-                    sysv_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
-                    sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1AA);
-                    sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE);
-                    Array.Copy(sb_sector, 0x1B0, sysv_strings, 0, 6);
-                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, CurrentEncoding);
-                    Array.Copy(sb_sector, 0x1B6, sysv_strings, 0, 6);
-                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
-                }
+                sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x004);
+                sysv_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x008);
+                sysv_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D4);
+                sysv_sb.s_flock = sb_sector[0x1A0];
+                sysv_sb.s_ilock = sb_sector[0x1A1];
+                sysv_sb.s_fmod = sb_sector[0x1A2];
+                sysv_sb.s_ronly = sb_sector[0x1A3];
+                sysv_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x1A4);
+                sysv_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
+                sysv_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AA);
+                sysv_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AC);
+                sysv_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE);
+                sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1B0);
+                sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1B4);
+                Array.Copy(sb_sector, 0x1B6, sysv_strings, 0, 6);
+                sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, CurrentEncoding);
+                Array.Copy(sb_sector, 0x1BC, sysv_strings, 0, 6);
+                sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
 
                 uint bs = 512;
                 if(sysvr4)
