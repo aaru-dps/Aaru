@@ -49,6 +49,9 @@ namespace DiscImageChef.Filesystems
         // Per a Linux kernel, Coherent fs has following:
         const string COH_FNAME = "noname";
         const string COH_FPACK = "nopack";
+        const string COH_XXXXX = "xxxxx";
+        const string COH_XXXXS = "xxxxx ";
+        const string COH_XXXXN = "xxxxx\n";
         // SCO AFS
         const ushort SCO_NFREE = 0xFFFF;
         // UNIX 7th Edition has nothing to detect it, so check for a valid filesystem is a must :(
@@ -142,7 +145,7 @@ namespace DiscImageChef.Filesystems
                 Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
                 s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
-                if(s_fname == COH_FNAME && s_fpack == COH_FPACK)
+                if((s_fname == COH_FNAME && s_fpack == COH_FPACK) || (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) || (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
                     return true;
 
                 // Now try to identify 7th edition
@@ -254,7 +257,7 @@ namespace DiscImageChef.Filesystems
                 Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
                 s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
-                if(s_fname == COH_FNAME && s_fpack == COH_FPACK)
+                if((s_fname == COH_FNAME && s_fpack == COH_FPACK) || (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) || (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Coherent is in PDP endianness, use helper for that
                     coherent = true;
