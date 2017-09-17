@@ -214,6 +214,7 @@ namespace DiscImageChef.Checksums
                     if(FailedECC_P || FailedECC_Q)
                         return false;
 
+                    /* TODO: This is not working
                     byte[] SectorForCheck = new byte[0x810];
                     uint StoredEDC = BitConverter.ToUInt32(channel, 0x810);
                     byte[] CalculatedEDCBytes;
@@ -225,7 +226,7 @@ namespace DiscImageChef.Checksums
                     {
                         DicConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}", channel[0x00C], channel[0x00D], channel[0x00E], CalculatedEDC, StoredEDC);
                         return false;
-                    }
+                    }*/
 
                     return true;
                 }
@@ -240,6 +241,7 @@ namespace DiscImageChef.Checksums
                             DicConsole.DebugWriteLine("CD checksums", "Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}", channel[0x00C], channel[0x00D], channel[0x00E]);
                         }
 
+                        /* TODO: This is not working
                         byte[] SectorForCheck = new byte[0x91C];
                         uint StoredEDC = BitConverter.ToUInt32(channel, 0x92C);
                         byte[] CalculatedEDCBytes;
@@ -251,7 +253,7 @@ namespace DiscImageChef.Checksums
                         {
                             DicConsole.DebugWriteLine("CD checksums", "Mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}", channel[0x00C], channel[0x00D], channel[0x00E], CalculatedEDC, StoredEDC);
                             return false;
-                        }
+                        }*/
                     }
                     else
                     {
@@ -286,6 +288,7 @@ namespace DiscImageChef.Checksums
                         if(FailedECC_P || FailedECC_Q)
                             return false;
 
+                        /* TODO: This is not working
                         byte[] SectorForCheck = new byte[0x808];
                         uint StoredEDC = BitConverter.ToUInt32(channel, 0x818);
                         byte[] CalculatedEDCBytes;
@@ -297,7 +300,7 @@ namespace DiscImageChef.Checksums
                         {
                             DicConsole.DebugWriteLine("CD checksums", "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}", channel[0x00C], channel[0x00D], channel[0x00E], CalculatedEDC, StoredEDC);
                             return false;
-                        }
+                        }*/
                     }
 
                     return true;
