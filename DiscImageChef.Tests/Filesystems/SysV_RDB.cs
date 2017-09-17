@@ -63,7 +63,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            511488,
+            511424,
         };
 
         readonly int[] clustersize = {

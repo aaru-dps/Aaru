@@ -498,6 +498,7 @@ namespace DiscImageChef.Filesystems
                     if(bs != imagePlugin.GetSectorSize())
                         sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, imagePlugin.GetSectorSize()).AppendLine();
                 }
+                xmlFSType.Clusters = sysv_sb.s_fsize;
                 sb.AppendFormat("{0} zones on volume ({1} bytes)", sysv_sb.s_fsize, sysv_sb.s_fsize * bs).AppendLine();
                 sb.AppendFormat("{0} free zones on volume ({1} bytes)", sysv_sb.s_tfree, sysv_sb.s_tfree * bs).AppendLine();
                 sb.AppendFormat("{0} free blocks on list ({1} bytes)", sysv_sb.s_nfree, sysv_sb.s_nfree * bs).AppendLine();
@@ -558,6 +559,7 @@ namespace DiscImageChef.Filesystems
 
                 xmlFSType.Type = "Coherent fs";
                 xmlFSType.ClusterSize = 512;
+                xmlFSType.Clusters = coh_sb.s_fsize;
 
                 sb.AppendLine("Coherent UNIX filesystem");
                 if(imagePlugin.GetSectorSize() != 512)
@@ -613,6 +615,7 @@ namespace DiscImageChef.Filesystems
 
                 xmlFSType.Type = "UNIX 7th Edition fs";
                 xmlFSType.ClusterSize = 512;
+                xmlFSType.Clusters = v7_sb.s_fsize;
                 sb.AppendLine("UNIX 7th Edition filesystem");
                 if(imagePlugin.GetSectorSize() != 512)
                     sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", 512, 2048).AppendLine();

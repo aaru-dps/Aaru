@@ -80,7 +80,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] type = {
-            "SVR4 fs",
+            "SVR2 fs",
         };
 
         [Test]
