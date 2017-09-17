@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems
         const ushort SCO_NFREE = 0xFFFF;
         // UNIX 7th Edition has nothing to detect it, so check for a valid filesystem is a must :(
         const ushort V7_NICINOD = 100;
-        const ushort V7_NICFREE = 50;
+        const ushort V7_NICFREE = 100;
         const uint V7_MAXSIZE = 0x00FFFFFF;
 
         public SysVfs()
