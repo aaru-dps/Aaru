@@ -47,8 +47,8 @@ namespace DiscImageChef.Filesystems
         const uint SYSV_CIGAM = 0x207E18FD;
         // Rest have no magic.
         // Per a Linux kernel, Coherent fs has following:
-        const string COH_FNAME = "nonamexxxxx ";
-        const string COH_FPACK = "nopackxxxxx\n";
+        const string COH_FNAME = "noname";
+        const string COH_FPACK = "nopack";
         // SCO AFS
         const ushort SCO_NFREE = 0xFFFF;
         // UNIX 7th Edition has nothing to detect it, so check for a valid filesystem is a must :(
@@ -137,12 +137,12 @@ namespace DiscImageChef.Filesystems
                     return true;
 
                 byte[] coherent_string = new byte[6];
-                Array.Copy(sb_sector, 0x1E8, coherent_string, 0, 6); // Coherent UNIX s_fname location
+                Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
                 s_fname = StringHandlers.CToString(coherent_string, CurrentEncoding);
-                Array.Copy(sb_sector, 0x1EE, coherent_string, 0, 6); // Coherent UNIX s_fpack location
+                Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
                 s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
-                if(s_fname == COH_FNAME || s_fpack == COH_FPACK)
+                if(s_fname == COH_FNAME && s_fpack == COH_FPACK)
                     return true;
 
                 // Now try to identify 7th edition
@@ -249,12 +249,12 @@ namespace DiscImageChef.Filesystems
                 }
 
                 byte[] coherent_string = new byte[6];
-                Array.Copy(sb_sector, 0x1E8, coherent_string, 0, 6); // Coherent UNIX s_fname location
+                Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
                 s_fname = StringHandlers.CToString(coherent_string, CurrentEncoding);
-                Array.Copy(sb_sector, 0x1EE, coherent_string, 0, 6); // Coherent UNIX s_fpack location
+                Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
                 s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
-                if(s_fname == COH_FNAME || s_fpack == COH_FPACK)
+                if(s_fname == COH_FNAME && s_fpack == COH_FPACK)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Coherent is in PDP endianness, use helper for that
                     coherent = true;
@@ -538,22 +538,22 @@ namespace DiscImageChef.Filesystems
                 CoherentSuperBlock coh_sb = new CoherentSuperBlock();
                 byte[] coh_strings = new byte[6];
 
-                coh_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
-                coh_sb.s_fsize = Swapping.PDPFromLittleEndian(BigEndianBitConverter.ToUInt32(sb_sector, 0x002));
-                coh_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
-                coh_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x108);
+                coh_sb.s_isize = BitConverter.ToUInt16(sb_sector, 0x000);
+                coh_sb.s_fsize = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x002));
+                coh_sb.s_nfree = BitConverter.ToUInt16(sb_sector, 0x006);
+                coh_sb.s_ninode = BitConverter.ToUInt16(sb_sector, 0x108);
                 coh_sb.s_flock = sb_sector[0x1D2];
                 coh_sb.s_ilock = sb_sector[0x1D3];
                 coh_sb.s_fmod = sb_sector[0x1D4];
                 coh_sb.s_ronly = sb_sector[0x1D5];
-                coh_sb.s_time = Swapping.PDPFromLittleEndian(BigEndianBitConverter.ToUInt32(sb_sector, 0x1D6));
-                coh_sb.s_tfree = Swapping.PDPFromLittleEndian(BigEndianBitConverter.ToUInt32(sb_sector, 0x1DE));
-                coh_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1E2);
-                coh_sb.s_int_m = BigEndianBitConverter.ToUInt16(sb_sector, 0x1E4);
-                coh_sb.s_int_n = BigEndianBitConverter.ToUInt16(sb_sector, 0x1E6);
-                Array.Copy(sb_sector, 0x1E8, coh_strings, 0, 6);
+                coh_sb.s_time = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x1D6));
+                coh_sb.s_tfree = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x1DA));
+                coh_sb.s_tinode = BitConverter.ToUInt16(sb_sector, 0x1DE);
+                coh_sb.s_int_m = BitConverter.ToUInt16(sb_sector, 0x1E0);
+                coh_sb.s_int_n = BitConverter.ToUInt16(sb_sector, 0x1E2);
+                Array.Copy(sb_sector, 0x1E4, coh_strings, 0, 6);
                 coh_sb.s_fname = StringHandlers.CToString(coh_strings, CurrentEncoding);
-                Array.Copy(sb_sector, 0x1EE, coh_strings, 0, 6);
+                Array.Copy(sb_sector, 0x1EA, coh_strings, 0, 6);
                 coh_sb.s_fpack = StringHandlers.CToString(coh_strings, CurrentEncoding);
 
                 xmlFSType.Type = "Coherent fs";
