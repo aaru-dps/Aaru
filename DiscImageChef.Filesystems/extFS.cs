@@ -40,6 +40,8 @@ namespace DiscImageChef.Filesystems
     // Information from the Linux kernel
     public class extFS : Filesystem
     {
+        const int sbPos = 0x400;
+
         public extFS()
         {
             Name = "Linux extended Filesystem";
@@ -59,12 +61,17 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
+            ulong sbSector = sbPos / imagePlugin.GetSectorSize();
+            uint sbOff = sbPos % imagePlugin.GetSectorSize();
+
+            if((sbSector + partition.Start) >= partition.End)
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.Start); // Superblock resides at 0x400
+            byte[] sb_sector = imagePlugin.ReadSector(sbSector + partition.Start);
+            byte[] sb = new byte[512];
+            Array.Copy(sb_sector, sbOff, sb, 0, 512);
 
-            ushort magic = BitConverter.ToUInt16(sb_sector, 0x038); // Here should reside magic number
+            ushort magic = BitConverter.ToUInt16(sb, 0x038);
 
             return magic == extFSMagic;
         }
@@ -75,7 +82,16 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.Start); // Superblock resides at 0x400
+            ulong sbSector = sbPos / imagePlugin.GetSectorSize();
+            uint sbOff = sbPos % imagePlugin.GetSectorSize();
+
+            if((sbSector + partition.Start) >= partition.End)
+                return;
+
+            byte[] sblock = imagePlugin.ReadSector(sbSector + partition.Start);
+            byte[] sb_sector = new byte[512];
+            Array.Copy(sblock, sbOff, sb_sector, 0, 512);
+
             extFSSuperBlock ext_sb = new extFSSuperBlock();
 
             ext_sb.inodes = BitConverter.ToUInt32(sb_sector, 0x000);

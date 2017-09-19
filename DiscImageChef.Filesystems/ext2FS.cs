@@ -41,6 +41,8 @@ namespace DiscImageChef.Filesystems
     // Information from the Linux kernel
     public class ext2FS : Filesystem
     {
+        const int sbPos = 0x400;
+
         public ext2FS()
         {
             Name = "Linux extended Filesystem 2, 3 and 4";
@@ -60,12 +62,22 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
+            ulong sbSector = sbPos / imagePlugin.GetSectorSize();
+            uint sbOff = sbPos % imagePlugin.GetSectorSize();
+
+            if((sbSector + partition.Start) >= partition.End)
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.Start);
+            int sb_size_in_bytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
+            uint sb_size_in_sectors = (uint)(sb_size_in_bytes / imagePlugin.GetSectorSize());
+            if(sb_size_in_bytes % imagePlugin.GetSectorSize() > 0)
+                sb_size_in_sectors++;
 
-            ushort magic = BitConverter.ToUInt16(sb_sector, 0x038);
+            byte[] sb_sector = imagePlugin.ReadSectors(sbSector + partition.Start, sb_size_in_sectors);
+            byte[] sb = new byte[sb_size_in_bytes];
+            Array.Copy(sb_sector, sbOff, sb, 0, sb_size_in_bytes);
+
+            ushort magic = BitConverter.ToUInt16(sb, 0x038);
 
             if(magic == ext2FSMagic || magic == ext2OldFSMagic)
                 return true;
@@ -87,22 +99,19 @@ namespace DiscImageChef.Filesystems
             byte[] guid_a = new byte[16];
             byte[] guid_b = new byte[16];
 
-            uint sb_size_in_sectors;
+            int sb_size_in_bytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
+            uint sb_size_in_sectors = (uint)(sb_size_in_bytes / imagePlugin.GetSectorSize());
+            if(sb_size_in_bytes % imagePlugin.GetSectorSize() > 0)
+                sb_size_in_sectors++;
 
-            if(imagePlugin.GetSectorSize() < 1024)
-                sb_size_in_sectors = 1024 / imagePlugin.GetSectorSize();
-            else
-                sb_size_in_sectors = 1;
+            ulong sbSector = sbPos / imagePlugin.GetSectorSize();
+            uint sbOff = sbPos % imagePlugin.GetSectorSize();
 
-            if(sb_size_in_sectors == 0)
-            {
-                information = "Error calculating size in sectors of ext2/3/4 superblocks";
-                return;
-            }
-
-            byte[] sb_sector = imagePlugin.ReadSectors(2 + partition.Start, sb_size_in_sectors);
-            IntPtr sbPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(sb_sector, 0, sbPtr, 512);
+            byte[] sb_sector = imagePlugin.ReadSectors(sbSector + partition.Start, sb_size_in_sectors);
+            byte[] sblock = new byte[sb_size_in_bytes];
+            Array.Copy(sb_sector, sbOff, sblock, 0, sb_size_in_bytes);
+            IntPtr sbPtr = Marshal.AllocHGlobal(sb_size_in_bytes);
+            Marshal.Copy(sblock, 0, sbPtr, sb_size_in_bytes);
             supblk = (ext2FSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(ext2FSSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
 
