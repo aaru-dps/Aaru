@@ -226,6 +226,9 @@ namespace DiscImageChef.DiscImages
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.mediaType = MediaType.GENERIC_HDD;
             ImageInfo.imageSize = pHdr.sectors * 512;
+			ImageInfo.cylinders = pHdr.cylinders;
+			ImageInfo.heads = pHdr.heads;
+			ImageInfo.sectorsPerTrack = (uint)((ImageInfo.sectors / ImageInfo.cylinders) / ImageInfo.heads);
             imageStream = stream;
 
             return true;
@@ -268,10 +271,6 @@ namespace DiscImageChef.DiscImages
                 sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
-
-			ImageInfo.cylinders = pHdr.cylinders;
-			ImageInfo.heads = pHdr.heads;
-			ImageInfo.sectorsPerTrack = (uint)((pHdr.sectors / pHdr.heads) / pHdr.cylinders);
 
 			return sector;
         }
