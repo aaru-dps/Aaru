@@ -148,6 +148,7 @@ Supported file systems for identification and information only
 * Linux extended file system 3
 * Linux extended file system 4
 * Locus file system
+* MicroDOS file system
 * Microsoft 12-bit File Allocation Table (FAT12), including Atari ST extensions
 * Microsoft 16-bit File Allocation Table (FAT16)
 * Microsoft 32-bit File Allocation Table (FAT32), including FAT+ extension
