@@ -40,6 +40,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 using System.Text;
+using Extents;
 
 namespace DiscImageChef.DiscImages
 {
@@ -269,6 +270,9 @@ namespace DiscImageChef.DiscImages
 		const uint MaxCacheSize = 16777216;
 		uint maxCachedSectors = MaxCacheSize / 512;
 
+		ExtentsULong extents;
+		Dictionary<ulong, ulong> extentsOff;
+
 		public Partimage()
 		{
 			Name = "Partimage disk image";
@@ -475,6 +479,42 @@ namespace DiscImageChef.DiscImages
 			if(!magic.Equals(MAGIC_BEGIN_TAIL))
 				throw new ImageNotSupportedException("Cannot find tail. Multiple volumes are not supported or image is corrupt.");
 
+			DicConsole.DebugWriteLine("Partimage plugin", "Filling extents");
+			DateTime start = DateTime.Now;
+			extents = new ExtentsULong();
+			extentsOff = new Dictionary<ulong, ulong>();
+			bool current = (bitmap[0] & 1 << (int)(0 % 8)) != 0;
+			ulong blockOff = 0;
+			ulong extentStart = 0;
+
+			for(ulong i = 1; i <= localHeader.qwBlocksCount; i++)
+			{
+				bool next = (bitmap[i / 8] & 1 << (int)(i % 8)) != 0;
+
+				// Flux
+				if(next != current)
+				{
+					// Next is used
+					if(next)
+					{
+						extentStart = i;
+						extentsOff.Add(i, ++blockOff);
+					}
+					else
+					{
+						extents.Add(extentStart, i);
+						extentsOff.TryGetValue(extentStart, out ulong foo);
+					}
+				}
+
+				if(next && current)
+					blockOff++;
+
+				current = next;
+			}
+			DateTime end = DateTime.Now;
+			DicConsole.DebugWriteLine("Partimage plugin", "Took {0} seconds to fill extents", (end - start).TotalSeconds);
+
 			sectorCache = new Dictionary<ulong, byte[]>();
 
 			ImageInfo.imageCreationTime = dateCreate;
@@ -492,21 +532,11 @@ namespace DiscImageChef.DiscImages
 			return true;
 		}
 
-		bool IsEmpty(ulong sectorAddress)
-		{
-			return (bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) == 0;
-		}
-
-		// TODO: Find a way to optimize this, it's insanely slow!
 		ulong BlockOffset(ulong sectorAddress)
 		{
-			ulong blockOff = 0;
-			for(ulong i = 0; i < sectorAddress; i++)
-			{
-				if(!IsEmpty(i))
-					blockOff++;
-			}
-			return blockOff;
+			extents.GetStart(sectorAddress, out ulong extentStart);
+			extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
+			return extentStartingOffset + (sectorAddress - extentStart);
 		}
 
 		public override byte[] ReadSector(ulong sectorAddress)
@@ -514,7 +544,7 @@ namespace DiscImageChef.DiscImages
 			if(sectorAddress > ImageInfo.sectors - 1)
 				throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
 
-			if(IsEmpty(sectorAddress))
+			if((bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) == 0)
 				return new byte[ImageInfo.sectorSize];
 
 			byte[] sector;

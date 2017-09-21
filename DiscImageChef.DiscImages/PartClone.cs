@@ -39,6 +39,7 @@ using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Extents;
 
 namespace DiscImageChef.DiscImages
 {
@@ -111,6 +112,9 @@ namespace DiscImageChef.DiscImages
 
 		const uint MaxCacheSize = 16777216;
 		uint maxCachedSectors = MaxCacheSize / 512;
+
+		ExtentsULong extents;
+		Dictionary<ulong, ulong> extentsOff;
 
 		public PartClone()
 		{
@@ -204,6 +208,42 @@ namespace DiscImageChef.DiscImages
 			dataOff = stream.Position;
 			DicConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", dataOff);
 
+			DicConsole.DebugWriteLine("PartClone plugin", "Filling extents");
+			DateTime start = DateTime.Now;
+			extents = new ExtentsULong();
+			extentsOff = new Dictionary<ulong, ulong>();
+			bool current = byteMap[0] > 0;
+			ulong blockOff = 0;
+			ulong extentStart = 0;
+
+			for(ulong i = 1; i < pHdr.totalBlocks; i++)
+			{
+				bool next = byteMap[i] > 0;
+
+				// Flux
+				if(next != current)
+				{
+					// Next is used
+					if(next)
+					{
+						extentStart = i;
+						extentsOff.Add(i, ++blockOff);
+					}
+					else
+					{
+						extents.Add(extentStart, i);
+						extentsOff.TryGetValue(extentStart, out ulong foo);
+					}
+				}
+
+				if(next && current)
+					blockOff++;
+
+				current = next;
+			}
+			DateTime end = DateTime.Now;
+			DicConsole.DebugWriteLine("PartClone plugin", "Took {0} seconds to fill extents", (end - start).TotalSeconds);
+
 			sectorCache = new Dictionary<ulong, byte[]>();
 
 			ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
@@ -219,16 +259,11 @@ namespace DiscImageChef.DiscImages
 			return true;
 		}
 
-		// TODO: Find a way to optimize this, it's insanely slow!
 		ulong BlockOffset(ulong sectorAddress)
 		{
-			ulong blockOff = 0;
-			for(ulong i = 0; i < sectorAddress; i++)
-			{
-				if(byteMap[i] > 0)
-					blockOff++;
-			}
-			return blockOff;
+			extents.GetStart(sectorAddress, out ulong extentStart);
+			extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
+			return extentStartingOffset + (sectorAddress - extentStart);
 		}
 
 		public override byte[] ReadSector(ulong sectorAddress)
