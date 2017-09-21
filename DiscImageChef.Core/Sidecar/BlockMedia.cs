@@ -197,6 +197,9 @@ namespace DiscImageChef.Core
             {
                 Checksum contentChkWorker = new Checksum();
 
+                // For fast debugging, skip checksum
+                //goto skipImageChecksum;
+
                 uint sectorsToRead = 512;
                 ulong sectors = image.GetSectors();
                 ulong doneSectors = 0;
@@ -221,6 +224,9 @@ namespace DiscImageChef.Core
 
                     contentChkWorker.Update(sector);
                 }
+
+                // For fast debugging, skip checksum
+                //skipImageChecksum:
 
                 List<ChecksumType> cntChecksums = contentChkWorker.End();
 
