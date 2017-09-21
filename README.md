@@ -62,6 +62,7 @@ Supported disk image formats
 * Nero Burning ROM (both image formats)
 * Parallels Hard Disk Image (HDD) version 2
 * Partclone disk images
+* Partimage disk images
 * QEMU Copy-On-Write versions 1, 2 and 3 (QCOW and QCOW2)
 * QEMU Enhanced Disk (QED)
 * Quasi88 disk images (.D77/.D88)
