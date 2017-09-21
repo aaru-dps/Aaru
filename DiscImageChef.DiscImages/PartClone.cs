@@ -219,14 +219,7 @@ namespace DiscImageChef.DiscImages
 			return true;
 		}
 
-		bool IsEmpty(ulong sectorAddress)
-		{
-			if(sectorAddress > (ulong)byteMap.LongLength - 1)
-				throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
-
-			return byteMap[sectorAddress] == 0;
-		}
-
+		// TODO: Find a way to optimize this, it's insanely slow!
 		ulong BlockOffset(ulong sectorAddress)
 		{
 			ulong blockOff = 0;
@@ -243,7 +236,7 @@ namespace DiscImageChef.DiscImages
 			if(sectorAddress > ImageInfo.sectors - 1)
 				throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
 
-			if(IsEmpty(sectorAddress))
+			if(byteMap[sectorAddress] == 0)
 				return new byte[pHdr.blockSize];
 
 			byte[] sector;
@@ -274,6 +267,19 @@ namespace DiscImageChef.DiscImages
 				throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
 			MemoryStream ms = new MemoryStream();
+
+			bool allEmpty = true;
+			for(uint i = 0; i < length; i++)
+			{
+				if(byteMap[sectorAddress + i] != 0)
+				{
+					allEmpty = false;
+					break;
+				}
+			}
+
+			if(allEmpty)
+				return new byte[pHdr.blockSize * length];
 
 			for(uint i = 0; i < length; i++)
 			{
