@@ -201,5 +201,19 @@ namespace Extents
         {
             return backend.ToArray();
         }
+
+        public bool GetStart(byte item, out byte start)
+        {
+            start = 0;
+            foreach(Tuple<byte, byte> extent in backend)
+            {
+                if(item >= extent.Item1 && item <= extent.Item2)
+                {
+                    start = extent.Item1;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
