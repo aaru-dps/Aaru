@@ -189,7 +189,7 @@ namespace DiscImageChef.CommonTypes
                                                 return MediaType.DOS_35_SS_DD_9;
                                             case 610:
                                                 return MediaType.IBM33FD_512;
-                                            case 616:
+                                            case 630:
                                                 return MediaType.Apricot_35;
                                             case 640:
                                                 return MediaType.DOS_35_SS_DD_8;
