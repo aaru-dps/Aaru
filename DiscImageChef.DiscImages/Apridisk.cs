@@ -310,7 +310,7 @@ namespace DiscImageChef.ImagePlugins
 			debugFs.Dispose();
 			*/
 
-			return false;
+			return true;
 		}
 
 		static uint Decompress(byte[] compressed, out byte[] decompressed)
