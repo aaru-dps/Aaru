@@ -453,9 +453,9 @@ namespace DiscImageChef.ImagePlugins
 					ImageInfo.sectorsPerTrack = 9;
 					break;
 				case MediaType.Apricot_35:
-					ImageInfo.cylinders = 77;
+					ImageInfo.cylinders = 70;
 					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 8;
+					ImageInfo.sectorsPerTrack = 9;
 					break;
 				case MediaType.DOS_35_ED:
 					ImageInfo.cylinders = 80;
@@ -967,7 +967,7 @@ namespace DiscImageChef.ImagePlugins
                         return MediaType.IBM33FD_256;
                     case 306432:
                         return MediaType.IBM33FD_512;
-					case 315392:
+					case 322560:
 						return MediaType.Apricot_35;
                     case 325632:
                         return MediaType.ECMA_70;

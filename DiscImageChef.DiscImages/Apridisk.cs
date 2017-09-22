@@ -289,7 +289,7 @@ namespace DiscImageChef.ImagePlugins
 
 			DicConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} sectors per track", ImageInfo.sectorsPerTrack);
 
-			if(ImageInfo.cylinders == 77 && ImageInfo.heads == 1 && ImageInfo.sectorsPerTrack == 8)
+			if(ImageInfo.cylinders == 70 && ImageInfo.heads == 1 && ImageInfo.sectorsPerTrack == 9)
 				ImageInfo.mediaType = MediaType.Apricot_35;
 			else if(ImageInfo.cylinders == 80 && ImageInfo.heads == 1 && ImageInfo.sectorsPerTrack == 9)
 				ImageInfo.mediaType = MediaType.DOS_35_SS_DD_9;

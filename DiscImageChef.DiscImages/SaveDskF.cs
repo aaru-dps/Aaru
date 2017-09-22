@@ -252,13 +252,13 @@ namespace DiscImageChef.ImagePlugins
 							break;
 					}
 					break;
-				case 77:
+				case 70:
 					switch(header.heads)
 					{
 						case 1:
 							switch(header.sectorsPerTrack)
 							{
-								case 8:
+								case 9:
 									ImageInfo.mediaType = MediaType.Apricot_35;
 									break;
 							}

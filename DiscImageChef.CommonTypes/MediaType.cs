@@ -449,7 +449,7 @@ namespace DiscImageChef.CommonTypes
         #endregion FDFORMAT, non-standard floppy formats
 
         #region Apricot ACT standard floppy formats
-        /// <summary>3.5", DS, DD, 77 tracks, 8 spt, 512 bytes/sector, MFM</summary>
+        /// <summary>3.5", DS, DD, 70 tracks, 9 spt, 512 bytes/sector, MFM</summary>
         Apricot_35,
         #endregion Apricot ACT standard floppy formats
 

@@ -393,7 +393,7 @@ namespace DiscImageChef.ImagePlugins
                         ImageInfo.mediaType = MediaType.ACORN_35_DS_DD;
                     else if(header.heads == 2 && header.totalCylinders == 77 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
                         ImageInfo.mediaType = MediaType.SHARP_35;
-					else if(header.heads == 1 && header.totalCylinders == 77 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
+					else if(header.heads == 1 && header.totalCylinders == 70 && header.sectorsPerTrack == 9 && header.sectorSize == 512)
 						ImageInfo.mediaType = MediaType.Apricot_35;
 					else
                         ImageInfo.mediaType = MediaType.Unknown;

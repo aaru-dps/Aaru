@@ -344,7 +344,7 @@ namespace DiscImageChef.ImagePlugins
 						ImageInfo.mediaType = MediaType.DOS_35_SS_DD_8;
 					else if(ImageInfo.heads == 2 && ImageInfo.cylinders == 80 && ImageInfo.sectorsPerTrack == 5 && ImageInfo.sectorSize == 1024)
 						ImageInfo.mediaType = MediaType.ACORN_35_DS_DD;
-					else if(ImageInfo.heads == 1 && ImageInfo.cylinders == 77 && ImageInfo.sectorsPerTrack == 8 && ImageInfo.sectorSize == 512)
+					else if(ImageInfo.heads == 1 && ImageInfo.cylinders == 70 && ImageInfo.sectorsPerTrack == 9 && ImageInfo.sectorSize == 512)
 						ImageInfo.mediaType = MediaType.Apricot_35;
 					else
 						ImageInfo.mediaType = MediaType.Unknown;
