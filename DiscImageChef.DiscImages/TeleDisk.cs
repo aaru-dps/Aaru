@@ -949,7 +949,9 @@ namespace DiscImageChef.ImagePlugins
                     {
                         switch(totalDiskSize)
                         {
-                            case 327680:
+							case 315392:
+								return MediaType.Apricot_35;
+							case 327680:
                                 return MediaType.DOS_35_SS_DD_8;
                             case 368640:
                                 return MediaType.DOS_35_SS_DD_9;

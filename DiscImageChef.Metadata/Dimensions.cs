@@ -112,6 +112,7 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.Floptical:
                 case CommonTypes.MediaType.HiFD:
                 case CommonTypes.MediaType.UHD144:
+                case CommonTypes.MediaType.Apricot_35:
                     // According to ECMA-100 et al
                     dmns.Height = 94;
                     dmns.HeightSpecified = true;

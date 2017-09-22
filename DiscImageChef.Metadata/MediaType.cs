@@ -406,6 +406,10 @@ namespace DiscImageChef.Metadata
                     DiscType = "3.5\" floppy";
                     DiscSubType = "IBM extra-density";
                     break;
+                case CommonTypes.MediaType.Apricot_35:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Apricot double-density, single-sided, 77 tracks";
+                    break;
                 case CommonTypes.MediaType.DMF:
                     DiscType = "3.5\" floppy";
                     DiscSubType = "Microsoft DMF";

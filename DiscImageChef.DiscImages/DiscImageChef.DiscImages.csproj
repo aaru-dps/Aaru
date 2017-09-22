@@ -97,6 +97,7 @@
     <Compile Include="UkvFdi.cs" />
     <Compile Include="PartClone.cs" />
     <Compile Include="Partimage.cs" />
+    <Compile Include="Apridisk.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

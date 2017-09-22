@@ -184,6 +184,15 @@ namespace DiscImageChef.ImagePlugins
 									break;
 							}
 							break;
+						case 512:
+							switch(fdihdr.spt)
+							{
+								case 8:
+									if(fdihdr.heads == 1)
+										ImageInfo.mediaType = MediaType.Apricot_35;
+									break;
+							}
+							break;
 						case 1024:
 							switch(fdihdr.spt)
 							{

@@ -42,6 +42,7 @@ Supported disk image formats
 * Apple II nibble images (NIB)
 * Apple New Disk Image Format (NDIF, requires Resource Fork)
 * Apple Universal Disk Image Format (UDIF), including obsolete (previous than DiskCopy 6) versions
+* Apridisk disk image formats (for ACT Apricot disks)
 * Anex86 disk images (.FDI for floppies, .HDI for hard disks)
 * BlindWrite 4 TOC files (.BWT/.BWI/.BWS)
 * BlindWrite 5/6 TOC files (.B5T/.B5I and .B6T/.B6I)

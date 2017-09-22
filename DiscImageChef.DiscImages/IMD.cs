@@ -308,6 +308,8 @@ namespace DiscImageChef.ImagePlugins
 							ImageInfo.mediaType = MediaType.ACORN_35_DS_DD;
 						else if(ImageInfo.heads == 2 && ImageInfo.cylinders == 82 && ImageInfo.sectorsPerTrack == 10 && ImageInfo.sectorSize == 512)
 							ImageInfo.mediaType = MediaType.FDFORMAT_35_DD;
+						else if(ImageInfo.heads == 1 && ImageInfo.cylinders == 77 && ImageInfo.sectorsPerTrack == 8 && ImageInfo.sectorSize == 512)
+						ImageInfo.mediaType = MediaType.Apricot_35;
 						break;
 					case TransferRate.FiveHundredMFM:
 						if(ImageInfo.heads == 2 && ImageInfo.cylinders == 80 && ImageInfo.sectorsPerTrack == 18 && ImageInfo.sectorSize == 512)
