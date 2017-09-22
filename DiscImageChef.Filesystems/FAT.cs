@@ -138,6 +138,27 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("FAT plugin", "huge_sectors = {0}", huge_sectors);
             DicConsole.DebugWriteLine("FAT plugin", "fat_id = 0x{0:X2}", fat_id);
 
+            ushort apricot_bps = BitConverter.ToUInt16(bpb_sector, 0x50);
+            byte apricot_spc = bpb_sector[0x52];
+            ushort apricot_reserved_secs = BitConverter.ToUInt16(bpb_sector, 0x53);
+            byte apricot_fats_no = bpb_sector[0x55];
+            ushort apricot_root_entries = BitConverter.ToUInt16(bpb_sector, 0x56);
+            ushort apricot_sectors = BitConverter.ToUInt16(bpb_sector, 0x58);
+            byte apricot_media_descriptor = bpb_sector[0x5A];
+            ushort apricot_fat_sectors = BitConverter.ToUInt16(bpb_sector, 0x5B);
+            bool apricot_correct_spc = apricot_spc == 1 || apricot_spc == 2 || apricot_spc == 4 || apricot_spc == 8 || apricot_spc == 16 || apricot_spc == 32 || apricot_spc == 64;
+            int bits_in_apricot_bps = Helpers.CountBits.Count(apricot_bps);
+
+            DicConsole.DebugWriteLine("FAT plugin", "apricot_bps = {0}", apricot_bps);
+            DicConsole.DebugWriteLine("FAT plugin", "apricot_spc = {0}", apricot_spc);
+            DicConsole.DebugWriteLine("FAT plugin", "apricot_correct_spc = {0}", apricot_correct_spc);
+            DicConsole.DebugWriteLine("FAT plugin", "apricot_reserved_secs = {0}", apricot_reserved_secs);
+            DicConsole.DebugWriteLine("FAT plugin", "apricot_fats_no = {0}", apricot_fats_no);
+            DicConsole.DebugWriteLine("FAT plugin", "apricot_root_entries = {0}", apricot_root_entries);
+            DicConsole.DebugWriteLine("FAT plugin", "apricot_sectors = {0}", apricot_sectors);
+            DicConsole.DebugWriteLine("FAT plugin", "apricot_media_descriptor = 0x{0:X2}", apricot_media_descriptor);
+            DicConsole.DebugWriteLine("FAT plugin", "apricot_fat_sectors = {0}", apricot_fat_sectors);
+
             // This is to support FAT partitions on hybrid ISO/USB images
             if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
             {
@@ -185,6 +206,11 @@ namespace DiscImageChef.Filesystems
             // BPB
             if(bits_in_bps == 1 && correct_spc && reserved_secs < (partition.End - partition.Start) && fats_no <= 2 && root_entries > 0 && fat_sectors > 0)
                 return sectors == 0 ? big_sectors <= (partition.End - partition.Start) + 1 : sectors <= (partition.End - partition.Start) + 1;
+
+            // Apricot BPB
+            if(bits_in_apricot_bps == 1 && apricot_correct_spc && apricot_reserved_secs < (partition.End - partition.Start) && apricot_fats_no <= 2 && apricot_root_entries > 0 &&
+               apricot_fat_sectors > 0 && apricot_sectors <= (partition.End - partition.Start) + 1)
+                return true;
 
             // All FAT12 without BPB can only be used on floppies, without partitions.
             if(partition.Start != 0)
@@ -269,6 +295,7 @@ namespace DiscImageChef.Filesystems
             bool useShortFAT32 = false;
             bool useLongFAT32 = false;
             bool andos_oem_correct = false;
+            bool useApricotBPB = false;
 
             AtariParameterBlock atariBPB = new AtariParameterBlock();
             MSXParameterBlock msxBPB = new MSXParameterBlock();
@@ -280,6 +307,7 @@ namespace DiscImageChef.Filesystems
             BIOSParameterBlockEBPB EBPB = new BIOSParameterBlockEBPB();
             FAT32ParameterBlockShort shortFat32BPB = new FAT32ParameterBlockShort();
             FAT32ParameterBlock Fat32BPB = new FAT32ParameterBlock();
+            ApricotParameterBlock ApricotBPB = new ApricotParameterBlock();
 
             byte[] bpb_sector = imagePlugin.ReadSectors(partition.Start, 2);
 
@@ -298,6 +326,7 @@ namespace DiscImageChef.Filesystems
                 EBPB = (BIOSParameterBlockEBPB)Marshal.PtrToStructure(bpbPtr, typeof(BIOSParameterBlockEBPB));
                 shortFat32BPB = (FAT32ParameterBlockShort)Marshal.PtrToStructure(bpbPtr, typeof(FAT32ParameterBlockShort));
                 Fat32BPB = (FAT32ParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(FAT32ParameterBlock));
+                ApricotBPB = (ApricotParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(ApricotParameterBlock));
 
                 Marshal.FreeHGlobal(bpbPtr);
 
@@ -311,6 +340,7 @@ namespace DiscImageChef.Filesystems
                 int bits_in_bps_dos40 = Helpers.CountBits.Count(EBPB.bps);
                 int bits_in_bps_fat32_short = Helpers.CountBits.Count(shortFat32BPB.bps);
                 int bits_in_bps_fat32 = Helpers.CountBits.Count(Fat32BPB.bps);
+                int bits_in_bps_apricot = Helpers.CountBits.Count(ApricotBPB.bps);
 
                 bool correct_spc_atari = atariBPB.spc == 1 || atariBPB.spc == 2 || atariBPB.spc == 4 || atariBPB.spc == 8 || atariBPB.spc == 16 || atariBPB.spc == 32 || atariBPB.spc == 64;
                 bool correct_spc_msx = msxBPB.spc == 1 || msxBPB.spc == 2 || msxBPB.spc == 4 || msxBPB.spc == 8 || msxBPB.spc == 16 || msxBPB.spc == 32 || msxBPB.spc == 64;
@@ -322,6 +352,7 @@ namespace DiscImageChef.Filesystems
                 bool correct_spc_dos40 = EBPB.spc == 1 || EBPB.spc == 2 || EBPB.spc == 4 || EBPB.spc == 8 || EBPB.spc == 16 || EBPB.spc == 32 || EBPB.spc == 64;
                 bool correct_spc_fat32_short = shortFat32BPB.spc == 1 || shortFat32BPB.spc == 2 || shortFat32BPB.spc == 4 || shortFat32BPB.spc == 8 || shortFat32BPB.spc == 16 || shortFat32BPB.spc == 32 || shortFat32BPB.spc == 64;
                 bool correct_spc_fat32 = Fat32BPB.spc == 1 || Fat32BPB.spc == 2 || Fat32BPB.spc == 4 || Fat32BPB.spc == 8 || Fat32BPB.spc == 16 || Fat32BPB.spc == 32 || Fat32BPB.spc == 64;
+                bool correct_spc_apricot = ApricotBPB.spc == 1 || ApricotBPB.spc == 2 || ApricotBPB.spc == 4 || ApricotBPB.spc == 8 || ApricotBPB.spc == 16 || ApricotBPB.spc == 32 || ApricotBPB.spc == 64;
 
                 // This is to support FAT partitions on hybrid ISO/USB images
                 if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
@@ -342,6 +373,7 @@ namespace DiscImageChef.Filesystems
                     shortFat32BPB.huge_sectors /= 4;
                     Fat32BPB.sectors /= 4;
                     Fat32BPB.big_sectors /= 4;
+                    ApricotBPB.sectors /= 4;
                 }
 
                 andos_oem_correct = dos33BPB.oem_name[0] < 0x20 && dos33BPB.oem_name[1] >= 0x20 && dos33BPB.oem_name[2] >= 0x20 && dos33BPB.oem_name[3] >= 0x20 &&
@@ -361,6 +393,11 @@ namespace DiscImageChef.Filesystems
                 {
                     DicConsole.DebugWriteLine("FAT plugin", "Using MSX BPB");
                     useMSXBPB = true;
+                }
+                else if(bits_in_bps_apricot == 1 && correct_spc_apricot && ApricotBPB.fats_no <= 2 && ApricotBPB.root_ent > 0 && ApricotBPB.sectors <= (partition.End - partition.Start) + 1 && ApricotBPB.spfat > 0)
+                {
+                    DicConsole.DebugWriteLine("FAT plugin", "Using Apricot BPB");
+                    useApricotBPB = true;
                 }
                 else if(bits_in_bps_dos40 == 1 && correct_spc_dos40 && EBPB.fats_no <= 2 && EBPB.root_ent > 0 && EBPB.spfat > 0 && (EBPB.signature == 0x28 || EBPB.signature == 0x29 || andos_oem_correct))
                 {
@@ -468,7 +505,7 @@ namespace DiscImageChef.Filesystems
             // This is needed because some OSes don't put volume label as first entry in the root directory
             uint sectors_for_root_directory = 0;
 
-            if(!useAtariBPB && !useMSXBPB && !useDOS2BPB && !useDOS3BPB && !useDOS32BPB && !useDOS33BPB && !useShortEBPB && !useEBPB && !useShortFAT32 && !useLongFAT32)
+            if(!useAtariBPB && !useMSXBPB && !useDOS2BPB && !useDOS3BPB && !useDOS32BPB && !useDOS33BPB && !useShortEBPB && !useEBPB && !useShortFAT32 && !useLongFAT32 && !useApricotBPB)
             {
                 isFAT12 = true;
                 fat_sector = imagePlugin.ReadSector(1 + partition.Start);
@@ -916,6 +953,19 @@ namespace DiscImageChef.Filesystems
                     extraInfo = atariSb.ToString();
                 }
             }
+            else if(useApricotBPB)
+            {
+                isFAT12 = true;
+                fakeBPB.bps = ApricotBPB.bps;
+                fakeBPB.spc = ApricotBPB.spc;
+                fakeBPB.rsectors = ApricotBPB.rsectors;
+                fakeBPB.fats_no = ApricotBPB.fats_no;
+                fakeBPB.root_ent = ApricotBPB.root_ent;
+                fakeBPB.sectors = ApricotBPB.sectors;
+                fakeBPB.media = ApricotBPB.media;
+                fakeBPB.spfat = ApricotBPB.spfat;
+                fakeBPB.boot_code = ApricotBPB.boot_code;
+            }
 
             if(!isFAT32)
             {
@@ -956,6 +1006,8 @@ namespace DiscImageChef.Filesystems
                 {
                     if(useAtariBPB)
                         sb.AppendLine("Atari FAT12");
+                    else if(useApricotBPB)
+                        sb.AppendLine("Apricot FAT12");
                     else
                         sb.AppendLine("Microsoft FAT12");
                     xmlFSType.Type = "FAT12";
@@ -1673,6 +1725,38 @@ namespace DiscImageChef.Filesystems
             public byte[] boot_code;
             /// <summary>Always 0x55 0xAA.</summary>
             public ushort boot_signature;
+        }
+
+        /// <summary>Apricot BIOS Parameter Block.</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct ApricotParameterBlock
+        {
+            /// <summary>Boot specific information</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
+            public byte[] boot_code;
+            /// <summary>Bytes per sector</summary>
+            public ushort bps;
+            /// <summary>Sectors per cluster</summary>
+            public byte spc;
+            /// <summary>Reserved sectors between BPB and FAT</summary>
+            public ushort rsectors;
+            /// <summary>Number of FATs</summary>
+            public byte fats_no;
+            /// <summary>Number of entries on root directory</summary>
+            public ushort root_ent;
+            /// <summary>Sectors in volume</summary>
+            public ushort sectors;
+            /// <summary>Media descriptor</summary>
+            public byte media;
+            /// <summary>Sectors per FAT</summary>
+            public ushort spfat;
+            /// <summary>Disk type</summary>
+            public byte diskType;
+            /// <summary>Reserved</summary>
+            public ushort reserved;
+            /// <summary>Unknown.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 416)]
+            public byte[] unknown;
         }
 
         public const uint fsinfo_signature1 = 0x41615252;
