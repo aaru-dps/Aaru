@@ -148,6 +148,7 @@ namespace DiscImageChef.Filesystems
             ushort apricot_fat_sectors = BitConverter.ToUInt16(bpb_sector, 0x5B);
             bool apricot_correct_spc = apricot_spc == 1 || apricot_spc == 2 || apricot_spc == 4 || apricot_spc == 8 || apricot_spc == 16 || apricot_spc == 32 || apricot_spc == 64;
             int bits_in_apricot_bps = Helpers.CountBits.Count(apricot_bps);
+            byte apricot_partitions = bpb_sector[0x0C];
 
             DicConsole.DebugWriteLine("FAT plugin", "apricot_bps = {0}", apricot_bps);
             DicConsole.DebugWriteLine("FAT plugin", "apricot_spc = {0}", apricot_spc);
@@ -209,7 +210,7 @@ namespace DiscImageChef.Filesystems
 
             // Apricot BPB
             if(bits_in_apricot_bps == 1 && apricot_correct_spc && apricot_reserved_secs < (partition.End - partition.Start) && apricot_fats_no <= 2 && apricot_root_entries > 0 &&
-               apricot_fat_sectors > 0 && apricot_sectors <= (partition.End - partition.Start) + 1)
+               apricot_fat_sectors > 0 && apricot_sectors <= (partition.End - partition.Start) + 1 && apricot_partitions == 0)
                 return true;
 
             // All FAT12 without BPB can only be used on floppies, without partitions.
@@ -307,7 +308,7 @@ namespace DiscImageChef.Filesystems
             BIOSParameterBlockEBPB EBPB = new BIOSParameterBlockEBPB();
             FAT32ParameterBlockShort shortFat32BPB = new FAT32ParameterBlockShort();
             FAT32ParameterBlock Fat32BPB = new FAT32ParameterBlock();
-            ApricotParameterBlock ApricotBPB = new ApricotParameterBlock();
+            ApricotLabel ApricotBPB = new ApricotLabel();
 
             byte[] bpb_sector = imagePlugin.ReadSectors(partition.Start, 2);
 
@@ -326,7 +327,7 @@ namespace DiscImageChef.Filesystems
                 EBPB = (BIOSParameterBlockEBPB)Marshal.PtrToStructure(bpbPtr, typeof(BIOSParameterBlockEBPB));
                 shortFat32BPB = (FAT32ParameterBlockShort)Marshal.PtrToStructure(bpbPtr, typeof(FAT32ParameterBlockShort));
                 Fat32BPB = (FAT32ParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(FAT32ParameterBlock));
-                ApricotBPB = (ApricotParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(ApricotParameterBlock));
+                ApricotBPB = (ApricotLabel)Marshal.PtrToStructure(bpbPtr, typeof(ApricotLabel));
 
                 Marshal.FreeHGlobal(bpbPtr);
 
@@ -340,7 +341,7 @@ namespace DiscImageChef.Filesystems
                 int bits_in_bps_dos40 = Helpers.CountBits.Count(EBPB.bps);
                 int bits_in_bps_fat32_short = Helpers.CountBits.Count(shortFat32BPB.bps);
                 int bits_in_bps_fat32 = Helpers.CountBits.Count(Fat32BPB.bps);
-                int bits_in_bps_apricot = Helpers.CountBits.Count(ApricotBPB.bps);
+                int bits_in_bps_apricot = Helpers.CountBits.Count(ApricotBPB.mainBPB.bps);
 
                 bool correct_spc_atari = atariBPB.spc == 1 || atariBPB.spc == 2 || atariBPB.spc == 4 || atariBPB.spc == 8 || atariBPB.spc == 16 || atariBPB.spc == 32 || atariBPB.spc == 64;
                 bool correct_spc_msx = msxBPB.spc == 1 || msxBPB.spc == 2 || msxBPB.spc == 4 || msxBPB.spc == 8 || msxBPB.spc == 16 || msxBPB.spc == 32 || msxBPB.spc == 64;
@@ -352,7 +353,7 @@ namespace DiscImageChef.Filesystems
                 bool correct_spc_dos40 = EBPB.spc == 1 || EBPB.spc == 2 || EBPB.spc == 4 || EBPB.spc == 8 || EBPB.spc == 16 || EBPB.spc == 32 || EBPB.spc == 64;
                 bool correct_spc_fat32_short = shortFat32BPB.spc == 1 || shortFat32BPB.spc == 2 || shortFat32BPB.spc == 4 || shortFat32BPB.spc == 8 || shortFat32BPB.spc == 16 || shortFat32BPB.spc == 32 || shortFat32BPB.spc == 64;
                 bool correct_spc_fat32 = Fat32BPB.spc == 1 || Fat32BPB.spc == 2 || Fat32BPB.spc == 4 || Fat32BPB.spc == 8 || Fat32BPB.spc == 16 || Fat32BPB.spc == 32 || Fat32BPB.spc == 64;
-                bool correct_spc_apricot = ApricotBPB.spc == 1 || ApricotBPB.spc == 2 || ApricotBPB.spc == 4 || ApricotBPB.spc == 8 || ApricotBPB.spc == 16 || ApricotBPB.spc == 32 || ApricotBPB.spc == 64;
+                bool correct_spc_apricot = ApricotBPB.mainBPB.spc == 1 || ApricotBPB.mainBPB.spc == 2 || ApricotBPB.mainBPB.spc == 4 || ApricotBPB.mainBPB.spc == 8 || ApricotBPB.mainBPB.spc == 16 || ApricotBPB.mainBPB.spc == 32 || ApricotBPB.mainBPB.spc == 64;
 
                 // This is to support FAT partitions on hybrid ISO/USB images
                 if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
@@ -373,7 +374,7 @@ namespace DiscImageChef.Filesystems
                     shortFat32BPB.huge_sectors /= 4;
                     Fat32BPB.sectors /= 4;
                     Fat32BPB.big_sectors /= 4;
-                    ApricotBPB.sectors /= 4;
+                    ApricotBPB.mainBPB.sectors /= 4;
                 }
 
                 andos_oem_correct = dos33BPB.oem_name[0] < 0x20 && dos33BPB.oem_name[1] >= 0x20 && dos33BPB.oem_name[2] >= 0x20 && dos33BPB.oem_name[3] >= 0x20 &&
@@ -394,7 +395,7 @@ namespace DiscImageChef.Filesystems
                     DicConsole.DebugWriteLine("FAT plugin", "Using MSX BPB");
                     useMSXBPB = true;
                 }
-                else if(bits_in_bps_apricot == 1 && correct_spc_apricot && ApricotBPB.fats_no <= 2 && ApricotBPB.root_ent > 0 && ApricotBPB.sectors <= (partition.End - partition.Start) + 1 && ApricotBPB.spfat > 0)
+                else if(bits_in_bps_apricot == 1 && correct_spc_apricot && ApricotBPB.mainBPB.fats_no <= 2 && ApricotBPB.mainBPB.root_ent > 0 && ApricotBPB.mainBPB.sectors <= (partition.End - partition.Start) + 1 && ApricotBPB.mainBPB.spfat > 0 && ApricotBPB.partitionCount == 0)
                 {
                     DicConsole.DebugWriteLine("FAT plugin", "Using Apricot BPB");
                     useApricotBPB = true;
@@ -956,15 +957,20 @@ namespace DiscImageChef.Filesystems
             else if(useApricotBPB)
             {
                 isFAT12 = true;
-                fakeBPB.bps = ApricotBPB.bps;
-                fakeBPB.spc = ApricotBPB.spc;
-                fakeBPB.rsectors = ApricotBPB.rsectors;
-                fakeBPB.fats_no = ApricotBPB.fats_no;
-                fakeBPB.root_ent = ApricotBPB.root_ent;
-                fakeBPB.sectors = ApricotBPB.sectors;
-                fakeBPB.media = ApricotBPB.media;
-                fakeBPB.spfat = ApricotBPB.spfat;
-                fakeBPB.boot_code = ApricotBPB.boot_code;
+                fakeBPB.bps = ApricotBPB.mainBPB.bps;
+                fakeBPB.spc = ApricotBPB.mainBPB.spc;
+                fakeBPB.rsectors = ApricotBPB.mainBPB.rsectors;
+                fakeBPB.fats_no = ApricotBPB.mainBPB.fats_no;
+                fakeBPB.root_ent = ApricotBPB.mainBPB.root_ent;
+                fakeBPB.sectors = ApricotBPB.mainBPB.sectors;
+                fakeBPB.media = ApricotBPB.mainBPB.media;
+                fakeBPB.spfat = ApricotBPB.mainBPB.spfat;
+                fakeBPB.sptrk = ApricotBPB.spt;
+                xmlFSType.Bootable = ApricotBPB.bootType > 0;
+
+                if(ApricotBPB.bootLocation > 0 && ApricotBPB.bootLocation + ApricotBPB.bootSize < imagePlugin.GetSectors())
+                    fakeBPB.boot_code = imagePlugin.ReadSectors(ApricotBPB.bootLocation,
+                                                                (uint)(ApricotBPB.sectorSize * ApricotBPB.bootSize) / imagePlugin.GetSectorSize());
             }
 
             if(!isFAT32)
@@ -1727,13 +1733,220 @@ namespace DiscImageChef.Filesystems
             public ushort boot_signature;
         }
 
-        /// <summary>Apricot BIOS Parameter Block.</summary>
+        /// <summary>Apricot Label.</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct ApricotLabel
+        {
+            /// <summary>Version of format which created disk</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] version;
+            /// <summary>Operating system.</summary>
+            public byte operatingSystem;
+            /// <summary>Software write protection.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool writeProtected;
+            /// <summary>Copy protected.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool copyProtected;
+            /// <summary>Boot type.</summary>
+            public byte bootType;
+            /// <summary>Partitions.</summary>
+            public byte partitionCount;
+            /// <summary>Is hard disk?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool winchester;
+            /// <summary>Sector size.</summary>
+            public ushort sectorSize;
+            /// <summary>Sectors per track.</summary>
+            public ushort spt;
+            /// <summary>Tracks per side.</summary>
+            public uint cylinders;
+            /// <summary>Sides.</summary>
+            public byte heads;
+            /// <summary>Interleave factor.</summary>
+            public byte interleave;
+            /// <summary>Skew factor.</summary>
+            public ushort skew;
+            /// <summary>Sector where boot code starts.</summary>
+            public uint bootLocation;
+            /// <summary>Size in sectors of boot code.</summary>
+            public ushort bootSize;
+            /// <summary>Address at which to load boot code.</summary>
+            public uint bootAddress;
+            /// <summary>Offset where to jump to boot.</summary>
+            public ushort bootOffset;
+            /// <summary>Segment where to jump to boot.</summary>
+            public ushort bootSegment;
+            /// <summary>First data sector.</summary>
+            public uint firstDataBlock;
+            /// <summary>Generation.</summary>
+            public ushort generation;
+            /// <summary>Copy count.</summary>
+            public ushort copyCount;
+            /// <summary>Maximum number of copies.</summary>
+            public ushort maxCopies;
+            /// <summary>Serial number.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] serialNumber;
+            /// <summary>Part number.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] partNumber;
+            /// <summary>Copyright.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
+            public byte[] copyright;
+            /// <summary>BPB for whole disk.</summary>
+            public ApricotParameterBlock mainBPB;
+            /// <summary>Name of FONT file.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] fontName;
+            /// <summary>Name of KEYBOARD file.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] keyboardName;
+            /// <summary>Minor BIOS version.</summary>
+            public byte biosMinorVersion;
+            /// <summary>Major BIOS version.</summary>
+            public byte biosMajorVersion;
+            /// <summary>Diagnostics enabled?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool diagnosticsFlag;
+            /// <summary>Printer device.</summary>
+            public byte prnDevice;
+            /// <summary>Bell volume.</summary>
+            public byte bellVolume;
+            /// <summary>Cache enabled?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool enableCache;
+            /// <summary>Graphics enabled?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool enableGraphics;
+            /// <summary>Length in sectors of DOS.</summary>
+            public byte dosLength;
+            /// <summary>Length in sectors of FONT file.</summary>
+            public byte fontLength;
+            /// <summary>Length in sectors of KEYBOARD file.</summary>
+            public byte keyboardLength;
+            /// <summary>Starting sector of DOS.</summary>
+            public ushort dosStart;
+            /// <summary>Starting sector of FONT file.</summary>
+            public ushort fontStart;
+            /// <summary>Starting sector of KEYBOARD file.</summary>
+            public ushort keyboardStart;
+            /// <summary>Keyboard click volume.</summary>
+            public byte keyboardVolume;
+            /// <summary>Auto-repeat enabled?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool autorepeat;
+            /// <summary>Auto-repeat lead-in.</summary>
+            public byte autorepeatLeadIn;
+            /// <summary>Auto-repeat interval.</summary>
+            public byte autorepeatInterval;
+            /// <summary>Microscreen mode.</summary>
+            public byte microscreenMode;
+            /// <summary>Spare area for keyboard values expansion.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+            public byte[] spareKeyboard;
+            /// <summary>Screen line mode.</summary>
+            public byte lineMode;
+            /// <summary>Screen line width.</summary>
+            public byte lineWidth;
+            /// <summary>Screen disabled?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool imageOff;
+            /// <summary>Spare area for screen values expansion.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
+            public byte[] spareScreen;
+            /// <summary>TX baud rate.</summary>
+            public byte txBaudRate;
+            /// <summary>RX baud rate.</summary>
+            public byte rxBaudRate;
+            /// <summary>TX bits.</summary>
+            public byte txBits;
+            /// <summary>RX bits.</summary>
+            public byte rxBits;
+            /// <summary>Stop bits.</summary>
+            public byte stopBits;
+            /// <summary>Parity enabled?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool parityCheck;
+            /// <summary>Parity type.</summary>
+            public byte parityType;
+            /// <summary>Xon/Xoff enabled on TX.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool txXonXoff;
+            /// <summary>Xon/Xoff enabled on RX.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool rxXonXoff;
+            /// <summary>Xon character.</summary>
+            public byte xonCharacter;
+            /// <summary>Xoff character.</summary>
+            public byte xoffCharacter;
+            /// <summary>Xon/Xoff buffer on RX.</summary>
+            public ushort rxXonXoffBuffer;
+            /// <summary>DTR/DSR enabled?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool dtrDsr;
+            /// <summary>CTS/RTS enabled?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool ctsRts;
+            /// <summary>NULLs after CR.</summary>
+            public byte nullsAfterCr;
+            /// <summary>NULLs after 0xFF.</summary>
+            public byte nullsAfterFF;
+            /// <summary>Send LF after CR in serial port.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool lfAfterCRSerial;
+            /// <summary>BIOS error report in serial port.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool biosErrorReportSerial;
+            /// <summary>Spare area for serial port values expansion.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
+            public byte[] spareSerial;
+            /// <summary>Send LF after CR in parallel port.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool lfAfterCrParallel;
+            /// <summary>Select line supported?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool selectLine;
+            /// <summary>Paper empty supported?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool paperEmpty;
+            /// <summary>Fault line supported?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool faultLine;
+            /// <summary>BIOS error report in parallel port.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool biosErrorReportParallel;
+            /// <summary>Spare area for parallel port values expansion.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+            public byte[] spareParallel;
+            /// <summary>Spare area for Winchester values expansion.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
+            public byte[] spareWinchester;
+            /// <summary>Parking enabled?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool parkingEnabled;
+            /// <summary>Format protection?.</summary>
+            [MarshalAs(UnmanagedType.U1)]
+            public bool formatProtection;
+            /// <summary>Spare area for RAM disk values expansion.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] spareRamDisk;
+            /// <summary>List of bad blocks.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public ushort[] badBlocks;
+            /// <summary>Array of partition BPBs.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public ApricotParameterBlock[] partitions;
+            /// <summary>Spare area.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
+            public byte[] spare;
+            /// <summary>CP/M double side indicator?.</summary>
+            public bool cpmDoubleSided;
+        }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct ApricotParameterBlock
         {
-            /// <summary>Boot specific information</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
-            public byte[] boot_code;
             /// <summary>Bytes per sector</summary>
             public ushort bps;
             /// <summary>Sectors per cluster</summary>
@@ -1752,11 +1965,8 @@ namespace DiscImageChef.Filesystems
             public ushort spfat;
             /// <summary>Disk type</summary>
             public byte diskType;
-            /// <summary>Reserved</summary>
-            public ushort reserved;
-            /// <summary>Unknown.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 416)]
-            public byte[] unknown;
+            /// <summary>Volume starting sector</summary>
+            public ushort startSector;
         }
 
         public const uint fsinfo_signature1 = 0x41615252;
