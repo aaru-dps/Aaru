@@ -83,6 +83,7 @@ Supported disk image formats
 Supported partitioning schemes
 ==============================
 * Acorn Linux and RISCiX partitions
+* ACT Apricot partitions
 * Amiga Rigid Disk Block (RDB)
 * Apple Partition Map
 * Atari AHDI and ICDPro

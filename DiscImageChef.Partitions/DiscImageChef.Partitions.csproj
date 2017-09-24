@@ -56,6 +56,7 @@
     <Compile Include="UNIX.cs" />
     <Compile Include="XENIX.cs" />
     <Compile Include="Plan9.cs" />
+    <Compile Include="Apricot.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
