@@ -435,7 +435,7 @@ namespace DiscImageChef.ImagePlugins
 
 			// Debug writing full disk as raw
 			/*
-            FileStream foo = new FileStream(Path.GetFileNameWithoutExtension(imagePath) + ".bin", FileMode.Create);
+			FileStream foo = new FileStream(Path.GetFileNameWithoutExtension(imageFilter.GetFilename()) + ".bin", FileMode.Create);
             for(ulong i = 0; i < (ulong)sectors.Count; i++)
             {
                 byte[] foob;
