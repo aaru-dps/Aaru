@@ -921,7 +921,7 @@ namespace DiscImageChef.Filesystems.CPM
             xmlFSType.Bootable |= (workingDefinition.sofs > 0 || workingDefinition.ofs > 0);
             xmlFSType.ClusterSize = 128 << dpb.bsh;
             if(dpb.dsm > 0)
-                xmlFSType.Clusters = ((dpb.dsm + 1) * 128) / (128 << dpb.bsh);
+                xmlFSType.Clusters = dpb.dsm;
             else
                 xmlFSType.Clusters = (long)(partition.End - partition.Start);
             if(labelCreationDate != null)
