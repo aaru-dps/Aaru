@@ -447,7 +447,7 @@ namespace DiscImageChef.ImagePlugins
 
 			ImageInfo.cylinders = header.tracks;
 			ImageInfo.heads = header.sides;
-			ImageInfo.sectors = ImageInfo.sectors / (uint)(header.tracks * header.sides);
+			ImageInfo.sectorsPerTrack = (uint)(ImageInfo.sectors / (ImageInfo.cylinders * ImageInfo.heads));
 
 			return true;
         }
