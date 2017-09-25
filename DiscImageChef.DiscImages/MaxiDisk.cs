@@ -134,8 +134,9 @@ namespace DiscImageChef.ImagePlugins
 			DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown3 = {0}", tmp_header.unknown3);
 
 			// This is hardcoded
-			if(tmp_header.diskType > 11)
-				return false;
+			// But its possible values are unknown...
+			//if(tmp_header.diskType > 11)
+			//	return false;
 
 			// Only floppies supported
 			if(tmp_header.heads == 0 || tmp_header.heads > 2)
@@ -172,8 +173,9 @@ namespace DiscImageChef.ImagePlugins
 			Marshal.FreeHGlobal(ftrPtr);
 
 			// This is hardcoded
-			if(tmp_header.diskType > 11)
-				return false;
+			// But its possible values are unknown...
+			//if(tmp_header.diskType > 11)
+			//	return false;
 
 			// Only floppies supported
 			if(tmp_header.heads == 0 || tmp_header.heads > 2)
