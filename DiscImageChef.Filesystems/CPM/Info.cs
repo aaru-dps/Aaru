@@ -340,7 +340,7 @@ namespace DiscImageChef.Filesystems.CPM
                             if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 640)
                             {
                                 cpmFound = true;
-                                firstDirectorySector86 = 8;
+                                firstDirectorySector86 = 16;
                                 dpb = new DiscParameterBlock();
                                 dpb.al0 = 0x80;
                                 dpb.al1 = 0;
@@ -350,7 +350,7 @@ namespace DiscImageChef.Filesystems.CPM
                                 dpb.drm = 0x3F;
                                 dpb.dsm = 0x9D;
                                 dpb.exm = 1;
-                                dpb.off = 1;
+                                dpb.off = 2;
                                 dpb.phm = 3;
                                 dpb.psh = 2;
                                 dpb.spt = 8 * 4;
