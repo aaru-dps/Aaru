@@ -860,7 +860,7 @@ namespace DiscImageChef.ImagePlugins
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(track != 1)
-                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
                 return ReadSector(sectorAddress);
             }
@@ -873,7 +873,7 @@ namespace DiscImageChef.ImagePlugins
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(track != 1)
-                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
                 return ReadSectors(sectorAddress, length);
             }
@@ -886,7 +886,7 @@ namespace DiscImageChef.ImagePlugins
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(track != 1)
-                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
                 return ReadSector(sectorAddress);
             }
@@ -899,7 +899,7 @@ namespace DiscImageChef.ImagePlugins
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(track != 1)
-                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
                 return ReadSectors(sectorAddress, length);
             }
