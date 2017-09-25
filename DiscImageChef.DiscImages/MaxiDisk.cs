@@ -363,7 +363,7 @@ namespace DiscImageChef.ImagePlugins
 
 		public override string GetImageFormat()
 		{
-			return "Digital Research DiskCopy";
+			return "MAXI Disk";
 		}
 
 		public override string GetImageVersion()
