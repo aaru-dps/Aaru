@@ -57,6 +57,7 @@ Supported disk image formats
 * Dreamcast GDI
 * IBM SaveDskF
 * MAME Compressed Hunks of Data (CHD)
+* MAXI Disk disk images (HDK)
 * Microsoft VHDX
 * Most known sector by sector copies of floppies with 128, 256, 319 and 1024 bytes/sector.
 * Most known sector by sector copies with different bytes/sector on track 0.
