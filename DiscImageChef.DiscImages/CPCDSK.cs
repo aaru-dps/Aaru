@@ -51,10 +51,14 @@ namespace DiscImageChef.ImagePlugins
         /// Identifier for CPCEMU disk images, "MV - CPCEMU Disk-File"
         /// </summary>
         readonly byte[] CPCDSKId = { 0x4D, 0x56, 0x20, 0x2D, 0x20, 0x43, 0x50, 0x43, 0x45, 0x4D, 0x55, 0x20, 0x44, 0x69, 0x73, 0x6B, 0x2D, 0x46, 0x69, 0x6C, 0x65 };
-        /// <summary>
-        /// Identifier for Extended CPCEMU disk images, "EXTENDED CPC DSK File"
-        /// </summary>
-        readonly byte[] EDSKId = { 0x45, 0x58, 0x54, 0x45, 0x4E, 0x44, 0x45, 0x44, 0x20, 0x43, 0x50, 0x43, 0x20, 0x44, 0x53, 0x4B, 0x20, 0x46, 0x69, 0x6C, 0x65 };
+		/// <summary>
+		/// Identifier for DU54 disk images, "MV - CPC format Disk Image (DU54)"
+		/// </summary>
+		readonly byte[] DU54Id = { 0x4D, 0x56, 0x20, 0x2D, 0x20, 0x43, 0x50, 0x43, 0x20, 0x66, 0x6F, 0x72, 0x6D, 0x61, 0x74, 0x20, 0x44, 0x69, 0x73, 0x6B, 0x20 };
+		/// <summary>
+		/// Identifier for Extended CPCEMU disk images, "EXTENDED CPC DSK File"
+		/// </summary>
+		readonly byte[] EDSKId = { 0x45, 0x58, 0x54, 0x45, 0x4E, 0x44, 0x45, 0x44, 0x20, 0x43, 0x50, 0x43, 0x20, 0x44, 0x53, 0x4B, 0x20, 0x46, 0x69, 0x6C, 0x65 };
         /// <summary>
         /// Identifier for track information, "Track-Info\r\n"
         /// </summary>
@@ -240,7 +244,7 @@ namespace DiscImageChef.ImagePlugins
 
             DicConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"", StringHandlers.CToString(header.magic));
 
-            return CPCDSKId.SequenceEqual(header.magic) || EDSKId.SequenceEqual(header.magic);
+			return CPCDSKId.SequenceEqual(header.magic) || EDSKId.SequenceEqual(header.magic) || DU54Id.SequenceEqual(header.magic);
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -259,7 +263,7 @@ namespace DiscImageChef.ImagePlugins
             header = (CPCDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CPCDiskInfo));
             Marshal.FreeHGlobal(headerPtr);
 
-            if(!CPCDSKId.SequenceEqual(header.magic) && !EDSKId.SequenceEqual(header.magic))
+			if(!CPCDSKId.SequenceEqual(header.magic) && !EDSKId.SequenceEqual(header.magic) && !DU54Id.SequenceEqual(header.magic))
                 return false;
 
             extended = EDSKId.SequenceEqual(header.magic);
