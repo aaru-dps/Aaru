@@ -123,7 +123,7 @@ namespace DiscImageChef.Filesystems.CPM
                                 dpb.phm += (byte)Math.Pow(2, i);
                             dpb.spt = (ushort)(amsSb.spt * (sectorSize / 128));
                             uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / sectorSize);
-                            directory = imagePlugin.ReadSector(firstDirectorySector + partition.Start, directoryLength);
+                            directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength);
 
                             // Build a CP/M disk definition
                             workingDefinition = new CpmDefinition();
@@ -226,7 +226,7 @@ namespace DiscImageChef.Filesystems.CPM
                             dpb.psh = 0; // Needed?
                             dpb.spt = hddSb.spt;
                             uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / sectorSize);
-                            directory = imagePlugin.ReadSector(firstDirectorySector + partition.Start, directoryLength);
+                            directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength);
                             DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
 
                             // Build a CP/M disk definition
@@ -650,7 +650,7 @@ namespace DiscImageChef.Filesystems.CPM
                     if(cpmFound)
                     {
                         uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / imagePlugin.GetSectorSize());
-                        directory = imagePlugin.ReadSector(firstDirectorySector86 + partition.Start, directoryLength);
+                        directory = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength);
                         DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
                     }
                 }
