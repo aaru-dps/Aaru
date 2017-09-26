@@ -68,6 +68,7 @@ Supported disk image formats
 * QEMU Copy-On-Write versions 1, 2 and 3 (QCOW and QCOW2)
 * QEMU Enhanced Disk (QED)
 * Quasi88 disk images (.D77/.D88)
+* Ray Arachelian's Disk IMage (.DIM)
 * RS-IDE hard disk images
 * Sector by sector copies of Microsoft's DMF floppies
 * Spectrum floppy disk image (.FDI)
