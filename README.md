@@ -74,7 +74,7 @@ Supported disk image formats
 * Spectrum floppy disk image (.FDI)
 * T98 hard disk images (.THD)
 * T98-Next hard disk images (.NHD)
-* TeleDisk (without compression)
+* TeleDisk
 * VMware VMDK and COWD images
 * Virtual98 disk images
 * Virtual PC fixed size, dynamic size and differencing (undo) disk images
