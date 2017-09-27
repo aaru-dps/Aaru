@@ -10,10 +10,6 @@ Filesystem plugins:
 Partitioning scheme plugins:
 --- Add support for AIX partitions
 
-Teledisk plugin:
---- Add support for "advanced compression"
---- Handle variable sectors per track situation. Teledisk seems to be able to read garbage from previous formattings.
-
 RAW plugin:
 --- Finish support for reading sectors of variable bytes/sector images
 
