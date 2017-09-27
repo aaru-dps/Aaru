@@ -190,15 +190,16 @@ namespace DiscImageChef.ImagePlugins
         TD0Header header;
         TDCommentBlockHeader commentHeader;
         byte[] commentBlock;
-        Dictionary<uint, byte[]> sectorsData;
         // LBA, data
         uint totalDiskSize;
         bool ADiskCRCHasFailed;
         List<ulong> SectorsWhereCRCHasFailed;
+		// Cylinder by head, sector data matrix
+		byte[][][][] sectorsData;
 
-        #endregion
+		#endregion
 
-        public TeleDisk()
+		public TeleDisk()
         {
             Name = "Sydex TeleDisk";
             PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
@@ -419,11 +420,101 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("TeleDisk plugin", "Parsing image");
 
             totalDiskSize = 0;
-            byte spt = 0;
             ImageInfo.imageSize = 0;
-            sectorsData = new Dictionary<uint, byte[]>();
-            ImageInfo.sectorSize = 0;
-            while(true)
+
+			int totalCylinders = -1;
+			int totalHeads = -1;
+			int maxSector = -1;
+			int totalSectors = 0;
+			long currentPos = stream.Position;
+			ImageInfo.sectorSize = uint.MaxValue;
+			ImageInfo.sectorsPerTrack = uint.MaxValue;
+
+			// Count cylinders
+			while(true)
+			{
+				TDTrackHeader TDTrack = new TDTrackHeader();
+
+				TDTrack.sectors = (byte)stream.ReadByte();
+				TDTrack.cylinder = (byte)stream.ReadByte();
+				TDTrack.head = (byte)stream.ReadByte();
+				TDTrack.crc = (byte)stream.ReadByte();
+
+				if(TDTrack.cylinder > totalCylinders)
+					totalCylinders = TDTrack.cylinder;
+				if(TDTrack.head > totalHeads)
+					totalHeads = TDTrack.head;
+
+				if(TDTrack.sectors == 0xFF) // End of disk image
+					break;
+
+				if(TDTrack.sectors < ImageInfo.sectorsPerTrack)
+					ImageInfo.sectorsPerTrack = TDTrack.sectors;
+
+				for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
+				{
+					TDSectorHeader TDSector = new TDSectorHeader();
+					TDDataHeader TDData = new TDDataHeader();
+					byte[] dataSizeBytes = new byte[2];
+					byte[] data;
+					byte[] decodedData;
+
+					TDSector.cylinder = (byte)stream.ReadByte();
+					TDSector.head = (byte)stream.ReadByte();
+					TDSector.sectorNumber = (byte)stream.ReadByte();
+					TDSector.sectorSize = (byte)stream.ReadByte();
+					TDSector.flags = (byte)stream.ReadByte();
+					TDSector.crc = (byte)stream.ReadByte();
+
+					if(TDSector.sectorNumber > maxSector)
+						maxSector = TDSector.sectorNumber;
+
+					if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
+					{
+						stream.Read(dataSizeBytes, 0, 2);
+						TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
+						TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
+						ImageInfo.imageSize += TDData.dataSize;
+						TDData.dataEncoding = (byte)stream.ReadByte();
+						data = new byte[TDData.dataSize];
+						stream.Read(data, 0, TDData.dataSize);
+					}
+
+					if(128 << TDSector.sectorSize < ImageInfo.sectorSize)
+						ImageInfo.sectorSize = (uint)(128 << TDSector.sectorSize);
+
+					totalSectors++;
+				}
+			}
+
+			totalCylinders++;
+			totalHeads++;
+
+			if(totalCylinders <= 0 || totalHeads <= 0)
+				throw new ImageNotSupportedException("No cylinders or heads found");
+
+			sectorsData = new byte[totalCylinders][][][];
+			// Total sectors per track
+			uint[][] spts = new uint[totalCylinders][];
+
+			ImageInfo.cylinders = (ushort)totalCylinders;
+			ImageInfo.heads = (byte)totalHeads;
+
+			DicConsole.DebugWriteLine("TeleDisk plugin", "Found {0} cylinders and {1} heads with a maximum sector number of {2}", totalCylinders, totalHeads, maxSector);
+
+			// Create heads
+			for(int i = 0; i < totalCylinders; i++)
+			{
+				sectorsData[i] = new byte[totalHeads][][];
+				spts[i] = new uint[totalHeads];
+
+				for(int j = 0; j < totalHeads; j++)
+					sectorsData[i][j] = new byte[maxSector + 1][];
+			}
+
+			// Decode the image
+			stream.Seek(currentPos, SeekOrigin.Begin);
+			while(true)
             {
                 TDTrackHeader TDTrack = new TDTrackHeader();
                 byte[] TDTrackForCRC = new byte[3];
@@ -451,16 +542,9 @@ namespace DiscImageChef.ImagePlugins
                 if(TDTrack.sectors == 0xFF) // End of disk image
                 {
                     DicConsole.DebugWriteLine("TeleDisk plugin", "End of disk image arrived");
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes", sectorsData.Count, totalDiskSize);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes", totalSectors, totalDiskSize);
 
                     break;
-                }
-
-                if(spt != TDTrack.sectors && TDTrack.sectors > 0)
-                {
-                    if(spt != 0)
-                        throw new FeatureUnsupportedImageException("Variable number of sectors per track. This kind of image is not yet supported");
-                    spt = TDTrack.sectors;
                 }
 
                 for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
@@ -486,67 +570,38 @@ namespace DiscImageChef.ImagePlugins
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector flags: 0x{0:X2}", TDSector.flags);
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}", TDSector.crc);
 
-                    uint LBA = (uint)((TDSector.cylinder * header.sides * spt) + (TDSector.head * spt) + (TDSector.sectorNumber - 1));
-                    if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
-                    {
-                        stream.Read(dataSizeBytes, 0, 2);
-                        TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
-                        TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
-                        ImageInfo.imageSize += TDData.dataSize;
-                        TDData.dataEncoding = (byte)stream.ReadByte();
-                        data = new byte[TDData.dataSize];
-                        stream.Read(data, 0, TDData.dataSize);
-                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}", TDData.dataSize);
-                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}", TDData.dataEncoding);
+                    uint LBA = (uint)((TDSector.cylinder * header.sides * ImageInfo.sectorsPerTrack) + (TDSector.head * ImageInfo.sectorsPerTrack) + (TDSector.sectorNumber - 1));
+					if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
+					{
+						stream.Read(dataSizeBytes, 0, 2);
+						TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
+						TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
+						ImageInfo.imageSize += TDData.dataSize;
+						TDData.dataEncoding = (byte)stream.ReadByte();
+						data = new byte[TDData.dataSize];
+						stream.Read(data, 0, TDData.dataSize);
+						DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}", TDData.dataSize);
+						DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}", TDData.dataEncoding);
 
-                        decodedData = DecodeTeleDiskData(TDSector.sectorSize, TDData.dataEncoding, data);
+						decodedData = DecodeTeleDiskData(TDSector.sectorSize, TDData.dataEncoding, data);
 
-                        byte TDSectorCalculatedCRC = (byte)(TeleDiskCRC(0, decodedData) & 0xFF);
+						byte TDSectorCalculatedCRC = (byte)(TeleDiskCRC(0, decodedData) & 0xFF);
 
-                        if(TDSectorCalculatedCRC != TDSector.crc)
-                        {
-                            DicConsole.DebugWriteLine("TeleDisk plugin", "Sector LBA {0} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}", LBA, TDSectorCalculatedCRC, TDSector.crc);
-                            if((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
-                                if(!sectorsData.ContainsKey(LBA) && (TDSector.flags & FlagsSectorDuplicate) != FlagsSectorDuplicate)
-                                    SectorsWhereCRCHasFailed.Add(LBA);
-                        }
-                    }
-                    else
-                    {
-                        switch(TDSector.sectorSize)
-                        {
-                            case SectorSize128:
-                                decodedData = new byte[128];
-                                break;
-                            case SectorSize256:
-                                decodedData = new byte[256];
-                                break;
-                            case SectorSize512:
-                                decodedData = new byte[512];
-                                break;
-                            case SectorSize1K:
-                                decodedData = new byte[1024];
-                                break;
-                            case SectorSize2K:
-                                decodedData = new byte[2048];
-                                break;
-                            case SectorSize4K:
-                                decodedData = new byte[4096];
-                                break;
-                            case SectorSize8K:
-                                decodedData = new byte[8192];
-                                break;
-                            default:
-                                throw new ImageNotSupportedException(string.Format("Sector size {0} for cylinder {1} head {2} sector {3} is incorrect.",
-                                    TDSector.sectorSize, TDSector.cylinder, TDSector.head, TDSector.sectorNumber));
-                        }
-                        ArrayHelpers.ArrayFill(decodedData, (byte)0);
-                    }
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", LBA);
+						if(TDSectorCalculatedCRC != TDSector.crc)
+						{
+							DicConsole.DebugWriteLine("TeleDisk plugin", "Sector {0}:{3}:{4} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}", TDTrack.cylinder, TDSectorCalculatedCRC, TDSector.crc, TDTrack.cylinder, TDSector.sectorNumber);
+							if((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
+								SectorsWhereCRCHasFailed.Add(LBA);
+						}
+					}
+					else
+						decodedData = new byte[128 << TDSector.sectorSize];
+
+					DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", LBA);
 
                     if((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
                     {
-                        if(sectorsData.ContainsKey(LBA))
+						if(sectorsData[TDTrack.cylinder][TDTrack.head][TDSector.sectorNumber] != null)
                         {
                             if((TDSector.flags & FlagsSectorDuplicate) == FlagsSectorDuplicate)
                             {
@@ -561,16 +616,14 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else
                         {
-                            sectorsData.Add(LBA, decodedData);
+							sectorsData[TDTrack.cylinder][TDTrack.head][TDSector.sectorNumber] = decodedData;
                             totalDiskSize += (uint)decodedData.Length;
                         }
                     }
-                    if(decodedData.Length > ImageInfo.sectorSize)
-                        ImageInfo.sectorSize = (uint)decodedData.Length;
                 }
             }
 
-            ImageInfo.sectors = (ulong)sectorsData.Count;
+			ImageInfo.sectors = ImageInfo.cylinders * ImageInfo.heads * ImageInfo.sectorsPerTrack;
             ImageInfo.mediaType = DecodeTeleDiskDiskType();
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
@@ -578,10 +631,6 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", ImageInfo.mediaType);
             if(!string.IsNullOrEmpty(ImageInfo.imageComments))
                 DicConsole.VerboseWriteLine("TeleDisk comments: {0}", ImageInfo.imageComments);
-
-			ImageInfo.heads = header.sides;
-			ImageInfo.sectorsPerTrack = spt;
-			ImageInfo.cylinders = (uint)((ImageInfo.sectors / header.sides) / spt);
 
             return true;
         }
@@ -608,49 +657,48 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            return ReadSectors(sectorAddress, 1);
-        }
+			(ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
+
+			if(cylinder >= sectorsData.Length)
+				throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+
+			if(head >= sectorsData[cylinder].Length)
+				throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+
+			if(sector > sectorsData[cylinder][head].Length)
+				throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+
+			return sectorsData[cylinder][head][sector];
+		}
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > (ulong)sectorsData.Count - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+			if(sectorAddress > ImageInfo.sectors - 1)
+				throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > (ulong)sectorsData.Count)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+			if(sectorAddress + length > ImageInfo.sectors)
+				throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] data = new byte[1]; // To make compiler happy
-            bool first = true;
-            int dataPosition = 0;
+			MemoryStream buffer = new MemoryStream();
+			for(uint i = 0; i < length; i++)
+			{
+				byte[] sector = ReadSector(sectorAddress + i);
+				buffer.Write(sector, 0, sector.Length);
+			}
 
-            for(ulong i = sectorAddress; i < (sectorAddress + length); i++)
-            {
-                if(!sectorsData.ContainsKey((uint)i))
-                    throw new ImageNotSupportedException(string.Format("Requested sector {0} not found", i));
+			return buffer.ToArray();
+		}
 
-                byte[] sector;
+		(ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
+		{
+			ushort cylinder = (ushort)(lba / (ImageInfo.heads * ImageInfo.sectorsPerTrack));
+			byte head = (byte)((lba / ImageInfo.sectorsPerTrack) % ImageInfo.heads);
+			byte sector = (byte)((lba % ImageInfo.sectorsPerTrack) + 1);
 
-                if(!sectorsData.TryGetValue((uint)i, out sector))
-                    throw new ImageNotSupportedException(string.Format("Error reading sector {0}", i));
+			return (cylinder, head, sector);
+		}
 
-                if(first)
-                {
-                    data = new byte[sector.Length];
-                    Array.Copy(sector, data, sector.Length);
-                    first = false;
-                }
-                else
-                {
-                    Array.Resize(ref data, dataPosition + sector.Length);
-                    Array.Copy(sector, 0, data, dataPosition, sector.Length);
-                }
-                dataPosition += sector.Length;
-            }
-
-            return data;
-        }
-
-        public override byte[] ReadSectorLong(ulong sectorAddress)
+		public override byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
