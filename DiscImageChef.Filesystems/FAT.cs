@@ -250,6 +250,8 @@ namespace DiscImageChef.Filesystems
                         fat2_sector_no = 2;
                     else if(imagePlugin.ImageInfo.sectors == 720 && imagePlugin.ImageInfo.sectorSize == 128)
                         fat2_sector_no = 5;
+                    else if(imagePlugin.ImageInfo.sectors == 640 && imagePlugin.ImageInfo.sectorSize == 512)
+                        fat2_sector_no = 2;
                     break;
                 case 0xFF:
                     if(imagePlugin.ImageInfo.sectors == 640 && imagePlugin.ImageInfo.sectorSize == 512)
@@ -635,6 +637,21 @@ namespace DiscImageChef.Filesystems
                             fakeBPB.heads = 1;
                             fakeBPB.hsectors = 0;
                             fakeBPB.spfat = 4;
+                        }
+                        else if(imagePlugin.ImageInfo.sectors == 640 && imagePlugin.ImageInfo.sectorSize == 512)
+                        {
+                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
+                            fakeBPB.bps = 512;
+                            fakeBPB.spc = 2;
+                            fakeBPB.rsectors = 1;
+                            fakeBPB.fats_no = 2;
+                            fakeBPB.root_ent = 112;
+                            fakeBPB.sectors = 640;
+                            fakeBPB.media = 0xFF;
+                            fakeBPB.sptrk = 8;
+                            fakeBPB.heads = 2;
+                            fakeBPB.hsectors = 0;
+                            fakeBPB.spfat = 1;
                         }
                         break;
                     case 0xFF:
