@@ -90,41 +90,6 @@ namespace DiscImageChef.Devices
             type = DeviceType.Unknown;
             scsiType = Decoders.SCSI.PeripheralDeviceTypes.UnknownDevice;
 
-            // TODO: This is getting error -110 in Linux. Apparently I should set device to standby, request CID/CSD, put device to transition. However I can't get it right now.
-            /*
-            try
-            {
-                byte[] csdBuf;
-                byte[] scrBuf;
-                uint[] mmcResponse;
-                double mmcDuration;
-
-                bool mmcSense = ReadCID(out csdBuf, out mmcResponse, 0, out mmcDuration);
-
-                if(!mmcSense)
-                {
-                    mmcSense = ReadSCR(out scrBuf, out mmcResponse, 0, out mmcDuration);
-
-                    if(!mmcSense)
-                        type = DeviceType.SecureDigital;
-                    else
-                        type = DeviceType.MMC;
-
-                    manufacturer = "To be filled manufacturer";
-                    model = "To be filled model";
-                    revision = "To be filled revision";
-                    serial = "To be filled serial";
-                    scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
-                    removable = false;
-                    return;
-                }
-                else
-                    System.Console.WriteLine("Error {0}: {1}", error, lastError);
-            }
-            catch(NotImplementedException) { }
-            catch(InvalidOperationException) { }
-            */
-
             AtaErrorRegistersCHS errorRegisters;
 
             byte[] ataBuf;
@@ -231,7 +196,6 @@ namespace DiscImageChef.Devices
                     if(System.IO.File.Exists("/sys/block/" + devPath + "/device/csd"))
                     {
                         int len = ConvertFromHexASCII("/sys/block/" + devPath + "/device/csd", out cachedCsd);
-                        System.Console.WriteLine("len {0} len2 {1}", len, cachedCsd.Length);
                         if(len == 0)
                             cachedCsd = null;
                     }
@@ -250,10 +214,27 @@ namespace DiscImageChef.Devices
 
                     if(cachedCid != null)
                     {
-                        type = DeviceType.MMC;
+                        scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
+                        removable = false;
 
                         if(cachedScr != null)
+                        {
                             type = DeviceType.SecureDigital;
+                            Decoders.SecureDigital.CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
+                            manufacturer = Decoders.SecureDigital.VendorString.Prettify(decoded.Manufacturer);
+                            model = decoded.ProductName;
+                            revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4, decoded.ProductRevision & 0x0F);
+                            serial = string.Format("{0}", decoded.ProductSerialNumber);
+                        }
+                        else
+                        {
+                            type = DeviceType.MMC;
+                            Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(cachedCid);
+                            manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                            model = decoded.ProductName;
+                            revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4, decoded.ProductRevision & 0x0F);
+                            serial = string.Format("{0}", decoded.ProductSerialNumber);
+                        }
                     }
                 }
             }
