@@ -491,15 +491,16 @@ namespace DiscImageChef.Decoders.MMC
                     break;
             }
 
-            unitFactor = Convert.ToDouble(string.Format("{0:X}", csd.EraseGroupSize));
-            multiplier = Convert.ToDouble(string.Format("{0:X}", csd.EraseGroupSizeMultiplier));
+            // TODO: Check specification
+            unitFactor = Convert.ToDouble(csd.EraseGroupSize);
+            multiplier = Convert.ToDouble(csd.EraseGroupSizeMultiplier);
             result = (unitFactor + 1) * (multiplier + 1);
             sb.AppendFormat("\tDevice can erase a minimum of {0} blocks at a time", (int)result).AppendLine();
 
             if(csd.WriteProtectGroupEnable)
             {
                 sb.AppendLine("\tDevice can write protect regions");
-                unitFactor = Convert.ToDouble(string.Format("{0:X}", csd.WriteProtectGroupSize));
+                unitFactor = Convert.ToDouble(csd.WriteProtectGroupSize);
                 sb.AppendFormat("\tDevice can write protect a minimum of {0} blocks at a time", (int)(result + 1)).AppendLine();
             }
             else

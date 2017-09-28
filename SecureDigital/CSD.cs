@@ -500,13 +500,14 @@ namespace DiscImageChef.Decoders.SecureDigital
                 if(csd.EraseBlockEnable)
                     sb.AppendLine("\tDevice can erase multiple blocks");
 
-                sb.AppendFormat("\tDevice must erase a minimum of {0} blocks at a time", Convert.ToUInt32(string.Format("{0:X}", csd.EraseSectorSize)) + 1).AppendLine();
-
+                // TODO: Check specification
+                sb.AppendFormat("\tDevice must erase a minimum of {0} blocks at a time", Convert.ToUInt32(csd.EraseSectorSize) + 1).AppendLine();
 
                 if(csd.WriteProtectGroupEnable)
                 {
                     sb.AppendLine("\tDevice can write protect regions");
-                    unitFactor = Convert.ToDouble(string.Format("{0:X}", csd.WriteProtectGroupSize));
+                    // TODO: Check specification
+                    unitFactor = Convert.ToDouble(csd.WriteProtectGroupSize);
                     sb.AppendFormat("\tDevice can write protect a minimum of {0} blocks at a time", (int)(result + 1)).AppendLine();
                 }
                 else
