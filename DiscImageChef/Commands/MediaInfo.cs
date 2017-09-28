@@ -100,7 +100,7 @@ namespace DiscImageChef.Commands
 
         static void doSDMediaInfo(string outputPrefix, Device dev)
         {
-            throw new NotImplementedException("MMC/SD devices not yet supported.");
+            DicConsole.ErrorWriteLine("Please use device-info command for MMC/SD devices.");
         }
 
         static void doSCSIMediaInfo(string outputPrefix, Device dev)
