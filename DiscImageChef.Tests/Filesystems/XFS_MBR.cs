@@ -55,7 +55,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly ulong[] sectors = {
-            191176,
+            1048576,
         };
 
         readonly uint[] sectorsize = {
@@ -63,7 +63,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            32512,
+            130816,
         };
 
         readonly int[] clustersize = {
@@ -71,11 +71,11 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumename = {
-            "VolumeLabel",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "unknown",
+            "230075b7-9834-b44e-a257-982a058311d8",
         };
 
         [Test]
