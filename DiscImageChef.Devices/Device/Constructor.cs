@@ -137,7 +137,7 @@ namespace DiscImageChef.Devices
             bool scsiSense = true;
 
             // Windows is answering SCSI INQUIRY for all device types so it needs to be detected first
-            if (platformID == Interop.PlatformID.Win32NT)
+            if(platformID == Interop.PlatformID.Win32NT)
             {
                 Windows.StoragePropertyQuery query = new Windows.StoragePropertyQuery();
                 query.PropertyId = Windows.StoragePropertyId.Device;
@@ -152,18 +152,18 @@ namespace DiscImageChef.Devices
 
                 bool hasError = !Windows.Extern.DeviceIoControlStorageQuery((SafeFileHandle)fd, Windows.WindowsIoctl.IOCTL_STORAGE_QUERY_PROPERTY, ref query, (uint)Marshal.SizeOf(query), descriptorPtr, 1000, ref returned, IntPtr.Zero);
 
-                if (hasError)
+                if(hasError)
                     error = Marshal.GetLastWin32Error();
 
                 Marshal.Copy(descriptorPtr, descriptor_b, 0, 1000);
 
-                if (!hasError && error == 0)
+                if(!hasError && error == 0)
                 {
 
                     Windows.StorageDeviceDescriptor descriptor = new Windows.StorageDeviceDescriptor();
                     descriptor.BusType = (Windows.StorageBusType)BitConverter.ToUInt32(descriptor_b, 28);
 
-                    switch (descriptor.BusType)
+                    switch(descriptor.BusType)
                     {
                         case Windows.StorageBusType.SCSI:
                         case Windows.StorageBusType.SSA:
@@ -202,12 +202,12 @@ namespace DiscImageChef.Devices
                     {
                         bool atapiSense = AtapiIdentify(out ataBuf, out errorRegisters);
 
-                        if (!atapiSense)
+                        if(!atapiSense)
                         {
                             type = DeviceType.ATAPI;
                             Identify.IdentifyDevice? ATAID = Identify.Decode(ataBuf);
 
-                            if (ATAID.HasValue)
+                            if(ATAID.HasValue)
                                 scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
                         }
                         else
@@ -218,7 +218,10 @@ namespace DiscImageChef.Devices
                 Marshal.FreeHGlobal(descriptorPtr);
             }
             else
-                scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
+            {
+                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                    scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
+            }
 
             #region USB
             if (platformID == Interop.PlatformID.Linux)
