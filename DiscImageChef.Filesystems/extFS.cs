@@ -61,6 +61,9 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
+            if(imagePlugin.GetSectorSize() < 512)
+                return false;
+            
             ulong sbSector = sbPos / imagePlugin.GetSectorSize();
             uint sbOff = sbPos % imagePlugin.GetSectorSize();
 
@@ -81,6 +84,9 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
+
+            if(imagePlugin.GetSectorSize() < 512)
+                return;
 
             ulong sbSector = sbPos / imagePlugin.GetSectorSize();
             uint sbOff = sbPos % imagePlugin.GetSectorSize();
