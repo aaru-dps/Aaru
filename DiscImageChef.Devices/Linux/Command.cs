@@ -364,7 +364,7 @@ namespace DiscImageChef.Devices.Linux
             io_cmd.arg = argument;
             io_cmd.flags = flags;
             io_cmd.blksz = blockSize;
-            io_cmd.blksz = blocks;
+            io_cmd.blocks = blocks;
             if(timeout > 0)
             {
                 io_cmd.data_timeout_ns = timeout * 1000000000;
