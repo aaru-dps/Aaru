@@ -41,7 +41,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[16];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendCSD, false, false, MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandADTC,
+            lastError = SendMmcCommand(MmcCommands.SendCSD, false, false, MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 | MmcFlags.CommandAC,
                                        0, 16, 1, ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
@@ -55,7 +55,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[16];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendCID, false, false, MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandADTC,
+            lastError = SendMmcCommand(MmcCommands.SendCID, false, false, MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 | MmcFlags.CommandAC,
                                        0, 16, 1, ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
@@ -139,7 +139,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[4];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendStatus, false, true, MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandADTC,
+            lastError = SendMmcCommand(MmcCommands.SendStatus, false, true, MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandAC,
                                        0, 4, 1, ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
