@@ -112,13 +112,15 @@ namespace DiscImageChef.ImagePlugins
         const byte kInvalidFmtByte = 0x96;
         /// <summary>Defined by LisaEm</summary>
         const byte kFmtNotStandard = 0x93;
+		/// <summary>Used incorrectly by Mac OS X with certaing disk images</summary>
+		const byte kMacOSXFmtByte = 0x00;
 
-        #endregion
+		#endregion
 
-        #region Internal variables
+		#region Internal variables
 
-        /// <summary>Start of data sectors in disk image, should be 0x58</summary>
-        uint dataOffset;
+		/// <summary>Start of data sectors in disk image, should be 0x58</summary>
+		uint dataOffset;
         /// <summary>Start of tags in disk image, after data sectors</summary>
         uint tagOffset;
         /// <summary>Bytes per tag, should be 12</summary>
@@ -202,8 +204,17 @@ namespace DiscImageChef.ImagePlugins
             if(tmp_header.valid != 1 || tmp_header.reserved != 0)
                 return false;
 
+			// Some versions seem to incorrectly create little endian fields
             if(tmp_header.dataSize + tmp_header.tagSize + 0x54 != imageFilter.GetDataForkLength() && tmp_header.format != kSigmaFormatTwiggy)
-                return false;
+			{
+				tmp_header.dataSize = BitConverter.ToUInt32(buffer, 0x40);
+				tmp_header.tagSize = BitConverter.ToUInt32(buffer, 0x44);
+				tmp_header.dataChecksum = BitConverter.ToUInt32(buffer, 0x48);
+				tmp_header.tagChecksum = BitConverter.ToUInt32(buffer, 0x4C);
+
+				if(tmp_header.dataSize + tmp_header.tagSize + 0x54 != imageFilter.GetDataForkLength() && tmp_header.format != kSigmaFormatTwiggy)
+					return false;
+			}
 
             if(tmp_header.format != kSonyFormat400K && tmp_header.format != kSonyFormat800K && tmp_header.format != kSonyFormat720K &&
                 tmp_header.format != kSonyFormat1440K && tmp_header.format != kSonyFormat1680K && tmp_header.format != kSigmaFormatTwiggy &&
@@ -216,7 +227,7 @@ namespace DiscImageChef.ImagePlugins
 
             if(tmp_header.fmtByte != kSonyFmtByte400K && tmp_header.fmtByte != kSonyFmtByte800K && tmp_header.fmtByte != kSonyFmtByte800KIncorrect &&
                tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSigmaFmtByteTwiggy &&
-               tmp_header.fmtByte != kFmtNotStandard)
+			   tmp_header.fmtByte != kFmtNotStandard && tmp_header.fmtByte != kMacOSXFmtByte)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", tmp_header.fmtByte);
 
@@ -272,10 +283,19 @@ namespace DiscImageChef.ImagePlugins
             if(header.valid != 1 || header.reserved != 0)
                 return false;
 
-            if(header.dataSize + header.tagSize + 0x54 != imageFilter.GetDataForkLength() && header.format != kSigmaFormatTwiggy)
-                return false;
+			// Some versions seem to incorrectly create little endian fields
+			if(header.dataSize + header.tagSize + 0x54 != imageFilter.GetDataForkLength() && header.format != kSigmaFormatTwiggy)
+			{
+				header.dataSize = BitConverter.ToUInt32(buffer, 0x40);
+				header.tagSize = BitConverter.ToUInt32(buffer, 0x44);
+				header.dataChecksum = BitConverter.ToUInt32(buffer, 0x48);
+				header.tagChecksum = BitConverter.ToUInt32(buffer, 0x4C);
 
-            if(header.format != kSonyFormat400K && header.format != kSonyFormat800K && header.format != kSonyFormat720K &&
+				if(header.dataSize + header.tagSize + 0x54 != imageFilter.GetDataForkLength() && header.format != kSigmaFormatTwiggy)
+					return false;
+			}
+
+			if(header.format != kSonyFormat400K && header.format != kSonyFormat800K && header.format != kSonyFormat720K &&
                 header.format != kSonyFormat1440K && header.format != kSonyFormat1680K && header.format != kSigmaFormatTwiggy && header.format != kNotStandardFormat)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Unknown header.format = 0x{0:X2} value", header.format);
@@ -284,7 +304,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             if(header.fmtByte != kSonyFmtByte400K && header.fmtByte != kSonyFmtByte800K && header.fmtByte != kSonyFmtByte800KIncorrect &&
-                header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSigmaFmtByteTwiggy && header.fmtByte != kFmtNotStandard)
+                header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSigmaFmtByteTwiggy && header.fmtByte != kFmtNotStandard && header.fmtByte != kMacOSXFmtByte)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
 
@@ -328,7 +348,10 @@ namespace DiscImageChef.ImagePlugins
             switch(header.format)
             {
                 case kSonyFormat400K:
-                    ImageInfo.mediaType = MediaType.AppleSonySS;
+					if(ImageInfo.sectors == 1600)
+						ImageInfo.mediaType = MediaType.AppleSonyDS;
+					else 
+						ImageInfo.mediaType = MediaType.AppleSonySS;
                     break;
                 case kSonyFormat800K:
                     ImageInfo.mediaType = MediaType.AppleSonyDS;
