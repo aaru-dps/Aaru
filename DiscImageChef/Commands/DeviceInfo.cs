@@ -1398,6 +1398,80 @@ namespace DiscImageChef.Commands
 
                         break;
                     }
+                case DeviceType.MMC:
+                    {
+                        bool noInfo = true;
+
+                        bool sense = dev.ReadCID(out byte[] mmcBuf, out uint[] response, dev.Timeout, out double duration);
+                        if(!sense)
+                        {
+                            noInfo = false;
+                            DataFile.WriteTo("Device-Info command", options.OutputPrefix, "_mmc_cid.bin", "MMC CID", mmcBuf);
+                            DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCID(mmcBuf));
+                        }
+                        sense = dev.ReadCSD(out mmcBuf, out response, dev.Timeout, out duration);
+                        if(!sense)
+                        {
+                            noInfo = false;
+                            DataFile.WriteTo("Device-Info command", options.OutputPrefix, "_mmc_csd.bin", "MMC CSD", mmcBuf);
+                            DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCSD(mmcBuf));
+                        }
+                        sense = dev.ReadOCR(out mmcBuf, out response, dev.Timeout, out duration);
+                        if(!sense)
+                        {
+                            noInfo = false;
+                            DataFile.WriteTo("Device-Info command", options.OutputPrefix, "_mmc_ocr.bin", "MMC OCR", mmcBuf);
+                            DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyOCR(mmcBuf));
+                        }
+                        sense = dev.ReadExtendedCSD(out mmcBuf, out response, dev.Timeout, out duration);
+                        if(!sense)
+                        {
+                            noInfo = false;
+                            DataFile.WriteTo("Device-Info command", options.OutputPrefix, "_mmc_ecsd.bin", "MMC Extended CSD", mmcBuf);
+                            DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(mmcBuf));
+                        }
+
+                        if(noInfo)
+                            DicConsole.WriteLine("Could not get any kind of information from the device !!!");
+                    }
+                    break;
+                case DeviceType.SecureDigital:
+                    {
+                        bool noInfo = true;
+
+                        bool sense = dev.ReadCID(out byte[] sdBuf, out uint[] response, dev.Timeout, out double duration);
+                        if(!sense)
+                        {
+                            noInfo = false;
+                            DataFile.WriteTo("Device-Info command", options.OutputPrefix, "_sd_cid.bin", "SecureDigital CID", sdBuf);
+                            DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(sdBuf));
+                        }
+                        sense = dev.ReadCSD(out sdBuf, out response, dev.Timeout, out duration);
+                        if(!sense)
+                        {
+                            noInfo = false;
+                            DataFile.WriteTo("Device-Info command", options.OutputPrefix, "_sd_csd.bin", "SecureDigital CSD", sdBuf);
+                            DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(sdBuf));
+                        }
+                        sense = dev.ReadSDOCR(out sdBuf, out response, dev.Timeout, out duration);
+                        if(!sense)
+                        {
+                            noInfo = false;
+                            DataFile.WriteTo("Device-Info command", options.OutputPrefix, "_sd_ocr.bin", "SecureDigital OCR", sdBuf);
+                            DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(sdBuf));
+                        }
+                        sense = dev.ReadSCR(out sdBuf, out response, dev.Timeout, out duration);
+                        if(!sense)
+                        {
+                            noInfo = false;
+                            DataFile.WriteTo("Device-Info command", options.OutputPrefix, "_sd_scr.bin", "SecureDigital SCR", sdBuf);
+                            DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(sdBuf));
+                        }
+
+                        if(noInfo)
+                            DicConsole.WriteLine("Could not get any kind of information from the device !!!");
+                    }
+                    break;
                 default:
                     DicConsole.ErrorWriteLine("Unknown device type {0}, cannot get information.", dev.Type);
                     break;
