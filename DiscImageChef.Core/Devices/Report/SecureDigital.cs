@@ -38,6 +38,7 @@
 using System;
 using DiscImageChef.Devices;
 using DiscImageChef.Metadata;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Core.Devices.Report
 {
@@ -48,7 +49,107 @@ namespace DiscImageChef.Core.Devices.Report
             if(report == null)
                 return;
 
-            throw new NotImplementedException("MMC/SD devices not yet supported.");
+            if(dev.Type == DeviceType.MMC)
+                report.MultiMediaCard = new mmcsdType();
+            else if(dev.Type == DeviceType.SecureDigital)
+                report.SecureDigital = new mmcsdType();
+
+            DicConsole.WriteLine("Trying to get CID...");
+            bool sense = dev.ReadCID(out byte[] cid, out uint[] response, dev.Timeout, out double duration);
+
+            if(!sense)
+            {
+                DicConsole.WriteLine("CID obtained correctly...");
+
+                if(dev.Type == DeviceType.MMC)
+                {
+                    // Clear serial number and manufacturing date
+                    cid[9] = 0;
+                    cid[10] = 0;
+                    cid[11] = 0;
+                    cid[12] = 0;
+                    cid[13] = 0;
+                    cid[14] = 0;
+                    report.MultiMediaCard.CID = cid;
+                }
+                else if(dev.Type == DeviceType.SecureDigital)
+                {
+                    // Clear serial number and manufacturing date
+                    cid[10] = 0;
+                    cid[11] = 0;
+                    cid[12] = 0;
+                    cid[13] = 0;
+                    cid[14] = 0;
+                    report.SecureDigital.CID = cid;
+                }
+            }
+            else
+                DicConsole.WriteLine("Could not read CID...");
+
+            DicConsole.WriteLine("Trying to get CSD...");
+            sense = dev.ReadCSD(out byte[] csd, out response, dev.Timeout, out duration);
+
+            if(!sense)
+            {
+                DicConsole.WriteLine("CSD obtained correctly...");
+
+                if(dev.Type == DeviceType.MMC)
+                    report.MultiMediaCard.CSD = csd;
+                else if(dev.Type == DeviceType.SecureDigital)
+                    report.SecureDigital.CSD = csd;
+            }
+            else
+                DicConsole.WriteLine("Could not read CSD...");
+
+            if(dev.Type == DeviceType.MMC)
+            {
+                DicConsole.WriteLine("Trying to get OCR...");
+                sense = dev.ReadOCR(out byte[] ocr, out response, dev.Timeout, out duration);
+
+                if(!sense)
+                {
+                    DicConsole.WriteLine("OCR obtained correctly...");
+                    report.MultiMediaCard.OCR = ocr;
+                }
+                else
+                    DicConsole.WriteLine("Could not read OCR...");
+
+                DicConsole.WriteLine("Trying to get Extended CSD...");
+                sense = dev.ReadExtendedCSD(out byte[] ecsd, out response, dev.Timeout, out duration);
+
+                if(!sense)
+                {
+                    DicConsole.WriteLine("Extended CSD obtained correctly...");
+                    report.MultiMediaCard.ExtendedCSD = ecsd;
+                }
+                else
+                    DicConsole.WriteLine("Could not read Extended CSD...");
+            }
+            else if(dev.Type == DeviceType.SecureDigital)
+            {
+                DicConsole.WriteLine("Trying to get OCR...");
+                sense = dev.ReadSDOCR(out byte[] ocr, out response, dev.Timeout, out duration);
+
+                if(!sense)
+                {
+                    DicConsole.WriteLine("OCR obtained correctly...");
+                    report.MultiMediaCard.OCR = ocr;
+                }
+                else
+                    DicConsole.WriteLine("Could not read OCR...");
+
+                DicConsole.WriteLine("Trying to get SCR...");
+                sense = dev.ReadSCR(out byte[] scr, out response, dev.Timeout, out duration);
+
+                if(!sense)
+                {
+                    DicConsole.WriteLine("SCR obtained correctly...");
+                    report.MultiMediaCard.SCR = scr;
+                }
+                else
+                    DicConsole.WriteLine("Could not read SCR...");
+            }
+
         }
     }
 }

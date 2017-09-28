@@ -48,6 +48,8 @@ namespace DiscImageChef.Metadata
         public ataType ATA { get; set; }
         public ataType ATAPI { get; set; }
         public scsiType SCSI { get; set; }
+        public mmcsdType MultiMediaCard { get; set; }
+        public mmcsdType SecureDigital { get; set; }
 
         [XmlIgnore]
         public bool CompactFlashSpecified { get; set; }
@@ -1032,6 +1034,16 @@ namespace DiscImageChef.Metadata
         public bool ManufacturerCodeSpecified { get; set; }
         [XmlIgnore]
         public bool CardCodeSpecified { get; set; }
+    }
+
+    [Serializable]
+    public class mmcsdType
+    {
+        public byte[] CID { get; set; }
+        public byte[] CSD { get; set; }
+        public byte[] OCR { get; set; }
+        public byte[] SCR { get; set; }
+        public byte[] ExtendedCSD { get; set; }
     }
 }
 
