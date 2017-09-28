@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : SysV.cs
+// Filename       : SysV_MBR.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -35,79 +35,51 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
+using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
+using DiscImageChef.PartPlugins;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class SysV
+    public class EAFS_MBR
     {
         readonly string[] testfiles = {
-            "amix.adf.lz",
-            "att_unix_svr4v2.1_dsdd.img.lz", "att_unix_svr4v2.1_mf2dd.img.lz", "att_unix_svr4v2.1_mf2hd.img.lz",
-            "scoopenserver_5.0.7hw_dmf.img.lz", "scoopenserver_5.0.7hw_dshd.img.lz", "scoopenserver_5.0.7hw_mf2dd.img.lz", "scoopenserver_5.0.7hw_mf2ed.img.lz",
-            "scoopenserver_5.0.7hw_mf2hd.img.lz",
-        };
-
-        readonly MediaType[] mediatypes = {
-            MediaType.CBM_AMIGA_35_DD,
-            MediaType.DOS_525_DS_DD_9,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
-            MediaType.DMF,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,
-            MediaType.DOS_35_HD,
+            "scoopenserver_5.0.7hw.vdi.lz"
         };
 
         readonly ulong[] sectors = {
-            1760,
-            720, 1440, 2880,
-            3360, 2400, 1440, 5760,
-            2880,
+            1024000,
         };
 
         readonly uint[] sectorsize = {
             512,
-            512, 512, 512,
-            512, 512, 512, 512,
-            512,
         };
 
         readonly long[] clusters = {
-            880,
-            360, 720, 1440,
-            1680, 1200, 720, 2880,
-            1440,
+            510048,
         };
 
         readonly int[] clustersize = {
             1024,
-            1024, 1024, 1024,
-            1024, 1024, 1024, 1024,
-            1024,
         };
 
         readonly string[] volumename = {
-            "",
-            "", "", "",
-            "", "", "", "",
-            "",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
             null,
-            null, null, null,
-            null, null, null, null,
-            null,
         };
 
         readonly string[] type = {
-            "SVR2 fs",
-            "SVR4 fs", "SVR4 fs", "SVR4 fs",
-            "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs",
-            "SVR4 fs",
+            "Extended Acer Fast Filesystem",
         };
 
         [Test]
@@ -115,23 +87,27 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "s5fs", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "eafs_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new ZZZRawImage();
+                ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
                 Filesystem fs = new DiscImageChef.Filesystems.SysVfs();
-                Partition wholePart = new Partition
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
                 {
-                    Name = "Whole device",
-                    Length = image.ImageInfo.sectors,
-                    Size = image.ImageInfo.sectors * image.ImageInfo.sectorSize
-                };
-                Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
-                fs.GetInformation(image, wholePart, out string information);
+                    if(partitions[j].Type == "XENIX")
+                    {
+                        part = j;
+                        break;
+                    }
+                }
+                Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                fs.GetInformation(image, partitions[part], out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);

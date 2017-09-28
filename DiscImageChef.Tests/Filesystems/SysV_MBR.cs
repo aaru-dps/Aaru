@@ -51,35 +51,35 @@ namespace DiscImageChef.Tests.Filesystems
     public class SysV_MBR
     {
         readonly string[] testfiles = {
-            "xenix_2.3.2d.vdi.lz",
+            "att_unix_svr4v2.1.vdi.lz", "att_unix_svr4v2.1_2k.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz"
         };
 
         readonly ulong[] sectors = {
-            40960,40960,
+            1024000, 1024000, 2097152,
         };
 
         readonly uint[] sectorsize = {
-            512,512,
+            512, 512, 512,
         };
 
         readonly long[] clusters = {
-            19624,19624,
+            511056, 255528, 1020096, 
         };
 
         readonly int[] clustersize = {
-            1024,1024,
+            1024, 2048, 1024,
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label",
+            "/usr3", "/usr3", "Volume label",
         };
 
         readonly string[] volumeserial = {
-            null,null,
+            null, null, null,
         };
 
         readonly string[] type = {
-            "XENIX fs","XENIX fs",
+            "SVR4 fs", "SVR2 fs", "SVR4 fs",
         };
 
         [Test]
@@ -99,7 +99,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].Type == "0x02")
+                    if(partitions[j].Type == "UNIX: /usr" || partitions[j].Type == "XENIX")
                     {
                         part = j;
                         break;

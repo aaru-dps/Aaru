@@ -166,6 +166,18 @@
     <Compile Include="Partitions\SGI.cs" />
     <Compile Include="Partitions\Sun.cs" />
     <Compile Include="Partitions\VTOC.cs" />
+    <Compile Include="Filesystems\XENIX.cs" />
+    <Compile Include="Filesystems\COHERENT.cs" />
+    <Compile Include="Filesystems\HTFS.cs" />
+    <Compile Include="Filesystems\DTFS.cs" />
+    <Compile Include="Filesystems\AFS.cs" />
+    <Compile Include="Filesystems\EAFS.cs" />
+    <Compile Include="Filesystems\XENIX_MBR.cs" />
+    <Compile Include="Filesystems\EAFS_MBR.cs" />
+    <Compile Include="Filesystems\AFS_MBR.cs" />
+    <Compile Include="Filesystems\COHERENT_MBR.cs" />
+    <Compile Include="Filesystems\HTFS_MBR.cs" />
+    <Compile Include="Filesystems\DTFS_MBR.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : SysV.cs
+// Filename       : AFS.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -45,69 +45,51 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class SysV
+    public class AFS
     {
         readonly string[] testfiles = {
-            "amix.adf.lz",
-            "att_unix_svr4v2.1_dsdd.img.lz", "att_unix_svr4v2.1_mf2dd.img.lz", "att_unix_svr4v2.1_mf2hd.img.lz",
             "scoopenserver_5.0.7hw_dmf.img.lz", "scoopenserver_5.0.7hw_dshd.img.lz", "scoopenserver_5.0.7hw_mf2dd.img.lz", "scoopenserver_5.0.7hw_mf2ed.img.lz",
             "scoopenserver_5.0.7hw_mf2hd.img.lz",
         };
 
         readonly MediaType[] mediatypes = {
-            MediaType.CBM_AMIGA_35_DD,
-            MediaType.DOS_525_DS_DD_9,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
-            MediaType.DMF,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,
+            MediaType.DMF, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED,
             MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
-            1760,
-            720, 1440, 2880,
             3360, 2400, 1440, 5760,
             2880,
         };
 
         readonly uint[] sectorsize = {
-            512,
-            512, 512, 512,
             512, 512, 512, 512,
-            512,
+            512, 
         };
 
         readonly long[] clusters = {
-            880,
-            360, 720, 1440,
             1680, 1200, 720, 2880,
             1440,
         };
 
         readonly int[] clustersize = {
-            1024,
-            1024, 1024, 1024,
             1024, 1024, 1024, 1024,
             1024,
         };
 
         readonly string[] volumename = {
-            "",
-            "", "", "",
             "", "", "", "",
             "",
         };
 
         readonly string[] volumeserial = {
-            null,
-            null, null, null,
             null, null, null, null,
             null,
         };
 
         readonly string[] type = {
-            "SVR2 fs",
-            "SVR4 fs", "SVR4 fs", "SVR4 fs",
-            "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs",
-            "SVR4 fs",
+            "Acer Fast Filesystem", "Acer Fast Filesystem", "Acer Fast Filesystem", "Acer Fast Filesystem",
+            "Acer Fast Filesystem",
         };
 
         [Test]
@@ -115,7 +97,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "s5fs", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "afs", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new ZZZRawImage();
