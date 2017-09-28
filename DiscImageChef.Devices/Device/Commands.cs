@@ -135,6 +135,42 @@ namespace DiscImageChef.Devices
                                   uint argument, uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
                                   out double duration, out bool sense, uint timeout = 0)
         {
+            if(command == MmcCommands.SendCID && cachedCid != null)
+            {
+                System.DateTime start = System.DateTime.Now;
+                buffer = new byte[cachedCid.Length];
+                System.Array.Copy(cachedCid, buffer, buffer.Length);
+                response = new uint[4];
+                sense = false;
+                System.DateTime end = System.DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+                return 0;
+            }
+
+            if(command == MmcCommands.SendCSD && cachedCid != null)
+            {
+                System.DateTime start = System.DateTime.Now;
+                buffer = new byte[cachedCsd.Length];
+                System.Array.Copy(cachedCsd, buffer, buffer.Length);
+                response = new uint[4];
+                sense = false;
+                System.DateTime end = System.DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+                return 0;
+            }
+
+            if(command == (MmcCommands)SecureDigitalCommands.SendSCR && cachedScr != null)
+            {
+                System.DateTime start = System.DateTime.Now;
+                buffer = new byte[cachedScr.Length];
+                System.Array.Copy(cachedScr, buffer, buffer.Length);
+                response = new uint[4];
+                sense = false;
+                System.DateTime end = System.DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+                return 0;
+            }
+
             return Command.SendMmcCommand(platformID, fd, command, write, isApplication, flags, argument, blockSize, blocks,
                                           ref buffer, out response, out duration, out sense, timeout);
         }
