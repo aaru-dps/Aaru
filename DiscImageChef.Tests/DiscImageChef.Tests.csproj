@@ -178,6 +178,7 @@
     <Compile Include="Filesystems\COHERENT_MBR.cs" />
     <Compile Include="Filesystems\HTFS_MBR.cs" />
     <Compile Include="Filesystems\DTFS_MBR.cs" />
+    <Compile Include="Filesystems\ISO9660.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
