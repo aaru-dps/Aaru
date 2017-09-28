@@ -62,6 +62,12 @@ namespace DiscImageChef.Devices
         readonly bool pcmcia;
         readonly byte[] cis;
 
+        // MMC and SecureDigital, values that need to be get with card idle, something that may
+        // not be possible to do but usually is already done by the SDHCI driver.
+        readonly byte[] cachedCsd;
+        readonly byte[] cachedCid;
+        readonly byte[] cachedScr;
+
         /// <summary>
         /// Gets the Platform ID for this device
         /// </summary>

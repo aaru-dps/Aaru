@@ -188,6 +188,8 @@ namespace DiscImageChef.Devices
                             type = DeviceType.ATA;
                             break;
                         case Windows.StorageBusType.MultiMediaCard:
+                            type = DeviceType.MMC;
+                            break;
                         case Windows.StorageBusType.SecureDigital:
                             type = DeviceType.SecureDigital;
                             break;
@@ -213,6 +215,7 @@ namespace DiscImageChef.Devices
                         else
                             manufacturer = "ATA";
                     }
+                    // TODO: Get cached CID, CSD and SCR from kernel space
                 }
 
                 Marshal.FreeHGlobal(descriptorPtr);
@@ -221,6 +224,38 @@ namespace DiscImageChef.Devices
             {
                 if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                     scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
+                // MultiMediaCard and SecureDigital go here
+                else if(devicePath.StartsWith("/dev/mmcblk", StringComparison.Ordinal))
+                {
+                    string devPath = devicePath.Substring(5);
+                    if(System.IO.File.Exists("/sys/block/" + devPath + "/device/csd"))
+                    {
+                        int len = ConvertFromHexASCII("/sys/block/" + devPath + "/device/csd", out cachedCsd);
+                        System.Console.WriteLine("len {0} len2 {1}", len, cachedCsd.Length);
+                        if(len == 0)
+                            cachedCsd = null;
+                    }
+                    if(System.IO.File.Exists("/sys/block/" + devPath + "/device/cid"))
+                    {
+                        int len = ConvertFromHexASCII("/sys/block/" + devPath + "/device/cid", out cachedCid);
+                        if(len == 0)
+                            cachedCid = null;
+                    }
+                    if(System.IO.File.Exists("/sys/block/" + devPath + "/device/scr"))
+                    {
+                        int len = ConvertFromHexASCII("/sys/block/" + devPath + "/device/scr", out cachedScr);
+                        if(len == 0)
+                            cachedScr = null;
+                    }
+
+                    if(cachedCid != null)
+                    {
+                        type = DeviceType.MMC;
+
+                        if(cachedScr != null)
+                            type = DeviceType.SecureDigital;
+                    }
+                }
             }
 
             #region USB
@@ -530,6 +565,30 @@ namespace DiscImageChef.Devices
                     }
                 }
             }
+        }
+
+        static int ConvertFromHexASCII(string file, out byte[] outBuf)
+        {
+            System.IO.StreamReader sr = new System.IO.StreamReader(file);
+            string ins = sr.ReadToEnd().Trim();
+            outBuf = new byte[ins.Length / 2];
+            int count = 0;
+
+            try
+            {
+                for(int i = 0; i < ins.Length; i+=2)
+                {
+                    outBuf[i/2] = Convert.ToByte(ins.Substring(i, 2), 16);
+                    count++;
+                }
+            }
+            catch
+            {
+                count = 0;
+            }
+
+            sr.Close();
+            return count;
         }
     }
 }
