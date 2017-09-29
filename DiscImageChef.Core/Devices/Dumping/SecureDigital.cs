@@ -94,6 +94,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[] scr = null;
             uint[] response;
             int physicalBlockSize = 0;
+            bool byteAddressed = true;
 
             if(dev.Type == DeviceType.MMC)
             {
@@ -111,6 +112,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         physicalBlockSize = 512;
                     else if(ecsdDecoded.NativeSectorSize == 1)
                         physicalBlockSize = 4096;
+                    // Supposing it's high-capacity MMC if it has Extended CSD...
+                    byteAddressed = false;
                 }
                 else
                     ecsd = null;
@@ -142,6 +145,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     csdDecoded = Decoders.SecureDigital.Decoders.DecodeCSD(csd);
                     blocks = (ulong)(csdDecoded.Structure == 0 ? (csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2) : (csdDecoded.Size + 1) * 1024);
                     blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
+                    // Structure >=1 for SDHC/SDXC, so that's block addressed
+                    byteAddressed = csdDecoded.Structure == 0;
                 }
                 else
                     csd = null;
@@ -243,7 +248,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             while(true)
             {
-                error = dev.Read(out cmdBuf, out response, 0, blockSize, blocksToRead, false, timeout, out duration);
+                error = dev.Read(out cmdBuf, out response, 0, blockSize, blocksToRead, byteAddressed, timeout, out duration);
 
                 if(error)
                     blocksToRead /= 2;
@@ -295,7 +300,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
 
-                error = dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, false, timeout, out duration);
+                error = dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed, timeout, out duration);
 
                     if(!error)
                     {
@@ -350,7 +355,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1, forward ? "forward" : "reverse", runningPersistent ? "recovering partial data, " : "");
 
-                    error = dev.Read(out cmdBuf, out response, (uint)badSector, blockSize, 1, false, timeout, out duration);
+                    error = dev.Read(out cmdBuf, out response, (uint)badSector, blockSize, 1, byteAddressed, timeout, out duration);
 
                         totalDuration += duration;
 
