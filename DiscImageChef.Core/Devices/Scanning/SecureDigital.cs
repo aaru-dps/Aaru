@@ -59,7 +59,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             uint timeout = 5;
             double duration = 0;
             ushort currentProfile = 0x0001;
-            uint blocksToRead = 1;
+            uint blocksToRead = 128;
             uint blockSize = 512;
             bool byteAddressed = true;
 

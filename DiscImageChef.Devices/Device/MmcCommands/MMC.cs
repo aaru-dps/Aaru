@@ -127,7 +127,13 @@ namespace DiscImageChef.Devices
             error = lastError != 0;
 
             if(transferLength > 1)
+            {
+                byte[] foo = new byte[0];
+                SendMmcCommand(MmcCommands.StopTransmission, false, false, MmcFlags.Response_R1b | MmcFlags.ResponseSPI_R1b | MmcFlags.CommandAC,
+                              0, 0, 0, ref foo, out uint[] responseStop, out double stopDuration, out bool stopSense, timeout);
+                duration += stopDuration;
                 DicConsole.DebugWriteLine("MMC Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
+            }
             else
                 DicConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
 
