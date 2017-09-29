@@ -371,13 +371,13 @@ namespace DiscImageChef.Decoders.MMC
 
             result = (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2) * Math.Pow(2, csd.ReadBlockLength);
             if(result > 1073741824)
-                sb.AppendFormat("\tDevice has {0} GiB", result/1073741824.0);
+                sb.AppendFormat("\tDevice has {0} GiB", result/1073741824.0).AppendLine();
             else if(result > 1048576)
-                sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0);
+                sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
             else if(result > 1024)
-                sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0);
+                sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
             else
-                sb.AppendFormat("\tDevice has {0} bytes", result);
+                sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();
 
             switch(csd.ReadCurrentAtVddMin & 0x07)
             {
