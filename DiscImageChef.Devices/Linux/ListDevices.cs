@@ -133,6 +133,7 @@ namespace DiscImageChef.Devices.Linux
                     case "USB":
                     case "PCMCIA":
                     case "FireWire":
+                    case "MMC/SD":
                         devices[i].supported = true;
                         break;
                 }
