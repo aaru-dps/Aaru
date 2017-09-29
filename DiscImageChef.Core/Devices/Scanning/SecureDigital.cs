@@ -59,7 +59,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             uint timeout = 5;
             double duration = 0;
             ushort currentProfile = 0x0001;
-            uint blocksToRead = 256;
+            uint blocksToRead = 1;
             uint blockSize = 512;
 
             if(dev.Type == DeviceType.MMC)

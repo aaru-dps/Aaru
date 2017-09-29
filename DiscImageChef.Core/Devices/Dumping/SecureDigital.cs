@@ -84,7 +84,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
 
-            uint blocksToRead = 256;
+            uint blocksToRead = 1;
             uint blockSize = 512;
             ulong blocks = 0;
             byte[] cid = null;
