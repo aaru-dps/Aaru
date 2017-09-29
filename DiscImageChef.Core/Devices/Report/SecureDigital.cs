@@ -61,7 +61,7 @@ namespace DiscImageChef.Core.Devices.Report
             {
                 DicConsole.WriteLine("CID obtained correctly...");
 
-                if(dev.Type == DeviceType.MMC)
+                if(dev.Type == DeviceType.SecureDigital)
                 {
                     // Clear serial number and manufacturing date
                     cid[9] = 0;
@@ -70,9 +70,9 @@ namespace DiscImageChef.Core.Devices.Report
                     cid[12] = 0;
                     cid[13] = 0;
                     cid[14] = 0;
-                    report.MultiMediaCard.CID = cid;
+                    report.SecureDigital.CID = cid;
                 }
-                else if(dev.Type == DeviceType.SecureDigital)
+                else if(dev.Type == DeviceType.MMC)
                 {
                     // Clear serial number and manufacturing date
                     cid[10] = 0;
@@ -80,7 +80,7 @@ namespace DiscImageChef.Core.Devices.Report
                     cid[12] = 0;
                     cid[13] = 0;
                     cid[14] = 0;
-                    report.SecureDigital.CID = cid;
+                    report.MultiMediaCard.CID = cid;
                 }
             }
             else
