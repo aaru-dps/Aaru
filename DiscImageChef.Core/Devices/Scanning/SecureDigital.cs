@@ -59,8 +59,9 @@ namespace DiscImageChef.Core.Devices.Scanning
             uint timeout = 5;
             double duration = 0;
             ushort currentProfile = 0x0001;
-            uint blocksToRead = 256;
+            uint blocksToRead = 128;
             uint blockSize = 512;
+            bool byteAddressed = true;
 
             if(dev.Type == DeviceType.MMC)
             {
@@ -74,6 +75,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     blocksToRead = ecsd.OptimalReadSize;
                     results.blocks = ecsd.SectorCount;
                     blockSize = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
+                    // Supposing it's high-capacity MMC if it has Extended CSD...
+                    byteAddressed = false;
                 }
 
                 if(sense || results.blocks == 0)
@@ -97,6 +100,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
                     results.blocks = (ulong)(csd.Structure == 0 ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2) : (csd.Size + 1) * 1024);
                     blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
+                    // Structure >=1 for SDHC/SDXC, so that's block addressed
+                    byteAddressed = csd.Structure == 0;
                 }
             }
 
@@ -110,7 +115,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             while(true)
             {
-                sense = dev.Read(out cmdBuf, out response, 0, blockSize, blocksToRead, false, timeout, out duration);
+                sense = dev.Read(out cmdBuf, out response, 0, blockSize, blocksToRead, byteAddressed, timeout, out duration);
 
                 if(sense)
                     blocksToRead /= 2;
@@ -180,7 +185,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.blocks, currentSpeed);
 
-                bool error = dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, false, timeout, out duration);
+                bool error = dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed, timeout, out duration);
 
                 if(!error)
                 {
@@ -246,7 +251,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
 
-                dev.Read(out cmdBuf, out response, (uint)seekPos, blockSize, blocksToRead, false, timeout, out seekCur);
+                dev.Read(out cmdBuf, out response, (uint)seekPos, blockSize, blocksToRead, byteAddressed, timeout, out seekCur);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(seekCur > results.seekMax && seekCur != 0)

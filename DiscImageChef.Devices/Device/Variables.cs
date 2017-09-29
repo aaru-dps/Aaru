@@ -67,6 +67,7 @@ namespace DiscImageChef.Devices
         readonly byte[] cachedCsd;
         readonly byte[] cachedCid;
         readonly byte[] cachedScr;
+        readonly byte[] cachedOcr;
 
         /// <summary>
         /// Gets the Platform ID for this device

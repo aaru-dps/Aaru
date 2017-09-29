@@ -38,6 +38,8 @@ namespace DiscImageChef.Decoders.SecureDigital
         {
             switch(SDVendorID)
             {
+                case 0xAA:
+                    return "QEMU";
                 default:
                     return string.Format("Unknown manufacturer ID 0x{0:X2}", SDVendorID);
             }

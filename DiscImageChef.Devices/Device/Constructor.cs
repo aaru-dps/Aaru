@@ -211,6 +211,12 @@ namespace DiscImageChef.Devices
                         if(len == 0)
                             cachedScr = null;
                     }
+                    if(System.IO.File.Exists("/sys/block/" + devPath + "/device/ocr"))
+                    {
+                        int len = ConvertFromHexASCII("/sys/block/" + devPath + "/device/ocr", out cachedOcr);
+                        if(len == 0)
+                            cachedOcr = null;
+                    }
 
                     if(cachedCid != null)
                     {
