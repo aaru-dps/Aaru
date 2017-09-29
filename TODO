@@ -26,7 +26,6 @@ Image checksum:
 
 Device handling:
 --- Add support for FreeBSD
---- Add support for MMC/SD devices
 --- Add support for NVMe devices
 --- Add support for streaming tape devices
 --- Support MMC feature codes FF33h
