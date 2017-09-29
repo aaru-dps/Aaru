@@ -154,5 +154,23 @@
             </ItemTemplate>
         </asp:Repeater>
     </div>
+    <div id="divMMC" runat="server">
+        <br/>
+        <b>MultiMediaCard device:</b><br/>
+		<asp:Repeater ID="repMMC" runat="server">
+            <ItemTemplate>
+                <%# Container.DataItem?.ToString() ?? string.Empty%><br/>
+            </ItemTemplate>
+        </asp:Repeater>
+    </div>
+    <div id="divSD" runat="server">
+        <br/>
+        <b>SecureDigital device:</b><br/>
+        <asp:Repeater ID="repSD" runat="server">
+            <ItemTemplate>
+                <%# Container.DataItem?.ToString() ?? string.Empty%><br/>
+            </ItemTemplate>
+        </asp:Repeater>
+    </div>
 </body>
 </html>

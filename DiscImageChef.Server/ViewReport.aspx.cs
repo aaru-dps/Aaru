@@ -407,6 +407,74 @@ namespace DiscImageChef.Server
                 else
                     divScsi.Visible = false;
 
+                if(report.MultiMediaCard != null)
+                {
+                    List<string> mmcOneValue = new List<string>();
+
+                    if(report.MultiMediaCard.CID != null)
+                    {
+                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyCID(report.MultiMediaCard.CID).Replace("\n", "<br/>"));
+                        mmcOneValue.Add("");
+                    }
+
+                    if(report.MultiMediaCard.CSD != null)
+                    {
+                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyCSD(report.MultiMediaCard.CSD).Replace("\n", "<br/>"));
+                        mmcOneValue.Add("");
+                    }
+
+                    if(report.MultiMediaCard.ExtendedCSD != null)
+                    {
+                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyExtendedCSD(report.MultiMediaCard.ExtendedCSD).Replace("\n", "<br/>"));
+                        mmcOneValue.Add("");
+                    }
+
+                    if(report.MultiMediaCard.OCR != null)
+                    {
+                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyCSD(report.MultiMediaCard.OCR).Replace("\n", "<br/>"));
+                        mmcOneValue.Add("");
+                    }
+
+                    repMMC.DataSource = mmcOneValue;
+                    repMMC.DataBind();
+                }
+                else
+                    divMMC.Visible = false;
+
+                if(report.SecureDigital != null)
+                {
+                    List<string> sdOneValue = new List<string>();
+
+                    if(report.SecureDigital.CID != null)
+                    {
+                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifyCID(report.SecureDigital.CID).Replace("\n", "<br/>"));
+                        sdOneValue.Add("");
+                    }
+
+                    if(report.SecureDigital.CSD != null)
+                    {
+                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifyCSD(report.SecureDigital.CSD).Replace("\n", "<br/>"));
+                        sdOneValue.Add("");
+                    }
+
+                    if(report.SecureDigital.SCR != null)
+                    {
+                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifySCR(report.SecureDigital.SCR).Replace("\n", "<br/>"));
+                        sdOneValue.Add("");
+                    }
+
+                    if(report.SecureDigital.OCR != null)
+                    {
+                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifyCSD(report.SecureDigital.OCR).Replace("\n", "<br/>"));
+                        sdOneValue.Add("");
+                    }
+
+                    repSD.DataSource = sdOneValue;
+                    repSD.DataBind();
+                }
+                else
+                    divSD.Visible = false;
+
                 if(removable && !sscMedia && testedMedia!=null)
                 {
                     List<string> mediaOneValue = new List<string>();
