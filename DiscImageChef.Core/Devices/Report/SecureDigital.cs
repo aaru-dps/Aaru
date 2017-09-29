@@ -133,7 +133,7 @@ namespace DiscImageChef.Core.Devices.Report
                 if(!sense)
                 {
                     DicConsole.WriteLine("OCR obtained correctly...");
-                    report.MultiMediaCard.OCR = ocr;
+                    report.SecureDigital.OCR = ocr;
                 }
                 else
                     DicConsole.WriteLine("Could not read OCR...");
@@ -144,7 +144,7 @@ namespace DiscImageChef.Core.Devices.Report
                 if(!sense)
                 {
                     DicConsole.WriteLine("SCR obtained correctly...");
-                    report.MultiMediaCard.SCR = scr;
+                    report.SecureDigital.SCR = scr;
                 }
                 else
                     DicConsole.WriteLine("Could not read SCR...");
