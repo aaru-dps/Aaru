@@ -171,6 +171,19 @@ namespace DiscImageChef.Devices
                 return 0;
             }
 
+            if((command == (MmcCommands)SecureDigitalCommands.SendOperatingCondition ||
+                command == MmcCommands.SendOpCond) && cachedOcr != null)
+            {
+                System.DateTime start = System.DateTime.Now;
+                buffer = new byte[cachedOcr.Length];
+                System.Array.Copy(cachedOcr, buffer, buffer.Length);
+                response = new uint[4];
+                sense = false;
+                System.DateTime end = System.DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+                return 0;
+            }
+
             return Command.SendMmcCommand(platformID, fd, command, write, isApplication, flags, argument, blockSize, blocks,
                                           ref buffer, out response, out duration, out sense, timeout);
         }
