@@ -676,12 +676,22 @@ namespace DiscImageChef.ImagePlugins
         ATAPI_IDENTIFY,
         /// <summary>PCMCIA/CardBus Card Information Structure</summary>
         PCMCIA_CIS,
-        /// <summary>SecureDigital / MMC CID</summary>
+        /// <summary>SecureDigital CID</summary>
         SD_CID,
-        /// <summary>SecureDigital / MMC CSD</summary>
+        /// <summary>SecureDigital CSD</summary>
         SD_CSD,
-        /// <summary>SecureDigital Extended CSD</summary>
-        SD_ExtendedCSD,
+        /// <summary>SecureDigital SCR</summary>
+        SD_SCR,
+		/// <summary>SecureDigital OCR</summary>
+		SD_OCR,
+		/// <summary>MultiMediaCard CID</summary>
+		MMC_CID,
+		/// <summary>MultiMediaCard CSD</summary>
+		MMC_CSD,
+		/// <summary>MultiMediaCard OCR</summary>
+		MMC_OCR,
+		/// <summary>MultiMediaCard Extended CSD</summary>
+		MMC_ExtendedCSD,
 		/// <summary>Xbox Security Sector</summary>
 		Xbox_SecuritySector
     };

@@ -175,13 +175,58 @@ namespace DiscImageChef.Core
                             Size = image.ReadDiskTag(MediaTagType.SD_CSD).Length
                         };
                         break;
-                    case MediaTagType.SD_ExtendedCSD:
+                    case MediaTagType.SD_SCR:
                         if(sidecar.BlockMedia[0].SecureDigital == null)
                             sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
-                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD = new DumpType
+                        sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_ExtendedCSD)).ToArray(),
-                            Size = image.ReadDiskTag(MediaTagType.SD_ExtendedCSD).Length
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_SCR)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SD_SCR).Length
+                        };
+                        break;
+                    case MediaTagType.SD_OCR:
+                        if(sidecar.BlockMedia[0].SecureDigital == null)
+                            sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                        sidecar.BlockMedia[0].SecureDigital.OCR = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_OCR)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SD_OCR).Length
+                        };
+                        break;
+                    case MediaTagType.MMC_CID:
+                        if(sidecar.BlockMedia[0].MultiMediaCard == null)
+                            sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                        sidecar.BlockMedia[0].MultiMediaCard.CID = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CID)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SD_CID).Length
+                        };
+                        break;
+                    case MediaTagType.MMC_CSD:
+                        if(sidecar.BlockMedia[0].MultiMediaCard == null)
+                            sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                        sidecar.BlockMedia[0].MultiMediaCard.CSD = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CSD)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SD_CSD).Length
+                        };
+                        break;
+                    case MediaTagType.MMC_OCR:
+                        if(sidecar.BlockMedia[0].MultiMediaCard == null)
+                            sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                        sidecar.BlockMedia[0].MultiMediaCard.OCR = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_OCR)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SD_OCR).Length
+                        };
+                        break;
+                    case MediaTagType.MMC_ExtendedCSD:
+                        if(sidecar.BlockMedia[0].MultiMediaCard == null)
+                            sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                        sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD).Length
                         };
                         break;
                 }

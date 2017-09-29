@@ -82,8 +82,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 BlockMedia = new BlockMediaType[] { new BlockMediaType() }
             };
 
-            sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
-
             uint blocksToRead = 128;
             uint blockSize = 512;
             ulong blocks = 0;
@@ -134,6 +132,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sense = dev.ReadOCR(out ocr, out response, timeout, out duration);
                 if(sense)
                     ocr = null;
+
+                sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
             }
             else if(dev.Type == DeviceType.SecureDigital)
             {
@@ -158,67 +158,81 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sense = dev.ReadSCR(out scr, out response, timeout, out duration);
                 if(sense)
                     scr = null;
+
+                sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
             }
 
             sense = dev.ReadCID(out cid, out response, timeout, out duration);
             if(sense)
                 cid = null;
 
-            // TODO: MultiMediaCard should be different
+            DumpType cidDump = null;
+            DumpType csdDump = null;
+            DumpType ocrDump = null;
+
             if(cid != null)
             {
-                sidecar.BlockMedia[0].SecureDigital.CID = new DumpType
+                cidDump = new DumpType
                 {
                     Image = outputPrefix + ".cid.bin",
                     Size = cid.Length,
                     Checksums = Checksum.GetChecksums(cid).ToArray()
                 };
-                DataFile.WriteTo("MMC/SecureDigital Dump", sidecar.BlockMedia[0].SecureDigital.CID.Image, cid);
+                DataFile.WriteTo("MMC/SecureDigital Dump", cidDump.Image, cid);
             };
             if(csd != null)
             {
-                sidecar.BlockMedia[0].SecureDigital.CSD = new DumpType
+                csdDump = new DumpType
                 {
                     Image = outputPrefix + ".csd.bin",
                     Size = csd.Length,
                     Checksums = Checksum.GetChecksums(csd).ToArray()
                 };
-                DataFile.WriteTo("MMC/SecureDigital Dump", sidecar.BlockMedia[0].SecureDigital.CSD.Image, csd);
+                DataFile.WriteTo("MMC/SecureDigital Dump", csdDump.Image, csd);
             };
             if(ecsd != null)
             {
-                sidecar.BlockMedia[0].SecureDigital.ExtendedCSD = new DumpType
+                sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
                 {
                     Image = outputPrefix + ".ecsd.bin",
                     Size = ecsd.Length,
                     Checksums = Checksum.GetChecksums(ecsd).ToArray()
                 };
-                DataFile.WriteTo("MMC/SecureDigital Dump", sidecar.BlockMedia[0].SecureDigital.ExtendedCSD.Image, ecsd);
+                DataFile.WriteTo("MMC/SecureDigital Dump", sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD.Image, ecsd);
             };
             if(ocr != null)
             {
-                // TODO: Add to metadata.xml
-                /*sidecar.BlockMedia[0].SecureDigital.OCR = new DumpType
+                ocrDump = new DumpType
                 {
                     Image = outputPrefix + ".ocr.bin",
                     Size = ocr.Length,
                     Checksums = Checksum.GetChecksums(ocr).ToArray()
                 };
-                DataFile.WriteTo("MMC/SecureDigital Dump", sidecar.BlockMedia[0].SecureDigital.OCR.Image, ocr);*/
-                DataFile.WriteTo("MMC/SecureDigital Dump", outputPrefix + ".ocr.bin", ocr);
+                DataFile.WriteTo("MMC/SecureDigital Dump", ocrDump.Image, ocr);
             };
             if(scr != null)
             {
-                // TODO: Add to metadata.xml
-                /*sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
+                sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
                 {
                     Image = outputPrefix + ".scr.bin",
                     Size = scr.Length,
                     Checksums = Checksum.GetChecksums(scr).ToArray()
                 };
-                DataFile.WriteTo("MMC/SecureDigital Dump", sidecar.BlockMedia[0].SecureDigital.SCR.Image, scr);*/
-                DataFile.WriteTo("MMC/SecureDigital Dump", outputPrefix + ".scr.bin", scr);
+                DataFile.WriteTo("MMC/SecureDigital Dump", sidecar.BlockMedia[0].SecureDigital.SCR.Image, scr);
             };
+
+            if(dev.Type == DeviceType.MMC)
+            {
+                sidecar.BlockMedia[0].MultiMediaCard.CID = cidDump;
+                sidecar.BlockMedia[0].MultiMediaCard.CSD = csdDump;
+                sidecar.BlockMedia[0].MultiMediaCard.OCR = ocrDump;
+            }
+            else if(dev.Type == DeviceType.SecureDigital)
+            {
+                sidecar.BlockMedia[0].SecureDigital.CID = cidDump;
+                sidecar.BlockMedia[0].SecureDigital.CSD = csdDump;
+                sidecar.BlockMedia[0].SecureDigital.OCR = ocrDump;
+            }
 
             DateTime start;
             DateTime end;
