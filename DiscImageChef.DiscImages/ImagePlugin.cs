@@ -693,7 +693,9 @@ namespace DiscImageChef.ImagePlugins
 		/// <summary>MultiMediaCard Extended CSD</summary>
 		MMC_ExtendedCSD,
 		/// <summary>Xbox Security Sector</summary>
-		Xbox_SecuritySector
+		Xbox_SecuritySector,
+		/// <summary>On floppy disks, data in last cylinder usually in a different format that contains duplication or manufacturing information</summary>
+		Floppy_LeadOut,
     };
 
     /// <summary>

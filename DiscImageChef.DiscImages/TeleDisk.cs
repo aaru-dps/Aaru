@@ -202,6 +202,7 @@ namespace DiscImageChef.ImagePlugins
 		// Cylinder by head, sector data matrix
 		byte[][][][] sectorsData;
 		Stream inStream;
+		byte[] leadOut;
 
 		#endregion
 
@@ -479,16 +480,12 @@ namespace DiscImageChef.ImagePlugins
 				if(TDTrack.sectors == 0xFF) // End of disk image
 					break;
 
-				if(TDTrack.sectors < ImageInfo.sectorsPerTrack)
-					ImageInfo.sectorsPerTrack = TDTrack.sectors;
-
 				for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
 				{
 					TDSectorHeader TDSector = new TDSectorHeader();
 					TDDataHeader TDData = new TDDataHeader();
 					byte[] dataSizeBytes = new byte[2];
 					byte[] data;
-					byte[] decodedData;
 
 					TDSector.cylinder = (byte)stream.ReadByte();
 					TDSector.head = (byte)stream.ReadByte();
@@ -505,7 +502,6 @@ namespace DiscImageChef.ImagePlugins
 						stream.Read(dataSizeBytes, 0, 2);
 						TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
 						TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
-						ImageInfo.imageSize += TDData.dataSize;
 						TDData.dataEncoding = (byte)stream.ReadByte();
 						data = new byte[TDData.dataSize];
 						stream.Read(data, 0, TDData.dataSize);
@@ -524,12 +520,66 @@ namespace DiscImageChef.ImagePlugins
 			if(totalCylinders <= 0 || totalHeads <= 0)
 				throw new ImageNotSupportedException("No cylinders or heads found");
 
+			bool hasLeadOutOnHead0 = false;
+			bool hasLeadOutOnHead1 = false;
+			ImageInfo.cylinders = (ushort)totalCylinders;
+			ImageInfo.heads = (byte)totalHeads;
+
+			// Count sectors per track
+			stream.Seek(currentPos, SeekOrigin.Begin);
+			while(true)
+			{
+				TDTrackHeader TDTrack = new TDTrackHeader();
+
+				TDTrack.sectors = (byte)stream.ReadByte();
+				TDTrack.cylinder = (byte)stream.ReadByte();
+				TDTrack.head = (byte)stream.ReadByte();
+				TDTrack.crc = (byte)stream.ReadByte();
+
+				if(TDTrack.sectors == 0xFF) // End of disk image
+					break;
+
+				if(TDTrack.sectors < ImageInfo.sectorsPerTrack)
+				{
+					if(TDTrack.cylinder + 1 == totalCylinders)
+					{
+						hasLeadOutOnHead0 |= TDTrack.head == 0;
+						hasLeadOutOnHead1 |= TDTrack.head == 1;
+						if(ImageInfo.cylinders == totalCylinders)
+							ImageInfo.cylinders--;
+					}
+					else
+						ImageInfo.sectorsPerTrack = TDTrack.sectors;
+				}
+				for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
+				{
+					TDSectorHeader TDSector = new TDSectorHeader();
+					TDDataHeader TDData = new TDDataHeader();
+					byte[] dataSizeBytes = new byte[2];
+					byte[] data;
+
+					TDSector.cylinder = (byte)stream.ReadByte();
+					TDSector.head = (byte)stream.ReadByte();
+					TDSector.sectorNumber = (byte)stream.ReadByte();
+					TDSector.sectorSize = (byte)stream.ReadByte();
+					TDSector.flags = (byte)stream.ReadByte();
+					TDSector.crc = (byte)stream.ReadByte();
+
+					if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
+					{
+						stream.Read(dataSizeBytes, 0, 2);
+						TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
+						TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
+						TDData.dataEncoding = (byte)stream.ReadByte();
+						data = new byte[TDData.dataSize];
+						stream.Read(data, 0, TDData.dataSize);
+					}
+				}
+			}
+
 			sectorsData = new byte[totalCylinders][][][];
 			// Total sectors per track
 			uint[][] spts = new uint[totalCylinders][];
-
-			ImageInfo.cylinders = (ushort)totalCylinders;
-			ImageInfo.heads = (byte)totalHeads;
 
 			DicConsole.DebugWriteLine("TeleDisk plugin", "Found {0} cylinders and {1} heads with a maximum sector number of {2}", totalCylinders, totalHeads, maxSector);
 
@@ -654,6 +704,29 @@ namespace DiscImageChef.ImagePlugins
 				}
 			}
 
+			MemoryStream leadOutMs = new MemoryStream();
+			if(hasLeadOutOnHead0)
+			{
+				for(int i = 0; i < sectorsData[totalCylinders - 1][0].Length; i++)
+				{
+					if(sectorsData[totalCylinders - 1][0][i] != null)
+						leadOutMs.Write(sectorsData[totalCylinders - 1][0][i], 0, sectorsData[totalCylinders - 1][0][i].Length);
+				}
+			}
+			if(hasLeadOutOnHead1)
+			{
+				for(int i = 0; i < sectorsData[totalCylinders - 1][1].Length; i++)
+				{
+					if(sectorsData[totalCylinders - 1][1][i] != null)
+						leadOutMs.Write(sectorsData[totalCylinders - 1][1][i], 0, sectorsData[totalCylinders - 1][1][i].Length);
+				}
+			}
+			if(leadOutMs.Length != 0)
+			{
+				leadOut = leadOutMs.ToArray();
+				ImageInfo.readableMediaTags.Add(MediaTagType.Floppy_LeadOut);
+			}
+
 			ImageInfo.sectors = ImageInfo.cylinders * ImageInfo.heads * ImageInfo.sectorsPerTrack;
 			ImageInfo.mediaType = DecodeTeleDiskDiskType();
 
@@ -665,6 +738,13 @@ namespace DiscImageChef.ImagePlugins
 
 			inStream.Dispose();
 			stream.Dispose();
+
+			/*
+			FileStream debugFs = new FileStream("debug.img", FileMode.CreateNew, FileAccess.Write);
+			for(ulong i = 0; i < ImageInfo.sectors; i++)
+				debugFs.Write(ReadSector(i), 0, (int)ImageInfo.sectorSize);
+			debugFs.Dispose();
+			*/
 
 			return true;
 		}
@@ -717,6 +797,8 @@ namespace DiscImageChef.ImagePlugins
 			for(uint i = 0; i < length; i++)
 			{
 				byte[] sector = ReadSector(sectorAddress + i);
+				if(sector == null)
+					sector = new byte[ImageInfo.sectorSize];
 				buffer.Write(sector, 0, sector.Length);
 			}
 
@@ -1128,6 +1210,18 @@ namespace DiscImageChef.ImagePlugins
 			}
 		}
 
+		public override byte[] ReadDiskTag(MediaTagType tag)
+		{
+			if(tag == MediaTagType.Floppy_LeadOut)
+			{
+				if(leadOut != null)
+					return leadOut;
+				throw new FeatureNotPresentImageException("Lead-out not present in disk image");
+			}
+			else
+				throw new FeatureUnsupportedImageException("Feature not supported by image format");
+		}
+
 		#endregion
 
 		#region Unsupported features
@@ -1138,11 +1232,6 @@ namespace DiscImageChef.ImagePlugins
 		}
 
 		public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override byte[] ReadDiskTag(MediaTagType tag)
 		{
 			throw new FeatureUnsupportedImageException("Feature not supported by image format");
 		}
