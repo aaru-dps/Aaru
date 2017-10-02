@@ -362,6 +362,10 @@ namespace DiscImageChef.Metadata
                     DiscType = "5.25\" floppy";
                     DiscSubType = "Apple FileWare";
                     break;
+                case CommonTypes.MediaType.RX50:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "DEC RX50";
+                    break;
                 case CommonTypes.MediaType.DOS_525_SS_DD_8:
                     DiscType = "5.25\" floppy";
                     DiscSubType = "IBM double-density, single-sided, 8 sectors";
