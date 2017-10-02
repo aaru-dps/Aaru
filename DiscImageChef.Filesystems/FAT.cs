@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using System.IO;
 
 namespace DiscImageChef.Filesystems
 {
@@ -217,6 +218,47 @@ namespace DiscImageChef.Filesystems
             if(partition.Start != 0)
                 return false;
 
+            // DEC Rainbow, lacks a BPB but has a very concrete structure...
+            if(imagePlugin.GetSectors() == 800 && imagePlugin.GetSectorSize() == 512)
+            {
+                // DEC Rainbow boots up with a Z80, first byte should be DI (disable interrupts)
+                byte z80_di = bpb_sector[0];
+                // First FAT1 sector resides at LBA 0x14
+                byte[] fat1_sector0 = imagePlugin.ReadSector(0x14);
+                // First FAT2 sector resides at LBA 0x1A
+                byte[] fat2_sector0 = imagePlugin.ReadSector(0x1A);
+                bool equal_fat_ids = fat1_sector0[0] == fat2_sector0[0] && fat1_sector0[1] == fat2_sector0[1];
+                // Volume is software interleaved 2:1
+                MemoryStream rootMs = new MemoryStream();
+                foreach(ulong rootSector in new[] { 0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20 })
+                {
+                    byte[] tmp = imagePlugin.ReadSector(rootSector);
+                    rootMs.Write(tmp, 0, tmp.Length);
+                }
+                byte[] root_dir = rootMs.ToArray();
+                rootMs = null;
+                bool valid_root_dir = true;
+
+                // Iterate all root directory
+                for(int e = 0; e < 96 * 32; e += 32)
+                {
+                    for(int c = 0; c < 11; c++)
+                    {
+                        if((root_dir[c + e] < 0x20 && root_dir[c + e] != 0x00 && root_dir[c + e] != 0x05) || root_dir[c + e] == 0xFF || root_dir[c + e] == 0x2E)
+                        {
+                            valid_root_dir = false;
+                            break;
+                        }
+                    }
+
+                    if(!valid_root_dir)
+                        break;
+                }
+
+                if(z80_di == 0xF3 && equal_fat_ids && (fat1_sector0[0] & 0xF0) == 0xF0 && fat1_sector0[1] == 0xFF && valid_root_dir)
+                    return true;
+            }
+
             byte fat2 = fat_sector[1];
             byte fat3 = fat_sector[2];
             ushort fat_2nd_cluster = (ushort)(((fat2 << 8) + fat3) & 0xFFF);
@@ -299,6 +341,7 @@ namespace DiscImageChef.Filesystems
             bool useLongFAT32 = false;
             bool andos_oem_correct = false;
             bool useApricotBPB = false;
+            bool useDecRainbowBPB = false;
 
             AtariParameterBlock atariBPB = new AtariParameterBlock();
             MSXParameterBlock msxBPB = new MSXParameterBlock();
@@ -508,7 +551,66 @@ namespace DiscImageChef.Filesystems
             // This is needed because some OSes don't put volume label as first entry in the root directory
             uint sectors_for_root_directory = 0;
 
-            if(!useAtariBPB && !useMSXBPB && !useDOS2BPB && !useDOS3BPB && !useDOS32BPB && !useDOS33BPB && !useShortEBPB && !useEBPB && !useShortFAT32 && !useLongFAT32 && !useApricotBPB)
+            // DEC Rainbow, lacks a BPB but has a very concrete structure...
+            if(imagePlugin.GetSectors() == 800 && imagePlugin.GetSectorSize() == 512 &&
+               !useAtariBPB && !useMSXBPB && !useDOS2BPB && !useDOS3BPB && !useDOS32BPB && !useDOS33BPB && !useShortEBPB && !useEBPB && !useShortFAT32 && !useLongFAT32 && !useApricotBPB)
+            {
+                // DEC Rainbow boots up with a Z80, first byte should be DI (disable interrupts)
+                byte z80_di = bpb_sector[0];
+                // First FAT1 sector resides at LBA 0x14
+                byte[] fat1_sector0 = imagePlugin.ReadSector(0x14);
+                // First FAT2 sector resides at LBA 0x1A
+                byte[] fat2_sector0 = imagePlugin.ReadSector(0x1A);
+                bool equal_fat_ids = fat1_sector0[0] == fat2_sector0[0] && fat1_sector0[1] == fat2_sector0[1];
+                // Volume is software interleaved 2:1
+                MemoryStream rootMs = new MemoryStream();
+                foreach(ulong rootSector in new[] { 0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20 })
+                {
+                    byte[] tmp = imagePlugin.ReadSector(rootSector);
+                    rootMs.Write(tmp, 0, tmp.Length);
+                }
+                byte[] root_dir = rootMs.ToArray();
+                rootMs = null;
+                bool valid_root_dir = true;
+
+                // Iterate all root directory
+                for(int e = 0; e < 96 * 32; e += 32)
+                {
+                    for(int c = 0; c < 11; c++)
+                    {
+                        if((root_dir[c + e] < 0x20 && root_dir[c + e] != 0x00 && root_dir[c + e] != 0x05) || root_dir[c + e] == 0xFF || root_dir[c + e] == 0x2E)
+                        {
+                            valid_root_dir = false;
+                            break;
+                        }
+                    }
+
+                    if(!valid_root_dir)
+                        break;
+                }
+
+                if(z80_di == 0xF3 && equal_fat_ids && (fat1_sector0[0] & 0xF0) == 0xF0 && fat1_sector0[1] == 0xFF && valid_root_dir)
+                {
+                    useDecRainbowBPB = true;
+                    DicConsole.DebugWriteLine("FAT plugin", "Using DEC Rainbow hardcoded BPB.");
+                    fakeBPB.bps = 512;
+                    fakeBPB.spc = 1;
+                    fakeBPB.rsectors = 20;
+                    fakeBPB.fats_no = 2;
+                    fakeBPB.root_ent = 96;
+                    fakeBPB.sectors = 800;
+                    fakeBPB.media = 0xFA;
+                    fakeBPB.sptrk = 10;
+                    fakeBPB.heads = 1;
+                    fakeBPB.hsectors = 0;
+                    fakeBPB.spfat = 3;
+                    xmlFSType.Bootable = true;
+                    fakeBPB.boot_code = bpb_sector;
+                    isFAT12 = true;
+                }
+            }
+
+            if(!useAtariBPB && !useMSXBPB && !useDOS2BPB && !useDOS3BPB && !useDOS32BPB && !useDOS33BPB && !useShortEBPB && !useEBPB && !useShortFAT32 && !useLongFAT32 && !useApricotBPB && !useDecRainbowBPB)
             {
                 isFAT12 = true;
                 fat_sector = imagePlugin.ReadSector(1 + partition.Start);
@@ -1168,6 +1270,19 @@ namespace DiscImageChef.Filesystems
             if(root_directory_sector + partition.Start < partition.End && imagePlugin.ImageInfo.xmlMediaType != ImagePlugins.XmlMediaType.OpticalDisc)
             {
                 byte[] root_directory = imagePlugin.ReadSectors(root_directory_sector + partition.Start, sectors_for_root_directory);
+
+                if(useDecRainbowBPB)
+                {
+                    MemoryStream rootMs = new MemoryStream();
+                    foreach(ulong rootSector in new[] { 0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20 })
+                    {
+                        byte[] tmp = imagePlugin.ReadSector(rootSector);
+                        rootMs.Write(tmp, 0, tmp.Length);
+                    }
+                    root_directory = rootMs.ToArray();
+                    rootMs = null;
+                }
+
                 for(int i = 0; i < root_directory.Length; i += 32)
                 {
                     // Not a correct entry
