@@ -176,7 +176,7 @@ namespace DiscImageChef.Metadata
                     break;
                 case CommonTypes.MediaType.DVDRWDL:
                     DiscType = "DVD";
-                    DiscSubType = "DVD-RW";
+                    DiscSubType = "DVD-RW DL";
                     break;
                 case CommonTypes.MediaType.EVD:
                     DiscType = "EVD";
@@ -254,6 +254,14 @@ namespace DiscImageChef.Metadata
                     DiscType = "LaserDisc";
                     DiscSubType = "LD-ROM";
                     break;
+                case CommonTypes.MediaType.LVROM:
+                    DiscType = "LaserDisc";
+                    DiscSubType = "LV-ROM";
+                    break;
+                case CommonTypes.MediaType.MegaLD:
+                    DiscType = "LaserDisc";
+                    DiscSubType = "MegaLD";
+                    break;
                 case CommonTypes.MediaType.MD:
                     DiscType = "MiniDisc";
                     DiscSubType = "MiniDisc";
@@ -265,6 +273,14 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.PCD:
                     DiscType = "Compact Disc";
                     DiscSubType = "Photo CD";
+                    break;
+                case CommonTypes.MediaType.PlayStationMemoryCard:
+                    DiscType = "PlayStation Memory Card";
+                    DiscSubType = "PlayStation Memory Card";
+                    break;
+                case CommonTypes.MediaType.PlayStationMemoryCard2:
+                    DiscType = "PlayStation Memory Card";
+                    DiscSubType = "PlayStation 2 Memory Card";
                     break;
                 case CommonTypes.MediaType.PS1CD:
                     DiscType = "Compact Disc";
@@ -293,6 +309,10 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.SACD:
                     DiscType = "SACD";
                     DiscSubType = "Super Audio CD";
+                    break;
+                case CommonTypes.MediaType.SegaCard:
+                    DiscType = "Sega Card";
+                    DiscSubType = "Sega Card";
                     break;
                 case CommonTypes.MediaType.SATURNCD:
                     DiscType = "Compact Disc";
@@ -474,6 +494,10 @@ namespace DiscImageChef.Metadata
                     DiscType = "8\" floppy";
                     DiscSubType = "DEC RX-02";
                     break;
+                case CommonTypes.MediaType.RX03:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "DEC RX-03";
+                    break;
                 case CommonTypes.MediaType.ACORN_525_SS_SD_40:
                     DiscType = "5.25\" floppy";
                     DiscSubType = "BBC Micro 100K";
@@ -514,9 +538,21 @@ namespace DiscImageChef.Metadata
                     DiscType = "5.25\" floppy";
                     DiscSubType = "Atari double-density";
                     break;
+                case CommonTypes.MediaType.ATARI_35_SS_DD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Atari ST double-density, single-sided, 10 sectors";
+                    break;
                 case CommonTypes.MediaType.ATARI_35_DS_DD:
                     DiscType = "3.5\" floppy";
                     DiscSubType = "Atari ST double-density, double-sided, 10 sectors";
+                    break;
+                case CommonTypes.MediaType.ATARI_35_SS_DD_11:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Atari ST double-density, single-sided, 11 sectors";
+                    break;
+                case CommonTypes.MediaType.ATARI_35_DS_DD_11:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Atari ST double-density, double-sided, 11 sectors";
                     break;
                 case CommonTypes.MediaType.CBM_1540:
                 case CommonTypes.MediaType.CBM_1540_Ext:
@@ -561,7 +597,11 @@ namespace DiscImageChef.Metadata
                     break;
                 case CommonTypes.MediaType.NEC_35_HD_15:
                     DiscType = "3.5\" floppy";
-                    DiscSubType = "NEC floppy mode 3";
+                    DiscSubType = "NEC high-density";
+                    break;
+                case CommonTypes.MediaType.NEC_35_TD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "NEC triple-density";
                     break;
                 case CommonTypes.MediaType.SHARP_525:
                     DiscType = "5.25\" floppy";
@@ -570,6 +610,14 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.SHARP_35:
                     DiscType = "3.5\" floppy";
                     DiscSubType = "Sharp";
+                    break;
+                case CommonTypes.MediaType.SHARP_525_9:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Sharp (9 sectors per track)";
+                    break;
+                case CommonTypes.MediaType.SHARP_35_9:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Sharp (9 sectors per track)";
                     break;
                 case CommonTypes.MediaType.ECMA_54:
                     DiscType = "8\" floppy";
@@ -663,6 +711,10 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.SuperCDROM2:
                     DiscType = "Compact Disc";
                     DiscSubType = "Super CD-ROM²";
+                    break;
+                case CommonTypes.MediaType.LDROM2:
+                    DiscType = "LaserDisc";
+                    DiscSubType = "LD-ROM²";
                     break;
                 case CommonTypes.MediaType.JaguarCD:
                     DiscType = "Compact Disc";
@@ -911,6 +963,14 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.VStapeI:
                     DiscType = "Digital Linear Tape";
                     DiscSubType = "DLTtape VS1";
+                    break;
+                case CommonTypes.MediaType.Data8:
+                    DiscType = "Data8";
+                    DiscSubType = "Data8";
+                    break;
+                case CommonTypes.MediaType.MiniDV:
+                    DiscType = "DV tape";
+                    DiscSubType = "MiniDV";
                     break;
                 case CommonTypes.MediaType.Exatape15m:
                     DiscType = "Exatape";
@@ -1391,6 +1451,369 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.UHD144:
                     DiscType = "UHD144";
                     DiscSubType = "UHD144";
+                    break;
+                case CommonTypes.MediaType.VCDHD:
+                    DiscType = "VCDHD";
+                    DiscSubType = "VCDHD";
+                    break;
+                case CommonTypes.MediaType.HuCard:
+                    DiscType = "HuCard";
+                    DiscSubType = "HuCard";
+                    break;
+                case CommonTypes.MediaType.CompactCassette:
+                    DiscType = "Compact Cassette";
+                    DiscSubType = "Compact Cassette";
+                    break;
+                case CommonTypes.MediaType.PCCardTypeI:
+                    DiscType = "PCMCIA Card";
+                    DiscSubType = "PC-Card Type I";
+                    break;
+                case CommonTypes.MediaType.PCCardTypeII:
+                    DiscType = "PCMCIA Card";
+                    DiscSubType = "PC-Card Type II";
+                    break;
+                case CommonTypes.MediaType.PCCardTypeIII:
+                    DiscType = "PCMCIA Card";
+                    DiscSubType = "PC-Card Type III";
+                    break;
+                case CommonTypes.MediaType.PCCardTypeIV:
+                    DiscType = "PCMCIA Card";
+                    DiscSubType = "PC-Card Type IV";
+                    break;
+                case CommonTypes.MediaType.ExpressCard34:
+                    DiscType = "Express Card";
+                    DiscSubType = "Express Card (34mm)";
+                    break;
+                case CommonTypes.MediaType.ExpressCard54:
+                    DiscType = "Express Card";
+                    DiscSubType = "Express Card (54mm)";
+                    break;
+                case CommonTypes.MediaType.FamicomGamePak:
+                    DiscType = "Nintendo Famicom Game Pak";
+                    DiscSubType = "Nintendo Famicom Game Pak";
+                    break;
+                case CommonTypes.MediaType.GameBoyAdvanceGamePak:
+                    DiscType = "Nintendo Game Boy Advance Game Pak";
+                    DiscSubType = "Nintendo Game Boy Advance Game Pak";
+                    break;
+                case CommonTypes.MediaType.GameBoyGamePak:
+                    DiscType = "Nintendo Game Boy Game Pak";
+                    DiscSubType = "Nintendo Game Boy Game Pak";
+                    break;
+                case CommonTypes.MediaType.N64DD:
+                    DiscType = "Nintendo 64 Disk";
+                    DiscSubType = "Nintendo 64 Disk";
+                    break;
+                case CommonTypes.MediaType.N64GamePak:
+                    DiscType = "Nintendo 64 Game Pak";
+                    DiscSubType = "Nintendo 64 Game Pak";
+                    break;
+                case CommonTypes.MediaType.NESGamePak:
+                    DiscType = "Nintendo Entertainment System Game Pak";
+                    DiscSubType = "Nintendo Entertainment System Game Pak";
+                    break;
+                case CommonTypes.MediaType.Nintendo3DSGameCard:
+                    DiscType = "Nintendo 3DS Game Card";
+                    DiscSubType = "Nintendo 3DS Game Card";
+                    break;
+                case CommonTypes.MediaType.NintendoDiskCard:
+                    DiscType = "Nintendo Disk Card";
+                    DiscSubType = "Nintendo Disk Card";
+                    break;
+                case CommonTypes.MediaType.NintendoDSGameCard:
+                    DiscType = "Nintendo DS Game Card";
+                    DiscSubType = "Nintendo DS Game Card";
+                    break;
+                case CommonTypes.MediaType.NintendoDSiGameCard:
+                    DiscType = "Nintendo DSi Game Card";
+                    DiscSubType = "Nintendo DSi Game Card";
+                    break;
+                case CommonTypes.MediaType.SNESGamePak:
+                    DiscType = "Super Nintendo Game Pak";
+                    DiscSubType = "Super Nintendo Game Pak";
+                    break;
+                case CommonTypes.MediaType.SNESGamePakUS:
+                    DiscType = "Super Nintendo Game Pak (US)";
+                    DiscSubType = "Super Nintendo Game Pak (US)";
+                    break;
+                case CommonTypes.MediaType.IBM3470:
+                    DiscType = "IBM 3470";
+                    DiscSubType = "IBM 3470";
+                    break;
+                case CommonTypes.MediaType.IBM3480:
+                    DiscType = "IBM 3480";
+                    DiscSubType = "IBM 3480";
+                    break;
+                case CommonTypes.MediaType.IBM3490:
+                    DiscType = "IBM 3490";
+                    DiscSubType = "IBM 3490";
+                    break;
+                case CommonTypes.MediaType.IBM3490E:
+                    DiscType = "IBM 3490E";
+                    DiscSubType = "IBM 3490E";
+                    break;
+                case CommonTypes.MediaType.IBM3592:
+                    DiscType = "IBM 3592";
+                    DiscSubType = "IBM 3592";
+                    break;
+                case CommonTypes.MediaType.STK4480:
+                    DiscType = "STK 4480";
+                    DiscSubType = "STK 4480";
+                    break;
+                case CommonTypes.MediaType.STK4490:
+                    DiscType = "STK 4490";
+                    DiscSubType = "STK 4490";
+                    break;
+                case CommonTypes.MediaType.STK9490:
+                    DiscType = "STK 9490";
+                    DiscSubType = "STK 9490";
+                    break;
+                case CommonTypes.MediaType.T9840A:
+                    DiscType = "STK T-9840";
+                    DiscSubType = "STK T-9840A";
+                    break;
+                case CommonTypes.MediaType.T9840B:
+                    DiscType = "STK T-9840";
+                    DiscSubType = "STK T-9840B";
+                    break;
+                case CommonTypes.MediaType.T9840C:
+                    DiscType = "STK T-9840";
+                    DiscSubType = "STK T-9840C";
+                    break;
+                case CommonTypes.MediaType.T9840D:
+                    DiscType = "STK T-9840";
+                    DiscSubType = "STK T-9840D";
+                    break;
+                case CommonTypes.MediaType.T9940A:
+                    DiscType = "STK T-9940";
+                    DiscSubType = "STK T-9940A";
+                    break;
+                case CommonTypes.MediaType.T9940B:
+                    DiscType = "STK T-9840";
+                    DiscSubType = "STK T-9840B";
+                    break;
+                case CommonTypes.MediaType.T10000A:
+                    DiscType = "STK T-10000";
+                    DiscSubType = "STK T-10000A";
+                    break;
+                case CommonTypes.MediaType.T10000B:
+                    DiscType = "STK T-10000";
+                    DiscSubType = "STK T-10000B";
+                    break;
+                case CommonTypes.MediaType.T10000C:
+                    DiscType = "STK T-10000";
+                    DiscSubType = "STK T-10000C";
+                    break;
+                case CommonTypes.MediaType.T10000D:
+                    DiscType = "STK T-10000";
+                    DiscSubType = "STK T-10000D";
+                    break;
+                case CommonTypes.MediaType.DemiDiskette:
+                    DiscType = "DemiDiskette";
+                    DiscSubType = "DemiDiskette";
+                    break;
+                case CommonTypes.MediaType.QuickDisk:
+                    DiscType = "QuickDisk";
+                    DiscSubType = "QuickDisk";
+                    break;
+                case CommonTypes.MediaType.VideoFloppy:
+                    DiscType = "VideoFloppy";
+                    DiscSubType = "VideoFloppy";
+                    break;
+                case CommonTypes.MediaType.Wafer:
+                    DiscType = "Wafer";
+                    DiscSubType = "Wafer";
+                    break;
+                case CommonTypes.MediaType.ZXMicrodrive:
+                    DiscType = "ZX Microdrive";
+                    DiscSubType = "ZX Microdrive";
+                    break;
+                case CommonTypes.MediaType.BeeCard:
+                    DiscType = "BeeCard";
+                    DiscSubType = "BeeCard";
+                    break;
+                case CommonTypes.MediaType.Borsu:
+                    DiscType = "Borsu";
+                    DiscSubType = "Borsu";
+                    break;
+                case CommonTypes.MediaType.DataStore:
+                    DiscType = "DataStore";
+                    DiscSubType = "DataStore";
+                    break;
+                case CommonTypes.MediaType.DIR:
+                    DiscType = "DIR";
+                    DiscSubType = "DIR";
+                    break;
+                case CommonTypes.MediaType.DST:
+                    DiscType = "DST";
+                    DiscSubType = "DST";
+                    break;
+                case CommonTypes.MediaType.DTF:
+                    DiscType = "DTF";
+                    DiscSubType = "DTF";
+                    break;
+                case CommonTypes.MediaType.DTF2:
+                    DiscType = "DTF2";
+                    DiscSubType = "DTF2";
+                    break;
+                case CommonTypes.MediaType.Flextra3020:
+                    DiscType = "Flextra";
+                    DiscSubType = "Flextra 3020";
+                    break;
+                case CommonTypes.MediaType.Flextra3225:
+                    DiscType = "Flextra";
+                    DiscSubType = "Flextra 3225";
+                    break;
+                case CommonTypes.MediaType.HiTC1:
+                    DiscType = "HiTC";
+                    DiscSubType = "HiTC1";
+                    break;
+                case CommonTypes.MediaType.HiTC2:
+                    DiscType = "HiTC";
+                    DiscSubType = "HiTC2";
+                    break;
+                case CommonTypes.MediaType.LT1:
+                    DiscType = "LT1";
+                    DiscSubType = "LT1";
+                    break;
+                case CommonTypes.MediaType.MiniCard:
+                    DiscType = "MiniCard";
+                    DiscSubType = "MiniCard";
+                    break;
+                case CommonTypes.MediaType.Orb:
+                    DiscType = "Orb";
+                    DiscSubType = "Orb";
+                    break;
+                case CommonTypes.MediaType.Orb5:
+                    DiscType = "Orb";
+                    DiscSubType = "Orb5";
+                    break;
+                case CommonTypes.MediaType.SmartMedia:
+                    DiscType = "SmartMedia";
+                    DiscSubType = "SmartMedia";
+                    break;
+                case CommonTypes.MediaType.xD:
+                    DiscType = "xD";
+                    DiscSubType = "xD";
+                    break;
+                case CommonTypes.MediaType.XQD:
+                    DiscType = "XQD";
+                    DiscSubType = "XQD";
+                    break;
+                case CommonTypes.MediaType.DataPlay:
+                    DiscType = "DataPlay";
+                    DiscSubType = "DataPlay";
+                    break;
+                case CommonTypes.MediaType.PD650:
+                    DiscType = "PD650";
+                    DiscSubType = "PD650";
+                    break;
+                case CommonTypes.MediaType.PD650_WORM:
+                    DiscType = "PD650";
+                    DiscSubType = "PD650 (WORM)";
+                    break;
+                case CommonTypes.MediaType.RA60:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RA-60";
+                    break;
+                case CommonTypes.MediaType.RA80:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RA-80";
+                    break;
+                case CommonTypes.MediaType.RA81:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RA-81";
+                    break;
+                case CommonTypes.MediaType.RC25:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RC-25";
+                    break;
+                case CommonTypes.MediaType.RD31:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RD-31";
+                    break;
+                case CommonTypes.MediaType.RD32:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RD-32";
+                    break;
+                case CommonTypes.MediaType.RD51:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RD-51";
+                    break;
+                case CommonTypes.MediaType.RD52:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RD-52";
+                    break;
+                case CommonTypes.MediaType.RD53:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RD-53";
+                    break;
+                case CommonTypes.MediaType.RD54:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RD-54";
+                    break;
+                case CommonTypes.MediaType.RK06:
+                case CommonTypes.MediaType.RK06_18:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RK-06";
+                    break;
+                case CommonTypes.MediaType.RK07:
+                case CommonTypes.MediaType.RK07_18:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RK-07";
+                    break;
+                case CommonTypes.MediaType.RM02:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RM-02";
+                    break;
+                case CommonTypes.MediaType.RM03:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RM-03";
+                    break;
+                case CommonTypes.MediaType.RM05:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RM-05";
+                    break;
+                case CommonTypes.MediaType.RP02:
+                case CommonTypes.MediaType.RP02_18:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RP-02";
+                    break;
+                case CommonTypes.MediaType.RP03:
+                case CommonTypes.MediaType.RP03_18:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RP-03";
+                    break;
+                case CommonTypes.MediaType.RP04:
+                case CommonTypes.MediaType.RP04_18:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RP-04";
+                    break;
+                case CommonTypes.MediaType.RP05:
+                case CommonTypes.MediaType.RP05_18:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RP-05";
+                    break;
+                case CommonTypes.MediaType.RP06:
+                case CommonTypes.MediaType.RP06_18:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "DEC RP-06";
+                    break;
+                case CommonTypes.MediaType.RDX:
+                    DiscType = "RDX";
+                    DiscSubType = "RDX";
+                    break;
+                case CommonTypes.MediaType.RDX320:
+                    DiscType = "RDX";
+                    DiscSubType = "RDX 320";
+                    break;
+                case CommonTypes.MediaType.Zone_HDD:
+                    DiscType = "Zoned Hard Disk Drive";
+                    DiscSubType = "Unknown";
+                    break;
+                case CommonTypes.MediaType.Microdrive:
+                    DiscType = "Hard Disk Drive";
+                    DiscSubType = "Microdrive";
                     break;
                 default:
                     DiscType = "Unknown";
