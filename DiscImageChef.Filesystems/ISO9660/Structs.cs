@@ -51,14 +51,19 @@ namespace DiscImageChef.Filesystems.ISO9660
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] volume_id;
             public ulong reserved2;
-            public ulong volume_space_size;
+            public uint volume_space_size;
+            public uint volume_space_size_be;
             // Only used in SVDs
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] escape_sequences;
-            public uint volume_set_size;
-            public uint volume_sequence_number;
-            public uint logical_block_size;
-            public ulong path_table_size;
+            public ushort volume_set_size;
+            public ushort volume_set_size_be;
+            public ushort volume_sequence_number;
+            public ushort volume_sequence_number_be;
+            public ushort logical_block_size;
+            public ushort logical_block_size_be;
+            public uint path_table_size;
+            public uint path_table_size_be;
             public uint type_1_path_table;
             public uint opt_type_1_path_table;
             public uint type_m_path_table;
@@ -108,6 +113,77 @@ namespace DiscImageChef.Filesystems.ISO9660
             public byte[] boot_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1977)]
             public byte[] boot_use;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct PartitionDescriptor
+        {
+            public byte type;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public byte[] id;
+            public byte version;
+            public byte reserved1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] system_id;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] partition_id;
+            public uint partition_location;
+            public uint partition_location_be;
+            public uint partition_size;
+            public uint partition_size_be;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1960)]
+            public byte[] system_use;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DirectoryRecord
+        {
+            public byte length;
+            public byte xattr_len;
+            public uint extent;
+            public uint extent_be;
+            public uint size;
+            public uint size_be;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
+            public byte[] date;
+            public FileFlags flags;
+            public byte file_unit_size;
+            public byte interleave;
+            public ushort volume_sequence_number;
+            public ushort volume_sequence_number_be;
+            public byte name_len;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ExtendedAttributeRecord
+        {
+            public ushort owner;
+            public ushort owner_be;
+            public ushort group;
+            public ushort group_be;
+            public Permissions permissions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public byte[] creation_date;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public byte[] modification_date;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public byte[] expiration_date;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public byte[] effective_date;
+            public RecordFormat record_format;
+            public RecordAttribute record_attributes;
+            public ushort record_length;
+            public ushort record_length_be;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] system_id;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] system_use;
+            public byte record_version;
+            public byte escape_len;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] reserved1;
+            public ushort app_use_len;
+            public ushort app_use_len_be;
         }
 
         struct DecodedVolumeDescriptor

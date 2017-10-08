@@ -144,6 +144,7 @@
     <Compile Include="ISO9660\Xattr.cs" />
     <Compile Include="ISO9660\Extent.cs" />
     <Compile Include="ISO9660\Super.cs" />
+    <Compile Include="ISO9660\Consts.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

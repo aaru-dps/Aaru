@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : ISO9660.cs
+// Filename       : Consts.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Component
@@ -30,32 +30,48 @@
 // Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
 using System;
-using System.Text;
-using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
-    // This is coded following ECMA-119.
-    // TODO: Differentiate ISO Level 1, 2, 3 and ISO 9660:1999
-    // TODO: Apple extensiones, requires XA or advance RR interpretation.
-    // TODO: Check ECMA-167
-    // TODO: Check ECMA-168
-    // TODO: HighSierra
     public partial class ISO9660 : Filesystem
     {
-        public ISO9660()
+        [Flags]
+        enum FileFlags : byte
         {
-            Name = "ISO9660 Filesystem";
-            PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            CurrentEncoding = Encoding.ASCII;
+            Hidden = 0x01,
+            Directory = 0x02,
+            Associated = 0x04,
+            Record = 0x08,
+            Protected = 0x10,
+            MultiExtent = 0x80
         }
 
-        public ISO9660(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        [Flags]
+        enum Permissions : ushort
         {
-            Name = "ISO9660 Filesystem";
-            PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            if(encoding == null)
-                CurrentEncoding = Encoding.ASCII;
+            SystemRead = 0x01,
+            SystemExecute = 0x04,
+            OwnerRead = 0x10,
+            OwnerExecute = 0x40,
+            GroupRead = 0x100,
+            GroupExecute = 0x400,
+            OtherRead = 0x1000,
+            OtherExecute = 0x4000,
+        }
+
+        enum RecordFormat : byte
+        {
+            Unspecified = 0,
+            FixedLength = 1,
+            VariableLength = 2,
+            VariableLengthAlternate = 3
+        }
+
+        enum RecordAttribute : byte
+        {
+            LFCR = 0,
+            ISO1539 = 1,
+            ControlContained = 2,
         }
     }
 }
