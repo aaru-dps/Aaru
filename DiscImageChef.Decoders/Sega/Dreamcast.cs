@@ -31,33 +31,71 @@
 // ****************************************************************************/
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Decoders.Sega
 {
-    public class Dreamcast
+    public static class Dreamcast
     {
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct IPBin
         {
-            public byte[] SegaHardwareID; //16
-            public byte[] maker_id; //16         // 0x010, "SEGA ENTERPRISES"
-            public byte[] dreamcast_crc; //4     // 0x020, CRC of product_no and product_version
-            public byte[] spare_space1; //1      // 0x024, " "
-            public byte[] dreamcast_media; //6   // 0x025, "GD-ROM"
-            public byte[] disc_no; //1           // 0x02B, Disc number
-            public byte[] disc_no_separator; //1 // 0x02C, '/'
-            public byte[] disc_total_nos; //1    // 0x02D, Total number of discs
-            public byte[] spare_space2; //2     // 0x02E, "  "
-            public byte[] region_codes; //8      // 0x030, Region codes, space-filled
-            public byte[] peripherals; //7       // 0x038, Supported peripherals, bitwise
-            public byte[] product_no; //10       // 0x03C, Product number
-            public byte[] product_version; //6  // 0x046, Product version
-            public byte[] release_date; //8      // 0x04C, YYYYMMDD
-            public byte[] spare_space3; //8      // 0x054, "  "
-            public byte[] boot_filename; //12    // 0x05C, Usually "1ST_READ.BIN" or "0WINCE.BIN  "
-            public byte[] producer; //16         // 0x068, Game producer, space-filled
-            public byte[] product_name; //128    // 0x078, Game name, space-filled
+            /// <summary>Must be "SEGA SEGAKATANA "</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] SegaHardwareID;
+            /// <summary>0x010, "SEGA ENTERPRISES"</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] maker_id;
+            /// <summary>0x020, CRC of product_no and product_version</summary>
+            public uint dreamcast_crc;
+            /// <summary>0x024, " "</summary>
+            public byte spare_space1;
+            /// <summary>0x025, "GD-ROM"</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] dreamcast_media;
+            /// <summary>0x02B, Disc number</summary>
+            public byte disc_no;
+            /// <summary>0x02C, '/'</summary>
+            public byte disc_no_separator;
+            /// <summary>0x02D, Total number of discs</summary>
+            public byte disc_total_nos;
+            /// <summary>0x02E, "  "</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] spare_space2;
+            /// <summary>0x030, Region codes, space-filled</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] region_codes;
+            /// <summary>0x038, Supported peripherals, bitwise</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
+            public byte[] peripherals;
+            /// <summary>0x03F, ' '</summary>
+            public byte spare_space3;
+            /// <summary>0x040, Product number</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public byte[] product_no;
+            /// <summary>0x04A, Product version</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] product_version;
+            /// <summary>0x050, YYYYMMDD</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] release_date;
+            /// <summary>0x058, "  "</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] spare_space4;
+            /// <summary>0x060, Usually "1ST_READ.BIN" or "0WINCE.BIN  "</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] boot_filename;
+            /// <summary>0x06C, "  "</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] spare_space5;
+            /// <summary>0x070, Game producer, space-filled</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] producer;
+            /// <summary>0x080, Game name, space-filled</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+            public byte[] product_name;
         }
 
         public static IPBin? DecodeIPBin(byte[] ipbin_sector)
@@ -69,68 +107,29 @@ namespace DiscImageChef.Decoders.Sega
                 return null;
 
             IPBin ipbin = new IPBin();
-            ipbin.SegaHardwareID = new byte[16];
-            // Declarations following
-            ipbin.maker_id = new byte[16];         // 0x010, "SEGA ENTERPRISES"
-            ipbin.dreamcast_crc = new byte[4];     // 0x020, CRC of product_no and product_version
-            ipbin.spare_space1 = new byte[1];      // 0x024, " "
-            ipbin.dreamcast_media = new byte[6];   // 0x025, "GD-ROM"
-            ipbin.disc_no = new byte[1];           // 0x02B, Disc number
-            ipbin.disc_no_separator = new byte[1]; // 0x02C, '/'
-            ipbin.disc_total_nos = new byte[1];    // 0x02D, Total number of discs
-            ipbin.spare_space2 = new byte[2];       // 0x02E, "  "
-            ipbin.region_codes = new byte[8];      // 0x030, Region codes, space-filled
-            ipbin.peripherals = new byte[7];       // 0x038, Supported peripherals, bitwise
-            ipbin.product_no = new byte[10];       // 0x03C, Product number
-            ipbin.product_version = new byte[6];    // 0x046, Product version
-            ipbin.release_date = new byte[8];      // 0x04C, YYYYMMDD
-            ipbin.spare_space3 = new byte[8];      // 0x054, "  "
-            ipbin.boot_filename = new byte[12];    // 0x05C, Usually "1ST_READ.BIN" or "0WINCE.BIN  "
-            ipbin.producer = new byte[16];         // 0x068, Game producer, space-filled
-            ipbin.product_name = new byte[128];    // 0x078, Game name, space-filled
-                                                   // Reading all data
-            Array.Copy(ipbin_sector, 0x010, ipbin.maker_id, 0, 16);      // "SEGA ENTERPRISES"
-            Array.Copy(ipbin_sector, 0x020, ipbin.dreamcast_crc, 0, 4);         // CRC of product_no and product_version (hex)
-            Array.Copy(ipbin_sector, 0x024, ipbin.spare_space1, 0, 1);       // " "
-            Array.Copy(ipbin_sector, 0x025, ipbin.dreamcast_media, 0, 6);          // "GD-ROM"
-            Array.Copy(ipbin_sector, 0x02B, ipbin.disc_no, 0, 1);         // Disc number
-            Array.Copy(ipbin_sector, 0x02C, ipbin.disc_no_separator, 0, 1);       // '/'
-            Array.Copy(ipbin_sector, 0x02D, ipbin.disc_total_nos, 0, 1);         // Total number of discs
-            Array.Copy(ipbin_sector, 0x02E, ipbin.spare_space2, 0, 2);          // "  "
-            Array.Copy(ipbin_sector, 0x030, ipbin.region_codes, 0, 8);          // Region codes, space-filled
-            Array.Copy(ipbin_sector, 0x038, ipbin.peripherals, 0, 7);     // Supported peripherals, hexadecimal
-            Array.Copy(ipbin_sector, 0x040, ipbin.product_no, 0, 10);     // Product number
-            Array.Copy(ipbin_sector, 0x04A, ipbin.product_version, 0, 6);      // Product version
-            Array.Copy(ipbin_sector, 0x050, ipbin.release_date, 0, 8);     // YYYYMMDD
-            Array.Copy(ipbin_sector, 0x058, ipbin.spare_space3, 0, 8);        // "  "
-            Array.Copy(ipbin_sector, 0x060, ipbin.boot_filename, 0, 12);     // Usually "1ST_READ.BIN" or "0WINCE.BIN  "
-            Array.Copy(ipbin_sector, 0x070, ipbin.producer, 0, 16);     // Game producer, space-filled
-            Array.Copy(ipbin_sector, 0x080, ipbin.product_name, 0, 128);     // Game name, space-filled
+            IntPtr ptr = Marshal.AllocHGlobal(512);
+            Marshal.Copy(ipbin_sector, 0, ptr, 512);
+            ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));
+            Marshal.FreeHGlobal(ptr);
 
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.maker_id = \"{0}\"", Encoding.ASCII.GetString(ipbin.maker_id));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.dreamcast_crc = 0x{0}", Encoding.ASCII.GetString(ipbin.dreamcast_crc));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space1 = \"{0}\"", Encoding.ASCII.GetString(ipbin.spare_space1));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space1 = \"{0}\"", (char)ipbin.spare_space1);
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.dreamcast_media = \"{0}\"", Encoding.ASCII.GetString(ipbin.dreamcast_media));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no = {0}", Encoding.ASCII.GetString(ipbin.disc_no));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no_separator = \"{0}\"", Encoding.ASCII.GetString(ipbin.disc_no_separator));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_total_nos = \"{0}\"", Encoding.ASCII.GetString(ipbin.disc_total_nos));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no = {0}", (char)ipbin.disc_no);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no_separator = \"{0}\"", (char)ipbin.disc_no_separator);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_total_nos = \"{0}\"", (char)ipbin.disc_total_nos);
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space2 = \"{0}\"", Encoding.ASCII.GetString(ipbin.spare_space2));
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.region_codes = \"{0}\"", Encoding.ASCII.GetString(ipbin.region_codes));
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.peripherals = \"{0}\"", Encoding.ASCII.GetString(ipbin.peripherals));
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_no = \"{0}\"", Encoding.ASCII.GetString(ipbin.product_no));
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_version = \"{0}\"", Encoding.ASCII.GetString(ipbin.product_version));
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.release_date = \"{0}\"", Encoding.ASCII.GetString(ipbin.release_date));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space3 = \"{0}\"", Encoding.ASCII.GetString(ipbin.spare_space3));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space3 = \"{0}\"", (char)ipbin.spare_space3);
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.boot_filename = \"{0}\"", Encoding.ASCII.GetString(ipbin.boot_filename));
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.producer = \"{0}\"", Encoding.ASCII.GetString(ipbin.producer));
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_name = \"{0}\"", Encoding.ASCII.GetString(ipbin.product_name));
 
-            string id = Encoding.ASCII.GetString(ipbin.SegaHardwareID);
-
-            if(id == "SEGA SEGAKATANA ")
-                return ipbin;
-            else
-                return null;
+            return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGAKATANA " ? ipbin : (IPBin?)null;
         }
 
         public static string Prettify(IPBin? decoded)
@@ -152,9 +151,10 @@ namespace DiscImageChef.Decoders.Sega
             ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
             IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).AppendLine();
             IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(ipbin.product_version)).AppendLine();
+            IPBinInformation.AppendFormat("Product CRC: 0x{0:X8}", ipbin.dreamcast_crc).AppendLine();
             IPBinInformation.AppendFormat("Producer: {0}", Encoding.ASCII.GetString(ipbin.producer)).AppendLine();
             IPBinInformation.AppendFormat("Disc media: {0}", Encoding.ASCII.GetString(ipbin.dreamcast_media)).AppendLine();
-            IPBinInformation.AppendFormat("Disc number {0} of {1}", Encoding.ASCII.GetString(ipbin.disc_no), Encoding.ASCII.GetString(ipbin.disc_total_nos)).AppendLine();
+            IPBinInformation.AppendFormat("Disc number {0} of {1}", (char)ipbin.disc_no, (char)ipbin.disc_total_nos).AppendLine();
             IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
             switch(Encoding.ASCII.GetString(ipbin.boot_filename))
             {
@@ -240,8 +240,8 @@ namespace DiscImageChef.Decoders.Sega
             if((iPeripherals & 0x08000000) == 0x08000000)
                 IPBinInformation.AppendLine("Game supports Mouse.");
 
-            if((iPeripherals & 0xF00000EE) != 0)
-                IPBinInformation.AppendFormat("Game supports unknown peripherals mask {0:X2}", (iPeripherals & 0xF00000EE));
+            if((iPeripherals & 0xEE) != 0)
+                IPBinInformation.AppendFormat("Game supports unknown peripherals mask {0:X2}", (iPeripherals & 0xEE));
 
             return IPBinInformation.ToString();
         }
