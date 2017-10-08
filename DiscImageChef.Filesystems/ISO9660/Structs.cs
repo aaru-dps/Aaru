@@ -68,8 +68,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             public uint opt_type_1_path_table;
             public uint type_m_path_table;
             public uint opt_type_m_path_table;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 34)]
-            public byte[] root_directory_record;
+            public DirectoryRecord root_directory_record;
+            public byte root_directory_name;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
             public byte[] volume_set_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
