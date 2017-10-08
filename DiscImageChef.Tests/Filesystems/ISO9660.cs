@@ -142,7 +142,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                Filesystem fs = new ISO9660Plugin();
+                Filesystem fs = new DiscImageChef.Filesystems.ISO9660.ISO9660();
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",

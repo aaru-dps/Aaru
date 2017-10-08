@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : ISO9660.cs
+// Filename       : Info.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : ISO 9660 filesystem plugin.
+// Component      : Component
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Identifies the ISO 9660 filesystem and shows information.
+//     Description
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,136 +29,18 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
-
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.Filesystems
+namespace DiscImageChef.Filesystems.ISO9660
 {
-    // This is coded following ECMA-119.
-    // TODO: Differentiate ISO Level 1, 2, 3 and ISO 9660:1999
-    // TODO: Apple extensiones, requires XA or advance RR interpretation.
-    // TODO: Needs a major rewrite
-    public class ISO9660Plugin : Filesystem
+    public partial class ISO9660 : Filesystem
     {
-        //static bool alreadyLaunched;
-
-        public ISO9660Plugin()
-        {
-            Name = "ISO9660 Filesystem";
-            PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            CurrentEncoding = Encoding.ASCII;
-        }
-
-        public ISO9660Plugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-            Name = "ISO9660 Filesystem";
-            PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            if(encoding == null)
-                CurrentEncoding = Encoding.ASCII;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PrimaryVolumeDescriptor
-        {
-            public byte type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] id;
-            public byte version;
-            // Only used in SVDs
-            public byte flags;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] system_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volume_id;
-            public ulong reserved2;
-            public ulong volume_space_size;
-            // Only used in SVDs
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] escape_sequences;
-            public uint volume_set_size;
-            public uint volume_sequence_number;
-            public uint logical_block_size;
-            public ulong path_table_size;
-            public uint type_1_path_table;
-            public uint opt_type_1_path_table;
-            public uint type_m_path_table;
-            public uint opt_type_m_path_table;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 34)]
-            public byte[] root_directory_record;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] volume_set_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] publisher_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] preparer_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] application_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 37)]
-            public byte[] copyright_file_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 37)]
-            public byte[] abstract_file_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 37)]
-            public byte[] bibliographic_file_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public byte[] creation_date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public byte[] modification_date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public byte[] expiration_date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public byte[] effective_date;
-            public byte file_structure_version;
-            public byte reserved4;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] application_data;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 653)]
-            public byte[] reserved5;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootRecord
-        {
-            public byte type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] id;
-            public byte version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] system_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] boot_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1977)]
-            public byte[] boot_use;
-        }
-
-        struct DecodedVolumeDescriptor
-        {
-            public string SystemIdentifier;
-            public string VolumeIdentifier;
-            public string VolumeSetIdentifier;
-            public string PublisherIdentifier;
-            public string DataPreparerIdentifier;
-            public string ApplicationIdentifier;
-            public DateTime CreationTime;
-            public bool HasModificationTime;
-            public DateTime ModificationTime;
-            public bool HasExpirationTime;
-            public DateTime ExpirationTime;
-            public bool HasEffectiveTime;
-            public DateTime EffectiveTime;
-        }
-
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            /*            if (alreadyLaunched)
-                            return false;
-                        alreadyLaunched = true;*/
-
             byte VDType;
 
             // ISO9660 is designed for 2048 bytes/sector devices
@@ -504,162 +386,6 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ClusterSize = 2048;
 
             information = ISOMetadata.ToString();
-        }
-
-        static DecodedVolumeDescriptor DecodeJolietDescriptor(PrimaryVolumeDescriptor jolietvd)
-        {
-            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
-
-            decodedVD.SystemIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.system_id).TrimEnd().Trim(new[] { '\u0000' });
-            decodedVD.VolumeIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.volume_id).TrimEnd().Trim(new[] { '\u0000' });
-            decodedVD.VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.volume_set_id).TrimEnd().Trim(new[] { '\u0000' });
-            decodedVD.PublisherIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.publisher_id).TrimEnd().Trim(new[] { '\u0000' });
-            decodedVD.DataPreparerIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.preparer_id).TrimEnd().Trim(new[] { '\u0000' });
-            decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.application_id).TrimEnd().Trim(new[] { '\u0000' });
-            if(jolietvd.creation_date[0] < 0x31 || jolietvd.creation_date[0] > 0x39)
-                decodedVD.CreationTime = DateTime.MinValue;
-            else
-                decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(jolietvd.creation_date);
-
-            if(jolietvd.modification_date[0] < 0x31 || jolietvd.modification_date[0] > 0x39)
-            {
-                decodedVD.HasModificationTime = false;
-            }
-            else
-            {
-                decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(jolietvd.modification_date);
-            }
-
-            if(jolietvd.expiration_date[0] < 0x31 || jolietvd.expiration_date[0] > 0x39)
-            {
-                decodedVD.HasExpirationTime = false;
-            }
-            else
-            {
-                decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(jolietvd.expiration_date);
-            }
-
-            if(jolietvd.effective_date[0] < 0x31 || jolietvd.effective_date[0] > 0x39)
-            {
-                decodedVD.HasEffectiveTime = false;
-            }
-            else
-            {
-                decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(jolietvd.effective_date);
-            }
-
-            return decodedVD;
-        }
-
-        static DecodedVolumeDescriptor DecodeVolumeDescriptor(PrimaryVolumeDescriptor pvd)
-        {
-            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
-
-            decodedVD.SystemIdentifier = Encoding.ASCII.GetString(pvd.system_id).TrimEnd().Trim(new[] { '\0' });
-            decodedVD.VolumeIdentifier = Encoding.ASCII.GetString(pvd.volume_id).TrimEnd().Trim(new[] { '\0' });
-            decodedVD.VolumeSetIdentifier = Encoding.ASCII.GetString(pvd.volume_set_id).TrimEnd().Trim(new[] { '\0' });
-            decodedVD.PublisherIdentifier = Encoding.ASCII.GetString(pvd.publisher_id).TrimEnd().Trim(new[] { '\0' });
-            decodedVD.DataPreparerIdentifier = Encoding.ASCII.GetString(pvd.preparer_id).TrimEnd().Trim(new[] { '\0' });
-            decodedVD.ApplicationIdentifier = Encoding.ASCII.GetString(pvd.application_data).TrimEnd().Trim(new[] { '\0' });
-            if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00)
-                decodedVD.CreationTime = DateTime.MinValue;
-            else
-                decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(pvd.creation_date);
-
-            if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00)
-            {
-                decodedVD.HasModificationTime = false;
-            }
-            else
-            {
-                decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(pvd.modification_date);
-            }
-
-            if(pvd.expiration_date[0] == '0' || pvd.expiration_date[0] == 0x00)
-            {
-                decodedVD.HasExpirationTime = false;
-            }
-            else
-            {
-                decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(pvd.expiration_date);
-            }
-
-            if(pvd.effective_date[0] == '0' || pvd.effective_date[0] == 0x00)
-            {
-                decodedVD.HasEffectiveTime = false;
-            }
-            else
-            {
-                decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(pvd.effective_date);
-            }
-
-            return decodedVD;
-        }
-
-        public override Errno Mount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Mount(bool debug)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Unmount()
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetAttributes(string path, ref FileAttributes attributes)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ListXAttr(string path, ref List<string> xattrs)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Read(string path, long offset, long size, ref byte[] buf)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadDir(string path, ref List<string> contents)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno StatFs(ref FileSystemInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno Stat(string path, ref FileEntryInfo stat)
-        {
-            return Errno.NotImplemented;
-        }
-
-        public override Errno ReadLink(string path, ref string dest)
-        {
-            return Errno.NotImplemented;
         }
     }
 }
