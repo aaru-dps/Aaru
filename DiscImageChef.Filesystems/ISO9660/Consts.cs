@@ -92,7 +92,8 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             x86 = 0,
             PowerPC = 1,
-            Macintosh = 2
+            Macintosh = 2,
+            EFI = 0xef
         }
 
         enum ElToritoEmulation : byte
