@@ -81,6 +81,13 @@ namespace DiscImageChef
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
 
+        public static DateTime HighSierraToDateTime(byte[] VDDateTime)
+        {
+            byte[] isotime = new byte[17];
+            Array.Copy(VDDateTime, 0, isotime, 0, 16);
+            return ISO9660ToDateTime(isotime);
+        }
+
         public static DateTime ISO9660ToDateTime(byte[] VDDateTime)
         {
             int year, month, day, hour, minute, second, hundredths;
