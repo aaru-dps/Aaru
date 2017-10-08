@@ -93,6 +93,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             PrimaryVolumeDescriptor? jolietvd = null;
             BootRecord? bvd = null;
             HighSierraPrimaryVolumeDescriptor? hsvd = null;
+            ElToritoBootRecord? torito = null;
 
             // ISO9660 is designed for 2048 bytes/sector devices
             if(imagePlugin.GetSectorSize() < 2048)
@@ -143,7 +144,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 switch(VDType)
                 {
-                    case 0: // TODO
+                    case 0:
                         {
                             bvd = new BootRecord();
                             IntPtr ptr = Marshal.AllocHGlobal(2048);
@@ -154,7 +155,14 @@ namespace DiscImageChef.Filesystems.ISO9660
                             BootSpec = "Unknown";
 
                             if(CurrentEncoding.GetString(bvd.Value.system_id).Substring(0, 23) == "EL TORITO SPECIFICATION")
+                            {
                                 BootSpec = "El Torito";
+                                torito = new ElToritoBootRecord();
+                                ptr = Marshal.AllocHGlobal(2048);
+                                Marshal.Copy(vd_sector, hs_off, ptr, 2048 - hs_off);
+                                torito = (ElToritoBootRecord)Marshal.PtrToStructure(ptr, typeof(ElToritoBootRecord));
+                                Marshal.FreeHGlobal(ptr);
+                            }
 
                             break;
                         }
@@ -278,9 +286,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                 ISOMetadata.AppendLine("This is a Sega Dreamcast disc.");
                 ISOMetadata.AppendLine(Decoders.Sega.Dreamcast.Prettify(Dreamcast));
             }
-            ISOMetadata.AppendLine("--------------------------------");
+            ISOMetadata.AppendLine("------------------------------");
             ISOMetadata.AppendLine("VOLUME DESCRIPTOR INFORMATION:");
-            ISOMetadata.AppendLine("--------------------------------");
+            ISOMetadata.AppendLine("------------------------------");
             ISOMetadata.AppendFormat("System identifier: {0}", decodedVD.SystemIdentifier).AppendLine();
             ISOMetadata.AppendFormat("Volume identifier: {0}", decodedVD.VolumeIdentifier).AppendLine();
             ISOMetadata.AppendFormat("Volume set identifier: {0}", decodedVD.VolumeSetIdentifier).AppendLine();
@@ -304,9 +312,9 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(jolietvd != null)
             {
-                ISOMetadata.AppendLine("---------------------------------------");
+                ISOMetadata.AppendLine("-------------------------------------");
                 ISOMetadata.AppendLine("JOLIET VOLUME DESCRIPTOR INFORMATION:");
-                ISOMetadata.AppendLine("---------------------------------------");
+                ISOMetadata.AppendLine("-------------------------------------");
                 ISOMetadata.AppendFormat("System identifier: {0}", decodedJolietVD.SystemIdentifier).AppendLine();
                 ISOMetadata.AppendFormat("Volume identifier: {0}", decodedJolietVD.VolumeIdentifier).AppendLine();
                 ISOMetadata.AppendFormat("Volume set identifier: {0}", decodedJolietVD.VolumeSetIdentifier).AppendLine();
@@ -328,6 +336,166 @@ namespace DiscImageChef.Filesystems.ISO9660
                     ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
             }
 
+            if(torito != null)
+            {
+                vd_sector = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start);
+                Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
+                sha1Ctx.Init();
+                byte[] boot_image;
+
+                int torito_off = 0;
+
+                if(vd_sector[torito_off] != 1)
+                    goto exit_torito;
+
+                ElToritoValidationEntry valentry = new ElToritoValidationEntry();
+                IntPtr ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
+                Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
+                valentry = (ElToritoValidationEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoValidationEntry));
+                Marshal.FreeHGlobal(ptr);
+
+                if(valentry.signature != ElToritoMagic)
+                    goto exit_torito;
+
+                torito_off += ElToritoEntrySize;
+
+                ElToritoInitialEntry initial_entry = new ElToritoInitialEntry();
+                ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
+                Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
+                initial_entry = (ElToritoInitialEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoInitialEntry));
+                Marshal.FreeHGlobal(ptr);
+                initial_entry.boot_type = (ElToritoEmulation)((byte)initial_entry.boot_type & 0xF);
+
+                boot_image = imagePlugin.ReadSectors(initial_entry.load_rba + partition.Start, initial_entry.sector_count);
+
+                ISOMetadata.AppendLine("----------------------");
+                ISOMetadata.AppendLine("EL TORITO INFORMATION:");
+                ISOMetadata.AppendLine("----------------------");
+
+                ISOMetadata.AppendLine("Initial entry:");
+                ISOMetadata.AppendFormat("\tDeveloper ID: {0}", CurrentEncoding.GetString(valentry.developer_id)).AppendLine();
+                if(initial_entry.bootable == ElToritoIndicator.Bootable)
+                {
+                    ISOMetadata.AppendFormat("\tBootable on {0}", valentry.platform_id).AppendLine();
+                    ISOMetadata.AppendFormat("\tBootable image starts at sector {0} and runs for {1} sectors", initial_entry.load_rba, initial_entry.sector_count).AppendLine();
+                    if(valentry.platform_id == ElToritoPlatform.x86)
+                        ISOMetadata.AppendFormat("\tBootable image will be loaded at segment {0:X4}h", initial_entry.load_seg == 0 ? 0x7C0 : initial_entry.load_seg).AppendLine();
+                    else
+                        ISOMetadata.AppendFormat("\tBootable image will be loaded at 0x{0:X8}", (uint)initial_entry.load_seg * 10).AppendLine();
+                    switch(initial_entry.boot_type)
+                    {
+                        case ElToritoEmulation.None:
+                            ISOMetadata.AppendLine("\tImage uses no emulation");
+                            break;
+                        case ElToritoEmulation.Md2hd:
+                            ISOMetadata.AppendLine("\tImage emulates a 5.25\" high-density (MD2HD, 1.2Mb) floppy");
+                            break;
+                        case ElToritoEmulation.Mf2hd:
+                            ISOMetadata.AppendLine("\tImage emulates a 3.5\" high-density (MF2HD, 1.44Mb) floppy");
+                            break;
+                        case ElToritoEmulation.Mf2ed:
+                            ISOMetadata.AppendLine("\tImage emulates a 3.5\" extra-density (MF2ED, 2.88Mb) floppy");
+                            break;
+                        default:
+                            ISOMetadata.AppendFormat("\tImage uses unknown emulation type {0}", (byte)initial_entry.boot_type).AppendLine();
+                            break;
+                    }
+                    ISOMetadata.AppendFormat("\tSystem type: 0x{0:X2}", initial_entry.system_type).AppendLine();
+                    ISOMetadata.AppendFormat("\tBootable image's SHA1: {0}", sha1Ctx.Data(boot_image, out byte[] hash)).AppendLine();
+                }
+                else
+                    ISOMetadata.AppendLine("\tNot bootable");
+
+                torito_off += ElToritoEntrySize;
+
+                int section_counter = 2;
+
+                while(torito_off < vd_sector.Length && (vd_sector[torito_off] == (byte)ElToritoIndicator.Header || vd_sector[torito_off] == (byte)ElToritoIndicator.LastHeader))
+                {
+                    ElToritoSectionHeaderEntry section_header = new ElToritoSectionHeaderEntry();
+                    ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
+                    Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
+                    section_header = (ElToritoSectionHeaderEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoSectionHeaderEntry));
+                    Marshal.FreeHGlobal(ptr);
+                    torito_off += ElToritoEntrySize;
+
+                    ISOMetadata.AppendFormat("Boot section {0}:", section_counter);
+                    ISOMetadata.AppendFormat("\tSection ID: {0}", CurrentEncoding.GetString(section_header.identifier)).AppendLine();
+
+                    for(int entry_counter = 1; entry_counter <= section_header.entries && torito_off < vd_sector.Length; entry_counter++)
+                    {
+                        ElToritoSectionEntry section_entry = new ElToritoSectionEntry();
+                        ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
+                        Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
+                        section_entry = (ElToritoSectionEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoSectionEntry));
+                        Marshal.FreeHGlobal(ptr);
+                        torito_off += ElToritoEntrySize;
+
+                        ISOMetadata.AppendFormat("\tEntry {0}:", entry_counter);
+                        if(section_entry.bootable == ElToritoIndicator.Bootable)
+                        {
+                            boot_image = imagePlugin.ReadSectors(section_entry.load_rba + partition.Start, section_entry.sector_count);
+                            ISOMetadata.AppendFormat("\t\tBootable on {0}", section_header.platform_id).AppendLine();
+                            ISOMetadata.AppendFormat("\t\tBootable image starts at sector {0} and runs for {1} sectors", section_entry.load_rba, section_entry.sector_count).AppendLine();
+                            if(valentry.platform_id == ElToritoPlatform.x86)
+                                ISOMetadata.AppendFormat("\t\tBootable image will be loaded at segment {0:X4}h", section_entry.load_seg == 0 ? 0x7C0 : section_entry.load_seg).AppendLine();
+                            else
+                                ISOMetadata.AppendFormat("\t\tBootable image will be loaded at 0x{0:X8}", (uint)section_entry.load_seg * 10).AppendLine();
+                            switch((ElToritoEmulation)((byte)section_entry.boot_type & 0xF))
+                            {
+                                case ElToritoEmulation.None:
+                                    ISOMetadata.AppendLine("\t\tImage uses no emulation");
+                                    break;
+                                case ElToritoEmulation.Md2hd:
+                                    ISOMetadata.AppendLine("\t\tImage emulates a 5.25\" high-density (MD2HD, 1.2Mb) floppy");
+                                    break;
+                                case ElToritoEmulation.Mf2hd:
+                                    ISOMetadata.AppendLine("\t\tImage emulates a 3.5\" high-density (MF2HD, 1.44Mb) floppy");
+                                    break;
+                                case ElToritoEmulation.Mf2ed:
+                                    ISOMetadata.AppendLine("\t\tImage emulates a 3.5\" extra-density (MF2ED, 2.88Mb) floppy");
+                                    break;
+                                default:
+                                    ISOMetadata.AppendFormat("\t\tImage uses unknown emulation type {0}", (byte)initial_entry.boot_type).AppendLine();
+                                    break;
+                            }
+
+                            ISOMetadata.AppendFormat("\t\tSelection criteria type: {0}", section_entry.selection_criteria_type).AppendLine();
+                            ISOMetadata.AppendFormat("\t\tSystem type: 0x{0:X2}", section_entry.system_type).AppendLine();
+                            ISOMetadata.AppendFormat("\t\tBootable image's SHA1: {0}", sha1Ctx.Data(boot_image, out byte[] hash)).AppendLine();
+                        }
+                        else
+                            ISOMetadata.AppendLine("\t\tNot bootable");
+
+                        ElToritoFlags flags = (ElToritoFlags)((byte)section_entry.boot_type & 0xF0);
+                        if(flags.HasFlag(ElToritoFlags.ATAPI))
+                            ISOMetadata.AppendLine("\t\tImage contains ATAPI drivers");
+                        if(flags.HasFlag(ElToritoFlags.SCSI))
+                            ISOMetadata.AppendLine("\t\tImage contains SCSI drivers");
+
+                        if(flags.HasFlag(ElToritoFlags.Continued))
+                        {
+                            while(true && torito_off < vd_sector.Length)
+                            {
+                                ElToritoSectionEntryExtension section_extension = new ElToritoSectionEntryExtension();
+                                ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
+                                Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
+                                section_extension = (ElToritoSectionEntryExtension)Marshal.PtrToStructure(ptr, typeof(ElToritoSectionEntryExtension));
+                                Marshal.FreeHGlobal(ptr);
+                                torito_off += ElToritoEntrySize;
+
+                                if(!section_extension.extension_flags.HasFlag(ElToritoFlags.Continued))
+                                    break;
+                            }
+                        }
+                    }
+
+                    if(section_header.header_id == ElToritoIndicator.LastHeader)
+                        break;
+                }
+            }
+
+        exit_torito:
             xmlFSType.Type = HighSierra ? "High Sierra Format" : "ISO9660";
 
             if(jolietvd != null)
