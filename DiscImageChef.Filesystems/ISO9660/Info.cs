@@ -60,16 +60,19 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             VDType = vd_sector[0 + xa_off];
             byte[] VDMagic = new byte[5];
+            byte[] HSMagic = new byte[5];
 
-            // Wrong, VDs can be any order!
-            if(VDType == 255) // Supposedly we are in the PVD.
+            // This indicates the end of a volume descriptor. HighSierra here would have 16 so no problem
+            if(VDType == 255)
                 return false;
 
             Array.Copy(vd_sector, 0x001 + xa_off, VDMagic, 0, 5);
+            Array.Copy(vd_sector, 0x009 + xa_off, HSMagic, 0, 5);
 
             DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", CurrentEncoding.GetString(VDMagic));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", CurrentEncoding.GetString(HSMagic));
 
-            return CurrentEncoding.GetString(VDMagic) == "CD001";
+            return CurrentEncoding.GetString(VDMagic) == IsoMagic || CurrentEncoding.GetString(HSMagic) == HighSierraMagic;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
@@ -79,6 +82,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             bool RockRidge = false;
             byte VDType;                            // Volume Descriptor Type, should be 1 or 2.
             byte[] VDMagic = new byte[5];           // Volume Descriptor magic "CD001"
+            byte[] HSMagic = new byte[5];           // Volume Descriptor magic "CDROM"
 
             string BootSpec = "";
 
@@ -88,6 +92,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             PrimaryVolumeDescriptor? pvd = null;
             PrimaryVolumeDescriptor? jolietvd = null;
             BootRecord? bvd = null;
+            HighSierraPrimaryVolumeDescriptor? hsvd = null;
 
             // ISO9660 is designed for 2048 bytes/sector devices
             if(imagePlugin.GetSectorSize() < 2048)
@@ -99,22 +104,24 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             ulong counter = 0;
 
+            byte[] vd_sector = imagePlugin.ReadSector(16 + counter + partition.Start);
+            int xa_off = imagePlugin.GetSectorSize() == 2336 ? 8 : 0;
+            Array.Copy(vd_sector, 0x009 + xa_off, HSMagic, 0, 5);
+            bool HighSierra = CurrentEncoding.GetString(HSMagic) == HighSierraMagic;
+            int hs_off = 0;
+            if(HighSierra)
+                hs_off = 8;
+
             while(true)
             {
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
                 // Seek to Volume Descriptor
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
                 byte[] vd_sector_tmp = imagePlugin.ReadSector(16 + counter + partition.Start);
-                byte[] vd_sector;
-                if(vd_sector_tmp.Length == 2336)
-                {
-                    vd_sector = new byte[2336 - 8];
-                    Array.Copy(vd_sector_tmp, 8, vd_sector, 0, 2336 - 8);
-                }
-                else
-                    vd_sector = vd_sector_tmp;
+                vd_sector = new byte[vd_sector_tmp.Length - xa_off];
+                Array.Copy(vd_sector_tmp, xa_off, vd_sector, 0, vd_sector.Length);
 
-                VDType = vd_sector[0];
+                VDType = vd_sector[0 + hs_off];
                 DicConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", VDType);
 
                 if(VDType == 255) // Supposedly we are in the PVD.
@@ -125,8 +132,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                 }
 
                 Array.Copy(vd_sector, 0x001, VDMagic, 0, 5);
+                Array.Copy(vd_sector, 0x009, HSMagic, 0, 5);
 
-                if(CurrentEncoding.GetString(VDMagic) != "CD001") // Recognized, it is an ISO9660, now check for rest of data.
+                if(CurrentEncoding.GetString(VDMagic) != IsoMagic && CurrentEncoding.GetString(HSMagic) != HighSierraMagic) // Recognized, it is an ISO9660, now check for rest of data.
                 {
                     if(counter == 0)
                         return;
@@ -139,7 +147,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         {
                             bvd = new BootRecord();
                             IntPtr ptr = Marshal.AllocHGlobal(2048);
-                            Marshal.Copy(vd_sector, 0, ptr, 2048);
+                            Marshal.Copy(vd_sector, hs_off, ptr, 2048 - hs_off);
                             bvd = (BootRecord)Marshal.PtrToStructure(ptr, typeof(BootRecord));
                             Marshal.FreeHGlobal(ptr);
 
@@ -152,11 +160,22 @@ namespace DiscImageChef.Filesystems.ISO9660
                         }
                     case 1:
                         {
-                            pvd = new PrimaryVolumeDescriptor();
-                            IntPtr ptr = Marshal.AllocHGlobal(2048);
-                            Marshal.Copy(vd_sector, 0, ptr, 2048);
-                            pvd = (PrimaryVolumeDescriptor)Marshal.PtrToStructure(ptr, typeof(PrimaryVolumeDescriptor));
-                            Marshal.FreeHGlobal(ptr);
+                            if(HighSierra)
+                            {
+                                hsvd = new HighSierraPrimaryVolumeDescriptor();
+                                IntPtr ptr = Marshal.AllocHGlobal(2048);
+                                Marshal.Copy(vd_sector, 0, ptr, 2048);
+                                hsvd = (HighSierraPrimaryVolumeDescriptor)Marshal.PtrToStructure(ptr, typeof(HighSierraPrimaryVolumeDescriptor));
+                                Marshal.FreeHGlobal(ptr);
+                            }
+                            else
+                            {
+                                pvd = new PrimaryVolumeDescriptor();
+                                IntPtr ptr = Marshal.AllocHGlobal(2048);
+                                Marshal.Copy(vd_sector, 0, ptr, 2048);
+                                pvd = (PrimaryVolumeDescriptor)Marshal.PtrToStructure(ptr, typeof(PrimaryVolumeDescriptor));
+                                Marshal.FreeHGlobal(ptr);
+                            }
                             break;
                         }
                     case 2:
@@ -194,16 +213,19 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             xmlFSType = new Schemas.FileSystemType();
 
-            if(pvd == null)
+            if(pvd == null && hsvd == null)
             {
                 information = "ERROR: Could not find primary volume descriptor";
                 return;
             }
 
-            decodedVD = DecodeVolumeDescriptor(pvd.Value);
+            if(HighSierra)
+                decodedVD = DecodeVolumeDescriptor(hsvd.Value);
+            else
+                decodedVD = DecodeVolumeDescriptor(pvd.Value);
+            
             if(jolietvd != null)
                 decodedJolietVD = DecodeJolietDescriptor(jolietvd.Value);
-
 
             ulong i = (ulong)BitConverter.ToInt32(VDPathTableStart, 0);
             DicConsole.DebugWriteLine("ISO9660 plugin", "VDPathTableStart = {0} + {1} = {2}", i, partition.Start, i + partition.Start);
@@ -234,7 +256,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             Decoders.Sega.Saturn.IPBin? Saturn = Decoders.Sega.Saturn.DecodeIPBin(ipbin_sector);
             Decoders.Sega.Dreamcast.IPBin? Dreamcast = Decoders.Sega.Dreamcast.DecodeIPBin(ipbin_sector);
 
-            ISOMetadata.AppendFormat("ISO9660 file system").AppendLine();
+            ISOMetadata.AppendFormat("{0} file system", HighSierra ? "High Sierra Format" : "ISO9660").AppendLine();
             if(jolietvd != null)
                 ISOMetadata.AppendFormat("Joliet extensions present.").AppendLine();
             if(RockRidge)
@@ -306,7 +328,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
             }
 
-            xmlFSType.Type = "ISO9660";
+            xmlFSType.Type = HighSierra ? "High Sierra Format" : "ISO9660";
 
             if(jolietvd != null)
             {

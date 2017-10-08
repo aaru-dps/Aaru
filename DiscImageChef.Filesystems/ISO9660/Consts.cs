@@ -35,6 +35,9 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660 : Filesystem
     {
+        readonly string IsoMagic = "CD001";
+        readonly string HighSierraMagic = "CDROM";
+
         [Flags]
         enum FileFlags : byte
         {
