@@ -278,6 +278,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 ISOMetadata.AppendFormat("Volume effective date: {0}", decodedVD.EffectiveTime).AppendLine();
             else
                 ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
+            ISOMetadata.AppendFormat("Volume has {0} blocks of {1} bytes each", decodedVD.Blocks, decodedVD.BlockSize).AppendLine();
 
             if(jolietvd != null)
             {
@@ -382,8 +383,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             }
 
             xmlFSType.Bootable |= bvd != null || SegaCD != null || Saturn != null || Dreamcast != null;
-            xmlFSType.Clusters = (long)(partition.End - partition.Start + 1);
-            xmlFSType.ClusterSize = 2048;
+            xmlFSType.Clusters = decodedVD.Blocks;
+            xmlFSType.ClusterSize = decodedVD.BlockSize;
 
             information = ISOMetadata.ToString();
         }

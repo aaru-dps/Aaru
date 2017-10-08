@@ -201,6 +201,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             public DateTime ExpirationTime;
             public bool HasEffectiveTime;
             public DateTime EffectiveTime;
+            public ushort BlockSize;
+            public uint Blocks;
         }
 
         static DecodedVolumeDescriptor DecodeJolietDescriptor(PrimaryVolumeDescriptor jolietvd)
@@ -247,6 +249,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                 decodedVD.HasEffectiveTime = true;
                 decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(jolietvd.effective_date);
             }
+
+            decodedVD.Blocks = jolietvd.volume_space_size;
+            decodedVD.BlockSize = jolietvd.logical_block_size;
 
             return decodedVD;
         }
@@ -295,6 +300,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                 decodedVD.HasEffectiveTime = true;
                 decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(pvd.effective_date);
             }
+
+            decodedVD.Blocks = pvd.volume_space_size;
+            decodedVD.BlockSize = pvd.logical_block_size;
 
             return decodedVD;
         }
