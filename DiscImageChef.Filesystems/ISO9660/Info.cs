@@ -80,7 +80,6 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             information = "";
             StringBuilder ISOMetadata = new StringBuilder();
-            bool RockRidge = false;
             byte VDType;                            // Volume Descriptor Type, should be 1 or 2.
             byte[] VDMagic = new byte[5];           // Volume Descriptor magic "CD001"
             byte[] HSMagic = new byte[5];           // Volume Descriptor magic "CDROM"
@@ -257,6 +256,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             bool XA = false;
             bool Apple = false;
             bool SUSP = false;
+            bool RRIP = false;
             List<ContinuationArea> contareas = new List<ContinuationArea>();
             List<byte[]> refareas = new List<byte[]>();
             StringBuilder suspInformation = new StringBuilder();
@@ -370,6 +370,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                                     refareas.Add(er);
                                 }
 
+                                RRIP |= nextSignature == RRIP_Magic || nextSignature == RRIP_PosixAttributes ||
+                                            nextSignature == RRIP_PosixDevNo || nextSignature == RRIP_Symlink ||
+                                            nextSignature == RRIP_Name || nextSignature == RRIP_Childlink ||
+                                            nextSignature == RRIP_Parentlink || nextSignature == RRIP_RelocatedDir ||
+                                            nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
+                                
                                 sa_off += sa[sa_off + 2];
 
                                 if(nextSignature == SUSP_Terminator)
@@ -419,6 +425,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                         refareas.Add(er);
                     }
 
+                    RRIP |= nextSignature == RRIP_Magic || nextSignature == RRIP_PosixAttributes ||
+                                nextSignature == RRIP_PosixDevNo || nextSignature == RRIP_Symlink ||
+                                nextSignature == RRIP_Name || nextSignature == RRIP_Childlink ||
+                                nextSignature == RRIP_Parentlink || nextSignature == RRIP_RelocatedDir ||
+                                nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
+
                     ca_off += ca_data[ca_off + 2];
                 }
             }
@@ -444,27 +456,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                 }
             }
 
-            // TODO: Check this
-            /*
-            if((i + partition.Start) < partition.End)
-            {
-
-                byte[] path_table = imagePlugin.ReadSector(i + partition.Start);
-                Array.Copy(path_table, 2, RootDirectoryLocation, 0, 4);
-                // Check for Rock Ridge
-                byte[] root_dir = imagePlugin.ReadSector((ulong)BitConverter.ToInt32(RootDirectoryLocation, 0) + partition.Start);
-
-                byte[] SUSPMagic = new byte[2];
-                byte[] RRMagic = new byte[2];
-
-                Array.Copy(root_dir, 0x22, SUSPMagic, 0, 2);
-                if(CurrentEncoding.GetString(SUSPMagic) == "SP")
-                {
-                    Array.Copy(root_dir, 0x29, RRMagic, 0, 2);
-                    RockRidge |= CurrentEncoding.GetString(RRMagic) == "RR";
-                }
-            }*/
-
             byte[] ipbin_sector = imagePlugin.ReadSector(0 + partition.Start);
             Decoders.Sega.CD.IPBin? SegaCD = Decoders.Sega.CD.DecodeIPBin(ipbin_sector);
             Decoders.Sega.Saturn.IPBin? Saturn = Decoders.Sega.Saturn.DecodeIPBin(ipbin_sector);
@@ -479,7 +470,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 ISOMetadata.AppendLine("Joliet extensions present.");
             if(SUSP)
                 ISOMetadata.AppendLine("System Use Sharing Protocol present.");
-            if(RockRidge)
+            if(RRIP)
                 ISOMetadata.AppendLine("Rock Ridge Interchange Protocol present.");
             if(bvd != null)
                 ISOMetadata.AppendFormat("Disc bootable following {0} specifications.", BootSpec).AppendLine();

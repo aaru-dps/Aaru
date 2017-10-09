@@ -49,6 +49,16 @@ namespace DiscImageChef.Filesystems.ISO9660
         const ushort SUSP_Reference = 0x4552; // "ER"
         const ushort SUSP_Selector = 0x4553; // "ES"
         const ushort SUSP_Magic = 0xBEEF;
+        const ushort RRIP_Magic = 0x5252; // "RR"
+        const ushort RRIP_PosixAttributes = 0x5058; // "PX"
+        const ushort RRIP_PosixDevNo = 0x504E; // "PN"
+        const ushort RRIP_Symlink = 0x534C; // "SL"
+        const ushort RRIP_Name = 0x4E4D; // "NM"
+        const ushort RRIP_Childlink = 0x434C; // "CL"
+        const ushort RRIP_Parentlink = 0x504C; // "PL"
+        const ushort RRIP_RelocatedDir = 0x5245; // "RE"
+        const ushort RRIP_Timestamps = 0x5446; // "TF"
+        const ushort RRIP_Sparse = 0x5346; // "SF"
 
         [Flags]
         enum FileFlags : byte
@@ -154,6 +164,69 @@ namespace DiscImageChef.Filesystems.ISO9660
             TypeCreatorIcon = 4,
             TypeCreatorIconBundle = 5,
             HFS = 6
+        }
+
+        [Flags]
+        enum PosixMode : uint
+        {
+            OwnerRead = 0x100,
+            OwnerWrite = 0x80,
+            OwnerExecute = 0x40,
+            GroupRead = 0x20,
+            GroupWrite = 0x10,
+            GroupExecute = 0x8,
+            OtherRead = 0x4,
+            OtherWrite = 0x2,
+            OtherExecute = 0x1,
+            SetUID = 0x800,
+            SetGid = 0x400,
+            IsVTX = 0x200,
+            Socket = 0xC000,
+            Symlink = 0xA000,
+            Regular = 0x8000,
+            Block = 0x6000,
+            Character = 0x2000,
+            Directory = 0x4000,
+            Pipe = 0x1000
+        }
+
+        [Flags]
+        enum SymlinkFlags : byte
+        {
+            Continue = 1
+        }
+
+        [Flags]
+        enum SymlinkComponentFlags : byte
+        {
+            Continue = 1,
+            Current = 2,
+            Parent = 4,
+            Root = 8,
+            Mountpoint = 16,
+            Networkname = 32
+        }
+
+        [Flags]
+        enum AlternateNameFlags : byte
+        {
+            Continue = 1,
+            Current = 2,
+            Parent = 4,
+            Networkname = 32
+        }
+
+        [Flags]
+        enum TimestampFlags : byte
+        {
+            Creation = 1 << 0,
+            Modification = 1 << 1,
+            Access = 1 << 2,
+            AttributeChange = 1 << 3,
+            Backup = 1 << 4,
+            Expiration = 1 << 5,
+            Effective = 1 << 6,
+            LongFormat = 1 << 7,
         }
     }
 }
