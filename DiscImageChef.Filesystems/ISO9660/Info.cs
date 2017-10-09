@@ -258,6 +258,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             bool SUSP = false;
             bool RRIP = false;
             bool ziso = false;
+            bool Amiga = false;
             List<ContinuationArea> contareas = new List<ContinuationArea>();
             List<byte[]> refareas = new List<byte[]>();
             StringBuilder suspInformation = new StringBuilder();
@@ -378,6 +379,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                             nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
 
                                 ziso |= nextSignature == ziso_Magic;
+                                Amiga |= nextSignature == Amiga_Magic;
 
                                 sa_off += sa[sa_off + 2];
 
@@ -435,6 +437,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
 
                     ziso |= nextSignature == ziso_Magic;
+                    Amiga |= nextSignature == Amiga_Magic;
 
                     ca_off += ca_data[ca_off + 2];
                 }

@@ -632,6 +632,26 @@ namespace DiscImageChef.Filesystems.ISO9660
             public uint uncomp_len_be;
         }
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AmigaEntry
+        {
+            public ushort signature;
+            public byte length;
+            public byte version;
+            public AmigaFlags flags;
+            // Followed by AmigaProtection if present
+            // Followed by length-prefixed string for comment if present
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct AmigaProtection
+        {
+            public byte User;
+            public byte Reserved;
+            public AmigaMultiuser Multiuser;
+            public AmigaAttributes Protection;
+        }
+
         struct DecodedVolumeDescriptor
         {
             public string SystemIdentifier;

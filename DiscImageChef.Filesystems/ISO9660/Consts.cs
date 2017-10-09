@@ -63,6 +63,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         const ulong ziso_header_cigam = 0x07D6DBC99653E437;
         const ushort ziso_Magic = 0x5A46; // "ZF"
         const ushort ziso_PagedZlib = 0x707A; // "pz"
+        const ushort Amiga_Magic = 0x4153; // "AS"
 
         [Flags]
         enum FileFlags : byte
@@ -231,6 +232,40 @@ namespace DiscImageChef.Filesystems.ISO9660
             Expiration = 1 << 5,
             Effective = 1 << 6,
             LongFormat = 1 << 7,
+        }
+
+        [Flags]
+        enum AmigaFlags : byte
+        {
+            Protection = 1 << 0,
+            Comment = 1 << 1,
+            CommentContinues = 1 << 2
+        }
+
+        [Flags]
+        enum AmigaMultiuser : byte
+        {
+            GroupDelete = 1 << 0,
+            GroupExec = 1 << 1,
+            GroupWrite = 1 << 2,
+            GroupRead = 1 << 3,
+            OtherDelete = 1 << 4,
+            OtherExec = 1 << 5,
+            OtherWrite = 1 << 6,
+            OtherRead = 1 << 7,
+        }
+
+        [Flags]
+        enum AmigaAttributes : byte
+        {
+            OwnerDelete = 1 << 0,
+            OwnerExec = 1 << 1,
+            OwnerWrite = 1 << 2,
+            OwnerRead = 1 << 3,
+            Archive = 1 << 4,
+            Reentrant = 1 << 5,
+            Script = 1 << 6,
+            Reserved = 1 << 7,
         }
     }
 }
