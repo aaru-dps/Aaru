@@ -36,10 +36,6 @@ using DiscImageChef.CommonTypes;
 namespace DiscImageChef.Filesystems.ISO9660
 {
     // This is coded following ECMA-119.
-    // TODO: Differentiate ISO Level 1, 2, 3 and ISO 9660:1999
-    // TODO: Apple extensiones, requires XA or advance RR interpretation.
-    // TODO: Check ECMA-167
-    // TODO: Check ECMA-168
     public partial class ISO9660 : Filesystem
     {
         public ISO9660()
