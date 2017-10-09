@@ -259,6 +259,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             bool RRIP = false;
             bool ziso = false;
             bool Amiga = false;
+            bool AAIP = false;
             List<ContinuationArea> contareas = new List<ContinuationArea>();
             List<byte[]> refareas = new List<byte[]>();
             StringBuilder suspInformation = new StringBuilder();
@@ -380,6 +381,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                                 ziso |= nextSignature == ziso_Magic;
                                 Amiga |= nextSignature == Amiga_Magic;
+                                AAIP |= nextSignature == AAIP_Magic || (nextSignature == AAIP_OldMagic && sa[sa_off + 3] == 1 && sa[sa_off + 2] >= 9);
 
                                 sa_off += sa[sa_off + 2];
 
@@ -438,6 +440,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                     ziso |= nextSignature == ziso_Magic;
                     Amiga |= nextSignature == Amiga_Magic;
+                    AAIP |= nextSignature == AAIP_Magic || (nextSignature == AAIP_OldMagic && ca_data[ca_off + 3] == 1 && ca_data[ca_off + 2] >= 9);
 
                     ca_off += ca_data[ca_off + 2];
                 }
@@ -480,6 +483,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 ISOMetadata.AppendLine("System Use Sharing Protocol present.");
             if(RRIP)
                 ISOMetadata.AppendLine("Rock Ridge Interchange Protocol present.");
+            if(AAIP)
+                ISOMetadata.AppendLine("Arbitrary Attribute Interchange Protocol present.");
             if(ziso)
                 ISOMetadata.AppendLine("zisofs compression present.");
             if(bvd != null)

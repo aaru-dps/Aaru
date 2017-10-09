@@ -64,6 +64,8 @@ namespace DiscImageChef.Filesystems.ISO9660
         const ushort ziso_Magic = 0x5A46; // "ZF"
         const ushort ziso_PagedZlib = 0x707A; // "pz"
         const ushort Amiga_Magic = 0x4153; // "AS"
+        const ushort AAIP_Magic = 0x414C; // "AL"
+        const ushort AAIP_OldMagic = 0x4141; // "AA"
 
         [Flags]
         enum FileFlags : byte
@@ -266,6 +268,12 @@ namespace DiscImageChef.Filesystems.ISO9660
             Reentrant = 1 << 5,
             Script = 1 << 6,
             Reserved = 1 << 7,
+        }
+
+        [Flags]
+        enum AAIPFlags : byte
+        {
+            Continue = 1
         }
     }
 }
