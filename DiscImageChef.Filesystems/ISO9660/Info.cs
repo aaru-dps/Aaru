@@ -30,6 +30,7 @@
 // Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -255,6 +256,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             int rootOff = 0;
             bool XA = false;
             bool Apple = false;
+            bool SUSP = false;
+            List<ContinuationArea> contareas = new List<ContinuationArea>();
+            List<byte[]> refareas = new List<byte[]>();
+            StringBuilder suspInformation = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -331,6 +336,47 @@ namespace DiscImageChef.Filesystems.ISO9660
                             }
                         }
 
+                        // IEEE-P1281 aka SUSP 1.12
+                        if(nextSignature == SUSP_Indicator)
+                        {
+                            SUSP = true;
+                            sa_off += sa[sa_off + 2];
+                            noneFound = false;
+
+                            while(sa_off < sa_len)
+                            {
+                                nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
+
+                                if(nextSignature == AppleMagic)
+                                {
+                                    // Can collide with AAIP
+                                    if(sa[sa_off + 3] == 1 && sa[sa_off + 2] == 7)
+                                        Apple = true;
+                                    else Apple |= sa[sa_off + 3] != 1;
+                                }
+
+                                if(nextSignature == SUSP_Continuation && sa_off + sa[sa_off + 2] <= sa_len)
+                                {
+                                    byte[] ce = new byte[sa[sa_off + 2]];
+                                    Array.Copy(sa, sa_off, ce, 0, ce.Length);
+                                    ContinuationArea ca = BigEndianMarshal.ByteArrayToStructureBigEndian<ContinuationArea>(ce);
+                                    contareas.Add(ca);
+                                }
+
+                                if(nextSignature == SUSP_Reference && sa_off + sa[sa_off + 2] <= sa_len)
+                                {
+                                    byte[] er = new byte[sa[sa_off + 2]];
+                                    Array.Copy(sa, sa_off, er, 0, er.Length);
+                                    refareas.Add(er);
+                                }
+
+                                sa_off += sa[sa_off + 2];
+
+                                if(nextSignature == SUSP_Terminator)
+                                    break;
+                            }
+                        }
+
                         if(noneFound)
                             break;
                     }
@@ -342,6 +388,61 @@ namespace DiscImageChef.Filesystems.ISO9660
                     break;
             }
 
+            foreach(ContinuationArea ca in contareas)
+            {
+                uint ca_len = (ca.ca_length_be + ca.offset_be) / (HighSierra ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size);
+                if((ca.ca_length_be + ca.offset_be) % (HighSierra ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size) > 0)
+                    ca_len++;
+
+                byte[] ca_sectors = imagePlugin.ReadSectors(ca.block_be, ca_len);
+                byte[] ca_data = new byte[ca.ca_length_be];
+                Array.Copy(ca_sectors, ca.offset_be, ca_data, 0, ca.ca_length_be);
+                int ca_off = 0;
+
+                while(ca_off < ca.ca_length_be)
+                {
+                    ushort nextSignature = BigEndianBitConverter.ToUInt16(ca_data, ca_off);
+
+                    // Apple never said to include its extensions inside a continuation area, but just in case
+                    if(nextSignature == AppleMagic)
+                    {
+                        // Can collide with AAIP
+                        if(ca_data[ca_off + 3] == 1 && ca_data[ca_off + 2] == 7)
+                            Apple = true;
+                        else Apple |= ca_data[ca_off + 3] != 1;
+                    }
+
+                    if(nextSignature == SUSP_Reference && ca_off + ca_data[ca_off + 2] <= ca.ca_length_be)
+                    {
+                        byte[] er = new byte[ca_data[ca_off + 2]];
+                        Array.Copy(ca_data, ca_off, er, 0, er.Length);
+                        refareas.Add(er);
+                    }
+
+                    ca_off += ca_data[ca_off + 2];
+                }
+            }
+
+            if(refareas.Count > 0)
+            {
+                suspInformation.AppendLine("----------------------------------------");
+                suspInformation.AppendLine("SYSTEM USE SHARING PROTOCOL INFORMATION:");
+                suspInformation.AppendLine("----------------------------------------");
+
+                counter = 1;
+                foreach(byte[] erb in refareas)
+                {
+                    ReferenceArea er = BigEndianMarshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
+                    string ext_id = CurrentEncoding.GetString(erb, Marshal.SizeOf(er), er.id_len);
+                    string ext_des = CurrentEncoding.GetString(erb, Marshal.SizeOf(er) + er.id_len, er.des_len);
+                    string ext_src = CurrentEncoding.GetString(erb, Marshal.SizeOf(er) + er.id_len + er.des_len, er.src_len);
+                    suspInformation.AppendFormat("Extension: {0}", counter).AppendLine();
+                    suspInformation.AppendFormat("\tID: {0}, version {1}", ext_id, er.ext_ver).AppendLine();
+                    suspInformation.AppendFormat("\tDescription: {0}", ext_des).AppendLine();
+                    suspInformation.AppendFormat("\tSource: {0}", ext_src).AppendLine();
+                    counter++;
+                }
+            }
 
             // TODO: Check this
             /*
@@ -376,6 +477,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 ISOMetadata.AppendLine("Apple extensions present.");
             if(jolietvd != null)
                 ISOMetadata.AppendLine("Joliet extensions present.");
+            if(SUSP)
+                ISOMetadata.AppendLine("System Use Sharing Protocol present.");
             if(RockRidge)
                 ISOMetadata.AppendLine("Rock Ridge Interchange Protocol present.");
             if(bvd != null)
@@ -605,6 +708,9 @@ namespace DiscImageChef.Filesystems.ISO9660
             }
 
         exit_torito:
+            if(refareas.Count > 0)
+                ISOMetadata.Append(suspInformation.ToString());
+
             xmlFSType.Type = HighSierra ? "High Sierra Format" : "ISO9660";
 
             if(jolietvd != null)

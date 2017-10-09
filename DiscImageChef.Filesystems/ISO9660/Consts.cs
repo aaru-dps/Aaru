@@ -42,6 +42,13 @@ namespace DiscImageChef.Filesystems.ISO9660
         const ushort XaMagic = 0x5841; // "XA"
         const ushort AppleMagic = 0x4141; // "AA"
         const ushort AppleMagicOld = 0x4241; // "BA"
+        const ushort SUSP_Continuation = 0x4345; // "CE"
+        const ushort SUSP_Padding = 0x5044; // "PD"
+        const ushort SUSP_Indicator = 0x5350; // "SP"
+        const ushort SUSP_Terminator = 0x5354; // "ST"
+        const ushort SUSP_Reference = 0x4552; // "ER"
+        const ushort SUSP_Selector = 0x4553; // "ES"
+        const ushort SUSP_Magic = 0xBEEF;
 
         [Flags]
         enum FileFlags : byte
