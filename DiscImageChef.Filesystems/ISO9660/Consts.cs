@@ -59,6 +59,10 @@ namespace DiscImageChef.Filesystems.ISO9660
         const ushort RRIP_RelocatedDir = 0x5245; // "RE"
         const ushort RRIP_Timestamps = 0x5446; // "TF"
         const ushort RRIP_Sparse = 0x5346; // "SF"
+        const ulong ziso_header_magic = 0x37E45396C9DBD607;
+        const ulong ziso_header_cigam = 0x07D6DBC99653E437;
+        const ushort ziso_Magic = 0x5A46; // "ZF"
+        const ushort ziso_PagedZlib = 0x707A; // "pz"
 
         [Flags]
         enum FileFlags : byte

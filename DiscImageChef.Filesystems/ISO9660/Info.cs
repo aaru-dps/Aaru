@@ -257,6 +257,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             bool Apple = false;
             bool SUSP = false;
             bool RRIP = false;
+            bool ziso = false;
             List<ContinuationArea> contareas = new List<ContinuationArea>();
             List<byte[]> refareas = new List<byte[]>();
             StringBuilder suspInformation = new StringBuilder();
@@ -375,7 +376,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                                             nextSignature == RRIP_Name || nextSignature == RRIP_Childlink ||
                                             nextSignature == RRIP_Parentlink || nextSignature == RRIP_RelocatedDir ||
                                             nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
-                                
+
+                                ziso |= nextSignature == ziso_Magic;
+
                                 sa_off += sa[sa_off + 2];
 
                                 if(nextSignature == SUSP_Terminator)
@@ -431,6 +434,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 nextSignature == RRIP_Parentlink || nextSignature == RRIP_RelocatedDir ||
                                 nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
 
+                    ziso |= nextSignature == ziso_Magic;
+
                     ca_off += ca_data[ca_off + 2];
                 }
             }
@@ -472,6 +477,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 ISOMetadata.AppendLine("System Use Sharing Protocol present.");
             if(RRIP)
                 ISOMetadata.AppendLine("Rock Ridge Interchange Protocol present.");
+            if(ziso)
+                ISOMetadata.AppendLine("zisofs compression present.");
             if(bvd != null)
                 ISOMetadata.AppendFormat("Disc bootable following {0} specifications.", BootSpec).AppendLine();
             if(SegaCD != null)
