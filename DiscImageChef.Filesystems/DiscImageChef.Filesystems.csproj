@@ -140,11 +140,30 @@
     <Compile Include="ISO9660\File.cs" />
     <Compile Include="ISO9660\Info.cs" />
     <Compile Include="ISO9660\ISO9660.cs" />
-    <Compile Include="ISO9660\Structs.cs" />
     <Compile Include="ISO9660\Xattr.cs" />
     <Compile Include="ISO9660\Extent.cs" />
     <Compile Include="ISO9660\Super.cs" />
-    <Compile Include="ISO9660\Consts.cs" />
+    <Compile Include="ISO9660\Structs\ISO.cs" />
+    <Compile Include="ISO9660\Structs\RRIP.cs" />
+    <Compile Include="ISO9660\Structs\SUSP.cs" />
+    <Compile Include="ISO9660\Structs\Amiga.cs" />
+    <Compile Include="ISO9660\Structs\HighSierra.cs" />
+    <Compile Include="ISO9660\Structs\Apple.cs" />
+    <Compile Include="ISO9660\Structs\ElTorito.cs" />
+    <Compile Include="ISO9660\Structs\XA.cs" />
+    <Compile Include="ISO9660\Structs\Ziso.cs" />
+    <Compile Include="ISO9660\Structs\Joliet.cs" />
+    <Compile Include="ISO9660\Structs\Common.cs" />
+    <Compile Include="ISO9660\Consts\ISO.cs" />
+    <Compile Include="ISO9660\Consts\HighSierra.cs" />
+    <Compile Include="ISO9660\Consts\XA.cs" />
+    <Compile Include="ISO9660\Consts\ElTorito.cs" />
+    <Compile Include="ISO9660\Consts\Apple.cs" />
+    <Compile Include="ISO9660\Consts\RRIP.cs" />
+    <Compile Include="ISO9660\Consts\Amiga.cs" />
+    <Compile Include="ISO9660\Consts\SUSP.cs" />
+    <Compile Include="ISO9660\Consts\Ziso.cs" />
+    <Compile Include="ISO9660\Consts\AAIP.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -188,6 +207,8 @@
     <Folder Include="CPM\" />
     <Folder Include="AppleDOS\" />
     <Folder Include="ISO9660\" />
+    <Folder Include="ISO9660\Structs\" />
+    <Folder Include="ISO9660\Consts\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
