@@ -40,6 +40,8 @@ namespace DiscImageChef.Filesystems.ISO9660
         const ushort ElToritoMagic = 0xAA55;
         const int ElToritoEntrySize = 32;
         const ushort XaMagic = 0x5841; // "XA"
+        const ushort AppleMagic = 0x4141; // "AA"
+        const ushort AppleMagicOld = 0x4241; // "BA"
 
         [Flags]
         enum FileFlags : byte
@@ -129,6 +131,22 @@ namespace DiscImageChef.Filesystems.ISO9660
             Continued = 0x20,
             ATAPI = 0x40,
             SCSI = 0x08
+        }
+
+        enum AppleId : byte
+        {
+            ProDOS = 1,
+            HFS = 2
+        }
+
+        enum AppleOldId : byte
+        {
+            ProDOS = 1,
+            TypeCreator = 2,
+            TypeCreatorBundle = 3,
+            TypeCreatorIcon = 4,
+            TypeCreatorIconBundle = 5,
+            HFS = 6
         }
     }
 }

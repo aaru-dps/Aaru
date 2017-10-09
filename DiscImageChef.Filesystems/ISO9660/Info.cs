@@ -254,6 +254,9 @@ namespace DiscImageChef.Filesystems.ISO9660
             byte[] root_dir = imagePlugin.ReadSectors(rootLocation + partition.Start, rootSize);
             int rootOff = 0;
             bool XA = false;
+            bool Apple = false;
+
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             // Walk thru root directory to see system area extensions in use
             while(rootOff + Marshal.SizeOf(typeof(DirectoryRecord)) < root_dir.Length)
@@ -274,14 +277,62 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Array.Copy(root_dir, rootOff + sa_off, sa, 0, sa_len);
                     sa_off = 0;
 
-                    if(Marshal.SizeOf(typeof(CdromXa)) + sa_off <= sa_len)
+                    while(sa_off < sa_len)
                     {
-                        CdromXa xa = BigEndianMarshal.ByteArrayToStructureBigEndian<CdromXa>(sa);
-                        if(xa.signature == XaMagic)
+                        bool noneFound = true;
+
+                        if(Marshal.SizeOf(typeof(CdromXa)) + sa_off <= sa_len)
                         {
-                            XA = true;
-                            sa_off += Marshal.SizeOf(typeof(CdromXa));
+                            CdromXa xa = BigEndianMarshal.ByteArrayToStructureBigEndian<CdromXa>(sa);
+                            if(xa.signature == XaMagic)
+                            {
+                                XA = true;
+                                sa_off += Marshal.SizeOf(typeof(CdromXa));
+                                noneFound = false;
+                            }
                         }
+
+                        if(sa_off >= sa_len)
+                            break;
+
+                        ushort nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
+
+                        // Easy, contains size field
+                        if(nextSignature == AppleMagic)
+                        {
+                            Apple = true;
+                            sa_off += sa[sa_off + 2];
+                            noneFound = false;
+                        }
+
+                        // Not easy, contains size field
+                        if(nextSignature == AppleMagicOld)
+                        {
+                            Apple = true;
+                            AppleOldId apple_id = (AppleOldId)sa[sa_off + 2];
+                            noneFound = false;
+
+                            switch(apple_id)
+                            {
+                                case AppleOldId.ProDOS:
+                                    sa_off += Marshal.SizeOf(typeof(AppleProDOSOldSystemUse));
+                                    break;
+                                case AppleOldId.TypeCreator:
+                                case AppleOldId.TypeCreatorBundle:
+                                    sa_off += Marshal.SizeOf(typeof(AppleHFSTypeCreatorSystemUse));
+                                    break;
+                                case AppleOldId.TypeCreatorIcon:
+                                case AppleOldId.TypeCreatorIconBundle:
+                                    sa_off += Marshal.SizeOf(typeof(AppleHFSIconSystemUse));
+                                    break;
+                                case AppleOldId.HFS:
+                                    sa_off += Marshal.SizeOf(typeof(AppleHFSOldSystemUse));
+                                    break;
+                            }
+                        }
+
+                        if(noneFound)
+                            break;
                     }
                 }
 
@@ -321,6 +372,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             ISOMetadata.AppendFormat("{0} file system", HighSierra ? "High Sierra Format" : "ISO9660").AppendLine();
             if(XA)
                 ISOMetadata.AppendLine("CD-ROM XA extensions present.");
+            if(Apple)
+                ISOMetadata.AppendLine("Apple extensions present.");
             if(jolietvd != null)
                 ISOMetadata.AppendLine("Joliet extensions present.");
             if(RockRidge)
