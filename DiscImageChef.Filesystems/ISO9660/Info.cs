@@ -236,14 +236,27 @@ namespace DiscImageChef.Filesystems.ISO9660
                 decodedJolietVD = DecodeJolietDescriptor(jolietvd.Value);
 
             uint rootLocation = HighSierra ? hsvd.Value.root_directory_record.extent : pvd.Value.root_directory_record.extent;
-            uint rootSize = HighSierra ? hsvd.Value.root_directory_record.size / hsvd.Value.logical_block_size : pvd.Value.root_directory_record.size / pvd.Value.logical_block_size;
+            uint rootSize = 0;
+
+            if(HighSierra)
+            {
+                rootSize = hsvd.Value.root_directory_record.size / hsvd.Value.logical_block_size;
+                if(hsvd.Value.root_directory_record.size % hsvd.Value.logical_block_size > 0)
+                    rootSize++;
+            }
+            else
+            {
+                rootSize = pvd.Value.root_directory_record.size / pvd.Value.logical_block_size;
+                if(pvd.Value.root_directory_record.size % pvd.Value.logical_block_size > 0)
+                    rootSize++;
+            }
 
             byte[] root_dir = imagePlugin.ReadSectors(rootLocation + partition.Start, rootSize);
             int rootOff = 0;
             bool XA = false;
 
             // Walk thru root directory to see system area extensions in use
-            while(rootOff < root_dir.Length)
+            while(rootOff + Marshal.SizeOf(typeof(DirectoryRecord)) < root_dir.Length)
             {
                 DirectoryRecord record = new DirectoryRecord();
                 IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(record));
@@ -252,18 +265,23 @@ namespace DiscImageChef.Filesystems.ISO9660
                 Marshal.FreeHGlobal(ptr);
 
                 int sa_off = Marshal.SizeOf(record) + record.name_len;
+                sa_off += sa_off % 2;
                 int sa_len = record.length - sa_off;
 
                 if(sa_len > 0 && rootOff + sa_off + sa_len <= root_dir.Length)
                 {
                     byte[] sa = new byte[sa_len];
                     Array.Copy(root_dir, rootOff + sa_off, sa, 0, sa_len);
+                    sa_off = 0;
 
-                    if(sa_len >= Marshal.SizeOf(typeof(CdromXa)))
+                    if(Marshal.SizeOf(typeof(CdromXa)) + sa_off <= sa_len)
                     {
                         CdromXa xa = BigEndianMarshal.ByteArrayToStructureBigEndian<CdromXa>(sa);
                         if(xa.signature == XaMagic)
+                        {
                             XA = true;
+                            sa_off += Marshal.SizeOf(typeof(CdromXa));
+                        }
                     }
                 }
 
