@@ -235,8 +235,44 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(jolietvd != null)
                 decodedJolietVD = DecodeJolietDescriptor(jolietvd.Value);
 
-            ulong i = (ulong)BitConverter.ToInt32(VDPathTableStart, 0);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "VDPathTableStart = {0} + {1} = {2}", i, partition.Start, i + partition.Start);
+            uint rootLocation = HighSierra ? hsvd.Value.root_directory_record.extent : pvd.Value.root_directory_record.extent;
+            uint rootSize = HighSierra ? hsvd.Value.root_directory_record.size / hsvd.Value.logical_block_size : pvd.Value.root_directory_record.size / pvd.Value.logical_block_size;
+
+            byte[] root_dir = imagePlugin.ReadSectors(rootLocation + partition.Start, rootSize);
+            int rootOff = 0;
+            bool XA = false;
+
+            // Walk thru root directory to see system area extensions in use
+            while(rootOff < root_dir.Length)
+            {
+                DirectoryRecord record = new DirectoryRecord();
+                IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(record));
+                Marshal.Copy(root_dir, rootOff, ptr, Marshal.SizeOf(record));
+                record = (DirectoryRecord)Marshal.PtrToStructure(ptr, typeof(DirectoryRecord));
+                Marshal.FreeHGlobal(ptr);
+
+                int sa_off = Marshal.SizeOf(record) + record.name_len;
+                int sa_len = record.length - sa_off;
+
+                if(sa_len > 0 && rootOff + sa_off + sa_len <= root_dir.Length)
+                {
+                    byte[] sa = new byte[sa_len];
+                    Array.Copy(root_dir, rootOff + sa_off, sa, 0, sa_len);
+
+                    if(sa_len >= Marshal.SizeOf(typeof(CdromXa)))
+                    {
+                        CdromXa xa = BigEndianMarshal.ByteArrayToStructureBigEndian<CdromXa>(sa);
+                        if(xa.signature == XaMagic)
+                            XA = true;
+                    }
+                }
+
+                rootOff += record.length;
+
+                if(record.length == 0)
+                    break;
+            }
+
 
             // TODO: Check this
             /*
@@ -265,10 +301,12 @@ namespace DiscImageChef.Filesystems.ISO9660
             Decoders.Sega.Dreamcast.IPBin? Dreamcast = Decoders.Sega.Dreamcast.DecodeIPBin(ipbin_sector);
 
             ISOMetadata.AppendFormat("{0} file system", HighSierra ? "High Sierra Format" : "ISO9660").AppendLine();
+            if(XA)
+                ISOMetadata.AppendLine("CD-ROM XA extensions present.");
             if(jolietvd != null)
-                ISOMetadata.AppendFormat("Joliet extensions present.").AppendLine();
+                ISOMetadata.AppendLine("Joliet extensions present.");
             if(RockRidge)
-                ISOMetadata.AppendFormat("Rock Ridge Interchange Protocol present.").AppendLine();
+                ISOMetadata.AppendLine("Rock Ridge Interchange Protocol present.");
             if(bvd != null)
                 ISOMetadata.AppendFormat("Disc bootable following {0} specifications.", BootSpec).AppendLine();
             if(SegaCD != null)

@@ -234,6 +234,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public ushort volume_sequence_number;
             public ushort volume_sequence_number_be;
             public byte name_len;
+            // Followed by name[name_len] and then system area until length arrives
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -254,6 +255,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public ushort volume_sequence_number;
             public ushort volume_sequence_number_be;
             public byte name_len;
+            // Followed by name[name_len] and then system area until length arrives
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -346,6 +348,18 @@ namespace DiscImageChef.Filesystems.ISO9660
             public ElToritoFlags extension_flags;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
             public byte[] selection_criterias;
+        }
+
+        // Big-endian
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CdromXa
+        {
+            public ushort group;
+            public ushort user;
+            public XaAttributes attributes;
+            public ushort signature;
+            public byte filenumber;
+            public byte[] reserved;
         }
 
         struct DecodedVolumeDescriptor

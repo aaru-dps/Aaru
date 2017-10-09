@@ -39,6 +39,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         readonly string HighSierraMagic = "CDROM";
         const ushort ElToritoMagic = 0xAA55;
         const int ElToritoEntrySize = 32;
+        const ushort XaMagic = 0x5841; // "XA"
 
         [Flags]
         enum FileFlags : byte
@@ -62,6 +63,22 @@ namespace DiscImageChef.Filesystems.ISO9660
             GroupExecute = 0x400,
             OtherRead = 0x1000,
             OtherExecute = 0x4000,
+        }
+
+        [Flags]
+        enum XaAttributes : ushort
+        {
+            SystemRead = 0x01,
+            SystemExecute = 0x04,
+            OwnerRead = 0x10,
+            OwnerExecute = 0x40,
+            GroupRead = 0x100,
+            GroupExecute = 0x400,
+            Mode2Form1 = 0x800,
+            Mode2Form2 = 0x1000,
+            Interleaved = 0x2000,
+            Cdda = 0x4000,
+            Directory = 0x8000,
         }
 
         enum RecordFormat : byte
