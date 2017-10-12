@@ -47,6 +47,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public Cram(Encoding encoding)
+        {
+            Name = "Cram filesystem";
+            PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public Cram(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Cram filesystem";

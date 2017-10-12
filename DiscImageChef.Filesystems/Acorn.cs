@@ -73,6 +73,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
+        public AcornADFS(Encoding encoding)
+        {
+            Name = "Acorn Advanced Disc Filing System";
+            PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public AcornADFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Acorn Advanced Disc Filing System";

@@ -233,6 +233,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
+        public ZFS(Encoding encoding)
+        {
+            Name = "ZFS Filesystem Plugin";
+            PluginUUID = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
+            // ZFS is always UTF-8
+            CurrentEncoding = Encoding.UTF8;
+        }
+
         public ZFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "ZFS Filesystem Plugin";

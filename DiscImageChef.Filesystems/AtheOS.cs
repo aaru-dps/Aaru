@@ -55,6 +55,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public AtheOS(Encoding encoding)
+        {
+            Name = "AtheOS Filesystem";
+            PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public AtheOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "AtheOS Filesystem";

@@ -58,6 +58,13 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
+        public FATX(Encoding encoding)
+        {
+            Name = "FATX Filesystem Plugin";
+            PluginUUID = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+            CurrentEncoding = Encoding.UTF8;
+        }
+
         public FATX(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "FATX Filesystem Plugin";

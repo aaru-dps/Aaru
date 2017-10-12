@@ -48,6 +48,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
+        public AmigaDOSPlugin(Encoding encoding)
+        {
+            Name = "Amiga DOS filesystem";
+            PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public AmigaDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Amiga DOS filesystem";

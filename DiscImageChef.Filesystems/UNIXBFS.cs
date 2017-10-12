@@ -50,6 +50,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public BFS(Encoding encoding)
+        {
+            Name = "UNIX Boot filesystem";
+            PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public BFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNIX Boot filesystem";

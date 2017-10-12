@@ -133,6 +133,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
+        public Fossil(Encoding encoding)
+        {
+            Name = "Fossil Filesystem Plugin";
+            PluginUUID = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+            // Technically everything on Plan 9 from Bell Labs is in UTF-8
+            CurrentEncoding = Encoding.UTF8;
+        }
+
         public Fossil(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Fossil Filesystem Plugin";

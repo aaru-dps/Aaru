@@ -60,6 +60,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public BeFS(Encoding encoding)
+        {
+            Name = "Be Filesystem";
+            PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public BeFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Be Filesystem";

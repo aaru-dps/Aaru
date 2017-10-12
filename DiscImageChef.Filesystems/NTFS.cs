@@ -49,6 +49,13 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.Unicode;
         }
 
+        public NTFS(Encoding encoding)
+        {
+            Name = "New Technology File System (NTFS)";
+            PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+            CurrentEncoding = Encoding.Unicode;
+        }
+
         public NTFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "New Technology File System (NTFS)";

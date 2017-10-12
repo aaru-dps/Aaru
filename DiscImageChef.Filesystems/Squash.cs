@@ -47,6 +47,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
+        public Squash(Encoding encoding)
+        {
+            Name = "Squash filesystem";
+            PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
+            else
+                CurrentEncoding = encoding;
+        }
+
         public Squash(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Squash filesystem";

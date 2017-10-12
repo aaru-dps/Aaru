@@ -65,6 +65,11 @@ namespace DiscImageChef.Filesystems
         {
         }
 
+        // TODO: Call other constructors
+        protected Filesystem(Encoding encoding)
+        {
+        }
+
         /// <summary>
         /// Initializes a filesystem instance prepared for reading contents
         /// </summary>

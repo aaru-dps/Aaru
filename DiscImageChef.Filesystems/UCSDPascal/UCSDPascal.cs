@@ -57,6 +57,14 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
+        public PascalPlugin(Encoding encoding)
+        {
+            Name = "U.C.S.D. Pascal filesystem";
+            PluginUUID = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+            // TODO: Until Apple ][ encoding is implemented
+            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+        }
+
         public PascalPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             device = imagePlugin;

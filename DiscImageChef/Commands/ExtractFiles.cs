@@ -40,6 +40,7 @@ using System.IO;
 using DiscImageChef.Filters;
 using DiscImageChef.Core;
 using DiscImageChef.CommonTypes;
+using System.Text;
 
 namespace DiscImageChef.Commands
 {
@@ -62,8 +63,26 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            Encoding encoding = null;
+
+            if(options.EncodingName != null)
+            {
+                try
+                {
+                    encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
+                    if(options.Verbose)
+                        DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                }
+                catch(ArgumentException)
+                {
+                    DicConsole.ErrorWriteLine("Specified encoding is not supported.");
+                    encoding = null;
+                    return;
+                }
+            }
+
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
+            plugins.RegisterAllPlugins(encoding);
 
             List<string> id_plugins;
             Filesystem _plugin;

@@ -55,6 +55,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public HAMMER(Encoding encoding)
+        {
+            Name = "HAMMER Filesystem";
+            PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public HAMMER(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "HAMMER Filesystem";

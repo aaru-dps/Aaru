@@ -51,6 +51,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
+        public UDF(Encoding encoding)
+        {
+            Name = "Universal Disk Format";
+            PluginUUID = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+            // UDF is always UTF-8
+            CurrentEncoding = Encoding.UTF8;
+        }
+
         public UDF(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Universal Disk Format";

@@ -47,6 +47,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
+        public VxFS(Encoding encoding)
+        {
+            Name = "Veritas filesystem";
+            PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
+            else
+                CurrentEncoding = encoding;
+        }
+
         public VxFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Veritas filesystem";

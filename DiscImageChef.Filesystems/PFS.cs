@@ -47,6 +47,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
+        public PFS(Encoding encoding)
+        {
+            Name = "Professional File System";
+            PluginUUID = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public PFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Professional File System";

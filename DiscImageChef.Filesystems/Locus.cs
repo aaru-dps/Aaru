@@ -203,6 +203,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public Locus(Encoding encoding)
+        {
+            Name = "Locus Filesystem Plugin";
+            PluginUUID = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public Locus(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Locus Filesystem Plugin";

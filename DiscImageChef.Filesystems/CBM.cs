@@ -47,6 +47,13 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = new Claunia.Encoding.PETSCII();
         }
 
+        public CBM(Encoding encoding)
+        {
+            Name = "Commodore file system";
+            PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+            CurrentEncoding = new Claunia.Encoding.PETSCII();
+        }
+
         public CBM(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Commodore file system";

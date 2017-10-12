@@ -48,6 +48,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public SolarFS(Encoding encoding)
+        {
+            Name = "Solar_OS filesystem";
+            PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public SolarFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Solar_OS filesystem";

@@ -63,6 +63,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
 
+        public AppleHFS(Encoding encoding)
+        {
+            Name = "Apple Hierarchical File System";
+            PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("macintosh");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public AppleHFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple Hierarchical File System";

@@ -75,6 +75,13 @@ namespace DiscImageChef.Filesystems.LisaFS
             CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
+        public LisaFS(Encoding encoding)
+        {
+            Name = "Apple Lisa File System";
+            PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+        }
+
         public LisaFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             device = imagePlugin;

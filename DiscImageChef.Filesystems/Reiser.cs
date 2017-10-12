@@ -98,6 +98,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public Reiser(Encoding encoding)
+        {
+            Name = "Reiser Filesystem Plugin";
+            PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public Reiser(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Reiser Filesystem Plugin";

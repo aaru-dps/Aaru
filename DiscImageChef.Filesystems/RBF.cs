@@ -165,6 +165,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public RBF(Encoding encoding)
+        {
+            Name = "OS-9 Random Block File Plugin";
+            PluginUUID = new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public RBF(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "OS-9 Random Block File Plugin";

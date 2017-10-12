@@ -112,6 +112,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public XFS(Encoding encoding)
+        {
+            Name = "XFS Filesystem Plugin";
+            PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public XFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "XFS Filesystem Plugin";

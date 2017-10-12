@@ -50,6 +50,13 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
+        public APFS(Encoding encoding)
+        {
+            Name = "Apple File System";
+            PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+            CurrentEncoding = Encoding.UTF8;
+        }
+
         public APFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple File System";

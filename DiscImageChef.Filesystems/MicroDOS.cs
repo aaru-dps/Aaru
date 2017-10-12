@@ -52,6 +52,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("koi8-r");
         }
 
+        public MicroDOS(Encoding encoding)
+        {
+            Name = "MicroDOS file system";
+            PluginUUID = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("koi8-r");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public MicroDOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "MicroDOS file system";

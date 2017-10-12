@@ -115,6 +115,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public QNX4(Encoding encoding)
+        {
+            Name = "QNX4 Plugin";
+            PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public QNX4(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX4 Plugin";

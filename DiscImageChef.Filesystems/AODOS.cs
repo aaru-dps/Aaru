@@ -50,6 +50,13 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("koi8-r");
         }
 
+        public AODOS(Encoding encoding)
+        {
+            Name = "Alexander Osipov DOS file system";
+            PluginUUID = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+            CurrentEncoding = Encoding.GetEncoding("koi8-r");
+        }
+
         public AODOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Alexander Osipov DOS file system";

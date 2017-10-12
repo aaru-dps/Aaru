@@ -116,6 +116,13 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.Unicode;
         }
 
+        public F2FS(Encoding encoding)
+        {
+            Name = "F2FS Plugin";
+            PluginUUID = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+            CurrentEncoding = Encoding.Unicode;
+        }
+
         public F2FS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "F2FS Plugin";

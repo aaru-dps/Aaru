@@ -46,6 +46,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("shift_jis");
         }
 
+        public PCEnginePlugin(Encoding encoding)
+        {
+            Name = "PC Engine CD Plugin";
+            PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("shift_jis");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public PCEnginePlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "PC Engine CD Plugin";

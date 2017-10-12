@@ -66,6 +66,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public SysVfs(Encoding encoding)
+        {
+            Name = "UNIX System V filesystem";
+            PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public SysVfs(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNIX System V filesystem";

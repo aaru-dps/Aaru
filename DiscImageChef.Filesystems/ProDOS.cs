@@ -86,6 +86,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
+        public ProDOSPlugin(Encoding encoding)
+        {
+            Name = "Apple ProDOS filesystem";
+            PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+            // TODO: Until Apple ][ encoding is implemented
+            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+        }
+
         public ProDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple ProDOS filesystem";

@@ -104,6 +104,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
+        public NILFS2(Encoding encoding)
+        {
+            Name = "NILFS2 Plugin";
+            PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
+            else
+                CurrentEncoding = encoding;
+        }
+
         public NILFS2(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "NILFS2 Plugin";

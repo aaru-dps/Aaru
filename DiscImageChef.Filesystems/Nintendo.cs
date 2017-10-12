@@ -47,6 +47,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("shift_jis");
         }
 
+        public NintendoPlugin(Encoding encoding)
+        {
+            Name = "Nintendo optical filesystems";
+            PluginUUID = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("shift_jis");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public NintendoPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Nintendo optical filesystems";

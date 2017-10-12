@@ -47,6 +47,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
+        public VMfs(Encoding encoding)
+        {
+            Name = "VMware filesystem";
+            PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
+            else
+                CurrentEncoding = encoding;
+        }
+
         public VMfs(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "VMware filesystem";

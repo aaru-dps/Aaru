@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Filters;
@@ -52,6 +53,25 @@ namespace DiscImageChef.Commands
             Sidecar.UpdateProgressEvent2 += Progress.UpdateProgress2;
             Sidecar.EndProgressEvent2 += Progress.EndProgress2;
             Sidecar.UpdateStatusEvent += Progress.UpdateStatus;
+
+
+            Encoding encoding = null;
+
+            if(options.EncodingName != null)
+            {
+                try
+                {
+                    encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
+                    if(options.Verbose)
+                        DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                }
+                catch(ArgumentException)
+                {
+                    DicConsole.ErrorWriteLine("Specified encoding is not supported.");
+                    encoding = null;
+                    return;
+                }
+            }
 
             if(File.Exists(options.InputFile))
             {
@@ -110,7 +130,7 @@ namespace DiscImageChef.Commands
                     Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
                     Core.Statistics.AddFilter(inputFilter.Name);
 
-                    CICMMetadataType sidecar = Sidecar.Create(_imageFormat, options.InputFile, inputFilter.UUID);
+                    CICMMetadataType sidecar = Sidecar.Create(_imageFormat, options.InputFile, inputFilter.UUID, encoding);
 
                     DicConsole.WriteLine("Writing metadata sidecar");
 

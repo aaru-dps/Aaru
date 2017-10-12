@@ -217,6 +217,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public dump(Encoding encoding)
+        {
+            Name = "dump(8) Plugin";
+            PluginUUID = new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public dump(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "dump(8) Plugin";

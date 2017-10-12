@@ -57,6 +57,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
+        public ODS(Encoding encoding)
+        {
+            Name = "Files-11 On-Disk Structure";
+            PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public ODS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Files-11 On-Disk Structure";

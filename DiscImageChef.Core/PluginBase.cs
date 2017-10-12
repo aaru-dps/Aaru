@@ -37,6 +37,7 @@ using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Console;
+using System.Text;
 
 namespace DiscImageChef.Core
 {
@@ -53,7 +54,7 @@ namespace DiscImageChef.Core
             ImagePluginsList = new SortedDictionary<string, ImagePlugin>();
         }
 
-        public void RegisterAllPlugins()
+        public void RegisterAllPlugins(Encoding encoding = null)
         {
             Assembly assembly;
 
@@ -101,7 +102,11 @@ namespace DiscImageChef.Core
                 {
                     if(type.IsSubclassOf(typeof(Filesystem)))
                     {
-                        Filesystem plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                        Filesystem plugin;
+                        if(encoding != null)
+                            plugin = (Filesystem)type.GetConstructor(new Type[] { encoding.GetType() }).Invoke(new object[] { encoding });
+                        else
+                            plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterPlugin(plugin);
                     }
                 }

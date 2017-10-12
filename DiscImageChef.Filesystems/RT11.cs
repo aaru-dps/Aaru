@@ -49,6 +49,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
+        public RT11(Encoding encoding)
+        {
+            Name = "RT-11 file system";
+            PluginUUID = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public RT11(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "RT-11 file system";

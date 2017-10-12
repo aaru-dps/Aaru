@@ -101,6 +101,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public EFS(Encoding encoding)
+        {
+            Name = "Extent File System Plugin";
+            PluginUUID = new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public EFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Extent File System Plugin";

@@ -51,6 +51,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("IBM437");
         }
 
+        public FAT(Encoding encoding)
+        {
+            Name = "Microsoft File Allocation Table";
+            PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("IBM437");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public FAT(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Microsoft File Allocation Table";

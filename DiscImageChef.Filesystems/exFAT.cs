@@ -50,6 +50,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public exFAT(Encoding encoding)
+        {
+            Name = "Microsoft Extended File Allocation Table";
+            PluginUUID = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public exFAT(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Microsoft Extended File Allocation Table";

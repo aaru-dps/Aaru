@@ -56,6 +56,9 @@ namespace DiscImageChef
 
         [Option('i', "input", Required = true, HelpText = "Disc image.")]
         public string InputFile { get; set; }
+
+        [Option('e', "encoding", Default = null, HelpText = "Name of character encoding to use.")]
+        public string EncodingName { get; set; }
     }
 
     [Verb("compare", HelpText = "Compares two disc images.")]
@@ -272,8 +275,12 @@ namespace DiscImageChef
         public bool Tape { get; set; }
         [Option('b', "block-size", Required = false, Default = 512, HelpText = "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored.")]
         public int BlockSize { get; set; }
+
+        [Option('e', "encoding", Default = null, HelpText = "Name of character encoding to use.")]
+        public string EncodingName { get; set; }
     }
 
+    // TODO: Add encoding
     [Verb("dump-media", HelpText = "Dumps the media inserted on a device to a media image.")]
     public class DumpMediaOptions : CommonOptions
     {
@@ -337,6 +344,9 @@ namespace DiscImageChef
 
         [Option('l', "long", Default = false, HelpText = "Uses long format.")]
         public bool Long { get; set; }
+
+        [Option('e', "encoding", Default = null, HelpText = "Name of character encoding to use.")]
+        public string EncodingName { get; set; }
     }
 
     [Verb("extract-files", HelpText = "Extracts all files in disc image.")]
@@ -350,6 +360,9 @@ namespace DiscImageChef
 
         [Option('x', "xattrs", Default = false, HelpText = "Extract extended attributes if present.")]
         public bool Xattrs { get; set; }
+
+        [Option('e', "encoding", Default = null, HelpText = "Name of character encoding to use.")]
+        public string EncodingName { get; set; }
     }
 
     [Verb("list-devices", HelpText = "Lists all connected devices.")]

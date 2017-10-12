@@ -51,6 +51,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public FFSPlugin(Encoding encoding)
+        {
+            Name = "BSD Fast File System (aka UNIX File System, UFS)";
+            PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public FFSPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";

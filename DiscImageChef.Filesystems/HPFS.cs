@@ -49,6 +49,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("ibm850");
         }
 
+        public HPFS(Encoding encoding)
+        {
+            Name = "OS/2 High Performance File System";
+            PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("ibm850");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public HPFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "OS/2 High Performance File System";

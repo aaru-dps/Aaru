@@ -70,6 +70,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public LIF(Encoding encoding)
+        {
+            Name = "HP Logical Interchange Format Plugin";
+            PluginUUID = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public LIF(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "HP Logical Interchange Format Plugin";

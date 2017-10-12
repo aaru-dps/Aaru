@@ -45,11 +45,11 @@ namespace DiscImageChef.Core
 {
     public static partial class Sidecar
     {
-        public static CICMMetadataType Create(ImagePlugin image, string imagePath, System.Guid filterId)
+        public static CICMMetadataType Create(ImagePlugin image, string imagePath, System.Guid filterId, System.Text.Encoding encoding)
         {
             CICMMetadataType sidecar = new CICMMetadataType();
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
+            plugins.RegisterAllPlugins(encoding);
 
             FileInfo fi = new FileInfo(imagePath);
             FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);

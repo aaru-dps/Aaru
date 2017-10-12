@@ -142,6 +142,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
+        public UNICOS(Encoding encoding)
+        {
+            Name = "UNICOS Filesystem Plugin";
+            PluginUUID = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else
+                CurrentEncoding = encoding;
+        }
+
         public UNICOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNICOS Filesystem Plugin";

@@ -47,6 +47,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.ASCII;
         }
 
+        public OperaFS(Encoding encoding)
+        {
+            Name = "Opera Filesystem Plugin";
+            PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+            // TODO: Find correct default encoding
+            CurrentEncoding = Encoding.ASCII;
+        }
+
         public OperaFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Opera Filesystem Plugin";
