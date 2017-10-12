@@ -12,7 +12,7 @@
 		DiscImageChef list of things to do:
 	</p>
     <div>
-        <velyo:MarkdownContent ID="todo" runat="server" Path="docs/TODO.md" />
+        <velyo:MarkdownContent ID="todo" runat="server" Path="~/docs/TODO.md" />
     </div>
 </body>
 </html>

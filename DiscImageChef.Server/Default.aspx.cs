@@ -12,7 +12,7 @@ namespace DiscImageChef.Server
         protected void Page_Load(object sender, EventArgs e)
         {
             MarkdownContent mkdown = new MarkdownContent();
-            StreamReader sr = new StreamReader("docs/README.md");
+            StreamReader sr = new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "docs", "README.md"));
             string mdcontent = sr.ReadToEnd();
             sr.Close();
 

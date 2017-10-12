@@ -12,7 +12,7 @@
         DiscImageChef list of changes:
     </p>
     <div>
-        <velyo:MarkdownContent ID="todo" runat="server" Path="docs/Changelog.md" />
+        <velyo:MarkdownContent ID="todo" runat="server" Path="~/docs/Changelog.md" />
     </div>
 </body>
 </html>

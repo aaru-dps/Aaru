@@ -12,7 +12,7 @@
         DiscImageChef list of things to be donated:
     </p>
     <div>
-        <velyo:MarkdownContent ID="todo" runat="server" Path="docs/DONATING.md" />
+        <velyo:MarkdownContent ID="todo" runat="server" Path="~/docs/DONATING.md" />
     </div>
 </body>
 </html>
