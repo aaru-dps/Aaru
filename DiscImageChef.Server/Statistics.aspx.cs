@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace DiscImageChef.Server
 {
-    public partial class Default : System.Web.UI.Page
+    public partial class Statistics : System.Web.UI.Page
     {
         class MediaItem
         {

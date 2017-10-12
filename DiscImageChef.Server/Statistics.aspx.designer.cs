@@ -11,7 +11,7 @@
 namespace DiscImageChef.Server {
 	
 	
-	public partial class Default {
+	public partial class Statistics {
 		
 		protected System.Web.UI.HtmlControls.HtmlGenericControl body;
 		

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" Inherits="DiscImageChef.Server.Default" %>
+﻿<%@ Page Language="C#" Inherits="DiscImageChef.Server.Statistics" %>
 <!DOCTYPE html>
 <html>
 <meta charset="UTF-8">
