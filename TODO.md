@@ -1,0 +1,71 @@
+﻿Disc image plugins
+==================
+* Add support for DiscFerret images
+* Add support for Kryoflux images
+* Add support for XPACK images
+
+Filesystem plugins
+==================
+* Add support for NwFS
+* Add support for ReFS
+
+Partitioning scheme plugins
+===========================
+* Add support for AIX partitions
+
+RAW plugin
+==========
+* Finish support for reading sectors of variable bytes/sector images
+
+Image comparison
+================
+* Compare sector tags
+* Offer the option to see differing values
+* Optimize and multithread
+
+Image checksum
+==============
+* Checksum disk tags
+* Checksum long sectors
+* Checksum sector tags
+* Optimize and multithread
+
+Device handling
+===============
+* Add support for FreeBSD
+* Add support for NVMe devices
+* Add support for streaming tape devices
+* Support MMC feature codes FF33h
+* Support SCSI mode pages 18h, 1Dh, 20h, 31h, 32h
+
+QCOW plugin
+===========
+* Add support for encrypted images
+
+VMDK plugin
+===========
+* Add support for encrypted extents
+* Add support for compressed extents
+
+UDIF plugin
+===========
+* Add support for chunks compressed with RLE, LZH, KenCode or LZFSE
+
+NDIF plugin
+===========
+* Add support for chunks compressed with RLE, LZH or KenCode
+
+DART plugin
+===========
+* Add support for chunks compressed with RLE or LZH
+
+CHD plugin
+==========
+* Add support for PCMCIA images
+* Add support for compressed hunks on CD disc images
+* Add support for compressed version 5 disk images
+
+Filters
+=======
+* Add support for 7Z archives
+* Add support for ZIP archives

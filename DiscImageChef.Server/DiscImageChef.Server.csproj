@@ -60,6 +60,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Velyo.AspNet.Markdown">
+      <HintPath>..\packages\Velyo.AspNet.Markdown.1.0.26.6184\lib\net451\Velyo.AspNet.Markdown.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
@@ -71,6 +74,10 @@
     <Content Include="int10h.org\vga_squarepx.ttf" />
     <Content Include="int10h.org\vga_squarepx.woff" />
     <Content Include="ViewReport.aspx" />
+    <Content Include="Default.aspx" />
+    <Content Include="Changelog.aspx" />
+    <Content Include="TODO.aspx" />
+    <Content Include="DONATING.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Global.asax.cs">
@@ -102,6 +109,12 @@
     <Compile Include="Controllers\UploadStatsController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\UploadReportController.cs" />
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Metadata\DiscImageChef.Metadata.csproj">
@@ -132,6 +145,15 @@
     <None Include="int10h.org\.htaccess" />
     <None Include="..\README.md">
       <Link>docs\README.md</Link>
+    </None>
+    <None Include="..\Changelog.md">
+      <Link>docs\Changelog.md</Link>
+    </None>
+    <None Include="..\DONATING.md">
+      <Link>docs\DONATING.md</Link>
+    </None>
+    <None Include="..\TODO.md">
+      <Link>docs\TODO.md</Link>
     </None>
   </ItemGroup>
   <ItemGroup>
