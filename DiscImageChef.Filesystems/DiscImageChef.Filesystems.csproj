@@ -34,7 +34,7 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="Claunia.Encoding">
-      <HintPath>..\packages\Claunia.Encoding.1.0.1\lib\portable40-net40+sl5+win8+wp8\Claunia.Encoding.dll</HintPath>
+      <HintPath>..\packages\Claunia.Encoding.1.1.0\lib\portable40-net40+sl5+win8+wp8\Claunia.Encoding.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

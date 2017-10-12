@@ -80,6 +80,7 @@ namespace DiscImageChef.Metadata
         public long PrintHex;
         public long Verify;
         public long ListDevices;
+        public long ListEncodings;
     }
 
     public class VerifiedItems

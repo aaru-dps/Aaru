@@ -322,6 +322,10 @@ namespace DiscImageChef.Core
                         AllStats.Commands.ListDevices++;
                         CurrentStats.Commands.ListDevices++;
                         break;
+                    case "list-encodings":
+                        AllStats.Commands.ListEncodings++;
+                        CurrentStats.Commands.ListEncodings++;
+                        break;
                 }
             }
         }

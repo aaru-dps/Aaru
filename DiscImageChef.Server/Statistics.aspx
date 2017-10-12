@@ -50,6 +50,7 @@
                     <i>extract-files</i> command has been run <asp:Label id="lblExtractFiles" runat="server"/> times<br/>
                     <i>formats</i> command has been run <asp:Label id="lblFormats" runat="server"/> times<br/>
                     <i>list-devices</i> command has been run <asp:Label id="lblListDevices" runat="server"/> times<br/>
+                    <i>list-encodings</i> command has been run <asp:Label id="lblListEncodings" runat="server"/> times<br/>
                     <i>ls</i> command has been run <asp:Label id="lblLs" runat="server"/> times<br/>
                     <i>media-info</i> command has been run <asp:Label id="lblMediaInfo" runat="server"/> times<br/>
                     <i>media-scan</i> command has been run <asp:Label id="lblMediaScan" runat="server"/> times<br/>

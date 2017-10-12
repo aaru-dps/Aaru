@@ -107,6 +107,7 @@ namespace DiscImageChef.Server
                     lblLs.Text = statistics.Commands.Ls.ToString();
                     lblExtractFiles.Text = statistics.Commands.ExtractFiles.ToString();
                     lblListDevices.Text = statistics.Commands.ListDevices.ToString();
+                    lblListEncodings.Text = statistics.Commands.ListEncodings.ToString();
                 }
                 else
                     divCommands.Visible = false;
@@ -237,7 +238,7 @@ namespace DiscImageChef.Server
                     divDevices.Visible = false;
 
             }
-            catch(Exception)
+            catch(Exception ex)
             {
                 content.InnerHtml = "<b>Could not load statistics</b>";
 #if DEBUG

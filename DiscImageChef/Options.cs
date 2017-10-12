@@ -356,5 +356,10 @@ namespace DiscImageChef
     public class ListDevicesOptions : CommonOptions
     {
     }
+
+    [Verb("list-encodings", HelpText = "Lists all supported text encodings and code pages.")]
+    public class ListEncodingsOptions : CommonOptions
+    {
+    }
 }
 

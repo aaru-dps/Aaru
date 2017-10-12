@@ -55,6 +55,8 @@ namespace DiscImageChef.Server {
 		
 		protected System.Web.UI.WebControls.Label lblListDevices;
 		
+		protected System.Web.UI.WebControls.Label lblListEncodings;
+		
 		protected System.Web.UI.WebControls.Label lblLs;
 		
 		protected System.Web.UI.WebControls.Label lblMediaInfo;
