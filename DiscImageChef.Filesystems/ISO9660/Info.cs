@@ -243,20 +243,26 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(jolietvd != null)
                 decodedJolietVD = DecodeJolietDescriptor(jolietvd.Value);
 
-            uint rootLocation = HighSierra ? hsvd.Value.root_directory_record.extent : pvd.Value.root_directory_record.extent;
+            uint rootLocation = 0;
             uint rootSize = 0;
 
-            if(HighSierra)
+            // No need to read root on CD-i, as extensions are not supported...
+            if(!CDi)
             {
-                rootSize = hsvd.Value.root_directory_record.size / hsvd.Value.logical_block_size;
-                if(hsvd.Value.root_directory_record.size % hsvd.Value.logical_block_size > 0)
-                    rootSize++;
-            }
-            else
-            {
-                rootSize = pvd.Value.root_directory_record.size / pvd.Value.logical_block_size;
-                if(pvd.Value.root_directory_record.size % pvd.Value.logical_block_size > 0)
-                    rootSize++;
+                rootLocation = HighSierra ? hsvd.Value.root_directory_record.extent : pvd.Value.root_directory_record.extent;
+
+                if(HighSierra)
+                {
+                    rootSize = hsvd.Value.root_directory_record.size / hsvd.Value.logical_block_size;
+                    if(hsvd.Value.root_directory_record.size % hsvd.Value.logical_block_size > 0)
+                        rootSize++;
+                }
+                else
+                {
+                    rootSize = pvd.Value.root_directory_record.size / pvd.Value.logical_block_size;
+                    if(pvd.Value.root_directory_record.size % pvd.Value.logical_block_size > 0)
+                        rootSize++;
+                }
             }
 
             byte[] root_dir = imagePlugin.ReadSectors(rootLocation + partition.Start, rootSize);
