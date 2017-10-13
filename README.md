@@ -136,6 +136,7 @@ Supported file systems for identification and information only
 * BSD Fast File System (FFS) / Unix File System (UFS)
 * BSD Unix File System 2 (UFS2)
 * BeOS filesystem
+* CD-i file system
 * Coherent UNIX file system
 * Commodore 1540/1541/1571/1581 filesystems
 * Cram file system

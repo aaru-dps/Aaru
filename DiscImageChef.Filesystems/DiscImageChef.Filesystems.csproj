@@ -164,6 +164,8 @@
     <Compile Include="ISO9660\Consts\SUSP.cs" />
     <Compile Include="ISO9660\Consts\Ziso.cs" />
     <Compile Include="ISO9660\Consts\AAIP.cs" />
+    <Compile Include="ISO9660\Structs\CDi.cs" />
+    <Compile Include="ISO9660\Consts\CDi.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

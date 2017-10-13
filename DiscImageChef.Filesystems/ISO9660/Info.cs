@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", CurrentEncoding.GetString(VDMagic));
             DicConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", CurrentEncoding.GetString(HSMagic));
 
-            return CurrentEncoding.GetString(VDMagic) == IsoMagic || CurrentEncoding.GetString(HSMagic) == HighSierraMagic;
+            return CurrentEncoding.GetString(VDMagic) == IsoMagic || CurrentEncoding.GetString(HSMagic) == HighSierraMagic || CurrentEncoding.GetString(VDMagic) == CdiMagic;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
@@ -93,6 +93,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             PrimaryVolumeDescriptor? jolietvd = null;
             BootRecord? bvd = null;
             HighSierraPrimaryVolumeDescriptor? hsvd = null;
+            FileStructureVolumeDescriptor? fsvd = null;
             ElToritoBootRecord? torito = null;
 
             // ISO9660 is designed for 2048 bytes/sector devices
@@ -112,6 +113,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             int hs_off = 0;
             if(HighSierra)
                 hs_off = 8;
+            bool CDi = false;
 
             while(true)
             {
@@ -135,12 +137,14 @@ namespace DiscImageChef.Filesystems.ISO9660
                 Array.Copy(vd_sector, 0x001, VDMagic, 0, 5);
                 Array.Copy(vd_sector, 0x009, HSMagic, 0, 5);
 
-                if(CurrentEncoding.GetString(VDMagic) != IsoMagic && CurrentEncoding.GetString(HSMagic) != HighSierraMagic) // Recognized, it is an ISO9660, now check for rest of data.
+                if(CurrentEncoding.GetString(VDMagic) != IsoMagic && CurrentEncoding.GetString(HSMagic) != HighSierraMagic && CurrentEncoding.GetString(VDMagic) != CdiMagic) // Recognized, it is an ISO9660, now check for rest of data.
                 {
                     if(counter == 0)
                         return;
                     break;
                 }
+
+                CDi |= CurrentEncoding.GetString(VDMagic) == CdiMagic;
 
                 switch(VDType)
                 {
@@ -176,6 +180,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 hsvd = (HighSierraPrimaryVolumeDescriptor)Marshal.PtrToStructure(ptr, typeof(HighSierraPrimaryVolumeDescriptor));
                                 Marshal.FreeHGlobal(ptr);
                             }
+                            else if(CDi)
+                                fsvd = BigEndianMarshal.ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vd_sector);
                             else
                             {
                                 pvd = new PrimaryVolumeDescriptor();
@@ -221,7 +227,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             xmlFSType = new Schemas.FileSystemType();
 
-            if(pvd == null && hsvd == null)
+            if(pvd == null && hsvd == null && fsvd == null)
             {
                 information = "ERROR: Could not find primary volume descriptor";
                 return;
@@ -229,6 +235,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(HighSierra)
                 decodedVD = DecodeVolumeDescriptor(hsvd.Value);
+            else if(CDi)
+                decodedVD = DecodeVolumeDescriptor(fsvd.Value);
             else
                 decodedVD = DecodeVolumeDescriptor(pvd.Value);
             
@@ -267,7 +275,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             // Walk thru root directory to see system area extensions in use
-            while(rootOff + Marshal.SizeOf(typeof(DirectoryRecord)) < root_dir.Length)
+            while(rootOff + Marshal.SizeOf(typeof(DirectoryRecord)) < root_dir.Length && !CDi)
             {
                 DirectoryRecord record = new DirectoryRecord();
                 IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(record));
@@ -472,7 +480,15 @@ namespace DiscImageChef.Filesystems.ISO9660
             Decoders.Sega.Saturn.IPBin? Saturn = Decoders.Sega.Saturn.DecodeIPBin(ipbin_sector);
             Decoders.Sega.Dreamcast.IPBin? Dreamcast = Decoders.Sega.Dreamcast.DecodeIPBin(ipbin_sector);
 
-            ISOMetadata.AppendFormat("{0} file system", HighSierra ? "High Sierra Format" : "ISO9660").AppendLine();
+            string fsFormat;
+            if(HighSierra)
+                fsFormat = "High Sierra Format";
+            else if (CDi)
+                fsFormat = "CD-i";
+            else
+                fsFormat = "ISO9660";
+            
+            ISOMetadata.AppendFormat("{0} file system", fsFormat).AppendLine();
             if(XA)
                 ISOMetadata.AppendLine("CD-ROM XA extensions present.");
             if(Apple)
@@ -717,7 +733,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(refareas.Count > 0)
                 ISOMetadata.Append(suspInformation.ToString());
 
-            xmlFSType.Type = HighSierra ? "High Sierra Format" : "ISO9660";
+            xmlFSType.Type = fsFormat;
 
             if(jolietvd != null)
             {

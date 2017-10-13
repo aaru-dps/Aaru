@@ -88,6 +88,7 @@ namespace DiscImageChef
             return ISO9660ToDateTime(isotime);
         }
 
+        // TODO: Timezone
         public static DateTime ISO9660ToDateTime(byte[] VDDateTime)
         {
             int year, month, day, hour, minute, second, hundredths;

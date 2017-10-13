@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : ISO.cs
+// Filename       : CDi.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Component
@@ -37,38 +37,35 @@ namespace DiscImageChef.Filesystems.ISO9660
     public partial class ISO9660 : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PrimaryVolumeDescriptor
+        struct FileStructureVolumeDescriptor
         {
             public byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public byte[] id;
             public byte version;
-            // Only used in SVDs
-            public byte flags;
+            public CdiVolumeFlags flags;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] system_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] volume_id;
-            public ulong reserved1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] reserved1;
             public uint volume_space_size;
-            public uint volume_space_size_be;
             // Only used in SVDs
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] escape_sequences;
-            public ushort volume_set_size;
-            public ushort volume_set_size_be;
+            public ushort reserved2;
+            public ushort volume_set_siz;
+            public ushort reserved3;
             public ushort volume_sequence_number;
-            public ushort volume_sequence_number_be;
+            public ushort reserved4;
             public ushort logical_block_size;
-            public ushort logical_block_size_be;
+            public uint reserved5;
             public uint path_table_size;
-            public uint path_table_size_be;
-            public uint type_1_path_table;
-            public uint opt_type_1_path_table;
+            public ulong reserved6;
             public uint type_m_path_table;
-            public uint opt_type_m_path_table;
-            public DirectoryRecord root_directory_record;
-            public byte root_directory_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 38)]
+            public byte[] reserved7;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
             public byte[] volume_set_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
@@ -77,127 +74,70 @@ namespace DiscImageChef.Filesystems.ISO9660
             public byte[] preparer_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
             public byte[] application_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 37)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] copyright_file_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 37)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public byte[] reserved8;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] abstract_file_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 37)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public byte[] reserved9;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] bibliographic_file_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+            public byte[] reserved10;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] creation_date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public byte reserved11;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] modification_date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public byte reserved12;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] expiration_date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public byte reserved13;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] effective_date;
+            public byte reserved14;
             public byte file_structure_version;
-            public byte reserved2;
+            public byte reserved15;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
             public byte[] application_data;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 653)]
-            public byte[] reserved3;
+            public byte[] reserved16;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootRecord
-        {
-            public byte type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] id;
-            public byte version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] system_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] boot_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1977)]
-            public byte[] boot_use;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PartitionDescriptor
-        {
-            public byte type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] id;
-            public byte version;
-            public byte reserved1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] system_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] partition_id;
-            public uint partition_location;
-            public uint partition_location_be;
-            public uint partition_size;
-            public uint partition_size_be;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1960)]
-            public byte[] system_use;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryRecord
+        struct CdiDirectoryRecord
         {
             public byte length;
             public byte xattr_len;
-            public uint extent;
-            public uint extent_be;
-            public uint size;
-            public uint size_be;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
-            public byte[] date;
-            public FileFlags flags;
-            public byte file_unit_size;
-            public byte interleave;
-            public ushort volume_sequence_number;
-            public ushort volume_sequence_number_be;
-            public byte name_len;
-            // Followed by name[name_len] and then system area until length arrives
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ExtendedAttributeRecord
-        {
-            public ushort owner;
-            public ushort owner_be;
-            public ushort group;
-            public ushort group_be;
-            public Permissions permissions;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public byte[] creation_date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public byte[] modification_date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public byte[] expiration_date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public byte[] effective_date;
-            public RecordFormat record_format;
-            public RecordAttribute record_attributes;
-            public ushort record_length;
-            public ushort record_length_be;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] system_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] system_use;
-            public byte record_version;
-            public byte escape_len;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] reserved1;
-            public ushort app_use_len;
-            public ushort app_use_len_be;
-        }
-
-        // There are two tables one in little endian one in big endian
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PathTableEntry
-        {
-            public byte name_len;
-            public byte xattr_len;
+            public uint reserved1;
             public uint start_lbn;
-            public ushort parent_dirno;
-            // Followed by name[name_len]
+            public uint reserved2;
+            public uint size;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] date;
+            public byte reserved3;
+            public CdiFileFlags flags;
+            public ushort file_unit_size;
+            public ushort reserved4;
+            public ushort volume_sequence_number;
+            public byte name_len;
+            // Followed by name[name_len] and then CdiSystemArea until length arrives
         }
 
-        static DecodedVolumeDescriptor DecodeVolumeDescriptor(PrimaryVolumeDescriptor pvd)
+        // Follows filename on directory record
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CdiSystemArea
+        {
+            public uint owner;
+            public CdiAttributes attributes;
+            public ushort reserved1;
+            public byte file_no;
+            public byte reserved2;
+        }
+
+        static DecodedVolumeDescriptor DecodeVolumeDescriptor(FileStructureVolumeDescriptor pvd)
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
@@ -210,7 +150,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00)
                 decodedVD.CreationTime = System.DateTime.MinValue;
             else
-                decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(pvd.creation_date);
+                decodedVD.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
 
             if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00)
             {
@@ -219,7 +159,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             else
             {
                 decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(pvd.modification_date);
+                decodedVD.ModificationTime = DateHandlers.HighSierraToDateTime(pvd.modification_date);
             }
 
             if(pvd.expiration_date[0] == '0' || pvd.expiration_date[0] == 0x00)
@@ -229,7 +169,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             else
             {
                 decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(pvd.expiration_date);
+                decodedVD.ExpirationTime = DateHandlers.HighSierraToDateTime(pvd.expiration_date);
             }
 
             if(pvd.effective_date[0] == '0' || pvd.effective_date[0] == 0x00)
@@ -239,7 +179,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             else
             {
                 decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(pvd.effective_date);
+                decodedVD.EffectiveTime = DateHandlers.HighSierraToDateTime(pvd.effective_date);
             }
 
             decodedVD.Blocks = pvd.volume_space_size;
