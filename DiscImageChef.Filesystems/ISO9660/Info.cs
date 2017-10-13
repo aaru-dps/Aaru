@@ -107,7 +107,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             ulong counter = 0;
 
             byte[] vd_sector = imagePlugin.ReadSector(16 + counter + partition.Start);
-            int xa_off = imagePlugin.GetSectorSize() == 2336 ? 8 : 0;
+            int xa_off = vd_sector.Length == 2336 ? 8 : 0;
             Array.Copy(vd_sector, 0x009 + xa_off, HSMagic, 0, 5);
             bool HighSierra = CurrentEncoding.GetString(HSMagic) == HighSierraMagic;
             int hs_off = 0;
