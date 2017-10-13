@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] escape_sequences;
             public ushort reserved2;
-            public ushort volume_set_siz;
+            public ushort volume_set_size;
             public ushort reserved3;
             public ushort volume_sequence_number;
             public ushort reserved4;
@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public uint reserved5;
             public uint path_table_size;
             public ulong reserved6;
-            public uint type_m_path_table;
+            public uint path_table_addr;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 38)]
             public byte[] reserved7;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]

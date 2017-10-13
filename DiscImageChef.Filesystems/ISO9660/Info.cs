@@ -526,9 +526,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                 ISOMetadata.AppendLine("This is a Sega Dreamcast disc.");
                 ISOMetadata.AppendLine(Decoders.Sega.Dreamcast.Prettify(Dreamcast));
             }
-            ISOMetadata.AppendLine("------------------------------");
-            ISOMetadata.AppendLine("VOLUME DESCRIPTOR INFORMATION:");
-            ISOMetadata.AppendLine("------------------------------");
+            ISOMetadata.AppendFormat("{0}------------------------------", CDi ? "---------------" : "").AppendLine();
+            ISOMetadata.AppendFormat("{0}VOLUME DESCRIPTOR INFORMATION:", CDi ? "FILE STRUCTURE " : "").AppendLine();
+            ISOMetadata.AppendFormat("{0}------------------------------", CDi ? "---------------" : "").AppendLine();
             ISOMetadata.AppendFormat("System identifier: {0}", decodedVD.SystemIdentifier).AppendLine();
             ISOMetadata.AppendFormat("Volume identifier: {0}", decodedVD.VolumeIdentifier).AppendLine();
             ISOMetadata.AppendFormat("Volume set identifier: {0}", decodedVD.VolumeSetIdentifier).AppendLine();

@@ -38,7 +38,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         readonly string CdiMagic = "CD-I ";
 
         [Flags]
-        enum CdiVolumeFlags
+        enum CdiVolumeFlags : byte
         {
             // Escapes are not ISO 2375 but ISO 2022
             NotISO2375 = 1,
