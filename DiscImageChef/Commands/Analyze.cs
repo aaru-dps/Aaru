@@ -128,6 +128,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.ErrorWriteLine("Unable to open image format");
                     DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                    DicConsole.DebugWriteLine("Analyze command", "Stack trace: {0}", ex.StackTrace);
                     return;
                 }
 
