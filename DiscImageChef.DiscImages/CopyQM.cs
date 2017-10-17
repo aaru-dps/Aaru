@@ -295,9 +295,11 @@ namespace DiscImageChef.ImagePlugins
             // In case there is omitted data
 			long sectors = (header.sectorsPerTrack) * header.heads * header.totalCylinders;
 
-            byte[] filling = new byte[(sectors * header.sectorSize) - decodedImage.Length];
-            if(filling.Length > 0)
+			long fillingLen = (sectors * header.sectorSize) - decodedImage.Length;
+            
+            if(fillingLen > 0)
             {
+				byte[] filling = new byte[fillingLen];
                 ArrayHelpers.ArrayFill(filling, (byte)0xF6);
                 decodedImage.Write(filling, 0, filling.Length);
             }
