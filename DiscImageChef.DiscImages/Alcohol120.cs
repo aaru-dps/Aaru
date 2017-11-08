@@ -144,7 +144,8 @@ namespace DiscImageChef.ImagePlugins
             Mode1 = 0xAA,
             Mode2 = 0xAB,
             Mode2F1 = 0xAC,
-            Mode2F2 = 0xAD
+            Mode2F2 = 0xAD,
+			Mode2F1Alt = 0xEC
         }
 
         enum AlcoholSubchannelMode : byte
@@ -616,8 +617,9 @@ namespace DiscImageChef.ImagePlugins
                 switch(trk.mode)
                 {
                     case AlcoholTrackMode.Mode1:
-                    case AlcoholTrackMode.Mode2F1:
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
+					case AlcoholTrackMode.Mode2F1:
+					case AlcoholTrackMode.Mode2F1Alt:
+						if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
                             ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
                         if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
                             ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
@@ -899,7 +901,7 @@ namespace DiscImageChef.ImagePlugins
             switch(_track.mode)
             {
                 case AlcoholTrackMode.Mode1:
-                    {
+					{
                         sector_offset = 16;
                         sector_size = 2048;
                         sector_skip = 288;
@@ -913,7 +915,8 @@ namespace DiscImageChef.ImagePlugins
                         break;
                     }
                 case AlcoholTrackMode.Mode2F1:
-                    {
+				case AlcoholTrackMode.Mode2F1Alt:
+					{
                         sector_offset = 24;
                         sector_size = 2048;
                         sector_skip = 280;
@@ -1016,7 +1019,7 @@ namespace DiscImageChef.ImagePlugins
             switch(_track.mode)
             {
                 case AlcoholTrackMode.Mode1:
-                    switch(tag)
+					switch(tag)
                     {
                         case SectorTagType.CDSectorSync:
                             {
@@ -1126,7 +1129,8 @@ namespace DiscImageChef.ImagePlugins
                         break;
                     }
                 case AlcoholTrackMode.Mode2F1:
-                    switch(tag)
+				case AlcoholTrackMode.Mode2F1Alt:
+					switch(tag)
                     {
                         case SectorTagType.CDSectorSync:
                             {
@@ -1359,9 +1363,10 @@ namespace DiscImageChef.ImagePlugins
             switch(_track.mode)
             {
                 case AlcoholTrackMode.Mode1:
-                case AlcoholTrackMode.Mode2:
+				case AlcoholTrackMode.Mode2:
                 case AlcoholTrackMode.Mode2F1:
-                case AlcoholTrackMode.Mode2F2:
+				case AlcoholTrackMode.Mode2F1Alt:
+				case AlcoholTrackMode.Mode2F2:
                 case AlcoholTrackMode.Audio:
                 case AlcoholTrackMode.DVD:
                     {
@@ -1626,10 +1631,11 @@ namespace DiscImageChef.ImagePlugins
             {
                 case AlcoholTrackMode.Audio:
                 case AlcoholTrackMode.Mode1:
-                case AlcoholTrackMode.Mode2:
+				case AlcoholTrackMode.Mode2:
                 case AlcoholTrackMode.Mode2F2:
                 case AlcoholTrackMode.Mode2F1:
-                    return 2352;
+				case AlcoholTrackMode.Mode2F1Alt:
+					return 2352;
                 case AlcoholTrackMode.DVD:
                     return 2048;
                 default:
@@ -1642,8 +1648,9 @@ namespace DiscImageChef.ImagePlugins
             switch(trackMode)
             {
                 case AlcoholTrackMode.Mode1:
-                case AlcoholTrackMode.Mode2F1:
-                    return 2048;
+				case AlcoholTrackMode.Mode2F1:
+				case AlcoholTrackMode.Mode2F1Alt:
+					return 2048;
                 case AlcoholTrackMode.Mode2F2:
                     return 2324;
                 case AlcoholTrackMode.Mode2:
@@ -1662,9 +1669,10 @@ namespace DiscImageChef.ImagePlugins
             switch(trackType)
             {
                 case AlcoholTrackMode.Mode1:
-                    return TrackType.CDMode1;
+					return TrackType.CDMode1;
                 case AlcoholTrackMode.Mode2F1:
-                    return TrackType.CDMode2Form1;
+				case AlcoholTrackMode.Mode2F1Alt:
+					return TrackType.CDMode2Form1;
                 case AlcoholTrackMode.Mode2F2:
                     return TrackType.CDMode2Form2;
                 case AlcoholTrackMode.Mode2:
