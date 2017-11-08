@@ -126,8 +126,15 @@ namespace DiscImageChef.Filesystems
             if(partition.End <= (partition.Start + 4 * (ulong)sb_size_in_sectors + sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
                 return false;
 
+            // Sectors in a cylinder
+            int spc = (int)(imagePlugin.ImageInfo.heads * imagePlugin.ImageInfo.sectorsPerTrack);
+
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
-            for(int i = 0; i <= 16; i++)
+            int[] locations = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+                // Superblock can also skip one cylinder (for boot)
+                spc};
+
+            foreach(int i in locations)
             {
                 if(i + sb_size_in_sectors >= (int)imagePlugin.ImageInfo.sectors)
                     break;
@@ -193,7 +200,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
             BigEndianBitConverter.IsLittleEndian = true; // Start in little endian until we know what are we handling here
-            int start;
+            int start = 0;
             uint magic;
             string s_fname, s_fpack;
             ushort s_nfree, s_ninode;
@@ -212,11 +219,17 @@ namespace DiscImageChef.Filesystems
                 sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
             else
                 sb_size_in_sectors = 1; // If not a single sector can store it
+            // Sectors in a cylinder
+            int spc = (int)(imagePlugin.ImageInfo.heads * imagePlugin.ImageInfo.sectorsPerTrack);
 
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
-            for(start = 0; start <= 16; start++)
+            int[] locations = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+                // Superblock can also skip one cylinder (for boot)
+                spc};
+
+            foreach(int i in locations)
             {
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors);
+                sb_sector = imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
 
                 if(magic == XENIX_MAGIC || magic == SYSV_MAGIC)
@@ -229,6 +242,7 @@ namespace DiscImageChef.Filesystems
                     }
                     else
                         xenix = true;
+                    start = i;
                     break;
                 }
                 if(magic == XENIX_CIGAM || magic == SYSV_CIGAM)
@@ -241,6 +255,7 @@ namespace DiscImageChef.Filesystems
                     }
                     else
                         xenix = true;
+                    start = i;
                     break;
                 }
 
@@ -250,12 +265,14 @@ namespace DiscImageChef.Filesystems
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Little endian
                     xenix3 = true;
+                    start = i;
                     break;
                 }
                 if(magic == XENIX_CIGAM)
                 {
                     BigEndianBitConverter.IsLittleEndian = false; // Big endian
                     xenix3 = true;
+                    start = i;
                     break;
                 }
 
@@ -265,12 +282,14 @@ namespace DiscImageChef.Filesystems
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Little endian
                     sysv = true;
+                    start = i;
                     break;
                 }
                 if(magic == SYSV_CIGAM)
                 {
                     BigEndianBitConverter.IsLittleEndian = false; // Big endian
                     sysv = true;
+                    start = i;
                     break;
                 }
 
@@ -284,6 +303,7 @@ namespace DiscImageChef.Filesystems
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Coherent is in PDP endianness, use helper for that
                     coherent = true;
+                    start = i;
                     break;
                 }
 
@@ -310,6 +330,7 @@ namespace DiscImageChef.Filesystems
                             {
                                 sys7th = true;
                                 BigEndianBitConverter.IsLittleEndian = true;
+                                start = i;
                                 break;
                             }
                         }
