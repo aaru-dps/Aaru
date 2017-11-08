@@ -314,7 +314,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                             }
                         }
 
-                        if(sa_off >= sa_len)
+                        if(sa_off + 2 >= sa_len)
                             break;
 
                         ushort nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
@@ -360,7 +360,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                             sa_off += sa[sa_off + 2];
                             noneFound = false;
 
-                            while(sa_off < sa_len)
+                            while(sa_off + 2 < sa_len)
                             {
                                 nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
 
