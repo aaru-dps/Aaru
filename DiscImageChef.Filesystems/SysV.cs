@@ -136,7 +136,7 @@ namespace DiscImageChef.Filesystems
 
                 magic = BitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
 
-                if(magic == XENIX_MAGIC || magic == XENIX_CIGAM)
+                if(magic == XENIX_MAGIC || magic == XENIX_CIGAM || magic == SYSV_MAGIC || magic == SYSV_CIGAM)
                     return true;
 
                 magic = BitConverter.ToUInt32(sb_sector, 0x1F8); // System V magic location
@@ -206,6 +206,7 @@ namespace DiscImageChef.Filesystems
             bool xenix3 = false;
             byte[] sb_sector;
             byte sb_size_in_sectors;
+            int offset = 0;
 
             if(imagePlugin.GetSectorSize() <= 0x400) // Check if underlying device sector size is smaller than SuperBlock size
                 sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
@@ -218,16 +219,28 @@ namespace DiscImageChef.Filesystems
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
 
-                if(magic == XENIX_MAGIC)
+                if(magic == XENIX_MAGIC || magic == SYSV_MAGIC)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Little endian
-                    xenix = true;
+                    if(magic == SYSV_MAGIC)
+                    {
+                        sysv = true;
+                        offset = 0x200;
+                    }
+                    else
+                        xenix = true;
                     break;
                 }
-                if(magic == XENIX_CIGAM)
+                if(magic == XENIX_CIGAM || magic == SYSV_CIGAM)
                 {
                     BigEndianBitConverter.IsLittleEndian = false; // Big endian
-                    xenix = true;
+                    if(magic == SYSV_CIGAM)
+                    {
+                        sysv = true;
+                        offset = 0x200;
+                    }
+                    else
+                        xenix = true;
                     break;
                 }
 
@@ -435,65 +448,21 @@ namespace DiscImageChef.Filesystems
             if(sysv)
             {
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors);
-                ushort pad0, pad1, pad2;
                 byte[] sysv_strings = new byte[6];
 
-                pad0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x002); // First padding
-                pad1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x00A); // Second padding
-                pad2 = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D6); // Third padding
-
-                // This detection is not working as expected
-                sysvr4 |= pad0 == 0 && pad1 == 0 && pad2 == 0;
-
                 SystemVRelease4SuperBlock sysv_sb = new SystemVRelease4SuperBlock();
-
-                sysv_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
-                sysv_sb.s_state = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F4);
-                sysv_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F8);
-                sysv_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x1FC);
-                sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x004);
-                sysv_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x008);
-                sysv_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D4);
-                sysv_sb.s_flock = sb_sector[0x1A0];
-                sysv_sb.s_ilock = sb_sector[0x1A1];
-                sysv_sb.s_fmod = sb_sector[0x1A2];
-                sysv_sb.s_ronly = sb_sector[0x1A3];
-                sysv_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x1A4);
-                sysv_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
-                sysv_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AA);
-                sysv_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AC);
-                sysv_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE);
-                sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1B0);
-                sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1B4);
-                Array.Copy(sb_sector, 0x1B6, sysv_strings, 0, 6);
-                sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, CurrentEncoding);
-                Array.Copy(sb_sector, 0x1BC, sysv_strings, 0, 6);
-                sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
-
+                sysv_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x1FC + offset);
                 uint bs = 512;
-                if(sysvr4)
-                {
-                    sb.AppendLine("System V Release 4 filesystem");
-                    xmlFSType.Type = "SVR4 fs";
-                }
-                else
-                {
-                    sb.AppendLine("System V Release 2 filesystem");
-                    xmlFSType.Type = "SVR2 fs";
-                }
                 switch(sysv_sb.s_type)
                 {
                     case 1:
-                        sb.AppendLine("512 bytes per block");
                         xmlFSType.ClusterSize = 512;
                         break;
                     case 2:
-                        sb.AppendLine("1024 bytes per block");
                         bs = 1024;
                         xmlFSType.ClusterSize = 1024;
                         break;
                     case 3:
-                        sb.AppendLine("2048 bytes per block");
                         bs = 2048;
                         xmlFSType.ClusterSize = 2048;
                         break;
@@ -501,16 +470,67 @@ namespace DiscImageChef.Filesystems
                         sb.AppendFormat("Unknown s_type value: 0x{0:X8}", sysv_sb.s_type).AppendLine();
                         break;
                 }
-                if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+                sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002 + offset);
+
+                if(sysv_sb.s_fsize * bs > 0 && sysv_sb.s_fsize * bs == partition.Size)
+                    sysvr4 = false;
+                else
+                    sysvr4 = true;
+
+                if(sysvr4)
                 {
-                    if(bs != 2048)
-                        sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, 2048).AppendLine();
+                    sysv_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000 + offset);
+                    sysv_sb.s_state = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F4 + offset);
+                    sysv_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F8 + offset);
+                    sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x004 + offset);
+                    sysv_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x008 + offset);
+                    sysv_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D4 + offset);
+                    sysv_sb.s_flock = sb_sector[0x1A0 + offset];
+                    sysv_sb.s_ilock = sb_sector[0x1A1 + offset];
+                    sysv_sb.s_fmod = sb_sector[0x1A2 + offset];
+                    sysv_sb.s_ronly = sb_sector[0x1A3 + offset];
+                    sysv_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x1A4 + offset);
+                    sysv_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8 + offset);
+                    sysv_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AA + offset);
+                    sysv_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AC + offset);
+                    sysv_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE + offset);
+                    sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1B0 + offset);
+                    sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1B4 + offset);
+                    Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
+                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, CurrentEncoding);
+                    Array.Copy(sb_sector, 0x1BC + offset, sysv_strings, 0, 6);
+                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
+                    sb.AppendLine("System V Release 4 filesystem");
+                    xmlFSType.Type = "SVR4 fs";
                 }
                 else
                 {
-                    if(bs != imagePlugin.GetSectorSize())
-                        sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, imagePlugin.GetSectorSize()).AppendLine();
+                    sysv_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000 + offset);
+                    sysv_sb.s_state = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F4 + offset);
+                    sysv_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F8 + offset);
+                    sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002 + offset);
+                    sysv_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006 + offset);
+                    sysv_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D0 + offset);
+                    sysv_sb.s_flock = sb_sector[0x19A + offset];
+                    sysv_sb.s_ilock = sb_sector[0x19B + offset];
+                    sysv_sb.s_fmod = sb_sector[0x19C + offset];
+                    sysv_sb.s_ronly = sb_sector[0x19D + offset];
+                    sysv_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x19E + offset);
+                    sysv_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A2 + offset);
+                    sysv_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A4 + offset);
+                    sysv_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A6 + offset);
+                    sysv_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8 + offset);
+                    sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1AA + offset);
+                    sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE + offset);
+                    Array.Copy(sb_sector, 0x1B0 + offset, sysv_strings, 0, 6);
+                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, CurrentEncoding);
+                    Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
+                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
+                    sb.AppendLine("System V Release 2 filesystem");
+                    xmlFSType.Type = "SVR2 fs";
                 }
+                sb.AppendFormat("{0} bytes per block", bs).AppendLine();
+
                 xmlFSType.Clusters = sysv_sb.s_fsize;
                 sb.AppendFormat("{0} zones on volume ({1} bytes)", sysv_sb.s_fsize, sysv_sb.s_fsize * bs).AppendLine();
                 sb.AppendFormat("{0} free zones on volume ({1} bytes)", sysv_sb.s_tfree, sysv_sb.s_tfree * bs).AppendLine();
