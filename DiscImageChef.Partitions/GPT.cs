@@ -113,7 +113,7 @@ namespace DiscImageChef.PartPlugins
             if(hdr.signature != GptMagic)
                 return false;
 
-            if(hdr.myLBA != 1)
+            if(hdr.myLBA != 1 + sectorOffset)
                 return false;
 
             uint divisor, modulo, sectorSize;
@@ -132,6 +132,8 @@ namespace DiscImageChef.PartPlugins
             }
 
             uint totalEntriesSectors = (hdr.entries * hdr.entriesSize) / imagePlugin.GetSectorSize();
+            if((hdr.entries * hdr.entriesSize) % imagePlugin.GetSectorSize() > 0)
+                totalEntriesSectors++;
 
             byte[] temp = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
             byte[] entriesBytes = new byte[temp.Length - (modulo * 512)];
