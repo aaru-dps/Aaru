@@ -51,6 +51,10 @@ namespace DiscImageChef.PartPlugins
         public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
+
+            if(sectorOffset + 2 >= imagePlugin.GetSectors())
+                return false;
+
             byte[] sector = imagePlugin.ReadSector(sectorOffset + 1);
             // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
             string[] really = StringHandlers.CToString(sector).Split(new[] {'\n'});

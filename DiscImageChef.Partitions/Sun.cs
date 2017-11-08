@@ -115,6 +115,9 @@ namespace DiscImageChef.PartPlugins
             if(imagePlugin.GetSectorSize() < 512)
                 return false;
 
+            if(sectorOffset + 2 >= imagePlugin.GetSectors())
+                return false;
+            
             bool useDkl = false, useDkl8 = false, useDkl16 = false;
 
             byte[] sunSector = imagePlugin.ReadSector(sectorOffset);

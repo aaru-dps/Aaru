@@ -52,6 +52,9 @@ namespace DiscImageChef.PartPlugins
         {
             partitions = new List<CommonTypes.Partition>();
 
+            if(sectorOffset + 2 >= imagePlugin.GetSectors())
+                return false;
+            
             byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
             GptHeader hdr;
 

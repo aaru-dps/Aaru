@@ -68,6 +68,9 @@ namespace DiscImageChef.PartPlugins
 
             partitions = new List<CommonTypes.Partition>();
 
+            if(sectorOffset + 2 >= imagePlugin.GetSectors())
+                return false;
+
             byte[] ddm_sector = imagePlugin.ReadSector(sectorOffset);
             AppleDriverDescriptorMap ddm;
 

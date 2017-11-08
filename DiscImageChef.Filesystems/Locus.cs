@@ -236,6 +236,9 @@ namespace DiscImageChef.Filesystems
                 if((Marshal.SizeOf(LocusSb)) % imagePlugin.GetSectorSize() != 0)
                     sbSize++;
 
+                if(partition.Start + location + sbSize >= imagePlugin.GetSectors())
+                    break;
+
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(LocusSb))
                     return false;
