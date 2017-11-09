@@ -262,7 +262,8 @@ namespace DiscImageChef.Filesystems
             }
 
             ulong[] root_ptrs = { b_root_ptr + partition.Start, ((partition.End - partition.Start) + 1) / 2 + partition.Start - 2,
-                ((partition.End - partition.Start) + 1) / 2 + partition.Start - 1, ((partition.End - partition.Start) + 1) / 2 + partition.Start};
+                ((partition.End - partition.Start) + 1) / 2 + partition.Start - 1, ((partition.End - partition.Start) + 1) / 2 + partition.Start,
+                ((partition.End - partition.Start) + 1) / 2 + partition.Start + 4};
 
             RootBlock rblk = new RootBlock();
 
@@ -342,7 +343,8 @@ namespace DiscImageChef.Filesystems
             }
 
             ulong[] root_ptrs = { b_root_ptr + partition.Start, ((partition.End - partition.Start) + 1) / 2 + partition.Start - 2,
-                ((partition.End - partition.Start) + 1) / 2 + partition.Start - 1, ((partition.End - partition.Start) + 1) / 2 + partition.Start};
+                ((partition.End - partition.Start) + 1) / 2 + partition.Start - 1, ((partition.End - partition.Start) + 1) / 2 + partition.Start,
+                ((partition.End - partition.Start) + 1) / 2 + partition.Start + 4};
 
             RootBlock rootBlk = new RootBlock();
             byte[] RootBlockSector = null;
