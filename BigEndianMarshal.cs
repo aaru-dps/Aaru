@@ -93,21 +93,21 @@ namespace DiscImageChef
                     ushort uint16 = (ushort)fi.GetValue(str);
                     byte[] uint16_b = BitConverter.GetBytes(uint16);
                     byte[] uint16_r = uint16_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToInt16(uint16_r, 0));
+                    fi.SetValueDirect(__makeref(str), BitConverter.ToUInt16(uint16_r, 0));
                 }
                 else if(fi.FieldType == typeof(uint))
                 {
                     uint uint32 = (uint)fi.GetValue(str);
                     byte[] uint32_b = BitConverter.GetBytes(uint32);
                     byte[] uint32_r = uint32_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToInt32(uint32_r, 0));
+                    fi.SetValueDirect(__makeref(str), BitConverter.ToUInt32(uint32_r, 0));
                 }
                 else if(fi.FieldType == typeof(ulong))
                 {
                     ulong uint64 = (ulong)fi.GetValue(str);
                     byte[] uint64_b = BitConverter.GetBytes(uint64);
                     byte[] uint64_r = uint64_b.Reverse().ToArray();
-                    fi.SetValueDirect(__makeref(str), BitConverter.ToInt64(uint64_r, 0));
+                    fi.SetValueDirect(__makeref(str), BitConverter.ToUInt64(uint64_r, 0));
                 }
                 else if(fi.FieldType == typeof(float))
                 {
