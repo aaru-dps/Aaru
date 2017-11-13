@@ -73,7 +73,8 @@ namespace DiscImageChef.Filesystems
             Lzma = 2,
             Lzo = 3,
             Xz = 4,
-            Lz4 = 5
+            Lz4 = 5,
+            Zstd = 6
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -167,6 +168,9 @@ namespace DiscImageChef.Filesystems
                     break;
                 case (ushort)SquashCompression.Zlib:
                     sbInformation.AppendLine("Volume is compressed using GZIP");
+                    break;
+                case (ushort)SquashCompression.Zstd:
+                    sbInformation.AppendLine("Volume is compressed using Zstandard");
                     break;
                 default:
                     sbInformation.AppendFormat("Volume is compressed using unknown algorithm {0}", sqSb.compression).AppendLine();
