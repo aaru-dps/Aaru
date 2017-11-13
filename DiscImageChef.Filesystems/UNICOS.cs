@@ -99,7 +99,7 @@ namespace DiscImageChef.Filesystems
             public extent_t s_sfs;     /* SFS only blocks */
             public long s_flag;     /* Flag word */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NC1MAXPART)]
-            public nc1fdev_sb s_part;  /* Partition descriptors */
+            public nc1fdev_sb[] s_part;  /* Partition descriptors */
             public long s_iounit;       /* Physical block size */
             public long s_numiresblks;  /* number of inode reservation blocks */
                                         /* per region (currently 1) */

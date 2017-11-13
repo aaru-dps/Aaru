@@ -184,6 +184,7 @@ namespace DiscImageChef.Filesystems
         const int NDADDR = 12;
         const int NIADDR = 3;
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct dinode
         {
             public ushort di_mode;    /*   0: IFMT, permissions; see below. */
@@ -197,18 +198,17 @@ namespace DiscImageChef.Filesystems
             public int di_ctime;   /*  32: Last inode change time. */
             public int di_ctimensec;   /*  36: Last inode change time. */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDADDR)]
-            public ufs_daddr_t di_db;  /*  40: Direct disk blocks. */
+            public ufs_daddr_t[] di_db;  /*  40: Direct disk blocks. */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NIADDR)]
-            public ufs_daddr_t di_ib;  /*  88: Indirect disk blocks. */
+            public ufs_daddr_t[] di_ib;  /*  88: Indirect disk blocks. */
             public uint di_flags;   /* 100: Status flags (chflags). */
             public uint di_blocks;  /* 104: Blocks actually held. */
             public int di_gen;     /* 108: Generation number. */
             public uint di_uid;     /* 112: File owner. */
             public uint di_gid;     /* 116: File group. */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public int di_spare;    /* 120: Reserved; currently unused */
+            public int[] di_spare;    /* 120: Reserved; currently unused */
         }
-
 
         public dump()
         {
