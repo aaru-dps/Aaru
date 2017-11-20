@@ -54,7 +54,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     public class ATA
     {
-        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume)
+        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume, ref DumpLog dumpLog)
         {
             bool aborted;
             MHDDLog mhddLog;
@@ -78,6 +78,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint timeout = 5;
             double duration;
 
+            dumpLog.WriteLine("Requesting ATA IDENTIFY DEVICE.");
             sense = dev.AtaIdentify(out byte[] cmdBuf, out Decoders.ATA.AtaErrorRegistersCHS errorChs);
             if(!sense && Decoders.ATA.Identify.Decode(cmdBuf).HasValue)
             {
@@ -90,6 +91,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(dev.IsUSB)
                 {
+                    dumpLog.WriteLine("Reading USB descriptors.");
                     sidecar.BlockMedia[0].USB = new USBType
                     {
                         ProductID = dev.USBProductID,
@@ -106,6 +108,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(dev.IsPCMCIA)
                 {
+                    dumpLog.WriteLine("Reading PCMCIA CIS.");
                     sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
                     {
                         CIS = new DumpType
@@ -116,6 +119,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     };
                     DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].PCMCIA.CIS.Image, dev.CIS);
+                    dumpLog.WriteLine("Decoding PCMCIA CIS.");
                     Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.CIS);
                     if(tuples != null)
                     {
@@ -178,12 +182,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                 DataFile dumpFile;
 
                 // Initializate reader
+                dumpLog.WriteLine("Initializing reader.");
                 Reader ataReader = new Reader(dev, timeout, cmdBuf);
                 // Fill reader blocks
                 ulong blocks = ataReader.GetDeviceBlocks();
                 // Check block sizes
                 if(ataReader.GetBlockSize())
                 {
+                    dumpLog.WriteLine("ERROR: Cannot get block size: {0}.", ataReader.ErrorMessage);
                     DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
                     return;
                 }
@@ -191,12 +197,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                 uint physicalsectorsize = ataReader.PhysicalBlockSize;
                 if(ataReader.FindReadCommand())
                 {
+                    dumpLog.WriteLine("ERROR: Cannot find correct read command: {0}.", ataReader.ErrorMessage);
                     DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
                     return;
                 }
                 // Check how many blocks to read, if error show and return
                 if(ataReader.GetBlocksToRead())
                 {
+                    dumpLog.WriteLine("ERROR: Cannot get blocks to read: {0}.", ataReader.ErrorMessage);
                     DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
                     return;
                 }
@@ -204,6 +212,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 ushort cylinders = ataReader.Cylinders;
                 byte heads = ataReader.Heads;
                 byte sectors = ataReader.Sectors;
+
+                dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
+                dumpLog.WriteLine("Device reports {0} cylinders {1} heads {2} sectors per track.", cylinders, heads, sectors);
+                dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
+                dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
+                dumpLog.WriteLine("Device reports {0} bytes per physical block.", physicalsectorsize);
 
                 bool removable = false || (!dev.IsCompactFlash && ataId.GeneralConfiguration.HasFlag(Decoders.ATA.Identify.GeneralConfigurationBit.Removable));
                 DumpHardwareType currentTry = null;
@@ -219,6 +233,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
                     ibgLog = new IBGLog(outputPrefix + ".ibg", currentProfile);
                     dumpFile = new DataFile(outputPrefix + ".bin");
+                    if(resume.NextBlock > 0)
+                        dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
+
                     dumpFile.Seek(resume.NextBlock, blockSize);
 
                     start = DateTime.UtcNow;
@@ -227,6 +244,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(aborted)
                         {
                             currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                            dumpLog.WriteLine("Aborted!");
                             break;
                         }
 
@@ -262,6 +280,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             ibgLog.Write(i, 0);
                             dumpFile.Write(new byte[blockSize * blocksToRead]);
+                            dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, i);
                         }
 
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
@@ -276,11 +295,12 @@ namespace DiscImageChef.Core.Devices.Dumping
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
+                    dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+                    dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
 
                     #region Error handling
                     if(resume.BadBlocks.Count > 0 && !aborted)
                     {
-
                         int pass = 0;
                         bool forward = true;
                         bool runningPersistent = false;
@@ -292,6 +312,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(aborted)
                             {
                                 currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                                dumpLog.WriteLine("Aborted!");
                                 break;
                             }
 
@@ -306,6 +327,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 resume.BadBlocks.Remove(badSector);
                                 extents.Add(badSector);
                                 dumpFile.WriteAt(cmdBuf, badSector, blockSize);
+                                dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                             }
                             else if(runningPersistent)
                                 dumpFile.WriteAt(cmdBuf, badSector, blockSize);
@@ -344,6 +366,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 if(aborted)
                                 {
                                     currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                                    dumpLog.WriteLine("Aborted!");
                                     break;
                                 }
 
@@ -366,6 +389,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                     dumpFile.Write(cmdBuf);
                                     extents.Add(currentBlock);
+                                    dumpLog.WriteLine("Error reading cylinder {0} head {1} sector {2}.", Cy, Hd, Sc);
                                 }
                                 else
                                 {
@@ -394,15 +418,21 @@ namespace DiscImageChef.Core.Devices.Dumping
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
+                    dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+                    dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
                 }
                 dataChk = new Checksum();
                 dumpFile.Seek(0, SeekOrigin.Begin);
                 blocksToRead = 500;
 
+                dumpLog.WriteLine("Checksum starts.");
                 for(ulong i = 0; i < blocks; i += blocksToRead)
                 {
                     if(aborted)
+                    {
+                        dumpLog.WriteLine("Aborted!");
                         break;
+                    }
 
                     if((blocks - i) < blocksToRead)
                         blocksToRead = (byte)(blocks - i);
@@ -423,6 +453,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 DicConsole.WriteLine();
                 dumpFile.Close();
                 end = DateTime.UtcNow;
+                dumpLog.WriteLine("Checksum finished in {0} seconds.", (end - start).TotalSeconds);
+                dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
 
                 PluginBase plugins = new PluginBase();
                 plugins.RegisterAllPlugins();
@@ -452,8 +484,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(_imageFormat != null)
                 {
+                    dumpLog.WriteLine("Getting partitions.");
                     List<Partition> partitions = Partitions.GetAll(_imageFormat);
                     Partitions.AddSchemesToStats(partitions);
+                    dumpLog.WriteLine("Found {0} partitions.", partitions.Count);
 
                     if(partitions.Count > 0)
                     {
@@ -470,6 +504,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 Type = partitions[i].Type
                             };
                             List<FileSystemType> lstFs = new List<FileSystemType>();
+                            dumpLog.WriteLine("Getting filesystems on partition {0}, starting at {1}, ending at {2}, with type {3}, under scheme {4}.",
+                                              i, partitions[i].Start, partitions[i].End, partitions[i].Type, partitions[i].Scheme);
 
                             foreach(Filesystem _plugin in plugins.PluginsList.Values)
                             {
@@ -480,6 +516,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                         _plugin.GetInformation(_imageFormat, partitions[i], out string foo);
                                         lstFs.Add(_plugin.XmlFSType);
                                         Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+                                        dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
                                     }
                                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -496,6 +533,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else
                     {
+                        dumpLog.WriteLine("Getting filesystem for whole device.");
+
                         xmlFileSysInfo = new PartitionType[1];
                         xmlFileSysInfo[0] = new PartitionType
                         {
@@ -520,6 +559,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     _plugin.GetInformation(_imageFormat, wholePart, out string foo);
                                     lstFs.Add(_plugin.XmlFSType);
                                     Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+                                    dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
                                 }
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body

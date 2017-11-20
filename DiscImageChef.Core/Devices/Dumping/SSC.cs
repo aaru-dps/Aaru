@@ -48,7 +48,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     internal static class SSC
     {
-        internal static void Dump(Device dev, string outputPrefix, string devicePath, ref CICMMetadataType sidecar, ref Metadata.Resume resume)
+        internal static void Dump(Device dev, string outputPrefix, string devicePath, ref CICMMetadataType sidecar, ref Metadata.Resume resume, ref DumpLog dumpLog)
         {
             Decoders.SCSI.FixedSense? fxSense;
             bool aborted;
@@ -73,6 +73,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(fxSense.HasValue && fxSense.Value.SenseKey != Decoders.SCSI.SenseKeys.NoSense)
             {
+                dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                 DicConsole.ErrorWriteLine("Drive has status error, please correct. Sense follows...");
                 DicConsole.ErrorWriteLine("{0}", strSense);
                 return;
@@ -81,6 +82,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Not in BOM/P
             if(fxSense.HasValue && fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x00 && fxSense.Value.ASCQ != 0x04 && fxSense.Value.SenseKey != Decoders.SCSI.SenseKeys.IllegalRequest)
             {
+                dumpLog.WriteLine("Rewinding, please wait...");
                 DicConsole.Write("Rewinding, please wait...");
                 // Rewind, let timeout apply
                 sense = dev.Rewind(out senseBuf, dev.Timeout, out duration);
@@ -104,6 +106,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DicConsole.WriteLine();
                     DicConsole.ErrorWriteLine("Drive could not rewind, please correct. Sense follows...");
                     DicConsole.ErrorWriteLine("{0}", strSense);
+                    dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
+                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                     return;
                 }
 
@@ -123,6 +127,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     DicConsole.ErrorWriteLine("Could not get position. Sense follows...");
                     DicConsole.ErrorWriteLine("{0}", strSense);
+                    dumpLog.WriteLine("Could not get position. Sense follows...");
+                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                     return;
                 }
             }
@@ -132,6 +138,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(cmdBuf[1] != 0)
                 {
                     DicConsole.Write("Drive not in partition 0. Rewinding, please wait...");
+                    dumpLog.WriteLine("Drive not in partition 0. Rewinding, please wait...");
                     // Rewind, let timeout apply
                     sense = dev.Locate(out senseBuf, false, 0, 0, dev.Timeout, out duration);
                     if(sense)
@@ -139,6 +146,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         DicConsole.WriteLine();
                         DicConsole.ErrorWriteLine("Drive could not rewind, please correct. Sense follows...");
                         DicConsole.ErrorWriteLine("{0}", strSense);
+                        dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
+                        dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                         return;
                     }
 
@@ -159,6 +168,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         DicConsole.WriteLine();
                         DicConsole.ErrorWriteLine("Drive could not rewind, please correct. Sense follows...");
                         DicConsole.ErrorWriteLine("{0}", strSense);
+                        dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
+                        dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                         return;
                     }
 
@@ -168,6 +179,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
                         DicConsole.ErrorWriteLine("Drive could not rewind, please correct. Sense follows...");
                         DicConsole.ErrorWriteLine("{0}", strSense);
+                        dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
+                        dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                         return;
                     }
 
@@ -175,6 +188,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(cmdBuf[1] != 0)
                     {
                         DicConsole.ErrorWriteLine("Drive could not rewind to partition 0 but no error occurred...");
+                        dumpLog.WriteLine("Drive could not rewind to partition 0 but no error occurred...");
                         return;
                     }
 
@@ -190,6 +204,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte scsiMediumTypeTape = 0;
             byte scsiDensityCodeTape = 0;
 
+            dumpLog.WriteLine("Requesting MODE SENSE (10).");
             sense = dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out duration);
             if(!sense || dev.Error)
             {
@@ -213,6 +228,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
+            dumpLog.WriteLine("Requesting MODE SENSE (6).");
             sense = dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
             if(sense || dev.Error)
                 sense = dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
@@ -241,6 +257,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length >= 1)
                     scsiDensityCodeTape = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                 blockSize = decMode.Value.Header.BlockDescriptors[0].BlockLength;
+                dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
             }
             else
                 blockSize = 1;
@@ -249,6 +266,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dskType = MediaTypeFromSCSI.Get((byte)dev.SCSIType, dev.Manufacturer, dev.Model, scsiMediumTypeTape, scsiDensityCodeTape, blocks, blockSize);
 
             DicConsole.WriteLine("Media identified as {0}", dskType);
+
+            dumpLog.WriteLine("SCSI device type: {0}.", dev.SCSIType);
+            dumpLog.WriteLine("SCSI medium type: {0}.", scsiMediumTypeTape);
+            dumpLog.WriteLine("SCSI density type: {0}.", scsiDensityCodeTape);
+            dumpLog.WriteLine("Media identified as {0}.", dskType);
 
             bool endOfMedia = false;
             ulong currentBlock = 0;
@@ -279,6 +301,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 DicConsole.WriteLine();
                                 DicConsole.ErrorWriteLine("Drive could not return back. Sense follows...");
                                 DicConsole.ErrorWriteLine("{0}", strSense);
+                                dumpLog.WriteLine("Drive could not return back. Sense follows...");
+                                dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                                 return;
                             }
                         }
@@ -291,6 +315,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             DicConsole.WriteLine();
                             DicConsole.ErrorWriteLine("Drive could not read. Sense follows...");
                             DicConsole.ErrorWriteLine("{0}", strSense);
+                            dumpLog.WriteLine("Drive could not read. Sense follows...");
+                            dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                             return;
                         }
                     }
@@ -299,6 +325,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         DicConsole.WriteLine();
                         DicConsole.ErrorWriteLine("Drive could not read. Sense follows...");
                         DicConsole.ErrorWriteLine("{0}", strSense);
+                        dumpLog.WriteLine("Drive could not read. Sense follows...");
+                        dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                         return;
                     }
                 }
@@ -306,6 +334,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     DicConsole.WriteLine();
                     DicConsole.ErrorWriteLine("Cannot read device, don't know why, exiting...");
+                    dumpLog.WriteLine("Cannot read device, don't know why, exiting...");
                     return;
                 }
             }
@@ -319,6 +348,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DicConsole.WriteLine();
                     DicConsole.ErrorWriteLine("Drive could not return back. Sense follows...");
                     DicConsole.ErrorWriteLine("{0}", strSense);
+                    dumpLog.WriteLine("Drive could not return back. Sense follows...");
+                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                     return;
                 }
             }
@@ -374,12 +405,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             while(currentPartition < totalPartitions)
             {
                 if(aborted)
+                {
+                    dumpLog.WriteLine("Aborted!");
                     break;
+                }
 
                 if(endOfMedia)
                 {
                     DicConsole.WriteLine();
                     DicConsole.WriteLine("Finished partition {0}", currentPartition);
+                    dumpLog.WriteLine("Finished partition {0}", currentPartition);
                     currentTapePartition.File = files.ToArray();
                     currentTapePartition.Checksums = partitionChk.End().ToArray();
                     currentTapePartition.EndBlock = (long)(currentBlock - 1);
@@ -451,6 +486,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         DicConsole.WriteLine();
                         DicConsole.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
+                        dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
 
                         sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
                         totalDuration += duration;
@@ -462,6 +498,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             DicConsole.ErrorWriteLine("Drive could not go back one block. Sense follows...");
                             DicConsole.ErrorWriteLine("{0}", strSense);
                             dumpFile.Close();
+                            dumpLog.WriteLine("Drive could not go back one block. Sense follows...");
+                            dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                             return;
                         }
 
@@ -475,6 +513,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             DicConsole.WriteLine();
                             DicConsole.ErrorWriteLine("Cannot dump a blank tape...");
                             dumpFile.Close();
+                            dumpLog.WriteLine("Cannot dump a blank tape...");
                             return;
                         }
 
@@ -483,12 +522,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             // TODO: Detect end of partition
                             endOfMedia = true;
+                            dumpLog.WriteLine("Found end-of-tape/partition...");
                             continue;
                         }
 
                         DicConsole.WriteLine();
                         DicConsole.WriteLine("Blank block found, end of tape?");
                         endOfMedia = true;
+                        dumpLog.WriteLine("Blank block found, end of tape?...");
                         continue;
                     }
 
@@ -497,6 +538,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         // TODO: Detect end of partition
                         endOfMedia = true;
+                        dumpLog.WriteLine("Found end-of-tape/partition...");
                         continue;
                     }
 
@@ -527,6 +569,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         DicConsole.WriteLine();
                         DicConsole.WriteLine("Changed to file {0} at block {1}", currentFile, currentBlock);
+                        dumpLog.WriteLine("Changed to file {0} at block {1}", currentFile, currentBlock);
                         continue;
                     }
 
@@ -534,6 +577,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
                     DicConsole.ErrorWriteLine("Drive could not read block. Sense follows...");
                     DicConsole.ErrorWriteLine("{0} {1}", fxSense.Value.SenseKey, strSense);
+                    dumpLog.WriteLine("Drive could not read block. Sense follows...");
+                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                     return;
                 }
 
@@ -562,6 +607,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             end = DateTime.UtcNow;
             mhddLog.Close();
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+            dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
+            dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
 
             DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming).", (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000);
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created

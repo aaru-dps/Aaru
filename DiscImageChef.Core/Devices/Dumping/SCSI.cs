@@ -40,6 +40,7 @@ using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
+using DiscImageChef.Core.Logging;
 using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
@@ -47,7 +48,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     public class SCSI
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
-        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel, ref Metadata.Resume resume)
+        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel, ref Metadata.Resume resume, ref DumpLog dumpLog)
         {
             byte[] senseBuf = null;
             bool sense = false;
@@ -61,6 +62,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                     if(decSense.HasValue)
                     {
+                        dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                         if(decSense.Value.ASC == 0x3A)
                         {
                             int leftRetries = 5;
@@ -72,6 +74,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 if(!sense)
                                     break;
 
+                                decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                                if(decSense.HasValue)
+                                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 leftRetries--;
                             }
 
@@ -92,6 +97,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 if(!sense)
                                     break;
 
+                                decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                                if(decSense.HasValue)
+                                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 leftRetries--;
                             }
 
@@ -125,6 +133,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 if(!sense)
                                     break;
 
+                                decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                                if(decSense.HasValue)
+                                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 leftRetries--;
                             }
 
@@ -155,17 +166,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(dumpRaw)
                     throw new ArgumentException("Tapes cannot be dumped raw.");
 
-                SSC.Dump(dev, outputPrefix, devicePath, ref sidecar, ref resume);
+                SSC.Dump(dev, outputPrefix, devicePath, ref sidecar, ref resume, ref dumpLog);
                 return;
             }
 
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
-                MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume);
+                MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog);
                 return;
             }
 
-            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, false, ref resume);
+            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, false, ref resume, ref dumpLog);
         }
     }
 }

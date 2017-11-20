@@ -52,7 +52,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     internal class CompactDisc
     {
         // TODO: Add support for resume file
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Metadata.Resume resume)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Metadata.Resume resume, ref DumpLog dumpLog)
         {
             MHDDLog mhddLog;
             IBGLog ibgLog;
@@ -84,6 +84,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // We discarded all discs that falsify a TOC before requesting a real TOC
             // No TOC, no CD (or an empty one)
+            dumpLog.WriteLine("Reading full TOC");
             bool tocSense = dev.ReadRawToc(out byte[] cmdBuf, out byte[] senseBuf, 1, dev.Timeout, out double duration);
             if(!tocSense)
             {
@@ -101,6 +102,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].TOC.Image, tmpBuf);
 
                     // ATIP exists on blank CDs
+                    dumpLog.WriteLine("Reading ATIP");
                     sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                     if(!sense)
                     {
@@ -128,6 +130,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
 
+                    dumpLog.WriteLine("Reading Disc Information");
                     sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation, dev.Timeout, out duration);
                     if(!sense)
                     {
@@ -153,6 +156,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     int sessions = 1;
                     int firstTrackLastSession = 0;
 
+                    dumpLog.WriteLine("Reading Session Information");
                     sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                     if(!sense)
                     {
@@ -205,6 +209,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             dskType = MediaType.CDV;
                     }
 
+                    dumpLog.WriteLine("Reading PMA");
                     sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                     if(!sense)
                     {
@@ -222,6 +227,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
 
+                    dumpLog.WriteLine("Reading CD-Text from Lead-In");
                     sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                     if(!sense)
                     {
@@ -395,10 +401,14 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             readBuffer = null;
 
+            dumpLog.WriteLine("Reading Lead-in");
             for(int leadInBlock = -150; leadInBlock < 0 && resume.NextBlock == 0; leadInBlock++)
             {
                 if(aborted)
+                {
+                    dumpLog.WriteLine("Aborted!");
                     break;
+                }
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > maxSpeed && currentSpeed != 0)
@@ -454,6 +464,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DicConsole.WriteLine();
             DicConsole.WriteLine("Got {0} lead-in sectors.", leadInSectorsGood);
+            dumpLog.WriteLine("Got {0} Lead-in sectors.", leadInSectorsGood);
 
             while(true)
             {
@@ -471,11 +482,18 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(dev.Error)
             {
+                DicConsole.WriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
                 DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
                 return;
             }
 
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+
+            dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
+            dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
+            dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
+            dumpLog.WriteLine("SCSI device type: {0}.", dev.SCSIType);
+            dumpLog.WriteLine("Media identified as {0}.", dskType);
 
             dumpFile = new DataFile(outputPrefix + ".bin");
             DataFile subFile = null;
@@ -487,10 +505,15 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpFile.Seek(resume.NextBlock, (ulong)sectorSize);
             if(separateSubchannel)
                 subFile.Seek(resume.NextBlock, subSize);
-            
+
+            if(resume.NextBlock > 0)
+                dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
+
             start = DateTime.UtcNow;
             for(int t = 0; t < tracks.Count(); t++)
             {
+                dumpLog.WriteLine("Reading track {0}", t);
+
                 tracks[t].BytesPerSector = sectorSize;
                 tracks[t].Image = new ImageType
                 {
@@ -527,6 +550,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(aborted)
                     {
                         currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                        dumpLog.WriteLine("Aborted!");
                         break;
                     }
 
@@ -592,6 +616,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             mhddLog.Write(i, cmdDuration);
 
                         ibgLog.Write(i, 0);
+                        dumpLog.WriteLine("Error reading {0} sectors from sector {1}.", blocksToRead, i);
                     }
 
                     if(tracks[t].TrackType1 == TrackTypeTrackType.mode1 && !checkedDataFormat)
@@ -630,6 +655,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+            dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
 
             #region Compact Disc Error handling
             if(resume.BadBlocks.Count > 0 && !aborted)
@@ -645,6 +672,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(aborted)
                     {
                         currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                        dumpLog.WriteLine("Aborted!");
                         break;
                     }
 
@@ -665,6 +693,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             resume.BadBlocks.Remove(badSector);
                             extents.Add(badSector);
+                            dumpLog.WriteLine("Correctly retried sector {0} in pass {1}.", badSector, pass);
                         }
                         
                         if(separateSubchannel)
@@ -728,6 +757,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
                     md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
 
+                    dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
                     if(sense)
                     {
@@ -754,6 +784,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
                     md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
 
+                    dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
                     if(sense)
                     {
@@ -773,6 +804,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 subFile.Seek(0, SeekOrigin.Begin);
             blocksToRead = 500;
 
+            dumpLog.WriteLine("Checksum starts.");
             for(int t = 0; t < tracks.Count(); t++)
             {
                 Checksum trkChk = new Checksum();
@@ -781,7 +813,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 for(ulong i = (ulong)tracks[t].StartSector; i <= (ulong)tracks[t].EndSector; i += blocksToRead)
                 {
                     if(aborted)
+                    {
+                        dumpLog.WriteLine("Aborted!");
                         break;
+                    }
 
                     if(((ulong)tracks[t].EndSector + 1 - i) < blocksToRead)
                         blocksToRead = (uint)((ulong)tracks[t].EndSector + 1 - i);
@@ -828,6 +863,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine();
             dumpFile.Close();
             end = DateTime.UtcNow;
+            dumpLog.WriteLine("Checksum finished in {0} seconds.", (end - start).TotalSeconds);
+            dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
 
             // TODO: Correct this
             sidecar.OpticalDisc[0].Checksums = dataChk.End().ToArray();

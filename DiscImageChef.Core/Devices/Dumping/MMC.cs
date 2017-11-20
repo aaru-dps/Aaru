@@ -39,13 +39,14 @@ using System;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
+using DiscImageChef.Core.Logging;
 using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
     internal static class MMC
     {
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Metadata.Resume resume)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Metadata.Resume resume, ref DumpLog dumpLog)
         {
             byte[] cmdBuf = null;
             byte[] senseBuf = null;
@@ -60,11 +61,14 @@ namespace DiscImageChef.Core.Devices.Dumping
             sidecar.OpticalDisc = new OpticalDiscType[1];
             sidecar.OpticalDisc[0] = new OpticalDiscType();
 
+            // TODO: Log not only what is it reading, but if it was read correctly or not.
+
             sense = dev.GetConfiguration(out cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current, dev.Timeout, out duration);
             if(!sense)
             {
                 Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(cmdBuf);
                 currentProfile = ftr.CurrentProfile;
+                dumpLog.WriteLine("Device reports current profile is 0x{0:X4}", ftr.CurrentProfile);
 
                 switch(ftr.CurrentProfile)
                 {
@@ -163,16 +167,18 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(compactDisc)
             {
-                CompactDisc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume);
+                CompactDisc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog);
                 return;
             }
 
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
             blocks = scsiReader.GetDeviceBlocks();
+            dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
 
             #region Nintendo
             if(dskType == MediaType.Unknown && blocks > 0)
             {
+                dumpLog.WriteLine("Reading Physical Format Information");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -182,6 +188,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(nintendoPfi.Value.DiskCategory == Decoders.DVD.DiskCategory.Nintendo &&
                             nintendoPfi.Value.PartVersion == 15)
                         {
+                            dumpLog.WriteLine("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
                             throw new NotImplementedException("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
                         }
                     }
@@ -200,7 +207,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dskType == MediaType.HDDVDROM || dskType == MediaType.HDDVDRW ||
                 dskType == MediaType.HDDVDRWDL)
             {
-
+                dumpLog.WriteLine("Reading Physical Format Information");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -279,6 +286,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
                 }
+
+                dumpLog.WriteLine("Reading Disc Manufacturing Information");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -301,7 +310,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         if(sense || !Decoders.SCSI.Inquiry.Decode(inqBuf).HasValue ||
                            (Decoders.SCSI.Inquiry.Decode(inqBuf).HasValue && !Decoders.SCSI.Inquiry.Decode(inqBuf).Value.KreonPresent))
+                        {
+                            dumpLog.WriteLine("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
                             throw new NotImplementedException("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
+                        }
 
                         if(dumpRaw && !force)
                         {
@@ -332,6 +344,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             #region DVD-ROM
             if(dskType == MediaType.DVDDownload || dskType == MediaType.DVDROM)
             {
+                dumpLog.WriteLine("Reading Lead-in Copyright Information.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -359,6 +372,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(dskType == MediaType.DVDDownload || dskType == MediaType.DVDROM ||
                 dskType == MediaType.HDDVDROM)
             {
+                dumpLog.WriteLine("Reading Burst Cutting Area.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.BurstCuttingArea, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -378,6 +392,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             #region DVD-RAM and HD DVD-RAM
             if(dskType == MediaType.DVDRAM || dskType == MediaType.HDDVDRAM)
             {
+                dumpLog.WriteLine("Reading Disc Description Structure.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_DDS, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -395,6 +410,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
 
+                dumpLog.WriteLine("Reading Spare Area Information.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_SpareAreaInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -417,6 +433,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             #region DVD-R and DVD-RW
             if(dskType == MediaType.DVDR || dskType == MediaType.DVDRW)
             {
+                dumpLog.WriteLine("Reading Pre-Recorded Information.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PreRecordedInfo, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -436,6 +453,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             #region DVD-R, DVD-RW and HD DVD-R
             if(dskType == MediaType.DVDR || dskType == MediaType.DVDRW || dskType == MediaType.HDDVDR)
             {
+                dumpLog.WriteLine("Reading Media Identifier.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_MediaIdentifier, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -450,6 +468,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].MediaID.Image, tmpBuf);
                 }
 
+                dumpLog.WriteLine("Reading Recordable Physical Information.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_PhysicalInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -470,6 +489,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(dskType == MediaType.DVDPR || dskType == MediaType.DVDPRDL ||
                 dskType == MediaType.DVDPRW || dskType == MediaType.DVDPRWDL)
             {
+                dumpLog.WriteLine("Reading ADdress In Pregroove.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.ADIP, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -484,6 +504,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].ADIP.Image, tmpBuf);
                 }
 
+                dumpLog.WriteLine("Reading Disc Control Blocks.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DCB, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -503,6 +524,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             #region HD DVD-ROM
             if(dskType == MediaType.HDDVDROM)
             {
+                dumpLog.WriteLine("Reading Lead-in Copyright Information.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVD_CopyrightInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -523,6 +545,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(dskType == MediaType.BDR || dskType == MediaType.BDRE || dskType == MediaType.BDROM ||
                 dskType == MediaType.BDRXL || dskType == MediaType.BDREXL)
             {
+                dumpLog.WriteLine("Reading Disc Information.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -540,6 +563,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
 
+                dumpLog.WriteLine("Reading PAC.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.PAC, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -560,6 +584,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             #region BD-ROM only
             if(dskType == MediaType.BDROM)
             {
+                dumpLog.WriteLine("Reading Burst Cutting Area.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_BurstCuttingArea, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -580,6 +605,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(dskType == MediaType.BDR || dskType == MediaType.BDRE ||
                 dskType == MediaType.BDRXL || dskType == MediaType.BDREXL)
             {
+                dumpLog.WriteLine("Reading Disc Definition Structure.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_DDS, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -594,6 +620,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DDS.Image, tmpBuf);
                 }
 
+                dumpLog.WriteLine("Reading Spare Area Information.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_SpareAreaInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
@@ -612,11 +639,11 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(isXbox)
             {
-                XGD.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, ref resume);
+                XGD.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, ref resume, ref dumpLog);
                 return;
             }
 
-            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, true, ref resume);
+            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, true, ref resume, ref dumpLog);
         }
     }
 }

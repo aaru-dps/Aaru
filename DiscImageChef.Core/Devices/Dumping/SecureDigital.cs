@@ -53,7 +53,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     public class SecureDigital
     {
-        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume)
+        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume, ref DumpLog dumpLog)
         {
             bool aborted;
             MHDDLog mhddLog;
@@ -99,6 +99,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 ExtendedCSD ecsdDecoded = new ExtendedCSD();
                 CSD csdDecoded = new CSD();
 
+                dumpLog.WriteLine("Reading Extended CSD");
                 sense = dev.ReadExtendedCSD(out ecsd, out response, timeout, out duration);
                 if(!sense)
                 {
@@ -116,6 +117,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else
                     ecsd = null;
 
+                dumpLog.WriteLine("Reading CSD");
                 sense = dev.ReadCSD(out csd, out response, timeout, out duration);
                 if(!sense)
                 {
@@ -129,6 +131,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else
                     csd = null;
 
+                dumpLog.WriteLine("Reading OCR");
                 sense = dev.ReadOCR(out ocr, out response, timeout, out duration);
                 if(sense)
                     ocr = null;
@@ -139,6 +142,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 Decoders.SecureDigital.CSD csdDecoded = new Decoders.SecureDigital.CSD();
 
+                dumpLog.WriteLine("Reading CSD");
                 sense = dev.ReadCSD(out csd, out response, timeout, out duration);
                 if(!sense)
                 {
@@ -151,10 +155,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else
                     csd = null;
 
+                dumpLog.WriteLine("Reading OCR");
                 sense = dev.ReadSDOCR(out ocr, out response, timeout, out duration);
                 if(sense)
                     ocr = null;
 
+                dumpLog.WriteLine("Reading SCR");
                 sense = dev.ReadSCR(out scr, out response, timeout, out duration);
                 if(sense)
                     scr = null;
@@ -162,6 +168,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
             }
 
+            dumpLog.WriteLine("Reading CID");
             sense = dev.ReadCID(out cid, out response, timeout, out duration);
             if(sense)
                 cid = null;
@@ -253,9 +260,11 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(blocks == 0)
             {
+                dumpLog.WriteLine("Cannot get device size.");
                 DicConsole.ErrorWriteLine("Unable to get device size.");
                 return;
             }
+            dumpLog.WriteLine("Device reports {0} blocks.", blocks);
 
             byte[] cmdBuf;
             bool error = true;
@@ -274,138 +283,151 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(error)
             {
                 blocksToRead = 1;
+                dumpLog.WriteLine("ERROR: Cannot get blocks to read, device error {0}.", dev.LastError);
                 DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
                 return;
             }
 
+            dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
 
-//            bool removable = false || (!dev.IsCompactFlash && ataId.GeneralConfiguration.HasFlag(Decoders.ATA.Identify.GeneralConfigurationBit.Removable));
             DumpHardwareType currentTry = null;
             ExtentsULong extents = null;
             ResumeSupport.Process(true, false, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformID, ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
                 throw new Exception("Could not process resume file, not continuing...");
 
-                DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+            DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-                ibgLog = new IBGLog(outputPrefix + ".ibg", currentProfile);
-                dumpFile = new DataFile(outputPrefix + ".bin");
-                dumpFile.Seek(resume.NextBlock, blockSize);
+            mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+            ibgLog = new IBGLog(outputPrefix + ".ibg", currentProfile);
+            dumpFile = new DataFile(outputPrefix + ".bin");
+            dumpFile.Seek(resume.NextBlock, blockSize);
+            if(resume.NextBlock > 0)
+                dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
 
-                start = DateTime.UtcNow;
-                for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
+            start = DateTime.UtcNow;
+            for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
+            {
+                if(aborted)
+                {
+                    currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                    dumpLog.WriteLine("Aborted!");
+                    break;
+                }
+
+                if((blocks - i) < blocksToRead)
+                    blocksToRead = (byte)(blocks - i);
+
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+                if(currentSpeed > maxSpeed && currentSpeed != 0)
+                    maxSpeed = currentSpeed;
+                if(currentSpeed < minSpeed && currentSpeed != 0)
+                    minSpeed = currentSpeed;
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+
+                DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
+
+                error = dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed, timeout, out duration);
+
+                if(!error)
+                {
+                    mhddLog.Write(i, duration);
+                    ibgLog.Write(i, currentSpeed * 1024);
+                    dumpFile.Write(cmdBuf);
+                    extents.Add(i, blocksToRead, true);
+                }
+                else
+                {
+                    for(ulong b = i; b < i + blocksToRead; b++)
+                        resume.BadBlocks.Add(b);
+                    if(duration < 500)
+                        mhddLog.Write(i, 65535);
+                    else
+                        mhddLog.Write(i, duration);
+
+                    ibgLog.Write(i, 0);
+                    dumpFile.Write(new byte[blockSize * blocksToRead]);
+                    dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, i);
+                }
+
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
+                currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (duration / (double)1000);
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
+                GC.Collect();
+                resume.NextBlock = i + blocksToRead;
+            }
+            end = DateTime.Now;
+            DicConsole.WriteLine();
+            mhddLog.Close();
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
+            ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+            dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
+
+            #region Error handling
+            if(resume.BadBlocks.Count > 0 && !aborted)
+            {
+
+                int pass = 0;
+                bool forward = true;
+                bool runningPersistent = false;
+
+            repeatRetryLba:
+                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                foreach(ulong badSector in tmpArray)
                 {
                     if(aborted)
                     {
                         currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                        dumpLog.WriteLine("Aborted!");
                         break;
                     }
 
-                    if((blocks - i) < blocksToRead)
-                        blocksToRead = (byte)(blocks - i);
-
-#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                    if(currentSpeed > maxSpeed && currentSpeed != 0)
-                        maxSpeed = currentSpeed;
-                    if(currentSpeed < minSpeed && currentSpeed != 0)
-                        minSpeed = currentSpeed;
-#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
-
-                    DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
-
-                error = dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed, timeout, out duration);
-
-                    if(!error)
-                    {
-                        mhddLog.Write(i, duration);
-                        ibgLog.Write(i, currentSpeed * 1024);
-                        dumpFile.Write(cmdBuf);
-                        extents.Add(i, blocksToRead, true);
-                    }
-                    else
-                    {
-                        for(ulong b = i; b < i + blocksToRead; b++)
-                            resume.BadBlocks.Add(b);
-                        if(duration < 500)
-                            mhddLog.Write(i, 65535);
-                        else
-                            mhddLog.Write(i, duration);
-
-                        ibgLog.Write(i, 0);
-                        dumpFile.Write(new byte[blockSize * blocksToRead]);
-                    }
-
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                    currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (duration / (double)1000);
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
-                    GC.Collect();
-                    resume.NextBlock = i + blocksToRead;
-                }
-                end = DateTime.Now;
-                DicConsole.WriteLine();
-                mhddLog.Close();
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
-
-                #region Error handling
-                if(resume.BadBlocks.Count > 0 && !aborted)
-                {
-
-                    int pass = 0;
-                    bool forward = true;
-                    bool runningPersistent = false;
-
-                repeatRetryLba:
-                    ulong[] tmpArray = resume.BadBlocks.ToArray();
-                    foreach(ulong badSector in tmpArray)
-                    {
-                        if(aborted)
-                        {
-                            currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
-                            break;
-                        }
-
-                        DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1, forward ? "forward" : "reverse", runningPersistent ? "recovering partial data, " : "");
+                    DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1, forward ? "forward" : "reverse", runningPersistent ? "recovering partial data, " : "");
 
                     error = dev.Read(out cmdBuf, out response, (uint)badSector, blockSize, 1, byteAddressed, timeout, out duration);
 
-                        totalDuration += duration;
+                    totalDuration += duration;
 
-                        if(!error)
-                        {
-                            resume.BadBlocks.Remove(badSector);
-                            extents.Add(badSector);
-                            dumpFile.WriteAt(cmdBuf, badSector, blockSize);
-                        }
-                        else if(runningPersistent)
-                            dumpFile.WriteAt(cmdBuf, badSector, blockSize);
-                    }
-
-                    if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
+                    if(!error)
                     {
-                        pass++;
-                        forward = !forward;
-                        resume.BadBlocks.Sort();
-                        resume.BadBlocks.Reverse();
-                        goto repeatRetryLba;
+                        resume.BadBlocks.Remove(badSector);
+                        extents.Add(badSector);
+                        dumpFile.WriteAt(cmdBuf, badSector, blockSize);
+                        dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
-
-                    DicConsole.WriteLine();
+                    else if(runningPersistent)
+                        dumpFile.WriteAt(cmdBuf, badSector, blockSize);
                 }
-                #endregion Error handling
 
-                currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
+                {
+                    pass++;
+                    forward = !forward;
+                    resume.BadBlocks.Sort();
+                    resume.BadBlocks.Reverse();
+                    goto repeatRetryLba;
+                }
 
-                dataChk = new Checksum();
+                DicConsole.WriteLine();
+            }
+            #endregion Error handling
+
+            currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+
+            dataChk = new Checksum();
             dumpFile.Seek(0, SeekOrigin.Begin);
             blocksToRead = 500;
 
+            dumpLog.WriteLine("Checksum starts.");
             for(ulong i = 0; i < blocks; i += blocksToRead)
             {
                 if(aborted)
+                {
+                    dumpLog.WriteLine("Aborted!");
                     break;
+                }
 
                 if((blocks - i) < blocksToRead)
                     blocksToRead = (byte)(blocks - i);
@@ -426,6 +448,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine();
             dumpFile.Close();
             end = DateTime.UtcNow;
+            dumpLog.WriteLine("Checksum finished in {0} seconds.", (end - start).TotalSeconds);
+            dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
 
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
@@ -455,8 +479,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(_imageFormat != null)
             {
+                dumpLog.WriteLine("Getting partitions.");
                 List<Partition> partitions = Partitions.GetAll(_imageFormat);
                 Partitions.AddSchemesToStats(partitions);
+                dumpLog.WriteLine("Found {0} partitions.", partitions.Count);
 
                 if(partitions.Count > 0)
                 {
@@ -473,6 +499,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Type = partitions[i].Type
                         };
                         List<FileSystemType> lstFs = new List<FileSystemType>();
+                        dumpLog.WriteLine("Getting filesystems on partition {0}, starting at {1}, ending at {2}, with type {3}, under scheme {4}.",
+                                          i, partitions[i].Start, partitions[i].End, partitions[i].Type, partitions[i].Scheme);
 
                         foreach(Filesystem _plugin in plugins.PluginsList.Values)
                         {
@@ -483,6 +511,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     _plugin.GetInformation(_imageFormat, partitions[i], out string foo);
                                     lstFs.Add(_plugin.XmlFSType);
                                     Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+                                    dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
                                 }
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -499,6 +528,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else
                 {
+                    dumpLog.WriteLine("Getting filesystem for whole device.");
+
                     xmlFileSysInfo = new PartitionType[1];
                     xmlFileSysInfo[0] = new PartitionType
                     {
@@ -523,6 +554,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 _plugin.GetInformation(_imageFormat, wholePart, out string foo);
                                 lstFs.Add(_plugin.XmlFSType);
                                 Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+                                dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
                             }
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body

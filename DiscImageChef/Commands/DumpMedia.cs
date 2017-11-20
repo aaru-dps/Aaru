@@ -105,23 +105,27 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            DumpLog dumpLog = new DumpLog(options.OutputPrefix + ".log", dev);
+
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    ATA.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume);
+                    ATA.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    SecureDigital.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume);
+                    SecureDigital.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog);
                     break;
                 case DeviceType.NVMe:
-                    NVMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume);
+                    NVMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel, ref resume);
+                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel, ref resume, ref dumpLog);
                     break;
                 default:
+                    dumpLog.WriteLine("Unknown device type.");
+                    dumpLog.Close();
                     throw new NotSupportedException("Unknown device type.");
             }
 
@@ -138,6 +142,8 @@ namespace DiscImageChef.Commands
                 xs.Serialize(fs, resume);
                 fs.Close();
             }
+
+            dumpLog.Close();
 
             Core.Statistics.AddCommand("dump-media");
         }
