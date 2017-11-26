@@ -180,7 +180,7 @@ namespace DiscImageChef.ImagePlugins
         public Alcohol120()
         {
             Name = "Alcohol 120% Media Descriptor Structure";
-            PluginUUID = new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F\n");
+            PluginUUID = new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
             ImageInfo.readableMediaTags = new List<MediaTagType>();
