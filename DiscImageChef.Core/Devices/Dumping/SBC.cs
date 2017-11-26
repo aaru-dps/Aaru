@@ -51,9 +51,11 @@ using Extents;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    using TrackType = ImagePlugins.TrackType;
+
     internal static class SBC
     {
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool opticalDisc, ref Metadata.Resume resume, ref DumpLog dumpLog)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool opticalDisc, ref Metadata.Resume resume, ref DumpLog dumpLog, Alcohol120 alcohol = null)
         {
             MHDDLog mhddLog;
             IBGLog ibgLog;
@@ -342,6 +344,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             readBuffer = null;
 
+            if(alcohol != null && !dumpRaw)
+            {
+                alcohol.AddSessions(new [] { new Session() { StartTrack = 1, EndTrack = 1, SessionSequence = 1}});
+                alcohol.AddTrack(20, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1);
+                alcohol.SetExtension(outputExtension);
+                alcohol.SetTrackSizes(1, (int)blockSize, 0, 0, (long)blocks);
+                alcohol.SetTrackTypes(1, TrackType.Data, TrackSubchannelType.None);
+            }
+            
             DumpHardwareType currentTry = null;
             ExtentsULong extents = null;
             ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformID, ref resume, ref currentTry, ref extents);
@@ -749,6 +760,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
+            if(alcohol != null && !dumpRaw)
+                alcohol.SetMediaType(dskType);
+            
             if(opticalDisc)
             {
                 sidecar.OpticalDisc[0].Checksums = dataChk.End().ToArray();
@@ -885,6 +899,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
+                if(alcohol != null && !dumpRaw)
+                    alcohol.Close();
             }
 
             Statistics.AddMedia(dskType, true);

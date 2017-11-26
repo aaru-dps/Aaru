@@ -38,7 +38,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
@@ -49,10 +48,16 @@ using Extents;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    using ImagePlugins;
+    using Metadata;
+    using MediaType = CommonTypes.MediaType;
+    using Session = Decoders.CD.Session;
+    using TrackType = Schemas.TrackType;
+
     internal class CompactDisc
     {
         // TODO: Add support for resume file
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Metadata.Resume resume, ref DumpLog dumpLog)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Resume resume, ref DumpLog dumpLog, Alcohol120 alcohol)
         {
             MHDDLog mhddLog;
             IBGLog ibgLog;
@@ -260,6 +265,30 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 DicConsole.ErrorWriteLine("Error trying to decode TOC...");
                 return;
+            }
+
+            ImagePlugins.Session[] sessionsForAlcohol = new ImagePlugins.Session[toc.Value.LastCompleteSession];
+            for(int i = 0; i < sessionsForAlcohol.Length; i++)
+            {
+                sessionsForAlcohol[i].SessionSequence = (ushort)(i + 1);
+                sessionsForAlcohol[i].StartTrack = ushort.MaxValue;
+            }
+            foreach(FullTOC.TrackDataDescriptor trk in toc.Value.TrackDescriptors)
+            {
+                if(trk.POINT > 0 && trk.POINT < 0xA0 && trk.SessionNumber <= sessionsForAlcohol.Length)
+                {
+                    if(trk.POINT < sessionsForAlcohol[trk.SessionNumber - 1].StartTrack)
+                        sessionsForAlcohol[trk.SessionNumber - 1].StartTrack = trk.POINT;
+                    if(trk.POINT > sessionsForAlcohol[trk.SessionNumber - 1].EndTrack)
+                        sessionsForAlcohol[trk.SessionNumber - 1].EndTrack = trk.POINT;
+                }
+            }
+            alcohol.AddSessions(sessionsForAlcohol);
+
+            foreach(FullTOC.TrackDataDescriptor trk in toc.Value.TrackDescriptors)
+            {
+                alcohol.AddTrack((byte)((trk.ADR << 4) & trk.CONTROL), trk.TNO, trk.POINT, trk.Min, trk.Sec, trk.Frame,
+                    trk.Zero, trk.PMIN, trk.PSEC, trk.PFRAME, trk.SessionNumber);
             }
 
             FullTOC.TrackDataDescriptor[] sortedTracks = toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
@@ -494,8 +523,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
             dumpLog.WriteLine("SCSI device type: {0}.", dev.SCSIType);
             dumpLog.WriteLine("Media identified as {0}.", dskType);
+            alcohol.SetMediaType(dskType);
 
             dumpFile = new DataFile(outputPrefix + ".bin");
+            alcohol.SetExtension(".bin");
             DataFile subFile = null;
             if(separateSubchannel)
                 subFile = new DataFile(outputPrefix + ".sub");
@@ -543,6 +574,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     tracks[t].SubChannel.Image.Value = tracks[t].Image.Value;
                 }
 
+                alcohol.SetTrackSizes((byte)(t + 1), sectorSize, tracks[t].StartSector, dumpFile.Position, (tracks[t].EndSector - tracks[t].StartSector + 1));
+                
                 bool checkedDataFormat = false;
 
                 for(ulong i = resume.NextBlock; i <= (ulong)tracks[t].EndSector; i += blocksToRead)
@@ -648,6 +681,38 @@ namespace DiscImageChef.Core.Devices.Dumping
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
                     resume.NextBlock = i + blocksToRead;
                 }
+
+                ImagePlugins.TrackType trkType;
+                switch(tracks[t].TrackType1)
+                {
+                    case TrackTypeTrackType.audio:
+                        trkType = ImagePlugins.TrackType.Audio;
+                        break;
+                    case TrackTypeTrackType.mode1:
+                        trkType = ImagePlugins.TrackType.CDMode1;
+                        break;
+                    case TrackTypeTrackType.mode2:
+                        trkType = ImagePlugins.TrackType.CDMode2Formless;
+                        break;
+                    case TrackTypeTrackType.m2f1:
+                        trkType = ImagePlugins.TrackType.CDMode2Form1;
+                        break;
+                    case TrackTypeTrackType.m2f2:
+                        trkType = ImagePlugins.TrackType.CDMode2Form2;
+                        break;
+                    case TrackTypeTrackType.dvd:
+                    case TrackTypeTrackType.hddvd:
+                    case TrackTypeTrackType.bluray:
+                    case TrackTypeTrackType.ddcd:
+                    case TrackTypeTrackType.mode0:
+                        trkType = ImagePlugins.TrackType.Data;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                alcohol.SetTrackTypes((byte)(t + 1), trkType,
+                    separateSubchannel ? TrackSubchannelType.None : TrackSubchannelType.RawInterleaved);
             }
             DicConsole.WriteLine();
             end = DateTime.UtcNow;
@@ -892,6 +957,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
+                alcohol.Close();
             }
 
             Statistics.AddMedia(dskType, true);

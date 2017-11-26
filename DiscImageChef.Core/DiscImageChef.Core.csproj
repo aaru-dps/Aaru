@@ -88,6 +88,7 @@
     <Compile Include="Sidecar\AudioMedia.cs" />
     <Compile Include="Sidecar\BlockTape.cs" />
     <Compile Include="Logging\DumpLog.cs" />
+    <Compile Include="Devices\Dumping\Alcohol120.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">

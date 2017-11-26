@@ -57,6 +57,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             bool compactDisc = true;
             ushort currentProfile = 0x0001;
             bool isXbox = false;
+            Alcohol120 alcohol = new Alcohol120(outputPrefix);
 
             sidecar.OpticalDisc = new OpticalDiscType[1];
             sidecar.OpticalDisc[0] = new OpticalDiscType();
@@ -167,7 +168,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(compactDisc)
             {
-                CompactDisc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog);
+                CompactDisc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, alcohol);
                 return;
             }
 
@@ -211,6 +212,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
                 if(!sense)
                 {
+                    alcohol.AddPFI(cmdBuf);
                     if(Decoders.DVD.PFI.Decode(cmdBuf).HasValue)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
@@ -325,6 +327,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         isXbox = true;
                     }
 
+                    alcohol.AddDMI(cmdBuf);
+                    
                     if(cmdBuf.Length == 2052)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
@@ -378,6 +382,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
+                    alcohol.AddBCA(tmpBuf);
                     sidecar.OpticalDisc[0].BCA = new DumpType
                     {
                         Image = outputPrefix + ".bca.bin",
@@ -590,6 +595,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
+                    alcohol.AddBCA(tmpBuf);
                     sidecar.OpticalDisc[0].BCA = new DumpType
                     {
                         Image = outputPrefix + ".bca.bin",
@@ -643,7 +649,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, true, ref resume, ref dumpLog);
+            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, true, ref resume, ref dumpLog, alcohol);
         }
     }
 }
