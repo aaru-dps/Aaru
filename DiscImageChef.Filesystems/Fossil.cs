@@ -203,7 +203,6 @@ namespace DiscImageChef.Filesystems
             if(sbLocation <= partition.End)
             {
                 sector = imagePlugin.ReadSector(sbLocation);
-                System.Console.WriteLine("Searching for superblock on sector {0}", sbLocation);
                 FossilSuperBlock fsb = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilSuperBlock>(sector);
 
                 DicConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic, Fossil_SbMagic);
