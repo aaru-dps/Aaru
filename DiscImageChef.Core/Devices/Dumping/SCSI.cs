@@ -53,9 +53,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[] senseBuf = null;
             bool sense = false;
             MediaType dskType = MediaType.Unknown;
+            int resets = 0;
 
             if(dev.IsRemovable)
             {
+                deviceGotReset:
                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out double duration);
                 if(sense)
                 {
@@ -63,6 +65,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(decSense.HasValue)
                     {
                         dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+
+                        // Just retry, for 5 times
+                        if(decSense.Value.ASC == 0x29)
+                        {
+                            resets++;
+                            if(resets < 5)
+                                goto deviceGotReset;
+                        }
+
                         if(decSense.Value.ASC == 0x3A)
                         {
                             int leftRetries = 5;

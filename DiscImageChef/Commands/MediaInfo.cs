@@ -112,15 +112,25 @@ namespace DiscImageChef.Commands
             MediaType dskType = MediaType.Unknown;
             ulong blocks = 0;
             uint blockSize = 0;
+            int resets = 0;
 
             if(dev.IsRemovable)
             {
+                deviceGotReset:
                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
                 if(sense)
                 {
                     Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                     if(decSense.HasValue)
                     {
+                        // Just retry, for 5 times
+                        if(decSense.Value.ASC == 0x29)
+                        {
+                            resets++;
+                            if(resets < 5)
+                                goto deviceGotReset;
+                        }
+
                         if(decSense.Value.ASC == 0x3A)
                         {
                             int leftRetries = 5;
