@@ -62,7 +62,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                     if(decSense.HasValue)
                     {
-                        dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                        dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                         if(decSense.Value.ASC == 0x3A)
                         {
                             int leftRetries = 5;
@@ -76,7 +76,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                 decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
-                                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 leftRetries--;
                             }
 
@@ -99,7 +99,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                 decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
-                                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 leftRetries--;
                             }
 
@@ -135,7 +135,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                 decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
-                                    dumpLog.WriteLine("Device not ready. Sense {0:X2}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 leftRetries--;
                             }
 
