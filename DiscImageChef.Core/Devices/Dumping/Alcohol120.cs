@@ -396,7 +396,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         {
             foreach(Session cdSession in cdSessions)
             {
-                System.Console.WriteLine("AddSession(start: {0}, end: {1}, sequence: {2}", cdSession.StartTrack, cdSession.EndTrack, cdSession.SessionSequence);
                 AlcoholSession session = new AlcoholSession
                 {
                     firstTrack = (ushort)cdSession.StartTrack,
@@ -409,8 +408,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
         public void SetTrackTypes(byte point, TrackType mode, TrackSubchannelType subMode)
         {
-            System.Console.WriteLine("SetTrackTypes(point: {0}, mode: {1}, subMode: {2}", point, mode, subMode);
-
             AlcoholTrack[] trkArray = tracks.ToArray();
 
             for(int i = 0; i < trkArray.Length; i++)
@@ -466,8 +463,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
         public void SetTrackSizes(byte point, int sectorSize, long startLba, long startOffset, long length)
         {
-            System.Console.WriteLine("SetTrackSizes(point: {0}, sectorSize: {1}, startOffset: {2}, length: {3}", point, sectorSize, startOffset, length);
-
             AlcoholTrack[] trkArray = tracks.ToArray();
 
             for(int i = 0; i < trkArray.Length; i++)
@@ -504,9 +499,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         public void AddTrack(byte adrCtl, byte tno, byte point, byte min, byte sec, byte frame, byte zero, byte pmin,
             byte psec, byte pframe, byte session)
         {
-            System.Console.WriteLine("AddTrack(adrCtl: {0}, tno: {1}, point: {2}, min: {3}, sec: {4}, frame: {5}, zero: {6}, pmin: {7}, psec: {8}, pframe: {9}, session: {10}",
-                                     adrCtl, tno, point, min, sec, frame, zero, pmin, psec, pframe, session);
-
             AlcoholTrack trk = new AlcoholTrack
             {
                 mode = AlcoholTrackMode.NoData,
