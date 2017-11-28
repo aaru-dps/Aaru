@@ -5,11 +5,11 @@
 // Filename       : SecureDigital.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : SecureDigital (SD) Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Contains SecureDigital (SD) commands.
 //
 // --[ License ] --------------------------------------------------------------
 //

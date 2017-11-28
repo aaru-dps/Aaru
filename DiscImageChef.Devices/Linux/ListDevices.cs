@@ -5,11 +5,11 @@
 // Filename       : ListDevices.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Linux direct device access.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Contains code to list available devices on Linux.
 //
 // --[ License ] --------------------------------------------------------------
 //

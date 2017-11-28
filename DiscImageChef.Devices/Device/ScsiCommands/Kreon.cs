@@ -2,15 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Adaptec.cs
+// Filename       : Kreon.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Adaptec vendor commands.
+// Component      : Kreon vendor commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains vendor commands for Adaptec ACB-4000A and
-//     ACB-4070 ST-506 to SCSI controllers.
+//     Contains vendor commands for Kreon SCSI devices.
 //
 // --[ License ] --------------------------------------------------------------
 //

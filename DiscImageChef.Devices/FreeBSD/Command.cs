@@ -5,7 +5,7 @@
 // Filename       : Command.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : FeeBSD direct device access.
+// Component      : FreeBSD direct device access.
 //
 // --[ Description ] ----------------------------------------------------------
 //

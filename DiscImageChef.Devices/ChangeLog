@@ -1,3 +1,11 @@
+2017-11-28  Michael Drüing <michael@drueing.de>
+    * Device/MmcCommands/MMC.cs:
+	* Device/MmcCommands/SecureDigital.cs:
+	* Device/ScsiCommands/Kreon.cs:
+	* FreeBSD/Commands.cs:
+	* Linux/ListDevices.cs:
+	* Windows/ListDevices.cs: Update/fix documentation.
+
 2017-05-23  Natalia Portillo  <claunia@claunia.com>
 
 	* Kreon.cs: Typo correction.

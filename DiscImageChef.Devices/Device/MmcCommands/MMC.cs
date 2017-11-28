@@ -5,11 +5,11 @@
 // Filename       : MMC.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : MultiMediaCard commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Contains MultiMediaCard commands.
 //
 // --[ License ] --------------------------------------------------------------
 //
