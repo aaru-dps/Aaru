@@ -1,3 +1,25 @@
+2017-11-28  Michael Drüing   <michael@drueing.de>
+
+    * Anex86.cs:
+    * AppleDOS.cs:
+    * Apridisk.cs:
+    * CPCDSK.cs:
+    * CloneCD.cs:
+    * D88.cs:
+    * DIM.cs:
+    * DiscJuggler.cs:
+    * DriDiskCopy.cs:
+    * MaxiDisk.cs:
+    * NHDr0.cs:
+    * PartClone.cs:
+    * Partimage.cs:
+    * RayDIM.cs:
+    * RsIde.cs:
+    * T98.cs:
+    * UkvFdi.cs:
+    * VHDX.cs:
+    * Virtual98.cs: Update/fix comments
+	
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.DiscImages.csproj: Added project for

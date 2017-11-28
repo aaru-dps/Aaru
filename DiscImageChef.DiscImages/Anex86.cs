@@ -5,11 +5,11 @@
 // Filename       : Anex86.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Manages Anex86 emulator disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

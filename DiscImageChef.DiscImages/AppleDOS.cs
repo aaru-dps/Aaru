@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : ZZZRawImage.cs
+// Filename       : AppleDOS.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Manages raw image, that is, user data sector by sector copy.
+//     Manages Apple ][ interleaved disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

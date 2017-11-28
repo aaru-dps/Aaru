@@ -5,11 +5,11 @@
 // Filename       : UkvFdi.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Manages Spectrum floppy disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

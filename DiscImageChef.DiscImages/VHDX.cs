@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Manages Connectix and Microsoft Virtual PC disk images.
+//     Manages extended Microsoft Virtual PC disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
