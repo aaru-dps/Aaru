@@ -5,11 +5,11 @@
 // Filename       : RayDIM.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Manages Ray Arachelian's "Disk IMage" images.
 //
 // --[ License ] --------------------------------------------------------------
 //

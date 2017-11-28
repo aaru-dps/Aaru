@@ -5,11 +5,11 @@
 // Filename       : ListDevices.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Windows direct device access.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Contains code to list all devices on Windows.
 //
 // --[ License ] --------------------------------------------------------------
 //

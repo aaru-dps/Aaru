@@ -5,11 +5,11 @@
 // Filename       : D88.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Manages D88 disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -5,11 +5,11 @@
 // Filename       : NHDr0.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Manages NHDr0 disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
