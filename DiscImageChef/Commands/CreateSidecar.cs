@@ -134,10 +134,9 @@ namespace DiscImageChef.Commands
 
                     DicConsole.WriteLine("Writing metadata sidecar");
 
-                    FileStream xmlFs = new FileStream(Path.GetDirectoryName(options.InputFile) +
-                                       //Path.PathSeparator +
-                                       Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml",
-                                           FileMode.CreateNew);
+                    FileStream xmlFs = new FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile),
+                                                                   Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
+                                                      FileMode.CreateNew);
 
                     System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
                     xmlSer.Serialize(xmlFs, sidecar);
@@ -174,10 +173,9 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Writing metadata sidecar");
 
-                FileStream xmlFs = new FileStream(Path.GetDirectoryName(options.InputFile) +
-                                   //Path.PathSeparator +
-                                   Path.GetFileName(options.InputFile) + ".cicm.xml",
-                                       FileMode.CreateNew);
+                FileStream xmlFs = new FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile),
+                                                               Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
+                                                  FileMode.CreateNew);
 
                 System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
