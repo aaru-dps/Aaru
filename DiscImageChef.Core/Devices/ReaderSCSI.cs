@@ -152,8 +152,13 @@ namespace DiscImageChef.Core.Devices
                     {
                         if(blockSize == 512)
                         {
-                            // Long sector sizes for 512-byte magneto-opticals
-                            foreach(ushort testSize in new[] { 600, 610, 630 })
+                            foreach(ushort testSize in new[] { 
+                                            // Long sector sizes for floppies
+                                            514,
+                                            // Long sector sizes for SuperDisk
+                                            536, 558,
+                                            // Long sector sizes for 512-byte magneto-opticals
+                                            600, 610, 630 })
                             {
                                 testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, testSize, timeout, out duration);
                                 if(!testSense && !dev.Error)
@@ -176,21 +181,28 @@ namespace DiscImageChef.Core.Devices
                         }
                         else if(blockSize == 1024)
                         {
-                            testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 1200, timeout, out duration);
-                            if(!testSense && !dev.Error)
+                            foreach(ushort testSize in new[] { 
+                                            // Long sector sizes for floppies
+                                            1026,
+                                            // Long sector sizes for 1024-byte magneto-opticals
+                                            1200 })
                             {
-                                readLong16 = true;
-                                longBlockSize = 1200;
-                                readRaw = true;
-                            }
-                            else
-                            {
-                                testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, 1200, timeout, out duration);
+                                testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, testSize, timeout, out duration);
+                                if(!testSense && !dev.Error)
+                                {
+                                    readLong16 = true;
+                                    longBlockSize = testSize;
+                                    readRaw = true;
+                                    break;
+                                }
+
+                                testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, testSize, timeout, out duration);
                                 if(!testSense && !dev.Error)
                                 {
                                     readLong10 = true;
-                                    longBlockSize = 1200;
+                                    longBlockSize = testSize;
                                     readRaw = true;
+                                    break;
                                 }
                             }
                         }

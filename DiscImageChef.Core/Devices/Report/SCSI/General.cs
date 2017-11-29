@@ -527,8 +527,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 {
                                     if(mediaTest.BlockSize == 512)
                                     {
-                                        // Long sector sizes for 512-byte magneto-opticals
-                                        foreach(ushort testSize in new[] { 600, 610, 630 })
+                                        foreach(ushort testSize in new[] { 
+                                            // Long sector sizes for floppies
+                                            514,
+                                            // Long sector sizes for SuperDisk
+                                            536, 558,
+                                            // Long sector sizes for 512-byte magneto-opticals
+                                            600, 610, 630 })
                                         {
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout, out duration);
                                             if(!sense && !dev.Error)
@@ -542,12 +547,20 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     }
                                     else if(mediaTest.BlockSize == 1024)
                                     {
-                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 1200, timeout, out duration);
-                                        if(!sense && !dev.Error)
+                                        foreach(ushort testSize in new[] { 
+                                            // Long sector sizes for floppies
+                                            1026,
+                                            // Long sector sizes for 1024-byte magneto-opticals
+                                            1200 })
                                         {
-                                            mediaTest.SupportsReadLong = true;
-                                            mediaTest.LongBlockSize = 1200;
-                                            mediaTest.LongBlockSizeSpecified = true;
+                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout, out duration);
+                                            if(!sense && !dev.Error)
+                                            {
+                                                mediaTest.SupportsReadLong = true;
+                                                mediaTest.LongBlockSize = testSize;
+                                                mediaTest.LongBlockSizeSpecified = true;
+                                                break;
+                                            }
                                         }
                                     }
                                     else if(mediaTest.BlockSize == 2048)
