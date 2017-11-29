@@ -501,7 +501,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     sense = dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, blocksToRead, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
                         true, true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout, out duration);
-                    if(dev.Error)
+                    if(dev.Error || sense)
                         blocksToRead /= 2;
                 }
 
@@ -509,7 +509,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     break;
             }
 
-            if(dev.Error)
+            if(dev.Error || sense)
             {
                 DicConsole.WriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
                 DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
