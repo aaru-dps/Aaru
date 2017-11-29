@@ -1,0 +1,21 @@
+//------------------------------------------------
+//--- 010 Editor v8.0.1 Binary Template
+//
+//      File: scsi_read_capacity.bt
+//   Authors: Natalia Portillo
+//   Version: 0.1
+//   Purpose: Decoding of SCSI READ CAPACITY return
+//  Category: SCSI
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct
+{
+ uint blocks;
+ uint blocksize;
+} ScsiReadCapacity;
+
+BigEndian();
+ScsiReadCapacity capacity;
