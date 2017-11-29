@@ -1,7 +1,9 @@
-# [4.0.0.0-beta] - 2017-09-05
+# [4.0.0.0-beta] - 2017-11-29
 ## Added
 ### - Commands
+- Added separate application to debug commands sent to devices.
 - list-devices: Lists devices that can be used for device dependent commands.
+- list-encodings: Lists supported character encodings.
 
 ### - Create Sidecar command
 - Added support for tape dumps where each tape-file is a separate dumped file.
@@ -38,15 +40,21 @@
 - D64.
 - D71.
 - D81.
+- Digital Research's DiskCopy.
 - DiscJuggler.
 - IBM SaveDskF.
 - IMD.
 - MAME Compressed Hunks of Data (aka CHD).
 - Parallels Hard Disk Image (aka HDD).
+- Partclone disk images
+- Partimage disk images
 - QEMU Copy-On-Write (aka QCOW).
 - QEMU Copy-On-Write v2.
 - QEMU Enhanced Disk (aka QED).
 - Quasi88 (.D77/.D88).
+- Ray Arachelian's Disk IMage (.DIM).
+- RS-IDE hard disk images.
+- Spectrum floppy disk image (.FDI)
 - T98.
 - VHDX.
 - Virtual98.
@@ -67,9 +75,11 @@
 - CP/M.
 - Detecting AO-DOS.
 - Detecting AtheOS.
+- Detecting CD-i.
 - Detecting Commodore 1540/1541/1571/1581.
 - Detecting cram.
 - Detecting Cray UNICOS.
+- Detecting dump(8) (Old historic BSD, AIX, UFS and UFS2 types).
 - Detecting ECMA-67.
 - Detecting exFAT.
 - Detecting Extent File System (aka SGI EFS).
@@ -77,7 +87,11 @@
 - Detecting FAT+.
 - Detecting fossil.
 - Detecting HAMMER.
+- Detecting High Sierra Format.
+- Detecting HP Logical Interchange Format.
 - Detecting IBM JFS.
+- Detecting Locus.
+- Detecting MicroDOS file system.
 - Detecting NILFS2.
 - Detecting OS-9 Random Block File (aka RBF).
 - Detecting Professional File System (aka PFS).
@@ -114,17 +128,18 @@
 
 ### - Media types
 - DDS, DDS-2, DDS-3, DDS-4.
-- HiFD
-- IOMEGA Clik! (aka PocketZip)
-- IOMEGA JAZ
-- LS-120
+- HiFD.
+- IOMEGA Clik! (aka PocketZip).
+- IOMEGA JAZ.
+- LS-120, LS-240, FD32MB.
 - NEC floppies.
 - Old DEC hard disks
 - SHARP floppies.
-- XGD3
+- XGD3.
 
 ### - Partitions
 - Acorn FileCore.
+- ACT Apricot.
 - BSD disklabels.
 - DEC disklabels.
 - DragonFly BSD.
@@ -154,46 +169,69 @@
 - Tested FFS2.
 
 ### - Apple Partition Map
+- Added bound checks.
 - Added support for decoding Driver Description Map.
 - Added support for maps without Driver Description Map.
 - Added support for old partition table.
+- Corrected partition start when map it's not on start of device.
 - Corrected support for misaligned maps, like on CDs.
 - Cut partitions that span outside the device.
 
 ### - cdrdao
-- Audio track matching
+- Audio track matching.
+- Corrected images that start with comments.
 - Prevent reading binary files.
 
 ### - CDRWin
-- CD-Text detection
+- CD-Text detection.
 - CD+G data return.
 - Prevent reading binary files.
 
+### - CP/M filesystem
+- Corrected cluster count calculation.
+- Corrected directory location on CP/M-86.
+- Corrected sector reading.
+
+### - Create Sidecar command
+- Corrected creation when path is absolute.
+
 ### - Device commands
 - Add ATA commands support for Windows.
+- Do not send SCSI INQUIRY to non-SCSI paths on Linux.
 
 ### - Device reports
 - Call ATA READ LONG last, as it confuses some drives
 - Try SCSI READ LONG (10) until max block size (65535)
 
 ### - DiskCopy 4.2
-- Track order for Lisa and Macintosh Twiggy
+- Added support for invalid images that use little-endian values.
+- Added support for images created by macOS that don't have a format byte set.
+- Corrected track order for Lisa and Macintosh Twiggy.
 
 ### - Dreamcast GDI images
 - Prevent reading binary files.
 
 ### - Dumping
 - Calculation of streaming device dumping speed.
+- Create dump log.
+- Corrected dumping CD-R and CD-RW.
+- Dumping optical media creates an Alcohol 120% descriptor file.
 - Optical media with 2048 bytes/sector now get ".iso" file extension.
+- Retry when SCSI devices return reset status.
 - Streaming Devices now store block size changes in metadata sidecar.
+- Wait for SCSI devices to exit ASC 28h (MEDIUM CHANGE) status.
 
 ### - ext2/3/4 filesystem
 - Added new superblock fields.
+- Added support for devices with sectors bigger than 512 bytes.
 - Use os type as XML system identifier.
 
 ### - FAT filesystem
+- Added DEC Rainbow's hard-wired BPB.
 - Added support for volumes with 256 bytes/sector.
+- Added support for ACT Apricot BPB.
 - Behaviour with some non-compliant media descriptors.
+- Corrected 5.25" MD1DD detection.
 - Corrected boot code detection.
 - Corrected misaligned volumes on optical media.
 - Gets volume label, creation time and modification time from root directory if available.
@@ -201,7 +239,9 @@
 - Use OEM name as XML system identifier.
 
 ### - Guid Partition Table
+- Added bound checks.
 - Corrected misaligned tables on optical media.
+- Corrected when table is smaller than one sector.
 
 ### - HFS filesystem
 - Corrected detection of a PowerPC only bootable volume (no boot sector).
@@ -220,8 +260,15 @@
 - Use OEM name as XML system identifier.
 
 ### - ISO9660 filesystem
+- Complete rewrite.
 - Check that date fields start with a number.
-- Removed non-working Rock Ridge detection.
+- Added detection of AAIP extensions.
+- Added detection of Apple extensions.
+- Added detection of EFI Platform ID for El Torito.
+- Added detection of RRIP extensions.
+- Added detection of SUSP extensions.
+- Added detection of XA extensions.
+- Added detection of ziso extensions.
 
 ### - Master Boot Record partitioning scheme
 - Check real presence of a GPT.
@@ -248,6 +295,10 @@
 - Corrected offsets.
 - Cut partitions that span outside the device.
 
+### - ODS filesystem
+- Corrected cluster size calculation.
+- Corrected misaligned volumes on optical media.
+
 ### - ProDOS filesystem
 - Corrected cluster size calculation.
 - Corrected misaligned volumes on optical media.
@@ -260,25 +311,38 @@
 - Handling of EVPDs smaller than length field.
 - Handling of modes 02h, 04h and 1Ch smaller than expected.
 - Prettyfying of mode 0Bh.
+- Prevented overflow on MMC FEATURES decoding.
+- Prevented overflow on SCSI MODE PAGE decoding.
 
 ### - SmartFileSystem
 - Added support for version 2.
 
 ### - Sun disklabel
+- Added bound checks.
 - Added support for 16-entries VTOC.
 - Added support for pre-VTOC disklabels.
 - Corrected structures for 8-entries VTOC.
+
+### - System V filesystem
+- Added COHERENT offsets.
+- Check for it starting on second cylinder.
+- Corrected cluster size calculation.
+- Corrected detection between Release 2 and Release 4.
+- Corrected Release 2 superblock parameters.
+- Enlarged NICFREE for Version 7.
+
+### TeleDisk images
+- Added support for Advanced Compression.
+- Added support for floppy lead-out.
+- Added variable sectors per track support.
 
 ### - UFS filesystem
 - Corrected superblock locations.
 - Move superblock to a single structure and marshal it, corrects detection of several variants.
 
-### - UNIX VTOC
-- Added support for pdInfo.
-- Added support for several variants.
-
 ## Changes
 - Added a public changelog.
+- Added operating system version statistics.
 - Added partitioning scheme name to partition structures.
 - Added several internal tests to prevent regression on changes.
 - Added support for different character encodings.
@@ -287,6 +351,9 @@
 - Added support for propagating disk geometry, needed by PC-98 partitions and old MBRs.
 - Better support for decoding multibyte encodings from C, Pascal and space-padded strings.
 - Changed handling of compressed files, using temporary files and caching.
+- Corrected casting on big-endian marshalling that was failing on some .NET Framework versions.
+- Corrected filter list reuse.
+- Disabled EDC check on CDs because it is not working (TODO).
 - Filesystems now have access to full partition structure.
 - Filters no longer return their own extension when requested for filename.
 - Moved Claunia.RsrcFork to NuGet.
