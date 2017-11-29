@@ -633,6 +633,16 @@ namespace DiscImageChef.ImagePlugins
 					ImageInfo.heads = 8;
 					ImageInfo.sectorsPerTrack = 32;
 					break;
+				case MediaType.LS240:
+					ImageInfo.cylinders = 262;
+					ImageInfo.heads = 32;
+					ImageInfo.sectorsPerTrack = 56;
+					break;
+				case MediaType.FD32MB:
+					ImageInfo.cylinders = 1024;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 32;
+					break;
 				default:
 					ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
 					ImageInfo.heads = 16;
@@ -1049,6 +1059,8 @@ namespace DiscImageChef.ImagePlugins
                         return MediaType.DOS_35_ED;
 					case 9338880:
 						return MediaType.NEC_35_TD;
+					case 33554432:
+						return MediaType.FD32MB;
 					case 40387584:
 						return MediaType.PocketZip;
 					case 126222336:
@@ -1059,6 +1071,8 @@ namespace DiscImageChef.ImagePlugins
 						return MediaType.HiFD;
                     case 229632000:
                         return MediaType.ECMA_201;
+					case 240386048:
+						return MediaType.LS240;
                     case 481520640:
                         return MediaType.ECMA_183_512;
                     case 533403648:

@@ -774,6 +774,7 @@ namespace DiscImageChef.CommonTypes
         HiFD,
         LS120,
         LS240,
+        FD32MB,
         QuickDisk,
         UHD144,
         VideoFloppy,

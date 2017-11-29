@@ -1448,6 +1448,10 @@ namespace DiscImageChef.Metadata
                     DiscType = "SuperDisk";
                     DiscSubType = "LS-240";
                     break;
+                case CommonTypes.MediaType.FD32MB:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "FD32MB";
+                    break;
                 case CommonTypes.MediaType.UHD144:
                     DiscType = "UHD144";
                     DiscSubType = "UHD144";

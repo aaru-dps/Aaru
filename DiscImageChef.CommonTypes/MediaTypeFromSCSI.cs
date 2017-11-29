@@ -107,12 +107,21 @@ namespace DiscImageChef.CommonTypes
                         {
                             if(blockSize == 512)
                             {
+                                if(blocks == 469504)
+                                    return MediaType.LS240;
                                 if(blocks == 246528)
                                     return MediaType.LS120;
+                                if(blocks == 65536)
+                                    return MediaType.FD32MB;
                                 if(blocks == 2880)
                                     return MediaType.DOS_35_HD;
                                 if(blocks == 1440)
                                     return MediaType.DOS_35_DS_DD_9;
+                            }
+                            else if(blockSize == 1024)
+                            {
+                                if(blocks == 1232)
+                                    return MediaType.NEC_35_HD_8;
                             }
 
                             return MediaType.Unknown;
