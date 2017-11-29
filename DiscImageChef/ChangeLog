@@ -1,3 +1,6 @@
+* Commands/CreateSidecar.cs:
+  Corrected sidecar filename creation when path is absolute.
+
 * Options.cs:
 * Commands/CreateSidecar.cs:
   Added support for creating a sidecar from a folder containing the
