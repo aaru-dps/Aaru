@@ -5,7 +5,7 @@ This is a list of hardware that I'm searching but is too rare or too expensive f
 The reason I want this hardware is because having it is the only way to add enhanced support for them (e.g. media detection, ECC support, raw dumping, etc.).
 After adding enhanced support all drives will be given to the Canary Islands Computer Museum.
 
-- 3.5" magneto-optical media: 128MiB, 540MiB, 630MiB, 1.3GiB
+- 3.5" magneto-optical media: 128MiB, 540MiB, 1.3GiB
 - 5.25" magneto-optical drive and media
 - 8" shugart drive
 - ADR drive and tapes
@@ -27,7 +27,6 @@ After adding enhanced support all drives will be given to the Canary Islands Com
 - LTO drive and tapes
 - LV-ROM drive and media
 - Mammoth drive and tapes
-- Matsushita LS-240 and media
 - PD-650 drives (e.g. Panasonic LF-D111) and media
 - Panasonic Blu-ray recorder
 - Plasmon UDO and UDO2 drives and media
