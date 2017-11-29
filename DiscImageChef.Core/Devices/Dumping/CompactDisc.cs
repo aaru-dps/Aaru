@@ -114,12 +114,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         ATIP.CDATIP? atip = ATIP.Decode(cmdBuf);
                         if(atip.HasValue)
                         {
-                            if(blocks == 0)
-                            {
-                                DicConsole.ErrorWriteLine("Cannot dump blank media.");
-                                return;
-                            }
-
                             // Only CD-R and CD-RW have ATIP
                             dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
 
@@ -398,6 +392,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             tracks[tracks.Length - 1].EndMSF = lastMSF;
             tracks[tracks.Length - 1].EndSector = lastSector;
             blocks = (ulong)(lastSector + 1);
+
+            if(blocks == 0)
+            {
+                DicConsole.ErrorWriteLine("Cannot dump blank media.");
+                return;
+            }
 
             if(dumpRaw)
             {
