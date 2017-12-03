@@ -36,13 +36,18 @@
 // ****************************************************************************/
 // //$Id$
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Filesystems;
+using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using Schemas;
+using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Core
 {
@@ -413,6 +418,200 @@ namespace DiscImageChef.Core
                 }
             }
 
+            // TODO: This is more of a hack, redo it planned for >4.0
+            #region SuperCardPro
+            string scpFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
+                Path.GetFileNameWithoutExtension(imagePath) + ".scp");
+            ImagePlugins.SuperCardPro scpImage = new SuperCardPro();
+            Filters.ZZZNoFilter scpFilter = new ZZZNoFilter();
+            scpFilter.Open(scpFilePath);
+
+            string scpFormat = null;
+            
+            switch(image.ImageInfo.mediaType)
+            {
+                case MediaType.Apple32SS:
+                case MediaType.Apple32DS:
+                    scpFormat = "Apple GCR (DOS 3.2)";
+                    break;
+                case MediaType.Apple33SS:
+                case MediaType.Apple33DS:
+                    scpFormat = "Apple GCR (DOS 3.3)";
+                    break;
+                case MediaType.AppleSonySS:
+                case MediaType.AppleSonyDS:
+                    scpFormat = "Apple GCR (Sony)";
+                    break;
+                case MediaType.AppleFileWare:
+                    scpFormat = "Apple GCR (Twiggy)";
+                    break;
+                case MediaType.DOS_525_SS_DD_9:
+                case MediaType.DOS_525_DS_DD_8:
+                case MediaType.DOS_525_DS_DD_9:
+                case MediaType.DOS_525_HD:
+                case MediaType.DOS_35_SS_DD_8:
+                case MediaType.DOS_35_SS_DD_9:
+                case MediaType.DOS_35_DS_DD_8:
+                case MediaType.DOS_35_DS_DD_9:
+                case MediaType.DOS_35_HD:
+                case MediaType.DOS_35_ED:
+                case MediaType.DMF:
+                case MediaType.DMF_82:
+                case MediaType.XDF_525:
+                case MediaType.XDF_35:
+                case MediaType.IBM53FD_256:
+                case MediaType.IBM53FD_512:
+                case MediaType.IBM53FD_1024:
+                case MediaType.RX02:
+                case MediaType.RX03:
+                case MediaType.RX50:
+                case MediaType.ACORN_525_SS_DD_40:
+                case MediaType.ACORN_525_SS_DD_80:
+                case MediaType.ACORN_525_DS_DD:
+                case MediaType.ACORN_35_DS_DD:
+                case MediaType.ACORN_35_DS_HD:
+                case MediaType.ATARI_525_ED:
+                case MediaType.ATARI_525_DD:
+                case MediaType.ATARI_35_SS_DD:
+                case MediaType.ATARI_35_DS_DD:
+                case MediaType.ATARI_35_SS_DD_11:
+                case MediaType.ATARI_35_DS_DD_11:
+                case MediaType.DOS_525_SS_DD_8:
+                case MediaType.NEC_8_DD:
+                case MediaType.NEC_525_SS:
+                case MediaType.NEC_525_DS:
+                case MediaType.NEC_525_HD:
+                case MediaType.NEC_35_HD_8:
+                case MediaType.NEC_35_HD_15:
+                case MediaType.NEC_35_TD:
+                case MediaType.FDFORMAT_525_DD:
+                case MediaType.FDFORMAT_525_HD:
+                case MediaType.FDFORMAT_35_DD:
+                case MediaType.FDFORMAT_35_HD:
+                case MediaType.Apricot_35:
+                case MediaType.CompactFloppy:
+                    scpFormat = "IBM MFM";
+                    break;
+                case MediaType.ATARI_525_SD:
+                case MediaType.NEC_8_SD:
+                case MediaType.ACORN_525_SS_SD_40:
+                case MediaType.ACORN_525_SS_SD_80:
+                case MediaType.RX01:
+                case MediaType.IBM23FD:
+                case MediaType.IBM33FD_128:
+                case MediaType.IBM33FD_256:
+                case MediaType.IBM33FD_512:
+                case MediaType.IBM43FD_128:
+                case MediaType.IBM43FD_256:
+                    scpFormat = "IBM FM";
+                    break;
+                case MediaType.CBM_35_DD:
+                    scpFormat = "Commodore MFM";
+                    break;
+                case MediaType.CBM_AMIGA_35_HD:
+                case MediaType.CBM_AMIGA_35_DD:
+                    scpFormat = "Amiga MFM";
+                    break;
+                case MediaType.CBM_1540:
+                case MediaType.CBM_1540_Ext:
+                case MediaType.CBM_1571:
+                    scpFormat = "Commodore GCR";
+                    break;
+                case MediaType.SHARP_525:
+                case MediaType.SHARP_525_9:
+                case MediaType.SHARP_35:
+                    break;
+                case MediaType.SHARP_35_9:
+                    break;
+                case MediaType.ECMA_99_15:
+                case MediaType.ECMA_99_26:
+                case MediaType.ECMA_100:
+                case MediaType.ECMA_125:
+                case MediaType.ECMA_147:
+                case MediaType.ECMA_99_8:
+                    scpFormat = "ISO MFM";
+                    break;
+                case MediaType.ECMA_54:
+                case MediaType.ECMA_59:
+                case MediaType.ECMA_66:
+                case MediaType.ECMA_69_8:
+                case MediaType.ECMA_69_15:
+                case MediaType.ECMA_69_26:
+                case MediaType.ECMA_70:
+                case MediaType.ECMA_78:
+                case MediaType.ECMA_78_2:
+                    scpFormat = "ISO FM";
+                    break;
+                default:
+                    scpFormat = "Unknown";
+                    break;
+            }
+
+            if(image.ImageInfo.heads <= 2 && File.Exists(scpFilePath) && scpImage.IdentifyImage(scpFilter))
+            {
+                try
+                {
+                    scpImage.OpenImage(scpFilter);
+                }
+                catch(NotImplementedException)
+                {
+                }
+
+                if((image.ImageInfo.heads == 2 && scpImage.header.heads == 0) ||
+                   (image.ImageInfo.heads == 1 && (scpImage.header.heads == 1 || scpImage.header.heads == 2)))
+                {
+                    if(scpImage.header.end + 1 >= image.ImageInfo.cylinders)
+                    {
+                        ImageType scpImageType = new ImageType();
+                        scpImageType.format = "SuperCardPro";
+                        scpImageType.Value = Path.GetFileName(scpFilePath);
+                        List<BlockTrackType> scpBlockTrackTypes = new List<BlockTrackType>();
+                        long currentSector = 0;
+                        Stream scpStream = scpFilter.GetDataForkStream();
+
+                        for(byte t = scpImage.header.start; t <= scpImage.header.end; t++)
+                        {
+                            BlockTrackType scpBlockTrackType = new BlockTrackType();
+                            scpBlockTrackType.Cylinder = t / image.ImageInfo.heads;
+                            scpBlockTrackType.Head = t % image.ImageInfo.heads;
+                            scpBlockTrackType.Image = scpImageType;
+                            scpBlockTrackType.Image.offset = scpImage.header.offsets[t];
+
+                            if(scpBlockTrackType.Cylinder < image.ImageInfo.cylinders)
+                            {
+                                scpBlockTrackType.StartSector = currentSector;
+                                currentSector += image.ImageInfo.sectorsPerTrack;
+                                scpBlockTrackType.EndSector = currentSector - 1;
+                                scpBlockTrackType.Sectors = image.ImageInfo.sectorsPerTrack;
+                                scpBlockTrackType.BytesPerSector = (int)image.ImageInfo.sectorSize;
+                                scpBlockTrackType.Format = scpFormat;
+                            }
+
+                            if(scpImage.tracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
+                            {
+                                byte[] trackContents =
+                                    new byte[(scpTrack.entries.Last().dataOffset +
+                                              scpTrack.entries.Last().trackLength) - scpImage.header.offsets[t] + 1];
+                                scpStream.Position = scpImage.header.offsets[t];
+                                scpStream.Read(trackContents, 0, trackContents.Length);
+                                scpBlockTrackType.Size = trackContents.Length;
+                                scpBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
+                            }
+
+                            scpBlockTrackTypes.Add(scpBlockTrackType);
+                        }
+
+                        sidecar.BlockMedia[0].Track =
+                            scpBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
+                    }
+                    else
+                        DicConsole.ErrorWriteLine("SuperCardPro image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...", scpImage.header.end + 1, image.ImageInfo.cylinders);
+                }
+                else
+                    DicConsole.ErrorWriteLine("SuperCardPro image do not contain same number of heads ({0}) than disk image ({1}), ignoring...", 2, image.ImageInfo.heads);
+            }
+            #endregion
+            
             // TODO: Implement support for getting CHS from SCSI mode pages
         }
     }

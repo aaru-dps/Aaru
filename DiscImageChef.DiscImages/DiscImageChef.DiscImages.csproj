@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -58,6 +58,7 @@
     <Compile Include="ImageInfo.cs" />
     <Compile Include="ImagePlugin.cs" />
     <Compile Include="Nero.cs" />
+    <Compile Include="SuperCardPro.cs" />
     <Compile Include="TeleDisk.cs" />
     <Compile Include="VHD.cs" />
     <Compile Include="ZZZRawImage.cs" />

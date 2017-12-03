@@ -211,3 +211,8 @@ Supported filters
 * LZip
 * MacBinary I, II, III
 * XZ
+
+Partially supported disk image formats
+======================================
+This disk image formats cannot be read, but their contents can be checksummed on sidecar creation
+* SuperCardPro
