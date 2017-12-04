@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KryoFlux.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Apple2MG.cs" />
     <Compile Include="CDRWin.cs" />

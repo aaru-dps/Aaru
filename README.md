@@ -215,4 +215,5 @@ Supported filters
 Partially supported disk image formats
 ======================================
 This disk image formats cannot be read, but their contents can be checksummed on sidecar creation
+* KryoFlux STREAM
 * SuperCardPro

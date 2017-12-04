@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : SuperCardPro.cs
+// Filename       : KryoFlux.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Manages SuperCardPro disk images.
+//     Manages KryoFlux disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -32,126 +32,79 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class SuperCardPro : ImagePlugin
+    public class KryoFlux : ImagePlugin
     {
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ScpHeader
+        public struct OobBlock
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] signature;
-            public byte version;
-            public ScpDiskType type;
-            public byte revolutions;
-            public byte start;
-            public byte end;
-            public ScpFlags flags;
-            public byte bitCellEncoding;
-            public byte heads;
-            public byte reserved;
-            public uint checksum;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)]
-            public uint[] offsets;
-        }
-
-        public struct TrackHeader
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] signature;
-            public byte trackNumber;
-            public TrackEntry[] entries;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct TrackEntry
-        {
-            public uint indexTime;
-            public uint trackLength;
-            public uint dataOffset;
+            public BlockIds blockId;
+            public OobTypes blockType;
+            public ushort length;
         }
         #endregion Internal Structures
 
         #region Internal Constants
-        /// <summary>
-        /// SuperCardPro header signature: "SCP"
-        /// </summary>
-        readonly byte[] ScpSignature = { 0x53, 0x43, 0x50 };
-        /// <summary>
-        /// SuperCardPro track header signature: "TRK"
-        /// </summary>
-        readonly byte[] TrkSignature = { 0x54, 0x52, 0x4B };
-        
-        public enum ScpDiskType : byte
+        public enum BlockIds : byte
         {
-            Commodore64 = 0x00,
-            CommodoreAmiga = 0x04,
-            AtariFMSS = 0x10,
-            AtariFMDS = 0x11,
-            AtariFSEx = 0x12,
-            AtariSTSS = 0x14,
-            AtariSTDS = 0x15,
-            AppleII = 0x20,
-            AppleIIPro = 0x21,
-            Apple400K = 0x24,
-            Apple800K = 0x25,
-            Apple144 = 0x26,
-            PC360K = 0x30,
-            PC720K = 0x31,
-            PC12M = 0x32,
-            PC144M = 0x33,
-            TandySSSD = 0x40,
-            TandySSDD = 0x41,
-            TandyDSSD = 0x42,
-            TandyDSDD = 0x43,
-            Ti994A = 0x50,
-            RolandD20 = 0x60
+            Flux2 = 0x00,
+            Flux2_1 = 0x01,
+            Flux2_2 = 0x02,
+            Flux2_3 = 0x03,
+            Flux2_4 = 0x04,
+            Flux2_5 = 0x05,
+            Flux2_6 = 0x06,
+            Flux2_7 = 0x07,
+            Nop1 = 0x08,
+            Nop2 = 0x09,
+            Nop3 = 0x0A,
+            Ovl16 = 0x0B,
+            Flux3 = 0x0C,
+            Oob = 0x0D
         }
 
-        [Flags]
-        public enum ScpFlags : byte
+        public enum OobTypes : byte
         {
-            /// <summary>
-            /// If set flux starts at index pulse
-            /// </summary>
-            Index = 0x00,
-            /// <summary>
-            /// If set drive is 96tpi
-            /// </summary>
-            Tpi = 0x02,
-            /// <summary>
-            /// If set drive is 360rpm
-            /// </summary>
-            Rpm = 0x04,
-            /// <summary>
-            /// If set image contains normalized data
-            /// </summary>
-            Normalized = 0x08,
-            /// <summary>
-            /// If set image is read/write capable
-            /// </summary>
-            Writable = 0x10
+            Invalid = 0x00,
+            StreamInfo = 0x01,
+            Index = 0x02,
+            StreamEnd = 0x03,
+            KFInfo = 0x04,
+            EOF = 0x0D
         }
+
+        const string hostDate = "host_date";
+        const string hostTime = "host_time";
+        const string kfName = "name";
+        const string kfVersion= "version";
+        const string kfDate = "date";
+        const string kfTime = "time";
+        const string kfHwId = "hwid";
+        const string kfHwRv = "hwrv";
+        const string kfSck = "sck";
+        const string kfIck = "ick";
         #endregion Internal Constants
 
         #region Internal variables
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
-        public ScpHeader header;
-        public Dictionary<byte, TrackHeader> tracks;
+        public SortedDictionary<byte, Filter> tracks;
         #endregion Internal variables
 
-        public SuperCardPro()
+        public KryoFlux()
         {
-            Name = "SuperCardPro";
-            PluginUUID = new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
+            Name = "KryoFlux STREAM";
+            PluginUUID = new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
             ImageInfo = new ImageInfo()
             {
                 readableSectorTags = new List<SectorTagType>(),
@@ -180,7 +133,7 @@ namespace DiscImageChef.ImagePlugins
         #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
-            header = new ScpHeader();
+            OobBlock header = new OobBlock();
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < Marshal.SizeOf(header))
@@ -191,15 +144,27 @@ namespace DiscImageChef.ImagePlugins
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
             Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(header));
-            header = (ScpHeader)Marshal.PtrToStructure(hdrPtr, typeof(ScpHeader));
+            header = (OobBlock)Marshal.PtrToStructure(hdrPtr, typeof(OobBlock));
             Marshal.FreeHGlobal(hdrPtr);
 
-            return ScpSignature.SequenceEqual(header.signature);
+            OobBlock footer = new OobBlock();
+            stream.Seek(-Marshal.SizeOf(footer), SeekOrigin.End);
+
+            hdr = new byte[Marshal.SizeOf(footer)];
+            stream.Read(hdr, 0, Marshal.SizeOf(footer));
+
+            hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(footer));
+            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(footer));
+            footer = (OobBlock)Marshal.PtrToStructure(hdrPtr, typeof(OobBlock));
+            Marshal.FreeHGlobal(hdrPtr);
+
+            return header.blockId == BlockIds.Oob && header.blockType == OobTypes.KFInfo &&
+                   footer.blockId == BlockIds.Oob && footer.blockType == OobTypes.EOF && footer.length == 0x0D0D;
         }
 
         public override bool OpenImage(Filter imageFilter)
         {
-            header = new ScpHeader();
+            OobBlock header = new OobBlock();
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < Marshal.SizeOf(header))
@@ -210,67 +175,185 @@ namespace DiscImageChef.ImagePlugins
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
             Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(header));
-            header = (ScpHeader)Marshal.PtrToStructure(hdrPtr, typeof(ScpHeader));
+            header = (OobBlock)Marshal.PtrToStructure(hdrPtr, typeof(OobBlock));
             Marshal.FreeHGlobal(hdrPtr);
 
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.signature = \"{0}\"", StringHandlers.CToString(header.signature));
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.version = {0}.{1}", (header.version & 0xF0) >> 4, header.version & 0xF);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.type = {0}", header.type);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.revolutions = {0}", header.revolutions);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.start = {0}", header.start);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.end = {0}", header.end);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.flags = {0}", header.flags);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.bitCellEncoding = {0}", header.bitCellEncoding);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.heads = {0}", header.heads);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.reserved = {0}", header.reserved);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.checksum = 0x{0:X8}", header.checksum);
+            OobBlock footer = new OobBlock();
+            stream.Seek(-Marshal.SizeOf(footer), SeekOrigin.End);
 
-            if(!ScpSignature.SequenceEqual(header.signature))
-                return false;
+            hdr = new byte[Marshal.SizeOf(footer)];
+            stream.Read(hdr, 0, Marshal.SizeOf(footer));
 
-            tracks = new Dictionary<byte, TrackHeader>();
+            hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(footer));
+            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(footer));
+            footer = (OobBlock)Marshal.PtrToStructure(hdrPtr, typeof(OobBlock));
+            Marshal.FreeHGlobal(hdrPtr);
 
-            for(byte t = header.start; t <= header.end; t++)
+            if(header.blockId != BlockIds.Oob || header.blockType != OobTypes.KFInfo ||
+               footer.blockId != BlockIds.Oob || footer.blockType != OobTypes.EOF ||
+               footer.length != 0x0D0D) return false;
+
+            #region TODO: This is supposing NoFilter, shouldn't
+            tracks = new SortedDictionary<byte, Filter>();
+            byte step = 1;
+            byte heads = 2;
+            bool topHead = false;
+            string basename = Path.Combine(imageFilter.GetParentFolder(),
+                imageFilter.GetFilename().Substring(0, imageFilter.GetFilename().Length - 8));
+
+            for(byte t = 0; t < 166; t += step)
             {
-                if(t >= header.offsets.Length)
-                    break;
+                int cylinder = t / heads;
+                int head = topHead ? 1 : t % heads;
+                string trackfile = Directory.Exists(basename)
+                    ? Path.Combine(basename, string.Format("{0:D2}.{1:D1}.raw", cylinder, head))
+                    : string.Format("{0}{1:D2}.{2:D1}.raw", basename, cylinder, head);
 
-                stream.Position = header.offsets[t];
-                TrackHeader trk = new TrackHeader();
-                trk.signature = new byte[3];
-                trk.entries = new TrackEntry[header.revolutions];
-                stream.Read(trk.signature, 0, trk.signature.Length);
-                trk.trackNumber = (byte)stream.ReadByte();
-
-                if(!trk.signature.SequenceEqual(TrkSignature))
+                if(!File.Exists(trackfile))
                 {
-                    DicConsole.DebugWriteLine("SuperCardPro plugin", "Track header at {0} contains incorrect signature.", header.offsets[t]);
-                    continue;
+                    if(cylinder == 0)
+                    {
+                        if(head == 0)
+                        {
+                            DicConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 0 hd 0, supposing only top head was dumped");
+                            topHead = true;
+                            heads = 1;
+                            continue;
+                        }
+
+                        DicConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
+                        heads = 1;
+                        continue;
+                    }
+                    else if(cylinder == 1)
+                    {
+                        DicConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 1, supposing double stepping");
+                        step = 2;
+                        continue;
+                    }
+                    else
+                    {
+                        DicConsole.DebugWriteLine("KryoFlux plugin", "Arrived end of disk at cylinder {0}", cylinder);
+                        step = 2;
+                        break;
+                    }
                 }
 
-                if(trk.trackNumber != t)
+                ZZZNoFilter trackFilter = new ZZZNoFilter();
+                trackFilter.Open(trackfile);
+                if(!trackFilter.IsOpened())
+                    throw new IOException("Could not open KryoFlux track file.");
+
+                ImageInfo.imageCreationTime = DateTime.MaxValue;
+                ImageInfo.imageLastModificationTime = DateTime.MinValue;
+
+                Stream trackStream = trackFilter.GetDataForkStream();
+                while(trackStream.Position < trackStream.Length)
                 {
-                    DicConsole.DebugWriteLine("SuperCardPro plugin", "Track number at {0} should be {1} but is {2}.", header.offsets[t], t, trk.trackNumber);
-                    continue;
+                    byte blockId = (byte)trackStream.ReadByte();
+                    switch(blockId)
+                    {
+                        case (byte)BlockIds.Oob:
+                        {
+                            trackStream.Position--;
+                            OobBlock oobBlk = new OobBlock();
+
+                            byte[] oob = new byte[Marshal.SizeOf(oobBlk)];
+                            trackStream.Read(oob, 0, Marshal.SizeOf(oobBlk));
+
+                            IntPtr oobPtr = Marshal.AllocHGlobal(Marshal.SizeOf(oobBlk));
+                            Marshal.Copy(oob, 0, oobPtr, Marshal.SizeOf(oobBlk));
+                            oobBlk = (OobBlock)Marshal.PtrToStructure(oobPtr, typeof(OobBlock));
+                            Marshal.FreeHGlobal(oobPtr);
+
+                            if(oobBlk.blockType == OobTypes.EOF)
+                            {
+                                trackStream.Position = trackStream.Length;
+                                break;
+                            }
+
+                            if(oobBlk.blockType != OobTypes.KFInfo)
+                            {
+                                trackStream.Position += oobBlk.length;
+                                break;
+                            }
+
+                            byte[] kfinfo = new byte[oobBlk.length];
+                            trackStream.Read(kfinfo, 0, oobBlk.length);
+                            string kfinfoStr = StringHandlers.CToString(kfinfo);
+                            string[] lines = kfinfoStr.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+
+                            DateTime blockDate = DateTime.Now;
+                            DateTime blockTime = DateTime.Now;
+                            bool foundDate = false;
+
+                            foreach(string line in lines)
+                            {
+                                string[] kvp = line.Split('=');
+                                if(kvp.Length != 2)
+                                    continue;
+
+                                kvp[0] = kvp[0].Trim();
+                                kvp[1] = kvp[1].Trim();
+                                DicConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
+
+                                if(kvp[0] == hostDate)
+                                {
+                                    if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal,
+                                        out blockDate))
+                                        foundDate = true;
+                                }
+                                else if(kvp[0] == hostTime)
+                                {
+                                    DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal,
+                                        out blockTime);
+                                }
+                                else if(kvp[0] == kfName)
+                                    ImageInfo.imageApplication = kvp[1];
+                                else if(kvp[0] == kfVersion)
+                                    ImageInfo.imageApplicationVersion = kvp[1];
+                            }
+
+                            if(foundDate)
+                            {
+                                DateTime blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
+                                    blockTime.Hour, blockTime.Minute, blockTime.Second);
+                                DicConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
+                                if(blockTimestamp < ImageInfo.imageCreationTime)
+                                    ImageInfo.imageCreationTime = blockTimestamp;
+                                if(blockTimestamp > ImageInfo.imageLastModificationTime)
+                                    ImageInfo.imageLastModificationTime= blockTimestamp;
+                            }
+
+                            break;
+                        }
+                        case (byte)BlockIds.Flux2:
+                        case (byte)BlockIds.Flux2_1:
+                        case (byte)BlockIds.Flux2_2:
+                        case (byte)BlockIds.Flux2_3:
+                        case (byte)BlockIds.Flux2_4:
+                        case (byte)BlockIds.Flux2_5:
+                        case (byte)BlockIds.Flux2_6:
+                        case (byte)BlockIds.Flux2_7:
+                        case (byte)BlockIds.Nop2:
+                            trackStream.Position++;
+                            continue;
+                        case (byte)BlockIds.Nop3:
+                        case (byte)BlockIds.Flux3:
+                            trackStream.Position += 2;
+                            continue;
+                        default:
+                            continue;
+                    }
                 }
-
-                DicConsole.DebugWriteLine("SuperCardPro plugin", "Found track {0} at {1}.", t, header.offsets[t]);
-
-                for(byte r = 0; r < header.revolutions; r++)
-                {
-                    byte[] rev = new byte[Marshal.SizeOf(typeof(TrackEntry))];
-                    stream.Read(rev, 0, Marshal.SizeOf(typeof(TrackEntry)));
-
-                    IntPtr revPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(TrackEntry)));
-                    Marshal.Copy(rev, 0, revPtr, Marshal.SizeOf(typeof(TrackEntry)));
-                    trk.entries[r] = (TrackEntry)Marshal.PtrToStructure(revPtr, typeof(TrackEntry));
-                    Marshal.FreeHGlobal(revPtr);
-                    // De-relative offsets
-                    trk.entries[r].dataOffset += header.offsets[t];
-                }
-
-                tracks.Add(t, trk);
+                
+                tracks.Add(t, trackFilter);
             }
+
+            ImageInfo.heads = heads;
+            ImageInfo.cylinders = (uint)(tracks.Count / heads);
+            
+            #endregion TODO: This is supposing NoFilter, shouldn't
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -337,7 +420,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageFormat()
         {
-            return "SuperCardPro";
+            return "KryoFlux STREAM";
         }
 
         public override string GetImageVersion()
@@ -360,7 +443,6 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageCreator;
         }
 
-        // TODO: Check if it exists. If so, read it.
         public override DateTime GetImageCreationTime()
         {
             return ImageInfo.imageCreationTime;
@@ -445,11 +527,6 @@ namespace DiscImageChef.ImagePlugins
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
-
-        public override bool? VerifyMediaImage()
-        {
-            throw new NotImplementedException();
-        }
         #endregion Public methods
 
         #region Unsupported features
@@ -508,6 +585,11 @@ namespace DiscImageChef.ImagePlugins
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override bool? VerifyMediaImage()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
