@@ -713,6 +713,82 @@ namespace DiscImageChef.Core
             }
             #endregion
 
+            #region DiscFerret
+            string dfiFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
+                Path.GetFileNameWithoutExtension(imagePath) + ".dfi");
+
+            if(File.Exists(dfiFilePath))
+            {
+                ImagePlugins.DiscFerret dfiImage = new DiscFerret();
+                Filters.ZZZNoFilter dfiFilter = new ZZZNoFilter();
+                dfiFilter.Open(dfiFilePath);
+
+                if(dfiImage.IdentifyImage(dfiFilter))
+                {
+
+                    try
+                    {
+                        dfiImage.OpenImage(dfiFilter);
+                    }
+                    catch(NotImplementedException)
+                    {
+                    }
+
+                    if(image.ImageInfo.heads == dfiImage.ImageInfo.heads)
+                    {
+                        if(dfiImage.ImageInfo.cylinders >= image.ImageInfo.cylinders)
+                        {
+                            List<BlockTrackType> dfiBlockTrackTypes = new List<BlockTrackType>();
+                            long currentSector = 0;
+                            Stream dfiStream = dfiFilter.GetDataForkStream();
+
+                            foreach(int t in dfiImage.trackOffsets.Keys)
+                            {
+                                BlockTrackType dfiBlockTrackType = new BlockTrackType();
+                                dfiBlockTrackType.Cylinder = t / image.ImageInfo.heads;
+                                dfiBlockTrackType.Head = t % image.ImageInfo.heads;
+                                dfiBlockTrackType.Image = new ImageType();
+                                dfiBlockTrackType.Image.format = dfiImage.GetImageFormat();
+                                dfiBlockTrackType.Image.Value = Path.GetFileName(dfiFilePath);
+
+                                if(dfiBlockTrackType.Cylinder < image.ImageInfo.cylinders)
+                                {
+                                    dfiBlockTrackType.StartSector = currentSector;
+                                    currentSector += image.ImageInfo.sectorsPerTrack;
+                                    dfiBlockTrackType.EndSector = currentSector - 1;
+                                    dfiBlockTrackType.Sectors = image.ImageInfo.sectorsPerTrack;
+                                    dfiBlockTrackType.BytesPerSector = (int)image.ImageInfo.sectorSize;
+                                    dfiBlockTrackType.Format = trkFormat;
+                                }
+
+                                if(dfiImage.trackOffsets.TryGetValue(t, out long offset) && dfiImage.trackLengths.TryGetValue(t, out long length))
+                                {
+                                    dfiBlockTrackType.Image.offset = offset;
+                                    byte[] trackContents = new byte[length];
+                                    dfiStream.Position = offset;
+                                    dfiStream.Read(trackContents, 0, trackContents.Length);
+                                    dfiBlockTrackType.Size = trackContents.Length;
+                                    dfiBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
+                                }
+
+                                dfiBlockTrackTypes.Add(dfiBlockTrackType);
+                            }
+
+                            sidecar.BlockMedia[0].Track =
+                                dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
+                        }
+                        else
+                            DicConsole.ErrorWriteLine(
+                                "DiscFerret image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
+                                dfiImage.ImageInfo.cylinders, image.ImageInfo.cylinders);
+                    }
+                    else
+                        DicConsole.ErrorWriteLine(
+                            "DiscFerret image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
+                            dfiImage.ImageInfo.heads, image.ImageInfo.heads);
+                }
+            }
+            #endregion
             // TODO: Implement support for getting CHS from SCSI mode pages
         }
     }
