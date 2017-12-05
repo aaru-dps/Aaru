@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
@@ -78,6 +79,24 @@ namespace DiscImageChef.ImagePlugins
             public uint trackLength;
             public uint dataOffset;
         }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct ScpFooter
+        {
+            public uint manufacturerOffset;
+            public uint modelOffset;
+            public uint serialOffset;
+            public uint creatorOffset;
+            public uint applicationOffset;
+            public uint commentsOffset;
+            public long creationTime;
+            public long modificationTime;
+            public byte applicationVersion;
+            public byte hardwareVersion;
+            public byte firmwareVersion;
+            public byte imageVersion;
+            public uint signature;
+        }
         #endregion Internal Structures
 
         #region Internal Constants
@@ -89,7 +108,11 @@ namespace DiscImageChef.ImagePlugins
         /// SuperCardPro track header signature: "TRK"
         /// </summary>
         readonly byte[] TrkSignature = { 0x54, 0x52, 0x4B };
-        
+        /// <summary>
+        /// SuperCardPro footer signature: "FPCS"
+        /// </summary>
+        const uint FooterSignature = 0x53435046;
+
         public enum ScpDiskType : byte
         {
             Commodore64 = 0x00,
@@ -138,7 +161,11 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// If set image is read/write capable
             /// </summary>
-            Writable = 0x10
+            Writable = 0x10,
+            /// <summary>
+            /// If set, image has footer
+            /// </summary>
+            HasFooter = 0x20,
         }
         #endregion Internal Constants
 
@@ -272,7 +299,115 @@ namespace DiscImageChef.ImagePlugins
                 tracks.Add(t, trk);
             }
 
+            if(header.flags.HasFlag(ScpFlags.HasFooter))
+            {
+                long position = stream.Position;
+                stream.Seek(-4, SeekOrigin.End);
+                
+                while(stream.Position >= position)
+                {
+                    byte[] footerSig = new byte[4];
+                    stream.Read(footerSig, 0, 4);
+                    uint footerMagic = BitConverter.ToUInt32(footerSig, 0);
+
+                    if(footerMagic == FooterSignature)
+                    {
+                        stream.Seek(-Marshal.SizeOf(typeof(ScpFooter)), SeekOrigin.Current);
+                        
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", stream.Position);
+                        
+                        byte[] ftr = new byte[Marshal.SizeOf(typeof(ScpFooter))];
+                        stream.Read(ftr, 0, Marshal.SizeOf(typeof(ScpFooter)));
+
+                        IntPtr ftrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ScpFooter)));
+                        Marshal.Copy(ftr, 0, ftrPtr, Marshal.SizeOf(typeof(ScpFooter)));
+                        ScpFooter footer = (ScpFooter)Marshal.PtrToStructure(ftrPtr, typeof(ScpFooter));
+                        Marshal.FreeHGlobal(ftrPtr);
+
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.manufacturerOffset = 0x{0:X8}", footer.manufacturerOffset);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.modelOffset = 0x{0:X8}", footer.modelOffset);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.serialOffset = 0x{0:X8}", footer.serialOffset);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.creatorOffset = 0x{0:X8}", footer.creatorOffset);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.applicationOffset = 0x{0:X8}", footer.applicationOffset);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.commentsOffset = 0x{0:X8}", footer.commentsOffset);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.creationTime = {0}", footer.creationTime);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.modificationTime = {0}", footer.modificationTime);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.applicationVersion = {0}.{1}", (footer.applicationVersion & 0xF0) >> 4, footer.applicationVersion & 0xF);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.hardwareVersion = {0}.{1}", (footer.hardwareVersion & 0xF0) >> 4, footer.hardwareVersion & 0xF);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.firmwareVersion = {0}.{1}", (footer.firmwareVersion & 0xF0) >> 4, footer.firmwareVersion & 0xF);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.imageVersion = {0}.{1}", (footer.imageVersion & 0xF0) >> 4, footer.imageVersion & 0xF);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.signature = \"{0}\"", StringHandlers.CToString(BitConverter.GetBytes(footer.signature)));
+
+                        ImageInfo.driveManufacturer = ReadPStringUTF8(stream, footer.manufacturerOffset);
+                        ImageInfo.driveModel = ReadPStringUTF8(stream, footer.modelOffset);
+                        ImageInfo.driveSerialNumber = ReadPStringUTF8(stream, footer.serialOffset);
+                        ImageInfo.imageCreator = ReadPStringUTF8(stream, footer.creatorOffset);
+                        ImageInfo.imageApplication = ReadPStringUTF8(stream, footer.applicationOffset);
+                        ImageInfo.imageComments = ReadPStringUTF8(stream, footer.commentsOffset);
+
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveManufacturer = \"{0}\"", ImageInfo.driveManufacturer);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveModel = \"{0}\"", ImageInfo.driveModel);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveSerialNumber = \"{0}\"", ImageInfo.driveSerialNumber);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreator = \"{0}\"", ImageInfo.imageCreator);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageApplication = \"{0}\"", ImageInfo.imageApplication);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageComments = \"{0}\"", ImageInfo.imageComments);
+
+                        if(footer.creationTime != 0)
+                            ImageInfo.imageCreationTime = DateHandlers.UNIXToDateTime(footer.creationTime);
+                        else
+                            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+
+                        if(footer.modificationTime != 0)
+                            ImageInfo.imageLastModificationTime = DateHandlers.UNIXToDateTime(footer.modificationTime);
+                        else
+                            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}", ImageInfo.imageCreationTime);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageLastModificationTime = {0}", ImageInfo.imageLastModificationTime);
+
+                        ImageInfo.imageApplicationVersion =
+                            string.Format("{0}.{1}", (footer.applicationVersion & 0xF0) >> 4, footer.applicationVersion & 0xF);
+                        ImageInfo.driveFirmwareRevision =
+                            string.Format("{0}.{1}", (footer.firmwareVersion & 0xF0) >> 4, footer.firmwareVersion & 0xF);
+                        ImageInfo.imageVersion =
+                            string.Format("{0}.{1}", (footer.imageVersion & 0xF0) >> 4, footer.imageVersion & 0xF);
+                        
+                        break;
+                    }
+                    
+                    stream.Seek(-8, SeekOrigin.Current);
+                }
+            }
+            else
+            {
+                ImageInfo.imageApplication = "SuperCardPro";
+                ImageInfo.imageApplicationVersion =
+                    string.Format("{0}.{1}", (header.version & 0xF0) >> 4, header.version & 0xF);
+                ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+                ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+                ImageInfo.imageVersion = "1.5";
+            }
+
             throw new NotImplementedException("Flux decoding is not yet implemented.");
+        }
+
+        string ReadPStringUTF8(Stream stream, uint position)
+        {
+            if(position == 0)
+                return null;
+
+            stream.Position = position;
+            byte[] len_b = new byte[2];
+            stream.Read(len_b, 0, 2);
+            ushort len = BitConverter.ToUInt16(len_b, 0);
+
+            if(len == 0 || len + stream.Position >= stream.Length)
+                return null;
+
+            byte[] str = new byte[len];
+            stream.Read(str, 0, len);
+
+            return Encoding.UTF8.GetString(str);
         }
 
         public override bool ImageHasPartitions()
