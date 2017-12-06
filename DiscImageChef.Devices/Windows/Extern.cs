@@ -98,6 +98,49 @@ namespace DiscImageChef.Devices.Windows
             IntPtr Overlapped
         );
 
+
+        [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
+        internal static extern bool DeviceIoControlGetDeviceNumber(
+            SafeFileHandle hDevice,
+            WindowsIoctl IoControlCode,
+            IntPtr InBuffer,
+            uint nInBufferSize,
+            ref StorageDeviceNumber OutBuffer,
+            uint nOutBufferSize,
+            ref uint pBytesReturned,
+            IntPtr Overlapped
+        );
+
+        [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
+        internal static extern SafeFileHandle SetupDiGetClassDevs(
+            ref Guid ClassGuid,
+            IntPtr Enumerator,
+            IntPtr hwndParent,
+            DeviceGetClassFlags Flags
+        );
+        
+        [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool SetupDiEnumDeviceInterfaces(
+            SafeFileHandle hDevInfo,
+            IntPtr devInfo,
+            ref Guid interfaceClassGuid,
+            uint memberIndex,
+            ref DeviceInterfaceData deviceInterfaceData
+        );
+        
+        [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool SetupDiGetDeviceInterfaceDetail(
+            SafeFileHandle hDevInfo,
+            ref DeviceInterfaceData deviceInterfaceData,
+            IntPtr deviceInterfaceDetailData,
+            UInt32 deviceInterfaceDetailDataSize,
+            ref UInt32 requiredSize,
+            IntPtr deviceInfoData
+        );
+        
+        [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool SetupDiDestroyDeviceInfoList(SafeFileHandle hDevInfo);
+        
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         internal static extern bool CloseHandle(SafeFileHandle hDevice);
     }

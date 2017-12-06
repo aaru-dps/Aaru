@@ -33,6 +33,8 @@
 using System;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
+using System.Text;
+using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices
@@ -100,6 +102,7 @@ namespace DiscImageChef.Devices
                 throw new SystemException(string.Format("Error {0} trying device.", lastError));
 
             bool scsiSense = true;
+            string ntDevicePath = null;
 
             // Windows is answering SCSI INQUIRY for all device types so it needs to be detected first
             if(platformID == Interop.PlatformID.Win32NT)
@@ -126,7 +129,20 @@ namespace DiscImageChef.Devices
                 {
 
                     Windows.StorageDeviceDescriptor descriptor = new Windows.StorageDeviceDescriptor();
+                    descriptor.Version = BitConverter.ToUInt32(descriptor_b, 0);
+                    descriptor.Size = BitConverter.ToUInt32(descriptor_b, 4);
+                    descriptor.DeviceType = descriptor_b[8];
+                    descriptor.DeviceTypeModifier= descriptor_b[9];
+                    descriptor.RemovableMedia = descriptor_b[10] > 0;
+                    descriptor.CommandQueueing = descriptor_b[11] > 0;
+                    descriptor.VendorIdOffset = BitConverter.ToUInt32(descriptor_b, 12);
+                    descriptor.ProductIdOffset = BitConverter.ToUInt32(descriptor_b, 16);
+                    descriptor.ProductRevisionOffset = BitConverter.ToUInt32(descriptor_b, 20);
+                    descriptor.SerialNumberOffset = BitConverter.ToUInt32(descriptor_b, 24);
                     descriptor.BusType = (Windows.StorageBusType)BitConverter.ToUInt32(descriptor_b, 28);
+                    descriptor.RawPropertiesLength = BitConverter.ToUInt32(descriptor_b, 32);
+                    descriptor.RawDeviceProperties = new byte[descriptor.RawPropertiesLength];
+                    Array.Copy(descriptor_b, 36, descriptor.RawDeviceProperties, 0, descriptor.RawPropertiesLength);
 
                     switch(descriptor.BusType)
                     {
@@ -180,9 +196,12 @@ namespace DiscImageChef.Devices
                         else
                             manufacturer = "ATA";
                     }
+
                     // TODO: Get cached CID, CSD and SCR from kernel space
                 }
-
+                
+                ntDevicePath = Windows.Command.GetDevicePath((SafeFileHandle)fd);
+                DicConsole.DebugWriteLine("Windows devices", "NT device path: {0}", ntDevicePath);
                 Marshal.FreeHGlobal(descriptorPtr);
             }
             else
@@ -246,9 +265,12 @@ namespace DiscImageChef.Devices
             }
 
             #region USB
-            if (platformID == Interop.PlatformID.Linux)
+
+            if(platformID == Interop.PlatformID.Linux)
             {
-                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
+                   devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
+                   devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                 {
                     string devPath = devicePath.Substring(5);
                     if(System.IO.Directory.Exists("/sys/block/" + devPath))
@@ -261,14 +283,15 @@ namespace DiscImageChef.Devices
                             {
                                 resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
                                 if(System.IO.File.Exists(resolvedLink + "/descriptors") &&
-                                    System.IO.File.Exists(resolvedLink + "/idProduct") &&
-                                    System.IO.File.Exists(resolvedLink + "/idVendor"))
+                                   System.IO.File.Exists(resolvedLink + "/idProduct") &&
+                                   System.IO.File.Exists(resolvedLink + "/idVendor"))
                                 {
                                     System.IO.FileStream usbFs;
                                     System.IO.StreamReader usbSr;
                                     string usbTemp;
 
-                                    usbFs = new System.IO.FileStream(resolvedLink + "/descriptors", System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                                    usbFs = new System.IO.FileStream(resolvedLink + "/descriptors",
+                                        System.IO.FileMode.Open, System.IO.FileAccess.Read);
                                     byte[] usbBuf = new byte[65536];
                                     int usbCount = usbFs.Read(usbBuf, 0, 65536);
                                     usbDescriptors = new byte[usbCount];
@@ -277,12 +300,14 @@ namespace DiscImageChef.Devices
 
                                     usbSr = new System.IO.StreamReader(resolvedLink + "/idProduct");
                                     usbTemp = usbSr.ReadToEnd();
-                                    ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out usbProduct);
+                                    ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber,
+                                        System.Globalization.CultureInfo.InvariantCulture, out usbProduct);
                                     usbSr.Close();
 
                                     usbSr = new System.IO.StreamReader(resolvedLink + "/idVendor");
                                     usbTemp = usbSr.ReadToEnd();
-                                    ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out usbVendor);
+                                    ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber,
+                                        System.Globalization.CultureInfo.InvariantCulture, out usbVendor);
                                     usbSr.Close();
 
                                     if(System.IO.File.Exists(resolvedLink + "/manufacturer"))
@@ -313,6 +338,10 @@ namespace DiscImageChef.Devices
                         }
                     }
                 }
+            }
+            else if(platformID == Interop.PlatformID.Win32NT)
+            {
+                
             }
             // TODO: Implement for other operating systems
             else

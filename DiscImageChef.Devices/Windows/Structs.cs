@@ -212,5 +212,31 @@ namespace DiscImageChef.Devices.Windows
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
         public byte[] DataBuffer;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct StorageDeviceNumber
+    {
+        public int deviceType;
+        public int deviceNumber;
+        public int partitionNumber;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    struct DeviceInfoData
+    {
+        public int cbSize;
+        public Guid classGuid;
+        public uint devInst;
+        public IntPtr reserved;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    struct DeviceInterfaceData
+    {
+        public int cbSize;
+        public Guid interfaceClassGuid;
+        public uint flags;
+        private IntPtr reserved;
+    }
 }
 

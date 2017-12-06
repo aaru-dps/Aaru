@@ -32,8 +32,10 @@
 // ****************************************************************************/
 
 using System;
+using System.Net.NetworkInformation;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
+using System.Text;
 using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices.Windows
@@ -480,6 +482,93 @@ namespace DiscImageChef.Devices.Windows
             sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
 
             return error;
+        }
+
+        internal static uint GetDeviceNumber(SafeFileHandle deviceHandle)
+        {
+            StorageDeviceNumber sdn = new StorageDeviceNumber();
+            sdn.deviceNumber = - 1;
+            uint k = 0;
+            if(!Extern.DeviceIoControlGetDeviceNumber(deviceHandle, WindowsIoctl.IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero,
+                0, ref sdn, (uint)Marshal.SizeOf(sdn), ref k, IntPtr.Zero))
+            {
+                return uint.MaxValue;
+            }
+
+            return (uint)sdn.deviceNumber;
+        }
+
+        internal static string GetDevicePath(SafeFileHandle fd)
+        {
+            uint devNumber = GetDeviceNumber(fd);
+
+            if(devNumber == uint.MaxValue)
+                return null;
+
+            SafeFileHandle hDevInfo = Extern.SetupDiGetClassDevs(ref Consts.GUID_DEVINTERFACE_DISK, IntPtr.Zero,
+                IntPtr.Zero, DeviceGetClassFlags.Present | DeviceGetClassFlags.DeviceInterface);
+
+            if(hDevInfo.IsInvalid)
+                return null;
+
+            uint index = 0;
+            DeviceInterfaceData spdid = new DeviceInterfaceData();
+            spdid.cbSize = Marshal.SizeOf(spdid);
+            
+            byte[] buffer;
+            
+            while(true)
+            {
+                buffer = new byte[2048];
+                
+                if(!Extern.SetupDiEnumDeviceInterfaces(hDevInfo, IntPtr.Zero, ref Consts.GUID_DEVINTERFACE_DISK, index,
+                    ref spdid))
+                    break;
+
+                uint size = 0;
+
+                Extern.SetupDiGetDeviceInterfaceDetail(hDevInfo, ref spdid, IntPtr.Zero, 0, ref size, IntPtr.Zero);
+
+                if(size > 0 && size < buffer.Length)
+                {
+                    buffer[0] = (byte)(IntPtr.Size == 8 ? IntPtr.Size : IntPtr.Size + Marshal.SystemDefaultCharSize); // Funny...
+
+                    IntPtr pspdidd = Marshal.AllocHGlobal(buffer.Length);
+                    Marshal.Copy(buffer, 0, pspdidd, buffer.Length);
+
+                    bool result =
+                        Extern.SetupDiGetDeviceInterfaceDetail(hDevInfo, ref spdid, pspdidd, size, ref size, IntPtr.Zero);
+
+                    buffer = new byte[size];
+                    Marshal.Copy(pspdidd, buffer, 0, buffer.Length);
+                    Marshal.FreeHGlobal(pspdidd);
+
+                    if(result)
+                    {
+                        string devicePath = Encoding.Unicode.GetString(buffer, 4, (int)size - 4);
+                        SafeFileHandle hDrive = Extern.CreateFile(devicePath, 0, FileShare.Read | FileShare.Write,
+                            IntPtr.Zero, FileMode.OpenExisting, 0, IntPtr.Zero);
+
+                        if(!hDrive.IsInvalid)
+                        {
+                            uint newDeviceNumber = GetDeviceNumber(hDrive);
+
+                            if(newDeviceNumber == devNumber)
+                            {
+                                Extern.CloseHandle(hDrive);
+                                return devicePath;
+                            }
+                        }
+                        
+                        Extern.CloseHandle(hDrive);
+                    }
+                }
+                
+                index++;
+            }
+
+            Extern.SetupDiDestroyDeviceInfoList(hDevInfo);
+            return null;
         }
     }
 }

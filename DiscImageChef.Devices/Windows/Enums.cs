@@ -105,7 +105,7 @@ namespace DiscImageChef.Devices.Windows
         /// <summary>
         /// FILE_ATTRIBUTE_VIRTUAL
         /// </summary>
-        Virtual = 0x10000
+        Virtual = 0x10000,
     }
 
     [Flags]
@@ -271,6 +271,7 @@ namespace DiscImageChef.Devices.Windows
         IOCTL_SCSI_GET_ADDRESS = 0x41018,
         IOCTL_STORAGE_QUERY_PROPERTY = 0x2D1400,
         IOCTL_IDE_PASS_THROUGH = 0x4D028,
+        IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080,
     }
 
     [Flags]
@@ -348,5 +349,35 @@ namespace DiscImageChef.Devices.Windows
         Virtual = 0xE,
         FileBackedVirtual = 0xF,
         NVMe = 0x11,
+    }
+    
+    [Flags]
+    enum DeviceGetClassFlags : uint
+    {
+        /// <summary>
+        /// DIGCF_DEFAULT
+        /// </summary>
+        Default = 0x01,
+        /// <summary>
+        /// DIGCF_PRESENT
+        /// </summary>
+        Present = 0x02,
+        /// <summary>
+        /// DIGCF_ALLCLASSES
+        /// </summary>
+        AllClasses = 0x04,
+        /// <summary>
+        /// DIGCF_PROFILE
+        /// </summary>
+        Profile = 0x08,
+        /// <summary>
+        /// DIGCF_DEVICEINTERFACE
+        /// </summary>
+        DeviceInterface = 0x10,
+    }
+
+    static class Consts
+    {
+        public static Guid GUID_DEVINTERFACE_DISK = new Guid(0x53F56307, 0xB6BF, 0x11D0, 0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B);
     }
 }
