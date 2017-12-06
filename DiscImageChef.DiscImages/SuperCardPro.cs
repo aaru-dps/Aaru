@@ -173,6 +173,7 @@ namespace DiscImageChef.ImagePlugins
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public ScpHeader header;
         public Dictionary<byte, TrackHeader> tracks;
+        Stream scpStream;
         #endregion Internal variables
 
         public SuperCardPro()
@@ -227,13 +228,13 @@ namespace DiscImageChef.ImagePlugins
         public override bool OpenImage(Filter imageFilter)
         {
             header = new ScpHeader();
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf(header))
+            scpStream = imageFilter.GetDataForkStream();
+            scpStream.Seek(0, SeekOrigin.Begin);
+            if(scpStream.Length < Marshal.SizeOf(header))
                 return false;
 
             byte[] hdr = new byte[Marshal.SizeOf(header)];
-            stream.Read(hdr, 0, Marshal.SizeOf(header));
+            scpStream.Read(hdr, 0, Marshal.SizeOf(header));
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
             Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(header));
@@ -262,12 +263,12 @@ namespace DiscImageChef.ImagePlugins
                 if(t >= header.offsets.Length)
                     break;
 
-                stream.Position = header.offsets[t];
+                scpStream.Position = header.offsets[t];
                 TrackHeader trk = new TrackHeader();
                 trk.signature = new byte[3];
                 trk.entries = new TrackEntry[header.revolutions];
-                stream.Read(trk.signature, 0, trk.signature.Length);
-                trk.trackNumber = (byte)stream.ReadByte();
+                scpStream.Read(trk.signature, 0, trk.signature.Length);
+                trk.trackNumber = (byte)scpStream.ReadByte();
 
                 if(!trk.signature.SequenceEqual(TrkSignature))
                 {
@@ -286,7 +287,7 @@ namespace DiscImageChef.ImagePlugins
                 for(byte r = 0; r < header.revolutions; r++)
                 {
                     byte[] rev = new byte[Marshal.SizeOf(typeof(TrackEntry))];
-                    stream.Read(rev, 0, Marshal.SizeOf(typeof(TrackEntry)));
+                    scpStream.Read(rev, 0, Marshal.SizeOf(typeof(TrackEntry)));
 
                     IntPtr revPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(TrackEntry)));
                     Marshal.Copy(rev, 0, revPtr, Marshal.SizeOf(typeof(TrackEntry)));
@@ -301,23 +302,23 @@ namespace DiscImageChef.ImagePlugins
 
             if(header.flags.HasFlag(ScpFlags.HasFooter))
             {
-                long position = stream.Position;
-                stream.Seek(-4, SeekOrigin.End);
+                long position = scpStream.Position;
+                scpStream.Seek(-4, SeekOrigin.End);
                 
-                while(stream.Position >= position)
+                while(scpStream.Position >= position)
                 {
                     byte[] footerSig = new byte[4];
-                    stream.Read(footerSig, 0, 4);
+                    scpStream.Read(footerSig, 0, 4);
                     uint footerMagic = BitConverter.ToUInt32(footerSig, 0);
 
                     if(footerMagic == FooterSignature)
                     {
-                        stream.Seek(-Marshal.SizeOf(typeof(ScpFooter)), SeekOrigin.Current);
+                        scpStream.Seek(-Marshal.SizeOf(typeof(ScpFooter)), SeekOrigin.Current);
                         
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", stream.Position);
+                        DicConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", scpStream.Position);
                         
                         byte[] ftr = new byte[Marshal.SizeOf(typeof(ScpFooter))];
-                        stream.Read(ftr, 0, Marshal.SizeOf(typeof(ScpFooter)));
+                        scpStream.Read(ftr, 0, Marshal.SizeOf(typeof(ScpFooter)));
 
                         IntPtr ftrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ScpFooter)));
                         Marshal.Copy(ftr, 0, ftrPtr, Marshal.SizeOf(typeof(ScpFooter)));
@@ -338,12 +339,12 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.imageVersion = {0}.{1}", (footer.imageVersion & 0xF0) >> 4, footer.imageVersion & 0xF);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.signature = \"{0}\"", StringHandlers.CToString(BitConverter.GetBytes(footer.signature)));
 
-                        ImageInfo.driveManufacturer = ReadPStringUTF8(stream, footer.manufacturerOffset);
-                        ImageInfo.driveModel = ReadPStringUTF8(stream, footer.modelOffset);
-                        ImageInfo.driveSerialNumber = ReadPStringUTF8(stream, footer.serialOffset);
-                        ImageInfo.imageCreator = ReadPStringUTF8(stream, footer.creatorOffset);
-                        ImageInfo.imageApplication = ReadPStringUTF8(stream, footer.applicationOffset);
-                        ImageInfo.imageComments = ReadPStringUTF8(stream, footer.commentsOffset);
+                        ImageInfo.driveManufacturer = ReadPStringUTF8(scpStream, footer.manufacturerOffset);
+                        ImageInfo.driveModel = ReadPStringUTF8(scpStream, footer.modelOffset);
+                        ImageInfo.driveSerialNumber = ReadPStringUTF8(scpStream, footer.serialOffset);
+                        ImageInfo.imageCreator = ReadPStringUTF8(scpStream, footer.creatorOffset);
+                        ImageInfo.imageApplication = ReadPStringUTF8(scpStream, footer.applicationOffset);
+                        ImageInfo.imageComments = ReadPStringUTF8(scpStream, footer.commentsOffset);
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveManufacturer = \"{0}\"", ImageInfo.driveManufacturer);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveModel = \"{0}\"", ImageInfo.driveModel);
@@ -375,7 +376,7 @@ namespace DiscImageChef.ImagePlugins
                         break;
                     }
                     
-                    stream.Seek(-8, SeekOrigin.Current);
+                    scpStream.Seek(-8, SeekOrigin.Current);
                 }
             }
             else
@@ -583,7 +584,19 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool? VerifyMediaImage()
         {
-            throw new NotImplementedException();
+            if(header.flags.HasFlag(ScpFlags.Writable))
+                return null;
+
+            byte[] wholeFile = new byte[scpStream.Length];
+            uint sum = 0;
+
+            scpStream.Position = 0;
+            scpStream.Read(wholeFile, 0, wholeFile.Length);
+
+            for(int i = 0x10; i < wholeFile.Length; i++)
+                sum += wholeFile[i];
+
+            return header.checksum == sum;
         }
         #endregion Public methods
 
