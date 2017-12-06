@@ -570,6 +570,91 @@ namespace DiscImageChef.Devices.Windows
             Extern.SetupDiDestroyDeviceInfoList(hDevInfo);
             return null;
         }
+
+        internal static bool IsSdhci(SafeFileHandle fd)
+        {
+            SffdiskQueryDeviceProtocolData queryData1 = new SffdiskQueryDeviceProtocolData();
+            queryData1.size = (ushort)Marshal.SizeOf(queryData1);
+            uint bytesReturned;
+            Extern.DeviceIoControl(fd, WindowsIoctl.IOCTL_SFFDISK_QUERY_DEVICE_PROTOCOL, IntPtr.Zero, 0,
+                ref queryData1, queryData1.size, out bytesReturned, IntPtr.Zero);
+            return queryData1.protocolGuid.Equals(Consts.GUID_SFF_PROTOCOL_SD);
+        }
+
+        /// <summary>
+        /// Sends a MMC/SD command
+        /// </summary>
+        /// <returns>The result of the command.</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="command">MMC/SD opcode</param>
+        /// <param name="buffer">Buffer for MMC/SD command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if MMC/SD returned non-OK status</param>
+        /// <param name="write"><c>True</c> if data is sent from host to card</param>
+        /// <param name="isApplication"><c>True</c> if command should be preceded with CMD55</param>
+        /// <param name="flags">Flags indicating kind and place of response</param>
+        /// <param name="blocks">How many blocks to transfer</param>
+        /// <param name="argument">Command argument</param>
+        /// <param name="response">Response registers</param>
+        /// <param name="blockSize">Size of block in bytes</param>
+        internal static int SendMmcCommand(SafeFileHandle fd, MmcCommands command, bool write, bool isApplication,
+            MmcFlags flags, uint argument, uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
+            out double duration, out bool sense, uint timeout = 0)
+        {
+            SffdiskDeviceCommandData commandData = new SffdiskDeviceCommandData();
+            SdCmdDescriptor commandDescriptor = new SdCmdDescriptor();
+            commandData.size = (ushort)Marshal.SizeOf(commandData);
+            commandData.command = SffdiskDcmd.DeviceCommand;
+            commandData.protocolArgumentSize = (ushort)Marshal.SizeOf(commandDescriptor);
+            commandData.deviceDataBufferSize = blockSize * blocks;
+            commandDescriptor.commandCode = (byte)command;
+            commandDescriptor.cmdClass = isApplication ? SdCommandClass.AppCmd : SdCommandClass.Standard;
+            commandDescriptor.transferDirection = write ? SdTransferDirection.Write : SdTransferDirection.Read;
+            commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandADTC) ? SdTransferType.SingleBlock : SdTransferType.CmdOnly;
+            commandDescriptor.responseType = 0;
+
+            if(flags.HasFlag(MmcFlags.Response_R1) || flags.HasFlag(MmcFlags.ResponseSPI_R1))
+                commandDescriptor.responseType = SdResponseType.R1;
+            if(flags.HasFlag(MmcFlags.Response_R1b) || flags.HasFlag(MmcFlags.ResponseSPI_R1b))
+                commandDescriptor.responseType = SdResponseType.R1b;
+            if(flags.HasFlag(MmcFlags.Response_R2) || flags.HasFlag(MmcFlags.ResponseSPI_R2))
+                commandDescriptor.responseType = SdResponseType.R2;
+            if(flags.HasFlag(MmcFlags.Response_R3) || flags.HasFlag(MmcFlags.ResponseSPI_R3))
+                commandDescriptor.responseType = SdResponseType.R3;
+            if(flags.HasFlag(MmcFlags.Response_R4) || flags.HasFlag(MmcFlags.ResponseSPI_R4))
+                commandDescriptor.responseType = SdResponseType.R4;
+            if(flags.HasFlag(MmcFlags.Response_R5) || flags.HasFlag(MmcFlags.ResponseSPI_R5))
+                commandDescriptor.responseType = SdResponseType.R5;
+            if(flags.HasFlag(MmcFlags.Response_R6))
+                commandDescriptor.responseType = SdResponseType.R6;
+
+            byte[] command_b = new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
+            IntPtr hBuf = Marshal.AllocHGlobal(command_b.Length);
+            Marshal.StructureToPtr(commandData, hBuf, true);
+            IntPtr descriptorOffset = new IntPtr(hBuf.ToInt32() + commandData.size);
+            Marshal.StructureToPtr(commandDescriptor, descriptorOffset, true);
+            Marshal.Copy(hBuf, command_b, 0, command_b.Length);
+            Marshal.FreeHGlobal(hBuf);
+
+            uint bytesReturned;
+            int error = 0;
+            DateTime start = DateTime.Now;
+            sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IOCTL_SFFDISK_DEVICE_COMMAND, command_b,
+                (uint)command_b.Length, command_b, (uint)command_b.Length, out bytesReturned, IntPtr.Zero);
+            DateTime end = DateTime.Now;
+
+            if(sense)
+                error = Marshal.GetLastWin32Error();
+
+            buffer = new byte[blockSize * blocks];
+            Buffer.BlockCopy(command_b, command_b.Length - buffer.Length, buffer, 0, buffer.Length);
+            
+            response = new uint[4];
+            duration = (end - start).TotalMilliseconds;
+
+            return error;
+        }
     }
 }
 

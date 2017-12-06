@@ -275,7 +275,7 @@ namespace DiscImageChef.Devices
             {
                 case Interop.PlatformID.Win32NT:
                     {
-                        throw new NotImplementedException();
+                        return Windows.Command.SendMmcCommand((SafeFileHandle)fd, command, write, isApplication, flags, argument, blockSize, blocks, ref buffer, out response, out duration, out sense, timeout);
                     }
                 case Interop.PlatformID.Linux:
                     {

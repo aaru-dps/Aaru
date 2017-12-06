@@ -248,12 +248,42 @@ namespace DiscImageChef.Devices.Windows
         public short wIndex;
         public short wLength;
     }
+    
     [StructLayout(LayoutKind.Sequential)]
     struct USB_DESCRIPTOR_REQUEST
     {
         public int ConnectionIndex;
         public USB_SETUP_PACKET SetupPacket;
         //public byte[] Data;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    struct SffdiskQueryDeviceProtocolData
+    {
+        public ushort size;
+        public ushort reserved;
+        public Guid protocolGuid;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    struct SffdiskDeviceCommandData
+    {
+        public ushort size;
+        public ushort reserved;
+        public SffdiskDcmd command;
+        public ushort protocolArgumentSize;
+        public uint deviceDataBufferSize;
+        public uint information;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    struct SdCmdDescriptor
+    {
+        public byte commandCode;
+        public SdCommandClass cmdClass;
+        public SdTransferDirection transferDirection;
+        public SdTransferType transferType;
+        public SdResponseType responseType;
     }
 }
 

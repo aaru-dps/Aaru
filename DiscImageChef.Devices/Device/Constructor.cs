@@ -203,6 +203,74 @@ namespace DiscImageChef.Devices
                 ntDevicePath = Windows.Command.GetDevicePath((SafeFileHandle)fd);
                 DicConsole.DebugWriteLine("Windows devices", "NT device path: {0}", ntDevicePath);
                 Marshal.FreeHGlobal(descriptorPtr);
+
+                if(Windows.Command.IsSdhci((SafeFileHandle)fd))
+                {
+                    byte[] sdBuffer = new byte[16];
+                    bool sense = false;
+
+                    lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, MmcCommands.SendCSD, false, false, MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 | MmcFlags.CommandAC,
+                        0, 16, 1, ref sdBuffer, out uint[] response, out double duration, out sense, 0);
+                    
+                    if(!sense)
+                    {
+                        cachedCsd = new byte[16];
+                        Array.Copy(sdBuffer, 0, cachedCsd, 0, 16);
+                    }
+
+                    sdBuffer = new byte[16];
+                    sense = false;
+
+                    lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, MmcCommands.SendCID, false, false, MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 | MmcFlags.CommandAC,
+                        0, 16, 1, ref sdBuffer, out response, out duration, out sense, 0);
+
+                    if(!sense)
+                    {
+                        cachedCid = new byte[16];
+                        Array.Copy(sdBuffer, 0, cachedCid, 0, 16);
+                    }
+
+                    sdBuffer = new byte[8];
+                    sense = false;
+
+                    lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, (MmcCommands)SecureDigitalCommands.SendSCR, false, true, MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandADTC,
+                        0, 8, 1, ref sdBuffer, out response, out duration, out sense, 0);
+
+                    if(!sense)
+                    {
+                        cachedScr = new byte[8];
+                        Array.Copy(sdBuffer, 0, cachedScr, 0, 8);
+                    }
+
+                    if(cachedScr != null)
+                    {
+                        sdBuffer = new byte[4];
+                        sense = false;
+
+                        lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, (MmcCommands)SecureDigitalCommands.SendOperatingCondition, false, true, MmcFlags.ResponseSPI_R3 | MmcFlags.Response_R3 | MmcFlags.CommandBCR,
+                            0, 4, 1, ref sdBuffer, out response, out duration, out sense, 0);
+
+                        if(!sense)
+                        {
+                            cachedScr = new byte[4];
+                            Array.Copy(sdBuffer, 0, cachedScr, 0, 4);
+                        }
+                    }
+                    else
+                    {
+                        sdBuffer = new byte[4];
+                        sense = false;
+
+                        lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, MmcCommands.SendOpCond, false, true, MmcFlags.ResponseSPI_R3 | MmcFlags.Response_R3 | MmcFlags.CommandBCR,
+                            0, 4, 1, ref sdBuffer, out response, out duration, out sense, 0);
+
+                        if(!sense)
+                        {
+                            cachedScr = new byte[4];
+                            Array.Copy(sdBuffer, 0, cachedScr, 0, 4);
+                        }
+                    }
+                }
             }
             else
             {
@@ -236,34 +304,36 @@ namespace DiscImageChef.Devices
                         if(len == 0)
                             cachedOcr = null;
                     }
-
-                    if(cachedCid != null)
-                    {
-                        scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
-                        removable = false;
-
-                        if(cachedScr != null)
-                        {
-                            type = DeviceType.SecureDigital;
-                            Decoders.SecureDigital.CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
-                            manufacturer = Decoders.SecureDigital.VendorString.Prettify(decoded.Manufacturer);
-                            model = decoded.ProductName;
-                            revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4, decoded.ProductRevision & 0x0F);
-                            serial = string.Format("{0}", decoded.ProductSerialNumber);
-                        }
-                        else
-                        {
-                            type = DeviceType.MMC;
-                            Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(cachedCid);
-                            manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
-                            model = decoded.ProductName;
-                            revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4, decoded.ProductRevision & 0x0F);
-                            serial = string.Format("{0}", decoded.ProductSerialNumber);
-                        }
-                    }
                 }
             }
 
+            #region SecureDigital / MultiMediaCard
+            if(cachedCid != null)
+            {
+                scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
+                removable = false;
+
+                if(cachedScr != null)
+                {
+                    type = DeviceType.SecureDigital;
+                    Decoders.SecureDigital.CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
+                    manufacturer = Decoders.SecureDigital.VendorString.Prettify(decoded.Manufacturer);
+                    model = decoded.ProductName;
+                    revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4, decoded.ProductRevision & 0x0F);
+                    serial = string.Format("{0}", decoded.ProductSerialNumber);
+                }
+                else
+                {
+                    type = DeviceType.MMC;
+                    Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(cachedCid);
+                    manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                    model = decoded.ProductName;
+                    revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4, decoded.ProductRevision & 0x0F);
+                    serial = string.Format("{0}", decoded.ProductSerialNumber);
+                }
+            }
+            #endregion SecureDigital / MultiMediaCard
+            
             #region USB
 
             if(platformID == Interop.PlatformID.Linux)

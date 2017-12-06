@@ -98,7 +98,6 @@ namespace DiscImageChef.Devices.Windows
             IntPtr Overlapped
         );
 
-
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
         internal static extern bool DeviceIoControlGetDeviceNumber(
             SafeFileHandle hDevice,
@@ -110,6 +109,22 @@ namespace DiscImageChef.Devices.Windows
             ref uint pBytesReturned,
             IntPtr Overlapped
         );
+
+        [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
+        internal static extern bool DeviceIoControl(
+            SafeFileHandle hDevice,
+            WindowsIoctl IoControlCode,
+            IntPtr InBuffer,
+            uint nInBufferSize,
+            ref SffdiskQueryDeviceProtocolData OutBuffer,
+            uint nOutBufferSize,
+            out uint pBytesReturned,
+            IntPtr Overlapped
+        );
+
+        [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
+        internal static extern bool DeviceIoControl(SafeFileHandle hDevice, WindowsIoctl IoControlCode, byte[] InBuffer,
+            uint nInBufferSize, byte[] OutBuffer, uint nOutBufferSize, out uint pBytesReturned, IntPtr Overlapped);
 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
         internal static extern SafeFileHandle SetupDiGetClassDevs(
