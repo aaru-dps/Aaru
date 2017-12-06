@@ -29,6 +29,7 @@ namespace DiscImageChef.Devices.Windows
         const int IOCTL_USB_GET_NODE_CONNECTION_DRIVERKEY_NAME = 0x220420;
 
         const int USB_DEVICE_DESCRIPTOR_TYPE = 0x1;
+        const int USB_CONFIGURATION_DESCRIPTOR_TYPE = 0x2;
         const int USB_STRING_DESCRIPTOR_TYPE = 0x3;
 
         const int BUFFER_SIZE = 2048;
@@ -974,6 +975,26 @@ namespace DiscImageChef.Devices.Windows
                         Marshal.FreeHGlobal(ptrRequest);
                     }
 
+                    // build a request for configuration descriptor 
+                    USB_DESCRIPTOR_REQUEST dcrRequest = new USB_DESCRIPTOR_REQUEST();
+                    dcrRequest.ConnectionIndex = PortPortNumber;
+                    dcrRequest.SetupPacket.wValue = (short)((USB_CONFIGURATION_DESCRIPTOR_TYPE << 8));
+                    dcrRequest.SetupPacket.wLength = (short)(nBytes - Marshal.SizeOf(dcrRequest));
+                    dcrRequest.SetupPacket.wIndex = 0; 
+                    // Geez, I wish C# had a Marshal.MemSet() method 
+                    IntPtr dcrPtrRequest = Marshal.StringToHGlobalAuto(NullString);
+                    Marshal.StructureToPtr(dcrRequest, dcrPtrRequest, true);
+
+                    // Use an IOCTL call to request the String Descriptor 
+                    if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, dcrPtrRequest, nBytes,
+                        dcrPtrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
+                    {
+                        IntPtr ptrStringDesc = new IntPtr(dcrPtrRequest.ToInt32() + Marshal.SizeOf(dcrRequest));
+                        Device.BinaryDeviceDescriptors = new byte[nBytesReturned];
+                        Marshal.Copy(ptrStringDesc, Device.BinaryDeviceDescriptors, 0, nBytesReturned);
+                    }
+                    Marshal.FreeHGlobal(dcrPtrRequest);
+
                     // Get the Driver Key Name (usefull in locating a device) 
                     USB_NODE_CONNECTION_DRIVERKEY_NAME DriverKey = new USB_NODE_CONNECTION_DRIVERKEY_NAME();
                     DriverKey.ConnectionIndex = PortPortNumber;
@@ -1082,6 +1103,7 @@ namespace DiscImageChef.Devices.Windows
             internal string DeviceDriverKey, DeviceHubDevicePath, DeviceInstanceID, DeviceName;
             internal string DeviceManufacturer, DeviceProduct, DeviceSerialNumber;
             internal USB_DEVICE_DESCRIPTOR DeviceDescriptor;
+            internal byte[] BinaryDeviceDescriptors;
 
             // a simple default constructor 
             public USBDevice()
@@ -1094,6 +1116,7 @@ namespace DiscImageChef.Devices.Windows
                 DeviceSerialNumber = "";
                 DeviceName = "";
                 DeviceInstanceID = "";
+                BinaryDeviceDescriptors = null;
             }
 
             // return Port Index of the Hub 
@@ -1139,6 +1162,11 @@ namespace DiscImageChef.Devices.Windows
             public string SerialNumber
             {
                 get { return DeviceSerialNumber; }
+            }
+            
+            public byte[] BinaryDescriptors
+            {
+                get { return BinaryDeviceDescriptors; }
             }
         }
 

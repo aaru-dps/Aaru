@@ -353,7 +353,7 @@ namespace DiscImageChef.Devices
 
                 if(usbDevice != null)
                 {
-                    // TODO: Get binary descriptors
+                    usbDescriptors = usbDevice.BinaryDescriptors;
                     usbVendor = (ushort)usbDevice.DeviceDescriptor.idVendor;
                     usbProduct = (ushort)usbDevice.DeviceDescriptor.idProduct;
                     usbManufacturerString = usbDevice.Manufacturer;
