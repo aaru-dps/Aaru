@@ -124,6 +124,9 @@ local long footerPosition = 0;
 
 wstring ReadPStringUTF8(uint pos)
 {
+    if(pos == 0)
+        return "";
+
     FSeek(pos);
     ushort strLen = ReadUShort();
     char str[] = ReadString(pos + 2, strLen);
