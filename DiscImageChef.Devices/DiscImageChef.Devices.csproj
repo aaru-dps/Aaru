@@ -84,6 +84,8 @@
     <Compile Include="Device\ScsiCommands\Kreon.cs" />
     <Compile Include="Device\List.cs" />
     <Compile Include="Linux\ListDevices.cs" />
+    <Compile Include="Windows\Usb.cs" />
+    <Compile Include="Windows\UsbFunctions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

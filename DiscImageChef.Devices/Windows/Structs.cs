@@ -238,5 +238,22 @@ namespace DiscImageChef.Devices.Windows
         public uint flags;
         private IntPtr reserved;
     }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    struct USB_SETUP_PACKET
+    {
+        public byte bmRequest;
+        public byte bRequest;
+        public short wValue;
+        public short wIndex;
+        public short wLength;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    struct USB_DESCRIPTOR_REQUEST
+    {
+        public int ConnectionIndex;
+        public USB_SETUP_PACKET SetupPacket;
+        //public byte[] Data;
+    }
 }
 

@@ -341,7 +341,26 @@ namespace DiscImageChef.Devices
             }
             else if(platformID == Interop.PlatformID.Win32NT)
             {
+                Windows.Usb.USBDevice usbDevice = null;
                 
+                // I have to search for USB disks, floppies and CD-ROMs as separate device types
+                foreach(string devGuid in new [] { Windows.Usb.GUID_DEVINTERFACE_FLOPPY, Windows.Usb.GUID_DEVINTERFACE_CDROM , Windows.Usb.GUID_DEVINTERFACE_DISK })
+                {
+                    usbDevice = Windows.Usb.FindDrivePath(devicePath, devGuid);
+                    if (usbDevice != null)
+                        break;
+                }
+
+                if(usbDevice != null)
+                {
+                    // TODO: Get binary descriptors
+                    usbVendor = (ushort)usbDevice.DeviceDescriptor.idVendor;
+                    usbProduct = (ushort)usbDevice.DeviceDescriptor.idProduct;
+                    usbManufacturerString = usbDevice.Manufacturer;
+                    usbProductString = usbDevice.Product;
+                    usbSerialString = usbDevice.SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
+                }
+
             }
             // TODO: Implement for other operating systems
             else

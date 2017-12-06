@@ -42,70 +42,141 @@ namespace DiscImageChef.Devices.Windows
         /// FILE_ATTRIBUTE_ARCHIVE
         /// </summary>
         Archive = 0x20,
+
         /// <summary>
         /// FILE_ATTRIBUTE_COMPRESSED
         /// </summary>
         Compressed = 0x800,
+
         /// <summary>
         /// FILE_ATTRIBUTE_DEVICE
         /// </summary>
         Device = 0x40,
+
         /// <summary>
         /// FILE_ATTRIBUTE_DIRECTORY
         /// </summary>
         Directory = 0x10,
+
         /// <summary>
         /// FILE_ATTRIBUTE_ENCRYPTED
         /// </summary>
         Encrypted = 0x4000,
+
         /// <summary>
         /// FILE_ATTRIBUTE_HIDDEN
         /// </summary>
         Hidden = 0x02,
+
         /// <summary>
         /// FILE_ATTRIBUTE_INTEGRITY_STREAM
         /// </summary>
         IntegrityStream = 0x8000,
+
         /// <summary>
         /// FILE_ATTRIBUTE_NORMAL
         /// </summary>
         Normal = 0x80,
+
         /// <summary>
         /// FILE_ATTRIBUTE_NOT_CONTENT_INDEXED
         /// </summary>
         NotContentIndexed = 0x2000,
+
         /// <summary>
         /// FILE_ATTRIBUTE_NO_SCRUB_DATA
         /// </summary>
         NoScrubData = 0x20000,
+
         /// <summary>
         /// FILE_ATTRIBUTE_OFFLINE
         /// </summary>
         Offline = 0x1000,
+
         /// <summary>
         /// FILE_ATTRIBUTE_READONLY
         /// </summary>
         Readonly = 0x01,
+
         /// <summary>
         /// FILE_ATTRIBUTE_REPARSE_POINT
         /// </summary>
         ReparsePoint = 0x400,
+
         /// <summary>
         /// FILE_ATTRIBUTE_SPARSE_FILE
         /// </summary>
         SparseFile = 0x200,
+
         /// <summary>
         /// FILE_ATTRIBUTE_SYSTEM
         /// </summary>
         System = 0x04,
+
         /// <summary>
         /// FILE_ATTRIBUTE_TEMPORARY
         /// </summary>
         Temporary = 0x100,
+
         /// <summary>
         /// FILE_ATTRIBUTE_VIRTUAL
         /// </summary>
         Virtual = 0x10000,
+
+        /// <summary>
+        /// FILE_FLAG_BACKUP_SEMANTICS
+        /// </summary>
+        BackupSemantics = 0x02000000,
+
+        /// <summary>
+        /// FILE_FLAG_DELETE_ON_CLOSE
+        /// </summary>
+        DeleteOnClose = 0x04000000,
+
+        /// <summary>
+        /// FILE_FLAG_NO_BUFFERING
+        /// </summary>
+        NoBuffering = 0x20000000,
+
+        /// <summary>
+        /// FILE_FLAG_OPEN_NO_RECALL
+        /// </summary>
+        OpenNoRecall = 0x00100000,
+
+        /// <summary>
+        /// FILE_FLAG_OPEN_REPARSE_POINT
+        /// </summary>
+        OpenReparsePoint = 0x00200000,
+
+        /// <summary>
+        /// FILE_FLAG_OVERLAPPED
+        /// </summary>
+        Overlapped = 0x40000000,
+
+        /// <summary>
+        /// FILE_FLAG_POSIX_SEMANTICS
+        /// </summary>
+        PosixSemantics = 0x0100000,
+
+        /// <summary>
+        /// FILE_FLAG_RANDOM_ACCESS
+        /// </summary>
+        RandomAccess = 0x10000000,
+
+        /// <summary>
+        /// FILE_FLAG_SESSION_AWARE
+        /// </summary>
+        SessionAware = 0x00800000,
+
+        /// <summary>
+        /// FILE_FLAG_SEQUENTIAL_SCAN
+        /// </summary>
+        SequentialScan = 0x08000000,
+
+        /// <summary>
+        /// FILE_FLAG_WRITE_THROUGH
+        /// </summary>
+        WriteThrough = 0x80000000,
     }
 
     [Flags]

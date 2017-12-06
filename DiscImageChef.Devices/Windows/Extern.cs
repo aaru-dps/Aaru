@@ -140,7 +140,7 @@ namespace DiscImageChef.Devices.Windows
         
         [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool SetupDiDestroyDeviceInfoList(SafeFileHandle hDevInfo);
-        
+
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         internal static extern bool CloseHandle(SafeFileHandle hDevice);
     }
