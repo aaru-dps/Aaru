@@ -218,5 +218,162 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>initiator id of who selected</summary>
         public uint init_id;
     }
+
+    struct nvme_command
+    {
+        private ushort opc_fuse_rsvd1;
+        /// <summary>
+        /// command identifier
+        /// </summary>
+        public ushort cid;
+        /// <summary>
+        /// namespace identifier
+        /// </summary>
+        public uint nsid;
+        /// <summary>
+        /// reserved
+        /// </summary>
+        public uint rsvd2;
+        /// <summary>
+        /// reserved
+        /// </summary>
+        public uint rsvd3;
+        /// <summary>
+        /// metadata pointer
+        /// </summary>
+        public ulong mptr;
+        /// <summary>
+        /// prp entry 1
+        /// </summary>
+        public ulong prp1;
+        /// <summary>
+        /// prp entry 2
+        /// </summary>
+        public ulong prp2;
+        /// <summary>
+        /// command-specific
+        /// </summary>
+        public uint cdw10;
+        /// <summary>
+        /// command-specific
+        /// </summary>
+        public uint cdw11;
+        /// <summary>
+        /// command-specific
+        /// </summary>
+        public uint cdw12;
+        /// <summary>
+        /// command-specific
+        /// </summary>
+        public uint cdw13;
+        /// <summary>
+        /// command-specific
+        /// </summary>
+        public uint cdw14;
+        /// <summary>
+        /// command-specific
+        /// </summary>
+        public uint cdw15;
+
+        /// <summary>
+        /// opcode
+        /// </summary>
+        public byte opc => (byte)((opc_fuse_rsvd1 & 0xFF00) >> 8);
+        /// <summary>
+        /// fused operation
+        /// </summary>
+        public byte fuse => (byte)((opc_fuse_rsvd1 & 0xC0) >> 6);
+        /// <summary>
+        /// reserved
+        /// </summary>
+        public byte rsvd1 => (byte)(opc_fuse_rsvd1 & 0x3F);
+    }
+
+    struct nvme_status
+    {
+        private ushort status;
+
+        /// <summary>
+        /// phase tag
+        /// </summary>
+        public byte p => (byte)((status & 0x8000) >> 15);
+
+        /// <summary>
+        /// status code
+        /// </summary>
+        public byte sc => (byte)((status & 0x7F80) >> 7);
+
+        /// <summary>
+        /// status code type
+        /// </summary>
+        public byte sct => (byte)((status & 0x70) >> 4);
+
+        /// <summary>
+        /// reserved
+        /// </summary>
+        public byte rsvd2 => (byte)((status & 0xC) >> 15);
+
+        /// <summary>
+        /// more
+        /// </summary>
+        public byte m => (byte)((status & 0x2) >> 1);
+
+        /// <summary>
+        /// do not retry
+        /// </summary>
+        public byte dnr => (byte)(status & 0x1);
+    }
+
+    struct nvme_completion
+    {
+        /// <summary>
+        /// command-specific
+        /// </summary>
+        public uint cdw0;
+
+        /// <summary>
+        /// reserved
+        /// </summary>
+        public uint rsvd1;
+
+        /// <summary>
+        /// submission queue head pointer
+        /// </summary>
+        public ushort sqhd;
+
+        /// <summary>
+        /// submission queue identifier
+        /// </summary>
+        public ushort sqid;
+
+        /// <summary>
+        /// command identifier
+        /// </summary>
+        public ushort cid;
+
+        public nvme_status status;
+    }
+
+    /// <summary>
+    /// NVMe I/O Request CCB used for the XPT_NVME_IO and XPT_NVME_ADMIN function codes.
+    /// </summary>
+    struct ccb_nvmeio
+    {
+        public ccb_hdr ccb_h;
+        /// <summary>Ptr for next CCB for action</summary>    
+        public IntPtr next_ccb;
+        /// <summary>NVME command, per NVME standard</summary>
+        public nvme_command cmd;
+        /// <summary>NVME completion, per NVME standard</summary>
+        public nvme_completion cpl;
+        /// <summary>Ptr to the data buf/SG list</summary>
+        public IntPtr data_ptr;
+        /// <summary>Data transfer length</summary>
+        public uint dxfer_len;
+        /// <summary>Number of SG list entries</summary>
+        public ushort sglist_cnt;
+        /// <summary>padding for removed uint32_t</summary>
+        public ushort unused;
+    }
 }
 
