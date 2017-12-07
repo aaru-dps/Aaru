@@ -196,7 +196,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     if(!printedExtents.Contains(fileId))
                     {
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId, CurrentEncoding.GetString(file.filename));
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId, StringHandlers.CToString(file.filename, CurrentEncoding));
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId, file.unknown1);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown2 = 0x{1:X2}", fileId, file.unknown2);

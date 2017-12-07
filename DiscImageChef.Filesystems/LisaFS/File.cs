@@ -504,7 +504,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 foreach(CatalogEntry entry in catalogCache)
                 {
-                    string filename = CurrentEncoding.GetString(entry.filename);
+                    string filename = StringHandlers.CToString(entry.filename, CurrentEncoding);
 
                     // LisaOS is case insensitive
                     if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) == 0
