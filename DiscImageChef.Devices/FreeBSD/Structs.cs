@@ -33,6 +33,9 @@
 
 using System;
 using System.Runtime.InteropServices;
+using path_id_t = System.UInt32;
+using target_id_t = System.UInt32;
+using lun_id_t = System.UInt64;
 
 namespace DiscImageChef.Devices.FreeBSD
 {
@@ -374,6 +377,214 @@ namespace DiscImageChef.Devices.FreeBSD
         public ushort sglist_cnt;
         /// <summary>padding for removed uint32_t</summary>
         public ushort unused;
+    }
+
+    struct periph_match_pattern
+    {
+        private const int DEV_IDLEN = 16;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] periph_name;
+        public uint unit_number;
+        public path_id_t path_id;
+        public target_id_t target_id;
+        public lun_id_t target_lun;
+        public periph_pattern_flags flags;
+    }
+
+    struct device_id_match_pattern
+    {
+        public byte id_len;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] id;
+    }
+
+    struct scsi_static_inquiry_pattern
+    {
+        private const int SID_VENDOR_SIZE = 8;
+        private const int SID_PRODUCT_SIZE = 16;
+        private const int SID_REVISION_SIZE = 4;
+        public byte type;
+        public byte media_type;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_VENDOR_SIZE + 1)] public byte[] vendor;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_PRODUCT_SIZE + 1)] public byte[] product;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_REVISION_SIZE + 1)] public byte[] revision;
+    }
+
+    struct device_match_pattern_data
+    {
+        [FieldOffset(0)] public scsi_static_inquiry_pattern inq_pat;
+        [FieldOffset(0)] public device_id_match_pattern devid_pat;
+    }
+
+    struct device_match_pattern
+    {
+        public path_id_t path_id;
+        public target_id_t target_id;
+        public lun_id_t target_lun;
+        public dev_pattern_flags flags;
+        public device_match_pattern_data data;
+    }
+
+    struct bus_match_pattern
+    {
+        private const int DEV_IDLEN = 16;
+
+        public path_id_t path_id;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] dev_name;
+        public uint unit_number;
+        public uint bus_id;
+        bus_pattern_flags flags;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    struct match_pattern
+    {
+        [FieldOffset(0)] public periph_match_pattern periph_pattern;
+        [FieldOffset(0)] public device_match_pattern device_pattern;
+        [FieldOffset(0)] public bus_match_pattern bus_pattern;
+    }
+
+    struct dev_match_pattern
+    {
+        public dev_match_type type;
+        public match_pattern pattern;
+    }
+
+    struct periph_match_result
+    {
+        private const int DEV_IDLEN = 16;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] periph_name;
+        public uint unit_number;
+        public path_id_t path_id;
+        public target_id_t target_id;
+        public lun_id_t target_lun;
+    }
+
+    struct mmc_cid
+    {
+        public uint mid;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] pnm;
+        public uint psn;
+        public ushort oid;
+        public ushort mdt_year;
+        public byte mdt_month;
+        public byte prv;
+        public byte fwrev;
+    }
+
+    struct mmc_params
+    {
+        /// <summary>
+        /// Card model
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 40)] public byte[] model;
+
+        /// <summary>
+        /// Card OCR
+        /// </summary>
+        public uint card_ocr;
+
+        /// <summary>
+        /// OCR of the IO portion of the card
+        /// </summary>
+        public uint io_ocr;
+
+        /// <summary>
+        /// Card CID -- raw 
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] card_cid;
+
+        /// <summary>
+        /// Card CID -- parsed 
+        /// </summary>
+        public mmc_cid cid;
+
+        /// <summary>
+        /// Card CSD -- raw
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] card_csd;
+
+        /// <summary>
+        /// Card RCA
+        /// </summary>
+        public ushort card_rca;
+
+        /// <summary>
+        /// What kind of card is it
+        /// </summary>
+        public mmc_card_features card_features;
+
+        public byte sdio_func_count;
+    }
+
+    struct device_match_result
+    {
+        public path_id_t path_id;
+        public target_id_t target_id;
+        public lun_id_t target_lun;
+        public cam_proto protocol;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] inq_data;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] ident_data;
+        public dev_result_flags flags;
+        public mmc_params mmc_ident_data;
+    }
+    struct bus_match_result {
+        public path_id_t	path_id;
+        private const int DEV_IDLEN = 16;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] dev_name;
+        public uint 	unit_number;
+        public uint 	bus_id;
+    }
+    [StructLayout(LayoutKind.Explicit)]
+    struct match_result
+    {
+        [FieldOffset(0)] public periph_match_result periph_result;
+        [FieldOffset(0)] public device_match_result device_result;
+        [FieldOffset(0)] public bus_match_result bus_result;
+    }
+
+    struct dev_match_result
+    {
+        public dev_match_type type;
+        public match_result result;
+    }
+
+    struct ccb_dm_cookie
+    {
+        public IntPtr bus;
+        public IntPtr target;
+        public IntPtr device;
+        public IntPtr periph;
+        public IntPtr pdrv;
+    }
+
+    struct ccb_dev_position
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public cam_generations[] generations;
+        dev_pos_type position_type;
+        public ccb_dm_cookie cookie;
+    }
+
+    struct ccb_dev_match
+    {
+        public ccb_hdr ccb_h;
+        ccb_dev_match_status status;
+        public uint num_patterns;
+        public uint pattern_buf_len;
+
+        /// <summary>
+        /// dev_match_pattern*
+        /// </summary>
+        public IntPtr patterns;
+
+        public uint num_matches;
+        public uint match_buf_len;
+
+        /// <summary>
+        /// dev_match_result*
+        /// </summary>
+        public IntPtr matches;
+
+        public ccb_dev_position pos;
     }
 }
 
