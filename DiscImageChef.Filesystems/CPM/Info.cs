@@ -44,6 +44,120 @@ namespace DiscImageChef.Filesystems.CPM
     {
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
+            // This will only continue on devices with a chance to have ever been used by CP/M while failing on all others
+            // It's ugly, but will stop a lot of false positives
+            switch(imagePlugin.ImageInfo.mediaType)
+            {
+                case MediaType.Unknown:
+                case MediaType.Apple32SS:
+                case MediaType.Apple32DS:
+                case MediaType.Apple33SS:
+                case MediaType.Apple33DS:
+                case MediaType.DOS_525_SS_DD_8:
+                case MediaType.DOS_525_SS_DD_9:
+                case MediaType.DOS_525_DS_DD_8:
+                case MediaType.DOS_525_DS_DD_9:
+                case MediaType.DOS_525_HD:
+                case MediaType.DOS_35_SS_DD_8:
+                case MediaType.DOS_35_SS_DD_9:
+                case MediaType.DOS_35_DS_DD_8:
+                case MediaType.DOS_35_DS_DD_9:
+                case MediaType.DOS_35_HD:
+                case MediaType.DOS_35_ED:
+                case MediaType.IBM23FD:
+                case MediaType.IBM33FD_128:
+                case MediaType.IBM33FD_256:
+                case MediaType.IBM33FD_512:
+                case MediaType.IBM43FD_128:
+                case MediaType.IBM43FD_256:
+                case MediaType.IBM53FD_256:
+                case MediaType.IBM53FD_512:
+                case MediaType.IBM53FD_1024:
+                case MediaType.RX01:
+                case MediaType.RX02:
+                case MediaType.RX03:
+                case MediaType.RX50:
+                case MediaType.ACORN_525_SS_SD_40:
+                case MediaType.ACORN_525_SS_SD_80:
+                case MediaType.ACORN_525_SS_DD_40:
+                case MediaType.ACORN_525_SS_DD_80:
+                case MediaType.ACORN_525_DS_DD:
+                case MediaType.ATARI_525_SD:
+                case MediaType.ATARI_525_ED:
+                case MediaType.ATARI_525_DD:
+                case MediaType.CBM_35_DD:
+                case MediaType.CBM_1540:
+                case MediaType.CBM_1540_Ext:
+                case MediaType.CBM_1571:
+                case MediaType.NEC_8_SD:
+                case MediaType.NEC_8_DD:
+                case MediaType.NEC_525_SS:
+                case MediaType.NEC_525_DS:
+                case MediaType.NEC_525_HD:
+                case MediaType.NEC_35_HD_8:
+                case MediaType.NEC_35_HD_15:
+                case MediaType.SHARP_525:
+                case MediaType.SHARP_525_9:
+                case MediaType.SHARP_35:
+                case MediaType.SHARP_35_9:
+                case MediaType.ECMA_99_8:
+                case MediaType.ECMA_99_15:
+                case MediaType.ECMA_99_26:
+                case MediaType.ECMA_100:
+                case MediaType.ECMA_125:
+                case MediaType.ECMA_147:
+                case MediaType.ECMA_54:
+                case MediaType.ECMA_59:
+                case MediaType.ECMA_66:
+                case MediaType.ECMA_69_8:
+                case MediaType.ECMA_69_15:
+                case MediaType.ECMA_69_26:
+                case MediaType.ECMA_70:
+                case MediaType.ECMA_78:
+                case MediaType.ECMA_78_2:
+                case MediaType.Apricot_35:
+                case MediaType.CompactFloppy:
+                case MediaType.DemiDiskette:
+                case MediaType.QuickDisk:
+                case MediaType.Wafer:
+                case MediaType.ZXMicrodrive:
+                case MediaType.AppleProfile:
+                case MediaType.AppleWidget:
+                case MediaType.AppleHD20:
+                case MediaType.RA60:
+                case MediaType.RA80:
+                case MediaType.RA81:
+                case MediaType.RC25:
+                case MediaType.RD31:
+                case MediaType.RD32:
+                case MediaType.RD51:
+                case MediaType.RD52:
+                case MediaType.RD53:
+                case MediaType.RD54:
+                case MediaType.RK06:
+                case MediaType.RK06_18:
+                case MediaType.RK07:
+                case MediaType.RK07_18:
+                case MediaType.RM02:
+                case MediaType.RM03:
+                case MediaType.RM05:
+                case MediaType.RP02:
+                case MediaType.RP02_18:
+                case MediaType.RP03:
+                case MediaType.RP03_18:
+                case MediaType.RP04:
+                case MediaType.RP04_18:
+                case MediaType.RP05:
+                case MediaType.RP05_18:
+                case MediaType.RP06:
+                case MediaType.RP06_18:
+                case MediaType.GENERIC_HDD:
+                case MediaType.FlashDrive:
+                    break;
+                default:
+                    return false;
+            }
+            
             // This will try to identify a CP/M filesystem
             // However as it contains no identification marks whatsoever it's more something of trial-and-error
             // As anything can happen, better try{}catch{} than sorry ;)
