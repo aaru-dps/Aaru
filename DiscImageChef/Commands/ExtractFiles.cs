@@ -44,6 +44,7 @@ using System.Text;
 
 namespace DiscImageChef.Commands
 {
+    // TODO: Rewrite this, has an insane amount of repeating code ;)
     public static class ExtractFiles
     {
         public static void doExtractFiles(ExtractFilesOptions options)
@@ -177,7 +178,152 @@ namespace DiscImageChef.Commands
                                         if(error == Errno.NoError)
                                         {
                                             foreach(string entry in rootDir)
-                                                DicConsole.WriteLine("{0}", entry);
+                                            {
+                                                FileEntryInfo stat = new FileEntryInfo();
+                                                string outputPath;
+                                                FileStream outputFile;
+
+                                                string volumeName;
+                                                if(string.IsNullOrEmpty(fs.XmlFSType.VolumeName))
+                                                    volumeName = "NO NAME";
+                                                else
+                                                    volumeName = fs.XmlFSType.VolumeName;
+
+                                                error = fs.Stat(entry, ref stat);
+                                                if(error == Errno.NoError)
+                                                {
+                                                    if(options.Xattrs)
+                                                    {
+                                                        List<string> xattrs = new List<string>();
+
+                                                        error = fs.ListXAttr(entry, ref xattrs);
+                                                        if(error == Errno.NoError)
+                                                        {
+                                                            foreach(string xattr in xattrs)
+                                                            {
+                                                                byte[] xattrBuf = new byte[0];
+                                                                error = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                                if(error == Errno.NoError)
+                                                                {
+                                                                    Directory.CreateDirectory(Path.Combine(
+                                                                        options.OutputDir,
+                                                                        fs.XmlFSType.Type,
+                                                                        volumeName,
+                                                                        ".xattrs",
+                                                                        xattr));
+
+                                                                    outputPath = Path.Combine(options.OutputDir,
+                                                                        fs.XmlFSType.Type,
+                                                                        volumeName,
+                                                                        ".xattrs",
+                                                                        xattr,
+                                                                        entry);
+
+                                                                    if(!File.Exists(outputPath))
+                                                                    {
+                                                                        outputFile = new FileStream(outputPath,
+                                                                            FileMode.CreateNew, FileAccess.ReadWrite,
+                                                                            FileShare.None);
+                                                                        outputFile.Write(xattrBuf, 0, xattrBuf.Length);
+                                                                        outputFile.Close();
+                                                                        FileInfo fi = new FileInfo(outputPath);
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                                        try
+                                                                        {
+                                                                            fi.CreationTimeUtc = stat.CreationTimeUtc;
+                                                                        }
+                                                                        catch
+                                                                        {
+                                                                        }
+                                                                        try
+                                                                        {
+                                                                            fi.LastWriteTimeUtc = stat.LastWriteTimeUtc;
+                                                                        }
+                                                                        catch
+                                                                        {
+                                                                        }
+                                                                        try
+                                                                        {
+                                                                            fi.LastAccessTimeUtc = stat.AccessTimeUtc;
+                                                                        }
+                                                                        catch
+                                                                        {
+                                                                        }
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                                        DicConsole.WriteLine(
+                                                                            "Written {0} bytes of xattr {1} from file {2} to {3}",
+                                                                            xattrBuf.Length, xattr, entry, outputPath);
+                                                                    }
+                                                                    else
+                                                                        DicConsole.ErrorWriteLine(
+                                                                            "Cannot write xattr {0} for {1}, output exists",
+                                                                            xattr, entry);
+
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    Directory.CreateDirectory(Path.Combine(options.OutputDir,
+                                                        fs.XmlFSType.Type,
+                                                        volumeName));
+
+                                                    outputPath = Path.Combine(options.OutputDir,
+                                                        fs.XmlFSType.Type,
+                                                        volumeName,
+                                                        entry);
+
+                                                    if(!File.Exists(outputPath))
+                                                    {
+                                                        byte[] outBuf = new byte[0];
+
+                                                        error = fs.Read(entry, 0, stat.Length, ref outBuf);
+
+                                                        if(error == Errno.NoError)
+                                                        {
+                                                            outputFile = new FileStream(outputPath, FileMode.CreateNew,
+                                                                FileAccess.ReadWrite,
+                                                                FileShare.None);
+                                                            outputFile.Write(outBuf, 0, outBuf.Length);
+                                                            outputFile.Close();
+                                                            FileInfo fi = new FileInfo(outputPath);
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                            try
+                                                            {
+                                                                fi.CreationTimeUtc = stat.CreationTimeUtc;
+                                                            }
+                                                            catch
+                                                            {
+                                                            }
+                                                            try
+                                                            {
+                                                                fi.LastWriteTimeUtc = stat.LastWriteTimeUtc;
+                                                            }
+                                                            catch
+                                                            {
+                                                            }
+                                                            try
+                                                            {
+                                                                fi.LastAccessTimeUtc = stat.AccessTimeUtc;
+                                                            }
+                                                            catch
+                                                            {
+                                                            }
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                            DicConsole.WriteLine("Written {0} bytes of file {1} to {2}",
+                                                                outBuf.Length, entry, outputPath);
+                                                        }
+                                                        else
+                                                            DicConsole.ErrorWriteLine("Error {0} reading file {1}",
+                                                                error, entry);
+                                                    }
+                                                    else
+                                                        DicConsole.ErrorWriteLine(
+                                                            "Cannot write file {0}, output exists", entry);
+                                                }
+                                                else
+                                                    DicConsole.ErrorWriteLine("Error reading file {0}", entry);
+                                            }
                                         }
                                         else
                                             DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
@@ -202,7 +348,151 @@ namespace DiscImageChef.Commands
                                 if(error == Errno.NoError)
                                 {
                                     foreach(string entry in rootDir)
-                                        DicConsole.WriteLine("{0}", entry);
+                                    {
+                                        FileEntryInfo stat = new FileEntryInfo();
+                                        string outputPath;
+                                        FileStream outputFile;
+
+                                        string volumeName;
+                                        if(string.IsNullOrEmpty(fs.XmlFSType.VolumeName))
+                                            volumeName = "NO NAME";
+                                        else
+                                            volumeName = fs.XmlFSType.VolumeName;
+
+                                        error = fs.Stat(entry, ref stat);
+                                        if(error == Errno.NoError)
+                                        {
+                                            if(options.Xattrs)
+                                            {
+                                                List<string> xattrs = new List<string>();
+
+                                                error = fs.ListXAttr(entry, ref xattrs);
+                                                if(error == Errno.NoError)
+                                                {
+                                                    foreach(string xattr in xattrs)
+                                                    {
+                                                        byte[] xattrBuf = new byte[0];
+                                                        error = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                        if(error == Errno.NoError)
+                                                        {
+                                                            Directory.CreateDirectory(Path.Combine(options.OutputDir,
+                                                                fs.XmlFSType.Type,
+                                                                volumeName,
+                                                                ".xattrs",
+                                                                xattr));
+
+                                                            outputPath = Path.Combine(options.OutputDir,
+                                                                fs.XmlFSType.Type,
+                                                                volumeName,
+                                                                ".xattrs",
+                                                                xattr,
+                                                                entry);
+
+                                                            if(!File.Exists(outputPath))
+                                                            {
+                                                                outputFile = new FileStream(outputPath,
+                                                                    FileMode.CreateNew, FileAccess.ReadWrite,
+                                                                    FileShare.None);
+                                                                outputFile.Write(xattrBuf, 0, xattrBuf.Length);
+                                                                outputFile.Close();
+                                                                FileInfo fi = new FileInfo(outputPath);
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                                try
+                                                                {
+                                                                    fi.CreationTimeUtc = stat.CreationTimeUtc;
+                                                                }
+                                                                catch
+                                                                {
+                                                                }
+                                                                try
+                                                                {
+                                                                    fi.LastWriteTimeUtc = stat.LastWriteTimeUtc;
+                                                                }
+                                                                catch
+                                                                {
+                                                                }
+                                                                try
+                                                                {
+                                                                    fi.LastAccessTimeUtc = stat.AccessTimeUtc;
+                                                                }
+                                                                catch
+                                                                {
+                                                                }
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                                DicConsole.WriteLine(
+                                                                    "Written {0} bytes of xattr {1} from file {2} to {3}",
+                                                                    xattrBuf.Length, xattr, entry, outputPath);
+                                                            }
+                                                            else
+                                                                DicConsole.ErrorWriteLine(
+                                                                    "Cannot write xattr {0} for {1}, output exists",
+                                                                    xattr, entry);
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            Directory.CreateDirectory(Path.Combine(options.OutputDir,
+                                                fs.XmlFSType.Type,
+                                                volumeName));
+
+                                            outputPath = Path.Combine(options.OutputDir,
+                                                fs.XmlFSType.Type,
+                                                volumeName,
+                                                entry);
+
+                                            if(!File.Exists(outputPath))
+                                            {
+                                                byte[] outBuf = new byte[0];
+
+                                                error = fs.Read(entry, 0, stat.Length, ref outBuf);
+
+                                                if(error == Errno.NoError)
+                                                {
+                                                    outputFile = new FileStream(outputPath, FileMode.CreateNew,
+                                                        FileAccess.ReadWrite,
+                                                        FileShare.None);
+                                                    outputFile.Write(outBuf, 0, outBuf.Length);
+                                                    outputFile.Close();
+                                                    FileInfo fi = new FileInfo(outputPath);
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                    try
+                                                    {
+                                                        fi.CreationTimeUtc = stat.CreationTimeUtc;
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+                                                    try
+                                                    {
+                                                        fi.LastWriteTimeUtc = stat.LastWriteTimeUtc;
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+                                                    try
+                                                    {
+                                                        fi.LastAccessTimeUtc = stat.AccessTimeUtc;
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                    DicConsole.WriteLine("Written {0} bytes of file {1} to {2}",
+                                                        outBuf.Length, entry, outputPath);
+                                                }
+                                                else
+                                                    DicConsole.ErrorWriteLine("Error {0} reading file {1}", error,
+                                                        entry);
+                                            }
+                                            else
+                                                DicConsole.ErrorWriteLine("Cannot write file {0}, output exists",
+                                                    entry);
+                                        }
+                                        else
+                                            DicConsole.ErrorWriteLine("Error reading file {0}", entry);
+                                    }
                                 }
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
@@ -243,7 +533,151 @@ namespace DiscImageChef.Commands
                                 if(error == Errno.NoError)
                                 {
                                     foreach(string entry in rootDir)
-                                        DicConsole.WriteLine("{0}", entry);
+                                    {
+                                        FileEntryInfo stat = new FileEntryInfo();
+                                        string outputPath;
+                                        FileStream outputFile;
+
+                                        string volumeName;
+                                        if(string.IsNullOrEmpty(fs.XmlFSType.VolumeName))
+                                            volumeName = "NO NAME";
+                                        else
+                                            volumeName = fs.XmlFSType.VolumeName;
+
+                                        error = fs.Stat(entry, ref stat);
+                                        if(error == Errno.NoError)
+                                        {
+                                            if(options.Xattrs)
+                                            {
+                                                List<string> xattrs = new List<string>();
+
+                                                error = fs.ListXAttr(entry, ref xattrs);
+                                                if(error == Errno.NoError)
+                                                {
+                                                    foreach(string xattr in xattrs)
+                                                    {
+                                                        byte[] xattrBuf = new byte[0];
+                                                        error = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                        if(error == Errno.NoError)
+                                                        {
+                                                            Directory.CreateDirectory(Path.Combine(options.OutputDir,
+                                                                fs.XmlFSType.Type,
+                                                                volumeName,
+                                                                ".xattrs",
+                                                                xattr));
+
+                                                            outputPath = Path.Combine(options.OutputDir,
+                                                                fs.XmlFSType.Type,
+                                                                volumeName,
+                                                                ".xattrs",
+                                                                xattr,
+                                                                entry);
+
+                                                            if(!File.Exists(outputPath))
+                                                            {
+                                                                outputFile = new FileStream(outputPath,
+                                                                    FileMode.CreateNew, FileAccess.ReadWrite,
+                                                                    FileShare.None);
+                                                                outputFile.Write(xattrBuf, 0, xattrBuf.Length);
+                                                                outputFile.Close();
+                                                                FileInfo fi = new FileInfo(outputPath);
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                                try
+                                                                {
+                                                                    fi.CreationTimeUtc = stat.CreationTimeUtc;
+                                                                }
+                                                                catch
+                                                                {
+                                                                }
+                                                                try
+                                                                {
+                                                                    fi.LastWriteTimeUtc = stat.LastWriteTimeUtc;
+                                                                }
+                                                                catch
+                                                                {
+                                                                }
+                                                                try
+                                                                {
+                                                                    fi.LastAccessTimeUtc = stat.AccessTimeUtc;
+                                                                }
+                                                                catch
+                                                                {
+                                                                }
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                                DicConsole.WriteLine(
+                                                                    "Written {0} bytes of xattr {1} from file {2} to {3}",
+                                                                    xattrBuf.Length, xattr, entry, outputPath);
+                                                            }
+                                                            else
+                                                                DicConsole.ErrorWriteLine(
+                                                                    "Cannot write xattr {0} for {1}, output exists",
+                                                                    xattr, entry);
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            Directory.CreateDirectory(Path.Combine(options.OutputDir,
+                                                fs.XmlFSType.Type,
+                                                volumeName));
+
+                                            outputPath = Path.Combine(options.OutputDir,
+                                                fs.XmlFSType.Type,
+                                                volumeName,
+                                                entry);
+
+                                            if(!File.Exists(outputPath))
+                                            {
+                                                byte[] outBuf = new byte[0];
+
+                                                error = fs.Read(entry, 0, stat.Length, ref outBuf);
+
+                                                if(error == Errno.NoError)
+                                                {
+                                                    outputFile = new FileStream(outputPath, FileMode.CreateNew,
+                                                        FileAccess.ReadWrite,
+                                                        FileShare.None);
+                                                    outputFile.Write(outBuf, 0, outBuf.Length);
+                                                    outputFile.Close();
+                                                    FileInfo fi = new FileInfo(outputPath);
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                    try
+                                                    {
+                                                        fi.CreationTimeUtc = stat.CreationTimeUtc;
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+                                                    try
+                                                    {
+                                                        fi.LastWriteTimeUtc = stat.LastWriteTimeUtc;
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+                                                    try
+                                                    {
+                                                        fi.LastAccessTimeUtc = stat.AccessTimeUtc;
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                                    DicConsole.WriteLine("Written {0} bytes of file {1} to {2}",
+                                                        outBuf.Length, entry, outputPath);
+                                                }
+                                                else
+                                                    DicConsole.ErrorWriteLine("Error {0} reading file {1}", error,
+                                                        entry);
+                                            }
+                                            else
+                                                DicConsole.ErrorWriteLine("Cannot write file {0}, output exists",
+                                                    entry);
+                                        }
+                                        else
+                                            DicConsole.ErrorWriteLine("Error reading file {0}", entry);
+                                    }
                                 }
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
