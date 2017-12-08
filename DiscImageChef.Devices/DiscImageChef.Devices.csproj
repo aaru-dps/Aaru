@@ -36,6 +36,7 @@
     <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FreeBSD\ListDevices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Linux\Extern.cs" />
     <Compile Include="Linux\Structs.cs" />

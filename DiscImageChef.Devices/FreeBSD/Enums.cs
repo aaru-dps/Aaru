@@ -265,7 +265,7 @@ namespace DiscImageChef.Devices.FreeBSD
 
     enum dev_match_type
     {
-        DEV_MATCH_PERIPH,
+        DEV_MATCH_PERIPH = 0,
         DEV_MATCH_DEVICE,
         DEV_MATCH_BUS
     }
@@ -385,5 +385,11 @@ namespace DiscImageChef.Devices.FreeBSD
         CAM_DEV_POS_EDT = 0x100,
         CAM_DEV_POS_PDRV = 0x200
     }
+    
+    enum FreebsdIoctl : uint
+    {
+        CAMIOCOMMAND = 0xC4D81802,
+    }
+
 }
 

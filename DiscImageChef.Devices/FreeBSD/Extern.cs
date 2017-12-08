@@ -64,6 +64,9 @@ namespace DiscImageChef.Devices.FreeBSD
 
         [DllImport("libcam", CharSet = CharSet.Ansi, SetLastError = true)]
         internal static extern int cam_send_ccb(IntPtr dev, IntPtr ccb);
+
+        [DllImport("libc")]
+        internal static extern int ioctl(int fd, FreebsdIoctl request, IntPtr argp);
     }
 }
 
