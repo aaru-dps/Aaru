@@ -1359,7 +1359,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                         return;
                     case 1:
                         DicConsole.WriteLine("Media type");
-                        DicConsole.WriteLine("Available values: {0} {1} {2}", MmcDiscStructureMediaType.DVD, MmcDiscStructureMediaType.BD);
+                        DicConsole.WriteLine("Available values: {0} {1}", MmcDiscStructureMediaType.DVD, MmcDiscStructureMediaType.BD);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
                         if(!System.Enum.TryParse(strDev, true, out mediaType))
@@ -1388,7 +1388,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                         }
                         DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AACSVolId, MmcDiscStructureFormat.AACSMediaSerial, MmcDiscStructureFormat.AACSMediaId, MmcDiscStructureFormat.AACSMKB);
                         DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AACSDataKeys, MmcDiscStructureFormat.AACSLBAExtents, MmcDiscStructureFormat.AACSMKBCPRM, MmcDiscStructureFormat.RecognizedFormatLayers);
-                        DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.WriteProtectionStatus, MmcDiscStructureFormat.CapabilityList);
+                        DicConsole.WriteLine("\t{0} {1}", MmcDiscStructureFormat.WriteProtectionStatus, MmcDiscStructureFormat.CapabilityList);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
                         if(!System.Enum.TryParse(strDev, true, out format))
