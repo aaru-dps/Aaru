@@ -182,19 +182,6 @@ namespace DiscImageChef.Devices.FreeBSD
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = SSD_FULL_SIZE - 1)] public byte[] sense_buf;
     }
 
-    struct cdb_t
-    {
-        /// <summary>
-        /// Pointer to the CDB bytes to send
-        /// </summary>
-        public int cdb_ptr;
-        /// <summary>
-        /// Area for the CDB send
-        /// </summary>
-        const int IOCDBLEN = 16;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)] public byte[] cdb_bytes;
-    }
-
     /// <summary>
     /// SCSI I/O Request CCB used for the XPT_SCSI_IO and XPT_CONT_TARGET_IO function codes.
     /// </summary>
@@ -224,8 +211,11 @@ namespace DiscImageChef.Devices.FreeBSD
         public sbyte sense_resid;
         /// <summary>Transfer residual length: 2's comp</summary>
         public int resid;
-        /// <summary>Union for CDB bytes/pointer</summary>
-        public cdb_t cdb_io;
+        /// <summary>
+        /// Area for the CDB send, or pointer to the CDB bytes to send
+        /// </summary>
+        const int IOCDBLEN = 16;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)] public byte[] cdb_bytes;
         /// <summary>Pointer to the message buffer</summary>
         public IntPtr msg_ptr;
         /// <summary>Number of bytes for the Message</summary>
@@ -236,19 +226,6 @@ namespace DiscImageChef.Devices.FreeBSD
         public uint tag_id;
         /// <summary>initiator id of who selected</summary>
         public uint init_id;
-    }
-
-    struct cdb_t64
-    {
-        /// <summary>
-        /// Pointer to the CDB bytes to send
-        /// </summary>
-        public long cdb_ptr;
-        /// <summary>
-        /// Area for the CDB send
-        /// </summary>
-        const int IOCDBLEN = 16;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)] public byte[] cdb_bytes;
     }
 
     /// <summary>
@@ -280,8 +257,12 @@ namespace DiscImageChef.Devices.FreeBSD
         public sbyte sense_resid;
         /// <summary>Transfer residual length: 2's comp</summary>
         public int resid;
-        /// <summary>Union for CDB bytes/pointer</summary>
-        public cdb_t64 cdb_io;
+        public uint alignment; 
+        /// <summary>
+        /// Area for the CDB send, or pointer to the CDB bytes to send
+        /// </summary>
+        const int IOCDBLEN = 16;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)] public byte[] cdb_bytes;
         /// <summary>Pointer to the message buffer</summary>
         public IntPtr msg_ptr;
         /// <summary>Number of bytes for the Message</summary>

@@ -42,7 +42,7 @@ namespace DiscImageChef.Devices.FreeBSD
     static class Command
     {
         const int CAM_MAX_CDBLEN = 16;
-        
+
         /// <summary>
         /// Sends a SCSI command (64-bit arch)
         /// </summary>
@@ -65,6 +65,7 @@ namespace DiscImageChef.Devices.FreeBSD
                 return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
+            IntPtr cdbPtr = IntPtr.Zero;
 
             if(ccbPtr.ToInt64() == 0)
             {
@@ -85,17 +86,18 @@ namespace DiscImageChef.Devices.FreeBSD
             csio.cdb_len = (byte)cdb.Length;
             // TODO: Create enum?
             csio.tag_action = 0x20;
-            csio.cdb_io = new cdb_t64();
+            csio.cdb_bytes = new byte[CAM_MAX_CDBLEN];
             if(cdb.Length <= CAM_MAX_CDBLEN)
-            {
-                csio.cdb_io.cdb_bytes = new byte[CAM_MAX_CDBLEN];
-                Array.Copy(cdb, 0, csio.cdb_io.cdb_bytes, 0, cdb.Length);
-            }
+                Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
             else
             {
-                csio.cdb_io.cdb_ptr = Marshal.AllocHGlobal(cdb.Length).ToInt64();
+                cdbPtr = Marshal.AllocHGlobal(cdb.Length);
+                byte[] cdbPtrBytes = BitConverter.GetBytes(cdbPtr.ToInt64());
+                Array.Copy(cdbPtrBytes, 0, csio.cdb_bytes, 0, IntPtr.Size);
                 csio.ccb_h.flags |= ccb_flags.CAM_CDB_POINTER;
             }
+            csio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+
             Marshal.Copy(buffer, 0, csio.data_ptr, buffer.Length);
             Marshal.StructureToPtr(csio, ccbPtr, false);
 
@@ -139,11 +141,13 @@ namespace DiscImageChef.Devices.FreeBSD
 
             Marshal.Copy(csio.data_ptr, buffer, 0, buffer.Length);
             if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
-                Marshal.Copy(new IntPtr(csio.cdb_io.cdb_ptr), cdb, 0, cdb.Length);
+                Marshal.Copy(new IntPtr(BitConverter.ToInt64(csio.cdb_bytes, 0)), cdb, 0, cdb.Length);
             else
-                Array.Copy(csio.cdb_io.cdb_bytes, 0, cdb, 0, cdb.Length);
+                Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
             duration = (end - start).TotalMilliseconds;
 
+            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
+                Marshal.FreeHGlobal(cdbPtr);
             Marshal.FreeHGlobal(csio.data_ptr);
             cam_freeccb(ccbPtr);
 
@@ -172,6 +176,7 @@ namespace DiscImageChef.Devices.FreeBSD
                 return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
+            IntPtr cdbPtr = IntPtr.Zero;
 
             if(ccbPtr.ToInt32() == 0)
             {
@@ -192,17 +197,18 @@ namespace DiscImageChef.Devices.FreeBSD
             csio.cdb_len = (byte)cdb.Length;
             // TODO: Create enum?
             csio.tag_action = 0x20;
-            csio.cdb_io = new cdb_t();
+            csio.cdb_bytes = new byte[CAM_MAX_CDBLEN];
             if(cdb.Length <= CAM_MAX_CDBLEN)
-            {
-                csio.cdb_io.cdb_bytes = new byte[CAM_MAX_CDBLEN];
-                Array.Copy(cdb, 0, csio.cdb_io.cdb_bytes, 0, cdb.Length);
-            }
+                Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
             else
             {
-                csio.cdb_io.cdb_ptr = Marshal.AllocHGlobal(cdb.Length).ToInt32();
+                cdbPtr = Marshal.AllocHGlobal(cdb.Length);
+                byte[] cdbPtrBytes = BitConverter.GetBytes(cdbPtr.ToInt32());
+                Array.Copy(cdbPtrBytes, 0, csio.cdb_bytes, 0, IntPtr.Size);
                 csio.ccb_h.flags |= ccb_flags.CAM_CDB_POINTER;
             }
+            csio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+
             Marshal.Copy(buffer, 0, csio.data_ptr, buffer.Length);
             Marshal.StructureToPtr(csio, ccbPtr, false);
 
@@ -246,11 +252,13 @@ namespace DiscImageChef.Devices.FreeBSD
 
             Marshal.Copy(csio.data_ptr, buffer, 0, buffer.Length);
             if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
-                Marshal.Copy(new IntPtr(csio.cdb_io.cdb_ptr), cdb, 0, cdb.Length);
+                Marshal.Copy(new IntPtr(BitConverter.ToInt32(csio.cdb_bytes, 0)), cdb, 0, cdb.Length);
             else
-                Array.Copy(csio.cdb_io.cdb_bytes, 0, cdb, 0, cdb.Length);
+                Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
             duration = (end - start).TotalMilliseconds;
 
+            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
+                Marshal.FreeHGlobal(cdbPtr);
             Marshal.FreeHGlobal(csio.data_ptr);
             cam_freeccb(ccbPtr);
 
