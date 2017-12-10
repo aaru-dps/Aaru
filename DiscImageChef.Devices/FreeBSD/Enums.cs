@@ -391,5 +391,348 @@ namespace DiscImageChef.Devices.FreeBSD
         CAMIOCOMMAND = 0xC4D81802,
     }
 
+    [Flags]
+    enum ccb_flags : uint
+    {
+        /// <summary>
+        /// The CDB field is a pointer
+        /// </summary>
+        CAM_CDB_POINTER = 0x00000001,
+        /// <summary>
+        /// SIM queue actions are enabled
+        /// </summary>
+        CAM_QUEUE_ENABLE = 0x00000002,
+        /// <summary>
+        /// CCB contains a linked CDB
+        /// </summary>
+        CAM_CDB_LINKED = 0x00000004,
+        /// <summary>
+        /// Perform transport negotiation with this command.
+        /// </summary>
+        CAM_NEGOTIATE = 0x00000008,
+        /// <summary>
+        /// Data type with physical addrs
+        /// </summary>
+        CAM_DATA_ISPHYS = 0x00000010,
+        /// <summary>
+        /// Disable autosense feature
+        /// </summary>
+        CAM_DIS_AUTOSENSE = 0x00000020,
+        /// <summary>
+        /// Data direction (00:IN/OUT)
+        /// </summary>
+        CAM_DIR_BOTH = 0x00000000,
+        /// <summary>
+        /// Data direction (01:DATA IN)
+        /// </summary>
+        CAM_DIR_IN = 0x00000040,
+        /// <summary>
+        /// Data direction (10:DATA OUT)
+        /// </summary>
+        CAM_DIR_OUT = 0x00000080,
+        /// <summary>
+        /// Data direction (11:no data)
+        /// </summary>
+        CAM_DIR_NONE = 0x000000C0,
+        /// <summary>
+        /// Data type (000:Virtual)
+        /// </summary>
+        CAM_DATA_VADDR = 0x00000000,
+        /// <summary>
+        /// Data type (001:Physical)
+        /// </summary>
+        CAM_DATA_PADDR = 0x00000010,
+        /// <summary>
+        /// Data type (010:sglist)
+        /// </summary>
+        CAM_DATA_SG = 0x00040000,
+        /// <summary>
+        /// Data type (011:sglist phys)
+        /// </summary>
+        CAM_DATA_SG_PADDR = 0x00040010,
+        /// <summary>
+        /// Data type (100:bio)
+        /// </summary>
+        CAM_DATA_BIO = 0x00200000,
+        /// <summary>
+        /// Use Soft reset alternative
+        /// </summary>
+        CAM_SOFT_RST_OP = 0x00000100,
+        /// <summary>
+        /// Flush resid bytes on complete
+        /// </summary>
+        CAM_ENG_SYNC = 0x00000200,
+        /// <summary>
+        /// Disable DEV Q freezing
+        /// </summary>
+        CAM_DEV_QFRZDIS = 0x00000400,
+        /// <summary>
+        /// Freeze DEV Q on execution
+        /// </summary>
+        CAM_DEV_QFREEZE = 0x00000800,
+        /// <summary>
+        /// Command takes a lot of power
+        /// </summary>
+        CAM_HIGH_POWER = 0x00001000,
+        /// <summary>
+        /// Sense data is a pointer
+        /// </summary>
+        CAM_SENSE_PTR = 0x00002000,
+        /// <summary>
+        /// Sense pointer is physical addr
+        /// </summary>
+        CAM_SENSE_PHYS = 0x00004000,
+        /// <summary>
+        /// Use the tag action in this ccb
+        /// </summary>
+        CAM_TAG_ACTION_VALID = 0x00008000,
+        /// <summary>
+        /// Pass driver does err. recovery
+        /// </summary>
+        CAM_PASS_ERR_RECOVER = 0x00010000,
+        /// <summary>
+        /// Disable disconnect
+        /// </summary>
+        CAM_DIS_DISCONNECT = 0x00020000,
+        /// <summary>
+        /// Message buffer ptr is physical
+        /// </summary>
+        CAM_MSG_BUF_PHYS = 0x00080000,
+        /// <summary>
+        /// Autosense data ptr is physical
+        /// </summary>
+        CAM_SNS_BUF_PHYS = 0x00100000,
+        /// <summary>
+        /// CDB poiner is physical
+        /// </summary>
+        CAM_CDB_PHYS = 0x00400000,
+        /// <summary>
+        /// SG list is for the HBA engine
+        /// </summary>
+        CAM_ENG_SGLIST = 0x00800000,
+
+        /* Phase cognizant mode flags */
+        /// <summary>
+        /// Disable autosave/restore ptrs
+        /// </summary>
+        CAM_DIS_AUTOSRP = 0x01000000,
+        /// <summary>
+        /// Disable auto disconnect
+        /// </summary>
+        CAM_DIS_AUTODISC = 0x02000000,
+        /// <summary>
+        /// Target CCB available
+        /// </summary>
+        CAM_TGT_CCB_AVAIL = 0x04000000,
+        /// <summary>
+        /// The SIM runs in phase mode
+        /// </summary>
+        CAM_TGT_PHASE_MODE = 0x08000000,
+        /// <summary>
+        /// Message buffer valid
+        /// </summary>
+        CAM_MSGB_VALID = 0x10000000,
+        /// <summary>
+        /// Status buffer valid
+        /// </summary>
+        CAM_STATUS_VALID = 0x20000000,
+        /// <summary>
+        /// Data buffer valid
+        /// </summary>
+        CAM_DATAB_VALID = 0x40000000,
+        /* Host target Mode flags */
+        /// <summary>
+        /// Send sense data with status
+        /// </summary>
+        CAM_SEND_SENSE = 0x08000000,
+        /// <summary>
+        /// Terminate I/O Message sup.
+        /// </summary>
+        CAM_TERM_IO = 0x10000000,
+        /// <summary>
+        /// Disconnects are mandatory
+        /// </summary>
+        CAM_DISCONNECT = 0x20000000,
+        /// <summary>
+        /// Send status after data phase
+        /// </summary>
+        CAM_SEND_STATUS = 0x40000000,
+        /// <summary>
+        /// Call callback without lock.
+        /// </summary>
+        CAM_UNLOCKED = 0x80000000
+    }
+
+	enum cam_status : uint
+	{
+		/// <summary>CCB request is in progress</summary>
+		CAM_REQ_INPROG = 0x00,
+
+		/// <summary>CCB request completed without error</summary>
+		CAM_REQ_CMP = 0x01,
+
+		/// <summary>CCB request aborted by the host</summary>
+		CAM_REQ_ABORTED = 0x02,
+
+		/// <summary>Unable to abort CCB request</summary>
+		CAM_UA_ABORT = 0x03,
+
+		/// <summary>CCB request completed with an error</summary>
+		CAM_REQ_CMP_ERR = 0x04,
+
+		/// <summary>CAM subsystem is busy</summary>
+		CAM_BUSY = 0x05,
+
+		/// <summary>CCB request was invalid</summary>
+		CAM_REQ_INVALID = 0x06,
+
+		/// <summary>Supplied Path ID is invalid</summary>
+		CAM_PATH_INVALID = 0x07,
+
+		/// <summary>SCSI Device Not Installed/there</summary>
+		CAM_DEV_NOT_THERE = 0x08,
+
+		/// <summary>Unable to terminate I/O CCB request</summary>
+		CAM_UA_TERMIO = 0x09,
+
+		/// <summary>Target Selection Timeout</summary>
+		CAM_SEL_TIMEOUT = 0x0a,
+
+		/// <summary>Command timeout</summary>
+		CAM_CMD_TIMEOUT = 0x0b,
+
+		/// <summary>SCSI error, look at error code in CCB</summary>
+		CAM_SCSI_STATUS_ERROR = 0x0c,
+
+		/// <summary>Message Reject Received</summary>
+		CAM_MSG_REJECT_REC = 0x0d,
+
+		/// <summary>SCSI Bus Reset Sent/Received</summary>
+		CAM_SCSI_BUS_RESET = 0x0e,
+
+		/// <summary>Uncorrectable parity error occurred</summary>
+		CAM_UNCOR_PARITY = 0x0f,
+
+		/// <summary>Autosense: request sense cmd fail</summary>
+		CAM_AUTOSENSE_FAIL = 0x10,
+
+		/// <summary>No HBA Detected error</summary>
+		CAM_NO_HBA = 0x11,
+
+		/// <summary>Data Overrun error</summary>
+		CAM_DATA_RUN_ERR = 0x12,
+
+		/// <summary>Unexpected Bus Free</summary>
+		CAM_UNEXP_BUSFREE = 0x13,
+
+		/// <summary>Target Bus Phase Sequence Failure</summary>
+		CAM_SEQUENCE_FAIL = 0x14,
+
+		/// <summary>CCB length supplied is inadequate</summary>
+		CAM_CCB_LEN_ERR = 0x15,
+
+		/// <summary>Unable to provide requested capability</summary>
+		CAM_PROVIDE_FAIL = 0x16,
+
+		/// <summary>A SCSI BDR msg was sent to target</summary>
+		CAM_BDR_SENT = 0x17,
+
+		/// <summary>CCB request terminated by the host</summary>
+		CAM_REQ_TERMIO = 0x18,
+
+		/// <summary>Unrecoverable Host Bus Adapter Error</summary>
+		CAM_UNREC_HBA_ERROR = 0x19,
+
+		/// <summary>Request was too large for this host</summary>
+		CAM_REQ_TOO_BIG = 0x1a,
+
+		/// <summary>This request should be requeued to preserve transaction ordering. This typically occurs when the SIM recognizes an error that should freeze the queue and must place additional requests for the target at the sim level back into the XPT queue.</summary>
+		CAM_REQUEUE_REQ = 0x1b,
+
+		/// <summary>ATA error, look at error code in CCB</summary>
+		CAM_ATA_STATUS_ERROR = 0x1c,
+
+		/// <summary>Initiator/Target Nexus lost.</summary>
+		CAM_SCSI_IT_NEXUS_LOST = 0x1d,
+
+		/// <summary>SMP error, look at error code in CCB</summary>
+		CAM_SMP_STATUS_ERROR = 0x1e,
+
+		/// <summary>Command completed without error but  exceeded the soft timeout threshold.</summary>
+		CAM_REQ_SOFTTIMEOUT = 0x1f,
+
+		/*
+		 * 0x20 - 0x32 are unassigned
+		 */
+
+		/// <summary>Initiator Detected Error</summary>
+		CAM_IDE = 0x33,
+
+		/// <summary>Resource Unavailable</summary>
+		CAM_RESRC_UNAVAIL = 0x34,
+
+		/// <summary>Unacknowledged Event by Host</summary>
+		CAM_UNACKED_EVENT = 0x35,
+
+		/// <summary>Message Received in Host Target Mode</summary>
+		CAM_MESSAGE_RECV = 0x36,
+
+		/// <summary>Invalid CDB received in Host Target Mode</summary>
+		CAM_INVALID_CDB = 0x37,
+
+		/// <summary>Lun supplied is invalid</summary>
+		CAM_LUN_INVALID = 0x38,
+
+		/// <summary>Target ID supplied is invalid</summary>
+		CAM_TID_INVALID = 0x39,
+
+		/// <summary>The requested function is not available</summary>
+		CAM_FUNC_NOTAVAIL = 0x3a,
+
+		/// <summary>Nexus is not established</summary>
+		CAM_NO_NEXUS = 0x3b,
+
+		/// <summary>The initiator ID is invalid</summary>
+		CAM_IID_INVALID = 0x3c,
+
+		/// <summary>The SCSI CDB has been received</summary>
+		CAM_CDB_RECVD = 0x3d,
+
+		/// <summary>The LUN is already enabled for target mode</summary>
+		CAM_LUN_ALRDY_ENA = 0x3e,
+
+		/// <summary>SCSI Bus Busy</summary>
+		CAM_SCSI_BUSY = 0x3f,
+
+
+		/*
+		 * Flags
+		 */
+
+		/// <summary>The DEV queue is frozen w/this err</summary>
+		CAM_DEV_QFRZN = 0x40,
+
+		/// <summary>Autosense data valid for target</summary>
+		CAM_AUTOSNS_VALID = 0x80,
+
+		/// <summary>SIM ready to take more commands</summary>
+		CAM_RELEASE_SIMQ = 0x100,
+
+		/// <summary>SIM has this command in its queue</summary>
+		CAM_SIM_QUEUED = 0x200,
+
+		/// <summary>Quality of service data is valid</summary>
+		CAM_QOS_VALID = 0x400,
+
+		/// <summary>Mask bits for just the status #</summary>
+		CAM_STATUS_MASK = 0x3F,
+
+		/*
+		 * Target Specific Adjunct Status
+		 */
+
+		/// <summary>sent sense with status</summary>
+		CAM_SENT_SENSE = 0x40000000
+	}
 }
 

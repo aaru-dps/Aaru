@@ -55,7 +55,7 @@ namespace DiscImageChef.Devices
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
 
-            return SendScsiCommand(ptID, (SafeFileHandle)fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration, out sense);
+            return SendScsiCommand(ptID, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration, out sense);
         }
 
         /// <summary>
@@ -119,6 +119,32 @@ namespace DiscImageChef.Devices
 
                         return Linux.Command.SendScsiCommand((int)fd, cdb, ref buffer, out senseBuffer, timeout, dir, out duration, out sense);
                     }
+                case Interop.PlatformID.FreeBSD:
+                {
+                    FreeBSD.ccb_flags flags = 0;
+
+                    switch(direction)
+                    {
+                        case ScsiDirection.In:
+                            flags = FreeBSD.ccb_flags.CAM_DIR_IN;
+                            break;
+                        case ScsiDirection.Out:
+                            flags = FreeBSD.ccb_flags.CAM_DIR_OUT;
+                            break;
+                        case ScsiDirection.Bidirectional:
+                            flags = FreeBSD.ccb_flags.CAM_DIR_BOTH;
+                            break;
+                        case ScsiDirection.None:
+                            flags = FreeBSD.ccb_flags.CAM_DIR_NONE;
+                            break;
+                    }
+
+                    return IntPtr.Size == 8
+                               ? FreeBSD.Command.SendScsiCommand64((IntPtr)fd, cdb, ref buffer, out senseBuffer, timeout,
+                                                                 flags, out duration, out sense)
+                               : FreeBSD.Command.SendScsiCommand((IntPtr)fd, cdb, ref buffer, out senseBuffer, timeout,
+                                                                 flags, out duration, out sense);
+                }
                 default:
                     throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }

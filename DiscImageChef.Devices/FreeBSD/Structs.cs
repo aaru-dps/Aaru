@@ -158,12 +158,12 @@ namespace DiscImageChef.Devices.FreeBSD
         public uint retry_count;
         public IntPtr cbfcnp;
         public xpt_opcode func_code;
-        public uint status;
+        public cam_status status;
         public IntPtr path;
         public uint path_id;
         public uint target_id;
         public ulong target_lun;
-        public uint flags;
+        public ccb_flags flags;
         public uint xflags;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public IntPtr[] periph_priv;
@@ -177,16 +177,29 @@ namespace DiscImageChef.Devices.FreeBSD
     [StructLayout(LayoutKind.Sequential)]
     struct scsi_sense_data
     {
+        const int SSD_FULL_SIZE = 252;
         public byte error_code;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 251)]
-        public byte[] sense_buf;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SSD_FULL_SIZE - 1)] public byte[] sense_buf;
+    }
+
+    struct cdb_t
+    {
+        /// <summary>
+        /// Pointer to the CDB bytes to send
+        /// </summary>
+        public int cdb_ptr;
+        /// <summary>
+        /// Area for the CDB send
+        /// </summary>
+        const int IOCDBLEN = 16;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)] public byte[] cdb_bytes;
     }
 
     /// <summary>
     /// SCSI I/O Request CCB used for the XPT_SCSI_IO and XPT_CONT_TARGET_IO function codes.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    struct cdb_scsiio
+    struct ccb_scsiio
     {
         public ccb_hdr ccb_h;
         /// <summary>Ptr for next CCB for action</summary>    
@@ -212,7 +225,7 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>Transfer residual length: 2's comp</summary>
         public int resid;
         /// <summary>Union for CDB bytes/pointer</summary>
-        public IntPtr cdb_io;
+        public cdb_t cdb_io;
         /// <summary>Pointer to the message buffer</summary>
         public IntPtr msg_ptr;
         /// <summary>Number of bytes for the Message</summary>
@@ -225,6 +238,61 @@ namespace DiscImageChef.Devices.FreeBSD
         public uint init_id;
     }
 
+    struct cdb_t64
+    {
+        /// <summary>
+        /// Pointer to the CDB bytes to send
+        /// </summary>
+        public long cdb_ptr;
+        /// <summary>
+        /// Area for the CDB send
+        /// </summary>
+        const int IOCDBLEN = 16;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = IOCDBLEN)] public byte[] cdb_bytes;
+    }
+
+    /// <summary>
+    /// SCSI I/O Request CCB used for the XPT_SCSI_IO and XPT_CONT_TARGET_IO function codes.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    struct ccb_scsiio64
+    {
+        public ccb_hdr ccb_h;
+        /// <summary>Ptr for next CCB for action</summary>    
+        public IntPtr next_ccb;
+        /// <summary>Ptr to mapping info</summary>
+        public IntPtr req_map;
+        /// <summary>Ptr to the data buf/SG list</summary>
+        public IntPtr data_ptr;
+        /// <summary>Data transfer length</summary>
+        public uint dxfer_len;
+        /// <summary>Autosense storage</summary>
+        public scsi_sense_data sense_data;
+        /// <summary>Number of bytes to autosense</summary>
+        public byte sense_len;
+        /// <summary>Number of bytes for the CDB</summary>
+        public byte cdb_len;
+        /// <summary>Number of SG list entries</summary>
+        public short sglist_cnt;
+        /// <summary>Returned SCSI status</summary>
+        public byte scsi_status;
+        /// <summary>Autosense resid length: 2's comp</summary>
+        public sbyte sense_resid;
+        /// <summary>Transfer residual length: 2's comp</summary>
+        public int resid;
+        /// <summary>Union for CDB bytes/pointer</summary>
+        public cdb_t64 cdb_io;
+        /// <summary>Pointer to the message buffer</summary>
+        public IntPtr msg_ptr;
+        /// <summary>Number of bytes for the Message</summary>
+        public short msg_len;
+        /// <summary>What to do for tag queueing. The tag action should be either the define below (to send a non-tagged transaction) or one of the defined scsi tag messages from scsi_message.h.</summary>
+        public byte tag_action;
+        /// <summary>tag id from initator (target mode)</summary>
+        public uint tag_id;
+        /// <summary>initiator id of who selected</summary>
+        public uint init_id;
+    }
     /// <summary>
     /// ATA I/O Request CCB used for the XPT_ATA_IO function code.
     /// </summary>
@@ -637,6 +705,89 @@ namespace DiscImageChef.Devices.FreeBSD
         public IntPtr matches;
 
         public ccb_dev_position pos;
+    }
+
+    struct cam_device
+    {
+        private const int MAXPATHLEN = 1024;
+        private const int DEV_IDLEN = 16;
+        private const int SIM_IDLEN = 16;
+        /// <summary>
+        /// Pathname of the device given by the user. This may be null if the user states the device name and unit number separately.
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPATHLEN)] public byte[] device_path;
+        /// <summary>
+        /// Device name given by the user.
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN + 1)] public byte[] given_dev_name;
+        /// <summary>
+        /// Unit number given by the user.
+        /// </summary>
+        public uint given_unit_number;
+        /// <summary>
+        /// Name of the device, e.g. 'pass'
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN + 1)] public byte[] device_name;
+        /// <summary>
+        /// Unit number of the passthrough device associated with this particular device.
+        /// </summary>
+        public uint dev_unit_num;
+        /// <summary>
+        /// Controller name, e.g. 'ahc'
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = SIM_IDLEN + 1)] public byte[] sim_name;
+        /// <summary>
+        /// Controller unit number
+        /// </summary>
+        public uint sim_unit_number;
+        /// <summary>
+        /// Controller bus number
+        /// </summary>
+        public uint bus_id;
+        /// <summary>
+        /// Logical Unit Number
+        /// </summary>
+        lun_id_t target_lun;
+        /// <summary>
+        /// Target ID
+        /// </summary>
+        target_id_t target_id;
+        /// <summary>
+        /// System SCSI bus number
+        /// </summary>
+        path_id_t path_id;
+        /// <summary>
+        /// type of peripheral device
+        /// </summary>
+        public ushort pd_type;
+        /// <summary>
+        /// SCSI Inquiry data
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] inq_data;
+        /// <summary>
+        /// device serial number
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)] public byte[] serial_num;
+        /// <summary>
+        /// length of the serial number
+        /// </summary>
+        public byte serial_num_len;
+        /// <summary>
+        /// Negotiated sync period
+        /// </summary>
+        public byte sync_period;
+        /// <summary>
+        /// Negotiated sync offset
+        /// </summary>
+        public byte sync_offset;
+        /// <summary>
+        /// Negotiated bus width
+        /// </summary>
+        public byte bus_width;
+        /// <summary>
+        /// file descriptor for device
+        /// </summary>
+        public int fd;
     }
 }
 

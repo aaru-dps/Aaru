@@ -33,7 +33,6 @@
 using System;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
-using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 
@@ -82,6 +81,18 @@ namespace DiscImageChef.Devices
 
                         break;
                     }
+                case Interop.PlatformID.FreeBSD:
+                {
+                    fd = FreeBSD.Extern.cam_open_device(devicePath, FreeBSD.FileFlags.ReadWrite);
+
+                    if(((IntPtr)fd).ToInt64() == 0)
+                    {
+                        error = true;
+                        lastError = Marshal.GetLastWin32Error();
+                    }
+
+                    break;
+                }
                 default:
                     throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", platformID));
             }
@@ -272,7 +283,7 @@ namespace DiscImageChef.Devices
                     }
                 }
             }
-            else
+            else if(platformID == Interop.PlatformID.Linux)
             {
                 if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                     scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
@@ -306,6 +317,8 @@ namespace DiscImageChef.Devices
                     }
                 }
             }
+            else
+                scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
 
             #region SecureDigital / MultiMediaCard
             if(cachedCid != null)
