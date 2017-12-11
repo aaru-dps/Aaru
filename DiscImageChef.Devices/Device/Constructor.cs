@@ -91,6 +91,12 @@ namespace DiscImageChef.Devices
                         lastError = Marshal.GetLastWin32Error();
                     }
 
+                    FreeBSD.cam_device camDevice =
+                        (FreeBSD.cam_device)Marshal.PtrToStructure((IntPtr)fd, typeof(FreeBSD.cam_device));
+                    
+                    if(StringHandlers.CToString(camDevice.sim_name) == "ata")
+                        throw new InvalidOperationException("Parallel ATA devices are not supported on FreeBSD due to upstream bug #224250.");
+
                     break;
                 }
                 default:
