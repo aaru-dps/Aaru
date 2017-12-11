@@ -433,6 +433,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Reading Lead-in");
             for(int leadInBlock = -150; leadInBlock < 0 && resume.NextBlock == 0; leadInBlock++)
             {
+                if(dev.PlatformID == Interop.PlatformID.FreeBSD)
+                {
+                    DicConsole.DebugWriteLine("Dump-Media", "FreeBSD panics when reading CD Lead-in, see upstream bug #FILLME.");
+                    break;
+                }
                 if(aborted)
                 {
                     dumpLog.WriteLine("Aborted!");
