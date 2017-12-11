@@ -768,5 +768,24 @@ namespace DiscImageChef.Devices.FreeBSD
         /// </summary>
         public int fd;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct ccb_getdev
+    {
+        public ccb_hdr ccb_h;
+        public cam_proto protocol;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] inq_data;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] ident_data;
+        /// <summary>
+        /// device serial number
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)] public byte[] serial_num;
+        public byte inq_flags;
+        /// <summary>
+        /// length of the serial number
+        /// </summary>
+        public byte serial_num_len;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public IntPtr[] padding;
+    }
 }
 
