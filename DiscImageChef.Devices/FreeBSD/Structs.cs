@@ -726,15 +726,15 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>
         /// Logical Unit Number
         /// </summary>
-        lun_id_t target_lun;
+        public lun_id_t target_lun;
         /// <summary>
         /// Target ID
         /// </summary>
-        target_id_t target_id;
+        public target_id_t target_id;
         /// <summary>
         /// System SCSI bus number
         /// </summary>
-        path_id_t path_id;
+        public path_id_t path_id;
         /// <summary>
         /// type of peripheral device
         /// </summary>
