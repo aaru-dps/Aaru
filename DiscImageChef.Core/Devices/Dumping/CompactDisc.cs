@@ -435,9 +435,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 if(dev.PlatformID == Interop.PlatformID.FreeBSD)
                 {
-                    DicConsole.DebugWriteLine("Dump-Media", "FreeBSD panics when reading CD Lead-in, see upstream bug #FILLME.");
+                    DicConsole.DebugWriteLine("Dump-Media", "FreeBSD panics when reading CD Lead-in, see upstream bug #224253.");
                     break;
                 }
+                
                 if(aborted)
                 {
                     dumpLog.WriteLine("Aborted!");
