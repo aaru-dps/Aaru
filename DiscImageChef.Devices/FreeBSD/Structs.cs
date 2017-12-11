@@ -293,12 +293,10 @@ namespace DiscImageChef.Devices.FreeBSD
         public uint dxfer_len;
         /// <summary>Transfer residual length: 2's comp</summary>
         public int resid;
-        /// <summary>What to do for tag queueing. The tag action should be either the define below (to send a non-tagged transaction) or one of the defined scsi tag messages from scsi_message.h.</summary>
-        public byte tag_action;
-        /// <summary>tag id from initator (target mode)</summary>
-        public uint tag_id;
-        /// <summary>initiator id of who selected</summary>
-        public uint init_id;
+        /// <summary>Flags for the rest of the buffer</summary>
+        public byte ata_flags;
+        public uint aux;
+        public uint unused;
     }
 
     [StructLayout(LayoutKind.Sequential)]

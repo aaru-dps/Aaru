@@ -34,7 +34,7 @@
 using System;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
-using DiscImageChef.Devices.Linux;
+using DiscImageChef.Decoders.ATA;
 using static DiscImageChef.Devices.FreeBSD.Extern;
 
 namespace DiscImageChef.Devices.FreeBSD
@@ -261,6 +261,295 @@ namespace DiscImageChef.Devices.FreeBSD
                 Marshal.FreeHGlobal(cdbPtr);
             Marshal.FreeHGlobal(csio.data_ptr);
             cam_freeccb(ccbPtr);
+
+            return error;
+        }
+
+        static ccb_flags AtaProtocolToCamFlags(AtaProtocol protocol)
+        {
+            switch(protocol)
+            {
+                case AtaProtocol.DeviceDiagnostic:
+                case AtaProtocol.DeviceReset:
+                case AtaProtocol.HardReset:
+                case AtaProtocol.NonData:
+                case AtaProtocol.SoftReset:
+                case AtaProtocol.ReturnResponse:
+                    return ccb_flags.CAM_DIR_NONE;
+                case AtaProtocol.PioIn:
+                case AtaProtocol.UDmaIn:
+                    return ccb_flags.CAM_DIR_IN;
+                case AtaProtocol.PioOut:
+                case AtaProtocol.UDmaOut:
+                    return ccb_flags.CAM_DIR_OUT;
+                default:
+                    return ccb_flags.CAM_DIR_NONE;
+            }
+        }
+
+        internal static int SendAtaCommand(IntPtr dev, AtaRegistersCHS registers,
+                                           out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        {
+            duration = 0;
+            sense = false;
+            errorRegisters = new AtaErrorRegistersCHS();
+
+            if(buffer == null) return -1;
+
+            IntPtr ccbPtr = cam_getccb(dev);
+
+            ccb_ataio ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
+            ataio.ccb_h.func_code = xpt_opcode.XPT_ATA_IO;
+            ataio.ccb_h.flags = AtaProtocolToCamFlags(protocol);
+            ataio.ccb_h.xflags = 0;
+            ataio.ccb_h.retry_count = 1;
+            ataio.ccb_h.cbfcnp = IntPtr.Zero;
+            ataio.ccb_h.timeout = timeout;
+            ataio.data_ptr = Marshal.AllocHGlobal(buffer.Length);
+            ataio.dxfer_len = (uint)buffer.Length;
+            ataio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+            ataio.cmd.flags = CamAtaIoFlags.NeedResult;
+            switch(protocol)
+            {
+                case AtaProtocol.Dma:
+                case AtaProtocol.DmaQueued:
+                case AtaProtocol.UDmaIn:
+                case AtaProtocol.UDmaOut:
+                    ataio.cmd.flags |= CamAtaIoFlags.DMA;
+                    break;
+                case AtaProtocol.FPDma:
+                    ataio.cmd.flags |= CamAtaIoFlags.FPDMA;
+                    break;
+            }
+
+            ataio.cmd.command = registers.command;
+            ataio.cmd.lba_high = registers.cylinderHigh;
+            ataio.cmd.lba_mid = registers.cylinderLow;
+            ataio.cmd.device = (byte)(0x40 | registers.deviceHead);
+            ataio.cmd.features = registers.feature;
+            ataio.cmd.sector_count = registers.sectorCount;
+            ataio.cmd.lba_low = registers.sector;
+
+            Marshal.Copy(buffer, 0, ataio.data_ptr, buffer.Length);
+            Marshal.StructureToPtr(ataio, ccbPtr, false);
+
+            DateTime start = DateTime.UtcNow;
+            int error = cam_send_ccb(dev, ccbPtr);
+            DateTime end = DateTime.UtcNow;
+
+            if(error < 0) error = Marshal.GetLastWin32Error();
+
+            ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
+
+            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_REQ_CMP &&
+               (ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_SCSI_STATUS_ERROR)
+            {
+                error = Marshal.GetLastWin32Error();
+                DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
+                sense = true;
+            }
+
+            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_ATA_STATUS_ERROR) sense = true;
+
+            errorRegisters.cylinderHigh = ataio.res.lba_high;
+            errorRegisters.cylinderLow = ataio.res.lba_mid;
+            errorRegisters.deviceHead = ataio.res.device;
+            errorRegisters.error = ataio.res.error;
+            errorRegisters.sector = ataio.res.lba_low;
+            errorRegisters.sectorCount = ataio.res.sector_count;
+            errorRegisters.status = ataio.res.status;
+
+            buffer = new byte[ataio.dxfer_len];
+
+            Marshal.Copy(ataio.data_ptr, buffer, 0, buffer.Length);
+            duration = (end - start).TotalMilliseconds;
+
+            Marshal.FreeHGlobal(ataio.data_ptr);
+            cam_freeccb(ccbPtr);
+
+            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0 || error != 0;
+
+            return error;
+        }
+
+        internal static int SendAtaCommand(IntPtr dev, AtaRegistersLBA28 registers,
+                                           out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        {
+            duration = 0;
+            sense = false;
+            errorRegisters = new AtaErrorRegistersLBA28();
+
+            if(buffer == null) return -1;
+
+            IntPtr ccbPtr = cam_getccb(dev);
+
+            ccb_ataio ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
+            ataio.ccb_h.func_code = xpt_opcode.XPT_ATA_IO;
+            ataio.ccb_h.flags = AtaProtocolToCamFlags(protocol);
+            ataio.ccb_h.xflags = 0;
+            ataio.ccb_h.retry_count = 1;
+            ataio.ccb_h.cbfcnp = IntPtr.Zero;
+            ataio.ccb_h.timeout = timeout;
+            ataio.data_ptr = Marshal.AllocHGlobal(buffer.Length);
+            ataio.dxfer_len = (uint)buffer.Length;
+            ataio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+            ataio.cmd.flags = CamAtaIoFlags.NeedResult;
+            switch(protocol)
+            {
+                case AtaProtocol.Dma:
+                case AtaProtocol.DmaQueued:
+                case AtaProtocol.UDmaIn:
+                case AtaProtocol.UDmaOut:
+                    ataio.cmd.flags |= CamAtaIoFlags.DMA;
+                    break;
+                case AtaProtocol.FPDma:
+                    ataio.cmd.flags |= CamAtaIoFlags.FPDMA;
+                    break;
+            }
+
+            ataio.cmd.command = registers.command;
+            ataio.cmd.lba_high = registers.lbaHigh;
+            ataio.cmd.lba_mid = registers.lbaMid;
+            ataio.cmd.device = (byte)(0x40 | registers.deviceHead);
+            ataio.cmd.features = registers.feature;
+            ataio.cmd.sector_count = registers.sectorCount;
+            ataio.cmd.lba_low = registers.lbaLow;
+
+            Marshal.Copy(buffer, 0, ataio.data_ptr, buffer.Length);
+            Marshal.StructureToPtr(ataio, ccbPtr, false);
+
+            DateTime start = DateTime.UtcNow;
+            int error = cam_send_ccb(dev, ccbPtr);
+            DateTime end = DateTime.UtcNow;
+
+            if(error < 0) error = Marshal.GetLastWin32Error();
+
+            ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
+
+            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_REQ_CMP &&
+               (ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_SCSI_STATUS_ERROR)
+            {
+                error = Marshal.GetLastWin32Error();
+                DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
+                sense = true;
+            }
+
+            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_ATA_STATUS_ERROR) sense = true;
+
+            errorRegisters.lbaHigh = ataio.res.lba_high;
+            errorRegisters.lbaMid = ataio.res.lba_mid;
+            errorRegisters.deviceHead = ataio.res.device;
+            errorRegisters.error = ataio.res.error;
+            errorRegisters.lbaLow = ataio.res.lba_low;
+            errorRegisters.sectorCount = ataio.res.sector_count;
+            errorRegisters.status = ataio.res.status;
+
+            buffer = new byte[ataio.dxfer_len];
+
+            Marshal.Copy(ataio.data_ptr, buffer, 0, buffer.Length);
+            duration = (end - start).TotalMilliseconds;
+
+            Marshal.FreeHGlobal(ataio.data_ptr);
+            cam_freeccb(ccbPtr);
+
+            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0 || error != 0;
+
+            return error;
+        }
+
+        internal static int SendAtaCommand(IntPtr dev, AtaRegistersLBA48 registers,
+                                           out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        {
+            duration = 0;
+            sense = false;
+            errorRegisters = new AtaErrorRegistersLBA48();
+
+            // 48-bit ATA CAM commands can crash FreeBSD < 9.2-RELEASE
+            if((System.Environment.Version.Major == 9 && System.Environment.Version.Minor < 2) ||
+               System.Environment.Version.Major < 9) return -1;
+            
+            if(buffer == null) return -1;
+
+            IntPtr ccbPtr = cam_getccb(dev);
+
+            ccb_ataio ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
+            ataio.ccb_h.func_code = xpt_opcode.XPT_ATA_IO;
+            ataio.ccb_h.flags = AtaProtocolToCamFlags(protocol);
+            ataio.ccb_h.xflags = 0;
+            ataio.ccb_h.retry_count = 1;
+            ataio.ccb_h.cbfcnp = IntPtr.Zero;
+            ataio.ccb_h.timeout = timeout;
+            ataio.data_ptr = Marshal.AllocHGlobal(buffer.Length);
+            ataio.dxfer_len = (uint)buffer.Length;
+            ataio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+            ataio.cmd.flags = CamAtaIoFlags.NeedResult | CamAtaIoFlags.ExtendedCommand;
+            switch(protocol)
+            {
+                case AtaProtocol.Dma:
+                case AtaProtocol.DmaQueued:
+                case AtaProtocol.UDmaIn:
+                case AtaProtocol.UDmaOut:
+                    ataio.cmd.flags |= CamAtaIoFlags.DMA;
+                    break;
+                case AtaProtocol.FPDma:
+                    ataio.cmd.flags |= CamAtaIoFlags.FPDMA;
+                    break;
+            }
+
+            ataio.cmd.lba_high_exp = (byte)((registers.lbaHigh & 0xFF00) >> 8);
+            ataio.cmd.lba_mid_exp = (byte)((registers.lbaMid & 0xFF00) >> 8);
+            ataio.cmd.features_exp = (byte)((registers.feature & 0xFF00) >> 8);
+            ataio.cmd.sector_count_exp = (byte)((registers.sectorCount & 0xFF00) >> 8);
+            ataio.cmd.lba_low_exp = (byte)((registers.lbaLow & 0xFF00) >> 8);
+            ataio.cmd.lba_high = (byte)(registers.lbaHigh & 0xFF);
+            ataio.cmd.lba_mid = (byte)(registers.lbaMid & 0xFF);
+            ataio.cmd.features = (byte)(registers.feature & 0xFF);
+            ataio.cmd.sector_count = (byte)(registers.sectorCount & 0xFF);
+            ataio.cmd.lba_low = (byte)(registers.lbaLow & 0xFF);
+            ataio.cmd.command = registers.command;
+            ataio.cmd.device = (byte)(0x40 | registers.deviceHead);
+
+            Marshal.Copy(buffer, 0, ataio.data_ptr, buffer.Length);
+            Marshal.StructureToPtr(ataio, ccbPtr, false);
+
+            DateTime start = DateTime.UtcNow;
+            int error = cam_send_ccb(dev, ccbPtr);
+            DateTime end = DateTime.UtcNow;
+
+            if(error < 0) error = Marshal.GetLastWin32Error();
+
+            ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
+
+            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_REQ_CMP &&
+               (ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_SCSI_STATUS_ERROR)
+            {
+                error = Marshal.GetLastWin32Error();
+                DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
+                sense = true;
+            }
+
+            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_ATA_STATUS_ERROR) sense = true;
+
+            errorRegisters.sectorCount = (ushort)((ataio.res.sector_count_exp << 8) + ataio.res.sector_count);
+            errorRegisters.lbaLow = (ushort)((ataio.res.lba_low_exp << 8) + ataio.res.lba_low);
+            errorRegisters.lbaMid = (ushort)((ataio.res.lba_mid_exp << 8) + ataio.res.lba_mid);
+            errorRegisters.lbaHigh = (ushort)((ataio.res.lba_high_exp << 8) + ataio.res.lba_high);
+            errorRegisters.deviceHead = ataio.res.device;
+            errorRegisters.error = ataio.res.error;
+            errorRegisters.status = ataio.res.status;
+
+            buffer = new byte[ataio.dxfer_len];
+
+            Marshal.Copy(ataio.data_ptr, buffer, 0, buffer.Length);
+            duration = (end - start).TotalMilliseconds;
+
+            Marshal.FreeHGlobal(ataio.data_ptr);
+            cam_freeccb(ccbPtr);
+
+            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0 || error != 0;
 
             return error;
         }

@@ -195,6 +195,11 @@ namespace DiscImageChef.Devices
                         return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
                             transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
                     }
+                case Interop.PlatformID.FreeBSD:
+                {
+                    return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
+                }
                 default:
                     throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
@@ -245,6 +250,11 @@ namespace DiscImageChef.Devices
                         return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
                             transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
                     }
+                case Interop.PlatformID.FreeBSD:
+                {
+                    return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
+                }
                 default:
                     throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
@@ -279,6 +289,11 @@ namespace DiscImageChef.Devices
                         return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
                             transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
                     }
+                case Interop.PlatformID.FreeBSD:
+                {
+                    return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
+                }
                 default:
                     throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
