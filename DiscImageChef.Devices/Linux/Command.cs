@@ -269,8 +269,8 @@ namespace DiscImageChef.Devices.Linux
 
             byte[] cdb = new byte[16];
             cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
-            cdb[1] |= 0x01;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
+            cdb[1] |= 0x01;
             if(transferRegister != AtaTransferRegister.NoTransfer &&
                 protocol != AtaProtocol.NonData)
             {
