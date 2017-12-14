@@ -8,13 +8,17 @@
 #include "ata.h"
 #include "main.h"
 #include "atapi.h"
+#include "atapi_report.h"
+#include <libxml/xmlwriter.h>
 
 #define DIC_VERSION "3.99.6.0"
 #define DIC_COPYRIGHT "Copyright © 2011-2017 Natalia Portillo"
+#define XML_ENCODING "UTF-8"
+#define DIC_REPORT_ROOT "DicDeviceReport"
 
 int main(int argc, void *argv[])
 {
-    int fd;
+    int fd, rc;
     unsigned char *scsi_sense = NULL;
     unsigned char *scsi_inq_data = NULL;
     unsigned char *ata_ident = NULL;
@@ -25,6 +29,8 @@ int main(int argc, void *argv[])
     unsigned char* product;
     unsigned char* revision;
     int deviceType = DEVICE_TYPE_UNKNOWN;
+    char* xmlFilename = malloc(NAME_MAX + 1);
+    xmlTextWriterPtr xmlWriter;
 
     printf("The Disc Image Chef Device Reporter for Linux %s\n", DIC_VERSION);
     printf("%s\n", DIC_COPYRIGHT);
@@ -88,6 +94,53 @@ int main(int argc, void *argv[])
     printf("Manufacturer: %s\n", manufacturer);
     printf("Product: %s\n", product);
     printf("Revision: %s\n", revision);
+
+    if(deviceType != DEVICE_TYPE_ATA && deviceType!=DEVICE_TYPE_ATAPI  && deviceType != DEVICE_TYPE_SCSI)
+    {
+        printf("Unsupported device type %s.", DeviceType[deviceType]);
+        return 3;
+    }
+
+    sprintf(xmlFilename, "%s_%s_%s.xml", manufacturer, product, revision);
+
+    xmlWriter = xmlNewTextWriterFilename(xmlFilename, 0);
+    if(xmlWriter == NULL)
+    {
+        printf("Could not create XML report file.\n");
+        return 4;
+    }
+
+    rc = xmlTextWriterStartDocument(xmlWriter, NULL, XML_ENCODING, NULL);
+    if(rc < 0)
+    {
+        printf("Could not create XML report file.\n");
+        return 4;
+    }
+
+    rc = xmlTextWriterStartElement(xmlWriter, BAD_CAST DIC_REPORT_ROOT);
+    if(rc < 0)
+    {
+        printf("Could not create XML report file.\n");
+        return 4;
+    }
+
+    char* xmlComment = malloc(255);
+    sprintf(xmlComment, "Report created with DiscImageChef.Device.Report v%s", DIC_VERSION);
+    rc = xmlTextWriterWriteComment(xmlWriter, xmlComment);
+    if(rc < 0)
+    {
+        printf("Could not create XML report file.\n");
+        return 4;
+    }
+
+    if(deviceType == DEVICE_TYPE_ATAPI)
+        AtapiReport(fd, xmlWriter);
+
+    rc = xmlTextWriterEndDocument(xmlWriter);
+    if (rc < 0) {
+        printf("Could not close XML report file.\n");
+        return 4;
+    }
 
     close(fd);
 

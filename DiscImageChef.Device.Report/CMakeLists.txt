@@ -3,4 +3,9 @@ project(DiscImageChef_Device_Report C)
 
 set(CMAKE_C_STANDARD 90)
 
-add_executable(DiscImageChef_Device_Report main.c scsi.c scsi.h main.h ata.h ata.c atapi.c atapi.h)
+find_package(LibXml2)
+
+include_directories(${LIBXML2_INCLUDE_DIR})
+
+add_executable(DiscImageChef_Device_Report main.c scsi.c scsi.h main.h ata.h ata.c atapi.c atapi.h atapi_report.c atapi_report.h identify_decode.c identify_decode.h)
+target_link_libraries(DiscImageChef_Device_Report ${LIBXML2_LIBRARIES})
