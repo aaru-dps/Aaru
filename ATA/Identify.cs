@@ -1655,7 +1655,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// CRYPTO SCRAMBLE EXT supported
             /// </summary>
-            CyrptoScramble = 0x0020,
+            CryptoScramble = 0x0020,
             /// <summary>
             /// Sanitize feature set is supported
             /// </summary>
@@ -3350,7 +3350,7 @@ namespace DiscImageChef.Decoders.ATA
                 sb.AppendLine().Append("BLOCK ERASE EXT is supported");
             if(ATAID.Capabilities3.HasFlag(CapabilitiesBit3.Overwrite))
                 sb.AppendLine().Append("OVERWRITE EXT is supported");
-            if(ATAID.Capabilities3.HasFlag(CapabilitiesBit3.CyrptoScramble))
+            if(ATAID.Capabilities3.HasFlag(CapabilitiesBit3.CryptoScramble))
                 sb.AppendLine().Append("CRYPTO SCRAMBLE EXT is supported");
 
             if(ATAID.CommandSet5.HasFlag(CommandSetBit5.DeviceConfDMA))
