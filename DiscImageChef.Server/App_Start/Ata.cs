@@ -1388,7 +1388,7 @@ namespace DiscImageChef.Server.App_Start
                     ataOneValue.Add("BLOCK ERASE EXT is supported");
                 if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.Overwrite))
                     ataOneValue.Add("OVERWRITE EXT is supported");
-                if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.CyrptoScramble))
+                if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.CryptoScramble))
                     ataOneValue.Add("CRYPTO SCRAMBLE EXT is supported");
             }
 
