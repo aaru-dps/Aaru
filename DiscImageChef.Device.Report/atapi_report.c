@@ -9,13 +9,13 @@
 #include "atapi.h"
 #include "identify_decode.h"
 
-#define DIC_ATAPI_REPORT_ELEMENT "ATAPI"
-
 void AtapiReport(int fd, xmlTextWriterPtr xmlWriter)
 {
     unsigned char *atapi_ident = NULL;
     AtaErrorRegistersCHS *ata_error_chs;
     int error;
+
+    printf("Querying ATAPI IDENTIFY...\n");
 
     error = IdentifyPacket(fd, &atapi_ident, &ata_error_chs);
 

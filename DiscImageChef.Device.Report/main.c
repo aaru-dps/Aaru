@@ -9,6 +9,7 @@
 #include "main.h"
 #include "atapi.h"
 #include "atapi_report.h"
+#include "scsi_report.h"
 #include <libxml/xmlwriter.h>
 
 #define DIC_VERSION "3.99.6.0"
@@ -135,6 +136,9 @@ int main(int argc, void *argv[])
 
     if(deviceType == DEVICE_TYPE_ATAPI)
         AtapiReport(fd, xmlWriter);
+
+    if(deviceType == DEVICE_TYPE_ATAPI || deviceType == DEVICE_TYPE_SCSI)
+        ScsiReport(fd, xmlWriter);
 
     rc = xmlTextWriterEndDocument(xmlWriter);
     if (rc < 0) {
