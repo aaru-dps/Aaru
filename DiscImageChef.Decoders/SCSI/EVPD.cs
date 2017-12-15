@@ -1177,7 +1177,7 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendLine("SCSI Extended INQUIRY Data:");
 
             if(page.PeripheralDeviceType == PeripheralDeviceTypes.DirectAccess ||
-               page.PeripheralDeviceType == PeripheralDeviceTypes.SCSIZonedBlockDEvice)
+               page.PeripheralDeviceType == PeripheralDeviceTypes.SCSIZonedBlockDevice)
             {
                 switch(page.SPT)
                 {

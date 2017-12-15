@@ -355,7 +355,7 @@ namespace DiscImageChef.Decoders.SCSI
                 case PeripheralDeviceTypes.SCSISecurityManagerDevice: //0x13,
                     sb.AppendLine("Security Manager Device");
                     break;
-                case PeripheralDeviceTypes.SCSIZonedBlockDEvice: //0x14
+                case PeripheralDeviceTypes.SCSIZonedBlockDevice: //0x14
                     sb.AppendLine("Host managed zoned block device");
                     break;
                 case PeripheralDeviceTypes.WellKnownDevice: //0x1E,

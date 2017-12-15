@@ -128,7 +128,7 @@ namespace DiscImageChef.Server.App_Start
                 case PeripheralDeviceTypes.SCSISecurityManagerDevice: //0x13,
                     scsiOneValue.Add("Security Manager Device");
                     break;
-                case PeripheralDeviceTypes.SCSIZonedBlockDEvice: //0x14
+                case PeripheralDeviceTypes.SCSIZonedBlockDevice: //0x14
                     scsiOneValue.Add("Host managed zoned block device");
                     break;
                 case PeripheralDeviceTypes.WellKnownDevice: //0x1E,

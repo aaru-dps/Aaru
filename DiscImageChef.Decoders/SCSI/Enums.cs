@@ -141,7 +141,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Host managed zoned block device
         /// </summary>
-        SCSIZonedBlockDEvice = 0x14,
+        SCSIZonedBlockDevice = 0x14,
         /// <summary>
         /// Well known logical unit
         /// </summary>
