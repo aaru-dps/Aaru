@@ -208,6 +208,7 @@ int SendAtaCommandLba48(int fd, AtaRegistersLBA48 registers, AtaErrorRegistersLB
 
     *errorRegisters = malloc(sizeof(AtaErrorRegistersLBA48));
     memset(*errorRegisters, 0, sizeof(AtaErrorRegistersLBA48));
+    (*errorRegisters)->error = sense_buf[11];
     (*errorRegisters)->sectorCount = (uint16_t)((sense_buf[12] << 8) + sense_buf[13]);
     (*errorRegisters)->lbaLow = (uint16_t)((sense_buf[14] << 8) + sense_buf[15]);
     (*errorRegisters)->lbaMid = (uint16_t)((sense_buf[16] << 8) + sense_buf[17]);
