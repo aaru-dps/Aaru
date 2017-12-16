@@ -241,7 +241,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             {
                 DicConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (10)...");
                 sense = dev.ModeSense10(out mode10Buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Default, 0x3F, 0x00, timeout, out duration);
-                if(!sense && dev.Error)
+                if(!sense && !dev.Error)
                 {
                     report.SCSI.SupportsModeSense10 = true;
                     report.SCSI.SupportsModeSubpages = false;
@@ -656,7 +656,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     {
                         report.SCSI.ReadCapabilities.SupportsReadCapacity = true;
                         report.SCSI.ReadCapabilities.Blocks = (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3])) + 1;
-                        report.SCSI.ReadCapabilities.BlockSize = (uint)((buffer[5] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + (buffer[7]));
+                        report.SCSI.ReadCapabilities.BlockSize = (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + (buffer[7]));
                         report.SCSI.ReadCapabilities.BlocksSpecified = true;
                         report.SCSI.ReadCapabilities.BlockSizeSpecified = true;
                     }
@@ -670,7 +670,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         Array.Copy(buffer, 0, temp, 0, 8);
                         Array.Reverse(temp);
                         report.SCSI.ReadCapabilities.Blocks = BitConverter.ToUInt64(temp, 0) + 1;
-                        report.SCSI.ReadCapabilities.BlockSize = (uint)((buffer[5] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + (buffer[7]));
+                        report.SCSI.ReadCapabilities.BlockSize = (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + (buffer[11]));
                         report.SCSI.ReadCapabilities.BlocksSpecified = true;
                         report.SCSI.ReadCapabilities.BlockSizeSpecified = true;
                     }
@@ -695,7 +695,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(!decMode.HasValue)
                             decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
                         if(debug)
-                            report.SCSI.ReadCapabilities.ModeSense10Data = buffer;
+                            report.SCSI.ReadCapabilities.ModeSense6Data = buffer;
                     }
 
                     if(decMode.HasValue)
