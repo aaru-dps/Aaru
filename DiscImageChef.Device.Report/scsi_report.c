@@ -17,6 +17,19 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
     int removable = FALSE;
     char user_response = ' ';
     unsigned char* tmpString;
+    const int testSize512[] = {514,
+            // Long sector sizes for SuperDisk
+                               536, 558,
+            // Long sector sizes for 512-byte magneto-opticals
+                               600, 610, 630};
+    const int testSize1024[] = {
+            // Long sector sizes for floppies
+            1026,
+            // Long sector sizes for 1024-byte magneto-opticals
+            1200};
+    const int testSize2048[] = {2380};
+    const int testSize4096[] = {4760};
+    const int testSize8192[] = {9424};
 
     printf("Querying SCSI INQUIRY...\n");
 
@@ -134,7 +147,7 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
 
     if(error)
     {
-        printf("Querying all mode pages using SCSI MODE SENSE (10)...");
+        printf("Querying all mode pages using SCSI MODE SENSE (10)...\n");
         error = ModeSense10(fd, &mode10Response, &sense, FALSE, TRUE, MODE_PAGE_DEFAULT, 0x3F, 0x00);
         if(!error)
             supportsMode10 = TRUE;
@@ -149,11 +162,11 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
     error = ModeSense6(fd, &mode6Response, &sense, FALSE, MODE_PAGE_DEFAULT, 0x3F, 0xFF);
     if(error)
     {
-        printf("Querying all mode pages using SCSI MODE SENSE (6)...");
+        printf("Querying all mode pages using SCSI MODE SENSE (6)...\n");
         error = ModeSense6(fd, &mode6Response, &sense, FALSE, MODE_PAGE_DEFAULT, 0x3F, 0x00);
         if(error)
         {
-            printf("Querying SCSI MODE SENSE (6)...");
+            printf("Querying SCSI MODE SENSE (6)...\n");
             error = ModeSense6(fd, &mode6Response, &sense, FALSE, MODE_PAGE_DEFAULT, 0x00, 0x00);
             if(!error)
                 supportsMode6 = TRUE;
@@ -186,12 +199,22 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
     }
 
     DecodedMode decMode;
+    DecodedMode decMode6;
+    DecodedMode decMode10;
     memset(&decMode, 0, sizeof(DecodedMode));
+    memset(&decMode6, 0, sizeof(DecodedMode));
+    memset(&decMode10, 0, sizeof(DecodedMode));
 
     if(supportsMode10)
-        decMode = DecodeMode10(mode10Response, inquiry->PeripheralDeviceType);
+    {
+        decMode10 = DecodeMode10(mode10Response, inquiry->PeripheralDeviceType);
+        memcpy(&decMode, &decMode10, sizeof(DecodedMode));
+    }
     else if(supportsMode6)
-        decMode = DecodeMode6(mode6Response, inquiry->PeripheralDeviceType);
+    {
+        decMode6 = DecodeMode6(mode6Response, inquiry->PeripheralDeviceType);
+        memcpy(&decMode, &decMode6, sizeof(DecodedMode));
+    }
 
     if(decMode.decoded)
     {
@@ -227,6 +250,212 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
             }
         }
         xmlTextWriterEndElement(xmlWriter); // </ModeSense>
+    }
+
+    if(inquiry->PeripheralDeviceType == 0x05) // MultiMediaDevice
+    {
+        // TODO: Report MMC
+    }
+    else if(inquiry->PeripheralDeviceType == 0x01) // SequentialAccess
+    {
+        // TODO: Report SSC
+    }
+    else
+    {
+        if(removable)
+        {
+            // TODO: Removable
+        }
+        else
+        {
+            uint64_t blocks = 0;
+            uint32_t blockSize = 0;
+
+            xmlTextWriterStartElement(xmlWriter, BAD_CAST "ReadCapabilities"); // <ReadCapabilities>
+
+            printf("Querying SCSI READ CAPACITY...\n");
+            error = ReadCapacity(fd, &buffer, &sense, FALSE, 0, FALSE);
+            if(!error)
+            {
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsReadCapacity", "%s", "true");
+                blocks = (uint64_t)(buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3]) + 1;
+                blockSize = (uint32_t)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + (buffer[7]));
+            }
+
+            printf("Querying SCSI READ CAPACITY (16)...\n");
+            error = ReadCapacity16(fd, &buffer, &sense, FALSE, 0);
+            if(!error)
+            {
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsReadCapacity16", "%s", "true");
+                blocks = (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3]);
+                blocks <<= 32;
+                blocks += (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + (buffer[7]);
+                blocks++;
+                blockSize = (uint32_t)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + (buffer[11]));
+            }
+
+            if(blocks != 0)
+            {
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "Blocks", "%llu", blocks);
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "BlockSize", "%lu", blockSize);
+            }
+
+            decMode.decoded = 0;
+
+            if(supportsMode10)
+            {
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsModeSense10", "%s", "true");
+                xmlTextWriterStartElement(xmlWriter, BAD_CAST "ModeSense10Data");
+                xmlTextWriterWriteBase64(xmlWriter, mode10Response, 0, (*(mode10Response + 0) << 8) + *(mode10Response + 1) + 2);
+                xmlTextWriterEndElement(xmlWriter);
+            }
+
+            if(supportsMode6)
+            {
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsModeSense6", "%s", "true");
+                xmlTextWriterStartElement(xmlWriter, BAD_CAST "ModeSense6Data");
+                xmlTextWriterWriteBase64(xmlWriter, mode6Response, 0, *(mode6Response + 0) + 1);
+                xmlTextWriterEndElement(xmlWriter);
+            }
+
+            if(decMode.decoded)
+            {
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "MediumType", "%d", decMode.Header.MediumType);
+                if(decMode.Header.descriptorsLength > 0)
+                    xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "Density", "%d", decMode.Header.BlockDescriptors[0].Density);
+            }
+
+            printf("Trying SCSI READ (6)...\n");
+            xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsRead", "%s", !Read6(fd, &buffer, &sense, 0, blockSize, 1) ? "true" : "false");
+
+            printf("Trying SCSI READ (10)...\n");
+            xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsRead10", "%s", !Read10(fd, &buffer, &sense, 0, FALSE, TRUE, FALSE, FALSE, 0, blockSize, 0, 1) ? "true" : "false");
+
+            printf("Trying SCSI READ (12)...\n");
+            xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsRead12", "%s", !Read12(fd, &buffer, &sense, 0, FALSE, TRUE, FALSE, FALSE, 0, blockSize, 0, 1, FALSE) ? "true" : "false");
+
+            printf("Trying SCSI READ (16)...\n");
+            xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsRead16", "%s", !Read16(fd, &buffer, &sense, 0, FALSE, TRUE, FALSE, 0, blockSize, 0, 1, FALSE) ? "true" : "false");
+
+            uint32_t longBlockSize = blockSize;
+
+            int supportsReadLong10 = FALSE;
+
+            printf("Trying SCSI READ LONG (10)...\n");
+            ReadLong10(fd, &buffer, &sense, FALSE, FALSE, 0, 0xFFFF);
+            if((sense[0] == 0x70 || sense[0] == 0x71) && (sense[2] & 0x0F) == 0x05 && sense[12] == 0x24 && sense[13] == 0x00)
+            {
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsReadLong", "%s", "true");
+                supportsReadLong10 = TRUE;
+                if(sense[0] & 0x80 && sense[2] & 0x20)
+                {
+                    uint32_t information = (sense[3] << 24) + (sense[4] << 16) + (sense[5] << 8) + sense[6];
+                    longBlockSize = 0xFFFF - (information & 0xFFFF);
+                    xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "LongBlockSize", "%d", longBlockSize);
+                }
+            }
+
+            printf("Trying SCSI READ LONG (10)...\n");
+            ReadLong16(fd, &buffer, &sense, FALSE, 0, 0xFFFF);
+            if((sense[0] == 0x70 || sense[0] == 0x71) && (sense[2] & 0x0F) == 0x05 && sense[12] == 0x24 && sense[13] == 0x00)
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsReadLong16", "%s", "true");
+
+            int i;
+
+            if(supportsReadLong10 && blockSize == longBlockSize)
+            {
+                if(blockSize == 512)
+                {
+                    for(i = 0; i < sizeof(testSize512) / sizeof(int); i++)
+                    {
+                        error = ReadLong10(fd, &buffer, &sense, FALSE, FALSE, 0, testSize512[i]);
+                        if(!error)
+                        {
+                            longBlockSize = testSize512[i];
+                            break;
+                        }
+                    }
+                }
+                else if(blockSize == 1024)
+                {
+                    for(i = 0; i < sizeof(testSize1024) / sizeof(int); i++)
+                    {
+                        error = ReadLong10(fd, &buffer, &sense, FALSE, FALSE, 0, testSize1024[i]);
+                        if(!error)
+                        {
+                            longBlockSize = testSize1024[i];
+                            break;
+                        }
+                    }
+                }
+                else if(blockSize == 2048)
+                {
+                    for(i = 0; i < sizeof(testSize2048) / sizeof(int); i++)
+                    {
+                        error = ReadLong10(fd, &buffer, &sense, FALSE, FALSE, 0, testSize2048[i]);
+                        if(!error)
+                        {
+                            longBlockSize = testSize2048[i];
+                            break;
+                        }
+                    }
+                }
+                else if(blockSize == 4096)
+                {
+                    for(i = 0; i < sizeof(testSize4096) / sizeof(int); i++)
+                    {
+                        error = ReadLong10(fd, &buffer, &sense, FALSE, FALSE, 0, testSize4096[i]);
+                        if(!error)
+                        {
+                            longBlockSize = testSize4096[i];
+                            break;
+                        }
+                    }
+                }
+                else if(blockSize == 8192)
+                {
+                    for(i = 0; i < sizeof(testSize8192) / sizeof(int); i++)
+                    {
+                        error = ReadLong10(fd, &buffer, &sense, FALSE, FALSE, 0, testSize8192[i]);
+                        if(!error)
+                        {
+                            longBlockSize = testSize8192[i];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if(supportsReadLong10 && blockSize == longBlockSize)
+            {
+                do
+                {
+                    printf("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+                    scanf("%c", &user_response);
+                    printf("\n");
+                } while(user_response != 'Y' && user_response != 'y' && user_response != 'N' && user_response != 'n');
+
+                if(user_response == 'Y' || user_response == 'y')
+                {
+                    for(i = blockSize; i <= 65536; i++)
+                    {
+                        printf("\rTrying to READ LONG with a size of %d bytes", i);
+                        error = ReadLong10(fd, &buffer, &sense, FALSE, FALSE, 0, i);
+                        if(!error)
+                        {
+                            longBlockSize = i;
+                            break;
+                        }
+                    }
+                    printf("\n");
+                }
+            }
+
+            if(supportsReadLong10 && blockSize != longBlockSize)
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "LongBlockSize", "%d", longBlockSize);
+
+            xmlTextWriterEndElement(xmlWriter); // </ReadCapabilities>
+        }
     }
 
     xmlTextWriterEndElement(xmlWriter); // </SCSI>
@@ -442,6 +671,7 @@ DecodedMode DecodeMode10(unsigned char* modeResponse, uint8_t deviceType)
 
     while(offset < length)
     {
+        printf("%doff\n", offset);
         int isSubpage = (modeResponse[offset] & 0x40) == 0x40;
 
         uint8_t pageNo = (uint8_t)(modeResponse[offset] & 0x3F);

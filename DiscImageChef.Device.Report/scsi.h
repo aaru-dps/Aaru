@@ -25,16 +25,36 @@ int Unload(int fd, unsigned char **senseBuffer);
 int LoadUnload(int fd, unsigned char **senseBuffer, int immediate, int load, int retense, int endOfTape, int hold);
 int ModeSense6(int fd, unsigned char **buffer, unsigned char **senseBuffer, int DBD, uint8_t pageControl, uint8_t pageCode, uint8_t subPageCode);
 int ModeSense10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int LLBAA, int DBD, uint8_t pageContorl, uint8_t pageCode, uint8_t subPageCode);
+int ReadCapacity(int fd, unsigned char **buffer, unsigned char **senseBuffer, int RelAddr, uint32_t address, int PMI);
+int ReadCapacity16(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint64_t address, int PMI);
+int Read6(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize, uint8_t transferLength);
+int Read10(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv, int relAddr, uint32_t lba, uint32_t blockSize, uint8_t groupNumber, uint16_t transferLength);
+int Read12(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv, int relAddr, uint32_t lba, uint32_t blockSize, uint8_t groupNumber, uint32_t transferLength, int streaming);
+int Read16(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv, uint64_t lba, uint32_t blockSize, uint8_t groupNumber, uint32_t transferLength, int streaming);
+int ReadLong10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int correct, int relAddr, uint32_t lba, uint16_t transferBytes);
+int ReadLong16(int fd, unsigned char **buffer, unsigned char **senseBuffer, int correct, uint64_t lba, uint32_t transferBytes);
+int Seek6(int fd, unsigned char **senseBuffer, uint32_t lba);
+int Seek10(int fd, unsigned char **senseBuffer, uint32_t lba);
 
 typedef enum
 {
+    SCSI_TEST_UNIT_READY = 0x00,
+    SCSI_READ = 0x08,
+    SCSI_SEEK = 0x0B,
     SCSI_INQUIRY = 0x12,
     SCSI_START_STOP_UNIT = 0x1B,
     SCSI_LOAD_UNLOAD = SCSI_START_STOP_UNIT,
     SCSI_MODE_SENSE = 0x1A,
     SCSI_PREVENT_ALLOW_MEDIUM_REMOVAL = 0x1E,
+    SCSI_READ_CAPACITY = 0x25,
+    SCSI_READ_10 = 0x28,
+    SCSI_READ_LONG = 0x3E,
+    SCSI_SEEK_10 = 0x2B,
     SCSI_MODE_SENSE_10 = 0x5A,
-    SCSI_ATA_PASSTHROUGH_16 = 0x85
+    SCSI_ATA_PASSTHROUGH_16 = 0x85,
+    SCSI_READ_16 = 0x88,
+    SCSI_SERVICE_ACTION_IN = 0x9E,
+    SCSI_READ_12 = 0xA8,
 } ScsiCommands;
 
 typedef enum
@@ -44,6 +64,12 @@ typedef enum
     MODE_PAGE_DEFAULT = 0x80,
     MODE_PAGE_SAVED = 0xC0
 } ScsiModeSensePageControl;
+
+typedef enum
+{
+    SCSI_READ_CAPACITY_16 = 0x10,
+    SCSI_READ_LONG_16 = 0x11,
+} ScsiServiceActionIn;
 
 // SCSI INQUIRY command response
 #pragma pack(1)

@@ -39,8 +39,12 @@ int SendScsiCommand(int fd, void *cdb, unsigned char cdb_len, unsigned char *buf
 
     if(error < 0)
         error = errno;
-    else
-        free(*senseBuffer);
+    else if(io_hdr.status != 0)
+        error = io_hdr.status;
+    else if(io_hdr.host_status != 0)
+        error = io_hdr.host_status;
+    else if(io_hdr.info != 0)
+        error = io_hdr.info & SG_INFO_OK_MASK;
 
     return error;
 }
@@ -260,6 +264,267 @@ int ModeSense10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int
     cdb[8] = (uint8_t)(buffer_len & 0xFF);
 
     error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int ReadCapacity(int fd, unsigned char **buffer, unsigned char **senseBuffer, int RelAddr, uint32_t address, int PMI)
+{
+    unsigned char cmd_len = 10;
+    unsigned int buffer_len = 8;
+    *buffer = malloc(buffer_len);
+    memset(*buffer, 0, buffer_len);
+
+    unsigned char cdb[] = {SCSI_READ_CAPACITY, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    if(PMI)
+    {
+        cdb[8] = 0x01;
+        if(RelAddr)
+            cdb[1] = 0x01;
+
+        cdb[2] = (uint8_t)((address & 0xFF000000) >> 24);
+        cdb[3] = (uint8_t)((address & 0xFF0000) >> 16);
+        cdb[4] = (uint8_t)((address & 0xFF00) >> 8);
+        cdb[5] = (uint8_t)(address & 0xFF);
+    }
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int ReadCapacity16(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint64_t address, int PMI)
+{
+    unsigned char cmd_len = 16;
+    unsigned int buffer_len = 32;
+    *buffer = malloc(buffer_len);
+    memset(*buffer, 0, buffer_len);
+
+    unsigned char cdb[] = {SCSI_SERVICE_ACTION_IN, SCSI_READ_CAPACITY_16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    if(PMI)
+    {
+        cdb[14] = 0x01;
+        cdb[2] = (uint8_t)((address & 0xFF00000000000000ULL) >> 56);
+        cdb[3] = (uint8_t)((address & 0xFF000000000000ULL) >> 48);
+        cdb[4] = (uint8_t)((address & 0xFF0000000000ULL) >> 40);
+        cdb[5] = (uint8_t)((address & 0xFF00000000ULL) >> 32);
+        cdb[6] = (uint8_t)((address & 0xFF000000ULL) >> 24);
+        cdb[7] = (uint8_t)((address & 0xFF0000ULL) >> 16);
+        cdb[8] = (uint8_t)((address & 0xFF00ULL) >> 8);
+        cdb[9] = (uint8_t)(address & 0xFFULL);
+    }
+
+    cdb[10] = (uint8_t)((buffer_len & 0xFF000000) >> 24);
+    cdb[11] = (uint8_t)((buffer_len & 0xFF0000) >> 16);
+    cdb[12] = (uint8_t)((buffer_len & 0xFF00) >> 8);
+    cdb[13] = (uint8_t)(buffer_len & 0xFF);
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int Read6(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize, uint8_t transferLength)
+{
+    unsigned char cmd_len = 6;
+    unsigned int buflen = transferLength == 0 ? 256 * blockSize : transferLength * blockSize;
+    *buffer = malloc(buflen);
+    memset(*buffer, 0, buflen);
+
+    unsigned char cdb[] = {SCSI_READ, 0, 0, 0, 0, 0};
+
+    cdb[1] = (uint8_t)((lba & 0x1F0000) >> 16);
+    cdb[2] = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[3] = (uint8_t)(lba & 0xFF);
+    cdb[4] = transferLength;
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buflen, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int Read10(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv, int relAddr, uint32_t lba, uint32_t blockSize, uint8_t groupNumber, uint16_t transferLength)
+{
+    unsigned char cmd_len = 10;
+    unsigned int buflen = transferLength * blockSize;
+    *buffer = malloc(buflen);
+    memset(*buffer, 0, buflen);
+
+    unsigned char cdb[] = {SCSI_READ_10, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    cdb[1] = (uint8_t)((rdprotect & 0x07) << 5);
+    if(dpo)
+        cdb[1] += 0x10;
+    if(fua)
+        cdb[1] += 0x08;
+    if(fuaNv)
+        cdb[1] += 0x02;
+    if(relAddr)
+        cdb[1] += 0x01;
+    cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[3] = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[4] = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[5] = (uint8_t)(lba & 0xFF);
+    cdb[6] = (uint8_t)(groupNumber & 0x1F);
+    cdb[7] = (uint8_t)((transferLength & 0xFF00) >> 8);
+    cdb[8] = (uint8_t)(transferLength & 0xFF);
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buflen, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int Read12(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv, int relAddr, uint32_t lba, uint32_t blockSize, uint8_t groupNumber, uint32_t transferLength, int streaming)
+{
+    unsigned char cmd_len = 12;
+    unsigned int buflen = transferLength * blockSize;
+    *buffer = malloc(buflen);
+    memset(*buffer, 0, buflen);
+
+    unsigned char cdb[] = {SCSI_READ_12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    cdb[1] = (uint8_t)((rdprotect & 0x07) << 5);
+    if(dpo)
+        cdb[1] += 0x10;
+    if(fua)
+        cdb[1] += 0x08;
+    if(fuaNv)
+        cdb[1] += 0x02;
+    if(relAddr)
+        cdb[1] += 0x01;
+    cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[3] = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[4] = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[5] = (uint8_t)(lba & 0xFF);
+    cdb[6] = (uint8_t)((transferLength & 0xFF000000) >> 24);
+    cdb[7] = (uint8_t)((transferLength & 0xFF0000) >> 16);
+    cdb[8] = (uint8_t)((transferLength & 0xFF00) >> 8);
+    cdb[9] = (uint8_t)(transferLength & 0xFF);
+    cdb[10] = (uint8_t)(groupNumber & 0x1F);
+    if(streaming)
+        cdb[10] += 0x80;
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buflen, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int Read16(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv, uint64_t lba, uint32_t blockSize, uint8_t groupNumber, uint32_t transferLength, int streaming)
+{
+    unsigned char cmd_len = 16;
+    unsigned int buflen = transferLength * blockSize;
+    *buffer = malloc(buflen);
+    memset(*buffer, 0, buflen);
+
+    unsigned char cdb[] = {SCSI_READ_16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    cdb[1] = (uint8_t)((rdprotect & 0x07) << 5);
+    if(dpo)
+        cdb[1] += 0x10;
+    if(fua)
+        cdb[1] += 0x08;
+    if(fuaNv)
+        cdb[1] += 0x02;
+    cdb[2] = (uint8_t)((lba & 0xFF00000000000000ULL) >> 56);
+    cdb[3] = (uint8_t)((lba & 0xFF000000000000ULL) >> 48);
+    cdb[4] = (uint8_t)((lba & 0xFF0000000000ULL) >> 40);
+    cdb[5] = (uint8_t)((lba & 0xFF00000000ULL) >> 32);
+    cdb[6] = (uint8_t)((lba & 0xFF000000ULL) >> 24);
+    cdb[7] = (uint8_t)((lba & 0xFF0000ULL) >> 16);
+    cdb[8] = (uint8_t)((lba & 0xFF00ULL) >> 8);
+    cdb[9] = (uint8_t)(lba & 0xFFULL);
+    cdb[10] = (uint8_t)((transferLength & 0xFF000000) >> 24);
+    cdb[11] = (uint8_t)((transferLength & 0xFF0000) >> 16);
+    cdb[12] = (uint8_t)((transferLength & 0xFF00) >> 8);
+    cdb[13] = (uint8_t)(transferLength & 0xFF);
+    cdb[14] = (uint8_t)(groupNumber & 0x1F);
+    if(streaming)
+        cdb[14] += 0x80;
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buflen, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int ReadLong10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int correct, int relAddr, uint32_t lba, uint16_t transferBytes)
+{
+    unsigned char cmd_len = 10;
+    *buffer = malloc(transferBytes);
+    memset(*buffer, 0, transferBytes);
+
+    unsigned char cdb[] = {SCSI_READ_LONG, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    if(correct)
+        cdb[1] += 0x02;
+    if(relAddr)
+        cdb[1] += 0x01;
+    cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[3] = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[4] = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[5] = (uint8_t)(lba & 0xFF);
+    cdb[7] = (uint8_t)((transferBytes & 0xFF00) >> 8);
+    cdb[8] = (uint8_t)(transferBytes & 0xFF);
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, transferBytes, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int ReadLong16(int fd, unsigned char **buffer, unsigned char **senseBuffer, int correct, uint64_t lba, uint32_t transferBytes)
+{
+    unsigned char cmd_len = 16;
+    *buffer = malloc(transferBytes);
+    memset(*buffer, 0, transferBytes);
+
+    unsigned char cdb[] = {SCSI_SERVICE_ACTION_IN, SCSI_READ_LONG_16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    cdb[2] = (uint8_t)((lba & 0xFF00000000000000ULL) >> 56);
+    cdb[3] = (uint8_t)((lba & 0xFF000000000000ULL) >> 48);
+    cdb[4] = (uint8_t)((lba & 0xFF0000000000ULL) >> 40);
+    cdb[5] = (uint8_t)((lba & 0xFF00000000ULL) >> 32);
+    cdb[6] = (uint8_t)((lba & 0xFF000000ULL) >> 24);
+    cdb[7] = (uint8_t)((lba & 0xFF0000ULL) >> 16);
+    cdb[8] = (uint8_t)((lba & 0xFF00ULL) >> 8);
+    cdb[9] = (uint8_t)(lba & 0xFFULL);
+    cdb[12] = (uint8_t)((transferBytes & 0xFF00) >> 8);
+    cdb[13] = (uint8_t)(transferBytes & 0xFF);
+    if(correct)
+        cdb[14] += 0x01;
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, transferBytes, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int Seek6(int fd, unsigned char **senseBuffer, uint32_t lba)
+{
+    unsigned char cmd_len = 6;
+    char cdb[] = {SCSI_SEEK, 0, 0, 0, 0, 0};
+    unsigned char *buffer = malloc(0);
+
+    cdb[1] = (uint8_t)((lba & 0x1F0000) >> 16);
+    cdb[2] = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[3] = (uint8_t)(lba & 0xFF);
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, buffer, 0, senseBuffer, SG_DXFER_NONE);
+
+    return error;
+}
+
+int Seek10(int fd, unsigned char **senseBuffer, uint32_t lba)
+{
+    unsigned char cmd_len = 10;
+    char cdb[] = {SCSI_SEEK_10, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    unsigned char *buffer = malloc(0);
+
+    cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[3] = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[4] = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[5] = (uint8_t)(lba & 0xFF);
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, buffer, 0, senseBuffer, SG_DXFER_NONE);
 
     return error;
 }
