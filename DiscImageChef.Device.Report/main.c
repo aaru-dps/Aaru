@@ -32,6 +32,7 @@ int main(int argc, void *argv[])
     int deviceType = DEVICE_TYPE_UNKNOWN;
     char* xmlFilename = malloc(NAME_MAX + 1);
     xmlTextWriterPtr xmlWriter;
+    const char* ataName = "ATA";
 
     printf("The Disc Image Chef Device Reporter for Linux %s\n", DIC_VERSION);
     printf("%s\n", DIC_COPYRIGHT);
@@ -79,7 +80,7 @@ int main(int argc, void *argv[])
             deviceType = DEVICE_TYPE_ATAPI;
     }
 
-    if(scsi_inq_data == NULL || strcmp(manufacturer,"ATA"))
+    if(scsi_inq_data == NULL || !strncmp((const char *)manufacturer,ataName, 3))
     {
         ata_error = Identify(fd, &ata_ident, &ata_error_chs);
 
