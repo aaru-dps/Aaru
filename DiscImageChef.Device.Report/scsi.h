@@ -9,13 +9,41 @@
 
 int SendScsiCommand(int fd, void *cdb, unsigned char cdb_len, unsigned char *buffer, unsigned int buffer_len, unsigned char **senseBuffer, int direction);
 int Inquiry(int fd, unsigned char **buffer, unsigned char **senseBuffer);
-
+int PreventMediumRemoval(int fd, unsigned char **senseBuffer);
+int AllowMediumRemoval(int fd, unsigned char **senseBuffer);
+int PreventAllowMediumRemoval(int fd, unsigned char **senseBuffer, int persistent, int prevent);
+int LoadTray(int fd, unsigned char **senseBuffer);
+int EjectTray(int fd, unsigned char **senseBuffer);
+int StartUnit(int fd, unsigned char **senseBuffer);
+int StopUnit(int fd, unsigned char **senseBuffer);
+int StartStopUnit(int fd, unsigned char **senseBuffer, int immediate, uint8_t formatLayer, uint8_t powerConditions, int changeFormatLayer, int loadEject, int start);
+int SpcPreventMediumRemoval(int fd, unsigned char **senseBuffer);
+int SpcAllowMediumRemoval(int fd, unsigned char **senseBuffer);
+int SpcPreventAllowMediumRemoval(int fd, unsigned char **senseBuffer, uint8_t preventMode);
+int Load(int fd, unsigned char **senseBuffer);
+int Unload(int fd, unsigned char **senseBuffer);
+int LoadUnload(int fd, unsigned char **senseBuffer, int immediate, int load, int retense, int endOfTape, int hold);
+int ModeSense6(int fd, unsigned char **buffer, unsigned char **senseBuffer, int DBD, uint8_t pageControl, uint8_t pageCode, uint8_t subPageCode);
+int ModeSense10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int LLBAA, int DBD, uint8_t pageContorl, uint8_t pageCode, uint8_t subPageCode);
 
 typedef enum
 {
     SCSI_INQUIRY = 0x12,
+    SCSI_START_STOP_UNIT = 0x1B,
+    SCSI_LOAD_UNLOAD = SCSI_START_STOP_UNIT,
+    SCSI_MODE_SENSE = 0x1A,
+    SCSI_PREVENT_ALLOW_MEDIUM_REMOVAL = 0x1E,
+    SCSI_MODE_SENSE_10 = 0x5A,
     SCSI_ATA_PASSTHROUGH_16 = 0x85
 } ScsiCommands;
+
+typedef enum
+{
+    MODE_PAGE_CURRENT = 0x00,
+    MODE_PAGE_CHANGEABLE = 0x40,
+    MODE_PAGE_DEFAULT = 0x80,
+    MODE_PAGE_SAVED = 0xC0
+} ScsiModeSensePageControl;
 
 // SCSI INQUIRY command response
 #pragma pack(1)
