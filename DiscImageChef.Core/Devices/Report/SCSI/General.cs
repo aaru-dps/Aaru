@@ -764,10 +764,18 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     {
                         if(report.SCSI.ReadCapabilities.BlockSize == 512)
                         {
-                            // Long sector sizes for 512-byte magneto-opticals
-                            foreach(ushort testSize in new[] { 600, 610, 630 })
+                            foreach(ushort testSize in new[]
                             {
-                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout, out duration);
+                                // Long sector sizes for floppies
+                                514,
+                                // Long sector sizes for SuperDisk
+                                536, 558,
+                                // Long sector sizes for 512-byte magneto-opticals
+                                600, 610, 630
+                            })
+                            {
+                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout,
+                                                       out duration);
                                 if(!sense && !dev.Error)
                                 {
                                     report.SCSI.ReadCapabilities.SupportsReadLong = true;
@@ -779,12 +787,23 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         }
                         else if(report.SCSI.ReadCapabilities.BlockSize == 1024)
                         {
-                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 1200, timeout, out duration);
-                            if(!sense && !dev.Error)
+                            foreach(ushort testSize in new[]
                             {
-                                report.SCSI.ReadCapabilities.SupportsReadLong = true;
-                                report.SCSI.ReadCapabilities.LongBlockSize = 1200;
-                                report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                // Long sector sizes for floppies
+                                1026,
+                                // Long sector sizes for 1024-byte magneto-opticals
+                                1200
+                            })
+                            {
+                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout,
+                                                       out duration);
+                                if(!sense && !dev.Error)
+                                {
+                                    report.SCSI.ReadCapabilities.SupportsReadLong = true;
+                                    report.SCSI.ReadCapabilities.LongBlockSize = testSize;
+                                    report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                    break;
+                                }
                             }
                         }
                         else if(report.SCSI.ReadCapabilities.BlockSize == 2048)
