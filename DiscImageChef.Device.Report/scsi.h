@@ -72,7 +72,7 @@ typedef enum
 } ScsiServiceActionIn;
 
 // SCSI INQUIRY command response
-#pragma pack(1)
+#pragma pack(push, 1)
 typedef struct
 {
     /// <summary>
@@ -310,5 +310,6 @@ typedef struct
     /// </summary>
     uint8_t VendorSpecific2;
 } ScsiInquiry;
+#pragma pack(pop)
 
 #endif //DISCIMAGECHEF_DEVICE_REPORT_SCSI_H
