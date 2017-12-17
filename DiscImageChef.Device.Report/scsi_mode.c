@@ -92,7 +92,7 @@ DecodedMode *DecodeMode10(unsigned char* modeResponse, uint8_t deviceType)
     memcpy(&(decodedMode->Header), hdrPtr, sizeof(ModeHeader));
     free(hdrPtr);
 
-    if(!decodedMode->header->decoded)
+    if(!decodedMode->Header.decoded)
         return decodedMode;
 
     decodedMode->decoded = 1;
@@ -101,9 +101,9 @@ DecodedMode *DecodeMode10(unsigned char* modeResponse, uint8_t deviceType)
     int offset;
 
     if(longlba)
-        offset = 8 + decodedMode->header->descriptorsLength * 16;
+        offset = 8 + decodedMode->Header.descriptorsLength * 16;
     else
-        offset = 8 + decodedMode->header->descriptorsLength * 8;
+        offset = 8 + decodedMode->Header.descriptorsLength * 8;
     int length = (modeResponse[0] << 8);
     length += modeResponse[1];
     length += 2;
