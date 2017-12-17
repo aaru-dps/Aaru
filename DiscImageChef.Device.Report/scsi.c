@@ -528,3 +528,14 @@ int Seek10(int fd, unsigned char **senseBuffer, uint32_t lba)
 
     return error;
 }
+
+int TestUnitReady(int fd, unsigned char **senseBuffer)
+{
+    unsigned char cmd_len = 6;
+    char cdb[] = {SCSI_TEST_UNIT_READY, 0, 0, 0, 0, 0};
+    unsigned char *buffer = malloc(0);
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, buffer, 0, senseBuffer, SG_DXFER_NONE);
+
+    return error;
+}

@@ -35,6 +35,7 @@ int ReadLong10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int 
 int ReadLong16(int fd, unsigned char **buffer, unsigned char **senseBuffer, int correct, uint64_t lba, uint32_t transferBytes);
 int Seek6(int fd, unsigned char **senseBuffer, uint32_t lba);
 int Seek10(int fd, unsigned char **senseBuffer, uint32_t lba);
+int TestUnitReady(int fd, unsigned char **senseBuffer);
 
 typedef enum
 {
