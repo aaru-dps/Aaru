@@ -1,6 +1,7 @@
 //
 // Created by claunia on 14/12/17.
 //
+#include <malloc.h>
 #include <string.h>
 #include <libxml/xmlwriter.h>
 #include "scsi_report.h"
@@ -198,48 +199,37 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
         xmlTextWriterEndElement(xmlWriter);
     }
 
-    DecodedMode decMode;
-    DecodedMode decMode6;
-    DecodedMode decMode10;
-    memset(&decMode, 0, sizeof(DecodedMode));
-    memset(&decMode6, 0, sizeof(DecodedMode));
-    memset(&decMode10, 0, sizeof(DecodedMode));
+    DecodedMode *decMode;
 
     if(supportsMode10)
-    {
-        decMode10 = DecodeMode10(mode10Response, inquiry->PeripheralDeviceType);
-        memcpy(&decMode, &decMode10, sizeof(DecodedMode));
-    }
+        decMode = DecodeMode10(mode10Response, inquiry->PeripheralDeviceType);
     else if(supportsMode6)
-    {
-        decMode6 = DecodeMode6(mode6Response, inquiry->PeripheralDeviceType);
-        memcpy(&decMode, &decMode6, sizeof(DecodedMode));
-    }
+        decMode = DecodeMode6(mode6Response, inquiry->PeripheralDeviceType);
 
-    if(decMode.decoded)
+    if(decMode->decoded)
     {
         int page, subpage;
 
         xmlTextWriterStartElement(xmlWriter, BAD_CAST "ModeSense"); // <ModeSense>
-        xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "BlankCheckEnabled", "%s", decMode.Header.EBC ? "true" : "false");
-        xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "DPOandFUA", "%s", decMode.Header.DPOFUA ? "true" : "false");
-        xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "WriteProtected", "%s", decMode.Header.WriteProtected ? "true" : "false");
+        xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "BlankCheckEnabled", "%s", decMode->Header.EBC ? "true" : "false");
+        xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "DPOandFUA", "%s", decMode->Header.DPOFUA ? "true" : "false");
+        xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "WriteProtected", "%s", decMode->Header.WriteProtected ? "true" : "false");
 
-        if(decMode.Header.BufferedMode > 0)
-            xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "BlankCheckEnabled", "%d", decMode.Header.BufferedMode);
-        if(decMode.Header.Speed > 0)
-            xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "Speed", "%d", decMode.Header.Speed);
+        if(decMode->Header.BufferedMode > 0)
+            xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "BlankCheckEnabled", "%d", decMode->Header.BufferedMode);
+        if(decMode->Header.Speed > 0)
+            xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "Speed", "%d", decMode->Header.Speed);
 
         for(page = 0; page < 256; page++)
         {
             for(subpage = 0; subpage < 256; subpage++)
             {
-                if(decMode.pageSizes[page][subpage] > 0 && decMode.Pages[page][subpage] != NULL)
+                if(decMode->pageSizes[page][subpage] > 0 && decMode->Pages[page][subpage] != NULL)
                 {
                     xmlTextWriterStartElement(xmlWriter, BAD_CAST "modePageType");
                     xmlTextWriterWriteFormatAttribute(xmlWriter, BAD_CAST "page", "%d", page);
                     xmlTextWriterWriteFormatAttribute(xmlWriter, BAD_CAST "subpage", "%d", subpage);
-                    xmlTextWriterWriteBase64(xmlWriter, decMode.Pages[page][subpage], 0, decMode.pageSizes[page][subpage]);
+                    xmlTextWriterWriteBase64(xmlWriter, decMode->Pages[page][subpage], 0, decMode->pageSizes[page][subpage]);
                     xmlTextWriterEndElement(xmlWriter);
 
                     if(page == 0x2A && subpage == 0x00)
@@ -300,8 +290,6 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
                 xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "BlockSize", "%lu", blockSize);
             }
 
-            decMode.decoded = 0;
-
             if(supportsMode10)
             {
                 xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsModeSense10", "%s", "true");
@@ -318,11 +306,11 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
                 xmlTextWriterEndElement(xmlWriter);
             }
 
-            if(decMode.decoded)
+            if(decMode->decoded)
             {
-                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "MediumType", "%d", decMode.Header.MediumType);
-                if(decMode.Header.descriptorsLength > 0)
-                    xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "Density", "%d", decMode.Header.BlockDescriptors[0].Density);
+                xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "MediumType", "%d", decMode->Header.MediumType);
+                if(decMode->Header.descriptorsLength > 0)
+                    xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "Density", "%d", decMode->Header.BlockDescriptors[0].Density);
             }
 
             printf("Trying SCSI READ (6)...\n");
@@ -428,6 +416,7 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
 
             if(supportsReadLong10 && blockSize == longBlockSize)
             {
+                user_response = ' ';
                 do
                 {
                     printf("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
@@ -459,261 +448,4 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
     }
 
     xmlTextWriterEndElement(xmlWriter); // </SCSI>
-}
-
-ModeHeader DecodeModeHeader6(unsigned char* modeResponse, uint8_t deviceType)
-{
-    int i;
-    ModeHeader header;
-
-    if(modeResponse[3])
-    {
-        header.descriptorsLength = modeResponse[3] / 8;
-        for(i = 0; i < header.descriptorsLength; i++)
-        {
-            header.BlockDescriptors[i].Density = modeResponse[0 + i * 8 + 4];
-            header.BlockDescriptors[i].Blocks += (uint64_t)(modeResponse[1 + i * 8 + 4] << 16);
-            header.BlockDescriptors[i].Blocks += (uint64_t)(modeResponse[2 + i * 8 + 4] << 8);
-            header.BlockDescriptors[i].Blocks += modeResponse[3 + i * 8 + 4];
-            header.BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[5 + i * 8 + 4] << 16);
-            header.BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[6 + i * 8 + 4] << 8);
-            header.BlockDescriptors[i].BlockLength += modeResponse[7 + i * 8 + 4];
-        }
-    }
-
-    if(deviceType == 0x00 || deviceType == 0x05)
-    {
-        header.WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
-        header.DPOFUA = ((modeResponse[2] & 0x10) == 0x10);
-    }
-
-    if(deviceType == 0x01)
-    {
-        header.WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
-        header.Speed = (uint8_t)(modeResponse[2] & 0x0F);
-        header.BufferedMode = (uint8_t)((modeResponse[2] & 0x70) >> 4);
-    }
-
-    if(deviceType == 0x02)
-        header.BufferedMode = (uint8_t)((modeResponse[2] & 0x70) >> 4);
-
-    if(deviceType == 0x07)
-    {
-        header.WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
-        header.EBC = ((modeResponse[2] & 0x01) == 0x01);
-        header.DPOFUA = ((modeResponse[2] & 0x10) == 0x10);
-    }
-
-    header.decoded = 1;
-
-    return header;
-}
-
-ModeHeader DecodeModeHeader10(unsigned char* modeResponse, uint8_t deviceType)
-{
-    uint16_t blockDescLength = (uint16_t)((modeResponse[6] << 8) + modeResponse[7]);
-    int i;
-    ModeHeader header;
-    header.MediumType = modeResponse[2];
-
-    int longLBA = (modeResponse[4] & 0x01) == 0x01;
-
-    if(blockDescLength > 0)
-    {
-        if(longLBA)
-        {
-            header.descriptorsLength = blockDescLength / 16;
-            for(i = 0; i < header.descriptorsLength; i++)
-            {
-                header.BlockDescriptors[i].Density = 0x00;
-                header.BlockDescriptors[i].Blocks = be64toh((uint64_t)(*modeResponse + 0 + i * 16 + 8));
-                header.BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[15 + i * 16 + 8] << 24);
-                header.BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[14 + i * 16 + 8] << 16);
-                header.BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[13 + i * 16 + 8] << 8);
-                header.BlockDescriptors[i].BlockLength += modeResponse[12 + i * 16 + 8];
-            }
-        }
-        else
-        {
-            header.descriptorsLength = blockDescLength / 8;
-            for(i = 0; i < header.descriptorsLength; i++)
-            {
-                if(deviceType != 0x00)
-                {
-                    header.BlockDescriptors[i].Density = modeResponse[0 + i * 8 + 8];
-                }
-                else
-                {
-                    header.BlockDescriptors[i].Density = 0x00;
-                    header.BlockDescriptors[i].Blocks += (uint64_t)(modeResponse[0 + i * 8 + 8] << 24);
-                }
-                header.BlockDescriptors[i].Blocks += (uint64_t)(modeResponse[1 + i * 8 + 8] << 16);
-                header.BlockDescriptors[i].Blocks += (uint64_t)(modeResponse[2 + i * 8 + 8] << 8);
-                header.BlockDescriptors[i].Blocks += modeResponse[3 + i * 8 + 8];
-                header.BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[5 + i * 8 + 8] << 16);
-                header.BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[6 + i * 8 + 8] << 8);
-                header.BlockDescriptors[i].BlockLength += modeResponse[7 + i * 8 + 8];
-            }
-        }
-    }
-
-    if(deviceType == 0x00 || deviceType == 0x05)
-    {
-        header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
-        header.DPOFUA = ((modeResponse[3] & 0x10) == 0x10);
-    }
-
-    if(deviceType == 0x01)
-    {
-        header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
-        header.Speed = (uint8_t)(modeResponse[3] & 0x0F);
-        header.BufferedMode = (uint8_t)((modeResponse[3] & 0x70) >> 4);
-    }
-
-    if(deviceType == 0x02)
-        header.BufferedMode = (uint8_t)((modeResponse[3] & 0x70) >> 4);
-
-    if(deviceType == 0x07)
-    {
-        header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
-        header.EBC = ((modeResponse[3] & 0x01) == 0x01);
-        header.DPOFUA = ((modeResponse[3] & 0x10) == 0x10);
-    }
-
-    header.decoded = 1;
-
-    return header;
-}
-
-DecodedMode DecodeMode6(unsigned char* modeResponse, uint8_t deviceType)
-{
-    DecodedMode decoded;
-
-    ModeHeader hdr = DecodeModeHeader6(modeResponse, deviceType);
-    if(!hdr.decoded)
-        return decoded;
-
-    decoded.Header = hdr;
-    decoded.decoded = 1;
-
-    int offset = 4 + decoded.Header.descriptorsLength * 8;
-    int length = modeResponse[0] + 1;
-
-    while(offset < length)
-    {
-        int isSubpage = (modeResponse[offset] & 0x40) == 0x40;
-
-        uint8_t pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
-        int subpage;
-
-        if(pageNo == 0)
-        {
-            decoded.pageSizes[0][0] = (size_t)(length - offset);
-            decoded.Pages[0][0] = malloc(decoded.pageSizes[0][0]);
-            memset(decoded.Pages[0][0], 0, decoded.pageSizes[0][0]);
-            memcpy(decoded.Pages[0][0], modeResponse + offset, decoded.pageSizes[0][0]);
-            offset += decoded.pageSizes[0][0];
-        }
-        else
-        {
-            if(isSubpage)
-            {
-                if(offset + 3 >= length)
-                    break;
-
-                pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
-                subpage = modeResponse[offset + 1];
-                decoded.pageSizes[pageNo][subpage] = (size_t)((modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4);
-                decoded.Pages[pageNo][subpage] = malloc(decoded.pageSizes[pageNo][subpage]);
-                memset(decoded.Pages[pageNo][subpage], 0, decoded.pageSizes[pageNo][subpage]);
-                memcpy(decoded.Pages[pageNo][subpage], modeResponse + offset, decoded.pageSizes[pageNo][subpage]);
-                offset += decoded.pageSizes[pageNo][subpage];
-            }
-            else
-            {
-                if(offset + 1 >= length)
-                    break;
-
-                pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
-                decoded.pageSizes[pageNo][0] = (size_t)(modeResponse[offset + 1] + 2);
-                decoded.Pages[pageNo][0] = malloc(decoded.pageSizes[pageNo][0]);
-                memset(decoded.Pages[pageNo][0], 0, decoded.pageSizes[pageNo][0]);
-                memcpy(decoded.Pages[pageNo][0], modeResponse + offset, decoded.pageSizes[pageNo][0]);
-                offset += decoded.pageSizes[pageNo][0];
-            }
-        }
-    }
-
-    return decoded;
-}
-
-DecodedMode DecodeMode10(unsigned char* modeResponse, uint8_t deviceType)
-{
-    DecodedMode decodedMode;
-
-    decodedMode.Header = DecodeModeHeader10(modeResponse, deviceType);
-
-    if(!decodedMode.Header.decoded)
-        return decodedMode;
-
-    decodedMode.decoded = 1;
-
-    int longlba = (modeResponse[4] & 0x01) == 0x01;
-    int offset;
-
-    if(longlba)
-        offset = 8 + decodedMode.Header.descriptorsLength * 16;
-    else
-        offset = 8 + decodedMode.Header.descriptorsLength * 8;
-    int length = (modeResponse[0] << 8);
-    length += modeResponse[1];
-    length += 2;
-
-    while(offset < length)
-    {
-        printf("%doff\n", offset);
-        int isSubpage = (modeResponse[offset] & 0x40) == 0x40;
-
-        uint8_t pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
-        int subpage;
-
-        if(pageNo == 0)
-        {
-            decodedMode.pageSizes[0][0] = (size_t)(length - offset);
-            decodedMode.Pages[0][0] = malloc(decodedMode.pageSizes[0][0]);
-            memset(decodedMode.Pages[0][0], 0, decodedMode.pageSizes[0][0]);
-            memcpy(decodedMode.Pages[0][0], modeResponse + offset, decodedMode.pageSizes[0][0]);
-            offset += decodedMode.pageSizes[0][0];
-        }
-        else
-        {
-            if(isSubpage)
-            {
-                if(offset + 3 >= length)
-                    break;
-
-                pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
-                subpage = modeResponse[offset + 1];
-                decodedMode.pageSizes[pageNo][subpage] = (size_t)((modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4);
-                decodedMode.Pages[pageNo][subpage] = malloc(decodedMode.pageSizes[pageNo][subpage]);
-                memset(decodedMode.Pages[pageNo][subpage], 0, decodedMode.pageSizes[pageNo][subpage]);
-                memcpy(decodedMode.Pages[pageNo][subpage], modeResponse + offset, decodedMode.pageSizes[pageNo][subpage]);
-                offset += decodedMode.pageSizes[pageNo][subpage];
-            }
-            else
-            {
-                if(offset + 1 >= length)
-                    break;
-
-                pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
-                decodedMode.pageSizes[pageNo][0] = (size_t)(modeResponse[offset + 1] + 2);
-                decodedMode.Pages[pageNo][0] = malloc(decodedMode.pageSizes[pageNo][0]);
-                memset(decodedMode.Pages[pageNo][0], 0, decodedMode.pageSizes[pageNo][0]);
-                memcpy(decodedMode.Pages[pageNo][0], modeResponse + offset, decodedMode.pageSizes[pageNo][0]);
-                offset += decodedMode.pageSizes[pageNo][0];
-            }
-        }
-    }
-
-    return decodedMode;
 }

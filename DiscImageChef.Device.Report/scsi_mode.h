@@ -35,8 +35,8 @@ typedef struct
     int decoded;
 } DecodedMode;
 
-ModeHeader DecodeModeHeader6(unsigned char* modeResponse, uint8_t deviceType);
-ModeHeader DecodeModeHeader10(unsigned char* modeResponse, uint8_t deviceType);
-DecodedMode DecodeMode6(unsigned char* modeResponse, uint8_t deviceType);
-DecodedMode DecodeMode10(unsigned char* modeResponse, uint8_t deviceType);
+ModeHeader *DecodeModeHeader6(unsigned char* modeResponse, uint8_t deviceType);
+ModeHeader *DecodeModeHeader10(unsigned char* modeResponse, uint8_t deviceType);
+DecodedMode *DecodeMode6(unsigned char* modeResponse, uint8_t deviceType);
+DecodedMode *DecodeMode10(unsigned char* modeResponse, uint8_t deviceType);
 #endif //DISCIMAGECHEF_DEVICE_REPORT_SCSI_MODE_H
