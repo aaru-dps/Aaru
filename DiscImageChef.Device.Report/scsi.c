@@ -8,13 +8,13 @@
 #include <sys/ioctl.h>
 #include <errno.h>
 #include <string.h>
-#include <stdint.h>
 #include "scsi.h"
 
 #define FALSE 0
 #define TRUE 1
 
-int SendScsiCommand(int fd, void *cdb, unsigned char cdb_len, unsigned char *buffer, unsigned int buffer_len, unsigned char **senseBuffer, int direction)
+int SendScsiCommand(int fd, void *cdb, unsigned char cdb_len, unsigned char *buffer, unsigned int buffer_len,
+                    unsigned char **senseBuffer, int direction)
 {
     if(buffer == NULL || cdb == NULL)
         return -1;
@@ -25,15 +25,15 @@ int SendScsiCommand(int fd, void *cdb, unsigned char cdb_len, unsigned char *buf
     sg_io_hdr_t io_hdr;
     memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
 
-    io_hdr.interface_id = 'S';
-    io_hdr.cmd_len = cdb_len;
-    io_hdr.mx_sb_len = 32;
+    io_hdr.interface_id    = 'S';
+    io_hdr.cmd_len         = cdb_len;
+    io_hdr.mx_sb_len       = 32;
     io_hdr.dxfer_direction = direction;
-    io_hdr.dxfer_len = buffer_len;
-    io_hdr.dxferp = buffer;
-    io_hdr.cmdp = cdb;
-    io_hdr.sbp = *senseBuffer;
-    io_hdr.timeout = 10000;
+    io_hdr.dxfer_len       = buffer_len;
+    io_hdr.dxferp          = buffer;
+    io_hdr.cmdp            = cdb;
+    io_hdr.sbp             = *senseBuffer;
+    io_hdr.timeout         = 10000;
 
     int error = ioctl(fd, SG_IO, &io_hdr);
 
@@ -86,7 +86,7 @@ int AllowMediumRemoval(int fd, unsigned char **senseBuffer)
 int PreventAllowMediumRemoval(int fd, unsigned char **senseBuffer, int persistent, int prevent)
 {
     unsigned char cmd_len = 6;
-    char cdb[] = {SCSI_PREVENT_ALLOW_MEDIUM_REMOVAL, 0, 0, 0, 0, 0};
+    char          cdb[]   = {SCSI_PREVENT_ALLOW_MEDIUM_REMOVAL, 0, 0, 0, 0, 0};
     unsigned char *buffer = malloc(0);
 
     if(prevent)
@@ -111,18 +111,19 @@ int EjectTray(int fd, unsigned char **senseBuffer)
 
 int StartUnit(int fd, unsigned char **senseBuffer)
 {
-return StartStopUnit(fd, senseBuffer, FALSE, 0, 0, FALSE, FALSE, TRUE);
+    return StartStopUnit(fd, senseBuffer, FALSE, 0, 0, FALSE, FALSE, TRUE);
 }
 
 int StopUnit(int fd, unsigned char **senseBuffer)
 {
-return StartStopUnit(fd, senseBuffer, FALSE, 0, 0, FALSE, FALSE, FALSE);
+    return StartStopUnit(fd, senseBuffer, FALSE, 0, 0, FALSE, FALSE, FALSE);
 }
 
-int StartStopUnit(int fd, unsigned char **senseBuffer, int immediate, uint8_t formatLayer, uint8_t powerConditions, int changeFormatLayer, int loadEject, int start)
+int StartStopUnit(int fd, unsigned char **senseBuffer, int immediate, uint8_t formatLayer, uint8_t powerConditions,
+                  int changeFormatLayer, int loadEject, int start)
 {
     unsigned char cmd_len = 6;
-    char cdb[] = {SCSI_START_STOP_UNIT, 0, 0, 0, 0, 0};
+    char          cdb[]   = {SCSI_START_STOP_UNIT, 0, 0, 0, 0, 0};
     unsigned char *buffer = malloc(0);
 
     if(immediate)
@@ -159,7 +160,7 @@ int SpcAllowMediumRemoval(int fd, unsigned char **senseBuffer)
 int SpcPreventAllowMediumRemoval(int fd, unsigned char **senseBuffer, uint8_t preventMode)
 {
     unsigned char cmd_len = 6;
-    char cdb[] = {SCSI_PREVENT_ALLOW_MEDIUM_REMOVAL, 0, 0, 0, 0, 0};
+    char          cdb[]   = {SCSI_PREVENT_ALLOW_MEDIUM_REMOVAL, 0, 0, 0, 0, 0};
     unsigned char *buffer = malloc(0);
     cdb[4] = (preventMode & 0x03);
 
@@ -170,18 +171,18 @@ int SpcPreventAllowMediumRemoval(int fd, unsigned char **senseBuffer, uint8_t pr
 
 int Load(int fd, unsigned char **senseBuffer)
 {
-return LoadUnload(fd, senseBuffer, FALSE, TRUE, FALSE, FALSE, FALSE);
+    return LoadUnload(fd, senseBuffer, FALSE, TRUE, FALSE, FALSE, FALSE);
 }
 
 int Unload(int fd, unsigned char **senseBuffer)
 {
-return LoadUnload(fd, senseBuffer, FALSE, FALSE, FALSE, FALSE, FALSE);
+    return LoadUnload(fd, senseBuffer, FALSE, FALSE, FALSE, FALSE, FALSE);
 }
 
 int LoadUnload(int fd, unsigned char **senseBuffer, int immediate, int load, int retense, int endOfTape, int hold)
 {
     unsigned char cmd_len = 6;
-    char cdb[] = {SCSI_LOAD_UNLOAD, 0, 0, 0, 0, 0};
+    char          cdb[]   = {SCSI_LOAD_UNLOAD, 0, 0, 0, 0, 0};
     unsigned char *buffer = malloc(0);
     if(immediate)
         cdb[1] = 0x01;
@@ -199,10 +200,12 @@ int LoadUnload(int fd, unsigned char **senseBuffer, int immediate, int load, int
     return error;
 }
 
-int ModeSense6(int fd, unsigned char **buffer, unsigned char **senseBuffer, int DBD, uint8_t pageControl, uint8_t pageCode, uint8_t subPageCode)
+int
+ModeSense6(int fd, unsigned char **buffer, unsigned char **senseBuffer, int DBD, uint8_t pageControl, uint8_t pageCode,
+           uint8_t subPageCode)
 {
-    unsigned char cmd_len = 6;
-    unsigned int buffer_len = 255;
+    unsigned char cmd_len    = 6;
+    unsigned int  buffer_len = 255;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
 
@@ -211,8 +214,8 @@ int ModeSense6(int fd, unsigned char **buffer, unsigned char **senseBuffer, int 
         cdb[1] |= 0x08;
     cdb[2] |= pageControl;
     cdb[2] |= (pageCode & 0x3F);
-    cdb[3] = subPageCode;
-    cdb[4] = (uint8_t)(buffer_len & 0xFF);
+    cdb[3]              = subPageCode;
+    cdb[4]              = (uint8_t)(buffer_len & 0xFF);
 
     int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
 
@@ -231,10 +234,11 @@ int ModeSense6(int fd, unsigned char **buffer, unsigned char **senseBuffer, int 
     return error;
 }
 
-int ModeSense10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int LLBAA, int DBD, uint8_t pageControl, uint8_t pageCode, uint8_t subPageCode)
+int ModeSense10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int LLBAA, int DBD, uint8_t pageControl,
+                uint8_t pageCode, uint8_t subPageCode)
 {
-    unsigned char cmd_len = 10;
-    unsigned int buffer_len = 4096;
+    unsigned char cmd_len    = 10;
+    unsigned int  buffer_len = 4096;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
 
@@ -245,10 +249,10 @@ int ModeSense10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int
         cdb[1] |= 0x08;
     cdb[2] |= pageControl;
     cdb[2] |= (pageCode & 0x3F);
-    cdb[3] = subPageCode;
-    cdb[7] = (uint8_t)((buffer_len & 0xFF00) >> 8);
-    cdb[8] = (uint8_t)(buffer_len & 0xFF);
-    cdb[9] = 0;
+    cdb[3]              = subPageCode;
+    cdb[7]              = (uint8_t)((buffer_len & 0xFF00) >> 8);
+    cdb[8]              = (uint8_t)(buffer_len & 0xFF);
+    cdb[9]              = 0;
 
     int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
 
@@ -270,8 +274,8 @@ int ModeSense10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int
 
 int ReadCapacity(int fd, unsigned char **buffer, unsigned char **senseBuffer, int RelAddr, uint32_t address, int PMI)
 {
-    unsigned char cmd_len = 10;
-    unsigned int buffer_len = 8;
+    unsigned char cmd_len    = 10;
+    unsigned int  buffer_len = 8;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
 
@@ -279,7 +283,7 @@ int ReadCapacity(int fd, unsigned char **buffer, unsigned char **senseBuffer, in
 
     if(PMI)
     {
-        cdb[8] = 0x01;
+        cdb[8]     = 0x01;
         if(RelAddr)
             cdb[1] = 0x01;
 
@@ -296,8 +300,8 @@ int ReadCapacity(int fd, unsigned char **buffer, unsigned char **senseBuffer, in
 
 int ReadCapacity16(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint64_t address, int PMI)
 {
-    unsigned char cmd_len = 16;
-    unsigned int buffer_len = 32;
+    unsigned char cmd_len    = 16;
+    unsigned int  buffer_len = 32;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
 
@@ -306,14 +310,14 @@ int ReadCapacity16(int fd, unsigned char **buffer, unsigned char **senseBuffer, 
     if(PMI)
     {
         cdb[14] = 0x01;
-        cdb[2] = (uint8_t)((address & 0xFF00000000000000ULL) >> 56);
-        cdb[3] = (uint8_t)((address & 0xFF000000000000ULL) >> 48);
-        cdb[4] = (uint8_t)((address & 0xFF0000000000ULL) >> 40);
-        cdb[5] = (uint8_t)((address & 0xFF00000000ULL) >> 32);
-        cdb[6] = (uint8_t)((address & 0xFF000000ULL) >> 24);
-        cdb[7] = (uint8_t)((address & 0xFF0000ULL) >> 16);
-        cdb[8] = (uint8_t)((address & 0xFF00ULL) >> 8);
-        cdb[9] = (uint8_t)(address & 0xFFULL);
+        cdb[2]  = (uint8_t)((address & 0xFF00000000000000ULL) >> 56);
+        cdb[3]  = (uint8_t)((address & 0xFF000000000000ULL) >> 48);
+        cdb[4]  = (uint8_t)((address & 0xFF0000000000ULL) >> 40);
+        cdb[5]  = (uint8_t)((address & 0xFF00000000ULL) >> 32);
+        cdb[6]  = (uint8_t)((address & 0xFF000000ULL) >> 24);
+        cdb[7]  = (uint8_t)((address & 0xFF0000ULL) >> 16);
+        cdb[8]  = (uint8_t)((address & 0xFF00ULL) >> 8);
+        cdb[9]  = (uint8_t)(address & 0xFFULL);
     }
 
     cdb[10] = (uint8_t)((buffer_len & 0xFF000000) >> 24);
@@ -326,10 +330,11 @@ int ReadCapacity16(int fd, unsigned char **buffer, unsigned char **senseBuffer, 
     return error;
 }
 
-int Read6(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize, uint8_t transferLength)
+int Read6(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize,
+          uint8_t transferLength)
 {
     unsigned char cmd_len = 6;
-    unsigned int buflen = transferLength == 0 ? 256 * blockSize : transferLength * blockSize;
+    unsigned int  buflen  = transferLength == 0 ? 256 * blockSize : transferLength * blockSize;
     *buffer = malloc(buflen);
     memset(*buffer, 0, buflen);
 
@@ -345,10 +350,11 @@ int Read6(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t 
     return error;
 }
 
-int Read10(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv, int relAddr, uint32_t lba, uint32_t blockSize, uint8_t groupNumber, uint16_t transferLength)
+int Read10(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv,
+           int relAddr, uint32_t lba, uint32_t blockSize, uint8_t groupNumber, uint16_t transferLength)
 {
     unsigned char cmd_len = 10;
-    unsigned int buflen = transferLength * blockSize;
+    unsigned int  buflen  = transferLength * blockSize;
     *buffer = malloc(buflen);
     memset(*buffer, 0, buflen);
 
@@ -376,16 +382,17 @@ int Read10(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t 
     return error;
 }
 
-int Read12(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv, int relAddr, uint32_t lba, uint32_t blockSize, uint8_t groupNumber, uint32_t transferLength, int streaming)
+int Read12(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv,
+           int relAddr, uint32_t lba, uint32_t blockSize, uint8_t groupNumber, uint32_t transferLength, int streaming)
 {
     unsigned char cmd_len = 12;
-    unsigned int buflen = transferLength * blockSize;
+    unsigned int  buflen  = transferLength * blockSize;
     *buffer = malloc(buflen);
     memset(*buffer, 0, buflen);
 
     unsigned char cdb[] = {SCSI_READ_12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[1] = (uint8_t)((rdprotect & 0x07) << 5);
+    cdb[1]  = (uint8_t)((rdprotect & 0x07) << 5);
     if(dpo)
         cdb[1] += 0x10;
     if(fua)
@@ -394,14 +401,14 @@ int Read12(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t 
         cdb[1] += 0x02;
     if(relAddr)
         cdb[1] += 0x01;
-    cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
-    cdb[3] = (uint8_t)((lba & 0xFF0000) >> 16);
-    cdb[4] = (uint8_t)((lba & 0xFF00) >> 8);
-    cdb[5] = (uint8_t)(lba & 0xFF);
-    cdb[6] = (uint8_t)((transferLength & 0xFF000000) >> 24);
-    cdb[7] = (uint8_t)((transferLength & 0xFF0000) >> 16);
-    cdb[8] = (uint8_t)((transferLength & 0xFF00) >> 8);
-    cdb[9] = (uint8_t)(transferLength & 0xFF);
+    cdb[2]  = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[3]  = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[4]  = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[5]  = (uint8_t)(lba & 0xFF);
+    cdb[6]  = (uint8_t)((transferLength & 0xFF000000) >> 24);
+    cdb[7]  = (uint8_t)((transferLength & 0xFF0000) >> 16);
+    cdb[8]  = (uint8_t)((transferLength & 0xFF00) >> 8);
+    cdb[9]  = (uint8_t)(transferLength & 0xFF);
     cdb[10] = (uint8_t)(groupNumber & 0x1F);
     if(streaming)
         cdb[10] += 0x80;
@@ -411,30 +418,31 @@ int Read12(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t 
     return error;
 }
 
-int Read16(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv, uint64_t lba, uint32_t blockSize, uint8_t groupNumber, uint32_t transferLength, int streaming)
+int Read16(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t rdprotect, int dpo, int fua, int fuaNv,
+           uint64_t lba, uint32_t blockSize, uint8_t groupNumber, uint32_t transferLength, int streaming)
 {
     unsigned char cmd_len = 16;
-    unsigned int buflen = transferLength * blockSize;
+    unsigned int  buflen  = transferLength * blockSize;
     *buffer = malloc(buflen);
     memset(*buffer, 0, buflen);
 
     unsigned char cdb[] = {SCSI_READ_16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[1] = (uint8_t)((rdprotect & 0x07) << 5);
+    cdb[1]  = (uint8_t)((rdprotect & 0x07) << 5);
     if(dpo)
         cdb[1] += 0x10;
     if(fua)
         cdb[1] += 0x08;
     if(fuaNv)
         cdb[1] += 0x02;
-    cdb[2] = (uint8_t)((lba & 0xFF00000000000000ULL) >> 56);
-    cdb[3] = (uint8_t)((lba & 0xFF000000000000ULL) >> 48);
-    cdb[4] = (uint8_t)((lba & 0xFF0000000000ULL) >> 40);
-    cdb[5] = (uint8_t)((lba & 0xFF00000000ULL) >> 32);
-    cdb[6] = (uint8_t)((lba & 0xFF000000ULL) >> 24);
-    cdb[7] = (uint8_t)((lba & 0xFF0000ULL) >> 16);
-    cdb[8] = (uint8_t)((lba & 0xFF00ULL) >> 8);
-    cdb[9] = (uint8_t)(lba & 0xFFULL);
+    cdb[2]  = (uint8_t)((lba & 0xFF00000000000000ULL) >> 56);
+    cdb[3]  = (uint8_t)((lba & 0xFF000000000000ULL) >> 48);
+    cdb[4]  = (uint8_t)((lba & 0xFF0000000000ULL) >> 40);
+    cdb[5]  = (uint8_t)((lba & 0xFF00000000ULL) >> 32);
+    cdb[6]  = (uint8_t)((lba & 0xFF000000ULL) >> 24);
+    cdb[7]  = (uint8_t)((lba & 0xFF0000ULL) >> 16);
+    cdb[8]  = (uint8_t)((lba & 0xFF00ULL) >> 8);
+    cdb[9]  = (uint8_t)(lba & 0xFFULL);
     cdb[10] = (uint8_t)((transferLength & 0xFF000000) >> 24);
     cdb[11] = (uint8_t)((transferLength & 0xFF0000) >> 16);
     cdb[12] = (uint8_t)((transferLength & 0xFF00) >> 8);
@@ -448,7 +456,8 @@ int Read16(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t 
     return error;
 }
 
-int ReadLong10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int correct, int relAddr, uint32_t lba, uint16_t transferBytes)
+int ReadLong10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int correct, int relAddr, uint32_t lba,
+               uint16_t transferBytes)
 {
     unsigned char cmd_len = 10;
     *buffer = malloc(transferBytes);
@@ -460,19 +469,20 @@ int ReadLong10(int fd, unsigned char **buffer, unsigned char **senseBuffer, int 
         cdb[1] += 0x02;
     if(relAddr)
         cdb[1] += 0x01;
-    cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
-    cdb[3] = (uint8_t)((lba & 0xFF0000) >> 16);
-    cdb[4] = (uint8_t)((lba & 0xFF00) >> 8);
-    cdb[5] = (uint8_t)(lba & 0xFF);
-    cdb[7] = (uint8_t)((transferBytes & 0xFF00) >> 8);
-    cdb[8] = (uint8_t)(transferBytes & 0xFF);
+    cdb[2]              = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[3]              = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[4]              = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[5]              = (uint8_t)(lba & 0xFF);
+    cdb[7]              = (uint8_t)((transferBytes & 0xFF00) >> 8);
+    cdb[8]              = (uint8_t)(transferBytes & 0xFF);
 
     int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, transferBytes, senseBuffer, SG_DXFER_FROM_DEV);
 
     return error;
 }
 
-int ReadLong16(int fd, unsigned char **buffer, unsigned char **senseBuffer, int correct, uint64_t lba, uint32_t transferBytes)
+int ReadLong16(int fd, unsigned char **buffer, unsigned char **senseBuffer, int correct, uint64_t lba,
+               uint32_t transferBytes)
 {
     unsigned char cmd_len = 16;
     *buffer = malloc(transferBytes);
@@ -480,14 +490,14 @@ int ReadLong16(int fd, unsigned char **buffer, unsigned char **senseBuffer, int 
 
     unsigned char cdb[] = {SCSI_SERVICE_ACTION_IN, SCSI_READ_LONG_16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[2] = (uint8_t)((lba & 0xFF00000000000000ULL) >> 56);
-    cdb[3] = (uint8_t)((lba & 0xFF000000000000ULL) >> 48);
-    cdb[4] = (uint8_t)((lba & 0xFF0000000000ULL) >> 40);
-    cdb[5] = (uint8_t)((lba & 0xFF00000000ULL) >> 32);
-    cdb[6] = (uint8_t)((lba & 0xFF000000ULL) >> 24);
-    cdb[7] = (uint8_t)((lba & 0xFF0000ULL) >> 16);
-    cdb[8] = (uint8_t)((lba & 0xFF00ULL) >> 8);
-    cdb[9] = (uint8_t)(lba & 0xFFULL);
+    cdb[2]  = (uint8_t)((lba & 0xFF00000000000000ULL) >> 56);
+    cdb[3]  = (uint8_t)((lba & 0xFF000000000000ULL) >> 48);
+    cdb[4]  = (uint8_t)((lba & 0xFF0000000000ULL) >> 40);
+    cdb[5]  = (uint8_t)((lba & 0xFF00000000ULL) >> 32);
+    cdb[6]  = (uint8_t)((lba & 0xFF000000ULL) >> 24);
+    cdb[7]  = (uint8_t)((lba & 0xFF0000ULL) >> 16);
+    cdb[8]  = (uint8_t)((lba & 0xFF00ULL) >> 8);
+    cdb[9]  = (uint8_t)(lba & 0xFFULL);
     cdb[12] = (uint8_t)((transferBytes & 0xFF00) >> 8);
     cdb[13] = (uint8_t)(transferBytes & 0xFF);
     if(correct)
@@ -501,7 +511,7 @@ int ReadLong16(int fd, unsigned char **buffer, unsigned char **senseBuffer, int 
 int Seek6(int fd, unsigned char **senseBuffer, uint32_t lba)
 {
     unsigned char cmd_len = 6;
-    char cdb[] = {SCSI_SEEK, 0, 0, 0, 0, 0};
+    char          cdb[]   = {SCSI_SEEK, 0, 0, 0, 0, 0};
     unsigned char *buffer = malloc(0);
 
     cdb[1] = (uint8_t)((lba & 0x1F0000) >> 16);
@@ -516,7 +526,7 @@ int Seek6(int fd, unsigned char **senseBuffer, uint32_t lba)
 int Seek10(int fd, unsigned char **senseBuffer, uint32_t lba)
 {
     unsigned char cmd_len = 10;
-    char cdb[] = {SCSI_SEEK_10, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    char          cdb[]   = {SCSI_SEEK_10, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     unsigned char *buffer = malloc(0);
 
     cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
@@ -532,7 +542,7 @@ int Seek10(int fd, unsigned char **senseBuffer, uint32_t lba)
 int TestUnitReady(int fd, unsigned char **senseBuffer)
 {
     unsigned char cmd_len = 6;
-    char cdb[] = {SCSI_TEST_UNIT_READY, 0, 0, 0, 0, 0};
+    char          cdb[]   = {SCSI_TEST_UNIT_READY, 0, 0, 0, 0, 0};
     unsigned char *buffer = malloc(0);
 
     int error = SendScsiCommand(fd, &cdb, cmd_len, buffer, 0, senseBuffer, SG_DXFER_NONE);
@@ -540,10 +550,11 @@ int TestUnitReady(int fd, unsigned char **senseBuffer)
     return error;
 }
 
-int GetConfiguration(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint16_t startingFeatureNumber, uint8_t RT)
+int GetConfiguration(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint16_t startingFeatureNumber,
+                     uint8_t RT)
 {
-    unsigned char cmd_len = 10;
-    uint16_t buffer_len = 8;
+    unsigned char cmd_len    = 10;
+    uint16_t      buffer_len = 8;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
     char cdb[] = {MMC_GET_CONFIGURATION, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -573,11 +584,12 @@ int GetConfiguration(int fd, unsigned char **buffer, unsigned char **senseBuffer
     return error;
 }
 
-int ReadTocPmaAtip(int fd, unsigned char **buffer, unsigned char **senseBuffer, int MSF, uint8_t format, uint8_t trackSessionNumber)
+int ReadTocPmaAtip(int fd, unsigned char **buffer, unsigned char **senseBuffer, int MSF, uint8_t format,
+                   uint8_t trackSessionNumber)
 {
-    unsigned char cmd_len = 10;
-    uint16_t buffer_len = 1024;
-    char cdb[] = {MMC_READ_TOC_PMA_ATIP, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    unsigned char cmd_len    = 10;
+    uint16_t      buffer_len = 1024;
+    char          cdb[]      = {MMC_READ_TOC_PMA_ATIP, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     if((format & 0xF) == 5)
         buffer_len = 32768;
@@ -587,10 +599,10 @@ int ReadTocPmaAtip(int fd, unsigned char **buffer, unsigned char **senseBuffer, 
 
     if(MSF)
         cdb[1] = 0x02;
-    cdb[2] = (uint8_t)(format & 0x0F);
-    cdb[6] = trackSessionNumber;
-    cdb[7] = (uint8_t)((buffer_len & 0xFF00) >> 8);
-    cdb[8] = (uint8_t)(buffer_len & 0xFF);
+    cdb[2]     = (uint8_t)(format & 0x0F);
+    cdb[6]     = trackSessionNumber;
+    cdb[7]     = (uint8_t)((buffer_len & 0xFF00) >> 8);
+    cdb[8]     = (uint8_t)(buffer_len & 0xFF);
 
     int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
 
@@ -610,23 +622,24 @@ int ReadTocPmaAtip(int fd, unsigned char **buffer, unsigned char **senseBuffer, 
     return error;
 }
 
-int ReadDiscStructure(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t mediaType, uint32_t address, uint8_t layerNumber, uint8_t format, uint8_t AGID)
+int ReadDiscStructure(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t mediaType, uint32_t address,
+                      uint8_t layerNumber, uint8_t format, uint8_t AGID)
 {
-    unsigned char cmd_len = 12;
-    uint16_t buffer_len = 8;
+    unsigned char cmd_len    = 12;
+    uint16_t      buffer_len = 8;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
     char cdb[] = {MMC_READ_DISC_STRUCTURE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[1] = (uint8_t)((uint8_t)mediaType & 0x0F);
-    cdb[2] = (uint8_t)((address & 0xFF000000) >> 24);
-    cdb[3] = (uint8_t)((address & 0xFF0000) >> 16);
-    cdb[4] = (uint8_t)((address & 0xFF00) >> 8);
-    cdb[5] = (uint8_t)(address & 0xFF);
-    cdb[6] = layerNumber;
-    cdb[7] = (uint8_t)format;
-    cdb[8] = (uint8_t)((buffer_len & 0xFF00) >> 8);
-    cdb[9] = (uint8_t)(buffer_len & 0xFF);
+    cdb[1]  = (uint8_t)((uint8_t)mediaType & 0x0F);
+    cdb[2]  = (uint8_t)((address & 0xFF000000) >> 24);
+    cdb[3]  = (uint8_t)((address & 0xFF0000) >> 16);
+    cdb[4]  = (uint8_t)((address & 0xFF00) >> 8);
+    cdb[5]  = (uint8_t)(address & 0xFF);
+    cdb[6]  = layerNumber;
+    cdb[7]  = (uint8_t)format;
+    cdb[8]  = (uint8_t)((buffer_len & 0xFF00) >> 8);
+    cdb[9]  = (uint8_t)(buffer_len & 0xFF);
     cdb[10] = (uint8_t)((AGID & 0x03) << 6);
 
     int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
@@ -647,28 +660,29 @@ int ReadDiscStructure(int fd, unsigned char **buffer, unsigned char **senseBuffe
     return error;
 }
 
-int ReadCd(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize, uint32_t transferLength, uint8_t expectedSectorType,
-int DAP, int relAddr, int sync, uint8_t headerCodes, int userData, int edcEcc, uint8_t C2Error, uint8_t subchannel)
+int ReadCd(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize,
+           uint32_t transferLength, uint8_t expectedSectorType, int DAP, int relAddr, int sync, uint8_t headerCodes,
+           int userData, int edcEcc, uint8_t C2Error, uint8_t subchannel)
 {
-    unsigned char cmd_len = 12;
-    uint32_t buffer_len = transferLength * blockSize;
+    unsigned char cmd_len    = 12;
+    uint32_t      buffer_len = transferLength * blockSize;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
     char cdb[] = {MMC_READ_CD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[1] = (uint8_t)((uint8_t)expectedSectorType << 2);
+    cdb[1]  = (uint8_t)((uint8_t)expectedSectorType << 2);
     if(DAP)
         cdb[1] += 0x02;
     if(relAddr)
         cdb[1] += 0x01;
-    cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
-    cdb[3] = (uint8_t)((lba & 0xFF0000) >> 16);
-    cdb[4] = (uint8_t)((lba & 0xFF00) >> 8);
-    cdb[5] = (uint8_t)(lba & 0xFF);
-    cdb[6] = (uint8_t)((transferLength & 0xFF0000) >> 16);
-    cdb[7] = (uint8_t)((transferLength & 0xFF00) >> 8);
-    cdb[8] = (uint8_t)(transferLength & 0xFF);
-    cdb[9] = (uint8_t)((uint8_t)C2Error << 1);
+    cdb[2]  = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[3]  = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[4]  = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[5]  = (uint8_t)(lba & 0xFF);
+    cdb[6]  = (uint8_t)((transferLength & 0xFF0000) >> 16);
+    cdb[7]  = (uint8_t)((transferLength & 0xFF00) >> 8);
+    cdb[8]  = (uint8_t)(transferLength & 0xFF);
+    cdb[9]  = (uint8_t)((uint8_t)C2Error << 1);
     cdb[9] += (uint8_t)((uint8_t)headerCodes << 5);
     if(sync)
         cdb[9] += 0x80;
@@ -683,22 +697,23 @@ int DAP, int relAddr, int sync, uint8_t headerCodes, int userData, int edcEcc, u
     return error;
 }
 
-int ReadCdMsf(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t startMsf, uint32_t endMsf, uint32_t blockSize, uint8_t expectedSectorType,
-int DAP, int sync, uint8_t headerCodes, int userData, int edcEcc, uint8_t C2Error, uint8_t subchannel)
+int ReadCdMsf(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t startMsf, uint32_t endMsf,
+              uint32_t blockSize, uint8_t expectedSectorType, int DAP, int sync, uint8_t headerCodes, int userData,
+              int edcEcc, uint8_t C2Error, uint8_t subchannel)
 {
     unsigned char cmd_len = 12;
-    char cdb[] = {MMC_READ_CD_MSF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    char          cdb[]   = {MMC_READ_CD_MSF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[1] = (uint8_t)((uint8_t)expectedSectorType << 2);
+    cdb[1]  = (uint8_t)((uint8_t)expectedSectorType << 2);
     if(DAP)
         cdb[1] += 0x02;
-    cdb[3] = (uint8_t)((startMsf & 0xFF0000) >> 16);
-    cdb[4] = (uint8_t)((startMsf & 0xFF00) >> 8);
-    cdb[5] = (uint8_t)(startMsf & 0xFF);
-    cdb[6] = (uint8_t)((endMsf & 0xFF0000) >> 16);
-    cdb[7] = (uint8_t)((endMsf & 0xFF00) >> 8);
-    cdb[8] = (uint8_t)(endMsf & 0xFF);
-    cdb[9] = (uint8_t)((uint8_t)C2Error << 1);
+    cdb[3]  = (uint8_t)((startMsf & 0xFF0000) >> 16);
+    cdb[4]  = (uint8_t)((startMsf & 0xFF00) >> 8);
+    cdb[5]  = (uint8_t)(startMsf & 0xFF);
+    cdb[6]  = (uint8_t)((endMsf & 0xFF0000) >> 16);
+    cdb[7]  = (uint8_t)((endMsf & 0xFF00) >> 8);
+    cdb[8]  = (uint8_t)(endMsf & 0xFF);
+    cdb[9]  = (uint8_t)((uint8_t)C2Error << 1);
     cdb[9] += (uint8_t)((uint8_t)headerCodes << 5);
     if(sync)
         cdb[9] += 0x80;
@@ -708,8 +723,8 @@ int DAP, int sync, uint8_t headerCodes, int userData, int edcEcc, uint8_t C2Erro
         cdb[9] += 0x08;
     cdb[10] = (uint8_t)subchannel;
 
-    uint32_t transferLength = (uint32_t)((cdb[6] - cdb[3]) * 60 * 75 + (cdb[7] - cdb[4]) * 75 + (cdb[8] - cdb[5]));
-    uint32_t buffer_len = transferLength * blockSize;
+    uint32_t      transferLength = (uint32_t)((cdb[6] - cdb[3]) * 60 * 75 + (cdb[7] - cdb[4]) * 75 + (cdb[8] - cdb[5]));
+    uint32_t      buffer_len     = transferLength * blockSize;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
 
@@ -718,22 +733,23 @@ int DAP, int sync, uint8_t headerCodes, int userData, int edcEcc, uint8_t C2Erro
     return error;
 }
 
-int PlextorReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize, uint32_t transferLength, uint8_t subchannel)
+int PlextorReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize,
+                    uint32_t transferLength, uint8_t subchannel)
 {
-    unsigned char cmd_len = 12;
-    uint32_t buffer_len = transferLength * blockSize;
+    unsigned char cmd_len    = 12;
+    uint32_t      buffer_len = transferLength * blockSize;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
     char cdb[] = {PIONEER_READ_CDDA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
-    cdb[3] = (uint8_t)((lba & 0xFF0000) >> 16);
-    cdb[4] = (uint8_t)((lba & 0xFF00) >> 8);
-    cdb[5] = (uint8_t)(lba & 0xFF);
-    cdb[6] = (uint8_t)((transferLength & 0xFF000000) >> 24);
-    cdb[7] = (uint8_t)((transferLength & 0xFF0000) >> 16);
-    cdb[8] = (uint8_t)((transferLength & 0xFF00) >> 8);
-    cdb[9] = (uint8_t)(transferLength & 0xFF);
+    cdb[2]  = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[3]  = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[4]  = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[5]  = (uint8_t)(lba & 0xFF);
+    cdb[6]  = (uint8_t)((transferLength & 0xFF000000) >> 24);
+    cdb[7]  = (uint8_t)((transferLength & 0xFF0000) >> 16);
+    cdb[8]  = (uint8_t)((transferLength & 0xFF00) >> 8);
+    cdb[9]  = (uint8_t)(transferLength & 0xFF);
     cdb[10] = (uint8_t)subchannel;
 
     int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
@@ -741,10 +757,11 @@ int PlextorReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer,
     return error;
 }
 
-int PlextorReadRawDvd(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t transferLength)
+int
+PlextorReadRawDvd(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t transferLength)
 {
-    unsigned char cmd_len = 10;
-    uint32_t buffer_len = transferLength * 2064;
+    unsigned char cmd_len    = 10;
+    uint32_t      buffer_len = transferLength * 2064;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
     char cdb[] = {SCSI_READ_BUFFER, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -762,21 +779,22 @@ int PlextorReadRawDvd(int fd, unsigned char **buffer, unsigned char **senseBuffe
     return error;
 }
 
-int PioneerReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize, uint32_t transferLength, uint8_t subchannel)
+int PioneerReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize,
+                    uint32_t transferLength, uint8_t subchannel)
 {
-    unsigned char cmd_len = 12;
-    uint32_t buffer_len = transferLength * blockSize;
+    unsigned char cmd_len    = 12;
+    uint32_t      buffer_len = transferLength * blockSize;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
     char cdb[] = {PIONEER_READ_CDDA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[2] = (uint8_t)((lba & 0xFF000000) >> 24);
-    cdb[3] = (uint8_t)((lba & 0xFF0000) >> 16);
-    cdb[4] = (uint8_t)((lba & 0xFF00) >> 8);
-    cdb[5] = (uint8_t)(lba & 0xFF);
-    cdb[7] = (uint8_t)((transferLength & 0xFF0000) >> 16);
-    cdb[8] = (uint8_t)((transferLength & 0xFF00) >> 8);
-    cdb[9] = (uint8_t)(transferLength & 0xFF);
+    cdb[2]  = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[3]  = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[4]  = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[5]  = (uint8_t)(lba & 0xFF);
+    cdb[7]  = (uint8_t)((transferLength & 0xFF0000) >> 16);
+    cdb[8]  = (uint8_t)((transferLength & 0xFF00) >> 8);
+    cdb[9]  = (uint8_t)(transferLength & 0xFF);
     cdb[10] = (uint8_t)subchannel;
 
     int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
@@ -784,21 +802,22 @@ int PioneerReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer,
     return error;
 }
 
-int PioneerReadCdDaMsf(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t startMsf, uint32_t endMsf, uint32_t blockSize, uint8_t subchannel)
+int PioneerReadCdDaMsf(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t startMsf, uint32_t endMsf,
+                       uint32_t blockSize, uint8_t subchannel)
 {
     unsigned char cmd_len = 12;
-    char cdb[] = {PIONEER_READ_CDDA_MSF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    char          cdb[]   = {PIONEER_READ_CDDA_MSF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[3] = (uint8_t)((startMsf & 0xFF0000) >> 16);
-    cdb[4] = (uint8_t)((startMsf & 0xFF00) >> 8);
-    cdb[5] = (uint8_t)(startMsf & 0xFF);
-    cdb[7] = (uint8_t)((endMsf & 0xFF0000) >> 16);
-    cdb[8] = (uint8_t)((endMsf & 0xFF00) >> 8);
-    cdb[9] = (uint8_t)(endMsf & 0xFF);
+    cdb[3]  = (uint8_t)((startMsf & 0xFF0000) >> 16);
+    cdb[4]  = (uint8_t)((startMsf & 0xFF00) >> 8);
+    cdb[5]  = (uint8_t)(startMsf & 0xFF);
+    cdb[7]  = (uint8_t)((endMsf & 0xFF0000) >> 16);
+    cdb[8]  = (uint8_t)((endMsf & 0xFF00) >> 8);
+    cdb[9]  = (uint8_t)(endMsf & 0xFF);
     cdb[10] = (uint8_t)subchannel;
 
-    uint32_t transferLength = (uint)((cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]));
-    uint32_t buffer_len = transferLength * blockSize;
+    uint32_t      transferLength = (uint)((cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]));
+    uint32_t      buffer_len     = transferLength * blockSize;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
 
@@ -809,8 +828,8 @@ int PioneerReadCdDaMsf(int fd, unsigned char **buffer, unsigned char **senseBuff
 
 int NecReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t transferLength)
 {
-    unsigned char cmd_len = 12;
-    uint32_t buffer_len = transferLength * 2352;
+    unsigned char cmd_len    = 12;
+    uint32_t      buffer_len = transferLength * 2352;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
     char cdb[] = {NEC_READ_CDDA, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -829,16 +848,16 @@ int NecReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uin
 
 int HlDtStReadRawDvd(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t transferLength)
 {
-    unsigned char cmd_len = 12;
-    uint32_t buffer_len = transferLength * 2064;
+    unsigned char cmd_len    = 12;
+    uint32_t      buffer_len = transferLength * 2064;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
     char cdb[] = {HLDTST_VENDOR, 0x48, 0x49, 0x54, 0x01, 0, 0, 0, 0, 0, 0, 0};
 
-    cdb[6] = (uint8_t)((lba & 0xFF000000) >> 24);
-    cdb[7] = (uint8_t)((lba & 0xFF0000) >> 16);
-    cdb[8] = (uint8_t)((lba & 0xFF00) >> 8);
-    cdb[9] = (uint8_t)(lba & 0xFF);
+    cdb[6]  = (uint8_t)((lba & 0xFF000000) >> 24);
+    cdb[7]  = (uint8_t)((lba & 0xFF0000) >> 16);
+    cdb[8]  = (uint8_t)((lba & 0xFF00) >> 8);
+    cdb[9]  = (uint8_t)(lba & 0xFF);
     cdb[10] = (uint8_t)((buffer_len & 0xFF00) >> 8);
     cdb[11] = (uint8_t)(buffer_len & 0xFF);
 
@@ -849,8 +868,8 @@ int HlDtStReadRawDvd(int fd, unsigned char **buffer, unsigned char **senseBuffer
 
 int ReadBlockLimits(int fd, unsigned char **buffer, unsigned char **senseBuffer)
 {
-    unsigned char cmd_len = 6;
-    unsigned int buffer_len = 6;
+    unsigned char cmd_len    = 6;
+    unsigned int  buffer_len = 6;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
 
@@ -863,8 +882,8 @@ int ReadBlockLimits(int fd, unsigned char **buffer, unsigned char **senseBuffer)
 
 int ReportDensitySupport(int fd, unsigned char **buffer, unsigned char **senseBuffer, int mediumType, int currentMedia)
 {
-    unsigned char cmd_len = 10;
-    unsigned int buffer_len = 256;
+    unsigned char cmd_len    = 10;
+    unsigned int  buffer_len = 256;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
 
@@ -873,8 +892,8 @@ int ReportDensitySupport(int fd, unsigned char **buffer, unsigned char **senseBu
         cdb[1] |= 0x01;
     if(mediumType)
         cdb[1] |= 0x02;
-    cdb[7] = (uint8_t)((buffer_len & 0xFF00) >> 8);
-    cdb[8] = (uint8_t)(buffer_len & 0xFF);
+    cdb[7]              = (uint8_t)((buffer_len & 0xFF00) >> 8);
+    cdb[8]              = (uint8_t)(buffer_len & 0xFF);
 
     int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
 
@@ -897,8 +916,8 @@ int ReportDensitySupport(int fd, unsigned char **buffer, unsigned char **senseBu
 
 int ReadMediaSerialNumber(int fd, unsigned char **buffer, unsigned char **senseBuffer)
 {
-    unsigned char cmd_len = 12;
-    unsigned int buffer_len = 256;
+    unsigned char cmd_len    = 12;
+    unsigned int  buffer_len = 256;
     *buffer = malloc(buffer_len);
     memset(*buffer, 0, buffer_len);
 
@@ -913,7 +932,9 @@ int ReadMediaSerialNumber(int fd, unsigned char **buffer, unsigned char **senseB
     if(error)
         return error;
 
-    buffer_len = (unsigned int)((*(*buffer + 0) << 24) + (*(*buffer + 1) << 16)) + (*(*buffer + 2) << 8) + *(*buffer + 3) + 4;
+    buffer_len =
+            (unsigned int)((*(*buffer + 0) << 24) + (*(*buffer + 1) << 16)) + (*(*buffer + 2) << 8) + *(*buffer + 3) +
+            4;
 
     free(*buffer);
     *buffer = malloc(buffer_len);

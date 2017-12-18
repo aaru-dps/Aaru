@@ -4,6 +4,7 @@
 
 #include <scsi/sg.h>
 #include <malloc.h>
+#include <stdint.h>
 #include <string.h>
 #include "ata.h"
 #include "scsi.h"
@@ -30,13 +31,13 @@ int AtaProtocolToScsiDirection(int protocol)
     }
 }
 
-unsigned char *AtaToCString(unsigned char* string, int len)
+unsigned char *AtaToCString(unsigned char *string, int len)
 {
-    unsigned char* buffer = malloc(len + 1);
-    unsigned char* ptr = buffer;
-    int i;
+    unsigned char *buffer = malloc(len + 1);
+    unsigned char *ptr    = buffer;
+    int           i;
 
-    for(i = 0; i < len; i+=2)
+    for(i = 0; i < len; i += 2)
     {
         *ptr++ = *(string + i + 1);
         *ptr++ = *(string + i);
@@ -56,7 +57,8 @@ unsigned char *AtaToCString(unsigned char* string, int len)
     return buffer;
 }
 
-int SendAtaCommandChs(int fd, AtaRegistersCHS registers, AtaErrorRegistersCHS **errorRegisters, int protocol, int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks)
+int SendAtaCommandChs(int fd, AtaRegistersCHS registers, AtaErrorRegistersCHS **errorRegisters, int protocol,
+                      int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks)
 {
     unsigned char cdb[16];
     memset(&cdb, 0, 16);
@@ -81,26 +83,27 @@ int SendAtaCommandChs(int fd, AtaRegistersCHS registers, AtaErrorRegistersCHS **
         cdb[2] |= (transferRegister & 0x03);
     }
 
-    cdb[4] = registers.feature;
-    cdb[6] = registers.sectorCount;
-    cdb[8] = registers.sector;
-    cdb[10] = registers.cylinderLow;
-    cdb[12] = registers.cylinderHigh;
-    cdb[13] = registers.deviceHead;
-    cdb[14] = registers.command;
+    cdb[4]              = registers.feature;
+    cdb[6]              = registers.sectorCount;
+    cdb[8]              = registers.sector;
+    cdb[10]             = registers.cylinderLow;
+    cdb[12]             = registers.cylinderHigh;
+    cdb[13]             = registers.deviceHead;
+    cdb[14]             = registers.command;
 
     unsigned char *sense_buf;
-    int error = SendScsiCommand(fd, &cdb, 16, buffer, buffer_len, &sense_buf, AtaProtocolToScsiDirection(protocol));
+    int           error = SendScsiCommand(fd, &cdb, 16, buffer, buffer_len, &sense_buf,
+                                          AtaProtocolToScsiDirection(protocol));
 
     *errorRegisters = malloc(sizeof(AtaErrorRegistersCHS));
     memset(*errorRegisters, 0, sizeof(AtaErrorRegistersCHS));
-    (*errorRegisters)->error = sense_buf[11];
-    (*errorRegisters)->sectorCount = sense_buf[13];
-    (*errorRegisters)->sector = sense_buf[15];
-    (*errorRegisters)->cylinderLow = sense_buf[17];
+    (*errorRegisters)->error        = sense_buf[11];
+    (*errorRegisters)->sectorCount  = sense_buf[13];
+    (*errorRegisters)->sector       = sense_buf[15];
+    (*errorRegisters)->cylinderLow  = sense_buf[17];
     (*errorRegisters)->cylinderHigh = sense_buf[19];
-    (*errorRegisters)->deviceHead = sense_buf[20];
-    (*errorRegisters)->status = sense_buf[21];
+    (*errorRegisters)->deviceHead   = sense_buf[20];
+    (*errorRegisters)->status       = sense_buf[21];
 
     if(error != 0)
         return error;
@@ -108,7 +111,8 @@ int SendAtaCommandChs(int fd, AtaRegistersCHS registers, AtaErrorRegistersCHS **
     return (*errorRegisters)->error;
 }
 
-int SendAtaCommandLba28(int fd, AtaRegistersLBA28 registers, AtaErrorRegistersLBA28 **errorRegisters, int protocol, int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks)
+int SendAtaCommandLba28(int fd, AtaRegistersLBA28 registers, AtaErrorRegistersLBA28 **errorRegisters, int protocol,
+                        int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks)
 {
     unsigned char cdb[16];
     memset(&cdb, 0, 16);
@@ -135,26 +139,27 @@ int SendAtaCommandLba28(int fd, AtaRegistersLBA28 registers, AtaErrorRegistersLB
 
     cdb[2] |= 0x20;
 
-    cdb[4] = registers.feature;
-    cdb[6] = registers.sectorCount;
-    cdb[8] = registers.lbaLow;
-    cdb[10] = registers.lbaMid;
-    cdb[12] = registers.lbaHigh;
-    cdb[13] = registers.deviceHead;
-    cdb[14] = registers.command;
+    cdb[4]              = registers.feature;
+    cdb[6]              = registers.sectorCount;
+    cdb[8]              = registers.lbaLow;
+    cdb[10]             = registers.lbaMid;
+    cdb[12]             = registers.lbaHigh;
+    cdb[13]             = registers.deviceHead;
+    cdb[14]             = registers.command;
 
     unsigned char *sense_buf;
-    int error = SendScsiCommand(fd, &cdb, 16, buffer, buffer_len, &sense_buf, AtaProtocolToScsiDirection(protocol));
+    int           error = SendScsiCommand(fd, &cdb, 16, buffer, buffer_len, &sense_buf,
+                                          AtaProtocolToScsiDirection(protocol));
 
     *errorRegisters = malloc(sizeof(AtaErrorRegistersLBA28));
     memset(*errorRegisters, 0, sizeof(AtaErrorRegistersLBA28));
-    (*errorRegisters)->error = sense_buf[11];
+    (*errorRegisters)->error       = sense_buf[11];
     (*errorRegisters)->sectorCount = sense_buf[13];
-    (*errorRegisters)->lbaLow = sense_buf[15];
-    (*errorRegisters)->lbaMid= sense_buf[17];
-    (*errorRegisters)->lbaHigh = sense_buf[19];
-    (*errorRegisters)->deviceHead = sense_buf[20];
-    (*errorRegisters)->status = sense_buf[21];
+    (*errorRegisters)->lbaLow      = sense_buf[15];
+    (*errorRegisters)->lbaMid      = sense_buf[17];
+    (*errorRegisters)->lbaHigh     = sense_buf[19];
+    (*errorRegisters)->deviceHead  = sense_buf[20];
+    (*errorRegisters)->status      = sense_buf[21];
 
     if(error != 0)
         return error;
@@ -162,7 +167,8 @@ int SendAtaCommandLba28(int fd, AtaRegistersLBA28 registers, AtaErrorRegistersLB
     return (*errorRegisters)->error;
 }
 
-int SendAtaCommandLba48(int fd, AtaRegistersLBA48 registers, AtaErrorRegistersLBA48 **errorRegisters, int protocol, int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks)
+int SendAtaCommandLba48(int fd, AtaRegistersLBA48 registers, AtaErrorRegistersLBA48 **errorRegisters, int protocol,
+                        int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks)
 {
     unsigned char cdb[16];
     memset(&cdb, 0, 16);
@@ -190,31 +196,32 @@ int SendAtaCommandLba48(int fd, AtaRegistersLBA48 registers, AtaErrorRegistersLB
 
     cdb[2] |= 0x20;
 
-    cdb[3] = (uint8_t)((registers.feature & 0xFF00) >> 8);
-    cdb[4] = (uint8_t)(registers.feature & 0xFF);
-    cdb[5] = (uint8_t)((registers.sectorCount & 0xFF00) >> 8);
-    cdb[6] = (uint8_t)(registers.sectorCount & 0xFF);
-    cdb[7] = (uint8_t)((registers.lbaLow & 0xFF00) >> 8);
-    cdb[8] = (uint8_t)(registers.lbaLow & 0xFF);
-    cdb[9] = (uint8_t)((registers.lbaMid & 0xFF00) >> 8);
-    cdb[10] = (uint8_t)(registers.lbaMid & 0xFF);
-    cdb[11] = (uint8_t)((registers.lbaHigh & 0xFF00) >> 8);
-    cdb[12] = (uint8_t)(registers.lbaHigh & 0xFF);
-    cdb[13] = registers.deviceHead;
-    cdb[14] = registers.command;
+    cdb[3]              = (uint8_t)((registers.feature & 0xFF00) >> 8);
+    cdb[4]              = (uint8_t)(registers.feature & 0xFF);
+    cdb[5]              = (uint8_t)((registers.sectorCount & 0xFF00) >> 8);
+    cdb[6]              = (uint8_t)(registers.sectorCount & 0xFF);
+    cdb[7]              = (uint8_t)((registers.lbaLow & 0xFF00) >> 8);
+    cdb[8]              = (uint8_t)(registers.lbaLow & 0xFF);
+    cdb[9]              = (uint8_t)((registers.lbaMid & 0xFF00) >> 8);
+    cdb[10]             = (uint8_t)(registers.lbaMid & 0xFF);
+    cdb[11]             = (uint8_t)((registers.lbaHigh & 0xFF00) >> 8);
+    cdb[12]             = (uint8_t)(registers.lbaHigh & 0xFF);
+    cdb[13]             = registers.deviceHead;
+    cdb[14]             = registers.command;
 
     unsigned char *sense_buf;
-    int error = SendScsiCommand(fd, &cdb, 16, buffer, buffer_len, &sense_buf, AtaProtocolToScsiDirection(protocol));
+    int           error = SendScsiCommand(fd, &cdb, 16, buffer, buffer_len, &sense_buf,
+                                          AtaProtocolToScsiDirection(protocol));
 
     *errorRegisters = malloc(sizeof(AtaErrorRegistersLBA48));
     memset(*errorRegisters, 0, sizeof(AtaErrorRegistersLBA48));
-    (*errorRegisters)->error = sense_buf[11];
+    (*errorRegisters)->error       = sense_buf[11];
     (*errorRegisters)->sectorCount = (uint16_t)((sense_buf[12] << 8) + sense_buf[13]);
-    (*errorRegisters)->lbaLow = (uint16_t)((sense_buf[14] << 8) + sense_buf[15]);
-    (*errorRegisters)->lbaMid = (uint16_t)((sense_buf[16] << 8) + sense_buf[17]);
-    (*errorRegisters)->lbaHigh = (uint16_t)((sense_buf[18] << 8) + sense_buf[19]);
-    (*errorRegisters)->deviceHead = sense_buf[20];
-    (*errorRegisters)->status = sense_buf[21];
+    (*errorRegisters)->lbaLow      = (uint16_t)((sense_buf[14] << 8) + sense_buf[15]);
+    (*errorRegisters)->lbaMid      = (uint16_t)((sense_buf[16] << 8) + sense_buf[17]);
+    (*errorRegisters)->lbaHigh     = (uint16_t)((sense_buf[18] << 8) + sense_buf[19]);
+    (*errorRegisters)->deviceHead  = sense_buf[20];
+    (*errorRegisters)->status      = sense_buf[21];
 
     if(error != 0)
         return error;
@@ -231,12 +238,15 @@ int Identify(int fd, unsigned char **buffer, AtaErrorRegistersCHS **errorRegiste
 
     registers.command = ATA_IDENTIFY_DEVICE;
 
-    int error = SendAtaCommandChs(fd, registers, errorRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_NONE, *buffer, 512, 0);
+    int error = SendAtaCommandChs(fd, registers, errorRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_NONE, *buffer, 512,
+                                  0);
 
     return error;
 }
 
-int Read(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head, uint8_t sector, uint8_t count)
+int
+Read(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head,
+     uint8_t sector, uint8_t count)
 {
     int buffer_len;
     if(count == 0)
@@ -252,19 +262,21 @@ int Read(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters,
     if(retry)
         registers.command = ATA_READ_RETRY;
     else
-        registers.command = ATA_READ_SECTORS;
-    registers.sectorCount = count;
+        registers.command  = ATA_READ_SECTORS;
+    registers.sectorCount  = count;
     registers.cylinderHigh = (uint8_t)((cylinder & 0xFF00) / 0x100);
-    registers.cylinderLow = (uint8_t)((cylinder & 0xFF) / 0x1);
-    registers.deviceHead = (uint8_t)(head & 0x0F);
-    registers.sector = sector;
+    registers.cylinderLow  = (uint8_t)((cylinder & 0xFF) / 0x1);
+    registers.deviceHead   = (uint8_t)(head & 0x0F);
+    registers.sector       = sector;
 
-    int error = SendAtaCommandChs(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT, *buffer, buffer_len, 1);
+    int error = SendAtaCommandChs(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT,
+                                  *buffer, buffer_len, 1);
 
     return error;
 }
 
-int ReadLong(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head, uint8_t sector, uint32_t blockSize)
+int ReadLong(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
+             uint8_t head, uint8_t sector, uint32_t blockSize)
 {
     *buffer = malloc(blockSize);
     memset(*buffer, 0, blockSize);
@@ -274,14 +286,15 @@ int ReadLong(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegist
     if(retry)
         registers.command = ATA_READ_LONG_RETRY;
     else
-        registers.command = ATA_READ_LONG;
-    registers.sectorCount = 1;
+        registers.command  = ATA_READ_LONG;
+    registers.sectorCount  = 1;
     registers.cylinderHigh = (uint8_t)((cylinder & 0xFF00) / 0x100);
-    registers.cylinderLow = (uint8_t)((cylinder & 0xFF) / 0x1);
-    registers.deviceHead = (uint8_t)(head & 0x0F);
-    registers.sector = sector;
+    registers.cylinderLow  = (uint8_t)((cylinder & 0xFF) / 0x1);
+    registers.deviceHead   = (uint8_t)(head & 0x0F);
+    registers.sector       = sector;
 
-    int error = SendAtaCommandChs(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT, *buffer, blockSize, 1);
+    int error = SendAtaCommandChs(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT,
+                                  *buffer, blockSize, 1);
 
     return error;
 }
@@ -293,18 +306,20 @@ int Seek(int fd, AtaErrorRegistersCHS **statusRegisters, uint16_t cylinder, uint
     AtaRegistersCHS registers;
     memset(&registers, 0, sizeof(AtaRegistersCHS));
 
-    registers.command = ATA_SEEK;
+    registers.command      = ATA_SEEK;
     registers.cylinderHigh = (uint8_t)((cylinder & 0xFF00) / 0x100);
-    registers.cylinderLow = (uint8_t)((cylinder & 0xFF) / 0x1);
-    registers.deviceHead = (uint8_t)(head & 0x0F);
-    registers.sector = sector;
+    registers.cylinderLow  = (uint8_t)((cylinder & 0xFF) / 0x1);
+    registers.deviceHead   = (uint8_t)(head & 0x0F);
+    registers.sector       = sector;
 
-    int error = SendAtaCommandChs(fd, registers, statusRegisters, ATA_PROTOCOL_NO_DATA, ATA_TRANSFER_NONE, *buffer, 0, 0);
+    int error = SendAtaCommandChs(fd, registers, statusRegisters, ATA_PROTOCOL_NO_DATA, ATA_TRANSFER_NONE, *buffer, 0,
+                                  0);
 
     return error;
 }
 
-int ReadDma(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head, uint8_t sector, uint8_t count)
+int ReadDma(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
+            uint8_t head, uint8_t sector, uint8_t count)
 {
     int buffer_len;
     if(count == 0)
@@ -320,19 +335,21 @@ int ReadDma(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegiste
     if(retry)
         registers.command = ATA_READ_DMA_RETRY;
     else
-        registers.command = ATA_READ_DMA;
-    registers.sectorCount = count;
+        registers.command  = ATA_READ_DMA;
+    registers.sectorCount  = count;
     registers.cylinderHigh = (uint8_t)((cylinder & 0xFF00) / 0x100);
-    registers.cylinderLow = (uint8_t)((cylinder & 0xFF) / 0x1);
-    registers.deviceHead = (uint8_t)(head & 0x0F);
-    registers.sector = sector;
+    registers.cylinderLow  = (uint8_t)((cylinder & 0xFF) / 0x1);
+    registers.deviceHead   = (uint8_t)(head & 0x0F);
+    registers.sector       = sector;
 
-    int error = SendAtaCommandChs(fd, registers, statusRegisters, ATA_PROTOCOL_DMA, ATA_TRANSFER_SECTORCOUNT, *buffer, buffer_len, 1);
+    int error = SendAtaCommandChs(fd, registers, statusRegisters, ATA_PROTOCOL_DMA, ATA_TRANSFER_SECTORCOUNT, *buffer,
+                                  buffer_len, 1);
 
     return error;
 }
 
-int ReadDmaLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba, uint8_t count)
+int ReadDmaLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
+               uint8_t count)
 {
     int buffer_len;
     if(count == 0)
@@ -350,18 +367,20 @@ int ReadDmaLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRe
     else
         registers.command = ATA_READ_DMA;
     registers.sectorCount = count;
-    registers.deviceHead = (uint8_t)((lba & 0xF000000) / 0x1000000);
-    registers.lbaHigh = (uint8_t)((lba & 0xFF0000) / 0x10000);
-    registers.lbaMid = (uint8_t)((lba & 0xFF00) / 0x100);
-    registers.lbaLow = (uint8_t)((lba & 0xFF) / 0x1);
+    registers.deviceHead  = (uint8_t)((lba & 0xF000000) / 0x1000000);
+    registers.lbaHigh     = (uint8_t)((lba & 0xFF0000) / 0x10000);
+    registers.lbaMid      = (uint8_t)((lba & 0xFF00) / 0x100);
+    registers.lbaLow      = (uint8_t)((lba & 0xFF) / 0x1);
     registers.deviceHead += 0x40;
 
-    int error = SendAtaCommandLba28(fd, registers, statusRegisters, ATA_PROTOCOL_DMA, ATA_TRANSFER_SECTORCOUNT, *buffer, buffer_len, 1);
+    int error = SendAtaCommandLba28(fd, registers, statusRegisters, ATA_PROTOCOL_DMA, ATA_TRANSFER_SECTORCOUNT, *buffer,
+                                    buffer_len, 1);
 
     return error;
 }
 
-int ReadLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba, uint8_t count)
+int ReadLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
+            uint8_t count)
 {
     int buffer_len;
     if(count == 0)
@@ -379,18 +398,20 @@ int ReadLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegis
     else
         registers.command = ATA_READ_SECTORS;
     registers.sectorCount = count;
-    registers.deviceHead = (uint8_t)((lba & 0xF000000) / 0x1000000);
-    registers.lbaHigh = (uint8_t)((lba & 0xFF0000) / 0x10000);
-    registers.lbaMid = (uint8_t)((lba & 0xFF00) / 0x100);
-    registers.lbaLow = (uint8_t)((lba & 0xFF) / 0x1);
+    registers.deviceHead  = (uint8_t)((lba & 0xF000000) / 0x1000000);
+    registers.lbaHigh     = (uint8_t)((lba & 0xFF0000) / 0x10000);
+    registers.lbaMid      = (uint8_t)((lba & 0xFF00) / 0x100);
+    registers.lbaLow      = (uint8_t)((lba & 0xFF) / 0x1);
     registers.deviceHead += 0x40;
 
-    int error = SendAtaCommandLba28(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT, *buffer, buffer_len, 1);
+    int error = SendAtaCommandLba28(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT,
+                                    *buffer, buffer_len, 1);
 
     return error;
 }
 
-int ReadLongLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba, uint32_t blockSize)
+int ReadLongLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
+                uint32_t blockSize)
 {
     *buffer = malloc(blockSize);
     memset(*buffer, 0, blockSize);
@@ -403,13 +424,14 @@ int ReadLongLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusR
         registers.command = ATA_READ_LONG;
     registers.sectorCount = 1;
     registers.sectorCount = 1;
-    registers.deviceHead = (uint8_t)((lba & 0xF000000) / 0x1000000);
-    registers.lbaHigh = (uint8_t)((lba & 0xFF0000) / 0x10000);
-    registers.lbaMid = (uint8_t)((lba & 0xFF00) / 0x100);
-    registers.lbaLow = (uint8_t)((lba & 0xFF) / 0x1);
+    registers.deviceHead  = (uint8_t)((lba & 0xF000000) / 0x1000000);
+    registers.lbaHigh     = (uint8_t)((lba & 0xFF0000) / 0x10000);
+    registers.lbaMid      = (uint8_t)((lba & 0xFF00) / 0x100);
+    registers.lbaLow      = (uint8_t)((lba & 0xFF) / 0x1);
     registers.deviceHead += 0x40;
 
-    int error = SendAtaCommandLba28(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT, *buffer, blockSize, 1);
+    int error = SendAtaCommandLba28(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT,
+                                    *buffer, blockSize, 1);
 
     return error;
 }
@@ -421,14 +443,15 @@ int SeekLba(int fd, AtaErrorRegistersLBA28 **statusRegisters, uint32_t lba)
     AtaRegistersLBA28 registers;
     memset(&registers, 0, sizeof(AtaRegistersLBA28));
 
-    registers.command = ATA_SEEK;
+    registers.command    = ATA_SEEK;
     registers.deviceHead = (uint8_t)((lba & 0xF000000) / 0x1000000);
-    registers.lbaHigh = (uint8_t)((lba & 0xFF0000) / 0x10000);
-    registers.lbaMid = (uint8_t)((lba & 0xFF00) / 0x100);
-    registers.lbaLow = (uint8_t)((lba & 0xFF) / 0x1);
+    registers.lbaHigh    = (uint8_t)((lba & 0xFF0000) / 0x10000);
+    registers.lbaMid     = (uint8_t)((lba & 0xFF00) / 0x100);
+    registers.lbaLow     = (uint8_t)((lba & 0xFF) / 0x1);
     registers.deviceHead += 0x40;
 
-    int error = SendAtaCommandLba28(fd, registers, statusRegisters, ATA_PROTOCOL_NO_DATA, ATA_TRANSFER_NONE, *buffer, 0, 0);
+    int error = SendAtaCommandLba28(fd, registers, statusRegisters, ATA_PROTOCOL_NO_DATA, ATA_TRANSFER_NONE, *buffer, 0,
+                                    0);
 
     return error;
 }
@@ -446,14 +469,15 @@ int ReadDmaLba48(int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **status
     AtaRegistersLBA48 registers;
     memset(&registers, 0, sizeof(AtaRegistersLBA48));
 
-    registers.command = ATA_READ_DMA_EXT;
+    registers.command     = ATA_READ_DMA_EXT;
     registers.sectorCount = count;
-    registers.lbaHigh = (uint16_t)((lba & 0xFFFF00000000) / 0x100000000);
-    registers.lbaMid = (uint16_t)((lba & 0xFFFF0000) / 0x10000);
-    registers.lbaLow = (uint16_t)((lba & 0xFFFF) / 0x1);
+    registers.lbaHigh     = (uint16_t)((lba & 0xFFFF00000000) / 0x100000000);
+    registers.lbaMid      = (uint16_t)((lba & 0xFFFF0000) / 0x10000);
+    registers.lbaLow      = (uint16_t)((lba & 0xFFFF) / 0x1);
     registers.deviceHead += 0x40;
 
-    int error = SendAtaCommandLba48(fd, registers, statusRegisters, ATA_PROTOCOL_DMA, ATA_TRANSFER_SECTORCOUNT, *buffer, buffer_len, 1);
+    int error = SendAtaCommandLba48(fd, registers, statusRegisters, ATA_PROTOCOL_DMA, ATA_TRANSFER_SECTORCOUNT, *buffer,
+                                    buffer_len, 1);
 
     return error;
 }
@@ -471,14 +495,15 @@ int ReadLba48(int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusReg
     AtaRegistersLBA48 registers;
     memset(&registers, 0, sizeof(AtaRegistersLBA48));
 
-    registers.command = ATA_READ_EXT;
+    registers.command     = ATA_READ_EXT;
     registers.sectorCount = count;
-    registers.lbaHigh = (uint16_t)((lba & 0xFFFF00000000) / 0x100000000);
-    registers.lbaMid = (uint16_t)((lba & 0xFFFF0000) / 0x10000);
-    registers.lbaLow = (uint16_t)((lba & 0xFFFF) / 0x1);
+    registers.lbaHigh     = (uint16_t)((lba & 0xFFFF00000000) / 0x100000000);
+    registers.lbaMid      = (uint16_t)((lba & 0xFFFF0000) / 0x10000);
+    registers.lbaLow      = (uint16_t)((lba & 0xFFFF) / 0x1);
     registers.deviceHead += 0x40;
 
-    int error = SendAtaCommandLba48(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT, *buffer, buffer_len, 1);
+    int error = SendAtaCommandLba48(fd, registers, statusRegisters, ATA_PROTOCOL_PIO_IN, ATA_TRANSFER_SECTORCOUNT,
+                                    *buffer, buffer_len, 1);
 
     return error;
 }

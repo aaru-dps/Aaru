@@ -5,8 +5,6 @@
 #ifndef DISCIMAGECHEF_DEVICE_REPORT_ATA_H
 #define DISCIMAGECHEF_DEVICE_REPORT_ATA_H
 
-#include <stdint.h>
-
 #pragma pack(1)
 typedef struct
 {
@@ -28,7 +26,7 @@ typedef struct
     uint8_t lbaHigh;
     uint8_t deviceHead;
     uint8_t command;
-}AtaRegistersLBA28;
+} AtaRegistersLBA28;
 
 typedef struct
 {
@@ -37,8 +35,8 @@ typedef struct
     uint16_t lbaLow;
     uint16_t lbaMid;
     uint16_t lbaHigh;
-    uint8_t deviceHead;
-    uint8_t command;
+    uint8_t  deviceHead;
+    uint8_t  command;
 } AtaRegistersLBA48;
 
 typedef struct
@@ -51,7 +49,7 @@ typedef struct
     uint8_t cylinderHigh;
     uint8_t deviceHead;
     uint8_t command;
-}AtaErrorRegistersCHS;
+} AtaErrorRegistersCHS;
 
 typedef struct
 {
@@ -67,53 +65,51 @@ typedef struct
 
 typedef struct
 {
-    uint8_t status;
-    uint8_t error;
+    uint8_t  status;
+    uint8_t  error;
     uint16_t sectorCount;
     uint16_t lbaLow;
     uint16_t lbaMid;
     uint16_t lbaHigh;
-    uint8_t deviceHead;
-    uint8_t command;
+    uint8_t  deviceHead;
+    uint8_t  command;
 } AtaErrorRegistersLBA48;
 
 typedef enum
 {
-    ATA_TRANSFER_NONE = 0,
-    ATA_TRANSFER_FEATURE,
-    ATA_TRANSFER_SECTORCOUNT,
-    ATA_TRANSFTER_SPTSIU
+    ATA_TRANSFER_NONE = 0, ATA_TRANSFER_FEATURE, ATA_TRANSFER_SECTORCOUNT, ATA_TRANSFTER_SPTSIU
 } AtaTransferRegister;
 
-typedef enum {
-    ATA_PROTOCOL_HARD_RESET = 0,
-    ATA_PROTOCOL_SOFT_RESET = 1,
-    ATA_PROTOCOL_NO_DATA = 3,
-    ATA_PROTOCOL_PIO_IN = 4,
-    ATA_PROTOCOL_PIO_OUT = 5,
-    ATA_PROTOCOL_DMA = 6,
-    ATA_PROTOCOL_DMA_QUEUED = 7,
+typedef enum
+{
+    ATA_PROTOCOL_HARD_RESET         = 0,
+    ATA_PROTOCOL_SOFT_RESET         = 1,
+    ATA_PROTOCOL_NO_DATA            = 3,
+    ATA_PROTOCOL_PIO_IN             = 4,
+    ATA_PROTOCOL_PIO_OUT            = 5,
+    ATA_PROTOCOL_DMA                = 6,
+    ATA_PROTOCOL_DMA_QUEUED         = 7,
     ATA_PROTOCOL_DEVICE_DIAGNOSTICS = 8,
-    ATA_PROTOCOL_DEVICE_RESET = 9,
-    ATA_PROTOCOL_UDMA_IN = 10,
-    ATA_PROTOCOL_UDMA_OUT = 11,
-    ATA_PROTOCOL_FPDMA = 12,
-    ATA_PROTOCOL_RETURN_RESPONSE = 15
+    ATA_PROTOCOL_DEVICE_RESET       = 9,
+    ATA_PROTOCOL_UDMA_IN            = 10,
+    ATA_PROTOCOL_UDMA_OUT           = 11,
+    ATA_PROTOCOL_FPDMA              = 12,
+    ATA_PROTOCOL_RETURN_RESPONSE    = 15
 } AtaProtocol;
 
 typedef enum
 {
-    ATA_READ_RETRY = 0x20,
-    ATA_READ_SECTORS = 0x21,
-    ATA_READ_LONG_RETRY = 0x22,
-    ATA_READ_LONG = 0x23,
-    ATA_READ_EXT = 0x24,
-    ATA_READ_DMA_EXT = 0x25,
-    ATA_SEEK = 0x70,
-    ATA_READ_DMA_RETRY = 0xC8,
-    ATA_READ_DMA = 0xC9,
+    ATA_READ_RETRY             = 0x20,
+    ATA_READ_SECTORS           = 0x21,
+    ATA_READ_LONG_RETRY        = 0x22,
+    ATA_READ_LONG              = 0x23,
+    ATA_READ_EXT               = 0x24,
+    ATA_READ_DMA_EXT           = 0x25,
+    ATA_SEEK                   = 0x70,
+    ATA_READ_DMA_RETRY         = 0xC8,
+    ATA_READ_DMA               = 0xC9,
     ATA_IDENTIFY_PACKET_DEVICE = 0xA1,
-    ATA_IDENTIFY_DEVICE = 0xEC
+    ATA_IDENTIFY_DEVICE        = 0xEC
 } AtaCommands;
 
 typedef struct
@@ -143,7 +139,7 @@ typedef struct
        Word 2
        Specific configuration
     */
-       uint16_t SpecificConfiguration;
+    uint16_t SpecificConfiguration;
     /*
        Word 3
        Heads in default translation mode
@@ -183,7 +179,7 @@ typedef struct
        Words 10 to 19
        Device serial number, right justified, padded with spaces
     */
-    uint8_t SerialNumber[20];
+    uint8_t  SerialNumber[20];
     /*
        Word 20
        Manufacturer defined
@@ -209,75 +205,75 @@ typedef struct
        Words 23 to 26
        Firmware revision, left justified, padded with spaces
     */
-    uint8_t FirmwareRevision[8];
+    uint8_t  FirmwareRevision[8];
     /*
        Words 27 to 46
        Model number, left justified, padded with spaces
     */
-    uint8_t Model[40];
+    uint8_t  Model[40];
     /*
        Word 47 bits 7 to 0
        Maximum number of sectors that can be transferred per
        interrupt on read and write multiple commands
     */
-    uint8_t MultipleMaxSectors;
+    uint8_t  MultipleMaxSectors;
     /*
        Word 47 bits 15 to 8
        Vendor unique
        ATA/ATAPI-4 says it must be 0x80
     */
-    uint8_t VendorWord47;
+    uint8_t  VendorWord47;
     /*
        Word 48
        ATA-1: Set to 1 if it can perform doubleword I/O
        ATA-2 to ATA/ATAPI-7: Reserved
        ATA8-ACS: Trusted Computing feature set
     */
-       uint16_t TrustedComputing;
+    uint16_t TrustedComputing;
     /*
        Word 49
        Capabilities
     */
-       uint16_t Capabilities;
+    uint16_t Capabilities;
     /*
        Word 50
        Capabilities
     */
-       uint16_t Capabilities2;
+    uint16_t Capabilities2;
     /*
        Word 51 bits 7 to 0
        Vendor unique
        Obsoleted in ATA/ATAPI-4
     */
-    uint8_t VendorWord51;
+    uint8_t  VendorWord51;
     /*
        Word 51 bits 15 to 8
        Transfer timing mode in PIO
        Obsoleted in ATA/ATAPI-4
     */
-    uint8_t PIOTransferTimingMode;
+    uint8_t  PIOTransferTimingMode;
     /*
        Word 52 bits 7 to 0
        Vendor unique
        Obsoleted in ATA/ATAPI-4
     */
-    uint8_t VendorWord52;
+    uint8_t  VendorWord52;
     /*
        Word 52 bits 15 to 8
        Transfer timing mode in DMA
        Obsoleted in ATA/ATAPI-4
     */
-    uint8_t DMATransferTimingMode;
+    uint8_t  DMATransferTimingMode;
     /*
        Word 53 bits 7 to 0
        Reports if words 54 to 58 are valid
     */
-       uint8_t ExtendedIdentify;
+    uint8_t  ExtendedIdentify;
     /*
        Word 53 bits 15 to 8
        Free-fall Control Sensitivity
     */
-    uint8_t FreeFallSensitivity;
+    uint8_t  FreeFallSensitivity;
     /*
        Word 54
        Cylinders in current translation mode
@@ -306,12 +302,12 @@ typedef struct
        Word 59 bits 7 to 0
        Number of sectors currently set to transfer on a READ/WRITE MULTIPLE command
     */
-    uint8_t MultipleSectorNumber;
+    uint8_t  MultipleSectorNumber;
     /*
        Word 59 bits 15 to 8
        Indicates if <see cref="MultipleSectorNumber"/> is valid
     */
-       uint8_t Capabilities3;
+    uint8_t  Capabilities3;
     /*
        Words 60 to 61
        If drive supports LBA, how many sectors are addressable using LBA
@@ -323,7 +319,7 @@ typedef struct
        Obsoleted in ATA/ATAPI-4
        In ATAPI it's not obsolete, indicates UDMA mode (UDMA7 is instead MDMA0)
     */
-    uint8_t DMASupported;
+    uint8_t  DMASupported;
     /*
        Word 62 bits 15 to 8
        Single word DMA mode currently active
@@ -332,28 +328,28 @@ typedef struct
        bit 10 indicates DMA is supported and bit 15 indicates DMADIR bit
        in PACKET is required for DMA transfers
     */
-    uint8_t DMAActive;
+    uint8_t  DMAActive;
     /*
        Word 63 bits 7 to 0
        Multiword DMA modes available
     */
-    uint8_t MDMASupported;
+    uint8_t  MDMASupported;
     /*
        Word 63 bits 15 to 8
        Multiword DMA mode currently active
     */
-    uint8_t MDMAActive;
+    uint8_t  MDMAActive;
 
     /*
        Word 64 bits 7 to 0
        Supported Advanced PIO transfer modes
     */
-    uint8_t APIOSupported;
+    uint8_t  APIOSupported;
     /*
        Word 64 bits 15 to 8
        Reserved
     */
-    uint8_t ReservedWord64;
+    uint8_t  ReservedWord64;
     /*
        Word 65
        Minimum MDMA transfer cycle time per word in nanoseconds
@@ -481,12 +477,12 @@ typedef struct
        Word 88 bits 7 to 0
        Supported Ultra DMA transfer modes
     */
-       uint8_t UDMASupported;
+    uint8_t UDMASupported;
     /*
        Word 88 bits 15 to 8
        Selected Ultra DMA transfer modes
     */
-       uint8_t UDMAActive;
+    uint8_t UDMAActive;
 
     /*
        Word 89
@@ -680,7 +676,7 @@ typedef struct
        Words 170 to 173
        Additional product identifier
     */
-    uint8_t AdditionalPID[8];
+    uint8_t  AdditionalPID[8];
 
     /*
        Word 174
@@ -774,12 +770,12 @@ typedef struct
        Word 219 bits 7 to 0
        Estimated device spin up in seconds
     */
-    uint8_t NVEstimatedSpinUp;
+    uint8_t  NVEstimatedSpinUp;
     /*
        Word 219 bits 15 to 8
        NV Cache reserved
     */
-    uint8_t NVReserved;
+    uint8_t  NVReserved;
 
     /*
        Word 220 bits 7 to 0
@@ -851,19 +847,44 @@ typedef struct
     uint8_t Checksum;
 } IdentifyDevice;
 
-unsigned char *AtaToCString(unsigned char* string, int len);
-int SendAtaCommandChs(int fd, AtaRegistersCHS registers, AtaErrorRegistersCHS **errorRegisters, int protocol, int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
-int SendAtaCommandLba28(int fd, AtaRegistersLBA28 registers, AtaErrorRegistersLBA28 **errorRegisters, int protocol, int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
-int SendAtaCommandLba48(int fd, AtaRegistersLBA48 registers, AtaErrorRegistersLBA48 **errorRegisters, int protocol, int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
-int Identify(int fd, unsigned char **buffer, AtaErrorRegistersCHS **errorRegisters);
-int Read(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head, uint8_t sector, uint8_t count);
-int ReadLong(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head, uint8_t sector, uint32_t blockSize);
-int Seek(int fd, AtaErrorRegistersCHS **statusRegisters, uint16_t cylinder, uint8_t head, uint8_t sector);
-int ReadDma(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head, uint8_t sector, uint8_t count);
-int ReadDmaLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba, uint8_t count);
-int ReadLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba, uint8_t count);
-int ReadLongLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba, uint32_t blockSize);
-int SeekLba(int fd, AtaErrorRegistersLBA28 **statusRegisters, uint32_t lba);
-int ReadDmaLba48(int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
-int ReadLba48(int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
+unsigned char *AtaToCString (unsigned char *string, int len);
+
+int SendAtaCommandChs (int fd, AtaRegistersCHS registers, AtaErrorRegistersCHS **errorRegisters, int protocol,
+                       int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
+
+int SendAtaCommandLba28 (int fd, AtaRegistersLBA28 registers, AtaErrorRegistersLBA28 **errorRegisters, int protocol,
+                         int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
+
+int SendAtaCommandLba48 (int fd, AtaRegistersLBA48 registers, AtaErrorRegistersLBA48 **errorRegisters, int protocol,
+                         int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
+
+int Identify (int fd, unsigned char **buffer, AtaErrorRegistersCHS **errorRegisters);
+
+int Read (int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
+          uint8_t head, uint8_t sector, uint8_t count);
+
+int ReadLong (int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
+              uint8_t head, uint8_t sector, uint32_t blockSize);
+
+int Seek (int fd, AtaErrorRegistersCHS **statusRegisters, uint16_t cylinder, uint8_t head, uint8_t sector);
+
+int ReadDma (int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
+             uint8_t head, uint8_t sector, uint8_t count);
+
+int ReadDmaLba (int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
+                uint8_t count);
+
+int ReadLba (int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
+             uint8_t count);
+
+int ReadLongLba (int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
+                 uint32_t blockSize);
+
+int SeekLba (int fd, AtaErrorRegistersLBA28 **statusRegisters, uint32_t lba);
+
+int
+ReadDmaLba48 (int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
+
+int ReadLba48 (int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
+
 #endif //DISCIMAGECHEF_DEVICE_REPORT_ATA_H

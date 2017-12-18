@@ -5,13 +5,14 @@
 #include <malloc.h>
 #include <string.h>
 #include <endian.h>
+#include <stdint.h>
 #include "scsi_mode.h"
 
-ModeHeader *DecodeModeHeader10(unsigned char* modeResponse, uint8_t deviceType)
+ModeHeader *DecodeModeHeader10(unsigned char *modeResponse, uint8_t deviceType)
 {
-    uint16_t blockDescLength = (uint16_t)((modeResponse[6] << 8) + modeResponse[7]);
-    int i;
-    ModeHeader *header = malloc(sizeof(ModeHeader));
+    uint16_t   blockDescLength = (uint16_t)((modeResponse[6] << 8) + modeResponse[7]);
+    int        i;
+    ModeHeader *header         = malloc(sizeof(ModeHeader));
     memset(header, 0, sizeof(ModeHeader));
     header->MediumType = modeResponse[2];
 
@@ -25,7 +26,7 @@ ModeHeader *DecodeModeHeader10(unsigned char* modeResponse, uint8_t deviceType)
             for(i = 0; i < header->descriptorsLength; i++)
             {
                 header->BlockDescriptors[i].Density = 0x00;
-                header->BlockDescriptors[i].Blocks = be64toh((uint64_t)(*modeResponse + 0 + i * 16 + 8));
+                header->BlockDescriptors[i].Blocks  = be64toh((uint64_t)(*modeResponse + 0 + i * 16 + 8));
                 header->BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[15 + i * 16 + 8] << 24);
                 header->BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[14 + i * 16 + 8] << 16);
                 header->BlockDescriptors[i].BlockLength += (uint32_t)(modeResponse[13 + i * 16 + 8] << 8);
@@ -59,14 +60,14 @@ ModeHeader *DecodeModeHeader10(unsigned char* modeResponse, uint8_t deviceType)
     if(deviceType == 0x00 || deviceType == 0x05)
     {
         header->WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
-        header->DPOFUA = ((modeResponse[3] & 0x10) == 0x10);
+        header->DPOFUA         = ((modeResponse[3] & 0x10) == 0x10);
     }
 
     if(deviceType == 0x01)
     {
         header->WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
-        header->Speed = (uint8_t)(modeResponse[3] & 0x0F);
-        header->BufferedMode = (uint8_t)((modeResponse[3] & 0x70) >> 4);
+        header->Speed          = (uint8_t)(modeResponse[3] & 0x0F);
+        header->BufferedMode   = (uint8_t)((modeResponse[3] & 0x70) >> 4);
     }
 
     if(deviceType == 0x02)
@@ -75,8 +76,8 @@ ModeHeader *DecodeModeHeader10(unsigned char* modeResponse, uint8_t deviceType)
     if(deviceType == 0x07)
     {
         header->WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
-        header->EBC = ((modeResponse[3] & 0x01) == 0x01);
-        header->DPOFUA = ((modeResponse[3] & 0x10) == 0x10);
+        header->EBC            = ((modeResponse[3] & 0x01) == 0x01);
+        header->DPOFUA         = ((modeResponse[3] & 0x10) == 0x10);
     }
 
     header->decoded = 1;
@@ -84,7 +85,7 @@ ModeHeader *DecodeModeHeader10(unsigned char* modeResponse, uint8_t deviceType)
     return header;
 }
 
-DecodedMode *DecodeMode10(unsigned char* modeResponse, uint8_t deviceType)
+DecodedMode *DecodeMode10(unsigned char *modeResponse, uint8_t deviceType)
 {
     DecodedMode *decodedMode = malloc(sizeof(DecodedMode));
 
@@ -113,12 +114,12 @@ DecodedMode *DecodeMode10(unsigned char* modeResponse, uint8_t deviceType)
         int isSubpage = (modeResponse[offset] & 0x40) == 0x40;
 
         uint8_t pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
-        int subpage;
+        int     subpage;
 
         if(pageNo == 0)
         {
             decodedMode->pageSizes[0][0] = (size_t)(length - offset);
-            decodedMode->Pages[0][0] = malloc(decodedMode->pageSizes[0][0]);
+            decodedMode->Pages[0][0]     = malloc(decodedMode->pageSizes[0][0]);
             memset(decodedMode->Pages[0][0], 0, decodedMode->pageSizes[0][0]);
             memcpy(decodedMode->Pages[0][0], modeResponse + offset, decodedMode->pageSizes[0][0]);
             offset += decodedMode->pageSizes[0][0];
@@ -130,12 +131,14 @@ DecodedMode *DecodeMode10(unsigned char* modeResponse, uint8_t deviceType)
                 if(offset + 3 >= length)
                     break;
 
-                pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
+                pageNo  = (uint8_t)(modeResponse[offset] & 0x3F);
                 subpage = modeResponse[offset + 1];
-                decodedMode->pageSizes[pageNo][subpage] = (size_t)((modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4);
-                decodedMode->Pages[pageNo][subpage] = malloc(decodedMode->pageSizes[pageNo][subpage]);
+                decodedMode->pageSizes[pageNo][subpage] = (size_t)((modeResponse[offset + 2] << 8) +
+                                                                   modeResponse[offset + 3] + 4);
+                decodedMode->Pages[pageNo][subpage]     = malloc(decodedMode->pageSizes[pageNo][subpage]);
                 memset(decodedMode->Pages[pageNo][subpage], 0, decodedMode->pageSizes[pageNo][subpage]);
-                memcpy(decodedMode->Pages[pageNo][subpage], modeResponse + offset, decodedMode->pageSizes[pageNo][subpage]);
+                memcpy(decodedMode->Pages[pageNo][subpage], modeResponse + offset,
+                       decodedMode->pageSizes[pageNo][subpage]);
                 offset += decodedMode->pageSizes[pageNo][subpage];
             }
             else
@@ -145,7 +148,7 @@ DecodedMode *DecodeMode10(unsigned char* modeResponse, uint8_t deviceType)
 
                 pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
                 decodedMode->pageSizes[pageNo][0] = (size_t)(modeResponse[offset + 1] + 2);
-                decodedMode->Pages[pageNo][0] = malloc(decodedMode->pageSizes[pageNo][0]);
+                decodedMode->Pages[pageNo][0]     = malloc(decodedMode->pageSizes[pageNo][0]);
                 memset(decodedMode->Pages[pageNo][0], 0, decodedMode->pageSizes[pageNo][0]);
                 memcpy(decodedMode->Pages[pageNo][0], modeResponse + offset, decodedMode->pageSizes[pageNo][0]);
                 offset += decodedMode->pageSizes[pageNo][0];
@@ -157,9 +160,9 @@ DecodedMode *DecodeMode10(unsigned char* modeResponse, uint8_t deviceType)
 }
 
 
-ModeHeader *DecodeModeHeader6(unsigned char* modeResponse, uint8_t deviceType)
+ModeHeader *DecodeModeHeader6(unsigned char *modeResponse, uint8_t deviceType)
 {
-    int i;
+    int        i;
     ModeHeader *header = malloc(sizeof(ModeHeader));
     memset(header, 0, sizeof(ModeHeader));
 
@@ -181,14 +184,14 @@ ModeHeader *DecodeModeHeader6(unsigned char* modeResponse, uint8_t deviceType)
     if(deviceType == 0x00 || deviceType == 0x05)
     {
         header->WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
-        header->DPOFUA = ((modeResponse[2] & 0x10) == 0x10);
+        header->DPOFUA         = ((modeResponse[2] & 0x10) == 0x10);
     }
 
     if(deviceType == 0x01)
     {
         header->WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
-        header->Speed = (uint8_t)(modeResponse[2] & 0x0F);
-        header->BufferedMode = (uint8_t)((modeResponse[2] & 0x70) >> 4);
+        header->Speed          = (uint8_t)(modeResponse[2] & 0x0F);
+        header->BufferedMode   = (uint8_t)((modeResponse[2] & 0x70) >> 4);
     }
 
     if(deviceType == 0x02)
@@ -197,8 +200,8 @@ ModeHeader *DecodeModeHeader6(unsigned char* modeResponse, uint8_t deviceType)
     if(deviceType == 0x07)
     {
         header->WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
-        header->EBC = ((modeResponse[2] & 0x01) == 0x01);
-        header->DPOFUA = ((modeResponse[2] & 0x10) == 0x10);
+        header->EBC            = ((modeResponse[2] & 0x01) == 0x01);
+        header->DPOFUA         = ((modeResponse[2] & 0x10) == 0x10);
     }
 
     header->decoded = 1;
@@ -206,7 +209,7 @@ ModeHeader *DecodeModeHeader6(unsigned char* modeResponse, uint8_t deviceType)
     return header;
 }
 
-DecodedMode *DecodeMode6(unsigned char* modeResponse, uint8_t deviceType)
+DecodedMode *DecodeMode6(unsigned char *modeResponse, uint8_t deviceType)
 {
     DecodedMode *decodedMode = malloc(sizeof(DecodedMode));
 
@@ -227,12 +230,12 @@ DecodedMode *DecodeMode6(unsigned char* modeResponse, uint8_t deviceType)
         int isSubpage = (modeResponse[offset] & 0x40) == 0x40;
 
         uint8_t pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
-        int subpage;
+        int     subpage;
 
         if(pageNo == 0)
         {
             decodedMode->pageSizes[0][0] = (size_t)(length - offset);
-            decodedMode->Pages[0][0] = malloc(decodedMode->pageSizes[0][0]);
+            decodedMode->Pages[0][0]     = malloc(decodedMode->pageSizes[0][0]);
             memset(decodedMode->Pages[0][0], 0, decodedMode->pageSizes[0][0]);
             memcpy(decodedMode->Pages[0][0], modeResponse + offset, decodedMode->pageSizes[0][0]);
             offset += decodedMode->pageSizes[0][0];
@@ -244,12 +247,14 @@ DecodedMode *DecodeMode6(unsigned char* modeResponse, uint8_t deviceType)
                 if(offset + 3 >= length)
                     break;
 
-                pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
+                pageNo  = (uint8_t)(modeResponse[offset] & 0x3F);
                 subpage = modeResponse[offset + 1];
-                decodedMode->pageSizes[pageNo][subpage] = (size_t)((modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4);
-                decodedMode->Pages[pageNo][subpage] = malloc(decodedMode->pageSizes[pageNo][subpage]);
+                decodedMode->pageSizes[pageNo][subpage] = (size_t)((modeResponse[offset + 2] << 8) +
+                                                                   modeResponse[offset + 3] + 4);
+                decodedMode->Pages[pageNo][subpage]     = malloc(decodedMode->pageSizes[pageNo][subpage]);
                 memset(decodedMode->Pages[pageNo][subpage], 0, decodedMode->pageSizes[pageNo][subpage]);
-                memcpy(decodedMode->Pages[pageNo][subpage], modeResponse + offset, decodedMode->pageSizes[pageNo][subpage]);
+                memcpy(decodedMode->Pages[pageNo][subpage], modeResponse + offset,
+                       decodedMode->pageSizes[pageNo][subpage]);
                 offset += decodedMode->pageSizes[pageNo][subpage];
             }
             else
@@ -259,7 +264,7 @@ DecodedMode *DecodeMode6(unsigned char* modeResponse, uint8_t deviceType)
 
                 pageNo = (uint8_t)(modeResponse[offset] & 0x3F);
                 decodedMode->pageSizes[pageNo][0] = (size_t)(modeResponse[offset + 1] + 2);
-                decodedMode->Pages[pageNo][0] = malloc(decodedMode->pageSizes[pageNo][0]);
+                decodedMode->Pages[pageNo][0]     = malloc(decodedMode->pageSizes[pageNo][0]);
                 memset(decodedMode->Pages[pageNo][0], 0, decodedMode->pageSizes[pageNo][0]);
                 memcpy(decodedMode->Pages[pageNo][0], modeResponse + offset, decodedMode->pageSizes[pageNo][0]);
                 offset += decodedMode->pageSizes[pageNo][0];

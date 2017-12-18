@@ -11,7 +11,7 @@
 
 char *DecodeGeneralConfiguration(uint16_t configuration)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
@@ -223,7 +223,7 @@ char *DecodeTransferMode(uint16_t transferMode)
 
 char *DecodeCapabilities(uint16_t capabilities)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
@@ -361,7 +361,7 @@ char *DecodeCapabilities(uint16_t capabilities)
 
 char *DecodeCapabilities2(uint16_t capabilities)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
@@ -499,14 +499,12 @@ char *DecodeCapabilities2(uint16_t capabilities)
 
 char *DecodeCapabilities3(uint8_t capabilities)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
     if(capabilities & 0x80)
     {
-        if(set)
-            strcat(decoded, " ");
         strcat(decoded, "BlockErase");
         set = 1;
     }
@@ -575,7 +573,7 @@ char *DecodeCapabilities3(uint8_t capabilities)
 
 char *DecodeCommandSet(uint16_t commandset)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
@@ -713,7 +711,7 @@ char *DecodeCommandSet(uint16_t commandset)
 
 char *DecodeCommandSet2(uint16_t commandset)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
@@ -851,7 +849,7 @@ char *DecodeCommandSet2(uint16_t commandset)
 
 char *DecodeCommandSet3(uint16_t commandset)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
@@ -989,7 +987,7 @@ char *DecodeCommandSet3(uint16_t commandset)
 
 char *DecodeCommandSet4(uint16_t commandset)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
@@ -1127,7 +1125,7 @@ char *DecodeCommandSet4(uint16_t commandset)
 
 char *DecodeCommandSet5(uint16_t commandset)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
@@ -1265,7 +1263,7 @@ char *DecodeCommandSet5(uint16_t commandset)
 
 char *DecodeDataSetMgmt(uint16_t datasetmgmt)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 
@@ -2269,7 +2267,7 @@ char *DecodeSpecificConfiguration(uint16_t configuration)
 
 char *DecodeTrustedComputing(uint16_t trutedcomputing)
 {
-    char* decoded = malloc(MAX_STRING_SIZE);
+    char *decoded = malloc(MAX_STRING_SIZE);
     memset(decoded, 0, MAX_STRING_SIZE);
     int set = 0;
 

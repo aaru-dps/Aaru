@@ -17,5 +17,6 @@ typedef enum
     DEVICE_TYPE_SD
 } DeviceTypes;
 
-const char* DeviceType[] = { "Unknown", "SCSI", "ATA", "ATAPI", "USB", "FireWire", "PCMCIA", "MultiMediaCard", "SecureDigital" };
+const char *DeviceType[] = {"Unknown", "SCSI", "ATA", "ATAPI", "USB", "FireWire", "PCMCIA", "MultiMediaCard",
+                            "SecureDigital"};
 #endif //DISCIMAGECHEF_DEVICE_REPORT_MAIN_H
