@@ -2460,6 +2460,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.DualR |= (feature[6] & 0x01) == 0x01;
             }
 
+            // TODO: Check this
             if(decoded.Version >= 2 && feature.Length >= 8)
                 decoded.DualRW |= (feature[6] & 0x02) == 0x02;
 
