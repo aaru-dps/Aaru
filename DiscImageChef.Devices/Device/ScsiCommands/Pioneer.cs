@@ -92,7 +92,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.ReadCdMsf;
+            cdb[0] = (byte)ScsiCommands.ReadCdDaMsf;
             cdb[3] = (byte)((startMsf & 0xFF0000) >> 16);
             cdb[4] = (byte)((startMsf & 0xFF00) >> 8);
             cdb[5] = (byte)(startMsf & 0xFF);

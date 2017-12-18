@@ -202,9 +202,9 @@ namespace DiscImageChef.Devices
             bool sense;
 
             if(retry)
-                registers.command = (byte)AtaCommands.ReadLong;
-            else
                 registers.command = (byte)AtaCommands.ReadLongRetry;
+            else
+                registers.command = (byte)AtaCommands.ReadLong;
             registers.sectorCount = 1;
             registers.cylinderHigh = (byte)((cylinder & 0xFF00) / 0x100);
             registers.cylinderLow = (byte)((cylinder & 0xFF) / 0x1);

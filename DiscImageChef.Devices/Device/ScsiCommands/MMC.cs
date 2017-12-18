@@ -292,7 +292,7 @@ namespace DiscImageChef.Devices
             byte[] tmpBuffer;
             bool sense;
 
-            if(format == 5)
+            if((format & 0x0F)== 5)
                 tmpBuffer = new byte[32768];
             else
                 tmpBuffer = new byte[1024];
