@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiscFerret.cs" />
+    <Compile Include="HDCopy.cs" />
     <Compile Include="KryoFlux.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Apple2MG.cs" />
