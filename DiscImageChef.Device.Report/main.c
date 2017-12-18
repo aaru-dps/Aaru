@@ -6,18 +6,13 @@
 #include <malloc.h>
 #include <stdint.h>
 #include <libxml/xmlwriter.h>
+#include "main.h"
 #include "scsi.h"
 #include "ata.h"
-#include "main.h"
 #include "atapi.h"
 #include "atapi_report.h"
 #include "scsi_report.h"
 #include "ata_report.h"
-
-#define DIC_VERSION "3.99.6.0"
-#define DIC_COPYRIGHT "Copyright © 2011-2017 Natalia Portillo"
-#define XML_ENCODING "UTF-8"
-#define DIC_REPORT_ROOT "DicDeviceReport"
 
 int main(int argc, void *argv[])
 {
