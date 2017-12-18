@@ -10,6 +10,7 @@
 #include "inquiry_decode.h"
 #include "scsi_mode.h"
 #include "mmc_report.h"
+#include "ssc_report.h"
 
 void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
 {
@@ -251,7 +252,7 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
     }
     else if(inquiry->PeripheralDeviceType == 0x01) // SequentialAccess
     {
-        // TODO: Report SSC
+        SscReport(fd, xmlWriter);
     }
     else
     {

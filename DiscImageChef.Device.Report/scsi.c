@@ -847,3 +847,83 @@ int HlDtStReadRawDvd(int fd, unsigned char **buffer, unsigned char **senseBuffer
     return error;
 }
 
+int ReadBlockLimits(int fd, unsigned char **buffer, unsigned char **senseBuffer)
+{
+    unsigned char cmd_len = 6;
+    unsigned int buffer_len = 6;
+    *buffer = malloc(buffer_len);
+    memset(*buffer, 0, buffer_len);
+
+    unsigned char cdb[] = {SCSI_READ_BLOCK_LIMITS, 0, 0, 0, 0, 0};
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+int ReportDensitySupport(int fd, unsigned char **buffer, unsigned char **senseBuffer, int mediumType, int currentMedia)
+{
+    unsigned char cmd_len = 10;
+    unsigned int buffer_len = 256;
+    *buffer = malloc(buffer_len);
+    memset(*buffer, 0, buffer_len);
+
+    unsigned char cdb[] = {SCSI_REPORT_DENSITY_SUPPORT, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    if(currentMedia)
+        cdb[1] |= 0x01;
+    if(mediumType)
+        cdb[1] |= 0x02;
+    cdb[7] = (uint8_t)((buffer_len & 0xFF00) >> 8);
+    cdb[8] = (uint8_t)(buffer_len & 0xFF);
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
+
+    if(error)
+        return error;
+
+    buffer_len = (unsigned int)(*(*buffer + 0) << 8) + *(*buffer + 1) + 2;
+
+    free(*buffer);
+    *buffer = malloc(buffer_len);
+    memset(*buffer, 0, buffer_len);
+    cdb[7] = (uint8_t)((buffer_len & 0xFF00) >> 8);
+    cdb[8] = (uint8_t)(buffer_len & 0xFF);
+
+    error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}
+
+
+int ReadMediaSerialNumber(int fd, unsigned char **buffer, unsigned char **senseBuffer)
+{
+    unsigned char cmd_len = 12;
+    unsigned int buffer_len = 256;
+    *buffer = malloc(buffer_len);
+    memset(*buffer, 0, buffer_len);
+
+    unsigned char cdb[] = {SCSI_READ_MEDIA_SERIAL, 0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    cdb[6] = (uint8_t)((buffer_len & 0xFF000000) >> 24);
+    cdb[7] = (uint8_t)((buffer_len & 0xFF0000) >> 16);
+    cdb[8] = (uint8_t)((buffer_len & 0xFF00) >> 8);
+    cdb[9] = (uint8_t)(buffer_len & 0xFF);
+
+    int error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
+
+    if(error)
+        return error;
+
+    buffer_len = (unsigned int)((*(*buffer + 0) << 24) + (*(*buffer + 1) << 16)) + (*(*buffer + 2) << 8) + *(*buffer + 3) + 4;
+
+    free(*buffer);
+    *buffer = malloc(buffer_len);
+    memset(*buffer, 0, buffer_len);
+    cdb[6] = (uint8_t)((buffer_len & 0xFF000000) >> 24);
+    cdb[7] = (uint8_t)((buffer_len & 0xFF0000) >> 16);
+    cdb[8] = (uint8_t)((buffer_len & 0xFF00) >> 8);
+    cdb[9] = (uint8_t)(buffer_len & 0xFF);
+
+    error = SendScsiCommand(fd, &cdb, cmd_len, *buffer, buffer_len, senseBuffer, SG_DXFER_FROM_DEV);
+
+    return error;
+}

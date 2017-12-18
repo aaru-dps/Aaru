@@ -47,10 +47,14 @@ int PioneerReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer,
 int PioneerReadCdDaMsf(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t startMsf, uint32_t endMsf, uint32_t blockSize, uint8_t subchannel);
 int NecReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t transferLength);
 int HlDtStReadRawDvd(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t transferLength);
+int ReadBlockLimits(int fd, unsigned char **buffer, unsigned char **senseBuffer);
+int ReportDensitySupport(int fd, unsigned char **buffer, unsigned char **senseBuffer, int mediumType, int currentMedia);
+int ReadMediaSerialNumber(int fd, unsigned char **buffer, unsigned char **senseBuffer);
 
 typedef enum
 {
     SCSI_TEST_UNIT_READY = 0x00,
+    SCSI_READ_BLOCK_LIMITS = 0x05,
     SCSI_READ = 0x08,
     SCSI_SEEK = 0x0B,
     SCSI_INQUIRY = 0x12,
@@ -64,12 +68,14 @@ typedef enum
     SCSI_SEEK_10 = 0x2B,
     SCSI_READ_BUFFER = 0x3C,
     MMC_READ_TOC_PMA_ATIP = 0x43,
+    SCSI_REPORT_DENSITY_SUPPORT = 0x44,
     MMC_GET_CONFIGURATION = 0x46,
     SCSI_MODE_SENSE_10 = 0x5A,
     SCSI_ATA_PASSTHROUGH_16 = 0x85,
     SCSI_READ_16 = 0x88,
     SCSI_SERVICE_ACTION_IN = 0x9E,
     SCSI_READ_12 = 0xA8,
+    SCSI_READ_MEDIA_SERIAL = 0xAB,
     MMC_READ_DISC_STRUCTURE = 0xAD,
     MMC_READ_CD_MSF = 0xB9,
     MMC_READ_CD = 0xBE,
