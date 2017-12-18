@@ -525,12 +525,13 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
                     xmlTextWriterEndElement(xmlWriter); // </testedMediaType>
 
                     if(!anyMedia)
-                    {
-                        xmlTextWriterEndElement(xmlWriter); // </RemovableMedias>
                         anyMedia = TRUE;
-                    }
                 }
             }
+
+
+            if(anyMedia)
+                xmlTextWriterEndElement(xmlWriter); // </RemovableMedias>
         }
         else
         {

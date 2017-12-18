@@ -103,6 +103,15 @@ typedef enum {
 
 typedef enum
 {
+    ATA_READ_RETRY = 0x20,
+    ATA_READ_SECTORS = 0x21,
+    ATA_READ_LONG_RETRY = 0x22,
+    ATA_READ_LONG = 0x23,
+    ATA_READ_EXT = 0x24,
+    ATA_READ_DMA_EXT = 0x25,
+    ATA_SEEK = 0x70,
+    ATA_READ_DMA_RETRY = 0xC8,
+    ATA_READ_DMA = 0xC9,
     ATA_IDENTIFY_PACKET_DEVICE = 0xA1,
     ATA_IDENTIFY_DEVICE = 0xEC
 } AtaCommands;
@@ -847,4 +856,14 @@ int SendAtaCommandChs(int fd, AtaRegistersCHS registers, AtaErrorRegistersCHS **
 int SendAtaCommandLba28(int fd, AtaRegistersLBA28 registers, AtaErrorRegistersLBA28 **errorRegisters, int protocol, int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
 int SendAtaCommandLba48(int fd, AtaRegistersLBA48 registers, AtaErrorRegistersLBA48 **errorRegisters, int protocol, int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
 int Identify(int fd, unsigned char **buffer, AtaErrorRegistersCHS **errorRegisters);
+int Read(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head, uint8_t sector, uint8_t count);
+int ReadLong(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head, uint8_t sector, uint32_t blockSize);
+int Seek(int fd, AtaErrorRegistersCHS **statusRegisters, uint16_t cylinder, uint8_t head, uint8_t sector);
+int ReadDma(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head, uint8_t sector, uint8_t count);
+int ReadDmaLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba, uint8_t count);
+int ReadLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba, uint8_t count);
+int ReadLongLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba, uint32_t blockSize);
+int SeekLba(int fd, AtaErrorRegistersLBA28 **statusRegisters, uint32_t lba);
+int ReadDmaLba48(int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
+int ReadLba48(int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
 #endif //DISCIMAGECHEF_DEVICE_REPORT_ATA_H

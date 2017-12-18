@@ -28,7 +28,7 @@ void AtapiReport(int fd, xmlTextWriterPtr xmlWriter)
     IdentifyDevice *identify = malloc(512);
     memcpy(identify, atapi_ident, 512);
 
-    xmlTextWriterStartElement(xmlWriter, BAD_CAST DIC_ATAPI_REPORT_ELEMENT);
+    xmlTextWriterStartElement(xmlWriter, BAD_CAST DIC_ATAPI_REPORT_ELEMENT); // <ATA>
 
     if((uint64_t)*identify->AdditionalPID != 0 && (uint64_t)*identify->AdditionalPID != 0x2020202020202020)
         xmlTextWriterWriteElement(xmlWriter, BAD_CAST "AdditionalPid", AtaToCString(identify->AdditionalPID, 8));
@@ -187,9 +187,9 @@ void AtapiReport(int fd, xmlTextWriterPtr xmlWriter)
     if(identify->WRVSectorCountMode2)
         xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "WRVSectorCountMode2", "%u", le32toh(identify->WRVSectorCountMode2));
 
-    xmlTextWriterStartElement(xmlWriter, BAD_CAST "Identify");
+    xmlTextWriterStartElement(xmlWriter, BAD_CAST "Identify"); // <Identify>
     xmlTextWriterWriteBase64(xmlWriter, atapi_ident, 0, 512);
-    xmlTextWriterEndElement(xmlWriter);
+    xmlTextWriterEndElement(xmlWriter); // </Identify>
 
-    xmlTextWriterEndElement(xmlWriter);
+    xmlTextWriterEndElement(xmlWriter); // </ATA>
 }
