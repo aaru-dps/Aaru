@@ -57,6 +57,7 @@ Supported disk image formats
 * Digital Research DiskCopy
 * DiscJuggler images
 * Dreamcast GDI
+* HD-Copy disk images
 * IBM SaveDskF
 * MAME Compressed Hunks of Data (CHD)
 * MAXI Disk disk images (HDK)
