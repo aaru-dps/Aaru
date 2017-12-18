@@ -67,11 +67,8 @@ using System.IO;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
-using System.Linq;
-using System.Text;
 using DiscImageChef.Filters;
 using System.Runtime.InteropServices;
-using DiscImageChef.Decoders.Floppy;
 
 namespace DiscImageChef.ImagePlugins
 {
