@@ -560,7 +560,8 @@ namespace DiscImageChef.Core.Devices.Report
                                     mediaTest.CurrentCHS.Cylinders = ataId.CurrentCylinders;
                                     mediaTest.CurrentCHS.Heads = ataId.CurrentHeads;
                                     mediaTest.CurrentCHS.Sectors = ataId.CurrentSectorsPerTrack;
-                                    mediaTest.Blocks = (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
+                                    if(mediaTest.Blocks == 0)
+                                        mediaTest.Blocks = (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
                                     mediaTest.BlocksSpecified = true;
                                 }
 
@@ -614,6 +615,7 @@ namespace DiscImageChef.Core.Devices.Report
 
                                     if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
                                     {
+                                        // TODO: Bit shift 1 << value&F
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                                         physicalsectorsize = logicalsectorsize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created

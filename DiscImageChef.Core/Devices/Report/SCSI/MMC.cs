@@ -262,7 +262,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     {
                                         report.SCSI.MultiMediaDevice.Features.DVDMultiRead = ftr001F.Value.MULTI110;
                                         report.SCSI.MultiMediaDevice.Features.CanReadAllDualRW = ftr001F.Value.DualRW;
-                                        report.SCSI.MultiMediaDevice.Features.CanReadAllDualR = ftr001F.Value.DualRW;
+                                        report.SCSI.MultiMediaDevice.Features.CanReadAllDualR = ftr001F.Value.DualR;
                                     }
                                 }
                                 break;
@@ -426,9 +426,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanWriteBDRE2 = ftr0041.Value.RE2;
                                         report.SCSI.MultiMediaDevice.Features.CanWriteBDRE1 = ftr0041.Value.RE1;
-                                        report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE = ftr0041.Value.OldRE;
-                                        report.SCSI.MultiMediaDevice.Features.CanReadBDR = ftr0041.Value.R;
-                                        report.SCSI.MultiMediaDevice.Features.CanReadOldBDR = ftr0041.Value.OldR;
+                                        report.SCSI.MultiMediaDevice.Features.CanWriteOldBDRE = ftr0041.Value.OldRE;
+                                        report.SCSI.MultiMediaDevice.Features.CanWriteBDR = ftr0041.Value.R;
+                                        report.SCSI.MultiMediaDevice.Features.CanWriteOldBDR = ftr0041.Value.OldR;
                                     }
                                 }
                                 break;
@@ -892,7 +892,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             }
                         }
 
-                        if(mediaType.StartsWith("CD-", StringComparison.Ordinal) || mediaType == "Audio CD")
+                        if(mediaType.StartsWith("CD-", StringComparison.Ordinal) || mediaType.StartsWith("DDCD-", StringComparison.Ordinal) || mediaType == "Audio CD")
                         {
                             mediaTest.CanReadTOCSpecified = true;
                             mediaTest.CanReadFullTOCSpecified = true;
@@ -909,7 +909,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 DataFile.WriteTo("SCSI Report", "readfulltoc", "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" + mediaType + ".bin", "read results", buffer);
                         }
 
-                        if(mediaType.StartsWith("CD-R", StringComparison.Ordinal))
+                        if(mediaType.StartsWith("CD-R", StringComparison.Ordinal) || mediaType.StartsWith("DDCD-R", StringComparison.Ordinal))
                         {
                             mediaTest.CanReadATIPSpecified = true;
                             mediaTest.CanReadPMASpecified = true;
@@ -1033,7 +1033,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 DataFile.WriteTo("SCSI Report", "epfi", "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" + mediaType + ".bin", "read results", buffer);
                         }
 
-                        if(mediaType.StartsWith("DVD+R", StringComparison.Ordinal))
+                        if(mediaType.StartsWith("DVD+R", StringComparison.Ordinal) || mediaType == "DVD+MRW")
                         {
                             mediaTest.CanReadADIPSpecified = true;
                             mediaTest.CanReadDCBSpecified = true;
@@ -1127,7 +1127,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             }
                         }
 
-                        if(mediaType.StartsWith("CD-", StringComparison.Ordinal) || mediaType == "Audio CD")
+                        if(mediaType.StartsWith("CD-", StringComparison.Ordinal) || mediaType.StartsWith("DDCD-", StringComparison.Ordinal) || mediaType == "Audio CD")
                         {
                             mediaTest.CanReadC2PointersSpecified = true;
                             mediaTest.CanReadCorrectedSubchannelSpecified = true;
@@ -1201,7 +1201,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                                 DicConsole.WriteLine("Trying to read CD Lead-Out...");
                                 if(mediaType == "Audio CD")
-                                    mediaTest.CanReadLeadOut = dev.ReadCd(out buffer, out senseBuffer, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
+                                    mediaTest.CanReadLeadOut = !dev.ReadCd(out buffer, out senseBuffer, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
                                 else
                                     mediaTest.CanReadLeadOut = !dev.ReadCd(out buffer, out senseBuffer, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
                                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadLeadOut);
@@ -1209,7 +1209,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     DataFile.WriteTo("SCSI Report", "leadout", "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" + mediaType + ".bin", "read results", buffer);
                             }
 
-                            if(mediaType == "Audio CD" && mediaTest.SupportsReadCd)
+                            if(mediaType == "Audio CD")
                             {
                                 DicConsole.WriteLine("Trying to read C2 Pointers...");
                                 mediaTest.CanReadC2Pointers = !dev.ReadCd(out buffer, out senseBuffer, 0, 2646, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2Pointers, MmcSubchannel.None, timeout, out duration);
@@ -1453,73 +1453,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                         if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
                         {
-                            if(mediaTest.BlockSize == 512)
+                            // DVDs
+                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 37856, timeout, out duration);
+                            if(!sense && !dev.Error)
                             {
-                                // Long sector sizes for 512-byte magneto-opticals
-                                foreach(ushort testSize in new[] { 600, 610, 630 })
-                                {
-                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout, out duration);
-                                    if(!sense && !dev.Error)
-                                    {
-                                        mediaTest.SupportsReadLong = true;
-                                        mediaTest.LongBlockSize = testSize;
-                                        mediaTest.LongBlockSizeSpecified = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            else if(mediaTest.BlockSize == 1024)
-                            {
-                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 1200, timeout, out duration);
-                                if(!sense && !dev.Error)
-                                {
-                                    mediaTest.SupportsReadLong = true;
-                                    mediaTest.LongBlockSize = 1200;
-                                    mediaTest.LongBlockSizeSpecified = true;
-                                }
-                            }
-                            else if(mediaTest.BlockSize == 2048)
-                            {
-                                if(mediaType.StartsWith("DVD", StringComparison.Ordinal))
-                                {
-                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 37856, timeout, out duration);
-                                    if(!sense && !dev.Error)
-                                    {
-                                        mediaTest.SupportsReadLong = true;
-                                        mediaTest.LongBlockSize = 37856;
-                                        mediaTest.LongBlockSizeSpecified = true;
-                                    }
-                                }
-                                else
-                                {
-                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, timeout, out duration);
-                                    if(!sense && !dev.Error)
-                                    {
-                                        mediaTest.SupportsReadLong = true;
-                                        mediaTest.LongBlockSize = 2380;
-                                        mediaTest.LongBlockSizeSpecified = true;
-                                    }
-                                }
-                            }
-                            else if(mediaTest.BlockSize == 4096)
-                            {
-                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, timeout, out duration);
-                                if(!sense && !dev.Error)
-                                {
-                                    mediaTest.SupportsReadLong = true;
-                                    mediaTest.LongBlockSize = 4760;
-                                    mediaTest.LongBlockSizeSpecified = true;
-                                }
-                            }
-                            else if(mediaTest.BlockSize == 8192)
-                            {
-                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, timeout, out duration);
-                                if(!sense && !dev.Error)
-                                {
-                                    mediaTest.SupportsReadLong = true;
-                                    mediaTest.LongBlockSize = 9424;
-                                    mediaTest.LongBlockSizeSpecified = true;
-                                }
+                                mediaTest.SupportsReadLong = true;
+                                mediaTest.LongBlockSize = 37856;
+                                mediaTest.LongBlockSizeSpecified = true;
                             }
                         }
 
