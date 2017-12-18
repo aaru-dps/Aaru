@@ -121,7 +121,7 @@ namespace DiscImageChef.Commands
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel, ref resume, ref dumpLog);
+                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel, ref resume, ref dumpLog, options.LeadIn);
                     break;
                 default:
                     dumpLog.WriteLine("Unknown device type.");

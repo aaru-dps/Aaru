@@ -280,7 +280,7 @@ namespace DiscImageChef
         public string EncodingName { get; set; }
     }
 
-    // TODO: Add encoding
+    // TODO: Add encoding, check options
     [Verb("dump-media", HelpText = "Dumps the media inserted on a device to a media image.")]
     public class DumpMediaOptions : CommonOptions
     {
@@ -291,7 +291,7 @@ namespace DiscImageChef
         public string OutputPrefix { get; set; }
 
         [Option('r', "raw", Default = false,
-            HelpText = "Print sectors with tags included.")]
+            HelpText = "Dump sectors with tags included. For optical media, dump scrambled sectors")]
         public bool Raw { get; set; }
 
         [Option('s', "stop-on-error", Default = false,
@@ -317,6 +317,9 @@ namespace DiscImageChef
         [Option('m', "resume", Default = true,
             HelpText = "Create/use resume mapfile.")]
         public bool Resume { get; set; }
+
+        [Option("lead-in", Default = true, HelpText = "Try to read lead-in. Only applicable to CD/DDCD/GD.")]
+        public bool LeadIn { get; set; }
     }
 
     [Verb("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]

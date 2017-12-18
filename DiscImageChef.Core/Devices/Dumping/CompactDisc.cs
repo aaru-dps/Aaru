@@ -57,7 +57,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     internal class CompactDisc
     {
         // TODO: Add support for resume file
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Resume resume, ref DumpLog dumpLog, Alcohol120 alcohol)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Resume resume, ref DumpLog dumpLog, Alcohol120 alcohol, bool dumpLeadIn)
         {
             MHDDLog mhddLog;
             IBGLog ibgLog;
@@ -419,87 +419,91 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(currentTry == null || extents == null)
                 throw new Exception("Could not process resume file, not continuing...");
 
-            DicConsole.WriteLine("Trying to read Lead-In...");
-            bool gotLeadIn = false;
-            int leadInSectorsGood = 0, leadInSectorsTotal = 0;
-
-            dumpFile = new DataFile(outputPrefix + ".leadin.bin");
-            dataChk = new Checksum();
-
-            start = DateTime.UtcNow;
-
-            readBuffer = null;
-
-            dumpLog.WriteLine("Reading Lead-in");
-            for(int leadInBlock = -150; leadInBlock < 0 && resume.NextBlock == 0; leadInBlock++)
+            if(dumpLeadIn)
             {
-                if(dev.PlatformID == Interop.PlatformID.FreeBSD)
+                DicConsole.WriteLine("Trying to read Lead-In...");
+                bool gotLeadIn = false;
+                int leadInSectorsGood = 0, leadInSectorsTotal = 0;
+
+                dumpFile = new DataFile(outputPrefix + ".leadin.bin");
+                dataChk = new Checksum();
+
+                start = DateTime.UtcNow;
+
+                readBuffer = null;
+
+                dumpLog.WriteLine("Reading Lead-in");
+                for(int leadInBlock = -150; leadInBlock < 0 && resume.NextBlock == 0; leadInBlock++)
                 {
-                    DicConsole.DebugWriteLine("Dump-Media", "FreeBSD panics when reading CD Lead-in, see upstream bug #224253.");
-                    break;
-                }
-                
-                if(aborted)
-                {
-                    dumpLog.WriteLine("Aborted!");
-                    break;
-                }
+                    if(dev.PlatformID == Interop.PlatformID.FreeBSD)
+                    {
+                        DicConsole.DebugWriteLine("Dump-Media",
+                                                  "FreeBSD panics when reading CD Lead-in, see upstream bug #224253.");
+                        break;
+                    }
+
+                    if(aborted)
+                    {
+                        dumpLog.WriteLine("Aborted!");
+                        break;
+                    }
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                if(currentSpeed > maxSpeed && currentSpeed != 0)
-                    maxSpeed = currentSpeed;
-                if(currentSpeed < minSpeed && currentSpeed != 0)
-                    minSpeed = currentSpeed;
+                    if(currentSpeed > maxSpeed && currentSpeed != 0) maxSpeed = currentSpeed;
+                    if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                DicConsole.Write("\rTrying to read lead-in sector {0} ({1:F3} MiB/sec.)", leadInBlock, currentSpeed);
+                    DicConsole.Write("\rTrying to read lead-in sector {0} ({1:F3} MiB/sec.)", leadInBlock,
+                                     currentSpeed);
 
-                sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)leadInBlock, blockSize, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
-                    true, true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout, out double cmdDuration);
+                    sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)leadInBlock, blockSize, 1,
+                                       MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
+                                       true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout,
+                                       out double cmdDuration);
 
-                if(!sense && !dev.Error)
-                {
-                    dataChk.Update(readBuffer);
-                    dumpFile.Write(readBuffer);
-                    gotLeadIn = true;
-                    leadInSectorsGood++;
-                    leadInSectorsTotal++;
-                }
-                else
-                {
-                    if(gotLeadIn)
+                    if(!sense && !dev.Error)
                     {
-                        // Write empty data
-                        dataChk.Update(new byte[blockSize]);
-                        dumpFile.Write(new byte[blockSize]);
+                        dataChk.Update(readBuffer);
+                        dumpFile.Write(readBuffer);
+                        gotLeadIn = true;
+                        leadInSectorsGood++;
                         leadInSectorsTotal++;
                     }
-                }
+                    else
+                    {
+                        if(gotLeadIn)
+                        {
+                            // Write empty data
+                            dataChk.Update(new byte[blockSize]);
+                            dumpFile.Write(new byte[blockSize]);
+                            leadInSectorsTotal++;
+                        }
+                    }
 
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                currentSpeed = ((double)blockSize / (double)1048576) / (cmdDuration / (double)1000);
+                    currentSpeed = ((double)blockSize / (double)1048576) / (cmdDuration / (double)1000);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
-            }
+                }
 
-            dumpFile.Close();
-            if(leadInSectorsGood > 0)
-            {
-                sidecar.OpticalDisc[0].LeadIn = new BorderType[]
+                dumpFile.Close();
+                if(leadInSectorsGood > 0)
                 {
-	                new BorderType
-	                {
-	                    Image = outputPrefix + ".leadin.bin",
-	                    Checksums = dataChk.End().ToArray(),
-	                    Size = leadInSectorsTotal * blockSize
-	                }
-                };
-            }
-            else
-                File.Delete(outputPrefix + ".leadin.bin");
+                    sidecar.OpticalDisc[0].LeadIn = new BorderType[]
+                    {
+                        new BorderType
+                        {
+                            Image = outputPrefix + ".leadin.bin",
+                            Checksums = dataChk.End().ToArray(),
+                            Size = leadInSectorsTotal * blockSize
+                        }
+                    };
+                }
+                else File.Delete(outputPrefix + ".leadin.bin");
 
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Got {0} lead-in sectors.", leadInSectorsGood);
-            dumpLog.WriteLine("Got {0} Lead-in sectors.", leadInSectorsGood);
+                DicConsole.WriteLine();
+                DicConsole.WriteLine("Got {0} lead-in sectors.", leadInSectorsGood);
+                dumpLog.WriteLine("Got {0} Lead-in sectors.", leadInSectorsGood);
+            }
 
             while(true)
             {

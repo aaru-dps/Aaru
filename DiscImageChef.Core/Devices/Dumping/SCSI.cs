@@ -48,7 +48,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     public class SCSI
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
-        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel, ref Metadata.Resume resume, ref DumpLog dumpLog)
+        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel, ref Metadata.Resume resume, ref DumpLog dumpLog, bool dumpLeadIn)
         {
             byte[] senseBuf = null;
             bool sense = false;
@@ -183,7 +183,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
-                MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog);
+                MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, dumpLeadIn);
                 return;
             }
 
