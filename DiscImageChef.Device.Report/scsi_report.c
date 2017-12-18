@@ -9,6 +9,7 @@
 #include "scsi.h"
 #include "inquiry_decode.h"
 #include "scsi_mode.h"
+#include "mmc_report.h"
 
 void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
 {
@@ -200,7 +201,8 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
         xmlTextWriterEndElement(xmlWriter);
     }
 
-    DecodedMode *decMode;
+    DecodedMode *decMode = NULL;
+    unsigned char* cdromMode = NULL;
 
     if(supportsMode10)
         decMode = DecodeMode10(mode10Response, inquiry->PeripheralDeviceType);
@@ -235,7 +237,7 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
 
                     if(page == 0x2A && subpage == 0x00)
                     {
-                        // TODO: Decode CD-ROM page
+                        cdromMode = decMode->Pages[0x2A][0x00];
                     }
                 }
             }
@@ -245,7 +247,7 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
 
     if(inquiry->PeripheralDeviceType == 0x05) // MultiMediaDevice
     {
-        // TODO: Report MMC
+        MmcReport(fd, xmlWriter, cdromMode);
     }
     else if(inquiry->PeripheralDeviceType == 0x01) // SequentialAccess
     {
@@ -416,7 +418,7 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
                             }
                         }
 
-                        printf("Trying SCSI READ LONG (10)...\n");
+                        printf("Trying SCSI READ LONG (16)...\n");
                         ReadLong16(fd, &buffer, &sense, FALSE, 0, 0xFFFF);
                         if((sense[0] == 0x70 || sense[0] == 0x71) && (sense[2] & 0x0F) == 0x05 && sense[12] == 0x24 && sense[13] == 0x00)
                             xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsReadLong16", "%s", "true");
@@ -616,7 +618,7 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
                 }
             }
 
-            printf("Trying SCSI READ LONG (10)...\n");
+            printf("Trying SCSI READ LONG (16)...\n");
             ReadLong16(fd, &buffer, &sense, FALSE, 0, 0xFFFF);
             if((sense[0] == 0x70 || sense[0] == 0x71) && (sense[2] & 0x0F) == 0x05 && sense[12] == 0x24 && sense[13] == 0x00)
                 xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsReadLong16", "%s", "true");

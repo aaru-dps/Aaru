@@ -36,6 +36,17 @@ int ReadLong16(int fd, unsigned char **buffer, unsigned char **senseBuffer, int 
 int Seek6(int fd, unsigned char **senseBuffer, uint32_t lba);
 int Seek10(int fd, unsigned char **senseBuffer, uint32_t lba);
 int TestUnitReady(int fd, unsigned char **senseBuffer);
+int GetConfiguration(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint16_t startingFeatureNumber, uint8_t RT);
+int ReadTocPmaAtip(int fd, unsigned char **buffer, unsigned char **senseBuffer, int MSF, uint8_t format, uint8_t trackSessionNumber);
+int ReadDiscStructure(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint8_t mediaType, uint32_t address, uint8_t layerNumber, uint8_t format, uint8_t AGID);
+int ReadCd(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize, uint32_t transferLength, uint8_t expectedSectorType, int DAP, int relAddr, int sync, uint8_t headerCodes, int userData, int edcEcc, uint8_t C2Error, uint8_t subchannel);
+int ReadCdMsf(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t startMsf, uint32_t endMsf, uint32_t blockSize, uint8_t expectedSectorType, int DAP, int sync, uint8_t headerCodes, int userData, int edcEcc, uint8_t C2Error, uint8_t subchannel);
+int PlextorReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize, uint32_t transferLength, uint8_t subchannel);
+int PlextorReadRawDvd(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t transferLength);
+int PioneerReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t blockSize, uint32_t transferLength, uint8_t subchannel);
+int PioneerReadCdDaMsf(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t startMsf, uint32_t endMsf, uint32_t blockSize, uint8_t subchannel);
+int NecReadCdDa(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t transferLength);
+int HlDtStReadRawDvd(int fd, unsigned char **buffer, unsigned char **senseBuffer, uint32_t lba, uint32_t transferLength);
 
 typedef enum
 {
@@ -51,11 +62,21 @@ typedef enum
     SCSI_READ_10 = 0x28,
     SCSI_READ_LONG = 0x3E,
     SCSI_SEEK_10 = 0x2B,
+    SCSI_READ_BUFFER = 0x3C,
+    MMC_READ_TOC_PMA_ATIP = 0x43,
+    MMC_GET_CONFIGURATION = 0x46,
     SCSI_MODE_SENSE_10 = 0x5A,
     SCSI_ATA_PASSTHROUGH_16 = 0x85,
     SCSI_READ_16 = 0x88,
     SCSI_SERVICE_ACTION_IN = 0x9E,
     SCSI_READ_12 = 0xA8,
+    MMC_READ_DISC_STRUCTURE = 0xAD,
+    MMC_READ_CD_MSF = 0xB9,
+    MMC_READ_CD = 0xBE,
+    NEC_READ_CDDA = 0xD4,
+    PIONEER_READ_CDDA = 0xD8,
+    PIONEER_READ_CDDA_MSF = 0xD9,
+    HLDTST_VENDOR = 0xE7,
 } ScsiCommands;
 
 typedef enum
@@ -71,6 +92,253 @@ typedef enum
     SCSI_READ_CAPACITY_16 = 0x10,
     SCSI_READ_LONG_16 = 0x11,
 } ScsiServiceActionIn;
+
+typedef enum
+{
+    DISC_STRUCTURE_DVD = 0x00,
+    DISC_STRUCTURE_BD = 0x01,
+} MmcDiscStructureMediaType;
+
+// TODO: Stylize this
+typedef enum
+{
+    // Generic Format Codes
+
+    /// <summary>
+    /// AACS Volume Identifier
+    /// </summary>
+            DISC_STRUCTURE_AACSVolId = 0x80,
+    /// <summary>
+    /// AACS Pre-recorded Media Serial Number
+    /// </summary>
+            DISC_STRUCTURE_AACSMediaSerial = 0x81,
+    /// <summary>
+    /// AACS Media Identifier
+    /// </summary>
+            DISC_STRUCTURE_AACSMediaId = 0x82,
+    /// <summary>
+    /// AACS Lead-in Media Key Block
+    /// </summary>
+            DISC_STRUCTURE_AACSMKB = 0x83,
+    /// <summary>
+    /// AACS Data Keys
+    /// </summary>
+            DISC_STRUCTURE_AACSDataKeys = 0x84,
+    /// <summary>
+    /// AACS LBA extents
+    /// </summary>
+            DISC_STRUCTURE_AACSLBAExtents = 0x85,
+    /// <summary>
+    /// CPRM Media Key Block specified by AACS
+    /// </summary>
+            DISC_STRUCTURE_AACSMKBCPRM = 0x86,
+    /// <summary>
+    /// Recognized format layers
+    /// </summary>
+            DISC_STRUCTURE_RecognizedFormatLayers = 0x90,
+    /// <summary>
+    /// Write protection status
+    /// </summary>
+            DISC_STRUCTURE_WriteProtectionStatus = 0xC0,
+    /// <summary>
+    /// READ/SEND DISC STRUCTURE capability list
+    /// </summary>
+            DISC_STRUCTURE_CapabilityList = 0xFF,
+
+    // DVD Disc Structures
+    /// <summary>
+    /// DVD Lead-in Physical Information
+    /// </summary>
+            DISC_STRUCTURE_PhysicalInformation = 0x00,
+    /// <summary>
+    /// DVD Lead-in Copyright Information
+    /// </summary>
+            DISC_STRUCTURE_CopyrightInformation = 0x01,
+    /// <summary>
+    /// CSS/CPPM Disc key
+    /// </summary>
+            DISC_STRUCTURE_DiscKey = 0x02,
+    /// <summary>
+    /// DVD Burst Cutting Area
+    /// </summary>
+            DISC_STRUCTURE_BurstCuttingArea = 0x03,
+    /// <summary>
+    /// DVD Lead-in Disc Manufacturing Information
+    /// </summary>
+            DISC_STRUCTURE_DiscManufacturingInformation = 0x04,
+    /// <summary>
+    /// DVD Copyright Information from specified sector
+    /// </summary>
+            DISC_STRUCTURE_SectorCopyrightInformation = 0x05,
+    /// <summary>
+    /// CSS/CPPM Media Identifier
+    /// </summary>
+            DISC_STRUCTURE_MediaIdentifier = 0x06,
+    /// <summary>
+    /// CSS/CPPM Media Key Block
+    /// </summary>
+            DISC_STRUCTURE_MediaKeyBlock = 0x07,
+    /// <summary>
+    /// DDS from DVD-RAM
+    /// </summary>
+            DISC_STRUCTURE_DVDRAM_DDS = 0x08,
+    /// <summary>
+    /// DVD-RAM Medium Status
+    /// </summary>
+            DISC_STRUCTURE_DVDRAM_MediumStatus = 0x09,
+    /// <summary>
+    /// DVD-RAM Spare Area Information
+    /// </summary>
+            DISC_STRUCTURE_DVDRAM_SpareAreaInformation = 0x0A,
+    /// <summary>
+    /// DVD-RAM Recording Type Information
+    /// </summary>
+            DISC_STRUCTURE_DVDRAM_RecordingType = 0x0B,
+    /// <summary>
+    /// DVD-R/-RW RMD in last Border-out
+    /// </summary>
+            DISC_STRUCTURE_LastBorderOutRMD = 0x0C,
+    /// <summary>
+    /// Specified RMD from last recorded Border-out
+    /// </summary>
+            DISC_STRUCTURE_SpecifiedRMD = 0x0D,
+    /// <summary>
+    /// DVD-R/-RW Lead-in pre-recorded information
+    /// </summary>
+            DISC_STRUCTURE_PreRecordedInfo = 0x0E,
+    /// <summary>
+    /// DVD-R/-RW Media Identifier
+    /// </summary>
+            DISC_STRUCTURE_DVDR_MediaIdentifier = 0x0F,
+    /// <summary>
+    /// DVD-R/-RW Physical Format Information
+    /// </summary>
+            DISC_STRUCTURE_DVDR_PhysicalInformation = 0x10,
+    /// <summary>
+    /// ADIP
+    /// </summary>
+            DISC_STRUCTURE_ADIP = 0x11,
+    /// <summary>
+    /// HD DVD Lead-in Copyright Protection Information
+    /// </summary>
+            DISC_STRUCTURE_HDDVD_CopyrightInformation = 0x12,
+    /// <summary>
+    /// AACS Lead-in Copyright Data Section
+    /// </summary>
+            DISC_STRUCTURE_DVD_AACS = 0x15,
+    /// <summary>
+    /// HD DVD-R Medium Status
+    /// </summary>
+            DISC_STRUCTURE_HDDVDR_MediumStatus = 0x19,
+    /// <summary>
+    /// HD DVD-R Last recorded RMD in the latest RMZ
+    /// </summary>
+            DISC_STRUCTURE_HDDVDR_LastRMD = 0x1A,
+    /// <summary>
+    /// DVD+/-R DL and DVD-Download DL layer capacity
+    /// </summary>
+            DISC_STRUCTURE_DVDR_LayerCapacity = 0x20,
+    /// <summary>
+    /// DVD-R DL Middle Zone start address
+    /// </summary>
+            DISC_STRUCTURE_MiddleZoneStart = 0x21,
+    /// <summary>
+    /// DVD-R DL Jump Interval Size
+    /// </summary>
+            DISC_STRUCTURE_JumpIntervalSize = 0x22,
+    /// <summary>
+    /// DVD-R DL Start LBA of the manual layer jump
+    /// </summary>
+            DISC_STRUCTURE_ManualLayerJumpStartLBA = 0x23,
+    /// <summary>
+    /// DVD-R DL Remapping information of the specified Anchor Point
+    /// </summary>
+            DISC_STRUCTURE_RemapAnchorPoint = 0x24,
+    /// <summary>
+    /// Disc Control Block
+    /// </summary>
+            DISC_STRUCTURE_DCB = 0x30,
+
+    // BD Disc Structures
+    /// <summary>
+    /// Blu-ray Disc Information
+    /// </summary>
+            DISC_STRUCTURE_DiscInformation = 0x00,
+    /// <summary>
+    /// Blu-ray Burst Cutting Area
+    /// </summary>
+            DISC_STRUCTURE_BD_BurstCuttingArea = 0x03,
+    /// <summary>
+    /// Blu-ray DDS
+    /// </summary>
+            DISC_STRUCTURE_BD_DDS = 0x08,
+    /// <summary>
+    /// Blu-ray Cartridge Status
+    /// </summary>
+            DISC_STRUCTURE_CartridgeStatus = 0x09,
+    /// <summary>
+    /// Blu-ray Spare Area Information
+    /// </summary>
+            DISC_STRUCTURE_BD_SpareAreaInformation = 0x0A,
+    /// <summary>
+    /// Unmodified DFL
+    /// </summary>
+            DISC_STRUCTURE_RawDFL = 0x12,
+    /// <summary>
+    /// Physical Access Control
+    /// </summary>
+            DISC_STRUCTURE_PAC = 0x30
+} MmcDiscStructureFormat;
+
+typedef enum
+{
+    MMC_SECTOR_ALL = 0,
+    MMC_SECTOR_CDDA = 1,
+    MMC_SECTOR_MODE1 = 2,
+    MMC_SECTOR_MODE2 = 3,
+    MMC_SECTOR_MODE2F1 = 4,
+    MMC_SECTOR_MODE2F2 = 5
+} MmcSectorTypes;
+
+typedef enum
+{
+    MMC_HEADER_NONE = 0,
+    MMC_HEADER_ONLY = 1,
+    MMC_SUBHEADER_ONLY = 2,
+    MMC_HEADER_ALL = 3
+} MmcHeaderCodes;
+
+typedef enum
+{
+    MMC_ERROR_NONE = 0,
+    MMC_ERROR_C2 = 1,
+    MMC_ERROR_C2_AND_BLOCK = 2
+} MmcErrorField;
+
+typedef enum
+{
+    MMC_SUBCHANNEL_NONE = 0,
+    MMC_SUBCHANNEL_RAW = 1,
+    MMC_SUBCHANNEL_Q16 = 2,
+    MMC_SUBCHANNEL_RW = 4
+} MmcSubchannel;
+
+typedef enum
+{
+    PIONEER_SUBCHANNEL_NONE = 0,
+    PIONEER_SUBCHANNEL_Q16 = 1,
+    PIONEER_SUBCHANNEL_ALL = 2,
+    PIONEER_SUBCHANNEL_ONLY = 3
+} PioneerSubchannel;
+
+typedef enum
+{
+    PLEXTOR_SUBCHANNEL_NONE = 0,
+    PLEXTOR_SUBCHANNEL_Q16 = 1,
+    PLEXTOR_SUBCHANNEL_PACK = 2,
+    PLEXTOR_SUBCHANNEL_ALL = 3,
+    PLEXTOR_SUBCHANNEL_RAW_C2 = 8
+} PlextorSubchannel;
 
 // SCSI INQUIRY command response
 #pragma pack(push, 1)
