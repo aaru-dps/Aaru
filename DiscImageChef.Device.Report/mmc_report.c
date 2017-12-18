@@ -1208,11 +1208,11 @@ void MmcReport(int fd, xmlTextWriterPtr xmlWriter, unsigned char *cdromMode)
             xmlTextWriterStartElement(xmlWriter, BAD_CAST "ModeSense6Data");
             xmlTextWriterWriteBase64(xmlWriter, buffer, 0, *(buffer + 0) + 1);
             xmlTextWriterEndElement(xmlWriter);
-            if(!decMode->decoded)
+            if(decMode == NULL || !decMode->decoded)
                 decMode = DecodeMode6(buffer, 0x05);
         }
 
-        if(decMode->decoded)
+        if(decMode != NULL && decMode->decoded)
         {
             xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "MediumType", "%d", decMode->Header.MediumType);
             if(decMode->Header.descriptorsLength > 0)
@@ -1305,7 +1305,7 @@ void MmcReport(int fd, xmlTextWriterPtr xmlWriter, unsigned char *cdromMode)
         }
 
         // All BDs but BD-ROM
-        if(i >= 1 || i <= 4)
+        if(i >= 1 && i <= 4)
         {
             printf("Querying BD DDS...\n");
             xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "CanReadDDS", "%s",
@@ -1376,7 +1376,7 @@ void MmcReport(int fd, xmlTextWriterPtr xmlWriter, unsigned char *cdromMode)
         }
 
         // All BDs
-        if(i >= 16 && i <= 5)
+        if(i >= 5 && i <= 16)
         {
             printf("Querying BD Disc Information...\n");
             xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "CanReadDiscInformation", "%s",
@@ -1757,8 +1757,6 @@ void MmcReport(int fd, xmlTextWriterPtr xmlWriter, unsigned char *cdromMode)
         if((sense[0] == 0x70 || sense[0] == 0x71) && (sense[2] & 0x0F) == 0x05 && sense[12] == 0x24 &&
            sense[13] == 0x00)
             xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsReadLong16", "%s", "true");
-
-        int i;
 
         if(supportsReadLong10 && blockSize == longBlockSize)
         {

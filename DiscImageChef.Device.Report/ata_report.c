@@ -328,7 +328,7 @@ void AtaReport(int fd, xmlTextWriterPtr xmlWriter)
                     xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "UnformattedBPS", "%u",
                                                     le16toh(identify->UnformattedBPS));
 
-                uint64_t blocks;
+                uint64_t blocks = 0;
 
                 if(identify->Cylinders > 0 && identify->Heads > 0 && identify->SectorsPerTrack != 0)
                 {

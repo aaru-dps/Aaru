@@ -198,11 +198,11 @@ void SscReport(int fd, xmlTextWriterPtr xmlWriter)
                     xmlTextWriterStartElement(xmlWriter, BAD_CAST "ModeSense6Data");
                     xmlTextWriterWriteBase64(xmlWriter, buffer, 0, *(buffer + 0) + 1);
                     xmlTextWriterEndElement(xmlWriter);
-                    if(!decMode->decoded)
+                    if(decMode == NULL || !decMode->decoded)
                         decMode = DecodeMode6(buffer, 0x01);
                 }
 
-                if(decMode->decoded)
+                if(decMode != NULL && decMode->decoded)
                 {
                     xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "MediumType", "%d", decMode->Header.MediumType);
                     if(decMode->Header.descriptorsLength > 0)
