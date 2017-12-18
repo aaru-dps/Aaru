@@ -318,7 +318,7 @@ namespace DiscImageChef
             HelpText = "Create/use resume mapfile.")]
         public bool Resume { get; set; }
 
-        [Option("lead-in", Default = true, HelpText = "Try to read lead-in. Only applicable to CD/DDCD/GD.")]
+        [Option("lead-in", Default = false, HelpText = "Try to read lead-in. Only applicable to CD/DDCD/GD.")]
         public bool LeadIn { get; set; }
     }
 
