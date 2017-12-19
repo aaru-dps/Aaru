@@ -109,8 +109,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static CDSessionInfo? Decode(byte[] CDSessionInfoResponse)
         {
-            if(CDSessionInfoResponse == null)
-                return null;
+            if(CDSessionInfoResponse == null) return null;
 
             CDSessionInfo decoded = new CDSessionInfo();
 
@@ -123,7 +122,9 @@ namespace DiscImageChef.Decoders.CD
 
             if(decoded.DataLength + 2 != CDSessionInfoResponse.Length)
             {
-                DicConsole.DebugWriteLine("CD Session Info decoder", "Expected CDSessionInfo size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDSessionInfoResponse.Length);
+                DicConsole.DebugWriteLine("CD Session Info decoder",
+                                          "Expected CDSessionInfo size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                          decoded.DataLength + 2, CDSessionInfoResponse.Length);
                 return null;
             }
 
@@ -134,7 +135,8 @@ namespace DiscImageChef.Decoders.CD
                 decoded.TrackDescriptors[i].CONTROL = (byte)(CDSessionInfoResponse[1 + i * 8 + 4] & 0x0F);
                 decoded.TrackDescriptors[i].TrackNumber = CDSessionInfoResponse[2 + i * 8 + 4];
                 decoded.TrackDescriptors[i].Reserved2 = CDSessionInfoResponse[3 + i * 8 + 4];
-                decoded.TrackDescriptors[i].TrackStartAddress = BigEndianBitConverter.ToUInt32(CDSessionInfoResponse, 4 + i * 8 + 4);
+                decoded.TrackDescriptors[i].TrackStartAddress =
+                    BigEndianBitConverter.ToUInt32(CDSessionInfoResponse, 4 + i * 8 + 4);
             }
 
             return decoded;
@@ -142,8 +144,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static string Prettify(CDSessionInfo? CDSessionInfoResponse)
         {
-            if(CDSessionInfoResponse == null)
-                return null;
+            if(CDSessionInfoResponse == null) return null;
 
             CDSessionInfo response = CDSessionInfoResponse.Value;
 
@@ -153,11 +154,12 @@ namespace DiscImageChef.Decoders.CD
             sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
             foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
             {
-                sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber).AppendLine();
+                sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber)
+                  .AppendLine();
                 sb.AppendFormat("Track starts at LBA {0}, or MSF {1:X2}:{2:X2}:{3:X2}", descriptor.TrackStartAddress,
-                    (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
-                    (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
-                    (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
+                                (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
+                                (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
+                                (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
 
                 switch((TOC_ADR)descriptor.ADR)
                 {
@@ -201,10 +203,9 @@ namespace DiscImageChef.Decoders.CD
                             break;
                     }
 
-                    if((descriptor.CONTROL & (byte)TOC_CONTROL.CopyPermissionMask) == (byte)TOC_CONTROL.CopyPermissionMask)
-                        sb.AppendLine("Digital copy of track is permitted");
-                    else
-                        sb.AppendLine("Digital copy of track is prohibited");
+                    if((descriptor.CONTROL & (byte)TOC_CONTROL.CopyPermissionMask) ==
+                       (byte)TOC_CONTROL.CopyPermissionMask) sb.AppendLine("Digital copy of track is permitted");
+                    else sb.AppendLine("Digital copy of track is prohibited");
 
 #if DEBUG
                     if(descriptor.Reserved1 != 0)
@@ -227,4 +228,3 @@ namespace DiscImageChef.Decoders.CD
         }
     }
 }
-

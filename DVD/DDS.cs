@@ -196,18 +196,15 @@ namespace DiscImageChef.Decoders.DVD
 
         public static DiscDefinitionStructure? Decode(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 2052)
-                return null;
+            if(response.Length != 2052) return null;
 
             DiscDefinitionStructure dds = new DiscDefinitionStructure();
 
             dds.Identifier = (ushort)((response[4] << 8) + response[5]);
 
-            if(dds.Identifier != 0x0A0A)
-                return null;
+            if(dds.Identifier != 0x0A0A) return null;
 
             // Common to both DVD-RAM versions
             dds.DataLength = (ushort)((response[0] << 8) + response[1]);
@@ -252,7 +249,8 @@ namespace DiscImageChef.Decoders.DVD
                 dds.StartLSNForZone = new uint[dds.Zones];
 
                 for(int i = 0; i < dds.Zones; i++)
-                    dds.StartLSNForZone[i] = (uint)((response[260 + i * 4 + 1] << 16) + (response[260 + i * 4 + 2] << 8) + response[260 + i * 4 + 3]);
+                    dds.StartLSNForZone[i] = (uint)((response[260 + i * 4 + 1] << 16) +
+                                                    (response[260 + i * 4 + 2] << 8) + response[260 + i * 4 + 3]);
             }
 
             return dds;
@@ -260,8 +258,7 @@ namespace DiscImageChef.Decoders.DVD
 
         public static string Prettify(DiscDefinitionStructure? dds)
         {
-            if(dds == null)
-                return null;
+            if(dds == null) return null;
 
             DiscDefinitionStructure decoded = dds.Value;
             StringBuilder sb = new StringBuilder();
@@ -271,17 +268,13 @@ namespace DiscImageChef.Decoders.DVD
                 sb.AppendLine("Formatting in progress.");
                 if(decoded.Groups == 24)
                 {
-                    if(decoded.PartialCertification)
-                        sb.AppendLine("Formatting is only using partial certification");
-                    if(decoded.FormattingOnlyAGroup)
-                        sb.AppendLine("Only a group is being formatted");
+                    if(decoded.PartialCertification) sb.AppendLine("Formatting is only using partial certification");
+                    if(decoded.FormattingOnlyAGroup) sb.AppendLine("Only a group is being formatted");
                 }
             }
 
-            if(decoded.UserCertification)
-                sb.AppendLine("Disc has been certified by an user");
-            if(decoded.ManufacturerCertification)
-                sb.AppendLine("Disc has been certified by a manufacturer");
+            if(decoded.UserCertification) sb.AppendLine("Disc has been certified by an user");
+            if(decoded.ManufacturerCertification) sb.AppendLine("Disc has been certified by a manufacturer");
 
             sb.AppendFormat("DDS has been updated {0} times", decoded.UpdateCount).AppendLine();
 
@@ -303,7 +296,8 @@ namespace DiscImageChef.Decoders.DVD
             if(decoded.Groups == 1)
             {
                 sb.AppendFormat("Disc has {0} zones", decoded.Zones).AppendLine();
-                sb.AppendFormat("Primary Spare Area stats at PSN {0:X}h and ends at PSN {1:X}h, inclusively", decoded.SpareAreaFirstPSN, decoded.SpareAreaLastPSN).AppendLine();
+                sb.AppendFormat("Primary Spare Area stats at PSN {0:X}h and ends at PSN {1:X}h, inclusively",
+                                decoded.SpareAreaFirstPSN, decoded.SpareAreaLastPSN).AppendLine();
                 sb.AppendFormat("LSN 0 is at PSN {0:X}h", decoded.LSN0Location).AppendLine();
 
                 for(int i = 0; i < decoded.StartLSNForZone.Length; i++)
@@ -319,4 +313,3 @@ namespace DiscImageChef.Decoders.DVD
         }
     }
 }
-

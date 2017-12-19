@@ -63,8 +63,7 @@ namespace DiscImageChef.Decoders.Bluray
         #region Public methods
         public static DiscDefinitionStructure? Decode(byte[] DDSResponse)
         {
-            if(DDSResponse == null)
-                return null;
+            if(DDSResponse == null) return null;
 
             DiscDefinitionStructure decoded = new DiscDefinitionStructure();
 
@@ -76,10 +75,11 @@ namespace DiscImageChef.Decoders.Bluray
             decoded.Signature = BigEndianBitConverter.ToUInt16(DDSResponse, 4);
             if(decoded.Signature != DDSIdentifier)
             {
-                DicConsole.DebugWriteLine("BD DDS decoder", "Found incorrect DDS signature (0x{0:X4})", decoded.Signature);
+                DicConsole.DebugWriteLine("BD DDS decoder", "Found incorrect DDS signature (0x{0:X4})",
+                                          decoded.Signature);
                 return null;
-
             }
+
             decoded.Format = DDSResponse[6];
             decoded.Reserved3 = DDSResponse[7];
             decoded.UpdateCount = BigEndianBitConverter.ToUInt32(DDSResponse, 8);
@@ -109,8 +109,7 @@ namespace DiscImageChef.Decoders.Bluray
 
         public static string Prettify(DiscDefinitionStructure? DDSResponse)
         {
-            if(DDSResponse == null)
-                return null;
+            if(DDSResponse == null) return null;
 
             DiscDefinitionStructure response = DDSResponse.Value;
 
@@ -134,24 +133,15 @@ namespace DiscImageChef.Decoders.Bluray
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DiscTypeSpecificData, 80));
 
 #if DEBUG
-            if(response.Reserved1 != 0)
-                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-            if(response.Reserved2 != 0)
-                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            if(response.Reserved3 != 0)
-                sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
-            if(response.Reserved4 != 0)
-                sb.AppendFormat("Reserved4 = 0x{0:X16}", response.Reserved4).AppendLine();
-            if(response.Reserved5 != 0)
-                sb.AppendFormat("Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
-            if(response.Reserved6 != 0)
-                sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
-            if(response.Reserved7 != 0)
-                sb.AppendFormat("Reserved7 = 0x{0:X2}", response.Reserved7).AppendLine();
-            if(response.Reserved8 != 0)
-                sb.AppendFormat("Reserved8 = 0x{0:X2}", response.Reserved8).AppendLine();
-            if(response.Reserved9 != 0)
-                sb.AppendFormat("Reserved9 = 0x{0:X8}", response.Reserved9).AppendLine();
+            if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0) sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
+            if(response.Reserved4 != 0) sb.AppendFormat("Reserved4 = 0x{0:X16}", response.Reserved4).AppendLine();
+            if(response.Reserved5 != 0) sb.AppendFormat("Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
+            if(response.Reserved6 != 0) sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
+            if(response.Reserved7 != 0) sb.AppendFormat("Reserved7 = 0x{0:X2}", response.Reserved7).AppendLine();
+            if(response.Reserved8 != 0) sb.AppendFormat("Reserved8 = 0x{0:X2}", response.Reserved8).AppendLine();
+            if(response.Reserved9 != 0) sb.AppendFormat("Reserved9 = 0x{0:X8}", response.Reserved9).AppendLine();
 #endif
 
             return sb.ToString();
@@ -295,4 +285,3 @@ namespace DiscImageChef.Decoders.Bluray
         #endregion Public structures
     }
 }
-

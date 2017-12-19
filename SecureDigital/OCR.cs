@@ -79,48 +79,32 @@ namespace DiscImageChef.Decoders.SecureDigital
 
         public static OCR DecodeOCR(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 4)
-                return null;
+            if(response.Length != 4) return null;
 
             return DecodeOCR(BitConverter.ToUInt32(response, 0));
         }
 
         public static string PrettifyOCR(OCR ocr)
         {
-            if(ocr == null)
-                return null;
+            if(ocr == null) return null;
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("SecureDigital Operation Conditions Register:");
-            if(!ocr.PowerUp)
-                sb.AppendLine("\tDevice is powering up");
-            if(ocr.CCS)
-                sb.AppendLine("\tDevice is SDHC, SDXC or higher");
-            if(ocr.UHS)
-                sb.AppendLine("\tDevice is UHS-II or higher");
-            if(ocr.ThreeFive)
-                sb.AppendLine("\tDevice can work with supply 3.5~3.6V");
-            if(ocr.ThreeFour)
-                sb.AppendLine("\tDevice can work with supply 3.4~3.5V");
-            if(ocr.ThreeThree)
-                sb.AppendLine("\tDevice can work with supply 3.3~3.4V");
-            if(ocr.ThreeTwo)
-                sb.AppendLine("\tDevice can work with supply 3.2~3.3V");
-            if(ocr.ThreeOne)
-                sb.AppendLine("\tDevice can work with supply 3.1~3.2V");
-            if(ocr.TwoNine)
-                sb.AppendLine("\tDevice can work with supply 2.9~3.0V");
-            if(ocr.TwoEight)
-                sb.AppendLine("\tDevice can work with supply 2.8~2.9V");
-            if(ocr.TwoSeven)
-                sb.AppendLine("\tDevice can work with supply 2.7~2.8V");
-            if(ocr.OneEight)
-                sb.AppendLine("\tDevice can switch to work with 1.8V supply");
-            if(ocr.LowPower)
-                sb.AppendLine("\tDevice is in low power mode");
+            if(!ocr.PowerUp) sb.AppendLine("\tDevice is powering up");
+            if(ocr.CCS) sb.AppendLine("\tDevice is SDHC, SDXC or higher");
+            if(ocr.UHS) sb.AppendLine("\tDevice is UHS-II or higher");
+            if(ocr.ThreeFive) sb.AppendLine("\tDevice can work with supply 3.5~3.6V");
+            if(ocr.ThreeFour) sb.AppendLine("\tDevice can work with supply 3.4~3.5V");
+            if(ocr.ThreeThree) sb.AppendLine("\tDevice can work with supply 3.3~3.4V");
+            if(ocr.ThreeTwo) sb.AppendLine("\tDevice can work with supply 3.2~3.3V");
+            if(ocr.ThreeOne) sb.AppendLine("\tDevice can work with supply 3.1~3.2V");
+            if(ocr.TwoNine) sb.AppendLine("\tDevice can work with supply 2.9~3.0V");
+            if(ocr.TwoEight) sb.AppendLine("\tDevice can work with supply 2.8~2.9V");
+            if(ocr.TwoSeven) sb.AppendLine("\tDevice can work with supply 2.7~2.8V");
+            if(ocr.OneEight) sb.AppendLine("\tDevice can switch to work with 1.8V supply");
+            if(ocr.LowPower) sb.AppendLine("\tDevice is in low power mode");
 
             return sb.ToString();
         }

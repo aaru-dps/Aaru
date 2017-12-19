@@ -75,4 +75,3 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         Undefined = 0xFF
     }
 }
-

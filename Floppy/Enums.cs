@@ -99,4 +99,3 @@ namespace DiscImageChef.Decoders.Floppy
         MacDoubleSide = 0xD9
     }
 }
-

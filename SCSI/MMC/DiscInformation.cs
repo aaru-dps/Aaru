@@ -275,17 +275,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static StandardDiscInformation? Decode000b(byte[] response)
         {
-            if(response.Length < 34)
-                return null;
+            if(response.Length < 34) return null;
 
-            if((response[2] & 0xE0) != 0)
-                return null;
+            if((response[2] & 0xE0) != 0) return null;
 
             StandardDiscInformation decoded = new StandardDiscInformation();
             decoded.DataLength = (ushort)((response[0] << 8) + response[1]);
 
-            if((decoded.DataLength + 2) != response.Length)
-                return null;
+            if((decoded.DataLength + 2) != response.Length) return null;
 
             decoded.DataType = (byte)((response[2] & 0xE0) >> 5);
             decoded.Erasable |= (response[2] & 0x10) == 0x10;
@@ -304,12 +301,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Dbit |= (response[7] & 0x04) == 0x04;
             decoded.BGFormatStatus = (byte)(response[7] & 0x03);
 
-            decoded.DiscIdentification = (uint)((response[12] << 24) + (response[13] << 16) +
-                (response[14] << 8) + response[15]);
-            decoded.LastSessionLeadInStartLBA = (uint)((response[16] << 24) + (response[17] << 16) +
-                (response[18] << 8) + response[19]);
-            decoded.LastPossibleLeadOutStartLBA = (uint)((response[20] << 24) + (response[21] << 16) +
-                (response[22] << 8) + response[23]);
+            decoded.DiscIdentification =
+                (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
+            decoded.LastSessionLeadInStartLBA =
+                (uint)((response[16] << 24) + (response[17] << 16) + (response[18] << 8) + response[19]);
+            decoded.LastPossibleLeadOutStartLBA =
+                (uint)((response[20] << 24) + (response[21] << 16) + (response[22] << 8) + response[23]);
 
             byte[] temp = new byte[8];
             Array.Copy(response, 24, temp, 0, 8);
@@ -335,13 +332,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string Prettify000b(StandardDiscInformation? information)
         {
-            if(!information.HasValue)
-                return null;
+            if(!information.HasValue) return null;
 
             StandardDiscInformation decoded = information.Value;
 
-            if(decoded.DataType != 0)
-                return null;
+            if(decoded.DataType != 0) return null;
 
             StringBuilder sb = new StringBuilder();
 
@@ -377,8 +372,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                     break;
             }
 
-            if(decoded.Erasable)
-                sb.AppendLine("Disc is erasable");
+            if(decoded.Erasable) sb.AppendLine("Disc is erasable");
 
             switch(decoded.LastSessionStatus)
             {
@@ -409,41 +403,35 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                     break;
             }
 
-            if(decoded.Dbit)
-                sb.AppendLine("MRW is dirty");
+            if(decoded.Dbit) sb.AppendLine("MRW is dirty");
 
             sb.AppendFormat("First track on disc is track {0}", decoded.FirstTrackNumber).AppendLine();
             sb.AppendFormat("Disc has {0} sessions", decoded.Sessions).AppendLine();
             sb.AppendFormat("First track in last session is track {0}", decoded.FirstTrackLastSession).AppendLine();
             sb.AppendFormat("Last track in last session is track {0}", decoded.LastTrackLastSession).AppendLine();
-            sb.AppendFormat("Last session Lead-In address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}", decoded.LastSessionLeadInStartLBA,
-                (decoded.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
-                (decoded.LastSessionLeadInStartLBA & 0xFF00) >> 8,
-                (decoded.LastSessionLeadInStartLBA & 0xFF)).AppendLine();
-            sb.AppendFormat("Last possible Lead-Out address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}", decoded.LastPossibleLeadOutStartLBA,
-                (decoded.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
-                (decoded.LastPossibleLeadOutStartLBA & 0xFF00) >> 8,
-                (decoded.LastPossibleLeadOutStartLBA & 0xFF)).AppendLine();
+            sb.AppendFormat("Last session Lead-In address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
+                            decoded.LastSessionLeadInStartLBA, (decoded.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
+                            (decoded.LastSessionLeadInStartLBA & 0xFF00) >> 8,
+                            (decoded.LastSessionLeadInStartLBA & 0xFF)).AppendLine();
+            sb.AppendFormat("Last possible Lead-Out address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
+                            decoded.LastPossibleLeadOutStartLBA, (decoded.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
+                            (decoded.LastPossibleLeadOutStartLBA & 0xFF00) >> 8,
+                            (decoded.LastPossibleLeadOutStartLBA & 0xFF)).AppendLine();
 
-            if(decoded.URU)
-                sb.AppendLine("Disc is defined for unrestricted use");
-            else
-                sb.AppendLine("Disc is defined for restricted use");
+            if(decoded.URU) sb.AppendLine("Disc is defined for unrestricted use");
+            else sb.AppendLine("Disc is defined for restricted use");
 
-            if(decoded.DID_V)
-                sb.AppendFormat("Disc ID: {0:X6}", decoded.DiscIdentification & 0x00FFFFFF).AppendLine();
-            if(decoded.DBC_V)
-                sb.AppendFormat("Disc barcode: {0:X16}", decoded.DiscBarcode).AppendLine();
-            if(decoded.DAC_V)
-                sb.AppendFormat("Disc application code: {0}", decoded.DiscApplicationCode).AppendLine();
+            if(decoded.DID_V) sb.AppendFormat("Disc ID: {0:X6}", decoded.DiscIdentification & 0x00FFFFFF).AppendLine();
+            if(decoded.DBC_V) sb.AppendFormat("Disc barcode: {0:X16}", decoded.DiscBarcode).AppendLine();
+            if(decoded.DAC_V) sb.AppendFormat("Disc application code: {0}", decoded.DiscApplicationCode).AppendLine();
 
             if(decoded.OPCTables != null)
             {
                 foreach(OPCTable table in decoded.OPCTables)
                 {
                     sb.AppendFormat("OPC values for {0}Kbit/sec.: {1}, {2}, {3}, {4}, {5}, {6}", table.Speed,
-                        table.OPCValues[0], table.OPCValues[1], table.OPCValues[2],
-                        table.OPCValues[3], table.OPCValues[4], table.OPCValues[5]).AppendLine();
+                                    table.OPCValues[0], table.OPCValues[1], table.OPCValues[2], table.OPCValues[3],
+                                    table.OPCValues[4], table.OPCValues[5]).AppendLine();
                 }
             }
 
@@ -452,17 +440,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static TrackResourcesInformation? Decode001b(byte[] response)
         {
-            if(response.Length != 12)
-                return null;
+            if(response.Length != 12) return null;
 
-            if((response[2] & 0xE0) != 0x20)
-                return null;
+            if((response[2] & 0xE0) != 0x20) return null;
 
             TrackResourcesInformation decoded = new TrackResourcesInformation();
             decoded.DataLength = (ushort)((response[0] << 8) + response[1]);
 
-            if((decoded.DataLength + 2) != response.Length)
-                return null;
+            if((decoded.DataLength + 2) != response.Length) return null;
 
             decoded.DataType = (byte)((response[2] & 0xE0) >> 5);
             decoded.MaxTracks = (ushort)((response[4] << 8) + response[5]);
@@ -475,19 +460,18 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string Prettify001b(TrackResourcesInformation? information)
         {
-            if(!information.HasValue)
-                return null;
+            if(!information.HasValue) return null;
 
             TrackResourcesInformation decoded = information.Value;
 
-            if(decoded.DataType != 1)
-                return null;
+            if(decoded.DataType != 1) return null;
 
             StringBuilder sb = new StringBuilder();
 
             sb.AppendFormat("{0} maximum possible tracks on the disc", decoded.MaxTracks).AppendLine();
             sb.AppendFormat("{0} assigned tracks on the disc", decoded.AssignedTracks).AppendLine();
-            sb.AppendFormat("{0} maximum possible appendable tracks on the disc", decoded.AppendableTracks).AppendLine();
+            sb.AppendFormat("{0} maximum possible appendable tracks on the disc", decoded.AppendableTracks)
+              .AppendLine();
             sb.AppendFormat("{0} current appendable tracks on the disc", decoded.MaxAppendableTracks).AppendLine();
 
             return sb.ToString();
@@ -495,40 +479,39 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static POWResourcesInformation? Decode010b(byte[] response)
         {
-            if(response.Length != 16)
-                return null;
+            if(response.Length != 16) return null;
 
-            if((response[2] & 0xE0) != 0x40)
-                return null;
+            if((response[2] & 0xE0) != 0x40) return null;
 
             POWResourcesInformation decoded = new POWResourcesInformation();
             decoded.DataLength = (ushort)((response[0] << 8) + response[1]);
 
-            if((decoded.DataLength + 2) != response.Length)
-                return null;
+            if((decoded.DataLength + 2) != response.Length) return null;
 
             decoded.DataType = (byte)((response[2] & 0xE0) >> 5);
-            decoded.RemainingPOWReplacements = (ushort)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]);
-            decoded.RemainingPOWReallocation = (ushort)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
-            decoded.RemainingPOWUpdates = (ushort)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
+            decoded.RemainingPOWReplacements =
+                (ushort)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]);
+            decoded.RemainingPOWReallocation =
+                (ushort)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
+            decoded.RemainingPOWUpdates =
+                (ushort)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
 
             return decoded;
         }
 
         public static string Prettify010b(POWResourcesInformation? information)
         {
-            if(!information.HasValue)
-                return null;
+            if(!information.HasValue) return null;
 
             POWResourcesInformation decoded = information.Value;
 
-            if(decoded.DataType != 1)
-                return null;
+            if(decoded.DataType != 1) return null;
 
             StringBuilder sb = new StringBuilder();
 
             sb.AppendFormat("{0} remaining POW replacements", decoded.RemainingPOWReplacements).AppendLine();
-            sb.AppendFormat("{0} remaining POW reallocation map entries", decoded.RemainingPOWReallocation).AppendLine();
+            sb.AppendFormat("{0} remaining POW reallocation map entries", decoded.RemainingPOWReallocation)
+              .AppendLine();
             sb.AppendFormat("{0} remaining POW updates", decoded.RemainingPOWUpdates).AppendLine();
 
             return sb.ToString();
@@ -536,24 +519,18 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string Prettify(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length < 12)
-                return null;
+            if(response.Length < 12) return null;
 
             switch(response[2] & 0xE0)
             {
-                case 0x00:
-                    return Prettify000b(Decode000b(response));
-                case 0x20:
-                    return Prettify001b(Decode001b(response));
-                case 0x40:
-                    return Prettify010b(Decode010b(response));
+                case 0x00: return Prettify000b(Decode000b(response));
+                case 0x20: return Prettify001b(Decode001b(response));
+                case 0x40: return Prettify010b(Decode010b(response));
             }
 
             return null;
         }
     }
 }
-

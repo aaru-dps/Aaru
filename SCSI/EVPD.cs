@@ -47,14 +47,11 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x00.</param>
         public static byte[] DecodePage00(byte[] page)
         {
-            if(page == null)
-                return null;
+            if(page == null) return null;
 
-            if(page[1] != 0)
-                return null;
+            if(page[1] != 0) return null;
 
-            if(page.Length != page[3] + 4)
-                return null;
+            if(page.Length != page[3] + 4) return null;
 
             byte[] decoded = new byte[page.Length - 4];
 
@@ -70,14 +67,11 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x01-0x7F.</param>
         public static string DecodeASCIIPage(byte[] page)
         {
-            if(page == null)
-                return null;
+            if(page == null) return null;
 
-            if(page[1] == 0 || page[1] > 0x7F)
-                return null;
+            if(page[1] == 0 || page[1] > 0x7F) return null;
 
-            if(page.Length != page[3] + 4)
-                return null;
+            if(page.Length != page[3] + 4) return null;
 
             byte[] ascii = new byte[page[4]];
 
@@ -93,14 +87,11 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x80.</param>
         public static string DecodePage80(byte[] page)
         {
-            if(page == null)
-                return null;
+            if(page == null) return null;
 
-            if(page[1] != 0x80)
-                return null;
+            if(page[1] != 0x80) return null;
 
-            if(page.Length != page[3] + 4)
-                return null;
+            if(page.Length != page[3] + 4) return null;
 
             byte[] ascii = new byte[page.Length - 4];
 
@@ -110,7 +101,6 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #region EVPD Page 0x81: Implemented operating definition page
-
         /// <summary>
         /// Implemented operating definition page
         /// Page code 0x81
@@ -149,17 +139,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_81? DecodePage_81(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0x81)
-                return null;
+            if(pageResponse[1] != 0x81) return null;
 
-            if(pageResponse[3] + 4 != pageResponse.Length)
-                return null;
+            if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 6)
-                return null;
+            if(pageResponse.Length < 6) return null;
 
             Page_81 decoded = new Page_81();
 
@@ -193,25 +179,18 @@ namespace DiscImageChef.Decoders.SCSI
         {
             switch(definition)
             {
-                case ScsiDefinitions.Current:
-                    return "";
-                case ScsiDefinitions.CCS:
-                    return "CCS";
-                case ScsiDefinitions.SCSI1:
-                    return "SCSI-1";
-                case ScsiDefinitions.SCSI2:
-                    return "SCSI-2";
-                case ScsiDefinitions.SCSI3:
-                    return "SCSI-3";
-                default:
-                    return string.Format("Unknown definition code {0}", (byte)definition);
+                case ScsiDefinitions.Current: return "";
+                case ScsiDefinitions.CCS: return "CCS";
+                case ScsiDefinitions.SCSI1: return "SCSI-1";
+                case ScsiDefinitions.SCSI2: return "SCSI-2";
+                case ScsiDefinitions.SCSI3: return "SCSI-3";
+                default: return string.Format("Unknown definition code {0}", (byte)definition);
             }
         }
 
         public static string PrettifyPage_81(Page_81? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_81 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -233,7 +212,6 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0x81: Implemented operating definition page
 
         /// <summary>
@@ -243,14 +221,11 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x82.</param>
         public static string DecodePage82(byte[] page)
         {
-            if(page == null)
-                return null;
+            if(page == null) return null;
 
-            if(page[1] != 0x82)
-                return null;
+            if(page[1] != 0x82) return null;
 
-            if(page.Length != page[3] + 4)
-                return null;
+            if(page.Length != page[3] + 4) return null;
 
             byte[] ascii = new byte[page.Length - 4];
 
@@ -260,7 +235,6 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #region EVPD Page 0x83: Device identification page
-
         public enum IdentificationAssociation : byte
         {
             /// <summary>
@@ -403,17 +377,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_83? DecodePage_83(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0x83)
-                return null;
+            if(pageResponse[1] != 0x83) return null;
 
-            if(pageResponse[3] + 4 != pageResponse.Length)
-                return null;
+            if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 6)
-                return null;
+            if(pageResponse.Length < 6) return null;
 
             Page_83 decoded = new Page_83();
 
@@ -441,8 +411,7 @@ namespace DiscImageChef.Decoders.SCSI
                     descriptor.ASCII = StringHandlers.CToString(descriptor.Binary);
                 else if(descriptor.CodeSet == IdentificationCodeSet.UTF8)
                     descriptor.ASCII = Encoding.UTF8.GetString(descriptor.Binary);
-                else
-                    descriptor.ASCII = "";
+                else descriptor.ASCII = "";
 
                 position += 4 + descriptor.Length;
                 descriptors.Add(descriptor);
@@ -460,8 +429,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_83(Page_83? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_83 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -488,7 +456,8 @@ namespace DiscImageChef.Decoders.SCSI
                         sb.AppendLine("\tIdentifier belongs to target device that contains the addressed logical unit");
                         break;
                     default:
-                        sb.AppendFormat("\tIndentifier has unknown association with code {0}", (byte)descriptor.Association).AppendLine();
+                        sb.AppendFormat("\tIndentifier has unknown association with code {0}",
+                                        (byte)descriptor.Association).AppendLine();
                         break;
                 }
 
@@ -540,156 +509,227 @@ namespace DiscImageChef.Decoders.SCSI
                             protocol = string.Format("unknown code {0}", (byte)descriptor.ProtocolIdentifier);
                             break;
                     }
+
                     sb.AppendFormat("\tDescriptor referes to {0} protocol", protocol).AppendLine();
                 }
 
                 switch(descriptor.Type)
                 {
                     case IdentificationTypes.NoAuthority:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tVendor descriptor contains: {0}", descriptor.ASCII).AppendLine();
                         else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
-                            sb.AppendFormat("\tVendor descriptor contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                            sb.AppendFormat("\tVendor descriptor contains binary data (hex): {0}",
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
                         else
-                            sb.AppendFormat("\tVendor descriptor contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet).AppendLine();
+                            sb.AppendFormat("\tVendor descriptor contains unknown kind {1} of data (hex): {0}",
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                            (byte)descriptor.CodeSet).AppendLine();
                         break;
                     case IdentificationTypes.Inquiry:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tInquiry descriptor contains: {0}", descriptor.ASCII).AppendLine();
                         else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
-                            sb.AppendFormat("\tInquiry descriptor contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                            sb.AppendFormat("\tInquiry descriptor contains binary data (hex): {0}",
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
                         else
-                            sb.AppendFormat("\tInquiry descriptor contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet).AppendLine();
+                            sb.AppendFormat("\tInquiry descriptor contains unknown kind {1} of data (hex): {0}",
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                            (byte)descriptor.CodeSet).AppendLine();
                         break;
                     case IdentificationTypes.EUI:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tIEEE EUI-64: {0}", descriptor.ASCII).AppendLine();
                         else
                         {
                             sb.AppendFormat("\tIEEE EUI-64: {0:X2}", descriptor.Binary[0]);
                             for(int i = 1; i < descriptor.Binary.Length; i++)
                                 sb.AppendFormat(":{0:X2}", descriptor.Binary[i]);
+
                             sb.AppendLine();
                         }
+
                         break;
                     case IdentificationTypes.NAA:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tNAA: {0}", descriptor.ASCII).AppendLine();
                         else
                         {
                             sb.AppendFormat("\tNAA: {0:X2}", descriptor.Binary[0]);
                             for(int i = 1; i < descriptor.Binary.Length; i++)
                                 sb.AppendFormat(":{0:X2}", descriptor.Binary[i]);
+
                             sb.AppendLine();
                         }
+
                         break;
                     case IdentificationTypes.Relative:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tRelative target port identifier: {0}", descriptor.ASCII).AppendLine();
                         else
-                            sb.AppendFormat("\tRelative target port identifier: {0}", (descriptor.Binary[2] << 8) + descriptor.Binary[3]).AppendLine();
+                            sb.AppendFormat("\tRelative target port identifier: {0}",
+                                            (descriptor.Binary[2] << 8) + descriptor.Binary[3]).AppendLine();
                         break;
                     case IdentificationTypes.TargetPortGroup:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tTarget group identifier: {0}", descriptor.ASCII).AppendLine();
                         else
-                            sb.AppendFormat("\tTarget group identifier: {0}", (descriptor.Binary[2] << 8) + descriptor.Binary[3]).AppendLine();
+                            sb.AppendFormat("\tTarget group identifier: {0}",
+                                            (descriptor.Binary[2] << 8) + descriptor.Binary[3]).AppendLine();
                         break;
                     case IdentificationTypes.LogicalUnitGroup:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tLogical unit group identifier: {0}", descriptor.ASCII).AppendLine();
                         else
-                            sb.AppendFormat("\tLogical unit group identifier: {0}", (descriptor.Binary[2] << 8) + descriptor.Binary[3]).AppendLine();
+                            sb.AppendFormat("\tLogical unit group identifier: {0}",
+                                            (descriptor.Binary[2] << 8) + descriptor.Binary[3]).AppendLine();
                         break;
                     case IdentificationTypes.MD5:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tMD5 logical unit identifier: {0}", descriptor.ASCII).AppendLine();
                         else
                         {
                             sb.AppendFormat("\tMD5 logical unit identifier: {0:x2}", descriptor.Binary[0]);
                             for(int i = 1; i < descriptor.Binary.Length; i++)
                                 sb.AppendFormat("{0:x2}", descriptor.Binary[i]);
+
                             sb.AppendLine();
                         }
+
                         break;
                     case IdentificationTypes.SCSI:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tSCSI name string identifier: {0}", descriptor.ASCII).AppendLine();
                         else
                         {
-                            sb.AppendFormat("\tSCSI name string identifier (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                            sb.AppendFormat("\tSCSI name string identifier (hex): {0}",
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
                         }
                         break;
                     case IdentificationTypes.ProtocolSpecific:
+                    {
+                        if(descriptor.PIV)
                         {
-                            if(descriptor.PIV)
+                            switch(descriptor.ProtocolIdentifier)
                             {
-                                switch(descriptor.ProtocolIdentifier)
-                                {
-                                    case ProtocolIdentifiers.ADT:
-                                        sb.AppendFormat("\tProtocol (Automation/Drive Interface Transport) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.ATA:
-                                        sb.AppendFormat("\tProtocol (ATA/ATAPI) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.FibreChannel:
-                                        sb.AppendFormat("\tProtocol (Fibre Channel) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.Firewire:
-                                        sb.AppendFormat("\tProtocol (IEEE 1394) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.iSCSI:
-                                        sb.AppendFormat("\tProtocol (Internet SCSI) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.NoProtocol:
-                                        sb.AppendFormat("\tProtocol (unknown) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.PCIe:
-                                        sb.AppendFormat("\tProtocol (PCI Express) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.RDMAP:
-                                        sb.AppendFormat("\tProtocol (SCSI Remote Direct Memory Access) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.SAS:
-                                        sb.AppendFormat("\tProtocol (Serial Attachment SCSI) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.SCSI:
-                                        sb.AppendFormat("\tProtocol (Parallel SCSI) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.SSA:
-                                        sb.AppendFormat("\tProtocol (SSA) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.SCSIe:
-                                        sb.AppendFormat("\tProtocol (SCSIe) specific descriptor: Routing ID is {0}", (descriptor.Binary[0] << 8) + descriptor.Binary[1]).AppendLine();
-                                        break;
-                                    case ProtocolIdentifiers.UAS:
-                                        sb.AppendFormat("\tProtocol (UAS) specific descriptor: USB address {0} interface {1}", descriptor.Binary[0] & 0x7F, descriptor.Binary[2]).AppendLine();
-                                        break;
-                                    default:
-                                        sb.AppendFormat("\tProtocol (unknown code {0}) specific descriptor with unknown format (hex): {1}", (byte)descriptor.ProtocolIdentifier, PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                                        break;
-                                }
+                                case ProtocolIdentifiers.ADT:
+                                    sb
+                                        .AppendFormat("\tProtocol (Automation/Drive Interface Transport) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.ATA:
+                                    sb
+                                        .AppendFormat("\tProtocol (ATA/ATAPI) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.FibreChannel:
+                                    sb
+                                        .AppendFormat("\tProtocol (Fibre Channel) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.Firewire:
+                                    sb
+                                        .AppendFormat("\tProtocol (IEEE 1394) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.iSCSI:
+                                    sb
+                                        .AppendFormat("\tProtocol (Internet SCSI) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.NoProtocol:
+                                    sb
+                                        .AppendFormat("\tProtocol (unknown) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.PCIe:
+                                    sb
+                                        .AppendFormat("\tProtocol (PCI Express) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.RDMAP:
+                                    sb
+                                        .AppendFormat("\tProtocol (SCSI Remote Direct Memory Access) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.SAS:
+                                    sb
+                                        .AppendFormat("\tProtocol (Serial Attachment SCSI) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.SCSI:
+                                    sb
+                                        .AppendFormat("\tProtocol (Parallel SCSI) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.SSA:
+                                    sb
+                                        .AppendFormat("\tProtocol (SSA) specific descriptor with unknown format (hex): {0}",
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.SCSIe:
+                                    sb.AppendFormat("\tProtocol (SCSIe) specific descriptor: Routing ID is {0}",
+                                                    (descriptor.Binary[0] << 8) + descriptor.Binary[1]).AppendLine();
+                                    break;
+                                case ProtocolIdentifiers.UAS:
+                                    sb
+                                        .AppendFormat("\tProtocol (UAS) specific descriptor: USB address {0} interface {1}",
+                                                      descriptor.Binary[0] & 0x7F, descriptor.Binary[2]).AppendLine();
+                                    break;
+                                default:
+                                    sb
+                                        .AppendFormat("\tProtocol (unknown code {0}) specific descriptor with unknown format (hex): {1}",
+                                                      (byte)descriptor.ProtocolIdentifier,
+                                                      PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                        .AppendLine();
+                                    break;
                             }
                         }
+                    }
+
                         break;
                     default:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
-                            sb.AppendFormat("\tUnknown descriptor type {1} contains: {0}", descriptor.ASCII, (byte)descriptor.Type).AppendLine();
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
+                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tUnknown descriptor type {1} contains: {0}", descriptor.ASCII,
+                                            (byte)descriptor.Type).AppendLine();
                         else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
-                            sb.AppendFormat("\tUnknown descriptor type {1} contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.Type).AppendLine();
+                            sb.AppendFormat("\tUnknown descriptor type {1} contains binary data (hex): {0}",
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                            (byte)descriptor.Type).AppendLine();
                         else
-                            sb.AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
+                            sb.AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}",
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                            (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
                         break;
                 }
             }
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0x83: Device identification page
 
         #region EVPD Page 0x84: Software Interface Identification page
-
         public struct SoftwareIdentifier
         {
             /// <summary>
@@ -728,17 +768,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_84? DecodePage_84(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0x84)
-                return null;
+            if(pageResponse[1] != 0x84) return null;
 
-            if(pageResponse[3] + 4 != pageResponse.Length)
-                return null;
+            if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 10)
-                return null;
+            if(pageResponse.Length < 10) return null;
 
             Page_84 decoded = new Page_84();
 
@@ -770,8 +806,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_84(Page_84? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_84 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -789,16 +824,15 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendFormat("\t{0:X2}", identifier.Identifier[0]);
                 for(int i = 1; i < identifier.Identifier.Length; i++)
                     sb.AppendFormat(":{0:X2}", identifier.Identifier[i]);
+
                 sb.AppendLine();
             }
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0x84: Software Interface Identification page
 
         #region EVPD Page 0x85: Management Network Addresses page
-
         public enum NetworkServiceTypes : byte
         {
             Unspecified = 0,
@@ -861,17 +895,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_85? DecodePage_85(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0x85)
-                return null;
+            if(pageResponse[1] != 0x85) return null;
 
-            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
-                return null;
+            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 4)
-                return null;
+            if(pageResponse.Length < 4) return null;
 
             Page_85 decoded = new Page_85();
 
@@ -907,8 +937,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_85(Page_85? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_85 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -935,49 +964,58 @@ namespace DiscImageChef.Decoders.SCSI
                         sb.AppendLine("\tIdentifier belongs to target device that contains the addressed logical unit");
                         break;
                     default:
-                        sb.AppendFormat("\tIndentifier has unknown association with code {0}", (byte)descriptor.Association).AppendLine();
+                        sb.AppendFormat("\tIndentifier has unknown association with code {0}",
+                                        (byte)descriptor.Association).AppendLine();
                         break;
                 }
 
                 switch(descriptor.Type)
                 {
                     case NetworkServiceTypes.CodeDownload:
-                        sb.AppendFormat("Address for code download: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        sb.AppendFormat("Address for code download: {0}", StringHandlers.CToString(descriptor.Address))
+                          .AppendLine();
                         break;
                     case NetworkServiceTypes.Diagnostics:
-                        sb.AppendFormat("Address for diagnostics: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        sb.AppendFormat("Address for diagnostics: {0}", StringHandlers.CToString(descriptor.Address))
+                          .AppendLine();
                         break;
                     case NetworkServiceTypes.Logging:
-                        sb.AppendFormat("Address for logging: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        sb.AppendFormat("Address for logging: {0}", StringHandlers.CToString(descriptor.Address))
+                          .AppendLine();
                         break;
                     case NetworkServiceTypes.Status:
-                        sb.AppendFormat("Address for status: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        sb.AppendFormat("Address for status: {0}", StringHandlers.CToString(descriptor.Address))
+                          .AppendLine();
                         break;
                     case NetworkServiceTypes.StorageConf:
-                        sb.AppendFormat("Address for storage configuration service: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        sb.AppendFormat("Address for storage configuration service: {0}",
+                                        StringHandlers.CToString(descriptor.Address)).AppendLine();
                         break;
                     case NetworkServiceTypes.Unspecified:
-                        sb.AppendFormat("Unspecified address: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        sb.AppendFormat("Unspecified address: {0}", StringHandlers.CToString(descriptor.Address))
+                          .AppendLine();
                         break;
                     case NetworkServiceTypes.CopyService:
-                        sb.AppendFormat("Address for copy service: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        sb.AppendFormat("Address for copy service: {0}", StringHandlers.CToString(descriptor.Address))
+                          .AppendLine();
                         break;
                     case NetworkServiceTypes.Administrative:
-                        sb.AppendFormat("Address for administrative configuration service: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        sb.AppendFormat("Address for administrative configuration service: {0}",
+                                        StringHandlers.CToString(descriptor.Address)).AppendLine();
                         break;
                     default:
-                        sb.AppendFormat("Address of unknown type {1}: {0}", StringHandlers.CToString(descriptor.Address), (byte)descriptor.Type).AppendLine();
+                        sb.AppendFormat("Address of unknown type {1}: {0}",
+                                        StringHandlers.CToString(descriptor.Address), (byte)descriptor.Type)
+                          .AppendLine();
                         break;
                 }
             }
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0x85: Management Network Addresses page
 
         #region EVPD Page 0x86: Extended INQUIRY data page
-
         /// <summary>
         /// Device identification page
         /// Page code 0x86
@@ -1112,17 +1150,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_86? DecodePage_86(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0x86)
-                return null;
+            if(pageResponse[1] != 0x86) return null;
 
-            if(pageResponse[3] + 4 != pageResponse.Length)
-                return null;
+            if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 64)
-                return null;
+            if(pageResponse.Length < 64) return null;
 
             Page_86 decoded = new Page_86();
 
@@ -1168,8 +1202,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_86(Page_86? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_86 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -1203,71 +1236,51 @@ namespace DiscImageChef.Decoders.SCSI
                         sb.AppendLine("Logical unit supports types 1, 2 and 3 protection");
                         break;
                     default:
-                        sb.AppendFormat("Logical unit supports unknown protection defined by code {0}", (byte)page.SPT).AppendLine();
+                        sb.AppendFormat("Logical unit supports unknown protection defined by code {0}", (byte)page.SPT)
+                          .AppendLine();
                         break;
                 }
             }
             else if(page.PeripheralDeviceType == PeripheralDeviceTypes.SequentialAccess && page.SPT == 1)
                 sb.AppendLine("Logical unit supports logical block protection");
 
-            if(page.GRD_CHK)
-                sb.AppendLine("Device checks the logical block guard");
-            if(page.APP_CHK)
-                sb.AppendLine("Device checks the logical block application tag");
-            if(page.REF_CHK)
-                sb.AppendLine("Device checks the logical block reference tag");
-            if(page.UASK_SUP)
-                sb.AppendLine("Device supports unit attention condition sense key specific data");
-            if(page.GROUP_SUP)
-                sb.AppendLine("Device supports grouping");
-            if(page.PRIOR_SUP)
-                sb.AppendLine("Device supports priority");
-            if(page.HEADSUP)
-                sb.AppendLine("Device supports head of queue");
-            if(page.ORDSUP)
-                sb.AppendLine("Device supports the ORDERED task attribute");
-            if(page.SIMPSUP)
-                sb.AppendLine("Device supports the SIMPLE task attribute");
-            if(page.WU_SUP)
-                sb.AppendLine("Device supports marking a block as uncorrectable with WRITE LONG");
-            if(page.CRD_SUP)
-                sb.AppendLine("Device supports disabling correction with WRITE LONG");
-            if(page.NV_SUP)
-                sb.AppendLine("Device has a non-volatile cache");
-            if(page.V_SUP)
-                sb.AppendLine("Device has a volatile cache");
-            if(page.NO_PI_CHK)
-                sb.AppendLine("Device has disabled protection information checks");
-            if(page.P_I_I_SUP)
-                sb.AppendLine("Device supports protection information intervals");
+            if(page.GRD_CHK) sb.AppendLine("Device checks the logical block guard");
+            if(page.APP_CHK) sb.AppendLine("Device checks the logical block application tag");
+            if(page.REF_CHK) sb.AppendLine("Device checks the logical block reference tag");
+            if(page.UASK_SUP) sb.AppendLine("Device supports unit attention condition sense key specific data");
+            if(page.GROUP_SUP) sb.AppendLine("Device supports grouping");
+            if(page.PRIOR_SUP) sb.AppendLine("Device supports priority");
+            if(page.HEADSUP) sb.AppendLine("Device supports head of queue");
+            if(page.ORDSUP) sb.AppendLine("Device supports the ORDERED task attribute");
+            if(page.SIMPSUP) sb.AppendLine("Device supports the SIMPLE task attribute");
+            if(page.WU_SUP) sb.AppendLine("Device supports marking a block as uncorrectable with WRITE LONG");
+            if(page.CRD_SUP) sb.AppendLine("Device supports disabling correction with WRITE LONG");
+            if(page.NV_SUP) sb.AppendLine("Device has a non-volatile cache");
+            if(page.V_SUP) sb.AppendLine("Device has a volatile cache");
+            if(page.NO_PI_CHK) sb.AppendLine("Device has disabled protection information checks");
+            if(page.P_I_I_SUP) sb.AppendLine("Device supports protection information intervals");
             if(page.LUICLR)
                 sb.AppendLine("Device clears any unit attention condition in all LUNs after reporting for any LUN");
-            if(page.R_SUP)
-                sb.AppendLine("Device supports referrals");
-            if(page.HSSRELEF)
-                sb.AppendLine("Devoce implements alternate reset handling");
-            if(page.CBCS)
-                sb.AppendLine("Device supports capability-based command security");
-            if(page.POA_SUP)
-                sb.AppendLine("Device supports power-on activation for new microcode");
-            if(page.HRA_SUP)
-                sb.AppendLine("Device supports hard reset activation for new microcode");
-            if(page.VSA_SUP)
-                sb.AppendLine("Device supports vendor specific activation for new microcode");
+            if(page.R_SUP) sb.AppendLine("Device supports referrals");
+            if(page.HSSRELEF) sb.AppendLine("Devoce implements alternate reset handling");
+            if(page.CBCS) sb.AppendLine("Device supports capability-based command security");
+            if(page.POA_SUP) sb.AppendLine("Device supports power-on activation for new microcode");
+            if(page.HRA_SUP) sb.AppendLine("Device supports hard reset activation for new microcode");
+            if(page.VSA_SUP) sb.AppendLine("Device supports vendor specific activation for new microcode");
 
             if(page.ExtendedTestMinutes > 0)
-                sb.AppendFormat("Extended self-test takes {0} to complete", TimeSpan.FromMinutes(page.ExtendedTestMinutes)).AppendLine();
+                sb.AppendFormat("Extended self-test takes {0} to complete",
+                                TimeSpan.FromMinutes(page.ExtendedTestMinutes)).AppendLine();
 
             if(page.MaximumSenseLength > 0)
-                sb.AppendFormat("Device supports a maximum of {0} bytes for sense data", page.MaximumSenseLength).AppendLine();
+                sb.AppendFormat("Device supports a maximum of {0} bytes for sense data", page.MaximumSenseLength)
+                  .AppendLine();
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0x86: Extended INQUIRY data page
 
         #region EVPD Page 0x89: ATA Information page
-
         /// <summary>
         /// ATA Information page
         /// Page code 0x89
@@ -1318,17 +1331,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_89? DecodePage_89(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0x89)
-                return null;
+            if(pageResponse[1] != 0x89) return null;
 
-            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
-                return null;
+            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 572)
-                return null;
+            if(pageResponse.Length < 572) return null;
 
             Page_89 decoded = new Page_89();
 
@@ -1360,17 +1369,20 @@ namespace DiscImageChef.Decoders.SCSI
         // TODO: Decode ATA signature?
         public static string PrettifyPage_89(Page_89? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_89 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI to ATA Translation Layer Data:");
 
-            sb.AppendFormat("\tTranslation layer vendor: {0}", VendorString.Prettify(StringHandlers.CToString(page.VendorIdentification).Trim())).AppendLine();
-            sb.AppendFormat("\tTranslation layer name: {0}", StringHandlers.CToString(page.ProductIdentification).Trim()).AppendLine();
-            sb.AppendFormat("\tTranslation layer release level: {0}", StringHandlers.CToString(page.ProductRevisionLevel).Trim()).AppendLine();
+            sb.AppendFormat("\tTranslation layer vendor: {0}",
+                            VendorString.Prettify(StringHandlers.CToString(page.VendorIdentification).Trim()))
+              .AppendLine();
+            sb.AppendFormat("\tTranslation layer name: {0}",
+                            StringHandlers.CToString(page.ProductIdentification).Trim()).AppendLine();
+            sb.AppendFormat("\tTranslation layer release level: {0}",
+                            StringHandlers.CToString(page.ProductRevisionLevel).Trim()).AppendLine();
             switch(page.CommandCode)
             {
                 case 0xEC:
@@ -1402,16 +1414,13 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("\tATA IDENTIFY information follows:");
                 sb.AppendFormat("{0}", ATA.Identify.Prettify(id)).AppendLine();
             }
-            else
-                sb.AppendLine("\tCould not decode ATA IDENTIFY information");
+            else sb.AppendLine("\tCould not decode ATA IDENTIFY information");
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0x89: ATA Information page
 
         #region EVPD Page 0xC0 (Quantum): Firmware Build Information page
-
         /// <summary>
         /// Firmware Build Information page
         /// Page code 0xC0 (Quantum)
@@ -1454,17 +1463,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C0_Quantum? DecodePage_C0_Quantum(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0xC0)
-                return null;
+            if(pageResponse[1] != 0xC0) return null;
 
-            if(pageResponse[3] != 20)
-                return null;
+            if(pageResponse[3] != 20) return null;
 
-            if(pageResponse.Length != 36)
-                return null;
+            if(pageResponse.Length != 36) return null;
 
             Page_C0_Quantum decoded = new Page_C0_Quantum();
 
@@ -1474,7 +1479,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.ServoFirmwareChecksum = (ushort)((pageResponse[4] << 8) + pageResponse[5]);
             decoded.ServoEEPROMChecksum = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.ReadWriteFirmwareChecksum = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+            decoded.ReadWriteFirmwareChecksum = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) +
+                                                       (pageResponse[10] << 8) + pageResponse[11]);
             decoded.ReadWriteFirmwareBuildData = new byte[24];
             Array.Copy(pageResponse, 12, decoded.ReadWriteFirmwareBuildData, 0, 24);
 
@@ -1488,8 +1494,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_C0_Quantum(Page_C0_Quantum? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_C0_Quantum page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -1499,15 +1504,14 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendFormat("\tServo firmware checksum: 0x{0:X4}", page.ServoFirmwareChecksum).AppendLine();
             sb.AppendFormat("\tEEPROM firmware checksum: 0x{0:X4}", page.ServoEEPROMChecksum).AppendLine();
             sb.AppendFormat("\tRead/write firmware checksum: 0x{0:X8}", page.ReadWriteFirmwareChecksum).AppendLine();
-            sb.AppendFormat("\tRead/write firmware build date: {0}", StringHandlers.CToString(page.ReadWriteFirmwareBuildData)).AppendLine();
+            sb.AppendFormat("\tRead/write firmware build date: {0}",
+                            StringHandlers.CToString(page.ReadWriteFirmwareBuildData)).AppendLine();
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0xC0 (Quantum): Firmware Build Information page
 
         #region EVPD Pages 0xC0, 0xC1 (Certance): Drive component revision level pages
-
         /// <summary>
         /// Drive component revision level pages
         /// Page codes 0xC0, 0xC1 (Certance)
@@ -1538,17 +1542,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C0_C1_Certance? DecodePage_C0_C1_Certance(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0xC0 && pageResponse[1] != 0xC1)
-                return null;
+            if(pageResponse[1] != 0xC0 && pageResponse[1] != 0xC1) return null;
 
-            if(pageResponse[3] != 92)
-                return null;
+            if(pageResponse[3] != 92) return null;
 
-            if(pageResponse.Length != 96)
-                return null;
+            if(pageResponse.Length != 96) return null;
 
             Page_C0_C1_Certance decoded = new Page_C0_C1_Certance();
 
@@ -1576,8 +1576,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_C0_C1_Certance(Page_C0_C1_Certance? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_C0_C1_Certance page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -1591,11 +1590,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion EVPD Pages 0xC0, 0xC1 (Certance): Drive component revision level pages
 
         #region EVPD Pages 0xC2, 0xC3, 0xC4, 0xC5, 0xC6 (Certance): Drive component serial number pages
-
         /// <summary>
         /// Drive component serial number pages
         /// Page codes 0xC2, 0xC3, 0xC4, 0xC5, 0xC6 (Certance)
@@ -1623,19 +1620,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C2_C3_C4_C5_C6_Certance? DecodePage_C2_C3_C4_C5_C6_Certance(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0xC2 && pageResponse[1] != 0xC3 &&
-                pageResponse[1] != 0xC4 && pageResponse[1] != 0xC5 &&
-                pageResponse[1] != 0xC6)
-                return null;
+            if(pageResponse[1] != 0xC2 && pageResponse[1] != 0xC3 && pageResponse[1] != 0xC4 &&
+               pageResponse[1] != 0xC5 && pageResponse[1] != 0xC6) return null;
 
-            if(pageResponse[3] != 12)
-                return null;
+            if(pageResponse[3] != 12) return null;
 
-            if(pageResponse.Length != 16)
-                return null;
+            if(pageResponse.Length != 16) return null;
 
             Page_C2_C3_C4_C5_C6_Certance decoded = new Page_C2_C3_C4_C5_C6_Certance();
 
@@ -1656,8 +1648,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_C2_C3_C4_C5_C6_Certance(Page_C2_C3_C4_C5_C6_Certance? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_C2_C3_C4_C5_C6_Certance page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -1667,29 +1658,32 @@ namespace DiscImageChef.Decoders.SCSI
             switch(page.PageCode)
             {
                 case 0xC2:
-                    sb.AppendFormat("\tHead Assembly Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    sb.AppendFormat("\tHead Assembly Serial Number: {0}", StringHandlers.CToString(page.SerialNumber))
+                      .AppendLine();
                     break;
                 case 0xC3:
-                    sb.AppendFormat("\tReel Motor 1 Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    sb.AppendFormat("\tReel Motor 1 Serial Number: {0}", StringHandlers.CToString(page.SerialNumber))
+                      .AppendLine();
                     break;
                 case 0xC4:
-                    sb.AppendFormat("\tReel Motor 2 Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    sb.AppendFormat("\tReel Motor 2 Serial Number: {0}", StringHandlers.CToString(page.SerialNumber))
+                      .AppendLine();
                     break;
                 case 0xC5:
-                    sb.AppendFormat("\tBoard Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    sb.AppendFormat("\tBoard Serial Number: {0}", StringHandlers.CToString(page.SerialNumber))
+                      .AppendLine();
                     break;
                 case 0xC6:
-                    sb.AppendFormat("\tBase Mechanical Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    sb.AppendFormat("\tBase Mechanical Serial Number: {0}", StringHandlers.CToString(page.SerialNumber))
+                      .AppendLine();
                     break;
             }
 
             return sb.ToString();
         }
-
         #endregion EVPD Pages 0xC0, 0xC1 (Certance): Drive component revision level pages
 
         #region EVPD Page 0xDF (Certance): Drive status pages
-
         /// <summary>
         /// Drive status pages
         /// Page codes 0xDF (Certance)
@@ -1780,17 +1774,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_DF_Certance? DecodePage_DF_Certance(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0xDF)
-                return null;
+            if(pageResponse[1] != 0xDF) return null;
 
-            if(pageResponse[3] != 60)
-                return null;
+            if(pageResponse[3] != 60) return null;
 
-            if(pageResponse.Length != 64)
-                return null;
+            if(pageResponse.Length != 64) return null;
 
             Page_DF_Certance decoded = new Page_DF_Certance();
 
@@ -1811,7 +1801,8 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.CartridgeCapacity = (ushort)((pageResponse[10] << 8) + pageResponse[11] + 4);
             decoded.PortATransportType = pageResponse[12];
             decoded.PortASelectionID = pageResponse[15];
-            decoded.OperatingHours = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) + pageResponse[23]);
+            decoded.OperatingHours = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) +
+                                            (pageResponse[22] << 8) + pageResponse[23]);
 
             byte[] buf = new byte[8];
             Array.Copy(pageResponse, 24, buf, 0, 8);
@@ -1830,8 +1821,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_DF_Certance(Page_DF_Certance? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_DF_Certance page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -1851,18 +1841,13 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if(page.Alerts)
-                sb.AppendLine("\tAlerts are enabled");
-            if(page.NoRemov)
-                sb.AppendLine("\tCartridge removable is prevented");
+            if(page.Alerts) sb.AppendLine("\tAlerts are enabled");
+            if(page.NoRemov) sb.AppendLine("\tCartridge removable is prevented");
             if(page.UnitRsvd)
                 sb.AppendFormat("\tUnit is reserved by initiator ID {0:X16}", page.InitiatorID).AppendLine();
-            if(page.Clean)
-                sb.AppendLine("\tDevice needs cleaning cartridge");
-            if(page.Threaded)
-                sb.AppendLine("\tCartridge tape is threaded");
-            if(page.Lun1Cmd)
-                sb.AppendLine("\tThere are commands pending to be forwarded");
+            if(page.Clean) sb.AppendLine("\tDevice needs cleaning cartridge");
+            if(page.Threaded) sb.AppendLine("\tCartridge tape is threaded");
+            if(page.Lun1Cmd) sb.AppendLine("\tThere are commands pending to be forwarded");
 
             switch(page.AutoloadMode)
             {
@@ -1944,19 +1929,18 @@ namespace DiscImageChef.Decoders.SCSI
                         break;
                 }
 
-                sb.AppendFormat("\tCartridge has an uncompressed capabity of {0} gigabytes", page.CartridgeCapacity).AppendLine();
-                sb.AppendFormat("\tCartridge serial number: {0}", StringHandlers.SpacePaddedToString(page.CartridgeSerialNumber)).AppendLine();
+                sb.AppendFormat("\tCartridge has an uncompressed capabity of {0} gigabytes", page.CartridgeCapacity)
+                  .AppendLine();
+                sb.AppendFormat("\tCartridge serial number: {0}",
+                                StringHandlers.SpacePaddedToString(page.CartridgeSerialNumber)).AppendLine();
             }
-            else
-                sb.AppendLine("\tThere is no cartridge inserted");
+            else sb.AppendLine("\tThere is no cartridge inserted");
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0xDF (Certance): Drive status pages
 
         #region EVPD Page 0xC0 (IBM): Drive Component Revision Levels page
-
         /// <summary>
         /// Drive Component Revision Levels page
         /// Page code 0xC0 (IBM)
@@ -1985,17 +1969,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C0_IBM? DecodePage_C0_IBM(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0xC0)
-                return null;
+            if(pageResponse[1] != 0xC0) return null;
 
-            if(pageResponse[3] != 39)
-                return null;
+            if(pageResponse[3] != 39) return null;
 
-            if(pageResponse.Length != 43)
-                return null;
+            if(pageResponse.Length != 43) return null;
 
             Page_C0_IBM decoded = new Page_C0_IBM();
 
@@ -2019,8 +1999,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_C0_IBM(Page_C0_IBM? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_C0_IBM page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -2032,11 +2011,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0xC0 (IBM): Drive Component Revision Levels page
 
         #region EVPD Page 0xC1 (IBM): Drive Serial Numbers page
-
         /// <summary>
         /// Drive Serial Numbers page
         /// Page code 0xC1 (IBM)
@@ -2065,17 +2042,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C1_IBM? DecodePage_C1_IBM(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0xC1)
-                return null;
+            if(pageResponse[1] != 0xC1) return null;
 
-            if(pageResponse[3] != 24)
-                return null;
+            if(pageResponse[3] != 24) return null;
 
-            if(pageResponse.Length != 28)
-                return null;
+            if(pageResponse.Length != 28) return null;
 
             Page_C1_IBM decoded = new Page_C1_IBM();
 
@@ -2099,24 +2072,23 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_C1_IBM(Page_C1_IBM? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_C1_IBM page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("IBM Drive Serial Numbers page:");
 
-            sb.AppendFormat("\tManufacturing serial number: {0}", StringHandlers.CToString(page.ManufacturingSerial)).AppendLine();
-            sb.AppendFormat("\tReported serial number: {0}", StringHandlers.CToString(page.ReportedSerial)).AppendLine();
+            sb.AppendFormat("\tManufacturing serial number: {0}", StringHandlers.CToString(page.ManufacturingSerial))
+              .AppendLine();
+            sb.AppendFormat("\tReported serial number: {0}", StringHandlers.CToString(page.ReportedSerial))
+              .AppendLine();
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0xC1 (IBM): Drive Serial Numbers page
 
         #region EVPD Page 0xB0: Sequential-access device capabilities page
-
         /// <summary>
         /// Sequential-access device capabilities page
         /// Page code 0xB0
@@ -2145,17 +2117,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_B0? DecodePage_B0(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0xB0)
-                return null;
+            if(pageResponse[1] != 0xB0) return null;
 
-            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
-                return null;
+            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 5)
-                return null;
+            if(pageResponse.Length < 5) return null;
 
             Page_B0 decoded = new Page_B0();
 
@@ -2176,36 +2144,28 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_B0(Page_B0? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_B0 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Sequential-access Device Capabilities:");
 
-            if(page.WORM)
-                sb.AppendLine("\tDevice supports WORM media");
-            if(page.TSMC)
-                sb.AppendLine("\tDevice supports Tape Stream Mirroring");
+            if(page.WORM) sb.AppendLine("\tDevice supports WORM media");
+            if(page.TSMC) sb.AppendLine("\tDevice supports Tape Stream Mirroring");
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0xB0: Sequential-access device capabilities page
 
         #region EVPD Page 0xB1: Manufacturer-assigned Serial Number page
-
         public static string DecodePageB1(byte[] page)
         {
-            if(page == null)
-                return null;
+            if(page == null) return null;
 
-            if(page[1] != 0xB1)
-                return null;
+            if(page[1] != 0xB1) return null;
 
-            if(page.Length != page[3] + 4)
-                return null;
+            if(page.Length != page[3] + 4) return null;
 
             byte[] ascii = new byte[page.Length - 4];
 
@@ -2213,21 +2173,16 @@ namespace DiscImageChef.Decoders.SCSI
 
             return StringHandlers.CToString(ascii).Trim();
         }
-
         #endregion EVPD Page 0xB1: Manufacturer-assigned Serial Number page
 
         #region EVPD Page 0xB2: TapeAlert Supported Flags page
-
         public static ulong DecodePageB2(byte[] page)
         {
-            if(page == null)
-                return 0;
+            if(page == null) return 0;
 
-            if(page[1] != 0xB2)
-                return 0;
+            if(page[1] != 0xB2) return 0;
 
-            if(page.Length != 12)
-                return 0;
+            if(page.Length != 12) return 0;
 
             byte[] bitmap = new byte[8];
 
@@ -2235,21 +2190,16 @@ namespace DiscImageChef.Decoders.SCSI
 
             return BitConverter.ToUInt64(bitmap.Reverse().ToArray(), 0);
         }
-
         #endregion EVPD Page 0xB2: TapeAlert Supported Flags page
 
         #region EVPD Page 0xB3: Automation Device Serial Number page
-
         public static string DecodePageB3(byte[] page)
         {
-            if(page == null)
-                return null;
+            if(page == null) return null;
 
-            if(page[1] != 0xB3)
-                return null;
+            if(page[1] != 0xB3) return null;
 
-            if(page.Length != page[3] + 4)
-                return null;
+            if(page.Length != page[3] + 4) return null;
 
             byte[] ascii = new byte[page.Length - 4];
 
@@ -2257,34 +2207,26 @@ namespace DiscImageChef.Decoders.SCSI
 
             return StringHandlers.CToString(ascii).Trim();
         }
-
         #endregion EVPD Page 0xB3: Automation Device Serial Number page
 
         #region EVPD Page 0xB4: Data Transfer Device Element Address page
-
         public static string DecodePageB4(byte[] page)
         {
-            if(page == null)
-                return null;
+            if(page == null) return null;
 
-            if(page[1] != 0xB3)
-                return null;
+            if(page[1] != 0xB3) return null;
 
-            if(page.Length != page[3] + 4)
-                return null;
+            if(page.Length != page[3] + 4) return null;
 
             byte[] element = new byte[page.Length - 4];
             StringBuilder sb = new StringBuilder();
-            foreach(byte b in element)
-                sb.AppendFormat("{0:X2}", b);
+            foreach(byte b in element) sb.AppendFormat("{0:X2}", b);
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0xB4: Data Transfer Device Element Address page
 
         #region EVPD Pages 0xC0 to 0xC5 (HP): Drive component revision level pages
-
         /// <summary>
         /// Drive component revision level pages
         /// Page codes 0xC0 to 0xC5 (HP)
@@ -2316,16 +2258,12 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C0_to_C5_HP? DecodePage_C0_to_C5_HP(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0xC0 && pageResponse[1] != 0xC1 &&
-                pageResponse[1] != 0xC2 && pageResponse[1] != 0xC3 &&
-                pageResponse[1] != 0xC4 && pageResponse[1] != 0xC5)
-                return null;
+            if(pageResponse[1] != 0xC0 && pageResponse[1] != 0xC1 && pageResponse[1] != 0xC2 &&
+               pageResponse[1] != 0xC3 && pageResponse[1] != 0xC4 && pageResponse[1] != 0xC5) return null;
 
-            if(pageResponse.Length < 4)
-                return null;
+            if(pageResponse.Length < 4) return null;
 
             Page_C0_to_C5_HP decoded = new Page_C0_to_C5_HP();
 
@@ -2352,7 +2290,8 @@ namespace DiscImageChef.Decoders.SCSI
             if(pageResponse[4] == pageResponse[3] - 1)
             {
                 List<byte> array = new List<byte>();
-                string fwRegExStr = "Firmware Rev\\s+=\\s+(?<fw>\\d+\\.\\d+)\\s+Build date\\s+=\\s+(?<date>(\\w|\\d|\\s*.)*)\\s*$";
+                string fwRegExStr =
+                    "Firmware Rev\\s+=\\s+(?<fw>\\d+\\.\\d+)\\s+Build date\\s+=\\s+(?<date>(\\w|\\d|\\s*.)*)\\s*$";
                 string fwcRegExStr = "FW_CONF\\s+=\\s+(?<value>0x[0-9A-Fa-f]{8})\\s*$";
                 string servoRegExStr = "Servo\\s+Rev\\s+=\\s+(?<version>\\d+\\.\\d+)\\s*$";
                 Regex fwRegEx = new Regex(fwRegExStr);
@@ -2389,8 +2328,7 @@ namespace DiscImageChef.Decoders.SCSI
 
                         array = new List<byte>();
                     }
-                    else
-                        array.Add(pageResponse[pos]);
+                    else array.Add(pageResponse[pos]);
                 }
 
                 return decoded;
@@ -2406,8 +2344,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_C0_to_C5_HP(Page_C0_to_C5_HP? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_C0_to_C5_HP page = modePage.Value;
             StringBuilder sb = new StringBuilder();
@@ -2447,11 +2384,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion EVPD Pages 0xC0 to 0xC5 (HP): Drive component revision level pages
 
         #region EVPD Page 0xC0 (Seagate): Firmware numbers page
-
         /// <summary>
         /// Firmware numbers page
         /// Page code 0xC0 (Seagate)
@@ -2481,17 +2416,13 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C0_Seagate? DecodePage_C0_Seagate(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if(pageResponse[1] != 0xC0)
-                return null;
+            if(pageResponse[1] != 0xC0) return null;
 
-            if(pageResponse[3] != 12)
-                return null;
+            if(pageResponse[3] != 12) return null;
 
-            if(pageResponse.Length != 16)
-                return null;
+            if(pageResponse.Length != 16) return null;
 
             Page_C0_Seagate decoded = new Page_C0_Seagate();
 
@@ -2518,23 +2449,20 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyPage_C0_Seagate(Page_C0_Seagate? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Page_C0_Seagate page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("Seagate Firmware Numbers page:");
 
-            sb.AppendFormat("\tController firmware version: {0}", StringHandlers.CToString(page.ControllerFirmware)).AppendLine();
+            sb.AppendFormat("\tController firmware version: {0}", StringHandlers.CToString(page.ControllerFirmware))
+              .AppendLine();
             sb.AppendFormat("\tBoot firmware version: {0}", StringHandlers.CToString(page.BootFirmware)).AppendLine();
             sb.AppendFormat("\tServo firmware version: {0}", StringHandlers.CToString(page.ServoFirmware)).AppendLine();
 
             return sb.ToString();
         }
-
         #endregion EVPD Page 0xC0 (Seagate): Firmware numbers page
-
     }
 }
-

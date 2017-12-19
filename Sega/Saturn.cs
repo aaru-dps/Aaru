@@ -44,23 +44,17 @@ namespace DiscImageChef.Decoders.Sega
         public struct IPBin
         {
             /// <summary>Must be "SEGA SEGASATURN "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] SegaHardwareID;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] SegaHardwareID;
             /// <summary>0x010, "SEGA ENTERPRISES"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] maker_id;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] maker_id;
             /// <summary>0x020, Product number</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] product_no;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] product_no;
             /// <summary>0x02A, Product version</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] product_version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] product_version;
             /// <summary>0x030, YYYYMMDD</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] release_date;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] release_date;
             /// <summary>0x038, "CD-"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] saturn_media;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] saturn_media;
             /// <summary>0x03B, Disc number</summary>
             public byte disc_no;
             /// <summary>// 0x03C, '/'</summary>
@@ -68,26 +62,20 @@ namespace DiscImageChef.Decoders.Sega
             /// <summary>// 0x03D, Total number of discs</summary>
             public byte disc_total_nos;
             /// <summary>0x03E, "  "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] spare_space1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] spare_space1;
             /// <summary>0x040, Region codes, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] region_codes;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] region_codes;
             /// <summary>0x050, Supported peripherals, see above</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] peripherals;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] peripherals;
             /// <summary>0x060, Game name, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 112)]
-            public byte[] product_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 112)] public byte[] product_name;
         }
 
         public static IPBin? DecodeIPBin(byte[] ipbin_sector)
         {
-            if(ipbin_sector == null)
-                return null;
+            if(ipbin_sector == null) return null;
 
-            if(ipbin_sector.Length < 512)
-                return null;
+            if(ipbin_sector.Length < 512) return null;
 
             IPBin ipbin = new IPBin();
             IntPtr ptr = Marshal.AllocHGlobal(512);
@@ -95,27 +83,38 @@ namespace DiscImageChef.Decoders.Sega
             ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));
             Marshal.FreeHGlobal(ptr);
 
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.maker_id = \"{0}\"", Encoding.ASCII.GetString(ipbin.maker_id));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_no = \"{0}\"", Encoding.ASCII.GetString(ipbin.product_no));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_version = \"{0}\"", Encoding.ASCII.GetString(ipbin.product_version));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.release_datedate = \"{0}\"", Encoding.ASCII.GetString(ipbin.release_date));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.saturn_media = \"{0}\"", Encoding.ASCII.GetString(ipbin.saturn_media));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.maker_id = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.maker_id));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_no = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.product_no));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_version = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.product_version));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.release_datedate = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.release_date));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.saturn_media = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.saturn_media));
             DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_no = {0}", (char)ipbin.disc_no);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_no_separator = \"{0}\"", (char)ipbin.disc_no_separator);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_total_nos = {0}", (char)ipbin.disc_total_nos);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.release_date = \"{0}\"", Encoding.ASCII.GetString(ipbin.release_date));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.spare_space1 = \"{0}\"", Encoding.ASCII.GetString(ipbin.spare_space1));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.region_codes = \"{0}\"", Encoding.ASCII.GetString(ipbin.region_codes));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.peripherals = \"{0}\"", Encoding.ASCII.GetString(ipbin.peripherals));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_name = \"{0}\"", Encoding.ASCII.GetString(ipbin.product_name));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_no_separator = \"{0}\"",
+                                      (char)ipbin.disc_no_separator);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_total_nos = {0}",
+                                      (char)ipbin.disc_total_nos);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.release_date = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.release_date));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.spare_space1 = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.spare_space1));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.region_codes = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.region_codes));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.peripherals = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.peripherals));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_name = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.product_name));
 
             return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGASATURN " ? ipbin : (IPBin?)null;
         }
 
         public static string Prettify(IPBin? decoded)
         {
-            if(decoded == null)
-                return null;
+            if(decoded == null) return null;
 
             IPBin ipbin = decoded.Value;
 
@@ -129,11 +128,15 @@ namespace DiscImageChef.Decoders.Sega
             DateTime ipbindate;
             CultureInfo provider = CultureInfo.InvariantCulture;
             ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
-            IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).AppendLine();
-            IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(ipbin.product_no)).AppendLine();
-            IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(ipbin.product_version)).AppendLine();
+            IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name))
+                            .AppendLine();
+            IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(ipbin.product_no))
+                            .AppendLine();
+            IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(ipbin.product_version))
+                            .AppendLine();
             IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
-            IPBinInformation.AppendFormat("Disc number {0} of {1}", (char)ipbin.disc_no, (char)ipbin.disc_total_nos).AppendLine();
+            IPBinInformation.AppendFormat("Disc number {0} of {1}", (char)ipbin.disc_no, (char)ipbin.disc_total_nos)
+                            .AppendLine();
 
             IPBinInformation.AppendFormat("Peripherals:").AppendLine();
             foreach(byte peripheral in ipbin.peripherals)
@@ -158,13 +161,13 @@ namespace DiscImageChef.Decoders.Sega
                     case 'T':
                         IPBinInformation.AppendLine("Game supports multitap.");
                         break;
-                    case ' ':
-                        break;
+                    case ' ': break;
                     default:
                         IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
                         break;
                 }
             }
+
             IPBinInformation.AppendLine("Regions supported:");
             foreach(byte region in ipbin.region_codes)
             {
@@ -182,8 +185,7 @@ namespace DiscImageChef.Decoders.Sega
                     case 'T':
                         IPBinInformation.AppendLine("Asia NTSC.");
                         break;
-                    case ' ':
-                        break;
+                    case ' ': break;
                     default:
                         IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
                         break;

@@ -40,40 +40,31 @@ namespace DiscImageChef.Decoders.SCSI
         {
             byte[] hdr;
 
-            if(header.BlockDescriptors != null)
-                hdr = new byte[4 + header.BlockDescriptors.Length * 8];
-            else
-                hdr = new byte[4];
+            if(header.BlockDescriptors != null) hdr = new byte[4 + header.BlockDescriptors.Length * 8];
+            else hdr = new byte[4];
 
             hdr[1] = (byte)header.MediumType;
 
             if(deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
             {
-                if(header.WriteProtected)
-                    hdr[2] += 0x80;
-                if(header.DPOFUA)
-                    hdr[2] += 0x10;
+                if(header.WriteProtected) hdr[2] += 0x80;
+                if(header.DPOFUA) hdr[2] += 0x10;
             }
 
             if(deviceType == PeripheralDeviceTypes.SequentialAccess)
             {
-                if(header.WriteProtected)
-                    hdr[2] += 0x80;
+                if(header.WriteProtected) hdr[2] += 0x80;
                 hdr[2] += (byte)(header.Speed & 0x0F);
                 hdr[2] += (byte)((header.BufferedMode << 4) & 0x70);
             }
 
-            if(deviceType == PeripheralDeviceTypes.PrinterDevice)
-                hdr[2] += (byte)((header.BufferedMode << 4) & 0x70);
+            if(deviceType == PeripheralDeviceTypes.PrinterDevice) hdr[2] += (byte)((header.BufferedMode << 4) & 0x70);
 
             if(deviceType == PeripheralDeviceTypes.OpticalDevice)
             {
-                if(header.WriteProtected)
-                    hdr[2] += 0x80;
-                if(header.EBC)
-                    hdr[2] += 0x01;
-                if(header.DPOFUA)
-                    hdr[2] += 0x10;
+                if(header.WriteProtected) hdr[2] += 0x80;
+                if(header.EBC) hdr[2] += 0x01;
+                if(header.DPOFUA) hdr[2] += 0x10;
             }
 
             if(header.BlockDescriptors != null)
@@ -98,11 +89,7 @@ namespace DiscImageChef.Decoders.SCSI
         public static byte[] EncodeMode6(DecodedMode mode, PeripheralDeviceTypes deviceType)
         {
             int modeSize = 0;
-            if(mode.Pages != null)
-            {
-                foreach(ModePage page in mode.Pages)
-                    modeSize += page.PageResponse.Length;
-            }
+            if(mode.Pages != null) { foreach(ModePage page in mode.Pages) modeSize += page.PageResponse.Length; }
 
             byte[] hdr = EncodeModeHeader6(mode.Header, deviceType);
             modeSize += hdr.Length;
@@ -123,15 +110,10 @@ namespace DiscImageChef.Decoders.SCSI
             return md;
         }
 
-
         public static byte[] EncodeMode10(DecodedMode mode, PeripheralDeviceTypes deviceType)
         {
             int modeSize = 0;
-            if(mode.Pages != null)
-            {
-                foreach(ModePage page in mode.Pages)
-                    modeSize += page.PageResponse.Length;
-            }
+            if(mode.Pages != null) { foreach(ModePage page in mode.Pages) modeSize += page.PageResponse.Length; }
 
             byte[] hdr = EncodeModeHeader10(mode.Header, deviceType);
             modeSize += hdr.Length;
@@ -163,47 +145,36 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(header.BlockDescriptors != null)
             {
-                if(longLBA)
-                    hdr = new byte[8 + header.BlockDescriptors.Length * 16];
-                else
-                    hdr = new byte[8 + header.BlockDescriptors.Length * 8];
+                if(longLBA) hdr = new byte[8 + header.BlockDescriptors.Length * 16];
+                else hdr = new byte[8 + header.BlockDescriptors.Length * 8];
             }
-            else
-                hdr = new byte[8];
+            else hdr = new byte[8];
 
             hdr[2] = (byte)header.MediumType;
 
             if(deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
             {
-                if(header.WriteProtected)
-                    hdr[3] += 0x80;
-                if(header.DPOFUA)
-                    hdr[3] += 0x10;
+                if(header.WriteProtected) hdr[3] += 0x80;
+                if(header.DPOFUA) hdr[3] += 0x10;
             }
 
             if(deviceType == PeripheralDeviceTypes.SequentialAccess)
             {
-                if(header.WriteProtected)
-                    hdr[3] += 0x80;
+                if(header.WriteProtected) hdr[3] += 0x80;
                 hdr[3] += (byte)(header.Speed & 0x0F);
                 hdr[3] += (byte)((header.BufferedMode << 4) & 0x70);
             }
 
-            if(deviceType == PeripheralDeviceTypes.PrinterDevice)
-                hdr[3] += (byte)((header.BufferedMode << 4) & 0x70);
+            if(deviceType == PeripheralDeviceTypes.PrinterDevice) hdr[3] += (byte)((header.BufferedMode << 4) & 0x70);
 
             if(deviceType == PeripheralDeviceTypes.OpticalDevice)
             {
-                if(header.WriteProtected)
-                    hdr[3] += 0x80;
-                if(header.EBC)
-                    hdr[3] += 0x01;
-                if(header.DPOFUA)
-                    hdr[3] += 0x10;
+                if(header.WriteProtected) hdr[3] += 0x80;
+                if(header.EBC) hdr[3] += 0x01;
+                if(header.DPOFUA) hdr[3] += 0x10;
             }
 
-            if(longLBA)
-                hdr[4] += 0x01;
+            if(longLBA) hdr[4] += 0x01;
 
             if(header.BlockDescriptors != null)
             {
@@ -232,8 +203,7 @@ namespace DiscImageChef.Decoders.SCSI
                     {
                         if(deviceType != PeripheralDeviceTypes.DirectAccess)
                             hdr[0 + i * 8 + 8] = (byte)header.BlockDescriptors[i].Density;
-                        else
-                            hdr[0 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF000000) >> 24);
+                        else hdr[0 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF000000) >> 24);
                         hdr[1 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF0000) >> 16);
                         hdr[2 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF00) >> 8);
                         hdr[3 + i * 8 + 8] = (byte)(header.BlockDescriptors[i].Blocks & 0xFF);
@@ -254,24 +224,15 @@ namespace DiscImageChef.Decoders.SCSI
             pg[0] = 0x01;
             pg[1] = 6;
 
-            if(page.PS)
-                pg[0] += 0x80;
-            if(page.AWRE)
-                pg[2] += 0x80;
-            if(page.ARRE)
-                pg[2] += 0x40;
-            if(page.TB)
-                pg[2] += 0x20;
-            if(page.RC)
-                pg[2] += 0x10;
-            if(page.EER)
-                pg[2] += 0x08;
-            if(page.PER)
-                pg[2] += 0x04;
-            if(page.DTE)
-                pg[2] += 0x02;
-            if(page.DCR)
-                pg[2] += 0x01;
+            if(page.PS) pg[0] += 0x80;
+            if(page.AWRE) pg[2] += 0x80;
+            if(page.ARRE) pg[2] += 0x40;
+            if(page.TB) pg[2] += 0x20;
+            if(page.RC) pg[2] += 0x10;
+            if(page.EER) pg[2] += 0x08;
+            if(page.PER) pg[2] += 0x04;
+            if(page.DTE) pg[2] += 0x02;
+            if(page.DCR) pg[2] += 0x01;
 
             pg[3] = page.ReadRetryCount;
             pg[4] = page.CorrectionSpan;
@@ -296,8 +257,7 @@ namespace DiscImageChef.Decoders.SCSI
             pg[0] = 0x01;
             pg[1] = 10;
 
-            if(page.PS)
-                pg[0] += 0x80;
+            if(page.PS) pg[0] += 0x80;
             pg[2] = page.Parameter;
             pg[3] = page.ReadRetryCount;
 
@@ -311,4 +271,3 @@ namespace DiscImageChef.Decoders.SCSI
         }
     }
 }
-

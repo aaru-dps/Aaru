@@ -39,8 +39,7 @@ namespace DiscImageChef.Decoders.MMC
     [StructLayout(LayoutKind.Sequential)]
     public class ExtendedCSD
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        public byte[] Reserved0;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] Reserved0;
         public byte ExtendedSecurityCommandsError;
         public byte SupportedCommandSets;
         public byte HPIFeatures;
@@ -58,13 +57,11 @@ namespace DiscImageChef.Decoders.MMC
         public byte OperationCodesTimeout;
         public uint FFUArgument;
         public byte BarrierSupport;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 177)]
-        public byte[] Reserved1;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 177)] public byte[] Reserved1;
         public byte CMDQueuingSupport;
         public byte CMDQueuingDepth;
         public uint NumberofFWSectorsCorrectlyProgrammed;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public byte[] VendorHealthReport;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] VendorHealthReport;
         public byte DeviceLifeEstimationTypeB;
         public byte DeviceLifeEstimationTypeA;
         public byte PreEOLInformation;
@@ -158,14 +155,11 @@ namespace DiscImageChef.Decoders.MMC
         public byte HWResetFunction;
         public byte HPIManagement;
         public byte PartitioningSupport;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] MaxEnhancedAreaSize;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] MaxEnhancedAreaSize;
         public byte PartitionsAttribute;
         public byte PartitioningSetting;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public byte[] GeneralPurposePartitionSize;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] EnhancedUserDataAreaSize;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] GeneralPurposePartitionSize;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] EnhancedUserDataAreaSize;
         public uint EnhancedUserDataStartAddress;
         public byte Reserved15;
         public byte BadBlockManagementMode;
@@ -174,8 +168,7 @@ namespace DiscImageChef.Decoders.MMC
         public byte PeriodicWakeUp;
         public byte SupportsProgramCxDInDDR;
         public ushort Reserved16;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-        public byte[] VendorSpecific;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] VendorSpecific;
         public byte NativeSectorSize;
         public byte SectorSizeEmulation;
         public byte SectorSize;
@@ -185,8 +178,7 @@ namespace DiscImageChef.Decoders.MMC
         public ushort ExceptionEventsControl;
         public ushort ExceptionEventsStatus;
         public ushort ExtendedPartitionsAttribute;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-        public byte[] ContextConfiguration;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] ContextConfiguration;
         public byte PackedCommandStatus;
         public byte PackedCommandFailureIndex;
         public byte PowerOffNotification;
@@ -202,19 +194,16 @@ namespace DiscImageChef.Decoders.MMC
         public byte ProductStateAwarenessEnablement;
         public byte SecureRemovalType;
         public byte CommandQueueModeEnable;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-        public byte[] Reserved18;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] Reserved18;
     }
 
     public partial class Decoders
     {
         public static ExtendedCSD DecodeExtendedCSD(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 512)
-                return null;
+            if(response.Length != 512) return null;
 
             ExtendedCSD csd = new ExtendedCSD();
             GCHandle handle = GCHandle.Alloc(response, GCHandleType.Pinned);
@@ -226,8 +215,7 @@ namespace DiscImageChef.Decoders.MMC
 
         public static string PrettifyExtendedCSD(ExtendedCSD csd)
         {
-            if(csd == null)
-                return null;
+            if(csd == null) return null;
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("MultiMediaCard Extended Device Specific Data Register:");
@@ -236,16 +224,15 @@ namespace DiscImageChef.Decoders.MMC
 
             if((csd.HPIFeatures & 0x01) == 0x01)
             {
-                if((csd.HPIFeatures & 0x02) == 0x02)
-                    sb.AppendLine("\tDevice implements HPI using CMD12");
-                else
-                    sb.AppendLine("\tDevice implements HPI using CMD13");
+                if((csd.HPIFeatures & 0x02) == 0x02) sb.AppendLine("\tDevice implements HPI using CMD12");
+                else sb.AppendLine("\tDevice implements HPI using CMD13");
             }
 
             if((csd.BackgroundOperationsSupport & 0x01) == 0x01)
                 sb.AppendLine("\tDevice supports background operations");
 
-            sb.AppendFormat("\tDevice supports a maximum of {0} packed reads and {1} packed writes", csd.MaxPackedReadCommands, csd.MaxPackedWriteCommands).AppendLine();
+            sb.AppendFormat("\tDevice supports a maximum of {0} packed reads and {1} packed writes",
+                            csd.MaxPackedReadCommands, csd.MaxPackedWriteCommands).AppendLine();
 
             if((csd.DataTagSupport & 0x01) == 0x01)
             {
@@ -258,15 +245,15 @@ namespace DiscImageChef.Decoders.MMC
             if((csd.ExtendedPartitionsSupport & 0x02) == 0x02)
                 sb.AppendLine("\tDevice supports system code extended partitions");
 
-            if((csd.SupportedModes & 0x01) == 0x01)
-                sb.AppendLine("\tDevice supports FFU");
-            if((csd.SupportedModes & 0x02) == 0x02)
-                sb.AppendLine("\tDevice supports Vendor Specific Mode");
+            if((csd.SupportedModes & 0x01) == 0x01) sb.AppendLine("\tDevice supports FFU");
+            if((csd.SupportedModes & 0x02) == 0x02) sb.AppendLine("\tDevice supports Vendor Specific Mode");
 
             if((csd.CMDQueuingSupport & 0x01) == 0x01)
-                sb.AppendFormat("\tDevice supports command queuing with a depth of {0}", csd.CMDQueuingDepth + 1).AppendLine();
+                sb.AppendFormat("\tDevice supports command queuing with a depth of {0}", csd.CMDQueuingDepth + 1)
+                  .AppendLine();
 
-            sb.AppendFormat("\t{0} firmware sectors correctly programmed", csd.NumberofFWSectorsCorrectlyProgrammed).AppendLine();
+            sb.AppendFormat("\t{0} firmware sectors correctly programmed", csd.NumberofFWSectorsCorrectlyProgrammed)
+              .AppendLine();
 
             switch(csd.DeviceLifeEstimationTypeB)
             {
@@ -362,16 +349,17 @@ namespace DiscImageChef.Decoders.MMC
             sb.AppendFormat("\tDevice version: {0}", csd.DeviceVersion).AppendLine();
             sb.AppendFormat("\tFirmware version: {0}", csd.FirmwareVersion).AppendLine();
 
-            if(csd.CacheSize == 0)
-                sb.AppendLine("\tDevice has no cache");
-            else
-                sb.AppendFormat("\tDevice has {0} KiB of cache", csd.CacheSize).AppendLine();
+            if(csd.CacheSize == 0) sb.AppendLine("\tDevice has no cache");
+            else sb.AppendFormat("\tDevice has {0} KiB of cache", csd.CacheSize).AppendLine();
 
             if(csd.GenericCMD6Timeout > 0)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms by default for a SWITCH command", csd.GenericCMD6Timeout * 10).AppendLine();
+                sb.AppendFormat("\tDevice takes a maximum of {0} ms by default for a SWITCH command",
+                                csd.GenericCMD6Timeout * 10).AppendLine();
 
             if(csd.PowerOffNotificationTimeout > 0)
-                sb.AppendFormat("\tDevice takes a maximum of {0} by default to power off from a SWITCH command notification", csd.PowerOffNotificationTimeout * 10).AppendLine();
+                sb
+                    .AppendFormat("\tDevice takes a maximum of {0} by default to power off from a SWITCH command notification",
+                                  csd.PowerOffNotificationTimeout * 10).AppendLine();
 
             switch(csd.BackgroundOperationsStatus & 0x03)
             {
@@ -389,103 +377,108 @@ namespace DiscImageChef.Decoders.MMC
                     break;
             }
 
-            sb.AppendFormat("\tLast WRITE MULTIPLE command correctly programmed {0} sectors", csd.CorrectlyProgrammedSectors).AppendLine();
+            sb.AppendFormat("\tLast WRITE MULTIPLE command correctly programmed {0} sectors",
+                            csd.CorrectlyProgrammedSectors).AppendLine();
 
             if(csd.InitializationTimeAfterPartition > 0)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms for initialization after partition", csd.InitializationTimeAfterPartition * 100).AppendLine();
+                sb.AppendFormat("\tDevice takes a maximum of {0} ms for initialization after partition",
+                                csd.InitializationTimeAfterPartition * 100).AppendLine();
 
             if((csd.CacheFlushingPolicy & 0x01) == 0x01)
                 sb.AppendLine("\tDevice uses a FIFO policy for cache flushing");
 
             if(csd.TRIMMultiplier > 0)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms for trimming a single erase group", csd.TRIMMultiplier * 300).AppendLine();
+                sb.AppendFormat("\tDevice takes a maximum of {0} ms for trimming a single erase group",
+                                csd.TRIMMultiplier * 300).AppendLine();
 
-            if((csd.SecureFeatureSupport & 0x40) == 0x40)
-                sb.AppendLine("\tDevice supports the sanitize operation");
+            if((csd.SecureFeatureSupport & 0x40) == 0x40) sb.AppendLine("\tDevice supports the sanitize operation");
             if((csd.SecureFeatureSupport & 0x10) == 0x10)
                 sb.AppendLine("\tDevice supports supports the secure and insecure trim operations");
             if((csd.SecureFeatureSupport & 0x04) == 0x04)
                 sb.AppendLine("\tDevice supports automatic erase on retired defective blocks");
-            if((csd.SecureFeatureSupport & 0x01) == 0x01)
-                sb.AppendLine("\tDevice supports secure purge operations");
+            if((csd.SecureFeatureSupport & 0x01) == 0x01) sb.AppendLine("\tDevice supports secure purge operations");
 
             if(csd.SecureEraseMultiplier > 0)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms for securely erasing a single erase group", csd.SecureEraseMultiplier * 300).AppendLine();
+                sb.AppendFormat("\tDevice takes a maximum of {0} ms for securely erasing a single erase group",
+                                csd.SecureEraseMultiplier * 300).AppendLine();
             if(csd.SecureTRIMMultiplier > 0)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms for securely trimming a single erase group", csd.SecureTRIMMultiplier * 300).AppendLine();
+                sb.AppendFormat("\tDevice takes a maximum of {0} ms for securely trimming a single erase group",
+                                csd.SecureTRIMMultiplier * 300).AppendLine();
 
-            if((csd.BootInformation & 0x04) == 0x04)
-                sb.AppendLine("\tDevice supports high speed timing on boot");
-            if((csd.BootInformation & 0x02) == 0x02)
-                sb.AppendLine("\tDevice supports dual data rate on boot");
-            if((csd.BootInformation & 0x01) == 0x01)
-                sb.AppendLine("\tDevice supports alternative boot method");
+            if((csd.BootInformation & 0x04) == 0x04) sb.AppendLine("\tDevice supports high speed timing on boot");
+            if((csd.BootInformation & 0x02) == 0x02) sb.AppendLine("\tDevice supports dual data rate on boot");
+            if((csd.BootInformation & 0x01) == 0x01) sb.AppendLine("\tDevice supports alternative boot method");
 
             if(csd.BootPartitionSize > 0)
                 sb.AppendFormat("\tDevice has a {0} KiB boot partition", csd.BootPartitionSize * 128).AppendLine();
 
             if((csd.AccessSize & 0x0F) > 0)
-                sb.AppendFormat("\tDevice has a page size of {0} KiB", (csd.AccessSize & 0x0F) * 512.0 / 1024.0).AppendLine();
+                sb.AppendFormat("\tDevice has a page size of {0} KiB", (csd.AccessSize & 0x0F) * 512.0 / 1024.0)
+                  .AppendLine();
 
             if(csd.HighCapacityEraseUnitSize > 0)
                 sb.AppendFormat("\tDevice erase groups are {0} KiB", csd.HighCapacityEraseUnitSize * 512).AppendLine();
 
-
             if(csd.HighCapacityEraseTimeout > 0)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms for erasing a single erase group", csd.HighCapacityEraseTimeout * 300).AppendLine();
+                sb.AppendFormat("\tDevice takes a maximum of {0} ms for erasing a single erase group",
+                                csd.HighCapacityEraseTimeout * 300).AppendLine();
 
             if(csd.HighCapacityWriteProtectGroupSize > 0)
-                sb.AppendFormat("\tDevice smallest write protect group is made of {0} erase groups", csd.HighCapacityWriteProtectGroupSize).AppendLine();
+                sb.AppendFormat("\tDevice smallest write protect group is made of {0} erase groups",
+                                csd.HighCapacityWriteProtectGroupSize).AppendLine();
 
             if(csd.SleepCurrentVcc > 0)
             {
                 unit = Math.Pow(2, csd.SleepCurrentVcc);
-                if(unit > 1000)
-                    sb.AppendFormat("\tDevice uses {0} mA on Vcc when sleeping", unit / 1000).AppendLine();
-                else
-                    sb.AppendFormat("\tDevice uses {0} μA on Vcc when sleeping", unit).AppendLine();
+                if(unit > 1000) sb.AppendFormat("\tDevice uses {0} mA on Vcc when sleeping", unit / 1000).AppendLine();
+                else sb.AppendFormat("\tDevice uses {0} μA on Vcc when sleeping", unit).AppendLine();
             }
 
             if(csd.SleepCurrentVccq > 0)
             {
                 unit = Math.Pow(2, csd.SleepCurrentVccq);
-                if(unit > 1000)
-                    sb.AppendFormat("\tDevice uses {0} mA on Vccq when sleeping", unit / 1000).AppendLine();
-                else
-                    sb.AppendFormat("\tDevice uses {0} μA on Vccq when sleeping", unit).AppendLine();
+                if(unit > 1000) sb.AppendFormat("\tDevice uses {0} mA on Vccq when sleeping", unit / 1000).AppendLine();
+                else sb.AppendFormat("\tDevice uses {0} μA on Vccq when sleeping", unit).AppendLine();
             }
 
             if(csd.ProductionStateAwarenessTimeout > 0)
             {
                 unit = Math.Pow(2, csd.ProductionStateAwareness) * 100;
                 if(unit > 1000000)
-                    sb.AppendFormat("\tDevice takes a maximum of {0} s to switch production state awareness", unit / 1000000).AppendLine();
+                    sb.AppendFormat("\tDevice takes a maximum of {0} s to switch production state awareness",
+                                    unit / 1000000).AppendLine();
                 else if(unit > 1000)
-                    sb.AppendFormat("\tDevice takes a maximum of {0} ms to switch production state awareness", unit / 1000).AppendLine();
+                    sb.AppendFormat("\tDevice takes a maximum of {0} ms to switch production state awareness",
+                                    unit / 1000).AppendLine();
                 else
-                    sb.AppendFormat("\tDevice takes a maximum of {0} μs to switch production state awareness", unit).AppendLine();
+                    sb.AppendFormat("\tDevice takes a maximum of {0} μs to switch production state awareness", unit)
+                      .AppendLine();
             }
 
             if(csd.SleepAwakeTimeout > 0)
             {
                 unit = Math.Pow(2, csd.SleepAwakeTimeout) * 100;
                 if(unit > 1000000)
-                    sb.AppendFormat("\tDevice takes a maximum of {0} ms to transition between sleep and standby states", unit / 1000000).AppendLine();
+                    sb.AppendFormat("\tDevice takes a maximum of {0} ms to transition between sleep and standby states",
+                                    unit / 1000000).AppendLine();
                 else if(unit > 1000)
-                    sb.AppendFormat("\tDevice takes a maximum of {0} μs to transition between sleep and standby states", unit / 1000).AppendLine();
+                    sb.AppendFormat("\tDevice takes a maximum of {0} μs to transition between sleep and standby states",
+                                    unit / 1000).AppendLine();
                 else
-                    sb.AppendFormat("\tDevice takes a maximum of {0} ns to transition between sleep and standby states", unit).AppendLine();
+                    sb.AppendFormat("\tDevice takes a maximum of {0} ns to transition between sleep and standby states",
+                                    unit).AppendLine();
             }
 
             if(csd.SleepNotificationTimeout > 0)
             {
                 unit = Math.Pow(2, csd.SleepNotificationTimeout) * 10;
                 if(unit > 1000000)
-                    sb.AppendFormat("\tDevice takes a maximum of {0} s to move to sleep state", unit / 1000000).AppendLine();
+                    sb.AppendFormat("\tDevice takes a maximum of {0} s to move to sleep state", unit / 1000000)
+                      .AppendLine();
                 else if(unit > 1000)
-                    sb.AppendFormat("\tDevice takes a maximum of {0} ms to move to sleep state", unit / 1000).AppendLine();
-                else
-                    sb.AppendFormat("\tDevice takes a maximum of {0} μs to move to sleep state", unit).AppendLine();
+                    sb.AppendFormat("\tDevice takes a maximum of {0} ms to move to sleep state", unit / 1000)
+                      .AppendLine();
+                else sb.AppendFormat("\tDevice takes a maximum of {0} μs to move to sleep state", unit).AppendLine();
             }
 
             sb.AppendFormat("\tDevice has {0} sectors", csd.SectorCount).AppendLine();
@@ -501,72 +494,74 @@ namespace DiscImageChef.Decoders.MMC
             if(csd.MinimumReadPerformance26 == 0)
                 sb.AppendLine("\tDevice cannot achieve 2.4MB/s reading in SDR 26Mhz mode");
             else
-                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in SDR 26Mhz mode", unit / 1000).AppendLine();
+                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in SDR 26Mhz mode", unit / 1000)
+                  .AppendLine();
 
             unit = csd.MinimumReadPerformance26_4 * 150;
             if(csd.MinimumReadPerformance26_4 == 0)
                 sb.AppendLine("\tDevice cannot achieve 2.4MB/s reading in SDR 26Mhz 4-bit mode");
             else
-                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in SDR 26Mhz 4-bit mode", unit / 1000).AppendLine();
+                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in SDR 26Mhz 4-bit mode",
+                                unit / 1000).AppendLine();
 
             unit = csd.MinimumReadPerformance52 * 150;
             if(csd.MinimumReadPerformance52 == 0)
                 sb.AppendLine("\tDevice cannot achieve 2.4MB/s reading in SDR 52Mhz mode");
             else
-                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in SDR 52Mhz mode", unit / 1000).AppendLine();
+                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in SDR 52Mhz mode", unit / 1000)
+                  .AppendLine();
 
             unit = csd.MinimumReadPerformanceDDR52 * 300;
             if(csd.MinimumReadPerformanceDDR52 == 0)
                 sb.AppendLine("\tDevice cannot achieve 4.8MB/s reading in DDR 52Mhz mode");
             else
-                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in DDR 52Mhz mode", unit / 1000).AppendLine();
+                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in DDR 52Mhz mode", unit / 1000)
+                  .AppendLine();
 
             unit = csd.MinimumWritePerformance26 * 150;
             if(csd.MinimumWritePerformance26 == 0)
                 sb.AppendLine("\tDevice cannot achieve 2.4MB/s writing in SDR 26Mhz mode");
             else
-                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in SDR 26Mhz mode", unit / 1000).AppendLine();
+                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in SDR 26Mhz mode", unit / 1000)
+                  .AppendLine();
 
             unit = csd.MinimumWritePerformance26_4 * 150;
             if(csd.MinimumWritePerformance26_4 == 0)
                 sb.AppendLine("\tDevice cannot achieve 2.4MB/s writing in SDR 26Mhz 4-bit mode");
             else
-                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in SDR 26Mhz 4-bit mode", unit / 1000).AppendLine();
+                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in SDR 26Mhz 4-bit mode",
+                                unit / 1000).AppendLine();
 
             unit = csd.MinimumWritePerformance52 * 150;
             if(csd.MinimumWritePerformance52 == 0)
                 sb.AppendLine("\tDevice cannot achieve 2.4MB/s writing in SDR 52Mhz mode");
             else
-                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in SDR 52Mhz mode", unit / 1000).AppendLine();
+                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in SDR 52Mhz mode", unit / 1000)
+                  .AppendLine();
 
             unit = csd.MinimumWritePerformanceDDR52 * 300;
             if(csd.MinimumWritePerformanceDDR52 == 0)
                 sb.AppendLine("\tDevice cannot achieve 4.8MB/s writing in DDR 52Mhz mode");
             else
-                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in DDR 52Mhz mode", unit / 1000).AppendLine();
+                sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in DDR 52Mhz mode", unit / 1000)
+                  .AppendLine();
 
             if(csd.PartitionSwitchingTime > 0)
-                sb.AppendFormat("\tDevice can take a maximum of {0} ms when switching partitions", csd.PartitionSwitchingTime * 10).AppendLine();
+                sb.AppendFormat("\tDevice can take a maximum of {0} ms when switching partitions",
+                                csd.PartitionSwitchingTime * 10).AppendLine();
 
             if(csd.OutOfInterruptBusyTiming > 0)
-                sb.AppendFormat("\tDevice can take a maximum of {0} ms when releasing from an interrupt", csd.OutOfInterruptBusyTiming * 10).AppendLine();
+                sb.AppendFormat("\tDevice can take a maximum of {0} ms when releasing from an interrupt",
+                                csd.OutOfInterruptBusyTiming * 10).AppendLine();
 
-            if((csd.DeviceType & 0x01) == 0x01)
-                sb.AppendLine("\tDevice supports 26 Mhz mode");
-            if((csd.DeviceType & 0x02) == 0x02)
-                sb.AppendLine("\tDevice supports 52 Mhz mode");
-            if((csd.DeviceType & 0x04) == 0x04)
-                sb.AppendLine("\tDevice supports DDR 52 Mhz mode at 1.8V or 3V");
-            if((csd.DeviceType & 0x08) == 0x08)
-                sb.AppendLine("\tDevice supports DDR 52 Mhz mode 1.2V");
-            if((csd.DeviceType & 0x10) == 0x10)
-                sb.AppendLine("\tDevice supports HS-200 mode (SDR 200Mhz) at 1.8V");
-            if((csd.DeviceType & 0x20) == 0x20)
-                sb.AppendLine("\tDevice supports HS-200 mode (SDR 200Mhz) at 1.2V");
-            if((csd.DeviceType & 0x40) == 0x40)
-                sb.AppendLine("\tDevice supports HS-400 mode (DDR 200Mhz) at 1.8V");
-            if((csd.DeviceType & 0x80) == 0x80)
-                sb.AppendLine("\tDevice supports HS-400 mode (DDR 200Mhz) at 1.2V");
+            if((csd.DeviceType & 0x01) == 0x01) sb.AppendLine("\tDevice supports 26 Mhz mode");
+            if((csd.DeviceType & 0x02) == 0x02) sb.AppendLine("\tDevice supports 52 Mhz mode");
+            if((csd.DeviceType & 0x04) == 0x04) sb.AppendLine("\tDevice supports DDR 52 Mhz mode at 1.8V or 3V");
+            if((csd.DeviceType & 0x08) == 0x08) sb.AppendLine("\tDevice supports DDR 52 Mhz mode 1.2V");
+            if((csd.DeviceType & 0x10) == 0x10) sb.AppendLine("\tDevice supports HS-200 mode (SDR 200Mhz) at 1.8V");
+            if((csd.DeviceType & 0x20) == 0x20) sb.AppendLine("\tDevice supports HS-200 mode (SDR 200Mhz) at 1.2V");
+            if((csd.DeviceType & 0x40) == 0x40) sb.AppendLine("\tDevice supports HS-400 mode (DDR 200Mhz) at 1.8V");
+            if((csd.DeviceType & 0x80) == 0x80) sb.AppendLine("\tDevice supports HS-400 mode (DDR 200Mhz) at 1.2V");
 
             sb.AppendFormat("\tCSD version 1.{0} revision 1.{1}", csd.Structure, csd.Revision).AppendLine();
 
@@ -575,8 +570,7 @@ namespace DiscImageChef.Decoders.MMC
                 sb.AppendLine("\tDevice supports enhanced strobe mode");
                 if((csd.BusWidth & 0x80) == 0x80)
                     sb.AppendLine("\tDevice uses strobe during Data Out, CRC and CMD responses");
-                else
-                    sb.AppendLine("\tDevice uses strobe during Data Out and CRC responses");
+                else sb.AppendLine("\tDevice uses strobe during Data Out and CRC responses");
             }
 
             switch(csd.BusWidth & 0x0F)
@@ -601,8 +595,7 @@ namespace DiscImageChef.Decoders.MMC
                     break;
             }
 
-            if((csd.PartitionConfiguration & 0x80) == 0x80)
-                sb.AppendLine("\tDevice sends boot acknowledge");
+            if((csd.PartitionConfiguration & 0x80) == 0x80) sb.AppendLine("\tDevice sends boot acknowledge");
 
             switch((csd.PartitionConfiguration & 0x38) >> 3)
             {
@@ -619,7 +612,8 @@ namespace DiscImageChef.Decoders.MMC
                     sb.AppendLine("\tDevice user area is enable for boot");
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown enabled boot partition code {0}", (csd.PartitionConfiguration & 0x38) >> 3).AppendLine();
+                    sb.AppendFormat("\tUnknown enabled boot partition code {0}",
+                                    (csd.PartitionConfiguration & 0x38) >> 3).AppendLine();
                     break;
             }
 
@@ -638,15 +632,16 @@ namespace DiscImageChef.Decoders.MMC
                     sb.AppendLine("\tThere is read/write access to replay protected memory block");
                     break;
                 default:
-                    sb.AppendFormat("\tThere is access to general purpose partition {0}", (csd.PartitionConfiguration & 0x07) - 3).AppendLine();
+                    sb.AppendFormat("\tThere is access to general purpose partition {0}",
+                                    (csd.PartitionConfiguration & 0x07) - 3).AppendLine();
                     break;
             }
 
-            if((csd.FirmwareConfiguration & 0x01) == 0x01)
-                sb.AppendLine("\tFirmware updates are permanently disabled");
+            if((csd.FirmwareConfiguration & 0x01) == 0x01) sb.AppendLine("\tFirmware updates are permanently disabled");
 
             if(csd.RPMBSize > 0)
-                sb.AppendFormat("\tDevice has a {0} KiB replay protected memory block", csd.RPMBSize * 128).AppendLine();
+                sb.AppendFormat("\tDevice has a {0} KiB replay protected memory block", csd.RPMBSize * 128)
+                  .AppendLine();
 
             switch(csd.NativeSectorSize)
             {
@@ -657,7 +652,8 @@ namespace DiscImageChef.Decoders.MMC
                     sb.AppendLine("\tDevice natively uses 4096 byte sectors");
                     break;
                 default:
-                    sb.AppendFormat("\tDevice natively uses unknown sector size indicated by code {0}", csd.NativeSectorSize).AppendLine();
+                    sb.AppendFormat("\tDevice natively uses unknown sector size indicated by code {0}",
+                                    csd.NativeSectorSize).AppendLine();
                     break;
             }
 
@@ -670,7 +666,8 @@ namespace DiscImageChef.Decoders.MMC
                     sb.AppendLine("\tDevice is using natively sized sectors");
                     break;
                 default:
-                    sb.AppendFormat("\tDevice emulates unknown sector size indicated by code {0}", csd.NativeSectorSize).AppendLine();
+                    sb.AppendFormat("\tDevice emulates unknown sector size indicated by code {0}", csd.NativeSectorSize)
+                      .AppendLine();
                     break;
             }
 
@@ -683,15 +680,14 @@ namespace DiscImageChef.Decoders.MMC
                     sb.AppendLine("\tDevice currently addresses 4096 byte sectors");
                     break;
                 default:
-                    sb.AppendFormat("\tDevice currently addresses unknown sector size indicated by code {0}", csd.NativeSectorSize).AppendLine();
+                    sb.AppendFormat("\tDevice currently addresses unknown sector size indicated by code {0}",
+                                    csd.NativeSectorSize).AppendLine();
                     break;
             }
 
-            if((csd.CacheControl & 0x01) == 0x01)
-                sb.AppendLine("\tDevice's cache is enabled");
+            if((csd.CacheControl & 0x01) == 0x01) sb.AppendLine("\tDevice's cache is enabled");
 
-            if((csd.CommandQueueModeEnable & 0x01) == 0x01)
-                sb.AppendLine("\tDevice has enabled command queuing");
+            if((csd.CommandQueueModeEnable & 0x01) == 0x01) sb.AppendLine("\tDevice has enabled command queuing");
 
             return sb.ToString();
         }

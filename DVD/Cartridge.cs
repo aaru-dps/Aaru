@@ -122,11 +122,9 @@ namespace DiscImageChef.Decoders.DVD
 
         public static MediumStatus? Decode(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 8)
-                return null;
+            if(response.Length != 8) return null;
 
             MediumStatus status = new MediumStatus();
 
@@ -149,22 +147,18 @@ namespace DiscImageChef.Decoders.DVD
 
         public static string Prettify(MediumStatus? status)
         {
-            if(status == null)
-                return null;
+            if(status == null) return null;
 
             MediumStatus decoded = status.Value;
             StringBuilder sb = new StringBuilder();
 
-            if(decoded.PWP)
-                sb.AppendLine("Disc surface is set to write protected status");
+            if(decoded.PWP) sb.AppendLine("Disc surface is set to write protected status");
 
             if(decoded.Cartridge)
             {
                 sb.AppendLine("Disc comes in a cartridge");
-                if(decoded.OUT)
-                    sb.AppendLine("Disc has been extracted from the cartridge");
-                if(decoded.CWP)
-                    sb.AppendLine("Cartridge is set to write protected");
+                if(decoded.OUT) sb.AppendLine("Disc has been extracted from the cartridge");
+                if(decoded.CWP) sb.AppendLine("Cartridge is set to write protected");
             }
 
             switch(decoded.DiscType)
@@ -184,8 +178,7 @@ namespace DiscImageChef.Decoders.DVD
             {
                 switch(decoded.RAMSWI)
                 {
-                    case 0:
-                        break;
+                    case 0: break;
                     case 1:
                         sb.AppendLine("Disc is write inhibited because it has been extracted from the cartridge");
                         break;
@@ -193,7 +186,8 @@ namespace DiscImageChef.Decoders.DVD
                         sb.AppendLine("Disc is write inhibited for an unspecified reason");
                         break;
                     default:
-                        sb.AppendFormat("Disc has unknown reason {0} for write inhibition", decoded.RAMSWI).AppendLine();
+                        sb.AppendFormat("Disc has unknown reason {0} for write inhibition", decoded.RAMSWI)
+                          .AppendLine();
                         break;
                 }
             }
@@ -207,4 +201,3 @@ namespace DiscImageChef.Decoders.DVD
         }
     }
 }
-

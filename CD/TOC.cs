@@ -111,8 +111,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static CDTOC? Decode(byte[] CDTOCResponse)
         {
-            if(CDTOCResponse == null)
-                return null;
+            if(CDTOCResponse == null) return null;
 
             CDTOC decoded = new CDTOC();
 
@@ -125,7 +124,9 @@ namespace DiscImageChef.Decoders.CD
 
             if(decoded.DataLength + 2 != CDTOCResponse.Length)
             {
-                DicConsole.DebugWriteLine("CD TOC decoder", "Expected CDTOC size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDTOCResponse.Length);
+                DicConsole.DebugWriteLine("CD TOC decoder",
+                                          "Expected CDTOC size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                          decoded.DataLength + 2, CDTOCResponse.Length);
                 return null;
             }
 
@@ -136,7 +137,8 @@ namespace DiscImageChef.Decoders.CD
                 decoded.TrackDescriptors[i].CONTROL = (byte)(CDTOCResponse[1 + i * 8 + 4] & 0x0F);
                 decoded.TrackDescriptors[i].TrackNumber = CDTOCResponse[2 + i * 8 + 4];
                 decoded.TrackDescriptors[i].Reserved2 = CDTOCResponse[3 + i * 8 + 4];
-                decoded.TrackDescriptors[i].TrackStartAddress = BigEndianBitConverter.ToUInt32(CDTOCResponse, 4 + i * 8 + 4);
+                decoded.TrackDescriptors[i].TrackStartAddress =
+                    BigEndianBitConverter.ToUInt32(CDTOCResponse, 4 + i * 8 + 4);
             }
 
             return decoded;
@@ -144,8 +146,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static string Prettify(CDTOC? CDTOCResponse)
         {
-            if(CDTOCResponse == null)
-                return null;
+            if(CDTOCResponse == null) return null;
 
             CDTOC response = CDTOCResponse.Value;
 
@@ -155,14 +156,12 @@ namespace DiscImageChef.Decoders.CD
             sb.AppendFormat("Last track number in last complete session: {0}", response.LastTrack).AppendLine();
             foreach(CDTOCTrackDataDescriptor descriptor in response.TrackDescriptors)
             {
-                if(descriptor.TrackNumber == 0xAA)
-                    sb.AppendLine("Track number: Lead-Out");
-                else
-                    sb.AppendFormat("Track number: {0}", descriptor.TrackNumber).AppendLine();
+                if(descriptor.TrackNumber == 0xAA) sb.AppendLine("Track number: Lead-Out");
+                else sb.AppendFormat("Track number: {0}", descriptor.TrackNumber).AppendLine();
                 sb.AppendFormat("Track starts at LBA {0}, or MSF {1:X2}:{2:X2}:{3:X2}", descriptor.TrackStartAddress,
-                    (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
-                    (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
-                    (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
+                                (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
+                                (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
+                                (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
 
                 switch((TOC_ADR)descriptor.ADR)
                 {
@@ -212,10 +211,9 @@ namespace DiscImageChef.Decoders.CD
                             break;
                     }
 
-                    if((descriptor.CONTROL & (byte)TOC_CONTROL.CopyPermissionMask) == (byte)TOC_CONTROL.CopyPermissionMask)
-                        sb.AppendLine("Digital copy of track is permitted");
-                    else
-                        sb.AppendLine("Digital copy of track is prohibited");
+                    if((descriptor.CONTROL & (byte)TOC_CONTROL.CopyPermissionMask) ==
+                       (byte)TOC_CONTROL.CopyPermissionMask) sb.AppendLine("Digital copy of track is permitted");
+                    else sb.AppendLine("Digital copy of track is prohibited");
 
 #if DEBUG
                     if(descriptor.Reserved1 != 0)
@@ -238,4 +236,3 @@ namespace DiscImageChef.Decoders.CD
         }
     }
 }
-

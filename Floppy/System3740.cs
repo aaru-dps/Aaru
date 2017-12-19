@@ -76,13 +76,11 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Gap from index pulse, 80 bytes set to 0xFF
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 40)]
-            public byte[] gap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 40)] public byte[] gap;
             /// <summary>
             /// 6 bytes set to 0x00
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] zero;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] zero;
             /// <summary>
             /// Set to <see cref="IBMIdType.IndexMark"/> 
             /// </summary>
@@ -90,8 +88,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Gap until first sector, 26 bytes to 0xFF
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)]
-            public byte[] gap1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)] public byte[] gap1;
         }
 
         /// <summary>
@@ -106,8 +103,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// 11 bytes set to 0xFF
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-            public byte[] innerGap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] innerGap;
             /// <summary>
             /// Sector data block
             /// </summary>
@@ -126,8 +122,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// 6 bytes set to 0
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] zero;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] zero;
             /// <summary>
             /// Set to <see cref="IBMIdType.AddressMark"/>
             /// </summary>
@@ -162,8 +157,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// 12 bytes set to 0
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] zero;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] zero;
             /// <summary>
             /// Set to <see cref="IBMIdType.DataMark"/> or to <see cref="IBMIdType.DeletedDataMark"/>
             /// </summary>
@@ -179,4 +173,3 @@ namespace DiscImageChef.Decoders.Floppy
         }
     }
 }
-

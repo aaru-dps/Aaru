@@ -35,8 +35,8 @@ namespace DiscImageChef.Decoders.SCSI
     public enum MediumTypes : byte
     {
         Default = 0x00,
-        #region Medium Types defined in ECMA-111 for Direct-Access devices
 
+        #region Medium Types defined in ECMA-111 for Direct-Access devices
         /// <summary>
         /// ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side
         /// </summary>
@@ -72,7 +72,6 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Medium Types defined in ECMA-111 for Direct-Access devices
 
         #region Medium Types defined in SCSI-2 for Direct-Access devices
-
         /// <summary>
         /// Unspecified single sided flexible disk
         /// </summary>
@@ -104,7 +103,6 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Medium Types defined in SCSI-2 for Direct-Access devices
 
         #region Medium Types defined in SCSI-3 SBC-1 for Optical devices
-
         /// <summary>
         /// Read-only medium
         /// </summary>
@@ -132,7 +130,6 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Medium Types defined in SCSI-3 SBC-1 for Optical devices
 
         #region Medium Types defined in SCSI-2 for MultiMedia devices
-
         /// <summary>
         /// 120 mm CD-ROM
         /// </summary>
@@ -157,11 +154,9 @@ namespace DiscImageChef.Decoders.SCSI
         /// 80 mm Compact Disc with data and audio
         /// </summary>
         MixedCD_80 = 0x07,
-
         #endregion Medium Types defined in SCSI-2 for MultiMedia devices
 
         #region Medium Types defined in SFF-8020i
-
         /// <summary>
         /// Unknown medium type
         /// </summary>
@@ -269,7 +264,6 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Medium Types defined in SFF-8020i
 
         #region Medium Types defined in USB Mass Storage Class - UFI Command Specification
-
         /// <summary>
         /// 3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)
         /// </summary>
@@ -281,7 +275,6 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Medium Types defined in USB Mass Storage Class - UFI Command Specification
 
         #region Medium Types defined in INF-8070
-
         /// <summary>
         /// Unknown type block device
         /// </summary>
@@ -294,7 +287,6 @@ namespace DiscImageChef.Decoders.SCSI
         /// Read/Write block device
         /// </summary>
         ReadWriteBlockDevice = 0x42,
-
         #endregion Medium Types defined in INF-8070
 
         #region Medium Types found in vendor documents
@@ -590,16 +582,14 @@ namespace DiscImageChef.Decoders.SCSI
         /// Exatape 75m
         /// </summary>
         Exatape75m = 0xD7,
-
-
         #endregion Medium Types found in vendor documents
     }
 
     public enum DensityType : byte
     {
         Default = 0x00,
-        #region Density Types defined in ECMA-111 for Direct-Access devices
 
+        #region Density Types defined in ECMA-111 for Direct-Access devices
         /// <summary>
         /// 7958 flux transitions per radian
         /// </summary>
@@ -615,7 +605,6 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Density Types defined in ECMA-111 for Direct-Access devices
 
         #region Density Types defined in ECMA-111 for Sequential-Access devices
-
         /// <summary>
         /// ECMA-62 &amp; ANSI X3.22-1983: 12,7 mm 9-Track Magnetic Tape, 32 ftpmm, NRZI, 32 cpmm
         /// </summary>
@@ -647,7 +636,6 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Density Types defined in ECMA-111 for Sequential-Access devices
 
         #region Density Types defined in SCSI-2 for Sequential-Access devices
-
         /// <summary>
         /// ANXI X3.136-1986: 6,35 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR (QIC-24)
         /// </summary>
@@ -711,7 +699,6 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Density Types defined in SCSI-2 for Sequential-Access devices
 
         #region Density Types defined in SCSI-2 for MultiMedia devices
-
         /// <summary>
         /// User data only
         /// </summary>
@@ -731,7 +718,6 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Density Types defined in SCSI-2 for MultiMedia devices
 
         #region Density Types defined in SCSI-2 for Optical devices
-
         /// <summary>
         /// ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks
         /// </summary>
@@ -768,7 +754,6 @@ namespace DiscImageChef.Decoders.SCSI
         /// ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks
         /// </summary>
         X3_200 = 0x09,
-
         #endregion Density Types defined in SCSI-2 for Optical devices
 
         #region Density Types found in vendor documents
@@ -1044,8 +1029,6 @@ namespace DiscImageChef.Decoders.SCSI
         /// VStape I compressed
         /// </summary>
         VStape1c = 0x99,
-
         #endregion Density Types found in vendor documents
     }
 }
-

@@ -44,13 +44,11 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Set to 0x00
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] zero;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] zero;
             /// <summary>
             /// Set to 0xA1
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] sync;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] sync;
             /// <summary>
             /// Set to 0xFF
             /// </summary>
@@ -70,8 +68,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// OS dependent tag
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
             /// <summary>
             /// Checksum from <see cref="amiga"/> to <see cref="label"/> 
             /// </summary>
@@ -80,9 +77,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// Checksum from <see cref="data"/>
             /// </summary>
             public uint dataChecksum;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] data;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] data;
         }
     }
 }
-

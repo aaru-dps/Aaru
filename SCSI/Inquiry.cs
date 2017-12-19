@@ -51,21 +51,23 @@ namespace DiscImageChef.Decoders.SCSI
     public static class Inquiry
     {
         #region Public methods
-
         public static SCSIInquiry? Decode(byte[] SCSIInquiryResponse)
         {
-            if(SCSIInquiryResponse == null)
-                return null;
+            if(SCSIInquiryResponse == null) return null;
 
             if(SCSIInquiryResponse.Length < 36 && SCSIInquiryResponse.Length != 5)
             {
-                DicConsole.DebugWriteLine("SCSI INQUIRY decoder", "INQUIRY response is {0} bytes, less than minimum of 36 bytes, decoded data can be incorrect, not decoding.", SCSIInquiryResponse.Length);
+                DicConsole.DebugWriteLine("SCSI INQUIRY decoder",
+                                          "INQUIRY response is {0} bytes, less than minimum of 36 bytes, decoded data can be incorrect, not decoding.",
+                                          SCSIInquiryResponse.Length);
                 return null;
             }
 
             if(SCSIInquiryResponse.Length < SCSIInquiryResponse[4] + 5)
             {
-                DicConsole.DebugWriteLine("SCSI INQUIRY decoder", "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.", SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
+                DicConsole.DebugWriteLine("SCSI INQUIRY decoder",
+                                          "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.",
+                                          SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
                 return null;
             }
 
@@ -95,8 +97,7 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.HiSup = Convert.ToBoolean((SCSIInquiryResponse[3] & 0x10));
                 decoded.ResponseDataFormat = (byte)(SCSIInquiryResponse[3] & 0x07);
             }
-            if(SCSIInquiryResponse.Length >= 5)
-                decoded.AdditionalLength = SCSIInquiryResponse[4];
+            if(SCSIInquiryResponse.Length >= 5) decoded.AdditionalLength = SCSIInquiryResponse[4];
             if(SCSIInquiryResponse.Length >= 6)
             {
                 decoded.SCCS = Convert.ToBoolean((SCSIInquiryResponse[5] & 0x80));
@@ -159,7 +160,8 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.KreonVersion = new byte[5];
                 Array.Copy(SCSIInquiryResponse, 42, decoded.KreonVersion, 0, 5);
 
-                if(decoded.KreonSpace == 0x20 && decoded.KreonIdentifier.SequenceEqual(new byte[] { 0x4B, 0x52, 0x45, 0x4F, 0x4E }))
+                if(decoded.KreonSpace == 0x20 &&
+                   decoded.KreonIdentifier.SequenceEqual(new byte[] {0x4B, 0x52, 0x45, 0x4F, 0x4E}))
                     decoded.KreonPresent = true;
             }
             if(SCSIInquiryResponse.Length >= 49)
@@ -212,16 +214,13 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.QAS = Convert.ToBoolean((SCSIInquiryResponse[56] & 0x02));
                 decoded.IUS = Convert.ToBoolean((SCSIInquiryResponse[56] & 0x01));
             }
-            if(SCSIInquiryResponse.Length >= 58)
-                decoded.Reserved4 = SCSIInquiryResponse[57];
+            if(SCSIInquiryResponse.Length >= 58) decoded.Reserved4 = SCSIInquiryResponse[57];
             if(SCSIInquiryResponse.Length >= 60)
             {
                 int descriptorsNo;
 
-                if(SCSIInquiryResponse.Length >= 74)
-                    descriptorsNo = 8;
-                else
-                    descriptorsNo = (SCSIInquiryResponse.Length - 58) / 2;
+                if(SCSIInquiryResponse.Length >= 74) descriptorsNo = 8;
+                else descriptorsNo = (SCSIInquiryResponse.Length - 58) / 2;
 
                 decoded.VersionDescriptors = new ushort[descriptorsNo];
                 for(int i = 0; i < descriptorsNo; i++)
@@ -229,6 +228,7 @@ namespace DiscImageChef.Decoders.SCSI
                     decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + (i * 2));
                 }
             }
+
             if(SCSIInquiryResponse.Length >= 75 && SCSIInquiryResponse.Length < 96)
             {
                 decoded.Reserved5 = new byte[SCSIInquiryResponse.Length - 74];
@@ -264,16 +264,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string Prettify(SCSIInquiry? SCSIInquiryResponse)
         {
-            if(SCSIInquiryResponse == null)
-                return null;
+            if(SCSIInquiryResponse == null) return null;
 
             SCSIInquiry response = SCSIInquiryResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendFormat("Device vendor: {0}", VendorString.Prettify(StringHandlers.CToString(response.VendorIdentification).Trim())).AppendLine();
-            sb.AppendFormat("Device name: {0}", StringHandlers.CToString(response.ProductIdentification).Trim()).AppendLine();
-            sb.AppendFormat("Device release level: {0}", StringHandlers.CToString(response.ProductRevisionLevel).Trim()).AppendLine();
+            sb.AppendFormat("Device vendor: {0}",
+                            VendorString.Prettify(StringHandlers.CToString(response.VendorIdentification).Trim()))
+              .AppendLine();
+            sb.AppendFormat("Device name: {0}", StringHandlers.CToString(response.ProductIdentification).Trim())
+              .AppendLine();
+            sb.AppendFormat("Device release level: {0}", StringHandlers.CToString(response.ProductRevisionLevel).Trim())
+              .AppendLine();
             switch((PeripheralQualifiers)response.PeripheralQualifier)
             {
                 case PeripheralQualifiers.Supported:
@@ -289,7 +292,8 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("Device is connected but unsupported.");
                     break;
                 default:
-                    sb.AppendFormat("Vendor value {0} set in Peripheral Qualifier field.", response.PeripheralQualifier).AppendLine();
+                    sb.AppendFormat("Vendor value {0} set in Peripheral Qualifier field.", response.PeripheralQualifier)
+                      .AppendLine();
                     break;
             }
 
@@ -365,7 +369,8 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("Unknown or no device type");
                     break;
                 default:
-                    sb.AppendFormat("Unknown device type field value 0x{0:X2}", response.PeripheralDeviceType).AppendLine();
+                    sb.AppendFormat("Unknown device type field value 0x{0:X2}", response.PeripheralDeviceType)
+                      .AppendLine();
                     break;
             }
 
@@ -393,7 +398,8 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("Device claims to comply with ANSI X3.408:2005 (SPC-4)");
                     break;
                 default:
-                    sb.AppendFormat("Device claims to comply with unknown SCSI ANSI standard value 0x{0:X2})", response.ANSIVersion).AppendLine();
+                    sb.AppendFormat("Device claims to comply with unknown SCSI ANSI standard value 0x{0:X2})",
+                                    response.ANSIVersion).AppendLine();
                     break;
             }
 
@@ -406,7 +412,8 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("Device claims to comply ECMA-111: Small Computer System Interface SCSI");
                     break;
                 default:
-                    sb.AppendFormat("Device claims to comply with unknown SCSI ECMA standard value 0x{0:X2})", response.ECMAVersion).AppendLine();
+                    sb.AppendFormat("Device claims to comply with unknown SCSI ECMA standard value 0x{0:X2})",
+                                    response.ECMAVersion).AppendLine();
                     break;
             }
 
@@ -419,65 +426,39 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("Device claims to comply with ISO/IEC 9316:1995");
                     break;
                 default:
-                    sb.AppendFormat("Device claims to comply with unknown SCSI ISO/IEC standard value 0x{0:X2})", response.ISOVersion).AppendLine();
+                    sb.AppendFormat("Device claims to comply with unknown SCSI ISO/IEC standard value 0x{0:X2})",
+                                    response.ISOVersion).AppendLine();
                     break;
             }
 
-            if(response.RMB)
-                sb.AppendLine("Device is removable");
-            if(response.AERC)
-                sb.AppendLine("Device supports Asynchronous Event Reporting Capability");
-            if(response.TrmTsk)
-                sb.AppendLine("Device supports TERMINATE TASK command");
-            if(response.NormACA)
-                sb.AppendLine("Device supports setting Normal ACA");
-            if(response.HiSup)
-                sb.AppendLine("Device supports LUN hierarchical addressing");
-            if(response.SCCS)
-                sb.AppendLine("Device contains an embedded storage array controller");
-            if(response.ACC)
-                sb.AppendLine("Device contains an Access Control Coordinator");
-            if(response.ThreePC)
-                sb.AppendLine("Device supports third-party copy commands");
-            if(response.Protect)
-                sb.AppendLine("Device supports protection information");
-            if(response.BQue)
-                sb.AppendLine("Device supports basic queueing");
-            if(response.EncServ)
-                sb.AppendLine("Device contains an embedded enclosure services component");
-            if(response.MultiP)
-                sb.AppendLine("Multi-port device");
-            if(response.MChngr)
-                sb.AppendLine("Device contains or is attached to a medium changer");
-            if(response.ACKREQQ)
-                sb.AppendLine("Device supports request and acknowledge handshakes");
-            if(response.Addr32)
-                sb.AppendLine("Device supports 32-bit wide SCSI addresses");
-            if(response.Addr16)
-                sb.AppendLine("Device supports 16-bit wide SCSI addresses");
-            if(response.RelAddr)
-                sb.AppendLine("Device supports relative addressing");
-            if(response.WBus32)
-                sb.AppendLine("Device supports 32-bit wide data transfers");
-            if(response.WBus16)
-                sb.AppendLine("Device supports 16-bit wide data transfers");
-            if(response.Sync)
-                sb.AppendLine("Device supports synchronous data transfer");
-            if(response.Linked)
-                sb.AppendLine("Device supports linked commands");
-            if(response.TranDis)
-                sb.AppendLine("Device supports CONTINUE TASK and TARGET TRANSFER DISABLE commands");
-            if(response.QAS)
-                sb.AppendLine("Device supports Quick Arbitration and Selection");
-            if(response.CmdQue)
-                sb.AppendLine("Device supports TCQ queue");
-            if(response.IUS)
-                sb.AppendLine("Device supports information unit transfers");
-            if(response.SftRe)
-                sb.AppendLine("Device implements RESET as a soft reset");
+            if(response.RMB) sb.AppendLine("Device is removable");
+            if(response.AERC) sb.AppendLine("Device supports Asynchronous Event Reporting Capability");
+            if(response.TrmTsk) sb.AppendLine("Device supports TERMINATE TASK command");
+            if(response.NormACA) sb.AppendLine("Device supports setting Normal ACA");
+            if(response.HiSup) sb.AppendLine("Device supports LUN hierarchical addressing");
+            if(response.SCCS) sb.AppendLine("Device contains an embedded storage array controller");
+            if(response.ACC) sb.AppendLine("Device contains an Access Control Coordinator");
+            if(response.ThreePC) sb.AppendLine("Device supports third-party copy commands");
+            if(response.Protect) sb.AppendLine("Device supports protection information");
+            if(response.BQue) sb.AppendLine("Device supports basic queueing");
+            if(response.EncServ) sb.AppendLine("Device contains an embedded enclosure services component");
+            if(response.MultiP) sb.AppendLine("Multi-port device");
+            if(response.MChngr) sb.AppendLine("Device contains or is attached to a medium changer");
+            if(response.ACKREQQ) sb.AppendLine("Device supports request and acknowledge handshakes");
+            if(response.Addr32) sb.AppendLine("Device supports 32-bit wide SCSI addresses");
+            if(response.Addr16) sb.AppendLine("Device supports 16-bit wide SCSI addresses");
+            if(response.RelAddr) sb.AppendLine("Device supports relative addressing");
+            if(response.WBus32) sb.AppendLine("Device supports 32-bit wide data transfers");
+            if(response.WBus16) sb.AppendLine("Device supports 16-bit wide data transfers");
+            if(response.Sync) sb.AppendLine("Device supports synchronous data transfer");
+            if(response.Linked) sb.AppendLine("Device supports linked commands");
+            if(response.TranDis) sb.AppendLine("Device supports CONTINUE TASK and TARGET TRANSFER DISABLE commands");
+            if(response.QAS) sb.AppendLine("Device supports Quick Arbitration and Selection");
+            if(response.CmdQue) sb.AppendLine("Device supports TCQ queue");
+            if(response.IUS) sb.AppendLine("Device supports information unit transfers");
+            if(response.SftRe) sb.AppendLine("Device implements RESET as a soft reset");
 #if DEBUG
-            if(response.VS1)
-                sb.AppendLine("Vendor specific bit 5 on byte 6 of INQUIRY response is set");
+            if(response.VS1) sb.AppendLine("Vendor specific bit 5 on byte 6 of INQUIRY response is set");
 #endif
 
             switch((TGPSValues)response.TPGS)
@@ -525,8 +506,7 @@ namespace DiscImageChef.Decoders.SCSI
                     switch(VersionDescriptor)
                     {
                         case 0xFFFF:
-                        case 0x0000:
-                            break;
+                        case 0x0000: break;
                         case 0x0020:
                             sb.AppendLine("Device complies with SAM (no version claimed)");
                             break;
@@ -1185,7 +1165,8 @@ namespace DiscImageChef.Decoders.SCSI
                         case 0x097D:
                         case 0x097E:
                         case 0x097F:
-                            sb.AppendFormat("Device complies with iSCSI revision {0}", VersionDescriptor & 0x1F).AppendLine();
+                            sb.AppendFormat("Device complies with iSCSI revision {0}", VersionDescriptor & 0x1F)
+                              .AppendLine();
                             break;
                         case 0x0980:
                             sb.AppendLine("Device complies with SBP-3 (no version claimed)");
@@ -1932,14 +1913,16 @@ namespace DiscImageChef.Decoders.SCSI
                             sb.AppendLine("Device complies with IEEE 1667-2009");
                             break;
                         default:
-                            sb.AppendFormat("Device complies with unknown standard code 0x{0:X4}", VersionDescriptor).AppendLine();
+                            sb.AppendFormat("Device complies with unknown standard code 0x{0:X4}", VersionDescriptor)
+                              .AppendLine();
                             break;
                     }
                 }
             }
 
             #region Quantum vendor prettifying
-            if(response.QuantumPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "quantum")
+            if(response.QuantumPresent &&
+               StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "quantum")
             {
                 sb.AppendLine("Quantum vendor-specific information:");
                 switch(response.Qt_ProductFamily)
@@ -1968,77 +1951,85 @@ namespace DiscImageChef.Decoders.SCSI
                 }
 
                 sb.AppendFormat("Release firmware: {0}", response.Qt_ReleasedFirmware).AppendLine();
-                sb.AppendFormat("Firmware version: {0}.{1}", response.Qt_FirmwareMajorVersion, response.Qt_FirmwareMinorVersion).AppendLine();
-                sb.AppendFormat("EEPROM format version: {0}.{1}", response.Qt_EEPROMFormatMajorVersion, response.Qt_EEPROMFormatMinorVersion).AppendLine();
+                sb.AppendFormat("Firmware version: {0}.{1}", response.Qt_FirmwareMajorVersion,
+                                response.Qt_FirmwareMinorVersion).AppendLine();
+                sb.AppendFormat("EEPROM format version: {0}.{1}", response.Qt_EEPROMFormatMajorVersion,
+                                response.Qt_EEPROMFormatMinorVersion).AppendLine();
                 sb.AppendFormat("Firmware personality: {0}", response.Qt_FirmwarePersonality).AppendLine();
                 sb.AppendFormat("Firmware subpersonality: {0}", response.Qt_FirmwareSubPersonality).AppendLine();
-                sb.AppendFormat("Tape directory format version: {0}", response.Qt_TapeDirectoryFormatVersion).AppendLine();
+                sb.AppendFormat("Tape directory format version: {0}", response.Qt_TapeDirectoryFormatVersion)
+                  .AppendLine();
                 sb.AppendFormat("Controller hardware version: {0}", response.Qt_ControllerHardwareVersion).AppendLine();
                 sb.AppendFormat("Drive EEPROM version: {0}", response.Qt_DriveEEPROMVersion).AppendLine();
                 sb.AppendFormat("Drive hardware version: {0}", response.Qt_DriveHardwareVersion).AppendLine();
-                sb.AppendFormat("Media loader firmware version: {0}", response.Qt_MediaLoaderFirmwareVersion).AppendLine();
-                sb.AppendFormat("Media loader hardware version: {0}", response.Qt_MediaLoaderHardwareVersion).AppendLine();
-                sb.AppendFormat("Media loader mechanical version: {0}", response.Qt_MediaLoaderMechanicalVersion).AppendLine();
-                if(response.Qt_LibraryPresent)
-                    sb.AppendLine("Library is present");
-                if(response.Qt_MediaLoaderPresent)
-                    sb.AppendLine("Media loader is present");
-                sb.AppendFormat("Module revision: {0}", StringHandlers.CToString(response.Qt_ModuleRevision)).AppendLine();
+                sb.AppendFormat("Media loader firmware version: {0}", response.Qt_MediaLoaderFirmwareVersion)
+                  .AppendLine();
+                sb.AppendFormat("Media loader hardware version: {0}", response.Qt_MediaLoaderHardwareVersion)
+                  .AppendLine();
+                sb.AppendFormat("Media loader mechanical version: {0}", response.Qt_MediaLoaderMechanicalVersion)
+                  .AppendLine();
+                if(response.Qt_LibraryPresent) sb.AppendLine("Library is present");
+                if(response.Qt_MediaLoaderPresent) sb.AppendLine("Media loader is present");
+                sb.AppendFormat("Module revision: {0}", StringHandlers.CToString(response.Qt_ModuleRevision))
+                  .AppendLine();
             }
             #endregion Quantum vendor prettifying
 
             #region IBM vendor prettifying
-            if(response.IBMPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "ibm")
+            if(response.IBMPresent &&
+               StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "ibm")
             {
                 sb.AppendLine("IBM vendor-specific information:");
 
-                if(response.IBM_PerformanceLimit == 0)
-                    sb.AppendLine("Performance is not limited");
-                else
-                    sb.AppendFormat("Performance is limited using factor {0}", response.IBM_PerformanceLimit);
+                if(response.IBM_PerformanceLimit == 0) sb.AppendLine("Performance is not limited");
+                else sb.AppendFormat("Performance is limited using factor {0}", response.IBM_PerformanceLimit);
 
-                if(response.IBM_AutDis)
-                    sb.AppendLine("Automation is disabled");
+                if(response.IBM_AutDis) sb.AppendLine("Automation is disabled");
 
                 sb.AppendFormat("IBM OEM Specific Field: {0}", response.IBM_OEMSpecific).AppendLine();
             }
             #endregion IBM vendor prettifying
 
             #region HP vendor prettifying
-            if(response.HPPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "hp")
+            if(response.HPPresent &&
+               StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "hp")
             {
                 sb.AppendLine("HP vendor-specific information:");
 
                 if(response.HP_WORM)
                     sb.AppendFormat("Device supports WORM version {0}", response.HP_WORMVersion).AppendLine();
 
-                byte[] OBDRSign = { 0x24, 0x44, 0x52, 0x2D, 0x31, 0x30};
-                if(OBDRSign.SequenceEqual(response.HP_OBDR))
-                    sb.AppendLine("Device supports Tape Disaster Recovery");
+                byte[] OBDRSign = {0x24, 0x44, 0x52, 0x2D, 0x31, 0x30};
+                if(OBDRSign.SequenceEqual(response.HP_OBDR)) sb.AppendLine("Device supports Tape Disaster Recovery");
             }
             #endregion HP vendor prettifying
 
             #region Seagate vendor prettifying
-            if((response.SeagatePresent || response.Seagate2Present || response.Seagate3Present)
-               && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "seagate")
+            if((response.SeagatePresent || response.Seagate2Present || response.Seagate3Present) &&
+               StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "seagate")
             {
                 sb.AppendLine("Seagate vendor-specific information:");
 
                 if(response.SeagatePresent)
-                    sb.AppendFormat("Drive serial number: {0}", StringHandlers.CToString(response.Seagate_DriveSerialNumber)).AppendLine();
+                    sb.AppendFormat("Drive serial number: {0}",
+                                    StringHandlers.CToString(response.Seagate_DriveSerialNumber)).AppendLine();
 
                 if(response.Seagate2Present)
-                    sb.AppendFormat("Drive copyright: {0}", StringHandlers.CToString(response.Seagate_Copyright)).AppendLine();
+                    sb.AppendFormat("Drive copyright: {0}", StringHandlers.CToString(response.Seagate_Copyright))
+                      .AppendLine();
 
                 if(response.Seagate3Present)
-                    sb.AppendFormat("Drive servo part number: {0}", PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40)).AppendLine();
+                    sb.AppendFormat("Drive servo part number: {0}",
+                                    PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40))
+                      .AppendLine();
             }
             #endregion Seagate vendor prettifying
 
             #region Kreon vendor prettifying
             if(response.KreonPresent)
             {
-                sb.AppendFormat("Drive is flashed with Kreon firmware {0}.", StringHandlers.CToString(response.KreonVersion)).AppendLine();
+                sb.AppendFormat("Drive is flashed with Kreon firmware {0}.",
+                                StringHandlers.CToString(response.KreonVersion)).AppendLine();
             }
             #endregion Kreon vendor prettifying
 
@@ -2049,8 +2040,7 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendFormat("Reserved byte 5, bits 2 to 1 = 0x{0:X2}", response.Reserved2).AppendLine();
             if(response.Reserved3 != 0)
                 sb.AppendFormat("Reserved byte 56, bits 7 to 4 = 0x{0:X2}", response.Reserved3).AppendLine();
-            if(response.Reserved4 != 0)
-                sb.AppendFormat("Reserved byte 57 = 0x{0:X2}", response.Reserved4).AppendLine();
+            if(response.Reserved4 != 0) sb.AppendFormat("Reserved byte 57 = 0x{0:X2}", response.Reserved4).AppendLine();
 
             if(response.Reserved5 != null)
             {
@@ -2097,11 +2087,9 @@ namespace DiscImageChef.Decoders.SCSI
             SCSIInquiry? decoded = Decode(SCSIInquiryResponse);
             return Prettify(decoded);
         }
-
         #endregion Public methods
 
         #region Public structures
-
         // SCSI INQUIRY command response
         public struct SCSIInquiry
         {
@@ -2341,6 +2329,7 @@ namespace DiscImageChef.Decoders.SCSI
             public byte[] VendorSpecific2;
 
             // Per DLT4000/DLT4500/DLT4700 Cartridge Tape Subsystem Product Manual
+
             #region Quantum vendor unique inquiry data structure
             /// <summary>
             /// Means that the INQUIRY response contains 56 bytes or more, so this data has been filled
@@ -2532,8 +2521,6 @@ namespace DiscImageChef.Decoders.SCSI
             public byte[] KreonVersion;
             #endregion Kreon vendor unique inquiry data structure
         }
-
         #endregion Public structures
     }
 }
-

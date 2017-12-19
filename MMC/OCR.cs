@@ -89,24 +89,20 @@ namespace DiscImageChef.Decoders.MMC
 
         public static OCR DecodeOCR(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 4)
-                return null;
+            if(response.Length != 4) return null;
 
             return DecodeOCR(BitConverter.ToUInt32(response, 0));
         }
 
         public static string PrettifyOCR(OCR ocr)
         {
-            if(ocr == null)
-                return null;
+            if(ocr == null) return null;
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("MultiMediaCard Operation Conditions Register:");
-            if(!ocr.PowerUp)
-                sb.AppendLine("\tDevice is powering up");
+            if(!ocr.PowerUp) sb.AppendLine("\tDevice is powering up");
             switch(ocr.AccessMode)
             {
                 case 0:
@@ -119,38 +115,23 @@ namespace DiscImageChef.Decoders.MMC
                     sb.AppendFormat("\tUnknown device access mode {0}", ocr.AccessMode).AppendLine();
                     break;
             }
-            if(ocr.ThreeFive)
-                sb.AppendLine("\tDevice can work with supply 3.5~3.6V");
-            if(ocr.ThreeFour)
-                sb.AppendLine("\tDevice can work with supply 3.4~3.5V");
-            if(ocr.ThreeThree)
-                sb.AppendLine("\tDevice can work with supply 3.3~3.4V");
-            if(ocr.ThreeTwo)
-                sb.AppendLine("\tDevice can work with supply 3.2~3.3V");
-            if(ocr.ThreeOne)
-                sb.AppendLine("\tDevice can work with supply 3.1~3.2V");
-            if(ocr.TwoNine)
-                sb.AppendLine("\tDevice can work with supply 2.9~3.0V");
-            if(ocr.TwoEight)
-                sb.AppendLine("\tDevice can work with supply 2.8~2.9V");
-            if(ocr.TwoSeven)
-                sb.AppendLine("\tDevice can work with supply 2.7~2.8V");
-            if(ocr.TwoSix)
-                sb.AppendLine("\tDevice can work with supply 2.6~2.7V");
-            if(ocr.TwoFive)
-                sb.AppendLine("\tDevice can work with supply 2.5~2.6V");
-            if(ocr.TwoFour)
-                sb.AppendLine("\tDevice can work with supply 2.4~2.5V");
-            if(ocr.TwoThree)
-                sb.AppendLine("\tDevice can work with supply 2.3~2.4V");
-            if(ocr.TwoTwo)
-                sb.AppendLine("\tDevice can work with supply 2.2~2.3V");
-            if(ocr.TwoOne)
-                sb.AppendLine("\tDevice can work with supply 2.1~2.2V");
-            if(ocr.TwoZero)
-                sb.AppendLine("\tDevice can work with supply 2.0~2.1V");
-            if(ocr.OneSix)
-                sb.AppendLine("\tDevice can work with supply 1.65~1.95V");
+
+            if(ocr.ThreeFive) sb.AppendLine("\tDevice can work with supply 3.5~3.6V");
+            if(ocr.ThreeFour) sb.AppendLine("\tDevice can work with supply 3.4~3.5V");
+            if(ocr.ThreeThree) sb.AppendLine("\tDevice can work with supply 3.3~3.4V");
+            if(ocr.ThreeTwo) sb.AppendLine("\tDevice can work with supply 3.2~3.3V");
+            if(ocr.ThreeOne) sb.AppendLine("\tDevice can work with supply 3.1~3.2V");
+            if(ocr.TwoNine) sb.AppendLine("\tDevice can work with supply 2.9~3.0V");
+            if(ocr.TwoEight) sb.AppendLine("\tDevice can work with supply 2.8~2.9V");
+            if(ocr.TwoSeven) sb.AppendLine("\tDevice can work with supply 2.7~2.8V");
+            if(ocr.TwoSix) sb.AppendLine("\tDevice can work with supply 2.6~2.7V");
+            if(ocr.TwoFive) sb.AppendLine("\tDevice can work with supply 2.5~2.6V");
+            if(ocr.TwoFour) sb.AppendLine("\tDevice can work with supply 2.4~2.5V");
+            if(ocr.TwoThree) sb.AppendLine("\tDevice can work with supply 2.3~2.4V");
+            if(ocr.TwoTwo) sb.AppendLine("\tDevice can work with supply 2.2~2.3V");
+            if(ocr.TwoOne) sb.AppendLine("\tDevice can work with supply 2.1~2.2V");
+            if(ocr.TwoZero) sb.AppendLine("\tDevice can work with supply 2.0~2.1V");
+            if(ocr.OneSix) sb.AppendLine("\tDevice can work with supply 1.65~1.95V");
 
             return sb.ToString();
         }
@@ -159,7 +140,7 @@ namespace DiscImageChef.Decoders.MMC
         {
             return PrettifyOCR(DecodeOCR(response));
         }
-    
+
         public static string PrettifyOCR(uint response)
         {
             return PrettifyOCR(DecodeOCR(response));
