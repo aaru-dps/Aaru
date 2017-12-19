@@ -1177,7 +1177,7 @@ namespace DiscImageChef.ImagePlugins
                             neroDAOV2.UPC = new byte[14];
                             Array.Copy(tmpbuffer, 4, neroDAOV2.UPC, 0, 14);
                             neroDAOV2.TocType = BigEndianBitConverter.ToUInt16(tmpbuffer, 18);
-                            neroDAOV1.FirstTrack = tmpbuffer[20];
+                            neroDAOV2.FirstTrack = tmpbuffer[20];
                             neroDAOV2.LastTrack = tmpbuffer[21];
                             neroDAOV2.Tracks = new List<NeroV2DAOEntry>();
 
