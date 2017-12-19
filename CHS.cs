@@ -29,7 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
-using System;
+
 namespace DiscImageChef.Helpers
 {
     public static class CHS
