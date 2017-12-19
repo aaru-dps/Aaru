@@ -134,8 +134,8 @@ namespace DiscImageChef
 
         public static int Swap(int x)
         {
-            x = (int)(((x << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF));
-            return (x << 16) | ((x >> 16) & 0xFFFF);
+            x = (int)(((x << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
+            return (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF));
         }
     }
 }
