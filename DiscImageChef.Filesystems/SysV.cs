@@ -38,7 +38,6 @@ using DiscImageChef.CommonTypes;
 namespace DiscImageChef.Filesystems
 {
     // Information from the Linux kernel
-    // TODO: Get documentation, test files, and rewrite this mess
     public class SysVfs : Filesystem
     {
         const uint XENIX_MAGIC = 0x002B5544;

@@ -56,7 +56,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
     internal class CompactDisc
     {
-        // TODO: Add support for resume file
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Resume resume, ref DumpLog dumpLog, Alcohol120 alcohol, bool dumpLeadIn)
         {
             MHDDLog mhddLog;

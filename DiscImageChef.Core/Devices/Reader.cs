@@ -79,9 +79,6 @@ namespace DiscImageChef.Core.Devices
                     break;
                 case DeviceType.NVMe:
                     throw new NotImplementedException("NVMe devices not yet supported.");
-                case DeviceType.MMC:
-                case DeviceType.SecureDigital:
-                    throw new NotImplementedException("MMC/SD devices not yet supported.");
             }
         }
 

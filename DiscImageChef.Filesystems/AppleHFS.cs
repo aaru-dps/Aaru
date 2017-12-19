@@ -136,7 +136,6 @@ namespace DiscImageChef.Filesystems
 
             bool APMFromHDDOnCD = false;
 
-            // TODO: I don't like this, I can do better
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
             {
                 byte[] tmp_sector = imagePlugin.ReadSectors(partition.Start, 2);

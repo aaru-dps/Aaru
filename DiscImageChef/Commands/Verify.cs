@@ -157,7 +157,6 @@ namespace DiscImageChef.Commands
                             else
                                 checkStatus = null;
 
-                            // TODO: Refactor
                             foreach(ulong failLBA in tempFailingLBAs)
                                 FailingLBAs.Add(failLBA);
 

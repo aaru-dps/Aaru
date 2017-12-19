@@ -353,7 +353,6 @@ namespace DiscImageChef.Settings
                             }
                         }
                         break;
-                    // TODO: Use the Registry
                     default:
                         {
                             string configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");

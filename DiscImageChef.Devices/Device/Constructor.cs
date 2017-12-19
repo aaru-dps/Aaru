@@ -213,8 +213,6 @@ namespace DiscImageChef.Devices
                         else
                             manufacturer = "ATA";
                     }
-
-                    // TODO: Get cached CID, CSD and SCR from kernel space
                 }
                 
                 ntDevicePath = Windows.Command.GetDevicePath((SafeFileHandle)fd);
