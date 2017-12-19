@@ -31,6 +31,9 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SharpCompress, Version=0.19.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96">
+      <HintPath>..\packages\SharpCompress.0.19.2\lib\net35\SharpCompress.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="plist-cil">
       <HintPath>..\packages\plist-cil.1.16.0\lib\net40\plist-cil.dll</HintPath>
@@ -44,10 +47,6 @@
     </Reference>
     <Reference Include="System.ValueTuple">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpCompress">
-      <HintPath>..\packages\SharpCompress.0.18.2\lib\net35\SharpCompress.dll</HintPath>
-      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
