@@ -573,8 +573,8 @@ namespace DiscImageChef.ImagePlugins
                         else if(MatchComposer.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found COMPOSER at line {0}", line);
-                            if(intrack) currenttrack.arranger = MatchComposer.Groups[1].Value;
-                            else discimage.arranger = MatchComposer.Groups[1].Value;
+                            if(intrack) currenttrack.composer = MatchComposer.Groups[1].Value;
+                            else discimage.composer = MatchComposer.Groups[1].Value;
                         }
                         else if(MatchDiskID.Success)
                         {
