@@ -40,37 +40,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class FAT16_Atari
     {
-        readonly string[] testfiles = {
-            "tos_1.04.vdi.lz","tos_1.04_small.vdi.lz",
-        };
+        readonly string[] testfiles = {"tos_1.04.vdi.lz", "tos_1.04_small.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            81920, 16384,
-        };
+        readonly ulong[] sectors = {81920, 16384,};
 
-        readonly uint[] sectorsize = {
-            512, 512,
-        };
+        readonly uint[] sectorsize = {512, 512,};
 
-        readonly long[] clusters = {
-            10239, 8191,
-        };
+        readonly long[] clusters = {10239, 8191,};
 
-        readonly int[] clustersize = {
-            4096, 1024,
-        };
+        readonly int[] clustersize = {4096, 1024,};
 
-        readonly string[] volumename = {
-            null, null,
-        };
+        readonly string[] volumename = {null, null,};
 
-        readonly string[] volumeserial = {
-            "BA9831", "2019E1",
-        };
+        readonly string[] volumeserial = {"BA9831", "2019E1",};
 
-        readonly string[] oemid = {
-            null, null,
-        };
+        readonly string[] oemid = {null, null,};
 
         [Test]
         public void Test()
@@ -95,6 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

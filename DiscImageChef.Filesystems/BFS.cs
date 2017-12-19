@@ -64,26 +64,21 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Be Filesystem";
             PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public BeFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Be Filesystem";
             PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
-                return false;
+            if((2 + partition.Start) >= partition.End) return false;
 
             uint magic;
             uint magic_be;
@@ -93,8 +88,7 @@ namespace DiscImageChef.Filesystems
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
 
-            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
-                return true;
+            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1) return true;
 
             if(sb_sector.Length >= 0x400)
             {
@@ -102,20 +96,20 @@ namespace DiscImageChef.Filesystems
                 magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x220);
             }
 
-            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
-                return true;
+            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1) return true;
 
             sb_sector = imagePlugin.ReadSector(1 + partition.Start);
 
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
 
-            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
-                return true;
+            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1) return true;
+
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
             byte[] name_bytes = new byte[32];
@@ -153,11 +147,9 @@ namespace DiscImageChef.Filesystems
                         sb_sector = new byte[0x200];
                         Array.Copy(temp, 0x200, sb_sector, 0, 0x200);
                     }
-                    else
-                        return;
+                    else return;
                 }
-                else
-                    return;
+                else return;
             }
 
             if(littleEndian)
@@ -166,56 +158,59 @@ namespace DiscImageChef.Filesystems
                 besb = (BeSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BeSuperBlock));
                 handle.Free();
             }
-            else
-                besb = BigEndianMarshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sb_sector);
+            else besb = BigEndianMarshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sb_sector);
 
             if(littleEndian) // Big-endian filesystem
                 sb.AppendLine("Little-endian BeFS");
-            else
-                sb.AppendLine("Big-endian BeFS");
+            else sb.AppendLine("Big-endian BeFS");
 
-            if(besb.magic1 != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN ||
-            besb.magic2 != BEFS_MAGIC2 || besb.magic3 != BEFS_MAGIC3 ||
-            besb.root_dir_len != 1 || besb.indices_len != 1 ||
-            (1 << (int)besb.block_shift) != besb.block_size)
+            if(besb.magic1 != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN || besb.magic2 != BEFS_MAGIC2 ||
+               besb.magic3 != BEFS_MAGIC3 || besb.root_dir_len != 1 || besb.indices_len != 1 ||
+               (1 << (int)besb.block_shift) != besb.block_size)
             {
                 sb.AppendLine("Superblock seems corrupt, following information may be incorrect");
                 sb.AppendFormat("Magic 1: 0x{0:X8} (Should be 0x42465331)", besb.magic1).AppendLine();
                 sb.AppendFormat("Magic 2: 0x{0:X8} (Should be 0xDD121031)", besb.magic2).AppendLine();
                 sb.AppendFormat("Magic 3: 0x{0:X8} (Should be 0x15B6830E)", besb.magic3).AppendLine();
-                sb.AppendFormat("Filesystem endianness: 0x{0:X8} (Should be 0x42494745)", besb.fs_byte_order).AppendLine();
+                sb.AppendFormat("Filesystem endianness: 0x{0:X8} (Should be 0x42494745)", besb.fs_byte_order)
+                  .AppendLine();
                 sb.AppendFormat("Root folder's i-node size: {0} blocks (Should be 1)", besb.root_dir_len).AppendLine();
                 sb.AppendFormat("Indices' i-node size: {0} blocks (Should be 1)", besb.indices_len).AppendLine();
                 sb.AppendFormat("1 << block_shift == block_size => 1 << {0} == {1} (Should be {2})", besb.block_shift,
-                    1 << (int)besb.block_shift, besb.block_size).AppendLine();
+                                1 << (int)besb.block_shift, besb.block_size).AppendLine();
             }
 
             if(besb.flags == BEFS_CLEAN)
             {
-                if(besb.log_start == besb.log_end)
-                    sb.AppendLine("Filesystem is clean");
-                else
-                    sb.AppendLine("Filesystem is dirty");
+                if(besb.log_start == besb.log_end) sb.AppendLine("Filesystem is clean");
+                else sb.AppendLine("Filesystem is dirty");
             }
-            else if(besb.flags == BEFS_DIRTY)
-                sb.AppendLine("Filesystem is dirty");
-            else
-                sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
+            else if(besb.flags == BEFS_DIRTY) sb.AppendLine("Filesystem is dirty");
+            else sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
 
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(besb.name, CurrentEncoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", besb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks in volume ({1} bytes)", besb.num_blocks, besb.num_blocks * besb.block_size).AppendLine();
-            sb.AppendFormat("{0} used blocks ({1} bytes)", besb.used_blocks, besb.used_blocks * besb.block_size).AppendLine();
+            sb.AppendFormat("{0} blocks in volume ({1} bytes)", besb.num_blocks, besb.num_blocks * besb.block_size)
+              .AppendLine();
+            sb.AppendFormat("{0} used blocks ({1} bytes)", besb.used_blocks, besb.used_blocks * besb.block_size)
+              .AppendLine();
             sb.AppendFormat("{0} bytes per i-node", besb.inode_size).AppendLine();
-            sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", besb.blocks_per_ag, besb.blocks_per_ag * besb.block_size).AppendLine();
+            sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", besb.blocks_per_ag,
+                            besb.blocks_per_ag * besb.block_size).AppendLine();
             sb.AppendFormat("{0} allocation groups in volume", besb.num_ags).AppendLine();
-            sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", besb.log_blocks_start,
-                besb.log_blocks_ag, besb.log_blocks_len, besb.log_blocks_len * besb.block_size).AppendLine();
-            sb.AppendFormat("Journal starts in byte {0} and ends in byte {1}", besb.log_start, besb.log_end).AppendLine();
-            sb.AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", besb.root_dir_start,
-                besb.root_dir_ag, besb.root_dir_len, besb.root_dir_len * besb.block_size).AppendLine();
-            sb.AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", besb.indices_start,
-                besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size).AppendLine();
+            sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                            besb.log_blocks_start, besb.log_blocks_ag, besb.log_blocks_len,
+                            besb.log_blocks_len * besb.block_size).AppendLine();
+            sb.AppendFormat("Journal starts in byte {0} and ends in byte {1}", besb.log_start, besb.log_end)
+              .AppendLine();
+            sb
+                .AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                              besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len,
+                              besb.root_dir_len * besb.block_size).AppendLine();
+            sb
+                .AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                              besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size)
+                .AppendLine();
 
             information = sb.ToString();
 
@@ -236,8 +231,7 @@ namespace DiscImageChef.Filesystems
         struct BeSuperBlock
         {
             /// <summary>0x000, Volume name, 32 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] name;
             /// <summary>0x020, "BFS1", 0x42465331</summary>
             public uint magic1;
             /// <summary>0x024, "BIGE", 0x42494745</summary>

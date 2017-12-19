@@ -83,13 +83,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Block allocation map
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 140)]
-            public byte[] bam;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 140)] public byte[] bam;
             /// <summary>
             /// Disk name
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
             /// <summary>
             /// Filled with 0xA0
             /// </summary>
@@ -117,23 +115,19 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Block allocation map for Dolphin DOS extended tracks
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] dolphinBam;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] dolphinBam;
             /// <summary>
             /// Block allocation map for Speed DOS extended tracks
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] speedBam;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] speedBam;
             /// <summary>
             /// Unused
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
-            public byte[] unused2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public byte[] unused2;
             /// <summary>
             /// Free sector count for second side in 1571
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
-            public byte[] freeCount;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public byte[] freeCount;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -158,8 +152,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Disk name
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
             /// <summary>
             /// Filled with 0xA0
             /// </summary>
@@ -188,15 +181,12 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start > 0)
-                return false;
+            if(partition.Start > 0) return false;
 
-            if(imagePlugin.ImageInfo.sectorSize != 256)
-                return false;
+            if(imagePlugin.ImageInfo.sectorSize != 256) return false;
 
             if(imagePlugin.ImageInfo.sectors != 683 && imagePlugin.ImageInfo.sectors != 768 &&
-               imagePlugin.ImageInfo.sectors != 1366 && imagePlugin.ImageInfo.sectors != 3200)
-                return false;
+               imagePlugin.ImageInfo.sectors != 1366 && imagePlugin.ImageInfo.sectors != 3200) return false;
 
             byte[] sector;
 
@@ -221,14 +211,15 @@ namespace DiscImageChef.Filesystems
                 cbmBam = (CommodoreBAM)Marshal.PtrToStructure(cbmBamPtr, typeof(CommodoreBAM));
                 Marshal.FreeHGlobal(cbmBamPtr);
 
-                if(cbmBam.dosVersion == 0x41 && (cbmBam.doubleSided == 0x00 || cbmBam.doubleSided == 0x80) && cbmBam.unused1 == 0x00 && cbmBam.directoryTrack == 0x12)
-                    return true;
+                if(cbmBam.dosVersion == 0x41 && (cbmBam.doubleSided == 0x00 || cbmBam.doubleSided == 0x80) &&
+                   cbmBam.unused1 == 0x00 && cbmBam.directoryTrack == 0x12) return true;
             }
 
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             byte[] sector;
 
@@ -250,12 +241,18 @@ namespace DiscImageChef.Filesystems
                 cbmHdr = (CommodoreHeader)Marshal.PtrToStructure(cbmHdrPtr, typeof(CommodoreHeader));
                 Marshal.FreeHGlobal(cbmHdrPtr);
 
-                sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmHdr.directoryTrack, cbmHdr.directorySector).AppendLine();
-                sbInformation.AppendFormat("Disk DOS Version: {0}", Encoding.ASCII.GetString(new byte[] { cbmHdr.diskDosVersion })).AppendLine();
-                sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new byte[] { cbmHdr.dosVersion })).AppendLine();
-                sbInformation.AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new byte[] { cbmHdr.diskVersion })).AppendLine();
+                sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmHdr.directoryTrack,
+                                           cbmHdr.directorySector).AppendLine();
+                sbInformation.AppendFormat("Disk DOS Version: {0}",
+                                           Encoding.ASCII.GetString(new byte[] {cbmHdr.diskDosVersion})).AppendLine();
+                sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new byte[] {cbmHdr.dosVersion}))
+                             .AppendLine();
+                sbInformation
+                    .AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new byte[] {cbmHdr.diskVersion}))
+                    .AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmHdr.diskId).AppendLine();
-                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, CurrentEncoding)).AppendLine();
+                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, CurrentEncoding))
+                             .AppendLine();
 
                 xmlFSType.VolumeName = StringHandlers.CToString(cbmHdr.name, CurrentEncoding);
                 xmlFSType.VolumeSerial = string.Format("{0}", cbmHdr.diskId);
@@ -269,11 +266,16 @@ namespace DiscImageChef.Filesystems
                 cbmBam = (CommodoreBAM)Marshal.PtrToStructure(cbmBamPtr, typeof(CommodoreBAM));
                 Marshal.FreeHGlobal(cbmBamPtr);
 
-                sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmBam.directoryTrack, cbmBam.directorySector).AppendLine();
-                sbInformation.AppendFormat("Disk DOS type: {0}", Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType))).AppendLine();
-                sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new byte[] { cbmBam.dosVersion })).AppendLine();
+                sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmBam.directoryTrack,
+                                           cbmBam.directorySector).AppendLine();
+                sbInformation.AppendFormat("Disk DOS type: {0}",
+                                           Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType)))
+                             .AppendLine();
+                sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new byte[] {cbmBam.dosVersion}))
+                             .AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmBam.diskId).AppendLine();
-                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, CurrentEncoding)).AppendLine();
+                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, CurrentEncoding))
+                             .AppendLine();
 
                 xmlFSType.VolumeName = StringHandlers.CToString(cbmBam.name, CurrentEncoding);
                 xmlFSType.VolumeSerial = string.Format("{0}", cbmBam.diskId);

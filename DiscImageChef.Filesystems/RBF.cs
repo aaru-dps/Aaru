@@ -48,8 +48,7 @@ namespace DiscImageChef.Filesystems
         struct RBF_IdSector
         {
             /// <summary>Sectors on disk</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] dd_tot;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] dd_tot;
             /// <summary>Tracks</summary>
             public byte dd_tks;
             /// <summary>Bytes in allocation map</summary>
@@ -57,8 +56,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>Sectors per cluster</summary>
             public ushort dd_bit;
             /// <summary>LSN of root directory</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] dd_dir;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] dd_dir;
             /// <summary>Owner ID</summary>
             public ushort dd_own;
             /// <summary>Attributes</summary>
@@ -72,19 +70,15 @@ namespace DiscImageChef.Filesystems
             /// <summary>Reserved</summary>
             public ushort dd_res;
             /// <summary>LSN of boot file</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] dd_bt;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] dd_bt;
             /// <summary>Size of boot file</summary>
             public ushort dd_bsz;
             /// <summary>Creation date</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] dd_dat;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] dd_dat;
             /// <summary>Volume name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] dd_nam;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] dd_nam;
             /// <summary>Path options</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] dd_opt;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] dd_opt;
             /// <summary>Reserved</summary>
             public byte reserved;
             /// <summary>Magic number</summary>
@@ -143,13 +137,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>Last write time for this structure</summary>
             public uint rid_mtime;
             /// <summary>Volume name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] rid_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] rid_name;
             /// <summary>Endian flag</summary>
             public byte rid_endflag;
             /// <summary>Padding</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] rid_unused2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] rid_unused2;
             /// <summary>Parity</summary>
             public uint rid_parity;
         }
@@ -169,49 +161,43 @@ namespace DiscImageChef.Filesystems
         {
             Name = "OS-9 Random Block File Plugin";
             PluginUUID = new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public RBF(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "OS-9 Random Block File Plugin";
             PluginUUID = new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 256)
-                return false;
+            if(imagePlugin.GetSectorSize() < 256) return false;
 
             // Documentation says ID should be sector 0
             // I've found that OS-9/X68000 has it on sector 4
             // I've read OS-9/Apple2 has it on sector 15
-            foreach(ulong location in new[] { 0, 4, 15 })
+            foreach(ulong location in new[] {0, 4, 15})
             {
                 RBF_IdSector RBFSb = new RBF_IdSector();
 
                 uint sbSize = (uint)(Marshal.SizeOf(RBFSb) / imagePlugin.GetSectorSize());
-                if(Marshal.SizeOf(RBFSb) % imagePlugin.GetSectorSize() != 0)
-                    sbSize++;
+                if(Marshal.SizeOf(RBFSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
-                if(partition.Start + location + sbSize >= imagePlugin.GetSectors())
-                    break;
+                if(partition.Start + location + sbSize >= imagePlugin.GetSectors()) break;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf(RBFSb))
-                    return false;
+                if(sector.Length < Marshal.SizeOf(RBFSb)) return false;
 
                 RBFSb = BigEndianMarshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
                 RBF_NewIdSector RBF9000Sb = BigEndianMarshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
 
-                DicConsole.DebugWriteLine("RBF plugin", "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})", location, RBFSb.dd_sync, RBF9000Sb.rid_sync, RBF_Sync, RBF_Cnys);
+                DicConsole.DebugWriteLine("RBF plugin",
+                                          "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
+                                          location, RBFSb.dd_sync, RBF9000Sb.rid_sync, RBF_Sync, RBF_Cnys);
 
                 if(RBFSb.dd_sync == RBF_Sync || RBF9000Sb.rid_sync == RBF_Sync || RBF9000Sb.rid_sync == RBF_Cnys)
                     return true;
@@ -220,39 +206,36 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 256)
-                return;
+            if(imagePlugin.GetSectorSize() < 256) return;
 
             RBF_IdSector RBFSb = new RBF_IdSector();
             RBF_NewIdSector RBF9000Sb = new RBF_NewIdSector();
 
-            foreach(ulong location in new[] { 0, 4, 15 })
+            foreach(ulong location in new[] {0, 4, 15})
             {
                 uint sbSize = (uint)(Marshal.SizeOf(RBFSb) / imagePlugin.GetSectorSize());
-                if(Marshal.SizeOf(RBFSb) % imagePlugin.GetSectorSize() != 0)
-                    sbSize++;
+                if(Marshal.SizeOf(RBFSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf(RBFSb))
-                    return;
+                if(sector.Length < Marshal.SizeOf(RBFSb)) return;
 
                 RBFSb = BigEndianMarshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
                 RBF9000Sb = BigEndianMarshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
 
-                DicConsole.DebugWriteLine("RBF plugin", "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})", location, RBFSb.dd_sync, RBF9000Sb.rid_sync, RBF_Sync, RBF_Cnys);
+                DicConsole.DebugWriteLine("RBF plugin",
+                                          "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
+                                          location, RBFSb.dd_sync, RBF9000Sb.rid_sync, RBF_Sync, RBF_Cnys);
 
-                if(RBFSb.dd_sync == RBF_Sync || RBF9000Sb.rid_sync == RBF_Sync || RBF9000Sb.rid_sync == RBF_Cnys)
-                    break;
+                if(RBFSb.dd_sync == RBF_Sync || RBF9000Sb.rid_sync == RBF_Sync || RBF9000Sb.rid_sync == RBF_Cnys) break;
             }
 
-            if(RBFSb.dd_sync != RBF_Sync && RBF9000Sb.rid_sync != RBF_Sync && RBF9000Sb.rid_sync != RBF_Cnys)
-                return;
+            if(RBFSb.dd_sync != RBF_Sync && RBF9000Sb.rid_sync != RBF_Sync && RBF9000Sb.rid_sync != RBF_Cnys) return;
 
-            if(RBF9000Sb.rid_sync == RBF_Cnys)
-                RBF9000Sb = BigEndianMarshal.SwapStructureMembersEndian(RBF9000Sb);
+            if(RBF9000Sb.rid_sync == RBF_Cnys) RBF9000Sb = BigEndianMarshal.SwapStructureMembersEndian(RBF9000Sb);
 
             StringBuilder sb = new StringBuilder();
 
@@ -268,32 +251,29 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("{0} heads", RBF9000Sb.rid_heads).AppendLine();
                 sb.AppendFormat("{0} bytes per block", RBF9000Sb.rid_blocksize).AppendLine();
                 // TODO: Convert to flags?
-                if((RBF9000Sb.rid_format & 0x01) == 0x01)
-                    sb.AppendLine("Disk is double sided");
-                else
-                    sb.AppendLine("Disk is single sided");
-                if((RBF9000Sb.rid_format & 0x02) == 0x02)
-                    sb.AppendLine("Disk is double density");
-                else
-                    sb.AppendLine("Disk is single density");
-                if((RBF9000Sb.rid_format & 0x10) == 0x10)
-                    sb.AppendLine("Disk is 384 TPI");
-                else if((RBF9000Sb.rid_format & 0x08) == 0x08)
-                    sb.AppendLine("Disk is 192 TPI");
-                else if((RBF9000Sb.rid_format & 0x04) == 0x04)
-                    sb.AppendLine("Disk is 96 TPI or 135 TPI");
-                else
-                    sb.AppendLine("Disk is 48 TPI");
-                sb.AppendFormat("Allocation bitmap descriptor starts at block {0}", RBF9000Sb.rid_bitmap == 0 ? 1 : RBF9000Sb.rid_bitmap).AppendLine();
+                if((RBF9000Sb.rid_format & 0x01) == 0x01) sb.AppendLine("Disk is double sided");
+                else sb.AppendLine("Disk is single sided");
+                if((RBF9000Sb.rid_format & 0x02) == 0x02) sb.AppendLine("Disk is double density");
+                else sb.AppendLine("Disk is single density");
+                if((RBF9000Sb.rid_format & 0x10) == 0x10) sb.AppendLine("Disk is 384 TPI");
+                else if((RBF9000Sb.rid_format & 0x08) == 0x08) sb.AppendLine("Disk is 192 TPI");
+                else if((RBF9000Sb.rid_format & 0x04) == 0x04) sb.AppendLine("Disk is 96 TPI or 135 TPI");
+                else sb.AppendLine("Disk is 48 TPI");
+                sb.AppendFormat("Allocation bitmap descriptor starts at block {0}",
+                                RBF9000Sb.rid_bitmap == 0 ? 1 : RBF9000Sb.rid_bitmap).AppendLine();
                 if(RBF9000Sb.rid_firstboot > 0)
                     sb.AppendFormat("Debugger descriptor starts at block {0}", RBF9000Sb.rid_firstboot).AppendLine();
                 if(RBF9000Sb.rid_bootfile > 0)
                     sb.AppendFormat("Boot file descriptor starts at block {0}", RBF9000Sb.rid_bootfile).AppendLine();
                 sb.AppendFormat("Root directory descriptor starts at block {0}", RBF9000Sb.rid_rootdir).AppendLine();
-                sb.AppendFormat("Disk is owned by group {0} user {1}", RBF9000Sb.rid_group, RBF9000Sb.rid_owner).AppendLine();
-                sb.AppendFormat("Volume was created on {0}", DateHandlers.UNIXToDateTime(RBF9000Sb.rid_ctime)).AppendLine();
-                sb.AppendFormat("Volume's identification block was last written on {0}", DateHandlers.UNIXToDateTime(RBF9000Sb.rid_mtime)).AppendLine();
-                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(RBF9000Sb.rid_name, CurrentEncoding)).AppendLine();
+                sb.AppendFormat("Disk is owned by group {0} user {1}", RBF9000Sb.rid_group, RBF9000Sb.rid_owner)
+                  .AppendLine();
+                sb.AppendFormat("Volume was created on {0}", DateHandlers.UNIXToDateTime(RBF9000Sb.rid_ctime))
+                  .AppendLine();
+                sb.AppendFormat("Volume's identification block was last written on {0}",
+                                DateHandlers.UNIXToDateTime(RBF9000Sb.rid_mtime)).AppendLine();
+                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(RBF9000Sb.rid_name, CurrentEncoding))
+                  .AppendLine();
 
                 xmlFSType = new Schemas.FileSystemType
                 {
@@ -316,34 +296,32 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("{0} tracks", RBFSb.dd_tks).AppendLine();
                 sb.AppendFormat("{0} sectors per track", RBFSb.dd_spt).AppendLine();
                 sb.AppendFormat("{0} bytes per sector", 256 << RBFSb.dd_lsnsize).AppendLine();
-                sb.AppendFormat("{0} sectors per cluster ({1} bytes)", RBFSb.dd_bit, RBFSb.dd_bit * (256 << RBFSb.dd_lsnsize)).AppendLine();
+                sb.AppendFormat("{0} sectors per cluster ({1} bytes)", RBFSb.dd_bit,
+                                RBFSb.dd_bit * (256 << RBFSb.dd_lsnsize)).AppendLine();
                 // TODO: Convert to flags?
-                if((RBFSb.dd_fmt & 0x01) == 0x01)
-                    sb.AppendLine("Disk is double sided");
-                else
-                    sb.AppendLine("Disk is single sided");
-                if((RBFSb.dd_fmt & 0x02) == 0x02)
-                    sb.AppendLine("Disk is double density");
-                else
-                    sb.AppendLine("Disk is single density");
-                if((RBFSb.dd_fmt & 0x10) == 0x10)
-                    sb.AppendLine("Disk is 384 TPI");
-                else if((RBFSb.dd_fmt & 0x08) == 0x08)
-                    sb.AppendLine("Disk is 192 TPI");
-                else if((RBFSb.dd_fmt & 0x04) == 0x04)
-                    sb.AppendLine("Disk is 96 TPI or 135 TPI");
-                else
-                    sb.AppendLine("Disk is 48 TPI");
-                sb.AppendFormat("Allocation bitmap descriptor starts at block {0}", RBFSb.dd_maplsn == 0 ? 1 : RBFSb.dd_maplsn).AppendLine();
+                if((RBFSb.dd_fmt & 0x01) == 0x01) sb.AppendLine("Disk is double sided");
+                else sb.AppendLine("Disk is single sided");
+                if((RBFSb.dd_fmt & 0x02) == 0x02) sb.AppendLine("Disk is double density");
+                else sb.AppendLine("Disk is single density");
+                if((RBFSb.dd_fmt & 0x10) == 0x10) sb.AppendLine("Disk is 384 TPI");
+                else if((RBFSb.dd_fmt & 0x08) == 0x08) sb.AppendLine("Disk is 192 TPI");
+                else if((RBFSb.dd_fmt & 0x04) == 0x04) sb.AppendLine("Disk is 96 TPI or 135 TPI");
+                else sb.AppendLine("Disk is 48 TPI");
+                sb.AppendFormat("Allocation bitmap descriptor starts at block {0}",
+                                RBFSb.dd_maplsn == 0 ? 1 : RBFSb.dd_maplsn).AppendLine();
                 sb.AppendFormat("{0} bytes in allocation bitmap", RBFSb.dd_map).AppendLine();
                 if(LSNToUInt32(RBFSb.dd_bt) > 0 && RBFSb.dd_bsz > 0)
-                    sb.AppendFormat("Boot file starts at block {0} and has {1} bytes", LSNToUInt32(RBFSb.dd_bt), RBFSb.dd_bsz).AppendLine();
-                sb.AppendFormat("Root directory descriptor starts at block {0}", LSNToUInt32(RBFSb.dd_dir)).AppendLine();
+                    sb.AppendFormat("Boot file starts at block {0} and has {1} bytes", LSNToUInt32(RBFSb.dd_bt),
+                                    RBFSb.dd_bsz).AppendLine();
+                sb.AppendFormat("Root directory descriptor starts at block {0}", LSNToUInt32(RBFSb.dd_dir))
+                  .AppendLine();
                 sb.AppendFormat("Disk is owned by user {0}", RBFSb.dd_own).AppendLine();
                 sb.AppendFormat("Volume was created on {0}", DateHandlers.OS9ToDateTime(RBFSb.dd_dat)).AppendLine();
                 sb.AppendFormat("Volume attributes: {0:X2}", RBFSb.dd_att).AppendLine();
-                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(RBFSb.dd_nam, CurrentEncoding)).AppendLine();
-                sb.AppendFormat("Path descriptor options: {0}", StringHandlers.CToString(RBFSb.dd_opt, CurrentEncoding)).AppendLine();
+                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(RBFSb.dd_nam, CurrentEncoding))
+                  .AppendLine();
+                sb.AppendFormat("Path descriptor options: {0}", StringHandlers.CToString(RBFSb.dd_opt, CurrentEncoding))
+                  .AppendLine();
 
                 xmlFSType = new Schemas.FileSystemType
                 {
@@ -363,8 +341,7 @@ namespace DiscImageChef.Filesystems
 
         public static uint LSNToUInt32(byte[] lsn)
         {
-            if(lsn == null || lsn.Length != 3)
-                return 0;
+            if(lsn == null || lsn.Length != 3) return 0;
 
             return (uint)((lsn[0] << 16) + (lsn[1] << 8) + lsn[2]);
         }

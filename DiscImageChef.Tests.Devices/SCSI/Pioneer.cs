@@ -85,7 +85,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -124,6 +124,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("How many sectors to transfer?: ");
                         strDev = System.Console.ReadLine();
                         if(!uint.TryParse(strDev, out length))
@@ -133,8 +134,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.WriteLine("Subchannel mode");
-                        DicConsole.WriteLine("Available values: {0} {1} {2} {3}", PioneerSubchannel.None, PioneerSubchannel.Q16, PioneerSubchannel.All, PioneerSubchannel.Only);
+                        DicConsole.WriteLine("Available values: {0} {1} {2} {3}", PioneerSubchannel.None,
+                                             PioneerSubchannel.Q16, PioneerSubchannel.All, PioneerSubchannel.Only);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
                         if(!System.Enum.TryParse(strDev, true, out subchan))
@@ -144,6 +147,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         switch(subchan)
                         {
                             case PioneerSubchannel.Q16:
@@ -159,24 +163,26 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                 blockSize = 2352;
                                 break;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length, subchan, dev.Timeout, out double duration);
+            bool sense = dev.PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length,
+                                             subchan, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ CD-DA to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",
+                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -206,8 +212,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD-DA response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -217,8 +222,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD-DA sense:");
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -234,10 +238,8 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
-                case 5:
-                    goto parameters;
+                case 4: goto start;
+                case 5: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -259,7 +261,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -298,6 +300,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("Start second?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out startSecond))
@@ -307,6 +310,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("Start frame?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out startFrame))
@@ -316,6 +320,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("End minute?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out endMinute))
@@ -325,6 +330,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("End second?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out endMinute))
@@ -334,6 +340,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("End frame?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out endFrame))
@@ -343,8 +350,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.WriteLine("Subchannel mode");
-                        DicConsole.WriteLine("Available values: {0} {1} {2} {3}", PioneerSubchannel.None, PioneerSubchannel.Q16, PioneerSubchannel.All, PioneerSubchannel.Only);
+                        DicConsole.WriteLine("Available values: {0} {1} {2} {3}", PioneerSubchannel.None,
+                                             PioneerSubchannel.Q16, PioneerSubchannel.All, PioneerSubchannel.Only);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
                         if(!System.Enum.TryParse(strDev, true, out subchan))
@@ -354,6 +363,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         switch(subchan)
                         {
                             case PioneerSubchannel.Q16:
@@ -369,26 +379,28 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                 blockSize = 2352;
                                 break;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             uint startMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
             uint endMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
             System.Console.Clear();
-            bool sense = dev.PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize, subchan, dev.Timeout, out double duration);
+            bool sense = dev.PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize,
+                                                subchan, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ CD-DA MSF to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",
+                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -418,8 +430,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD-DA MSF response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -429,8 +440,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD-DA MSF sense:");
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -446,10 +456,8 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
-                case 5:
-                    goto parameters;
+                case 4: goto start;
+                case 5: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -467,7 +475,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -506,6 +514,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("How many sectors to transfer?: ");
                         strDev = System.Console.ReadLine();
                         if(!uint.TryParse(strDev, out length))
@@ -515,6 +524,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("Include error flags?: ");
                         strDev = System.Console.ReadLine();
                         if(!bool.TryParse(strDev, out errorFlags))
@@ -524,6 +534,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("Read whole sector?: ");
                         strDev = System.Console.ReadLine();
                         if(!bool.TryParse(strDev, out wholeSector))
@@ -533,24 +544,26 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, address, length, errorFlags, wholeSector, dev.Timeout, out double duration);
+            bool sense = dev.PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, address, length, errorFlags,
+                                             wholeSector, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ CD-XA to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",
+                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -580,8 +593,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD-XA response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -591,8 +603,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD-XA sense:");
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -608,10 +619,8 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
-                case 5:
-                    goto parameters;
+                case 4: goto start;
+                case 5: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -619,6 +628,5 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     goto menu;
             }
         }
-
     }
 }

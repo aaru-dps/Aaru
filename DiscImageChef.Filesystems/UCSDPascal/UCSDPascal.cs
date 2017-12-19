@@ -90,4 +90,3 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         }
     }
 }
-

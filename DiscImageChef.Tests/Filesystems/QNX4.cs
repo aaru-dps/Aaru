@@ -38,29 +38,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class QNX4
     {
-        readonly string[] testfiles = {
-            "qnx_4.24_dsdd.img.lz","qnx_4.24_dshd.img.lz","qnx_4.24_mf2dd.img.lz","qnx_4.24_mf2hd.img.lz",
-        };
+        readonly string[] testfiles =
+            {"qnx_4.24_dsdd.img.lz", "qnx_4.24_dshd.img.lz", "qnx_4.24_mf2dd.img.lz", "qnx_4.24_mf2hd.img.lz",};
 
-        readonly MediaType[] mediatypes = {
-            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
-        };
+        readonly MediaType[] mediatypes =
+            {MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,};
 
-        readonly ulong[] sectors = {
-            720, 2400, 1440, 2880,
-        };
+        readonly ulong[] sectors = {720, 2400, 1440, 2880,};
 
-        readonly uint[] sectorsize = {
-            512, 512, 512, 512,
-        };
+        readonly uint[] sectorsize = {512, 512, 512, 512,};
 
-        readonly long[] clusters = {
-            720, 2400, 1440, 2880,
-        };
+        readonly long[] clusters = {720, 2400, 1440, 2880,};
 
-        readonly int[] clustersize = {
-            512, 512, 512, 512,
-        };
+        readonly int[] clustersize = {512, 512, 512, 512,};
 
         [Test]
         public void Test()

@@ -40,33 +40,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class Reiser4
     {
-        readonly string[] testfiles = {
-            "linux.vdi.lz",
-        };
+        readonly string[] testfiles = {"linux.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            262144,
-        };
+        readonly ulong[] sectors = {262144,};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            32511,
-        };
+        readonly long[] clusters = {32511,};
 
-        readonly int[] clustersize = {
-            4096,
-        };
+        readonly int[] clustersize = {4096,};
 
-        readonly string[] volumename = {
-            "Volume label",
-        };
+        readonly string[] volumename = {"Volume label",};
 
-        readonly string[] volumeserial = {
-            "b0c1924e-6f10-8c42-b6c5-66a457896460",
-        };
+        readonly string[] volumeserial = {"b0c1924e-6f10-8c42-b6c5-66a457896460",};
 
         [Test]
         public void Test()
@@ -91,6 +77,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

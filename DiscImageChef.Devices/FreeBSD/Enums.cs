@@ -174,8 +174,7 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>Set device type information</summary>
         XPT_SDEV_TYPE = 0x07,
         /// <summary>(Re)Scan the SCSI Bus</summary>
-        XPT_SCAN_BUS = 0x08 | XPT_FC_QUEUED | XPT_FC_USER_CCB
-                           | XPT_FC_XPT_ONLY,
+        XPT_SCAN_BUS = 0x08 | XPT_FC_QUEUED | XPT_FC_USER_CCB | XPT_FC_XPT_ONLY,
         /// <summary>Get EDT entries matching the given pattern</summary>
         XPT_DEV_MATCH = 0x09 | XPT_FC_XPT_ONLY,
         /// <summary>Turn on debugging for a bus, target or lun</summary>
@@ -187,11 +186,9 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>Get/Set Device advanced information</summary>
         XPT_DEV_ADVINFO = 0x0e,
         /// <summary>Asynchronous event</summary>
-        XPT_ASYNC = 0x0f | XPT_FC_QUEUED | XPT_FC_USER_CCB
-                           | XPT_FC_XPT_ONLY,
+        XPT_ASYNC = 0x0f | XPT_FC_QUEUED | XPT_FC_USER_CCB | XPT_FC_XPT_ONLY,
 
         /// <summary>SCSI Control Functions: 0x10->0x1F</summary>
-
         /// <summary>Abort the specified CCB</summary>
         XPT_ABORT = 0x10,
         /// <summary>Reset the specified SCSI bus</summary>
@@ -201,8 +198,7 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>Terminate the I/O process</summary>
         XPT_TERM_IO = 0x13,
         /// <summary>Scan Logical Unit</summary>
-        XPT_SCAN_LUN = 0x14 | XPT_FC_QUEUED | XPT_FC_USER_CCB
-                           | XPT_FC_XPT_ONLY,
+        XPT_SCAN_LUN = 0x14 | XPT_FC_QUEUED | XPT_FC_USER_CCB | XPT_FC_XPT_ONLY,
         /// <summary>Get default/user transfer settings for the target</summary>
         XPT_GET_TRAN_SETTINGS = 0x15,
         /// <summary>Set transfer rate/width negotiation settings</summary>
@@ -222,8 +218,7 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>Serial Management Protocol</summary>
         XPT_SMP_IO = 0x1b | XPT_FC_DEV_QUEUED,
         /// <summary>Scan Target</summary>
-        XPT_SCAN_TGT = 0x1E | XPT_FC_QUEUED | XPT_FC_USER_CCB
-                           | XPT_FC_XPT_ONLY,
+        XPT_SCAN_TGT = 0x1E | XPT_FC_QUEUED | XPT_FC_USER_CCB | XPT_FC_XPT_ONLY,
 
         // HBA engine commands 0x20->0x2F
 
@@ -280,7 +275,7 @@ namespace DiscImageChef.Devices.FreeBSD
         PERIPH_MATCH_LUN = 0x004,
         PERIPH_MATCH_NAME = 0x008,
         PERIPH_MATCH_UNIT = 0x010,
-    //  PERIPH_MATCH_ANY = 0x01f
+        //  PERIPH_MATCH_ANY = 0x01f
     }
 
     [Flags]
@@ -292,7 +287,7 @@ namespace DiscImageChef.Devices.FreeBSD
         DEV_MATCH_LUN = 0x004,
         DEV_MATCH_INQUIRY = 0x008,
         DEV_MATCH_DEVID = 0x010,
-    //  DEV_MATCH_ANY = 0x00f
+        //  DEV_MATCH_ANY = 0x00f
     }
 
     [Flags]
@@ -303,7 +298,7 @@ namespace DiscImageChef.Devices.FreeBSD
         BUS_MATCH_NAME = 0x002,
         BUS_MATCH_UNIT = 0x004,
         BUS_MATCH_BUS_ID = 0x008,
-    //  BUS_MATCH_ANY = 0x00f
+        //  BUS_MATCH_ANY = 0x00f
     }
 
     [Flags]
@@ -382,11 +377,11 @@ namespace DiscImageChef.Devices.FreeBSD
         CAM_DEV_POS_DEVICE = 0x004,
         CAM_DEV_POS_PERIPH = 0x008,
         CAM_DEV_POS_PDPTR = 0x010,
-    //  CAM_DEV_POS_TYPEMASK = 0xf00,
+        //  CAM_DEV_POS_TYPEMASK = 0xf00,
         CAM_DEV_POS_EDT = 0x100,
         CAM_DEV_POS_PDRV = 0x200
     }
-    
+
     enum FreebsdIoctl : uint
     {
         CAMIOCOMMAND = 0xC4D81802,
@@ -564,176 +559,174 @@ namespace DiscImageChef.Devices.FreeBSD
         CAM_UNLOCKED = 0x80000000
     }
 
-	enum cam_status : uint
-	{
-		/// <summary>CCB request is in progress</summary>
-		CAM_REQ_INPROG = 0x00,
+    enum cam_status : uint
+    {
+        /// <summary>CCB request is in progress</summary>
+        CAM_REQ_INPROG = 0x00,
 
-		/// <summary>CCB request completed without error</summary>
-		CAM_REQ_CMP = 0x01,
+        /// <summary>CCB request completed without error</summary>
+        CAM_REQ_CMP = 0x01,
 
-		/// <summary>CCB request aborted by the host</summary>
-		CAM_REQ_ABORTED = 0x02,
+        /// <summary>CCB request aborted by the host</summary>
+        CAM_REQ_ABORTED = 0x02,
 
-		/// <summary>Unable to abort CCB request</summary>
-		CAM_UA_ABORT = 0x03,
+        /// <summary>Unable to abort CCB request</summary>
+        CAM_UA_ABORT = 0x03,
 
-		/// <summary>CCB request completed with an error</summary>
-		CAM_REQ_CMP_ERR = 0x04,
+        /// <summary>CCB request completed with an error</summary>
+        CAM_REQ_CMP_ERR = 0x04,
 
-		/// <summary>CAM subsystem is busy</summary>
-		CAM_BUSY = 0x05,
+        /// <summary>CAM subsystem is busy</summary>
+        CAM_BUSY = 0x05,
 
-		/// <summary>CCB request was invalid</summary>
-		CAM_REQ_INVALID = 0x06,
+        /// <summary>CCB request was invalid</summary>
+        CAM_REQ_INVALID = 0x06,
 
-		/// <summary>Supplied Path ID is invalid</summary>
-		CAM_PATH_INVALID = 0x07,
+        /// <summary>Supplied Path ID is invalid</summary>
+        CAM_PATH_INVALID = 0x07,
 
-		/// <summary>SCSI Device Not Installed/there</summary>
-		CAM_DEV_NOT_THERE = 0x08,
+        /// <summary>SCSI Device Not Installed/there</summary>
+        CAM_DEV_NOT_THERE = 0x08,
 
-		/// <summary>Unable to terminate I/O CCB request</summary>
-		CAM_UA_TERMIO = 0x09,
+        /// <summary>Unable to terminate I/O CCB request</summary>
+        CAM_UA_TERMIO = 0x09,
 
-		/// <summary>Target Selection Timeout</summary>
-		CAM_SEL_TIMEOUT = 0x0a,
+        /// <summary>Target Selection Timeout</summary>
+        CAM_SEL_TIMEOUT = 0x0a,
 
-		/// <summary>Command timeout</summary>
-		CAM_CMD_TIMEOUT = 0x0b,
+        /// <summary>Command timeout</summary>
+        CAM_CMD_TIMEOUT = 0x0b,
 
-		/// <summary>SCSI error, look at error code in CCB</summary>
-		CAM_SCSI_STATUS_ERROR = 0x0c,
+        /// <summary>SCSI error, look at error code in CCB</summary>
+        CAM_SCSI_STATUS_ERROR = 0x0c,
 
-		/// <summary>Message Reject Received</summary>
-		CAM_MSG_REJECT_REC = 0x0d,
+        /// <summary>Message Reject Received</summary>
+        CAM_MSG_REJECT_REC = 0x0d,
 
-		/// <summary>SCSI Bus Reset Sent/Received</summary>
-		CAM_SCSI_BUS_RESET = 0x0e,
+        /// <summary>SCSI Bus Reset Sent/Received</summary>
+        CAM_SCSI_BUS_RESET = 0x0e,
 
-		/// <summary>Uncorrectable parity error occurred</summary>
-		CAM_UNCOR_PARITY = 0x0f,
+        /// <summary>Uncorrectable parity error occurred</summary>
+        CAM_UNCOR_PARITY = 0x0f,
 
-		/// <summary>Autosense: request sense cmd fail</summary>
-		CAM_AUTOSENSE_FAIL = 0x10,
+        /// <summary>Autosense: request sense cmd fail</summary>
+        CAM_AUTOSENSE_FAIL = 0x10,
 
-		/// <summary>No HBA Detected error</summary>
-		CAM_NO_HBA = 0x11,
+        /// <summary>No HBA Detected error</summary>
+        CAM_NO_HBA = 0x11,
 
-		/// <summary>Data Overrun error</summary>
-		CAM_DATA_RUN_ERR = 0x12,
+        /// <summary>Data Overrun error</summary>
+        CAM_DATA_RUN_ERR = 0x12,
 
-		/// <summary>Unexpected Bus Free</summary>
-		CAM_UNEXP_BUSFREE = 0x13,
+        /// <summary>Unexpected Bus Free</summary>
+        CAM_UNEXP_BUSFREE = 0x13,
 
-		/// <summary>Target Bus Phase Sequence Failure</summary>
-		CAM_SEQUENCE_FAIL = 0x14,
+        /// <summary>Target Bus Phase Sequence Failure</summary>
+        CAM_SEQUENCE_FAIL = 0x14,
 
-		/// <summary>CCB length supplied is inadequate</summary>
-		CAM_CCB_LEN_ERR = 0x15,
+        /// <summary>CCB length supplied is inadequate</summary>
+        CAM_CCB_LEN_ERR = 0x15,
 
-		/// <summary>Unable to provide requested capability</summary>
-		CAM_PROVIDE_FAIL = 0x16,
+        /// <summary>Unable to provide requested capability</summary>
+        CAM_PROVIDE_FAIL = 0x16,
 
-		/// <summary>A SCSI BDR msg was sent to target</summary>
-		CAM_BDR_SENT = 0x17,
+        /// <summary>A SCSI BDR msg was sent to target</summary>
+        CAM_BDR_SENT = 0x17,
 
-		/// <summary>CCB request terminated by the host</summary>
-		CAM_REQ_TERMIO = 0x18,
+        /// <summary>CCB request terminated by the host</summary>
+        CAM_REQ_TERMIO = 0x18,
 
-		/// <summary>Unrecoverable Host Bus Adapter Error</summary>
-		CAM_UNREC_HBA_ERROR = 0x19,
+        /// <summary>Unrecoverable Host Bus Adapter Error</summary>
+        CAM_UNREC_HBA_ERROR = 0x19,
 
-		/// <summary>Request was too large for this host</summary>
-		CAM_REQ_TOO_BIG = 0x1a,
+        /// <summary>Request was too large for this host</summary>
+        CAM_REQ_TOO_BIG = 0x1a,
 
-		/// <summary>This request should be requeued to preserve transaction ordering. This typically occurs when the SIM recognizes an error that should freeze the queue and must place additional requests for the target at the sim level back into the XPT queue.</summary>
-		CAM_REQUEUE_REQ = 0x1b,
+        /// <summary>This request should be requeued to preserve transaction ordering. This typically occurs when the SIM recognizes an error that should freeze the queue and must place additional requests for the target at the sim level back into the XPT queue.</summary>
+        CAM_REQUEUE_REQ = 0x1b,
 
-		/// <summary>ATA error, look at error code in CCB</summary>
-		CAM_ATA_STATUS_ERROR = 0x1c,
+        /// <summary>ATA error, look at error code in CCB</summary>
+        CAM_ATA_STATUS_ERROR = 0x1c,
 
-		/// <summary>Initiator/Target Nexus lost.</summary>
-		CAM_SCSI_IT_NEXUS_LOST = 0x1d,
+        /// <summary>Initiator/Target Nexus lost.</summary>
+        CAM_SCSI_IT_NEXUS_LOST = 0x1d,
 
-		/// <summary>SMP error, look at error code in CCB</summary>
-		CAM_SMP_STATUS_ERROR = 0x1e,
+        /// <summary>SMP error, look at error code in CCB</summary>
+        CAM_SMP_STATUS_ERROR = 0x1e,
 
-		/// <summary>Command completed without error but  exceeded the soft timeout threshold.</summary>
-		CAM_REQ_SOFTTIMEOUT = 0x1f,
+        /// <summary>Command completed without error but  exceeded the soft timeout threshold.</summary>
+        CAM_REQ_SOFTTIMEOUT = 0x1f,
 
-		/*
-		 * 0x20 - 0x32 are unassigned
-		 */
+        /*
+         * 0x20 - 0x32 are unassigned
+         */
 
-		/// <summary>Initiator Detected Error</summary>
-		CAM_IDE = 0x33,
+        /// <summary>Initiator Detected Error</summary>
+        CAM_IDE = 0x33,
 
-		/// <summary>Resource Unavailable</summary>
-		CAM_RESRC_UNAVAIL = 0x34,
+        /// <summary>Resource Unavailable</summary>
+        CAM_RESRC_UNAVAIL = 0x34,
 
-		/// <summary>Unacknowledged Event by Host</summary>
-		CAM_UNACKED_EVENT = 0x35,
+        /// <summary>Unacknowledged Event by Host</summary>
+        CAM_UNACKED_EVENT = 0x35,
 
-		/// <summary>Message Received in Host Target Mode</summary>
-		CAM_MESSAGE_RECV = 0x36,
+        /// <summary>Message Received in Host Target Mode</summary>
+        CAM_MESSAGE_RECV = 0x36,
 
-		/// <summary>Invalid CDB received in Host Target Mode</summary>
-		CAM_INVALID_CDB = 0x37,
+        /// <summary>Invalid CDB received in Host Target Mode</summary>
+        CAM_INVALID_CDB = 0x37,
 
-		/// <summary>Lun supplied is invalid</summary>
-		CAM_LUN_INVALID = 0x38,
+        /// <summary>Lun supplied is invalid</summary>
+        CAM_LUN_INVALID = 0x38,
 
-		/// <summary>Target ID supplied is invalid</summary>
-		CAM_TID_INVALID = 0x39,
+        /// <summary>Target ID supplied is invalid</summary>
+        CAM_TID_INVALID = 0x39,
 
-		/// <summary>The requested function is not available</summary>
-		CAM_FUNC_NOTAVAIL = 0x3a,
+        /// <summary>The requested function is not available</summary>
+        CAM_FUNC_NOTAVAIL = 0x3a,
 
-		/// <summary>Nexus is not established</summary>
-		CAM_NO_NEXUS = 0x3b,
+        /// <summary>Nexus is not established</summary>
+        CAM_NO_NEXUS = 0x3b,
 
-		/// <summary>The initiator ID is invalid</summary>
-		CAM_IID_INVALID = 0x3c,
+        /// <summary>The initiator ID is invalid</summary>
+        CAM_IID_INVALID = 0x3c,
 
-		/// <summary>The SCSI CDB has been received</summary>
-		CAM_CDB_RECVD = 0x3d,
+        /// <summary>The SCSI CDB has been received</summary>
+        CAM_CDB_RECVD = 0x3d,
 
-		/// <summary>The LUN is already enabled for target mode</summary>
-		CAM_LUN_ALRDY_ENA = 0x3e,
+        /// <summary>The LUN is already enabled for target mode</summary>
+        CAM_LUN_ALRDY_ENA = 0x3e,
 
-		/// <summary>SCSI Bus Busy</summary>
-		CAM_SCSI_BUSY = 0x3f,
+        /// <summary>SCSI Bus Busy</summary>
+        CAM_SCSI_BUSY = 0x3f,
 
+        /*
+         * Flags
+         */
 
-		/*
-		 * Flags
-		 */
+        /// <summary>The DEV queue is frozen w/this err</summary>
+        CAM_DEV_QFRZN = 0x40,
 
-		/// <summary>The DEV queue is frozen w/this err</summary>
-		CAM_DEV_QFRZN = 0x40,
+        /// <summary>Autosense data valid for target</summary>
+        CAM_AUTOSNS_VALID = 0x80,
 
-		/// <summary>Autosense data valid for target</summary>
-		CAM_AUTOSNS_VALID = 0x80,
+        /// <summary>SIM ready to take more commands</summary>
+        CAM_RELEASE_SIMQ = 0x100,
 
-		/// <summary>SIM ready to take more commands</summary>
-		CAM_RELEASE_SIMQ = 0x100,
+        /// <summary>SIM has this command in its queue</summary>
+        CAM_SIM_QUEUED = 0x200,
 
-		/// <summary>SIM has this command in its queue</summary>
-		CAM_SIM_QUEUED = 0x200,
+        /// <summary>Quality of service data is valid</summary>
+        CAM_QOS_VALID = 0x400,
 
-		/// <summary>Quality of service data is valid</summary>
-		CAM_QOS_VALID = 0x400,
+        /// <summary>Mask bits for just the status #</summary>
+        CAM_STATUS_MASK = 0x3F,
 
-		/// <summary>Mask bits for just the status #</summary>
-		CAM_STATUS_MASK = 0x3F,
+        /*
+         * Target Specific Adjunct Status
+         */
 
-		/*
-		 * Target Specific Adjunct Status
-		 */
-
-		/// <summary>sent sense with status</summary>
-		CAM_SENT_SENSE = 0x40000000
-	}
+        /// <summary>sent sense with status</summary>
+        CAM_SENT_SENSE = 0x40000000
+    }
 }
-

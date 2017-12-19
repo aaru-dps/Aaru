@@ -63,107 +63,101 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Locus_Superblock
         {
-            public uint s_magic;    /* identifies this as a locus filesystem */
-                            /* defined as a constant below */
-            public gfs_t s_gfs;      /* global filesystem number */
-            public daddr_t s_fsize;    /* size in blocks of entire volume */
-                                /* several ints for replicated filsystems */
-            public commitcnt_t s_lwm;  /* all prior commits propagated */
-            public commitcnt_t s_hwm;  /* highest commit propagated */
-                                /* oldest committed version in the list.
-                                 * llst mod NCMTLST is the offset of commit #llst in the list,
-                                 * which wraps around from there.
-                                 */
+            public uint s_magic; /* identifies this as a locus filesystem */
+            /* defined as a constant below */
+            public gfs_t s_gfs; /* global filesystem number */
+            public daddr_t s_fsize; /* size in blocks of entire volume */
+            /* several ints for replicated filsystems */
+            public commitcnt_t s_lwm; /* all prior commits propagated */
+            public commitcnt_t s_hwm; /* highest commit propagated */
+            /* oldest committed version in the list.
+             * llst mod NCMTLST is the offset of commit #llst in the list,
+             * which wraps around from there.
+             */
             public commitcnt_t s_llst;
-            public fstore_t s_fstore;  /* filesystem storage bit mask; if the
+            public fstore_t s_fstore; /* filesystem storage bit mask; if the
                    filsys is replicated and this is not a
                    primary or backbone copy, this bit mask
                    determines which files are stored */
 
-            public time_t s_time;         /* last super block update */
-            public daddr_t s_tfree;        /* total free blocks*/
+            public time_t s_time; /* last super block update */
+            public daddr_t s_tfree; /* total free blocks*/
 
-            public ino_t s_isize;      /* size in blocks of i-list */
-            public short s_nfree;        /* number of addresses in s_free */
-            public LocusFlags s_flags;     /* filsys flags, defined below */
-            public ino_t s_tinode;         /* total free inodes */
-            public ino_t s_lasti;        /* start place for circular search */
-            public ino_t s_nbehind;      /* est # free inodes before s_lasti */
-            public pckno_t s_gfspack;     /* global filesystem pack number */
-            public short s_ninode;       /* number of i-nodes in s_inode */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public short[] s_dinfo;     /* interleave stuff */
-                                 //#define s_m s_dinfo[0]
-                                 //#define s_skip  s_dinfo[0]      /* AIX defines  */
-                                 //#define s_n s_dinfo[1]
-                                 //#define s_cyl   s_dinfo[1]      /* AIX defines  */
-            public byte s_flock;    /* lock during free list manipulation */
-            public byte s_ilock;    /* lock during i-list manipulation */
-            public byte s_fmod;         /* super block modified flag */
-            public LocusVersion s_version;  /* version of the data format in fs. */
-                             /*  defined below. */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] s_fsmnt;    /* name of this file system */
+            public ino_t s_isize; /* size in blocks of i-list */
+            public short s_nfree; /* number of addresses in s_free */
+            public LocusFlags s_flags; /* filsys flags, defined below */
+            public ino_t s_tinode; /* total free inodes */
+            public ino_t s_lasti; /* start place for circular search */
+            public ino_t s_nbehind; /* est # free inodes before s_lasti */
+            public pckno_t s_gfspack; /* global filesystem pack number */
+            public short s_ninode; /* number of i-nodes in s_inode */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public short[] s_dinfo; /* interleave stuff */
+            //#define s_m s_dinfo[0]
+            //#define s_skip  s_dinfo[0]      /* AIX defines  */
+            //#define s_n s_dinfo[1]
+            //#define s_cyl   s_dinfo[1]      /* AIX defines  */
+            public byte s_flock; /* lock during free list manipulation */
+            public byte s_ilock; /* lock during i-list manipulation */
+            public byte s_fmod; /* super block modified flag */
+            public LocusVersion s_version; /* version of the data format in fs. */
+            /*  defined below. */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] s_fsmnt; /* name of this file system */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public byte[] s_fpack; /* name of this physical volume */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NICINOD)]
-            public ino_t[] s_inode;   /* free i-node list */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NICINOD)] public ino_t[] s_inode; /* free i-node list */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NICFREE)]
-            public daddr_t[] su_free;   /* free block list for non-replicated filsys */
-            public byte s_byteorder;    /* byte order of integers */
+            public daddr_t[] su_free; /* free block list for non-replicated filsys */
+            public byte s_byteorder; /* byte order of integers */
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Locus_OldSuperblock
         {
-            public uint s_magic;    /* identifies this as a locus filesystem */
-                                    /* defined as a constant below */
-            public gfs_t s_gfs;      /* global filesystem number */
-            public daddr_t s_fsize;    /* size in blocks of entire volume */
-                                       /* several ints for replicated filsystems */
-            public commitcnt_t s_lwm;  /* all prior commits propagated */
-            public commitcnt_t s_hwm;  /* highest commit propagated */
-                                       /* oldest committed version in the list.
-                                        * llst mod NCMTLST is the offset of commit #llst in the list,
-                                        * which wraps around from there.
-                                        */
+            public uint s_magic; /* identifies this as a locus filesystem */
+            /* defined as a constant below */
+            public gfs_t s_gfs; /* global filesystem number */
+            public daddr_t s_fsize; /* size in blocks of entire volume */
+            /* several ints for replicated filsystems */
+            public commitcnt_t s_lwm; /* all prior commits propagated */
+            public commitcnt_t s_hwm; /* highest commit propagated */
+            /* oldest committed version in the list.
+             * llst mod NCMTLST is the offset of commit #llst in the list,
+             * which wraps around from there.
+             */
             public commitcnt_t s_llst;
-            public fstore_t s_fstore;  /* filesystem storage bit mask; if the
+            public fstore_t s_fstore; /* filesystem storage bit mask; if the
                    filsys is replicated and this is not a
                    primary or backbone copy, this bit mask
                    determines which files are stored */
 
-            public time_t s_time;         /* last super block update */
-            public daddr_t s_tfree;        /* total free blocks*/
+            public time_t s_time; /* last super block update */
+            public daddr_t s_tfree; /* total free blocks*/
 
-            public ino_t s_isize;      /* size in blocks of i-list */
-            public short s_nfree;        /* number of addresses in s_free */
-            public LocusFlags s_flags;     /* filsys flags, defined below */
-            public ino_t s_tinode;         /* total free inodes */
-            public ino_t s_lasti;        /* start place for circular search */
-            public ino_t s_nbehind;      /* est # free inodes before s_lasti */
-            public pckno_t s_gfspack;     /* global filesystem pack number */
-            public short s_ninode;       /* number of i-nodes in s_inode */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public short[] s_dinfo;     /* interleave stuff */
-                                        //#define s_m s_dinfo[0]
-                                        //#define s_skip  s_dinfo[0]      /* AIX defines  */
-                                        //#define s_n s_dinfo[1]
-                                        //#define s_cyl   s_dinfo[1]      /* AIX defines  */
-            public byte s_flock;    /* lock during free list manipulation */
-            public byte s_ilock;    /* lock during i-list manipulation */
-            public byte s_fmod;         /* super block modified flag */
-            public LocusVersion s_version;  /* version of the data format in fs. */
-                                    /*  defined below. */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] s_fsmnt;    /* name of this file system */
+            public ino_t s_isize; /* size in blocks of i-list */
+            public short s_nfree; /* number of addresses in s_free */
+            public LocusFlags s_flags; /* filsys flags, defined below */
+            public ino_t s_tinode; /* total free inodes */
+            public ino_t s_lasti; /* start place for circular search */
+            public ino_t s_nbehind; /* est # free inodes before s_lasti */
+            public pckno_t s_gfspack; /* global filesystem pack number */
+            public short s_ninode; /* number of i-nodes in s_inode */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public short[] s_dinfo; /* interleave stuff */
+            //#define s_m s_dinfo[0]
+            //#define s_skip  s_dinfo[0]      /* AIX defines  */
+            //#define s_n s_dinfo[1]
+            //#define s_cyl   s_dinfo[1]      /* AIX defines  */
+            public byte s_flock; /* lock during free list manipulation */
+            public byte s_ilock; /* lock during i-list manipulation */
+            public byte s_fmod; /* super block modified flag */
+            public LocusVersion s_version; /* version of the data format in fs. */
+            /*  defined below. */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] s_fsmnt; /* name of this file system */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public byte[] s_fpack; /* name of this physical volume */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = OLDNICINOD)]
-            public ino_t[] s_inode;   /* free i-node list */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = OLDNICINOD)] public ino_t[] s_inode; /* free i-node list */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = OLDNICFREE)]
-            public daddr_t[] su_free;   /* free block list for non-replicated filsys */
-            public byte s_byteorder;    /* byte order of integers */
+            public daddr_t[] su_free; /* free block list for non-replicated filsys */
+            public byte s_byteorder; /* byte order of integers */
         }
 
         [Flags]
@@ -173,22 +167,22 @@ namespace DiscImageChef.Filesystems
             SB_CLEAN = 0x2, /* fs unmounted cleanly (or checks run) */
             SB_DIRTY = 0x4, /* fs mounted without CLEAN bit set */
             SB_RMV = 0x8, /* fs is a removable file system */
-            SB_PRIMPACK = 0x10,    /* This is the primary pack of the filesystem */
-            SB_REPLTYPE = 0x20,    /* This is a replicated type filesystem. */
-            SB_USER = 0x40,    /* This is a "user" replicated filesystem. */
-            SB_BACKBONE = 0x80,    /* backbone pack ; complete copy of primary pack but not modifiable */
-            SB_NFS = 0x100,   /* This is a NFS type filesystem */
-            SB_BYHAND = 0x200,   /* Inhibits automatic fscks on a mangled file system */
-            SB_NOSUID = 0x400,   /* Set-uid/Set-gid is disabled */
-            SB_SYNCW = 0x800   /* Synchronous Write */
+            SB_PRIMPACK = 0x10, /* This is the primary pack of the filesystem */
+            SB_REPLTYPE = 0x20, /* This is a replicated type filesystem. */
+            SB_USER = 0x40, /* This is a "user" replicated filesystem. */
+            SB_BACKBONE = 0x80, /* backbone pack ; complete copy of primary pack but not modifiable */
+            SB_NFS = 0x100, /* This is a NFS type filesystem */
+            SB_BYHAND = 0x200, /* Inhibits automatic fscks on a mangled file system */
+            SB_NOSUID = 0x400, /* Set-uid/Set-gid is disabled */
+            SB_SYNCW = 0x800 /* Synchronous Write */
         }
 
         [Flags]
         enum LocusVersion : byte
         {
-            SB_SB4096 = 1,   /* smallblock filesys with 4096 byte blocks */
-            SB_B1024 = 2,   /* 1024 byte block filesystem */
-            NUMSCANDEV = 5   /* Used by scangfs(), refed in space.h */
+            SB_SB4096 = 1, /* smallblock filesys with 4096 byte blocks */
+            SB_B1024 = 2, /* 1024 byte block filesystem */
+            NUMSCANDEV = 5 /* Used by scangfs(), refed in space.h */
         }
 
         const uint Locus_Magic = 0xFFEEDDCD;
@@ -207,41 +201,33 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Locus Filesystem Plugin";
             PluginUUID = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public Locus(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Locus Filesystem Plugin";
             PluginUUID = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             for(ulong location = 0; location <= 8; location++)
             {
                 Locus_Superblock LocusSb = new Locus_Superblock();
 
                 uint sbSize = (uint)((Marshal.SizeOf(LocusSb)) / imagePlugin.GetSectorSize());
-                if((Marshal.SizeOf(LocusSb)) % imagePlugin.GetSectorSize() != 0)
-                    sbSize++;
+                if((Marshal.SizeOf(LocusSb)) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
-                if(partition.Start + location + sbSize >= imagePlugin.GetSectors())
-                    break;
+                if(partition.Start + location + sbSize >= imagePlugin.GetSectors()) break;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf(LocusSb))
-                    return false;
+                if(sector.Length < Marshal.SizeOf(LocusSb)) return false;
 
                 IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(LocusSb));
                 Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(LocusSb));
@@ -251,18 +237,17 @@ namespace DiscImageChef.Filesystems
                 DicConsole.DebugWriteLine("Locus plugin", "magic at {1} = 0x{0:X8}", LocusSb.s_magic, location);
 
                 if(LocusSb.s_magic == Locus_Magic || LocusSb.s_magic == Locus_Cigam ||
-                   LocusSb.s_magic == Locus_OldMagic || LocusSb.s_magic == Locus_OldCigam)
-                    return true;
+                   LocusSb.s_magic == Locus_OldMagic || LocusSb.s_magic == Locus_OldCigam) return true;
             }
 
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512)
-                return;
+            if(imagePlugin.GetSectorSize() < 512) return;
 
             Locus_Superblock LocusSb = new Locus_Superblock();
             byte[] sector = null;
@@ -270,12 +255,10 @@ namespace DiscImageChef.Filesystems
             for(ulong location = 0; location <= 8; location++)
             {
                 uint sbSize = (uint)((Marshal.SizeOf(LocusSb)) / imagePlugin.GetSectorSize());
-                if((Marshal.SizeOf(LocusSb)) % imagePlugin.GetSectorSize() != 0)
-                    sbSize++;
+                if((Marshal.SizeOf(LocusSb)) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
                 sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf(LocusSb))
-                    return;
+                if(sector.Length < Marshal.SizeOf(LocusSb)) return;
 
                 IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(LocusSb));
                 Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(LocusSb));
@@ -283,14 +266,12 @@ namespace DiscImageChef.Filesystems
                 Marshal.FreeHGlobal(sbPtr);
 
                 if(LocusSb.s_magic == Locus_Magic || LocusSb.s_magic == Locus_Cigam ||
-                   LocusSb.s_magic == Locus_OldMagic || LocusSb.s_magic == Locus_OldCigam)
-                    break;
+                   LocusSb.s_magic == Locus_OldMagic || LocusSb.s_magic == Locus_OldCigam) break;
             }
 
             // We don't care about old version for information
-            if(LocusSb.s_magic != Locus_Magic && LocusSb.s_magic != Locus_Cigam &&
-               LocusSb.s_magic != Locus_OldMagic && LocusSb.s_magic != Locus_OldCigam)
-                return;
+            if(LocusSb.s_magic != Locus_Magic && LocusSb.s_magic != Locus_Cigam && LocusSb.s_magic != Locus_OldMagic &&
+               LocusSb.s_magic != Locus_OldCigam) return;
 
             // Numerical arrays are not important for information so no need to swap them
             if(LocusSb.s_magic == Locus_Cigam || LocusSb.s_magic == Locus_OldCigam)
@@ -301,16 +282,12 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            if(LocusSb.s_magic == Locus_OldMagic)
-                sb.AppendLine("Locus filesystem (old)");
-            else
-                sb.AppendLine("Locus filesystem");
+            if(LocusSb.s_magic == Locus_OldMagic) sb.AppendLine("Locus filesystem (old)");
+            else sb.AppendLine("Locus filesystem");
 
             int blockSize;
-            if(LocusSb.s_version == LocusVersion.SB_SB4096)
-                blockSize = 4096;
-            else
-                blockSize = 1024;
+            if(LocusSb.s_version == LocusVersion.SB_SB4096) blockSize = 4096;
+            else blockSize = 1024;
 
             string s_fsmnt = StringHandlers.CToString(LocusSb.s_fsmnt, CurrentEncoding);
             string s_fpack = StringHandlers.CToString(LocusSb.s_fpack, CurrentEncoding);
@@ -337,37 +314,28 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("Locus plugin", "LocusSb.s_fmod = {0}", LocusSb.s_fmod);
             DicConsole.DebugWriteLine("Locus plugin", "LocusSb.s_version = {0}", LocusSb.s_version);
 
-            sb.AppendFormat("Superblock last modified on {0}", DateHandlers.UNIXToDateTime(LocusSb.s_time)).AppendLine();
-            sb.AppendFormat("Volume has {0} blocks of {1} bytes each (total {2} bytes)", LocusSb.s_fsize, blockSize, LocusSb.s_fsize * blockSize).AppendLine();
+            sb.AppendFormat("Superblock last modified on {0}", DateHandlers.UNIXToDateTime(LocusSb.s_time))
+              .AppendLine();
+            sb.AppendFormat("Volume has {0} blocks of {1} bytes each (total {2} bytes)", LocusSb.s_fsize, blockSize,
+                            LocusSb.s_fsize * blockSize).AppendLine();
             sb.AppendFormat("{0} blocks free ({1} bytes)", LocusSb.s_tfree, LocusSb.s_tfree * blockSize).AppendLine();
             sb.AppendFormat("I-node list uses {0} blocks", LocusSb.s_isize).AppendLine();
             sb.AppendFormat("{0} free inodes", LocusSb.s_tinode).AppendLine();
             sb.AppendFormat("Next free inode search will start at inode {0}", LocusSb.s_lasti).AppendLine();
-            sb.AppendFormat("There are an estimate of {0} free inodes before next search start", LocusSb.s_nbehind).AppendLine();
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_RDONLY))
-                sb.AppendLine("Read-only volume");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN))
-                sb.AppendLine("Clean volume");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY))
-                sb.AppendLine("Dirty volume");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_RMV))
-                sb.AppendLine("Removable volume");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_PRIMPACK))
-                sb.AppendLine("This is the primary pack");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_REPLTYPE))
-                sb.AppendLine("Replicated volume");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_USER))
-                sb.AppendLine("User replicated volume");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_BACKBONE))
-                sb.AppendLine("Backbone volume");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_NFS))
-                sb.AppendLine("NFS volume");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_BYHAND))
-                sb.AppendLine("Volume inhibits automatic fsck");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_NOSUID))
-                sb.AppendLine("Set-uid/set-gid is disabled");
-            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_SYNCW))
-                sb.AppendLine("Volume uses synchronous writes");
+            sb.AppendFormat("There are an estimate of {0} free inodes before next search start", LocusSb.s_nbehind)
+              .AppendLine();
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_RDONLY)) sb.AppendLine("Read-only volume");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN)) sb.AppendLine("Clean volume");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY)) sb.AppendLine("Dirty volume");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_RMV)) sb.AppendLine("Removable volume");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_PRIMPACK)) sb.AppendLine("This is the primary pack");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_REPLTYPE)) sb.AppendLine("Replicated volume");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_USER)) sb.AppendLine("User replicated volume");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_BACKBONE)) sb.AppendLine("Backbone volume");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_NFS)) sb.AppendLine("NFS volume");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_BYHAND)) sb.AppendLine("Volume inhibits automatic fsck");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_NOSUID)) sb.AppendLine("Set-uid/set-gid is disabled");
+            if(LocusSb.s_flags.HasFlag(LocusFlags.SB_SYNCW)) sb.AppendLine("Volume uses synchronous writes");
             sb.AppendFormat("Volume label: {0}", s_fsmnt).AppendLine();
             sb.AppendFormat("Physical volume name: {0}", s_fpack).AppendLine();
             sb.AppendFormat("Global File System number: {0}", LocusSb.s_gfs).AppendLine();

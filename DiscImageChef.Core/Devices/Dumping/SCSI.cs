@@ -44,7 +44,9 @@ namespace DiscImageChef.Core.Devices.Dumping
     public class SCSI
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
-        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel, ref Metadata.Resume resume, ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)
+        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
+                                bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel,
+                                ref Metadata.Resume resume, ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)
         {
             byte[] senseBuf = null;
             bool sense = false;
@@ -60,14 +62,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                     if(decSense.HasValue)
                     {
-                        dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                        dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                          decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
 
                         // Just retry, for 5 times
                         if(decSense.Value.ASC == 0x29)
                         {
                             resets++;
-                            if(resets < 5)
-                                goto deviceGotReset;
+                            if(resets < 5) goto deviceGotReset;
                         }
 
                         if(decSense.Value.ASC == 0x3A)
@@ -78,12 +80,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
                                 System.Threading.Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
-                                if(!sense)
-                                    break;
+                                if(!sense) break;
 
                                 decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
-                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                      decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 leftRetries--;
                             }
 
@@ -101,18 +103,19 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
                                 System.Threading.Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
-                                if(!sense)
-                                    break;
+                                if(!sense) break;
 
                                 decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
-                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                      decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 leftRetries--;
                             }
 
                             if(sense)
                             {
-                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
+                                                          Decoders.SCSI.Sense.PrettifySense(senseBuf));
                                 return;
                             }
                         }
@@ -137,24 +140,26 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
                                 System.Threading.Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
-                                if(!sense)
-                                    break;
+                                if(!sense) break;
 
                                 decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
-                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                      decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 leftRetries--;
                             }
 
                             if(sense)
                             {
-                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
+                                                          Decoders.SCSI.Sense.PrettifySense(senseBuf));
                                 return;
                             }
                         }
                         else
                         {
-                            DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
+                                                      Decoders.SCSI.Sense.PrettifySense(senseBuf));
                             return;
                         }
                     }
@@ -170,8 +175,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
             {
-                if(dumpRaw)
-                    throw new ArgumentException("Tapes cannot be dumped raw.");
+                if(dumpRaw) throw new ArgumentException("Tapes cannot be dumped raw.");
 
                 SSC.Dump(dev, outputPrefix, devicePath, ref sidecar, ref resume, ref dumpLog);
                 return;
@@ -179,11 +183,13 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
-                MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, dumpLeadIn, encoding);
+                MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
+                         ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, dumpLeadIn, encoding);
                 return;
             }
 
-            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, false, ref resume, ref dumpLog, encoding);
+            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar,
+                     ref dskType, false, ref resume, ref dumpLog, encoding);
         }
     }
 }

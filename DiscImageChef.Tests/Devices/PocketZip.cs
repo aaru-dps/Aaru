@@ -37,21 +37,13 @@ namespace DiscImageChef.Tests.Devices
     [TestFixture]
     public class PocketZip
     {
-        readonly string[] testfiles = {
-            "clik!.bin.lz","pocketzip.bin.lz",
-        };
+        readonly string[] testfiles = {"clik!.bin.lz", "pocketzip.bin.lz",};
 
-        readonly MediaType[] mediatypes = {
-            MediaType.PocketZip,MediaType.PocketZip,
-        };
+        readonly MediaType[] mediatypes = {MediaType.PocketZip, MediaType.PocketZip,};
 
-        readonly ulong[] sectors = {
-            78882,78882,
-        };
+        readonly ulong[] sectors = {78882, 78882,};
 
-        readonly uint[] sectorsize = {
-            512,512,
-        };
+        readonly uint[] sectorsize = {512, 512,};
 
         [Test]
         public void Test()

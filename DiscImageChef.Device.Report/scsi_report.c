@@ -377,8 +377,9 @@ void ScsiReport(int fd, xmlTextWriterPtr xmlWriter)
                         if(!error)
                         {
                             xmlTextWriterWriteFormatElement(xmlWriter, BAD_CAST "SupportsReadCapacity", "%s", "true");
-                            blocks = (uint64_t)(buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3]) +
-                                     1;
+                            blocks    =
+                                    (uint64_t)(buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3]) +
+                                    1;
                             blockSize = (uint32_t)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) +
                                                    (buffer[7]));
                         }

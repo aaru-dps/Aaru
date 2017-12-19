@@ -76,7 +76,6 @@ namespace DiscImageChef.Metadata
 
     public class ataType
     {
-
         public string AdditionalPID { get; set; }
         public Identify.TransferMode APIOSupported { get; set; }
         public ushort ATAPIByteCount { get; set; }
@@ -1046,4 +1045,3 @@ namespace DiscImageChef.Metadata
         public byte[] ExtendedCSD { get; set; }
     }
 }
-

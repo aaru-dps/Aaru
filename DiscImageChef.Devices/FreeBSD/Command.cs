@@ -55,14 +55,14 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        internal static int SendScsiCommand64(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ccb_flags direction, out double duration, out bool sense)
+        internal static int SendScsiCommand64(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
+                                              uint timeout, ccb_flags direction, out double duration, out bool sense)
         {
             senseBuffer = null;
             duration = 0;
             sense = false;
 
-            if(buffer == null)
-                return -1;
+            if(buffer == null) return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
             IntPtr cdbPtr = IntPtr.Zero;
@@ -87,8 +87,7 @@ namespace DiscImageChef.Devices.FreeBSD
             // TODO: Create enum?
             csio.tag_action = 0x20;
             csio.cdb_bytes = new byte[CAM_MAX_CDBLEN];
-            if(cdb.Length <= CAM_MAX_CDBLEN)
-                Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
+            if(cdb.Length <= CAM_MAX_CDBLEN) Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
             else
             {
                 cdbPtr = Marshal.AllocHGlobal(cdb.Length);
@@ -105,8 +104,7 @@ namespace DiscImageChef.Devices.FreeBSD
             int error = cam_send_ccb(dev, ccbPtr);
             DateTime end = DateTime.UtcNow;
 
-            if(error < 0)
-                error = Marshal.GetLastWin32Error();
+            if(error < 0) error = Marshal.GetLastWin32Error();
 
             csio = (ccb_scsiio64)Marshal.PtrToStructure(ccbPtr, typeof(ccb_scsiio64));
 
@@ -142,12 +140,10 @@ namespace DiscImageChef.Devices.FreeBSD
             Marshal.Copy(csio.data_ptr, buffer, 0, buffer.Length);
             if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
                 Marshal.Copy(new IntPtr(BitConverter.ToInt64(csio.cdb_bytes, 0)), cdb, 0, cdb.Length);
-            else
-                Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
+            else Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
             duration = (end - start).TotalMilliseconds;
 
-            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
-                Marshal.FreeHGlobal(cdbPtr);
+            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER)) Marshal.FreeHGlobal(cdbPtr);
             Marshal.FreeHGlobal(csio.data_ptr);
             cam_freeccb(ccbPtr);
 
@@ -166,14 +162,14 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        internal static int SendScsiCommand(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ccb_flags direction, out double duration, out bool sense)
+        internal static int SendScsiCommand(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
+                                            uint timeout, ccb_flags direction, out double duration, out bool sense)
         {
             senseBuffer = null;
             duration = 0;
             sense = false;
 
-            if(buffer == null)
-                return -1;
+            if(buffer == null) return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
             IntPtr cdbPtr = IntPtr.Zero;
@@ -198,8 +194,7 @@ namespace DiscImageChef.Devices.FreeBSD
             // TODO: Create enum?
             csio.tag_action = 0x20;
             csio.cdb_bytes = new byte[CAM_MAX_CDBLEN];
-            if(cdb.Length <= CAM_MAX_CDBLEN)
-                Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
+            if(cdb.Length <= CAM_MAX_CDBLEN) Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
             else
             {
                 cdbPtr = Marshal.AllocHGlobal(cdb.Length);
@@ -216,8 +211,7 @@ namespace DiscImageChef.Devices.FreeBSD
             int error = cam_send_ccb(dev, ccbPtr);
             DateTime end = DateTime.UtcNow;
 
-            if(error < 0)
-                error = Marshal.GetLastWin32Error();
+            if(error < 0) error = Marshal.GetLastWin32Error();
 
             csio = (ccb_scsiio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_scsiio));
 
@@ -253,12 +247,10 @@ namespace DiscImageChef.Devices.FreeBSD
             Marshal.Copy(csio.data_ptr, buffer, 0, buffer.Length);
             if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
                 Marshal.Copy(new IntPtr(BitConverter.ToInt32(csio.cdb_bytes, 0)), cdb, 0, cdb.Length);
-            else
-                Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
+            else Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
             duration = (end - start).TotalMilliseconds;
 
-            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
-                Marshal.FreeHGlobal(cdbPtr);
+            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER)) Marshal.FreeHGlobal(cdbPtr);
             Marshal.FreeHGlobal(csio.data_ptr);
             cam_freeccb(ccbPtr);
 
@@ -274,16 +266,12 @@ namespace DiscImageChef.Devices.FreeBSD
                 case AtaProtocol.HardReset:
                 case AtaProtocol.NonData:
                 case AtaProtocol.SoftReset:
-                case AtaProtocol.ReturnResponse:
-                    return ccb_flags.CAM_DIR_NONE;
+                case AtaProtocol.ReturnResponse: return ccb_flags.CAM_DIR_NONE;
                 case AtaProtocol.PioIn:
-                case AtaProtocol.UDmaIn:
-                    return ccb_flags.CAM_DIR_IN;
+                case AtaProtocol.UDmaIn: return ccb_flags.CAM_DIR_IN;
                 case AtaProtocol.PioOut:
-                case AtaProtocol.UDmaOut:
-                    return ccb_flags.CAM_DIR_OUT;
-                default:
-                    return ccb_flags.CAM_DIR_NONE;
+                case AtaProtocol.UDmaOut: return ccb_flags.CAM_DIR_OUT;
+                default: return ccb_flags.CAM_DIR_NONE;
             }
         }
 
@@ -470,7 +458,7 @@ namespace DiscImageChef.Devices.FreeBSD
             // 48-bit ATA CAM commands can crash FreeBSD < 9.2-RELEASE
             if((System.Environment.Version.Major == 9 && System.Environment.Version.Minor < 2) ||
                System.Environment.Version.Major < 9) return -1;
-            
+
             if(buffer == null) return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
@@ -555,4 +543,3 @@ namespace DiscImageChef.Devices.FreeBSD
         }
     }
 }
-

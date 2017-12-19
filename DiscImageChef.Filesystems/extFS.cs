@@ -53,32 +53,26 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Linux extended Filesystem";
             PluginUUID = new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public extFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Linux extended Filesystem";
             PluginUUID = new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
-            
+            if(imagePlugin.GetSectorSize() < 512) return false;
+
             ulong sbSector = sbPos / imagePlugin.GetSectorSize();
             uint sbOff = sbPos % imagePlugin.GetSectorSize();
 
-            if((sbSector + partition.Start) >= partition.End)
-                return false;
+            if((sbSector + partition.Start) >= partition.End) return false;
 
             byte[] sb_sector = imagePlugin.ReadSector(sbSector + partition.Start);
             byte[] sb = new byte[512];
@@ -89,20 +83,19 @@ namespace DiscImageChef.Filesystems
             return magic == extFSMagic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
-            if(imagePlugin.GetSectorSize() < 512)
-                return;
+            if(imagePlugin.GetSectorSize() < 512) return;
 
             ulong sbSector = sbPos / imagePlugin.GetSectorSize();
             uint sbOff = sbPos % imagePlugin.GetSectorSize();
 
-            if((sbSector + partition.Start) >= partition.End)
-                return;
+            if((sbSector + partition.Start) >= partition.End) return;
 
             byte[] sblock = imagePlugin.ReadSector(sbSector + partition.Start);
             byte[] sb_sector = new byte[512];
@@ -123,7 +116,8 @@ namespace DiscImageChef.Filesystems
             sb.AppendLine("ext filesystem");
             sb.AppendFormat("{0} zones on volume", ext_sb.zones);
             sb.AppendFormat("{0} free blocks ({1} bytes)", ext_sb.freecountblk, ext_sb.freecountblk * 1024);
-            sb.AppendFormat("{0} inodes on volume, {1} free ({2}%)", ext_sb.inodes, ext_sb.freecountind, ext_sb.freecountind * 100 / ext_sb.inodes);
+            sb.AppendFormat("{0} inodes on volume, {1} free ({2}%)", ext_sb.inodes, ext_sb.freecountind,
+                            ext_sb.freecountind * 100 / ext_sb.inodes);
             sb.AppendFormat("First free inode is {0}", ext_sb.firstfreeind);
             sb.AppendFormat("First free block is {0}", ext_sb.firstfreeblk);
             sb.AppendFormat("First data zone is {0}", ext_sb.firstdatazone);

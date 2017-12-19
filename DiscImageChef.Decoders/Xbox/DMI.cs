@@ -39,44 +39,30 @@ namespace DiscImageChef.Decoders.Xbox
     {
         public static bool IsXbox(byte[] dmi)
         {
-            if(dmi == null)
-                return false;
-            if(dmi.Length != 2052)
-                return false;
+            if(dmi == null) return false;
+            if(dmi.Length != 2052) return false;
 
             // Version is 1
-            if(BitConverter.ToUInt32(dmi, 4) != 1)
-                return false;
+            if(BitConverter.ToUInt32(dmi, 4) != 1) return false;
 
             // Catalogue number is two letters, five numbers, one letter
-            for(int i = 12; i < 14; i++)
-            {
-                if(dmi[i] < 0x41 || dmi[i] > 0x5A)
-                    return false;
-            }
-            for(int i = 14; i < 19; i++)
-            {
-                if(dmi[i] < 0x30 || dmi[i] > 0x39)
-                    return false;
-            }
-            if(dmi[19] < 0x41 || dmi[19] > 0x5A)
-                return false;
+            for(int i = 12; i < 14; i++) { if(dmi[i] < 0x41 || dmi[i] > 0x5A) return false; }
+            for(int i = 14; i < 19; i++) { if(dmi[i] < 0x30 || dmi[i] > 0x39) return false; }
+
+            if(dmi[19] < 0x41 || dmi[19] > 0x5A) return false;
 
             long timestamp = BitConverter.ToInt64(dmi, 20);
 
             // Game cannot exist before the Xbox
-            if(timestamp < 0x1BD164833DFC000)
-                return false;
+            if(timestamp < 0x1BD164833DFC000) return false;
 
             return true;
         }
 
         public static bool IsXbox360(byte[] dmi)
         {
-            if(dmi == null)
-                return false;
-            if(dmi.Length != 2052)
-                return false;
+            if(dmi == null) return false;
+            if(dmi.Length != 2052) return false;
 
             uint signature = BitConverter.ToUInt32(dmi, 0x7EC);
 
@@ -167,8 +153,7 @@ namespace DiscImageChef.Decoders.Xbox
         public static XboxDMI? DecodeXbox(byte[] response)
         {
             bool isXbox = IsXbox(response);
-            if(!isXbox)
-                return null;
+            if(!isXbox) return null;
 
             XboxDMI dmi = new XboxDMI();
 
@@ -188,8 +173,7 @@ namespace DiscImageChef.Decoders.Xbox
         public static Xbox360DMI? DecodeXbox360(byte[] response)
         {
             bool isX360 = IsXbox360(response);
-            if(!isX360)
-                return null;
+            if(!isX360) return null;
 
             Xbox360DMI dmi = new Xbox360DMI();
 
@@ -205,26 +189,24 @@ namespace DiscImageChef.Decoders.Xbox
             Array.Copy(response, 68, tmp, 0, 16);
             dmi.CatalogNumber = StringHandlers.CToString(tmp);
 
-            if(dmi.CatalogNumber == null || dmi.CatalogNumber.Length < 13)
-                return null;
+            if(dmi.CatalogNumber == null || dmi.CatalogNumber.Length < 13) return null;
 
             return dmi;
         }
 
         public static string PrettifyXbox(XboxDMI? dmi)
         {
-            if(dmi == null)
-                return null;
+            if(dmi == null) return null;
 
             XboxDMI decoded = dmi.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.Append("Catalogue number: ");
-            for(int i = 0; i < 2; i++)
-                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            for(int i = 0; i < 2; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
             sb.Append("-");
-            for(int i = 2; i < 7; i++)
-                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            for(int i = 2; i < 7; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
             sb.Append("-");
             sb.AppendFormat("{0}", decoded.CatalogNumber[7]);
             sb.AppendLine();
@@ -236,55 +218,54 @@ namespace DiscImageChef.Decoders.Xbox
 
         public static string PrettifyXbox360(Xbox360DMI? dmi)
         {
-            if(dmi == null)
-                return null;
+            if(dmi == null) return null;
 
             Xbox360DMI decoded = dmi.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.Append("Catalogue number: ");
-            for(int i = 0; i < 2; i++)
-                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            for(int i = 0; i < 2; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
             sb.Append("-");
-            for(int i = 2; i < 6; i++)
-                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            for(int i = 2; i < 6; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
             sb.Append("-");
-            for(int i = 6; i < 8; i++)
-                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            for(int i = 6; i < 8; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
             sb.Append("-");
 
             if(decoded.CatalogNumber.Length == 13)
             {
-                for(int i = 8; i < 10; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                for(int i = 8; i < 10; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
                 sb.Append("-");
-                for(int i = 10; i < 13; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                for(int i = 10; i < 13; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
             }
             else if(decoded.CatalogNumber.Length == 14)
             {
-                for(int i = 8; i < 11; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                for(int i = 8; i < 11; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
                 sb.Append("-");
-                for(int i = 11; i < 14; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                for(int i = 11; i < 14; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
             }
             else
             {
                 for(int i = 8; i < decoded.CatalogNumber.Length - 3; i++)
                     sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
                 sb.Append("-");
                 for(int i = decoded.CatalogNumber.Length - 3; i < decoded.CatalogNumber.Length; i++)
                     sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
             }
+
             sb.AppendLine();
 
             sb.Append("Media ID: ");
-            for(int i = 0; i < 12; i++)
-                sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
+            for(int i = 0; i < 12; i++) sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
+
             sb.Append("-");
-            for(int i = 12; i < 16; i++)
-                sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
+            for(int i = 12; i < 16; i++) sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
+
             sb.AppendLine();
 
             sb.AppendFormat("Timestamp: {0}", DateTime.FromFileTimeUtc(decoded.Timestamp)).AppendLine();
@@ -303,4 +284,3 @@ namespace DiscImageChef.Decoders.Xbox
         }
     }
 }
-

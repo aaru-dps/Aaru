@@ -75,10 +75,7 @@ namespace DiscImageChef.Devices
         /// <value>The Platform ID</value>
         public Interop.PlatformID PlatformID
         {
-            get
-            {
-                return platformID;
-            }
+            get { return platformID; }
         }
 
         /// <summary>
@@ -87,21 +84,14 @@ namespace DiscImageChef.Devices
         /// <value>The file handle</value>
         public object FileHandle
         {
-            get
-            {
-                return fd;
-            }
+            get { return fd; }
         }
 
         /// <summary>
         /// Gets or sets the standard timeout for commands sent to this device
         /// </summary>
         /// <value>The timeout in seconds</value>
-        public uint Timeout
-        {
-            get;
-            set;
-        }
+        public uint Timeout { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="Device"/> is in error.
@@ -109,10 +99,7 @@ namespace DiscImageChef.Devices
         /// <value><c>true</c> if error; otherwise, <c>false</c>.</value>
         public bool Error
         {
-            get
-            {
-                return error;
-            }
+            get { return error; }
         }
 
         /// <summary>
@@ -121,10 +108,7 @@ namespace DiscImageChef.Devices
         /// <value>The last error.</value>
         public int LastError
         {
-            get
-            {
-                return lastError;
-            }
+            get { return lastError; }
         }
 
         /// <summary>
@@ -133,10 +117,7 @@ namespace DiscImageChef.Devices
         /// <value>The device type.</value>
         public DeviceType Type
         {
-            get
-            {
-                return type;
-            }
+            get { return type; }
         }
 
         /// <summary>
@@ -145,10 +126,7 @@ namespace DiscImageChef.Devices
         /// <value>The manufacturer.</value>
         public string Manufacturer
         {
-            get
-            {
-                return manufacturer;
-            }
+            get { return manufacturer; }
         }
 
         /// <summary>
@@ -157,10 +135,7 @@ namespace DiscImageChef.Devices
         /// <value>The model.</value>
         public string Model
         {
-            get
-            {
-                return model;
-            }
+            get { return model; }
         }
 
         /// <summary>
@@ -169,10 +144,7 @@ namespace DiscImageChef.Devices
         /// <value>The revision.</value>
         public string Revision
         {
-            get
-            {
-                return revision;
-            }
+            get { return revision; }
         }
 
         /// <summary>
@@ -181,10 +153,7 @@ namespace DiscImageChef.Devices
         /// <value>The serial number.</value>
         public string Serial
         {
-            get
-            {
-                return serial;
-            }
+            get { return serial; }
         }
 
         /// <summary>
@@ -193,10 +162,7 @@ namespace DiscImageChef.Devices
         /// <value>The SCSI peripheral device type.</value>
         public Decoders.SCSI.PeripheralDeviceTypes SCSIType
         {
-            get
-            {
-                return scsiType;
-            }
+            get { return scsiType; }
         }
 
         /// <summary>
@@ -205,10 +171,7 @@ namespace DiscImageChef.Devices
         /// <value><c>true</c> if this device's media is removable; otherwise, <c>false</c>.</value>
         public bool IsRemovable
         {
-            get
-            {
-                return removable;
-            }
+            get { return removable; }
         }
 
         /// <summary>
@@ -217,10 +180,7 @@ namespace DiscImageChef.Devices
         /// <value><c>true</c> if this device is attached via USB; otherwise, <c>false</c>.</value>
         public bool IsUSB
         {
-            get
-            {
-                return usb;
-            }
+            get { return usb; }
         }
 
         /// <summary>
@@ -229,10 +189,7 @@ namespace DiscImageChef.Devices
         /// <value>The USB vendor ID.</value>
         public ushort USBVendorID
         {
-            get
-            {
-                return usbVendor;
-            }
+            get { return usbVendor; }
         }
 
         /// <summary>
@@ -241,10 +198,7 @@ namespace DiscImageChef.Devices
         /// <value>The USB product ID.</value>
         public ushort USBProductID
         {
-            get
-            {
-                return usbProduct;
-            }
+            get { return usbProduct; }
         }
 
         /// <summary>
@@ -253,10 +207,7 @@ namespace DiscImageChef.Devices
         /// <value>The USB descriptors.</value>
         public byte[] USBDescriptors
         {
-            get
-            {
-                return usbDescriptors;
-            }
+            get { return usbDescriptors; }
         }
 
         /// <summary>
@@ -265,10 +216,7 @@ namespace DiscImageChef.Devices
         /// <value>The USB manufacturer string.</value>
         public string USBManufacturerString
         {
-            get
-            {
-                return usbManufacturerString;
-            }
+            get { return usbManufacturerString; }
         }
 
         /// <summary>
@@ -277,10 +225,7 @@ namespace DiscImageChef.Devices
         /// <value>The USB product string.</value>
         public string USBProductString
         {
-            get
-            {
-                return usbProductString;
-            }
+            get { return usbProductString; }
         }
 
         /// <summary>
@@ -289,47 +234,62 @@ namespace DiscImageChef.Devices
         /// <value>The USB serial string.</value>
         public string USBSerialString
         {
-            get
-            {
-                return usbSerialString;
-            }
+            get { return usbSerialString; }
         }
 
         /// <summary>
         /// Gets a value indicating whether this device is attached via FireWire.
         /// </summary>
         /// <value><c>true</c> if this device is attached via FireWire; otherwise, <c>false</c>.</value>
-        public bool IsFireWire { get { return firewire; } }
+        public bool IsFireWire
+        {
+            get { return firewire; }
+        }
 
         /// <summary>
         /// Gets the FireWire GUID
         /// </summary>
         /// <value>The FireWire GUID.</value>
-        public ulong FireWireGUID { get { return firewireGuid; } }
+        public ulong FireWireGUID
+        {
+            get { return firewireGuid; }
+        }
 
         /// <summary>
         /// Gets the FireWire model number
         /// </summary>
         /// <value>The FireWire model.</value>
-        public uint FireWireModel { get { return firewireModel; } }
+        public uint FireWireModel
+        {
+            get { return firewireModel; }
+        }
 
         /// <summary>
         /// Gets the FireWire model name.
         /// </summary>
         /// <value>The FireWire model name.</value>
-        public string FireWireModelName { get { return firewireModelName; } }
+        public string FireWireModelName
+        {
+            get { return firewireModelName; }
+        }
 
         /// <summary>
         /// Gets the FireWire vendor number.
         /// </summary>
         /// <value>The FireWire vendor number.</value>
-        public uint FireWireVendor { get { return firewireVendor; } }
+        public uint FireWireVendor
+        {
+            get { return firewireVendor; }
+        }
 
         /// <summary>
         /// Gets the FireWire vendor name.
         /// </summary>
         /// <value>The FireWire vendor name.</value>
-        public string FireWireVendorName { get { return firewireVendorName; } }
+        public string FireWireVendorName
+        {
+            get { return firewireVendorName; }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this device is a CompactFlash device.
@@ -337,10 +297,7 @@ namespace DiscImageChef.Devices
         /// <value><c>true</c> if this device is a CompactFlash device; otherwise, <c>false</c>.</value>
         public bool IsCompactFlash
         {
-            get
-            {
-                return compactFlash;
-            }
+            get { return compactFlash; }
         }
 
         /// <summary>
@@ -349,10 +306,7 @@ namespace DiscImageChef.Devices
         /// <value><c>true</c> if this device is a PCMCIA device; otherwise, <c>false</c>.</value>
         public bool IsPCMCIA
         {
-            get
-            {
-                return pcmcia;
-            }
+            get { return pcmcia; }
         }
 
         /// <summary>
@@ -360,11 +314,7 @@ namespace DiscImageChef.Devices
         /// </summary>
         public byte[] CIS
         {
-            get
-            {
-                return cis;
-            }
+            get { return cis; }
         }
     }
 }
-

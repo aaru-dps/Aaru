@@ -39,19 +39,13 @@ namespace DiscImageChef.Devices.FreeBSD
     static class Extern
     {
         [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
-        internal static extern int open(
-            string pathname,
-            [MarshalAs(UnmanagedType.U4)]
-            FileFlags flags);
+        internal static extern int open(string pathname, [MarshalAs(UnmanagedType.U4)] FileFlags flags);
 
         [DllImport("libc")]
         internal static extern int close(int fd);
 
         [DllImport("libcam", CharSet = CharSet.Ansi, SetLastError = true)]
-        internal static extern IntPtr cam_open_device(
-            string path,
-            [MarshalAs(UnmanagedType.U4)]
-            FileFlags flags);
+        internal static extern IntPtr cam_open_device(string path, [MarshalAs(UnmanagedType.U4)] FileFlags flags);
 
         [DllImport("libcam", CharSet = CharSet.Ansi, SetLastError = true)]
         internal static extern void cam_close_device(IntPtr dev);
@@ -69,4 +63,3 @@ namespace DiscImageChef.Devices.FreeBSD
         internal static extern int ioctl(int fd, FreebsdIoctl request, IntPtr argp);
     }
 }
-

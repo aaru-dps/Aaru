@@ -50,7 +50,9 @@ namespace DiscImageChef.Devices
         /// <param name="cache">If set to <c>true</c> device can return cached data.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, ushort element, byte elementType, byte volume, byte partition, ushort firstAttribute, bool cache, uint timeout, out double duration)
+        public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, ushort element,
+                                  byte elementType, byte volume, byte partition, ushort firstAttribute, bool cache,
+                                  uint timeout, out double duration)
         {
             buffer = new byte[256];
             byte[] cdb = new byte[16];
@@ -70,17 +72,17 @@ namespace DiscImageChef.Devices
             cdb[11] = (byte)((buffer.Length & 0xFF0000) >> 16);
             cdb[12] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[13] = (byte)(buffer.Length & 0xFF);
-            if(cache)
-                cdb[14] += 0x01;
+            if(cache) cdb[14] += 0x01;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
-            if(sense)
-                return true;
+            if(sense) return true;
 
 #pragma warning disable IDE0004 // Cast is necessary or an invalid bitshift happens
-            uint attrLen = (uint)(((int)buffer[0] << 24) + ((int)buffer[1] << 16) + ((int)buffer[2] << 8) + buffer[3] + 4);
+            uint attrLen = (uint)(((int)buffer[0] << 24) + ((int)buffer[1] << 16) + ((int)buffer[2] << 8) + buffer[3] +
+                                  4);
 #pragma warning restore IDE0004 // Cast is necessary or an invalid bitshift happens
             buffer = new byte[attrLen];
             cdb[10] = (byte)((buffer.Length & 0xFF000000) >> 24);
@@ -89,7 +91,8 @@ namespace DiscImageChef.Devices
             cdb[13] = (byte)(buffer.Length & 0xFF);
             senseBuffer = new byte[32];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ ATTRIBUTE took {0} ms.", duration);
@@ -98,4 +101,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

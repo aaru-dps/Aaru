@@ -41,7 +41,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class DIM : ImagePlugin
+    public class DIM : ImagePlugin
     {
         #region Internal enumerations
         enum DiskType : byte
@@ -56,12 +56,10 @@ namespace DiscImageChef.ImagePlugins
         #endregion
 
         #region Internal constants
-        readonly byte[] HeaderID = { 0x44, 0x49, 0x46, 0x43, 0x20, 0x48, 0x45, 0x41, 0x44, 0x45, 0x52, 0x20, 0x20 };
+        readonly byte[] HeaderID = {0x44, 0x49, 0x46, 0x43, 0x20, 0x48, 0x45, 0x41, 0x44, 0x45, 0x52, 0x20, 0x20};
         #endregion
 
-
         #region Internal variables
-
         /// <summary>Start of data sectors in disk image, should be 0x100</summary>
         const uint dataOffset = 0x100;
         /// <summary>Disk image file</summary>
@@ -103,8 +101,7 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < dataOffset)
-                return false;
+            if(stream.Length < dataOffset) return false;
 
             comment = new byte[60];
             hdrId = new byte[13];
@@ -123,8 +120,7 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < dataOffset)
-                return false;
+            if(stream.Length < dataOffset) return false;
 
             long diskSize = stream.Length - dataOffset;
 
@@ -137,8 +133,7 @@ namespace DiscImageChef.ImagePlugins
             stream.Seek(0xC2, SeekOrigin.Begin);
             stream.Read(comment, 0, 60);
 
-            if(!HeaderID.SequenceEqual(hdrId))
-                return false;
+            if(!HeaderID.SequenceEqual(hdrId)) return false;
 
             ImageInfo.mediaType = MediaType.Unknown;
 
@@ -151,8 +146,8 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 8 * 1024));
                         return false;
                     }
-                    if(diskSize / (2 * 8 * 1024) == 77)
-                        ImageInfo.mediaType = MediaType.SHARP_525;
+
+                    if(diskSize / (2 * 8 * 1024) == 77) ImageInfo.mediaType = MediaType.SHARP_525;
                     ImageInfo.sectorSize = 1024;
                     break;
                 // 9 spt, 1024 bps
@@ -162,8 +157,8 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
                         return false;
                     }
-                    if(diskSize / (2 * 9 * 512) == 80)
-                        ImageInfo.mediaType = MediaType.SHARP_525_9;
+
+                    if(diskSize / (2 * 9 * 512) == 80) ImageInfo.mediaType = MediaType.SHARP_525_9;
                     ImageInfo.sectorSize = 512;
                     break;
                 // 15 spt, 512 bps
@@ -173,8 +168,8 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 15 * 512));
                         return false;
                     }
-                    if(diskSize / (2 * 15 * 512) == 80)
-                        ImageInfo.mediaType = MediaType.DOS_525_HD;
+
+                    if(diskSize / (2 * 15 * 512) == 80) ImageInfo.mediaType = MediaType.DOS_525_HD;
                     ImageInfo.sectorSize = 512;
                     break;
                 // 9 spt, 1024 bps
@@ -184,8 +179,8 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
                         return false;
                     }
-                    if(diskSize / (2 * 9 * 512) == 80)
-                        ImageInfo.mediaType = MediaType.SHARP_35_9;
+
+                    if(diskSize / (2 * 9 * 512) == 80) ImageInfo.mediaType = MediaType.SHARP_35_9;
                     ImageInfo.sectorSize = 512;
                     break;
                 // 18 spt, 512 bps
@@ -195,22 +190,20 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 18 * 512));
                         return false;
                     }
-                    if(diskSize / (2 * 18 * 512) == 80)
-                        ImageInfo.mediaType = MediaType.DOS_35_HD;
+
+                    if(diskSize / (2 * 18 * 512) == 80) ImageInfo.mediaType = MediaType.DOS_35_HD;
                     ImageInfo.sectorSize = 512;
                     break;
                 // 26 spt, 256 bps
                 case DiskType.N88:
                     if(diskSize % (2 * 26 * 256) == 0)
                     {
-                        if(diskSize % (2 * 26 * 256) == 77)
-                            ImageInfo.mediaType = MediaType.NEC_8_DD;
+                        if(diskSize % (2 * 26 * 256) == 77) ImageInfo.mediaType = MediaType.NEC_8_DD;
                         ImageInfo.sectorSize = 256;
                     }
                     else if(diskSize % (2 * 26 * 128) == 0)
                     {
-                        if(diskSize % (2 * 26 * 128) == 77)
-                            ImageInfo.mediaType = MediaType.NEC_8_SD;
+                        if(diskSize % (2 * 26 * 128) == 77) ImageInfo.mediaType = MediaType.NEC_8_SD;
                         ImageInfo.sectorSize = 256;
                     }
                     else
@@ -218,15 +211,15 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 26 * 256));
                         return false;
                     }
+
                     break;
-                default:
-                    return false;
+                default: return false;
             }
 
             DicConsole.VerboseWriteLine("DIM image contains a disk of type {0}", ImageInfo.mediaType);
             if(!string.IsNullOrEmpty(ImageInfo.imageComments))
                 DicConsole.VerboseWriteLine("DIM comments: {0}", ImageInfo.imageComments);
-            
+
             dimImageFilter = imageFilter;
 
             ImageInfo.imageSize = (ulong)diskSize;
@@ -237,42 +230,42 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageComments = StringHandlers.CToString(comment, Encoding.GetEncoding(932));
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 
-			switch(ImageInfo.mediaType)
-			{
-				case MediaType.SHARP_525:
-					ImageInfo.cylinders = 77;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 8;
-					break;
-				case MediaType.SHARP_525_9:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 9;
-					break;
-				case MediaType.DOS_525_HD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 15;
-					break;
-				case MediaType.SHARP_35_9:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 9;
-					break;
-				case MediaType.DOS_35_HD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 18;
-					break;
-				case MediaType.NEC_8_DD:
-				case MediaType.NEC_8_SD:
-					ImageInfo.cylinders = 77;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 26;
-					break;
-			}
+            switch(ImageInfo.mediaType)
+            {
+                case MediaType.SHARP_525:
+                    ImageInfo.cylinders = 77;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 8;
+                    break;
+                case MediaType.SHARP_525_9:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 9;
+                    break;
+                case MediaType.DOS_525_HD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 15;
+                    break;
+                case MediaType.SHARP_35_9:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 9;
+                    break;
+                case MediaType.DOS_35_HD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 18;
+                    break;
+                case MediaType.NEC_8_DD:
+                case MediaType.NEC_8_SD:
+                    ImageInfo.cylinders = 77;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 26;
+                    break;
+            }
 
-			return true;
+            return true;
         }
 
         public override bool ImageHasPartitions()
@@ -370,7 +363,6 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region Unsupported features
-
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -511,16 +503,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -529,7 +523,6 @@ namespace DiscImageChef.ImagePlugins
         {
             return null;
         }
-
         #endregion
     }
 }

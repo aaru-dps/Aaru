@@ -44,16 +44,15 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Reiser4_Superblock
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] magic;
             public ushort diskformat;
             public ushort blocksize;
             public Guid uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
         }
 
-        readonly byte[] Reiser4_Magic = { 0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+        readonly byte[] Reiser4_Magic =
+            {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         const uint Reiser4_SuperOffset = 0x10000;
 
         public Reiser4()
@@ -67,43 +66,34 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Reiser4 Filesystem Plugin";
             PluginUUID = new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public Reiser4(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Reiser4 Filesystem Plugin";
             PluginUUID = new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             uint sbAddr = Reiser4_SuperOffset / imagePlugin.GetSectorSize();
-            if(sbAddr == 0)
-                sbAddr = 1;
+            if(sbAddr == 0) sbAddr = 1;
 
             Reiser4_Superblock reiserSb = new Reiser4_Superblock();
 
             uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(reiserSb) % imagePlugin.GetSectorSize() != 0)
-                sbSize++;
+            if(Marshal.SizeOf(reiserSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
-            if(partition.Start + sbAddr + sbSize >= partition.End)
-                return false;
+            if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(reiserSb))
-                return false;
+            if(sector.Length < Marshal.SizeOf(reiserSb)) return false;
 
             IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(reiserSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(reiserSb));
@@ -113,33 +103,29 @@ namespace DiscImageChef.Filesystems
             return Reiser4_Magic.SequenceEqual(reiserSb.magic);
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512)
-                return;
+            if(imagePlugin.GetSectorSize() < 512) return;
 
             uint sbAddr = Reiser4_SuperOffset / imagePlugin.GetSectorSize();
-            if(sbAddr == 0)
-                sbAddr = 1;
+            if(sbAddr == 0) sbAddr = 1;
 
             Reiser4_Superblock reiserSb = new Reiser4_Superblock();
 
             uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(reiserSb) % imagePlugin.GetSectorSize() != 0)
-                sbSize++;
+            if(Marshal.SizeOf(reiserSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(reiserSb))
-                return;
+            if(sector.Length < Marshal.SizeOf(reiserSb)) return;
 
             IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(reiserSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(reiserSb));
             reiserSb = (Reiser4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(Reiser4_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            if(!Reiser4_Magic.SequenceEqual(reiserSb.magic))
-                return;
+            if(!Reiser4_Magic.SequenceEqual(reiserSb.magic)) return;
 
             StringBuilder sb = new StringBuilder();
 
@@ -154,7 +140,8 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "Reiser 4 filesystem";
             xmlFSType.ClusterSize = reiserSb.blocksize;
-            xmlFSType.Clusters = (long)(((partition.End - partition.Start) * imagePlugin.GetSectorSize()) / reiserSb.blocksize);
+            xmlFSType.Clusters =
+                (long)(((partition.End - partition.Start) * imagePlugin.GetSectorSize()) / reiserSb.blocksize);
             xmlFSType.VolumeName = StringHandlers.CToString(reiserSb.label, CurrentEncoding);
             xmlFSType.VolumeSerial = reiserSb.uuid.ToString();
         }

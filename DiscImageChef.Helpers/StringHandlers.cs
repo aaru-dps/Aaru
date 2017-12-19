@@ -55,8 +55,7 @@ namespace DiscImageChef
         /// <param name="encoding">Encoding.</param>
         public static string CToString(byte[] CString, Encoding encoding, bool twoBytes = false, int start = 0)
         {
-            if(CString == null)
-                return null;
+            if(CString == null) return null;
 
             int len = 0;
 
@@ -71,11 +70,10 @@ namespace DiscImageChef
                             len++;
                             break;
                         }
-  //                      if((i + 1) == CString.Length)
-//                            break;
+                        //                      if((i + 1) == CString.Length)
+                        //                            break;
                     }
-                    else
-                        break;
+                    else break;
                 }
 
                 len++;
@@ -105,17 +103,15 @@ namespace DiscImageChef
         /// <param name="encoding">Encoding.</param>
         public static string PascalToString(byte[] PascalString, Encoding encoding, int start = 0)
         {
-            if(PascalString == null)
-                return null;
+            if(PascalString == null) return null;
 
             byte length = PascalString[start];
             int len = 0;
 
             for(int i = start + 1; i < length + 1 && i < PascalString.Length; i++)
             {
-                if(PascalString[i] == 0)
-                    break;
-                
+                if(PascalString[i] == 0) break;
+
                 len++;
             }
 
@@ -143,15 +139,13 @@ namespace DiscImageChef
         /// <param name="encoding">Encoding.</param>
         public static string SpacePaddedToString(byte[] SpacePaddedString, Encoding encoding, int start = 0)
         {
-            if(SpacePaddedString == null)
-                return null;
+            if(SpacePaddedString == null) return null;
 
             int len = start;
 
             for(int i = SpacePaddedString.Length; i >= start; i--)
             {
-                if(i == start)
-                    return "";
+                if(i == start) return "";
 
                 if(SpacePaddedString[i - 1] != 0x20)
                 {
@@ -174,21 +168,16 @@ namespace DiscImageChef
             byte compId = dstring[0];
             string temp = "";
 
-            if(compId != 8 && compId != 16)
-                return null;
+            if(compId != 8 && compId != 16) return null;
 
             for(int byteIndex = 1; byteIndex < dstring.Length;)
             {
-                if(compId == 16)
-                    unicode = (ushort)(dstring[byteIndex++] << 8);
-                else
-                    unicode = 0;
+                if(compId == 16) unicode = (ushort)(dstring[byteIndex++] << 8);
+                else unicode = 0;
 
-                if(byteIndex < dstring.Length)
-                    unicode |= dstring[byteIndex++];
+                if(byteIndex < dstring.Length) unicode |= dstring[byteIndex++];
 
-                if(unicode == 0)
-                    break;
+                if(unicode == 0) break;
 
                 temp += Encoding.Unicode.GetString(System.BitConverter.GetBytes(unicode));
             }
@@ -197,4 +186,3 @@ namespace DiscImageChef
         }
     }
 }
-

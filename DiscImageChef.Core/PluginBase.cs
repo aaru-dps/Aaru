@@ -70,10 +70,7 @@ namespace DiscImageChef.Core
                         RegisterImagePlugin(plugin);
                     }
                 }
-                catch(Exception exception)
-                {
-                    DicConsole.ErrorWriteLine("Exception {0}", exception);
-                }
+                catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
             }
 
             assembly = Assembly.GetAssembly(typeof(PartPlugin));
@@ -88,10 +85,7 @@ namespace DiscImageChef.Core
                         RegisterPartPlugin(plugin);
                     }
                 }
-                catch(Exception exception)
-                {
-                    DicConsole.ErrorWriteLine("Exception {0}", exception);
-                }
+                catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
             }
 
             assembly = Assembly.GetAssembly(typeof(Filesystem));
@@ -104,16 +98,13 @@ namespace DiscImageChef.Core
                     {
                         Filesystem plugin;
                         if(encoding != null)
-                            plugin = (Filesystem)type.GetConstructor(new Type[] { encoding.GetType() }).Invoke(new object[] { encoding });
-                        else
-                            plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                            plugin = (Filesystem)type.GetConstructor(new Type[] {encoding.GetType()})
+                                                     .Invoke(new object[] {encoding});
+                        else plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterPlugin(plugin);
                     }
                 }
-                catch(Exception exception)
-                {
-                    DicConsole.ErrorWriteLine("Exception {0}", exception);
-                }
+                catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
             }
         }
 
@@ -127,10 +118,7 @@ namespace DiscImageChef.Core
 
         void RegisterPlugin(Filesystem plugin)
         {
-            if(!PluginsList.ContainsKey(plugin.Name.ToLower()))
-            {
-                PluginsList.Add(plugin.Name.ToLower(), plugin);
-            }
+            if(!PluginsList.ContainsKey(plugin.Name.ToLower())) { PluginsList.Add(plugin.Name.ToLower(), plugin); }
         }
 
         void RegisterPartPlugin(PartPlugin partplugin)
@@ -142,4 +130,3 @@ namespace DiscImageChef.Core
         }
     }
 }
-

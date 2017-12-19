@@ -59,9 +59,11 @@ namespace DiscImageChef.Core
                         if(_partplugin.GetInformation(image, out List<Partition> _partitions, imagePartition.Start))
                         {
                             partitions.AddRange(_partitions);
-                            DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name, imagePartition.Start);
+                            DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name,
+                                                      imagePartition.Start);
                         }
                     }
+
                     checkedLocations.Add(imagePartition.Start);
                 }
             }
@@ -96,7 +98,8 @@ namespace DiscImageChef.Core
                     DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", _partplugin.Name, partitions[0].Start);
                     if(_partplugin.GetInformation(image, out List<Partition> _partitions, partitions[0].Start))
                     {
-                        DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name, partitions[0].Start);
+                        DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name,
+                                                  partitions[0].Start);
                         childs.AddRange(_partitions);
                     }
                 }
@@ -111,10 +114,8 @@ namespace DiscImageChef.Core
 
                     foreach(Partition child in childs)
                     {
-                        if(checkedLocations.Contains(child.Start))
-                            childPartitions.Add(child);
-                        else
-                            partitions.Add(child);
+                        if(checkedLocations.Contains(child.Start)) childPartitions.Add(child);
+                        else partitions.Add(child);
                     }
                 }
                 else
@@ -132,39 +133,31 @@ namespace DiscImageChef.Core
             {
                 List<ulong> startLocations = new List<ulong>();
 
-                foreach(Partition detectedPartition in childPartitions)
-                    startLocations.Add(detectedPartition.Start);
+                foreach(Partition detectedPartition in childPartitions) startLocations.Add(detectedPartition.Start);
 
                 foreach(Partition imagePartition in image.GetPartitions())
                 {
-                    if(!startLocations.Contains(imagePartition.Start))
-                        childPartitions.Add(imagePartition);
+                    if(!startLocations.Contains(imagePartition.Start)) childPartitions.Add(imagePartition);
                 }
             }
 
-            Partition[] childArray = childPartitions.OrderBy(part => part.Start).ThenBy(part => part.Length).ThenBy(part => part.Scheme).ToArray();
+            Partition[] childArray = childPartitions
+                .OrderBy(part => part.Start).ThenBy(part => part.Length).ThenBy(part => part.Scheme).ToArray();
 
-            for(long i = 0; i < childArray.LongLength; i++)
-                childArray[i].Sequence = (ulong)i;
+            for(long i = 0; i < childArray.LongLength; i++) childArray[i].Sequence = (ulong)i;
 
             return childArray.ToList();
         }
 
         public static void AddSchemesToStats(List<Partition> partitions)
         {
-            if(partitions == null || partitions.Count == 0)
-                return;
-            
+            if(partitions == null || partitions.Count == 0) return;
+
             List<string> schemes = new List<string>();
 
-            foreach(Partition part in partitions)
-            {
-                if(!schemes.Contains(part.Scheme))
-                    schemes.Add(part.Scheme);
-            }
+            foreach(Partition part in partitions) { if(!schemes.Contains(part.Scheme)) schemes.Add(part.Scheme); }
 
-            foreach(string scheme in schemes)
-                Statistics.AddPartition(scheme);
+            foreach(string scheme in schemes) Statistics.AddPartition(scheme);
         }
     }
 }

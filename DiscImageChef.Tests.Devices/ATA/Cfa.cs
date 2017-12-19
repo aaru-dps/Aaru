@@ -79,11 +79,12 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void RequestExtendedErrorCode(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense = dev.RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLBA28 errorRegisters,
+                                                      dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending REQUEST EXTENDED ERROR CODE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -120,8 +121,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 2:
-                    goto start;
+                case 2: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -138,7 +138,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -176,6 +176,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("What head?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out head))
@@ -185,6 +186,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         if(head > 15)
                         {
                             DicConsole.WriteLine("Head cannot be bigger than 15. Setting it to 15...");
@@ -199,17 +201,18 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters, cylinder, head, sector, dev.Timeout, out double duration);
+            bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters, cylinder, head,
+                                             sector, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending TRANSLATE SECTOR to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -243,8 +246,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("TRANSLATE SECTOR response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -260,10 +262,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
-                case 4:
-                    goto parameters;
+                case 3: goto start;
+                case 4: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -278,7 +278,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -314,22 +314,25 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         if(lba > 0xFFFFFFF)
                         {
-                            DicConsole.WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...", 0xFFFFFFF);
+                            DicConsole
+                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                           0xFFFFFFF);
                             lba = 0xFFFFFFF;
                         }
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, lba, dev.Timeout, out double duration);
+            bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, lba,
+                                             dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending TRANSLATE SECTOR to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -363,8 +366,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("TRANSLATE SECTOR response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -380,10 +382,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
-                case 4:
-                    goto parameters;
+                case 3: goto start;
+                case 4: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();

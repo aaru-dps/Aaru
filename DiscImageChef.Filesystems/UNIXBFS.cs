@@ -54,26 +54,21 @@ namespace DiscImageChef.Filesystems
         {
             Name = "UNIX Boot filesystem";
             PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public BFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNIX Boot filesystem";
             PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
-                return false;
+            if((2 + partition.Start) >= partition.End) return false;
 
             uint magic;
 
@@ -82,7 +77,8 @@ namespace DiscImageChef.Filesystems
             return magic == BFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
@@ -115,7 +111,8 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}", bfs_sb.s_volume);
 
             sb.AppendLine("UNIX Boot filesystem");
-            sb.AppendFormat("Volume goes from byte {0} to byte {1}, for {2} bytes", bfs_sb.s_start, bfs_sb.s_end, bfs_sb.s_end - bfs_sb.s_start).AppendLine();
+            sb.AppendFormat("Volume goes from byte {0} to byte {1}, for {2} bytes", bfs_sb.s_start, bfs_sb.s_end,
+                            bfs_sb.s_end - bfs_sb.s_start).AppendLine();
             sb.AppendFormat("Filesystem name: {0}", bfs_sb.s_fsname).AppendLine();
             sb.AppendFormat("Volume name: {0}", bfs_sb.s_volume).AppendLine();
 

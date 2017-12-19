@@ -74,16 +74,17 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void Park(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.CertancePark(out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending PARK to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",
+                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("PARK decoded sense:");
             DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
@@ -112,15 +113,13 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("PARK sense:");
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 2:
-                    goto start;
+                case 2: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -131,16 +130,17 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void Unpark(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.CertanceUnpark(out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending UNPARK to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",
+                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("UNPARK decoded sense:");
             DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
@@ -169,15 +169,13 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("UNPARK sense:");
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 2:
-                    goto start;
+                case 2: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();

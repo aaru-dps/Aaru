@@ -40,33 +40,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class NILFS2
     {
-        readonly string[] testfiles = {
-            "linux.vdi.lz",
-        };
+        readonly string[] testfiles = {"linux.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            262144,
-        };
+        readonly ulong[] sectors = {262144,};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            32512,
-        };
+        readonly long[] clusters = {32512,};
 
-        readonly int[] clustersize = {
-            4096,
-        };
+        readonly int[] clustersize = {4096,};
 
-        readonly string[] volumename = {
-            "Volume label",
-        };
+        readonly string[] volumename = {"Volume label",};
 
-        readonly string[] volumeserial = {
-            "6b1ca79e-7048-a748-93a0-89c74b02cb5a",
-        };
+        readonly string[] volumeserial = {"6b1ca79e-7048-a748-93a0-89c74b02cb5a",};
 
         [Test]
         public void Test()
@@ -91,6 +77,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

@@ -43,23 +43,18 @@ namespace DiscImageChef.Filesystems.AppleDOS
             public byte catalogTrack;
             public byte catalogSector;
             public byte dosRelease;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] unused2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] unused2;
             public byte volumeNumber;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] unused3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] unused3;
             public byte maxTrackSectorPairsPerSector;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] unused4;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] unused4;
             public byte lastAllocatedSector;
             public sbyte allocationDirection;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] unused5;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] unused5;
             public byte tracks;
             public byte sectorsPerTrack;
             public ushort bytesPerSector;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 200)]
-            public byte[] bitmap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 200)] public byte[] bitmap;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -68,10 +63,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
             public byte unused1;
             public byte trackOfNext;
             public byte sectorOfNext;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] unused2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
-            public FileEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] unused2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)] public FileEntry[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -80,8 +73,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             public byte extentTrack;
             public byte extentSector;
             public byte typeAndFlags;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-            public byte[] filename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)] public byte[] filename;
             public ushort length;
         }
 
@@ -91,13 +83,10 @@ namespace DiscImageChef.Filesystems.AppleDOS
             public byte unused1;
             public byte nextListTrack;
             public byte nextListSector;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] unused2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] unused2;
             public ushort sectorOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] unused3;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 122)]
-            public TrackSectorListEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] unused3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 122)] public TrackSectorListEntry[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

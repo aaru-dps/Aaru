@@ -30,7 +30,6 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -268,37 +267,21 @@ namespace DiscImageChef.Core
                 spamsumThread.Start(spamsumPkt);
             }
 
-            while(adlerThread.IsAlive || crc16Thread.IsAlive ||
-                   crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                   md5Thread.IsAlive || ripemd160Thread.IsAlive ||
-                   sha1Thread.IsAlive || sha256Thread.IsAlive ||
-                   sha384Thread.IsAlive || sha512Thread.IsAlive ||
-                   spamsumThread.IsAlive)
-            {
-            }
+            while(adlerThread.IsAlive || crc16Thread.IsAlive || crc32Thread.IsAlive || crc64Thread.IsAlive ||
+                  md5Thread.IsAlive || ripemd160Thread.IsAlive || sha1Thread.IsAlive || sha256Thread.IsAlive ||
+                  sha384Thread.IsAlive || sha512Thread.IsAlive || spamsumThread.IsAlive) { }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                adlerThread = new Thread(updateAdler);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                crc16Thread = new Thread(updateCRC16);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                crc32Thread = new Thread(updateCRC32);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                crc64Thread = new Thread(updateCRC64);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                md5Thread = new Thread(updateMD5);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                ripemd160Thread = new Thread(updateRIPEMD160);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                sha1Thread = new Thread(updateSHA1);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                sha256Thread = new Thread(updateSHA256);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                sha384Thread = new Thread(updateSHA384);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                sha512Thread = new Thread(updateSHA512);
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-                spamsumThread = new Thread(updateSpamSum);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) adlerThread = new Thread(updateAdler);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) crc16Thread = new Thread(updateCRC16);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) crc32Thread = new Thread(updateCRC32);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) crc64Thread = new Thread(updateCRC64);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) md5Thread = new Thread(updateMD5);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) ripemd160Thread = new Thread(updateRIPEMD160);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) sha1Thread = new Thread(updateSHA1);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) sha256Thread = new Thread(updateSHA256);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) sha384Thread = new Thread(updateSHA384);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) sha512Thread = new Thread(updateSHA512);
+            if(enabled.HasFlag(EnableChecksum.SpamSum)) spamsumThread = new Thread(updateSpamSum);
         }
 
         public List<ChecksumType> End()
@@ -546,15 +529,10 @@ namespace DiscImageChef.Core
                 spamsumThreadData.Start(spamsumPktData);
             }
 
-
-            while(adlerThreadData.IsAlive || crc16ThreadData.IsAlive ||
-                crc32ThreadData.IsAlive || crc64ThreadData.IsAlive ||
-                md5ThreadData.IsAlive || ripemd160ThreadData.IsAlive ||
-                sha1ThreadData.IsAlive || sha256ThreadData.IsAlive ||
-                sha384ThreadData.IsAlive || sha512ThreadData.IsAlive ||
-                spamsumThreadData.IsAlive)
-            {
-            }
+            while(adlerThreadData.IsAlive || crc16ThreadData.IsAlive || crc32ThreadData.IsAlive ||
+                  crc64ThreadData.IsAlive || md5ThreadData.IsAlive || ripemd160ThreadData.IsAlive ||
+                  sha1ThreadData.IsAlive || sha256ThreadData.IsAlive || sha384ThreadData.IsAlive ||
+                  sha512ThreadData.IsAlive || spamsumThreadData.IsAlive) { }
 
             List<ChecksumType> dataChecksums = new List<ChecksumType>();
             ChecksumType chk;
@@ -651,7 +629,6 @@ namespace DiscImageChef.Core
         }
 
         #region Threading helpers
-
         struct adlerPacket
         {
             public Adler32Context context;
@@ -772,7 +749,6 @@ namespace DiscImageChef.Core
         {
             ((spamsumPacket)packet).context.Update(((spamsumPacket)packet).data);
         }
-
         #endregion Threading helpers
     }
 }

@@ -37,7 +37,6 @@ Copyright © 2011-2018 Natalia Portillo
 #include <string.h>
 #include <unistd.h>
 #include <malloc.h>
-#include <stdint.h>
 #include <libxml/xmlwriter.h>
 #include "main.h"
 #include "scsi.h"
@@ -56,13 +55,13 @@ int main(int argc, void *argv[])
     unsigned char        *atapi_ident   = NULL;
     AtaErrorRegistersCHS *ata_error_chs;
     int                  scsi_error, ata_error;
-    unsigned char *manufacturer;
-    unsigned char *product;
-    unsigned char *revision;
-    int deviceType = DEVICE_TYPE_UNKNOWN;
-    char *xmlFilename = malloc(NAME_MAX + 1);
-    xmlTextWriterPtr xmlWriter;
-    const char *ataName = "ATA";
+    unsigned char        *manufacturer;
+    unsigned char        *product;
+    unsigned char        *revision;
+    int                  deviceType     = DEVICE_TYPE_UNKNOWN;
+    char                 *xmlFilename   = malloc(NAME_MAX + 1);
+    xmlTextWriterPtr     xmlWriter;
+    const char           *ataName       = "ATA";
 
     printf("The Disc Image Chef Device Reporter for Linux %s\n", DIC_VERSION);
     printf("%s\n", DIC_COPYRIGHT);

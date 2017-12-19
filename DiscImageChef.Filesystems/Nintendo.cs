@@ -51,29 +51,23 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Nintendo optical filesystems";
             PluginUUID = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("shift_jis");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("shift_jis");
+            else CurrentEncoding = encoding;
         }
 
         public NintendoPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Nintendo optical filesystems";
             PluginUUID = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("shift_jis");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("shift_jis");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start != 0)
-                return false;
+            if(partition.Start != 0) return false;
 
-            if((imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) < 0x50000)
-                return false;
+            if((imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) < 0x50000) return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -82,13 +76,13 @@ namespace DiscImageChef.Filesystems
             uint magicGC = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
-            if(magicGC == 0xC2339F3D || magicWii == 0x5D1C9EA3)
-                return true;
+            if(magicGC == 0xC2339F3D || magicWii == 0x5D1C9EA3) return true;
 
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             information = "";
@@ -104,12 +98,9 @@ namespace DiscImageChef.Filesystems
             uint magicGC = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
-            if(magicGC == 0xC2339F3D)
-                wii = false;
-            else if(magicWii == 0x5D1C9EA3)
-                wii = true;
-            else
-                return;
+            if(magicGC == 0xC2339F3D) wii = false;
+            else if(magicWii == 0x5D1C9EA3) wii = true;
+            else return;
 
             fields.discType = Encoding.ASCII.GetString(header, 0, 1);
             fields.gameCode = Encoding.ASCII.GetString(header, 1, 2);
@@ -151,8 +142,10 @@ namespace DiscImageChef.Filesystems
                 {
                     if((offset1 + i * 8 + 8) < 0x50000)
                     {
-                        fields.firstPartitions[i].offset = BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 0)) << 2;
-                        fields.firstPartitions[i].type = BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
+                        fields.firstPartitions[i].offset =
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 0)) << 2;
+                        fields.firstPartitions[i].type =
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
                     }
                 }
 
@@ -160,8 +153,10 @@ namespace DiscImageChef.Filesystems
                 {
                     if((offset1 + i * 8 + 8) < 0x50000)
                     {
-                        fields.firstPartitions[i].offset = BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 0)) << 2;
-                        fields.firstPartitions[i].type = BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
+                        fields.firstPartitions[i].offset =
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 0)) << 2;
+                        fields.firstPartitions[i].type =
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
                     }
                 }
 
@@ -169,8 +164,10 @@ namespace DiscImageChef.Filesystems
                 {
                     if((offset1 + i * 8 + 8) < 0x50000)
                     {
-                        fields.firstPartitions[i].offset = BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 0)) << 2;
-                        fields.firstPartitions[i].type = BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
+                        fields.firstPartitions[i].offset =
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 0)) << 2;
+                        fields.firstPartitions[i].type =
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
                     }
                 }
 
@@ -178,8 +175,10 @@ namespace DiscImageChef.Filesystems
                 {
                     if((offset1 + i * 8 + 8) < 0x50000)
                     {
-                        fields.firstPartitions[i].offset = BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 0)) << 2;
-                        fields.firstPartitions[i].type = BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
+                        fields.firstPartitions[i].offset =
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 0)) << 2;
+                        fields.firstPartitions[i].type =
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
                     }
                 }
 
@@ -220,24 +219,33 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("Nintendo plugin", "fstMax = {0}", fields.fstMax);
             for(int i = 0; i < fields.firstPartitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].offset = {0}", fields.firstPartitions[i].offset, i);
-                DicConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].type = {0}", fields.firstPartitions[i].type, i);
+                DicConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].offset = {0}",
+                                          fields.firstPartitions[i].offset, i);
+                DicConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].type = {0}",
+                                          fields.firstPartitions[i].type, i);
             }
             for(int i = 0; i < fields.secondPartitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].offset = {0}", fields.secondPartitions[i].offset, i);
-                DicConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].type = {0}", fields.secondPartitions[i].type, i);
+                DicConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].offset = {0}",
+                                          fields.secondPartitions[i].offset, i);
+                DicConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].type = {0}",
+                                          fields.secondPartitions[i].type, i);
             }
             for(int i = 0; i < fields.thirdPartitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].offset = {0}", fields.thirdPartitions[i].offset, i);
-                DicConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].type = {0}", fields.thirdPartitions[i].type, i);
+                DicConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].offset = {0}",
+                                          fields.thirdPartitions[i].offset, i);
+                DicConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].type = {0}",
+                                          fields.thirdPartitions[i].type, i);
             }
             for(int i = 0; i < fields.fourthPartitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].offset = {0}", fields.fourthPartitions[i].offset, i);
-                DicConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].type = {0}", fields.fourthPartitions[i].type, i);
+                DicConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].offset = {0}",
+                                          fields.fourthPartitions[i].offset, i);
+                DicConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].type = {0}",
+                                          fields.fourthPartitions[i].type, i);
             }
+
             DicConsole.DebugWriteLine("Nintendo plugin", "region = {0}", fields.region);
             DicConsole.DebugWriteLine("Nintendo plugin", "japanAge = {0}", fields.japanAge);
             DicConsole.DebugWriteLine("Nintendo plugin", "usaAge = {0}", fields.usaAge);
@@ -250,32 +258,38 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("Nintendo plugin", "koreaAge = {0}", fields.koreaAge);
 
             sbInformation.AppendLine("Nintendo optical filesystem");
-            if(wii)
-                sbInformation.AppendLine("Nintendo Wii Optical Disc");
-            else
-                sbInformation.AppendLine("Nintendo GameCube Optical Disc");
+            if(wii) sbInformation.AppendLine("Nintendo Wii Optical Disc");
+            else sbInformation.AppendLine("Nintendo GameCube Optical Disc");
             sbInformation.AppendFormat("Disc ID is {0}", fields.discID).AppendLine();
             sbInformation.AppendFormat("Disc is a {0} disc", DiscTypeToString(fields.discType)).AppendLine();
             sbInformation.AppendFormat("Disc region is {0}", RegionCodeToString(fields.regionCode)).AppendLine();
             sbInformation.AppendFormat("Published by {0}", PublisherCodeToString(fields.publisherCode)).AppendLine();
             if(fields.discNumber > 0)
                 sbInformation.AppendFormat("Disc number {0} of a multi-disc set", fields.discNumber + 1).AppendLine();
-            if(fields.streaming)
-                sbInformation.AppendLine("Disc is prepared for audio streaming");
+            if(fields.streaming) sbInformation.AppendLine("Disc is prepared for audio streaming");
             if(fields.streamBufferSize > 0)
-                sbInformation.AppendFormat("Audio streaming buffer size is {0} bytes", fields.streamBufferSize).AppendLine();
+                sbInformation.AppendFormat("Audio streaming buffer size is {0} bytes", fields.streamBufferSize)
+                             .AppendLine();
             sbInformation.AppendFormat("Title: {0}", fields.title).AppendLine();
 
             if(wii)
             {
                 for(int i = 0; i < fields.firstPartitions.Length; i++)
-                    sbInformation.AppendFormat("First {0} partition starts at sector {1}", PartitionTypeToString(fields.firstPartitions[i].type), fields.firstPartitions[i].offset / 2048).AppendLine();
+                    sbInformation.AppendFormat("First {0} partition starts at sector {1}",
+                                               PartitionTypeToString(fields.firstPartitions[i].type),
+                                               fields.firstPartitions[i].offset / 2048).AppendLine();
                 for(int i = 0; i < fields.secondPartitions.Length; i++)
-                    sbInformation.AppendFormat("Second {0} partition starts at sector {1}", PartitionTypeToString(fields.secondPartitions[i].type), fields.secondPartitions[i].offset / 2048).AppendLine();
+                    sbInformation.AppendFormat("Second {0} partition starts at sector {1}",
+                                               PartitionTypeToString(fields.secondPartitions[i].type),
+                                               fields.secondPartitions[i].offset / 2048).AppendLine();
                 for(int i = 0; i < fields.thirdPartitions.Length; i++)
-                    sbInformation.AppendFormat("Third {0} partition starts at sector {1}", PartitionTypeToString(fields.thirdPartitions[i].type), fields.thirdPartitions[i].offset / 2048).AppendLine();
+                    sbInformation.AppendFormat("Third {0} partition starts at sector {1}",
+                                               PartitionTypeToString(fields.thirdPartitions[i].type),
+                                               fields.thirdPartitions[i].offset / 2048).AppendLine();
                 for(int i = 0; i < fields.fourthPartitions.Length; i++)
-                    sbInformation.AppendFormat("Fourth {0} partition starts at sector {1}", PartitionTypeToString(fields.fourthPartitions[i].type), fields.fourthPartitions[i].offset / 2048).AppendLine();
+                    sbInformation.AppendFormat("Fourth {0} partition starts at sector {1}",
+                                               PartitionTypeToString(fields.fourthPartitions[i].type),
+                                               fields.fourthPartitions[i].offset / 2048).AppendLine();
 
                 //                sbInformation.AppendFormat("Region byte is {0}", fields.region).AppendLine();
                 if((fields.japanAge & 0x80) != 0x80)
@@ -298,16 +312,15 @@ namespace DiscImageChef.Filesystems
                     sbInformation.AppendFormat("Korea age rating is {0}", fields.koreaAge).AppendLine();
             }
             else
-                sbInformation.AppendFormat("FST starts at {0} and has {1} bytes", fields.fstOff, fields.fstSize).AppendLine();
+                sbInformation.AppendFormat("FST starts at {0} and has {1} bytes", fields.fstOff, fields.fstSize)
+                             .AppendLine();
 
             information = sbInformation.ToString();
             xmlFSType.Bootable = true;
             xmlFSType.Clusters = (long)((imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) / 2048);
             xmlFSType.ClusterSize = 2048;
-            if(wii)
-                xmlFSType.Type = "Nintendo Wii filesystem";
-            else
-                xmlFSType.Type = "Nintendo Gamecube filesystem";
+            if(wii) xmlFSType.Type = "Nintendo Wii filesystem";
+            else xmlFSType.Type = "Nintendo Gamecube filesystem";
             xmlFSType.VolumeName = fields.title;
             xmlFSType.VolumeSerial = fields.discID;
         }
@@ -356,46 +369,27 @@ namespace DiscImageChef.Filesystems
         {
             switch(discType)
             {
-                case "C":
-                    return "Commodore 64 Virtual Console";
-                case "D":
-                    return "Demo";
-                case "E":
-                    return "Neo-Geo Virtual Console";
-                case "F":
-                    return "NES Virtual Console";
-                case "G":
-                    return "Gamecube";
-                case "H":
-                    return "Wii channel";
-                case "J":
-                    return "Super Nintendo Virtual Console";
-                case "L":
-                    return "Master System Virtual Console";
-                case "M":
-                    return "Megadrive Virtual Console";
-                case "N":
-                    return "Nintendo 64 Virtual Console";
-                case "P":
-                    return "Promotional or TurboGrafx Virtual Console";
-                case "Q":
-                    return "TurboGrafx CD Virtual Console";
+                case "C": return "Commodore 64 Virtual Console";
+                case "D": return "Demo";
+                case "E": return "Neo-Geo Virtual Console";
+                case "F": return "NES Virtual Console";
+                case "G": return "Gamecube";
+                case "H": return "Wii channel";
+                case "J": return "Super Nintendo Virtual Console";
+                case "L": return "Master System Virtual Console";
+                case "M": return "Megadrive Virtual Console";
+                case "N": return "Nintendo 64 Virtual Console";
+                case "P": return "Promotional or TurboGrafx Virtual Console";
+                case "Q": return "TurboGrafx CD Virtual Console";
                 case "R":
-                case "S":
-                    return "Wii";
-                case "U":
-                    return "Utility";
-                case "W":
-                    return "WiiWare";
-                case "X":
-                    return "MSX Virtual Console or WiiWare demo";
+                case "S": return "Wii";
+                case "U": return "Utility";
+                case "W": return "WiiWare";
+                case "X": return "MSX Virtual Console or WiiWare demo";
                 case "0":
-                case "1":
-                    return "Diagnostic";
-                case "4":
-                    return "Wii Backup";
-                case "_":
-                    return "WiiFit";
+                case "1": return "Diagnostic";
+                case "4": return "Wii Backup";
+                case "_": return "WiiFit";
             }
 
             return string.Format("unknown type '{0}'", discType);
@@ -405,34 +399,22 @@ namespace DiscImageChef.Filesystems
         {
             switch(regionCode)
             {
-                case "A":
-                    return "any region";
-                case "D":
-                    return "Germany";
+                case "A": return "any region";
+                case "D": return "Germany";
                 case "N":
-                case "E":
-                    return "USA";
-                case "F":
-                    return "France";
-                case "I":
-                    return "Italy";
-                case "J":
-                    return "Japan";
+                case "E": return "USA";
+                case "F": return "France";
+                case "I": return "Italy";
+                case "J": return "Japan";
                 case "K":
-                case "Q":
-                    return "Korea";
+                case "Q": return "Korea";
                 case "L":
                 case "M":
-                case "P":
-                    return "PAL";
-                case "R":
-                    return "Russia";
-                case "S":
-                    return "Spain";
-                case "T":
-                    return "Taiwan";
-                case "U":
-                    return "Australia";
+                case "P": return "PAL";
+                case "R": return "Russia";
+                case "S": return "Spain";
+                case "T": return "Taiwan";
+                case "U": return "Australia";
             }
 
             return string.Format("unknown code '{0}'", regionCode);
@@ -442,48 +424,27 @@ namespace DiscImageChef.Filesystems
         {
             switch(publisherCode)
             {
-                case "01":
-                    return "Nintendo";
-                case "08":
-                    return "CAPCOM";
-                case "41":
-                    return "Ubisoft";
-                case "4F":
-                    return "Eidos";
-                case "51":
-                    return "Acclaim";
-                case "52":
-                    return "Activision";
-                case "5D":
-                    return "Midway";
-                case "5G":
-                    return "Hudson";
-                case "64":
-                    return "LucasArts";
-                case "69":
-                    return "Electronic Arts";
-                case "6S":
-                    return "TDK Mediactive";
-                case "8P":
-                    return "SEGA";
-                case "A4":
-                    return "Mirage Studios";
-                case "AF":
-                    return "Namco";
-                case "B2":
-                    return "Bandai";
-                case "DA":
-                    return "Tomy";
-                case "EM":
-                    return "Konami";
-                case "70":
-                    return "Atari";
-                case "4Q":
-                    return "Disney Interactive";
-                case "GD":
-                    return "Square Enix";
-                case "7D":
-                    return "Sierra";
+                case "01": return "Nintendo";
+                case "08": return "CAPCOM";
+                case "41": return "Ubisoft";
+                case "4F": return "Eidos";
+                case "51": return "Acclaim";
+                case "52": return "Activision";
+                case "5D": return "Midway";
+                case "5G": return "Hudson";
+                case "64": return "LucasArts";
+                case "69": return "Electronic Arts";
+                case "6S": return "TDK Mediactive";
+                case "8P": return "SEGA";
+                case "A4": return "Mirage Studios";
+                case "AF": return "Namco";
+                case "B2": return "Bandai";
+                case "DA": return "Tomy";
+                case "EM": return "Konami";
+                case "70": return "Atari";
+                case "4Q": return "Disney Interactive";
+                case "GD": return "Square Enix";
+                case "7D": return "Sierra";
             }
 
             return string.Format("Unknown publisher '{0}'", publisherCode);
@@ -493,12 +454,9 @@ namespace DiscImageChef.Filesystems
         {
             switch(type)
             {
-                case 0:
-                    return "data";
-                case 1:
-                    return "update";
-                case 2:
-                    return "channel";
+                case 0: return "data";
+                case 1: return "update";
+                case 2: return "channel";
             }
 
             return string.Format("unknown type {0}", type);
@@ -565,4 +523,3 @@ namespace DiscImageChef.Filesystems
         }
     }
 }
-

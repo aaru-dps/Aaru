@@ -71,6 +71,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.ShareStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -80,6 +81,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.BenchmarkStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -89,6 +91,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.CommandStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -98,6 +101,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.DeviceStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -107,6 +111,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.FilesystemStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -116,6 +121,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.FilterStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -125,6 +131,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.MediaImageStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -134,6 +141,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.MediaScanStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -143,6 +151,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.PartitionStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -152,6 +161,7 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.MediaStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
@@ -161,13 +171,12 @@ namespace DiscImageChef.Commands
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
+
                 Settings.Settings.Current.Stats.VerifyStats = pressedKey.Key == ConsoleKey.Y;
             }
-            else
-                Settings.Settings.Current.Stats = null;
+            else Settings.Settings.Current.Stats = null;
 
             Settings.Settings.SaveSettings();
         }
     }
 }
-

@@ -48,7 +48,9 @@ namespace DiscImageChef.Devices
         /// <param name="transferLength">How many blocks to read.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint transferLength, PioneerSubchannel subchannel, uint timeout, out double duration)
+        public bool PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
+                                    uint transferLength, PioneerSubchannel subchannel, uint timeout,
+                                    out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
@@ -66,7 +68,8 @@ namespace DiscImageChef.Devices
 
             buffer = new byte[blockSize * transferLength];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA took {0} ms.", duration);
@@ -86,7 +89,8 @@ namespace DiscImageChef.Devices
         /// <param name="endMsf">End MM:SS:FF of read encoded as 0x00MMSSFF.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf, uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
+        public bool PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf,
+                                       uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
@@ -104,7 +108,8 @@ namespace DiscImageChef.Devices
             uint transferLength = (uint)((cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]));
             buffer = new byte[blockSize * transferLength];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA MSF took {0} ms.", duration);
@@ -124,7 +129,8 @@ namespace DiscImageChef.Devices
         /// <param name="wholeSector">If set to <c>true</c>, returns all 2352 bytes of sector data.</param>
         /// <param name="lba">Start block address.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength, bool errorFlags, bool wholeSector, uint timeout, out double duration)
+        public bool PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
+                                    bool errorFlags, bool wholeSector, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
@@ -155,7 +161,8 @@ namespace DiscImageChef.Devices
                 cdb[6] = 0x00;
             }
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-XA took {0} ms.", duration);
@@ -164,4 +171,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

@@ -42,28 +42,19 @@ namespace DiscImageChef.Server.App_Start
             foreach(pageType evpd in pages)
             {
                 string decoded;
-                if(evpd.page >= 0x01 && evpd.page <= 0x7F)
-                    decoded = Decoders.SCSI.EVPD.DecodeASCIIPage(evpd.value);
-                else if(evpd.page == 0x81)
-                    decoded = Decoders.SCSI.EVPD.PrettifyPage_81(evpd.value);
-                else if(evpd.page == 0x82)
-                    decoded = Decoders.SCSI.EVPD.DecodePage82(evpd.value);
-                else if(evpd.page == 0x83)
-                    decoded = Decoders.SCSI.EVPD.PrettifyPage_83(evpd.value);
-                else if(evpd.page == 0x84)
-                    decoded = Decoders.SCSI.EVPD.PrettifyPage_84(evpd.value);
-                else if(evpd.page == 0x85)
-                    decoded = Decoders.SCSI.EVPD.PrettifyPage_85(evpd.value);
-                else if(evpd.page == 0x86)
-                    decoded = Decoders.SCSI.EVPD.PrettifyPage_86(evpd.value);
-                else if(evpd.page == 0x89)
-                    decoded = Decoders.SCSI.EVPD.PrettifyPage_89(evpd.value);
-                else if(evpd.page == 0xB0)
-                    decoded = Decoders.SCSI.EVPD.PrettifyPage_B0(evpd.value);
+                if(evpd.page >= 0x01 && evpd.page <= 0x7F) decoded = Decoders.SCSI.EVPD.DecodeASCIIPage(evpd.value);
+                else if(evpd.page == 0x81) decoded = Decoders.SCSI.EVPD.PrettifyPage_81(evpd.value);
+                else if(evpd.page == 0x82) decoded = Decoders.SCSI.EVPD.DecodePage82(evpd.value);
+                else if(evpd.page == 0x83) decoded = Decoders.SCSI.EVPD.PrettifyPage_83(evpd.value);
+                else if(evpd.page == 0x84) decoded = Decoders.SCSI.EVPD.PrettifyPage_84(evpd.value);
+                else if(evpd.page == 0x85) decoded = Decoders.SCSI.EVPD.PrettifyPage_85(evpd.value);
+                else if(evpd.page == 0x86) decoded = Decoders.SCSI.EVPD.PrettifyPage_86(evpd.value);
+                else if(evpd.page == 0x89) decoded = Decoders.SCSI.EVPD.PrettifyPage_89(evpd.value);
+                else if(evpd.page == 0xB0) decoded = Decoders.SCSI.EVPD.PrettifyPage_B0(evpd.value);
                 else if(evpd.page == 0xB2)
-                    decoded = string.Format("TapeAlert Supported Flags Bitmap: 0x{0:X16}<br/>", Decoders.SCSI.EVPD.DecodePageB2(evpd.value));
-                else if(evpd.page == 0xB4)
-                    decoded = Decoders.SCSI.EVPD.DecodePageB4(evpd.value);
+                    decoded = string.Format("TapeAlert Supported Flags Bitmap: 0x{0:X16}<br/>",
+                                            Decoders.SCSI.EVPD.DecodePageB2(evpd.value));
+                else if(evpd.page == 0xB4) decoded = Decoders.SCSI.EVPD.DecodePageB4(evpd.value);
                 else if(evpd.page == 0xC0 && vendor.Trim() == "quantum")
                     decoded = Decoders.SCSI.EVPD.PrettifyPage_C0_Quantum(evpd.value);
                 else if(evpd.page == 0xC0 && vendor.Trim() == "seagate")
@@ -74,20 +65,19 @@ namespace DiscImageChef.Server.App_Start
                     decoded = Decoders.SCSI.EVPD.PrettifyPage_C1_IBM(evpd.value);
                 else if((evpd.page == 0xC0 || evpd.page == 0xC1) && vendor.Trim() == "certance")
                     decoded = Decoders.SCSI.EVPD.PrettifyPage_C0_C1_Certance(evpd.value);
-                else if((evpd.page == 0xC2 || evpd.page == 0xC3 || evpd.page == 0xC4 || evpd.page == 0xC5 || evpd.page == 0xC6) &&
+                else if((evpd.page == 0xC2 || evpd.page == 0xC3 || evpd.page == 0xC4 || evpd.page == 0xC5 ||
+                         evpd.page == 0xC6) &&
                         vendor.Trim() == "certance")
                     decoded = Decoders.SCSI.EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(evpd.value);
-                else if((evpd.page == 0xC0 || evpd.page == 0xC1 || evpd.page == 0xC2 || evpd.page == 0xC3 || evpd.page == 0xC4 || evpd.page == 0xC5) &&
-                        vendor.Trim() == "hp")
-                    decoded = Decoders.SCSI.EVPD.PrettifyPage_C0_to_C5_HP(evpd.value);
+                else if((evpd.page == 0xC0 || evpd.page == 0xC1 || evpd.page == 0xC2 || evpd.page == 0xC3 ||
+                         evpd.page == 0xC4 || evpd.page == 0xC5) &&
+                        vendor.Trim() == "hp") decoded = Decoders.SCSI.EVPD.PrettifyPage_C0_to_C5_HP(evpd.value);
                 else if(evpd.page == 0xDF && vendor.Trim() == "certance")
                     decoded = Decoders.SCSI.EVPD.PrettifyPage_DF_Certance(evpd.value);
-                else
-                    decoded = "Undecoded";
+                else decoded = "Undecoded";
 
-                if(!string.IsNullOrEmpty(decoded))
-                    decoded = decoded.Replace("\n", "<br/>");
-                
+                if(!string.IsNullOrEmpty(decoded)) decoded = decoded.Replace("\n", "<br/>");
+
                 evpdPages.Add(string.Format("EVPD page {0:X2}h", evpd.page), decoded);
             }
         }

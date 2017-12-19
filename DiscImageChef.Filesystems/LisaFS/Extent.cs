@@ -55,24 +55,20 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             file = new ExtentFile();
 
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             if(fileId < 4 || (fileId == 4 && (mddf.fsversion != LisaFSv2 && mddf.fsversion != LisaFSv1)))
                 return Errno.InvalidArgument;
 
-            if(extentCache.TryGetValue(fileId, out file))
-                return Errno.NoError;
+            if(extentCache.TryGetValue(fileId, out file)) return Errno.NoError;
 
             // A file ID that cannot be stored in the S-Records File
-            if(fileId >= srecords.Length)
-                return Errno.InvalidArgument;
+            if(fileId >= srecords.Length) return Errno.InvalidArgument;
 
             ulong ptr = srecords[fileId].extent_ptr;
 
             // An invalid pointer denotes file does not exist
-            if(ptr == 0xFFFFFFFF || ptr == 0x00000000)
-                return Errno.NoSuchFile;
+            if(ptr == 0xFFFFFFFF || ptr == 0x00000000) return Errno.NoSuchFile;
 
             // Pointers are relative to MDDF
             ptr += mddf.mddf_block + volumePrefix;
@@ -96,8 +92,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     }
                 }
 
-                if(!found)
-                    return Errno.InvalidArgument;
+                if(!found) return Errno.InvalidArgument;
             }
 
             // Checks that the sector tag indicates its the Extents File we are searching for
@@ -107,13 +102,10 @@ namespace DiscImageChef.Filesystems.LisaFS
             {
                 byte[] sector;
 
-                if(mddf.fsversion == LisaFSv1)
-                    sector = device.ReadSectors(ptr, 2);
-                else
-                    sector = device.ReadSector(ptr);
+                if(mddf.fsversion == LisaFSv1) sector = device.ReadSectors(ptr, 2);
+                else sector = device.ReadSector(ptr);
 
-                if(sector[0] >= 32 || sector[0] == 0)
-                    return Errno.InvalidArgument;
+                if(sector[0] >= 32 || sector[0] == 0) return Errno.InvalidArgument;
 
                 file.filenameLen = sector[0];
                 file.filename = new byte[file.filenameLen];
@@ -174,8 +166,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 for(int j = 0; j < 41; j++)
                 {
-                    if(BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4) == 0)
-                        break;
+                    if(BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4) == 0) break;
 
                     extentsCount++;
                 }
@@ -195,54 +186,85 @@ namespace DiscImageChef.Filesystems.LisaFS
                 {
                     if(!printedExtents.Contains(fileId))
                     {
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId, StringHandlers.CToString(file.filename, CurrentEncoding));
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId, file.unknown1);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown2 = 0x{1:X2}", fileId, file.unknown2);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].etype = 0x{1:X2}", fileId, file.etype);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId,
+                                                  file.filenameLen);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId,
+                                                  StringHandlers.CToString(file.filename, CurrentEncoding));
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId,
+                                                  file.unknown1);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId,
+                                                  file.file_uid);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown2 = 0x{1:X2}", fileId,
+                                                  file.unknown2);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].etype = 0x{1:X2}", fileId,
+                                                  file.etype);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].ftype = {1}", fileId, file.ftype);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown3 = 0x{1:X2}", fileId, file.unknown3);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown3 = 0x{1:X2}", fileId,
+                                                  file.unknown3);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dtc = {1}", fileId, file.dtc);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dta = {1}", fileId, file.dta);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dtm = {1}", fileId, file.dtm);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dtb = {1}", fileId, file.dtb);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dts = {1}", fileId, file.dts);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].serial = {1}", fileId, file.serial);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown4 = 0x{1:X2}", fileId, file.unknown4);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].locked = {1}", fileId, file.locked > 0);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].protect = {1}", fileId, file.protect > 0);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].master = {1}", fileId, file.master > 0);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].scavenged = {1}", fileId, file.scavenged > 0);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].closed = {1}", fileId, file.closed > 0);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown4 = 0x{1:X2}", fileId,
+                                                  file.unknown4);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].locked = {1}", fileId,
+                                                  file.locked > 0);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].protect = {1}", fileId,
+                                                  file.protect > 0);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].master = {1}", fileId,
+                                                  file.master > 0);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].scavenged = {1}", fileId,
+                                                  file.scavenged > 0);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].closed = {1}", fileId,
+                                                  file.closed > 0);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].open = {1}", fileId, file.open > 0);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown5 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
-                                                  "{10:X2}{11:X2}", fileId, file.unknown5[0], file.unknown5[1], file.unknown5[2], file.unknown5[3],
-                                                  file.unknown5[4], file.unknown5[5], file.unknown5[6], file.unknown5[7], file.unknown5[8], file.unknown5[9],
-                                                  file.unknown5[10]);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].release = {1}", fileId, file.release);
+                        DicConsole.DebugWriteLine("LisaFS plugin",
+                                                  "ExtentFile[{0}].unknown5 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
+                                                  "{10:X2}{11:X2}", fileId, file.unknown5[0], file.unknown5[1],
+                                                  file.unknown5[2], file.unknown5[3], file.unknown5[4],
+                                                  file.unknown5[5], file.unknown5[6], file.unknown5[7],
+                                                  file.unknown5[8], file.unknown5[9], file.unknown5[10]);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].release = {1}", fileId,
+                                                  file.release);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].build = {1}", fileId, file.build);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].compatibility = {1}", fileId, file.compatibility);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].revision = {1}", fileId, file.revision);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown6 = 0x{1:X4}", fileId, file.unknown6);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password_valid = {1}", fileId, file.password_valid > 0);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password = {1}", fileId, CurrentEncoding.GetString(file.password));
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}", fileId, file.unknown7[0],
-                                                  file.unknown7[1], file.unknown7[2]);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].overhead = {1}", fileId, file.overhead);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown8 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
-                                                  "{10:X2}{11:X2}{12:X2}{13:X2}{14:X2}{15:X2}{16:X2}", fileId, file.unknown8[0], file.unknown8[1], file.unknown8[2],
-                                                  file.unknown8[3], file.unknown8[4], file.unknown8[5], file.unknown8[6], file.unknown8[7], file.unknown8[8],
-                                                  file.unknown8[9], file.unknown8[10], file.unknown8[11], file.unknown8[12], file.unknown8[13], file.unknown8[14],
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].compatibility = {1}", fileId,
+                                                  file.compatibility);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].revision = {1}", fileId,
+                                                  file.revision);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown6 = 0x{1:X4}", fileId,
+                                                  file.unknown6);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password_valid = {1}", fileId,
+                                                  file.password_valid > 0);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password = {1}", fileId,
+                                                  CurrentEncoding.GetString(file.password));
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}",
+                                                  fileId, file.unknown7[0], file.unknown7[1], file.unknown7[2]);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].overhead = {1}", fileId,
+                                                  file.overhead);
+                        DicConsole.DebugWriteLine("LisaFS plugin",
+                                                  "ExtentFile[{0}].unknown8 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
+                                                  "{10:X2}{11:X2}{12:X2}{13:X2}{14:X2}{15:X2}{16:X2}", fileId,
+                                                  file.unknown8[0], file.unknown8[1], file.unknown8[2],
+                                                  file.unknown8[3], file.unknown8[4], file.unknown8[5],
+                                                  file.unknown8[6], file.unknown8[7], file.unknown8[8],
+                                                  file.unknown8[9], file.unknown8[10], file.unknown8[11],
+                                                  file.unknown8[12], file.unknown8[13], file.unknown8[14],
                                                   file.unknown8[15]);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].length = {1}", fileId, file.length);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown9 = 0x{1:X8}", fileId, file.unknown9);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown9 = 0x{1:X8}", fileId,
+                                                  file.unknown9);
                         for(int ext = 0; ext < file.extents.Length; ext++)
                         {
-                            DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].extents[{1}].start = {2}", fileId, ext, file.extents[ext].start);
-                            DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].extents[{1}].length = {2}", fileId, ext, file.extents[ext].length);
+                            DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].extents[{1}].start = {2}",
+                                                      fileId, ext, file.extents[ext].start);
+                            DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].extents[{1}].length = {2}",
+                                                      fileId, ext, file.extents[ext].length);
                         }
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown10 = 0x{1:X4}", fileId, file.unknown10);
+
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown10 = 0x{1:X4}", fileId,
+                                                  file.unknown10);
 
                         printedExtents.Add(fileId);
                     }
@@ -259,8 +281,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         Errno ReadSRecords()
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             // Searches the S-Records place using MDDF pointers
             byte[] sectors = device.ReadSectors(mddf.srec_ptr + mddf.mddf_block + volumePrefix, mddf.srec_len);
@@ -281,4 +302,3 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
     }
 }
-

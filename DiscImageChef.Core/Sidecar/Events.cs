@@ -44,8 +44,7 @@ namespace DiscImageChef.Core
 
         public static void InitProgress()
         {
-            if(InitProgressEvent != null)
-                InitProgressEvent();
+            if(InitProgressEvent != null) InitProgressEvent();
         }
 
         public static void UpdateProgress(string text, long current, long maximum)
@@ -56,14 +55,12 @@ namespace DiscImageChef.Core
 
         public static void EndProgress()
         {
-            if(EndProgressEvent != null)
-                EndProgressEvent();
+            if(EndProgressEvent != null) EndProgressEvent();
         }
 
         public static void InitProgress2()
         {
-            if(InitProgressEvent2 != null)
-                InitProgressEvent2();
+            if(InitProgressEvent2 != null) InitProgressEvent2();
         }
 
         public static void UpdateProgress2(string text, long current, long maximum)
@@ -74,14 +71,12 @@ namespace DiscImageChef.Core
 
         public static void EndProgress2()
         {
-            if(EndProgressEvent2 != null)
-                EndProgressEvent2();
+            if(EndProgressEvent2 != null) EndProgressEvent2();
         }
 
         public static void UpdateStatus(string text, params object[] args)
         {
-            if(UpdateStatusEvent != null)
-                UpdateStatusEvent(string.Format(text, args));
+            if(UpdateStatusEvent != null) UpdateStatusEvent(string.Format(text, args));
         }
     }
 }

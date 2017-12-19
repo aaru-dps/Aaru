@@ -43,24 +43,19 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             deviceBlock = new long();
 
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             uint fileID;
             MFS_FileEntry entry;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID))
-                return Errno.NoSuchFile;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileID, out entry))
-                return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
 
-            if(fileBlock > (entry.flPyLen / volMDB.drAlBlkSiz))
-                return Errno.InvalidArgument;
+            if(fileBlock > (entry.flPyLen / volMDB.drAlBlkSiz)) return Errno.InvalidArgument;
 
             uint nextBlock = entry.flStBlk;
             long relBlock = 0;
@@ -73,8 +68,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     return Errno.NoError;
                 }
 
-                if(blockMap[nextBlock] == BMAP_FREE || blockMap[nextBlock] == BMAP_LAST)
-                    break;
+                if(blockMap[nextBlock] == BMAP_FREE || blockMap[nextBlock] == BMAP_LAST) break;
 
                 nextBlock = blockMap[nextBlock];
                 relBlock++;
@@ -85,77 +79,56 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             uint fileID;
             MFS_FileEntry entry;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID))
-                return Errno.NoSuchFile;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileID, out entry))
-                return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
 
             attributes = new FileAttributes();
             MFS_FinderFlags fdFlags = (MFS_FinderFlags)BigEndianBitConverter.ToUInt16(entry.flUsrWds, 0x08);
 
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsAlias))
-                attributes |= FileAttributes.Alias;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kHasBundle))
-                attributes |= FileAttributes.Bundle;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kHasBeenInited))
-                attributes |= FileAttributes.HasBeenInited;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kHasCustomIcon))
-                attributes |= FileAttributes.HasCustomIcon;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kHasNoINITs))
-                attributes |= FileAttributes.HasNoINITs;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsInvisible))
-                attributes |= FileAttributes.Hidden;
-            if(entry.flFlags.HasFlag(MFS_FileFlags.Locked))
-                attributes |= FileAttributes.Immutable;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsOnDesk))
-                attributes |= FileAttributes.IsOnDesk;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsShared))
-                attributes |= FileAttributes.Shared;
-            if(fdFlags.HasFlag(MFS_FinderFlags.kIsStationery))
-                attributes |= FileAttributes.Stationery;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsAlias)) attributes |= FileAttributes.Alias;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kHasBundle)) attributes |= FileAttributes.Bundle;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kHasBeenInited)) attributes |= FileAttributes.HasBeenInited;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kHasCustomIcon)) attributes |= FileAttributes.HasCustomIcon;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kHasNoINITs)) attributes |= FileAttributes.HasNoINITs;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsInvisible)) attributes |= FileAttributes.Hidden;
+            if(entry.flFlags.HasFlag(MFS_FileFlags.Locked)) attributes |= FileAttributes.Immutable;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsOnDesk)) attributes |= FileAttributes.IsOnDesk;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsShared)) attributes |= FileAttributes.Shared;
+            if(fdFlags.HasFlag(MFS_FinderFlags.kIsStationery)) attributes |= FileAttributes.Stationery;
 
-            if(!attributes.HasFlag(FileAttributes.Alias) &&
-               !attributes.HasFlag(FileAttributes.Bundle) &&
-               !attributes.HasFlag(FileAttributes.Stationery))
-                attributes |= FileAttributes.File;
+            if(!attributes.HasFlag(FileAttributes.Alias) && !attributes.HasFlag(FileAttributes.Bundle) &&
+               !attributes.HasFlag(FileAttributes.Stationery)) attributes |= FileAttributes.File;
 
             attributes |= FileAttributes.BlockUnits;
-            
+
             return Errno.NoError;
         }
 
         public override Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             byte[] file;
             Errno error = Errno.NoError;
 
-            if(debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                file = directoryBlocks;
-            else if(debug && string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && bootBlocks != null)
-                file = bootBlocks;
+            if(debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0) file = directoryBlocks;
+            else if(debug && string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && bootBlocks != null
+            ) file = bootBlocks;
             else if(debug && string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
                 file = blockMapBytes;
-            else if(debug && string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
-                file = mdbBlocks;
-            else
-                error = ReadFile(path, out file, false, false);
-            
-            if(error != Errno.NoError)
-                return error;
+            else if(debug && string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0) file = mdbBlocks;
+            else error = ReadFile(path, out file, false, false);
+
+            if(error != Errno.NoError) return error;
 
             if(size == 0)
             {
@@ -163,11 +136,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 return Errno.NoError;
             }
 
-            if(offset >= file.Length)
-                return Errno.InvalidArgument;
+            if(offset >= file.Length) return Errno.InvalidArgument;
 
-            if(size + offset >= file.Length)
-                size = file.Length - offset;
+            if(size + offset >= file.Length) size = file.Length - offset;
 
             buf = new byte[size];
 
@@ -178,12 +149,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
         public override Errno Stat(string path, ref FileEntryInfo stat)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
             {
@@ -205,7 +174,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = (directoryBlocks.Length / stat.BlockSize) + (directoryBlocks.Length % stat.BlockSize);
+                        stat.Blocks = (directoryBlocks.Length / stat.BlockSize) +
+                                      (directoryBlocks.Length % stat.BlockSize);
                         stat.Length = directoryBlocks.Length;
                     }
                     else if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
@@ -223,8 +193,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                         stat.Blocks = (mdbBlocks.Length / stat.BlockSize) + (mdbBlocks.Length % stat.BlockSize);
                         stat.Length = mdbBlocks.Length;
                     }
-                    else
-                        return Errno.InvalidArgument;
+                    else return Errno.InvalidArgument;
 
                     return Errno.NoError;
                 }
@@ -233,16 +202,13 @@ namespace DiscImageChef.Filesystems.AppleMFS
             uint fileID;
             MFS_FileEntry entry;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID))
-                return Errno.NoSuchFile;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileID, out entry))
-                return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
 
             FileAttributes attr = new FileAttributes();
             Errno error = GetAttributes(path, ref attr);
-            if(error != Errno.NoError)
-                return error;
+            if(error != Errno.NoError) return error;
 
             stat = new FileEntryInfo();
             stat.Attributes = attr;
@@ -270,21 +236,17 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             buf = null;
 
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             uint fileID;
             MFS_FileEntry entry;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID))
-                return Errno.NoSuchFile;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileID, out entry))
-                return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
 
             uint nextBlock;
 
@@ -295,6 +257,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     buf = new byte[0];
                     return Errno.NoError;
                 }
+
                 nextBlock = entry.flRStBlk;
             }
             else
@@ -314,9 +277,13 @@ namespace DiscImageChef.Filesystems.AppleMFS
             do
             {
                 if(tags)
-                    sectors = device.ReadSectorsTag((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart, (uint)sectorsPerBlock, ImagePlugins.SectorTagType.AppleSectorTag);
+                    sectors =
+                        device.ReadSectorsTag((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart,
+                                              (uint)sectorsPerBlock, ImagePlugins.SectorTagType.AppleSectorTag);
                 else
-                    sectors = device.ReadSectors((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart, (uint)sectorsPerBlock);
+                    sectors =
+                        device.ReadSectors((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart,
+                                           (uint)sectorsPerBlock);
 
                 ms.Write(sectors, 0, sectors.Length);
 
@@ -330,14 +297,12 @@ namespace DiscImageChef.Filesystems.AppleMFS
             }
             while(nextBlock > BMAP_LAST);
 
-            if(tags)
-                buf = ms.ToArray();
+            if(tags) buf = ms.ToArray();
             else
             {
                 if(resourceFork)
                 {
-                    if(ms.Length < entry.flRLgLen)
-                        buf = ms.ToArray();
+                    if(ms.Length < entry.flRLgLen) buf = ms.ToArray();
                     else
                     {
                         buf = new byte[entry.flRLgLen];
@@ -346,8 +311,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 }
                 else
                 {
-                    if(ms.Length < entry.flLgLen)
-                        buf = ms.ToArray();
+                    if(ms.Length < entry.flLgLen) buf = ms.ToArray();
                     else
                     {
                         buf = new byte[entry.flLgLen];
@@ -360,4 +324,3 @@ namespace DiscImageChef.Filesystems.AppleMFS
         }
     }
 }
-

@@ -35,8 +35,8 @@ namespace DiscImageChef.Tests.Checksums
     [TestFixture]
     public class CRC64
     {
-        static readonly byte[] ExpectedEmpty = { 0x60, 0x6b, 0x70, 0xa2, 0x3e, 0xba, 0xf6, 0xc2 };
-        static readonly byte[] ExpectedRandom = { 0xbf, 0x09, 0x99, 0x2c, 0xc5, 0xed, 0xe3, 0x8e };
+        static readonly byte[] ExpectedEmpty = {0x60, 0x6b, 0x70, 0xa2, 0x3e, 0xba, 0xf6, 0xc2};
+        static readonly byte[] ExpectedRandom = {0xbf, 0x09, 0x99, 0x2c, 0xc5, 0xed, 0xe3, 0x8e};
 
         [Test]
         public void CRC64EmptyFile()
@@ -49,7 +49,8 @@ namespace DiscImageChef.Tests.Checksums
         public void CRC64EmptyData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -61,7 +62,8 @@ namespace DiscImageChef.Tests.Checksums
         public void CRC64EmptyInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -83,7 +85,8 @@ namespace DiscImageChef.Tests.Checksums
         public void CRC64RandomData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -95,7 +98,8 @@ namespace DiscImageChef.Tests.Checksums
         public void CRC64RandomInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();

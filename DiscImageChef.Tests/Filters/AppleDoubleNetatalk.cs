@@ -46,7 +46,8 @@ namespace DiscImageChef.Tests.Filters
         public AppleDoubleNetatalk()
         {
             location = Path.Combine(Consts.TestFilesRoot, "filters", "appledouble", "netatalk", "DOS_720.dmg");
-            sidecar = Path.Combine(Consts.TestFilesRoot, "filters", "appledouble", "netatalk", ".AppleDouble", "DOS_720.dmg");
+            sidecar = Path.Combine(Consts.TestFilesRoot, "filters", "appledouble", "netatalk", ".AppleDouble",
+                                   "DOS_720.dmg");
         }
 
         [Test]

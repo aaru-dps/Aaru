@@ -75,22 +75,22 @@ namespace DiscImageChef.Commands
 
                 if(inputFormat.ImageInfo.readableSectorTags == null)
                 {
-                    DicConsole.WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
+                    DicConsole
+                        .WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
                     options.LongSectors = false;
                 }
                 else
                 {
                     if(inputFormat.ImageInfo.readableSectorTags.Count == 0)
                     {
-                        DicConsole.WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
+                        DicConsole
+                            .WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
                         options.LongSectors = false;
                     }
                 }
 
-                if(options.LongSectors)
-                    sector = inputFormat.ReadSectorLong(options.StartSector + i);
-                else
-                    sector = inputFormat.ReadSector(options.StartSector + i);
+                if(options.LongSectors) sector = inputFormat.ReadSectorLong(options.StartSector + i);
+                else sector = inputFormat.ReadSector(options.StartSector + i);
 
                 DiscImageChef.PrintHex.PrintHexArray(sector, options.WidthBytes);
             }
@@ -99,4 +99,3 @@ namespace DiscImageChef.Commands
         }
     }
 }
-

@@ -59,10 +59,7 @@ namespace DiscImageChef.Filters
                         }
                     }
                 }
-                catch(Exception exception)
-                {
-                    DicConsole.ErrorWriteLine("Exception {0}", exception);
-                }
+                catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
             }
         }
 
@@ -76,23 +73,21 @@ namespace DiscImageChef.Filters
                 {
                     if(filter.Identify(path))
                     {
-                        Filter foundFilter = (Filter)filter.GetType().GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                        Filter foundFilter =
+                            (Filter)filter.GetType().GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         foundFilter.Open(path);
 
-                        if(foundFilter.IsOpened())
-                            return foundFilter;
+                        if(foundFilter.IsOpened()) return foundFilter;
                     }
                 }
-                else
-                    noFilter = filter;
+                else noFilter = filter;
             }
 
             if(noFilter.Identify(path))
             {
                 noFilter.Open(path);
 
-                if(noFilter.IsOpened())
-                    return noFilter;
+                if(noFilter.IsOpened()) return noFilter;
             }
 
             return noFilter;
@@ -104,4 +99,3 @@ namespace DiscImageChef.Filters
         }
     }
 }
-

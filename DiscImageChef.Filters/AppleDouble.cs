@@ -64,8 +64,7 @@ namespace DiscImageChef.Filters
         {
             public uint magic;
             public uint version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] homeFilesystem;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] homeFilesystem;
             public ushort entries;
         }
 
@@ -126,12 +125,18 @@ namespace DiscImageChef.Filters
         const uint AppleDoubleVersion = 0x00010000;
         const uint AppleDoubleVersion2 = 0x00020000;
 
-        readonly byte[] MacintoshHome = { 0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-        readonly byte[] ProDOSHome = { 0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-        readonly byte[] DOSHome = { 0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-        readonly byte[] UNIXHome = { 0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-        readonly byte[] VMXHome = { 0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-        readonly byte[] OSXHome = { 0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+        readonly byte[] MacintoshHome =
+            {0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        readonly byte[] ProDOSHome =
+            {0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        readonly byte[] DOSHome =
+            {0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        readonly byte[] UNIXHome =
+            {0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        readonly byte[] VMXHome =
+            {0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+        readonly byte[] OSXHome =
+            {0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
 
         AppleDoubleEntry dataFork;
         AppleDoubleEntry rsrcFork;
@@ -205,10 +210,10 @@ namespace DiscImageChef.Filters
 
         public override Stream GetResourceForkStream()
         {
-            if(rsrcFork.length == 0)
-                return null;
+            if(rsrcFork.length == 0) return null;
 
-            return new OffsetStream(headerPath, FileMode.Open, FileAccess.Read, rsrcFork.offset, rsrcFork.offset + rsrcFork.length - 1);
+            return new OffsetStream(headerPath, FileMode.Open, FileAccess.Read, rsrcFork.offset,
+                                    rsrcFork.offset + rsrcFork.length - 1);
         }
 
         public override bool HasResourceFork()
@@ -270,8 +275,8 @@ namespace DiscImageChef.Filters
                     prodosStream.Read(prodos_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(prodos_b);
                     prodosStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
-                        return true;
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
                 }
             }
 
@@ -285,8 +290,8 @@ namespace DiscImageChef.Filters
                     unixStream.Read(unix_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unix_b);
                     unixStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
-                        return true;
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
                 }
             }
 
@@ -300,8 +305,8 @@ namespace DiscImageChef.Filters
                     dosStream.Read(dos_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dos_b);
                     dosStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
-                        return true;
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
                 }
             }
 
@@ -315,8 +320,8 @@ namespace DiscImageChef.Filters
                     doslStream.Read(dosl_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dosl_b);
                     doslStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
-                        return true;
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
                 }
             }
 
@@ -330,8 +335,8 @@ namespace DiscImageChef.Filters
                     netatalkStream.Read(netatalk_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(netatalk_b);
                     netatalkStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
-                        return true;
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
                 }
             }
 
@@ -345,8 +350,8 @@ namespace DiscImageChef.Filters
                     daveStream.Read(dave_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dave_b);
                     daveStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
-                        return true;
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
                 }
             }
 
@@ -360,8 +365,8 @@ namespace DiscImageChef.Filters
                     osxStream.Read(osx_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(osx_b);
                     osxStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
-                        return true;
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
                 }
             }
 
@@ -375,8 +380,8 @@ namespace DiscImageChef.Filters
                     unarStream.Read(unar_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unar_b);
                     unarStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
-                        return true;
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
                 }
             }
 
@@ -442,7 +447,8 @@ namespace DiscImageChef.Filters
                     prodosStream.Read(prodos_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(prodos_b);
                     prodosStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = ProDosAppleDouble;
                 }
             }
@@ -457,7 +463,8 @@ namespace DiscImageChef.Filters
                     unixStream.Read(unix_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unix_b);
                     unixStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = UNIXAppleDouble;
                 }
             }
@@ -472,7 +479,8 @@ namespace DiscImageChef.Filters
                     dosStream.Read(dos_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dos_b);
                     dosStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = DOSAppleDouble;
                 }
             }
@@ -487,7 +495,8 @@ namespace DiscImageChef.Filters
                     doslStream.Read(dosl_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dosl_b);
                     doslStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = DOSAppleDoubleLower;
                 }
             }
@@ -502,7 +511,8 @@ namespace DiscImageChef.Filters
                     netatalkStream.Read(netatalk_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(netatalk_b);
                     netatalkStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = NetatalkAppleDouble;
                 }
             }
@@ -517,7 +527,8 @@ namespace DiscImageChef.Filters
                     daveStream.Read(dave_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dave_b);
                     daveStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = DAVEAppleDouble;
                 }
             }
@@ -532,7 +543,8 @@ namespace DiscImageChef.Filters
                     osxStream.Read(osx_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(osx_b);
                     osxStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = OSXAppleDouble;
                 }
             }
@@ -547,7 +559,8 @@ namespace DiscImageChef.Filters
                     unarStream.Read(unar_b, 0, 26);
                     header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unar_b);
                     unarStream.Close();
-                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                    if(header.magic == AppleDoubleMagic &&
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = UnArAppleDouble;
                 }
             }
@@ -580,7 +593,8 @@ namespace DiscImageChef.Filters
                         fs.Seek(entry.offset, SeekOrigin.Begin);
                         byte[] dates_b = new byte[16];
                         fs.Read(dates_b, 0, 16);
-                        AppleDoubleFileDates dates = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleFileDates>(dates_b);
+                        AppleDoubleFileDates dates =
+                            BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleFileDates>(dates_b);
                         creationTime = DateHandlers.AppleDoubleToDateTime(dates.creationDate);
                         lastWriteTime = DateHandlers.AppleDoubleToDateTime(dates.modificationDate);
                         break;
@@ -590,26 +604,31 @@ namespace DiscImageChef.Filters
                         fs.Read(finfo, 0, finfo.Length);
                         if(MacintoshHome.SequenceEqual(header.homeFilesystem))
                         {
-                            AppleDoubleMacFileInfo macinfo = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleMacFileInfo>(finfo);
+                            AppleDoubleMacFileInfo macinfo =
+                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleMacFileInfo>(finfo);
                             creationTime = DateHandlers.MacToDateTime(macinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
                         {
-                            AppleDoubleProDOSFileInfo prodosinfo = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleProDOSFileInfo>(finfo);
+                            AppleDoubleProDOSFileInfo prodosinfo =
+                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleProDOSFileInfo>(finfo);
                             creationTime = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(UNIXHome.SequenceEqual(header.homeFilesystem))
                         {
-                            AppleDoubleUNIXFileInfo unixinfo = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleUNIXFileInfo>(finfo);
+                            AppleDoubleUNIXFileInfo unixinfo =
+                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleUNIXFileInfo>(finfo);
                             creationTime = DateHandlers.UNIXUnsignedToDateTime(unixinfo.creationDate);
                             lastWriteTime = DateHandlers.UNIXUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
                         {
-                            AppleDoubleDOSFileInfo dosinfo = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleDOSFileInfo>(finfo);
-                            lastWriteTime = DateHandlers.DOSToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
+                            AppleDoubleDOSFileInfo dosinfo =
+                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleDOSFileInfo>(finfo);
+                            lastWriteTime =
+                                DateHandlers.DOSToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
                         break;
                     case AppleDoubleEntryID.ResourceFork:

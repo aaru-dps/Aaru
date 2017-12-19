@@ -48,291 +48,247 @@ namespace DiscImageChef.Filters
 
         public OffsetStream(Stream stream, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = stream;
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options, long start, long end)
+        public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
+                            FileOptions options, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(path, mode, access, share, bufferSize, options);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         public OffsetStream(SafeFileHandle handle, FileAccess access, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(handle, access);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(handle, access, bufferSize);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync, long start, long end)
+        public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync, long start,
+                            long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(handle, access, bufferSize, isAsync);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(string path, FileMode mode, FileSystemRights rights, FileShare share, int bufferSize, FileOptions options, long start, long end)
+        public OffsetStream(string path, FileMode mode, FileSystemRights rights, FileShare share, int bufferSize,
+                            FileOptions options, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(path, mode, rights, share, bufferSize, options);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(string path, FileMode mode, FileSystemRights rights, FileShare share, int bufferSize, FileOptions options, FileSecurity fileSecurity, long start, long end)
+        public OffsetStream(string path, FileMode mode, FileSystemRights rights, FileShare share, int bufferSize,
+                            FileOptions options, FileSecurity fileSecurity, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(path, mode, rights, share, bufferSize, options, fileSecurity);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool useAsync, long start, long end)
+        public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
+                            bool useAsync, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(path, mode, access, share, bufferSize, useAsync);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, long start, long end)
+        public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, long start,
+                            long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(path, mode, access, share, bufferSize);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(path, mode, access, share);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         public OffsetStream(string path, FileMode mode, FileAccess access, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(path, mode, access);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         public OffsetStream(string path, FileMode mode, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new FileStream(path, mode);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public OffsetStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, long start, long end)
+        public OffsetStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, long start,
+                            long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new MemoryStream(buffer, index, count, writable, publiclyVisible);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         public OffsetStream(byte[] buffer, int index, int count, bool writable, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new MemoryStream(buffer, index, count, writable);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         public OffsetStream(byte[] buffer, int index, int count, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new MemoryStream(buffer, index, count);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         public OffsetStream(byte[] buffer, bool writable, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new MemoryStream(buffer, writable);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         public OffsetStream(byte[] buffer, long start, long end)
         {
-            if(start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
 
-            if(end < 0)
-                throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
             streamEnd = end;
 
             baseStream = new MemoryStream(buffer);
 
-            if(end > baseStream.Length)
-                throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
         ~OffsetStream()
@@ -343,64 +299,48 @@ namespace DiscImageChef.Filters
 
         public override bool CanRead
         {
-            get
-            {
-                return baseStream.CanRead;
-            }
+            get { return baseStream.CanRead; }
         }
 
         public override bool CanSeek
         {
-            get
-            {
-                return baseStream.CanSeek;
-            }
+            get { return baseStream.CanSeek; }
         }
 
         public override bool CanWrite
         {
-            get
-            {
-                return baseStream.CanWrite;
-            }
+            get { return baseStream.CanWrite; }
         }
 
         public override long Length
         {
-            get
-            {
-                return streamEnd - streamStart + 1;
-            }
+            get { return streamEnd - streamStart + 1; }
         }
 
         public override long Position
         {
-            get
-            {
-                return baseStream.Position - streamStart;
-            }
+            get { return baseStream.Position - streamStart; }
 
             set
             {
-                if(value + streamStart > streamEnd)
-                    throw new IOException("Cannot set position past stream end.");
+                if(value + streamStart > streamEnd) throw new IOException("Cannot set position past stream end.");
 
                 baseStream.Position = value;
             }
         }
 
-        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback,
+                                               object state)
         {
-            if(baseStream.Position + count > streamEnd)
-                throw new IOException("Cannot read past stream end.");
+            if(baseStream.Position + count > streamEnd) throw new IOException("Cannot read past stream end.");
 
             return baseStream.BeginRead(buffer, offset, count, callback, state);
         }
 
-        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback,
+                                                object state)
         {
-            if(baseStream.Position + count > streamEnd)
-                throw new IOException("Cannot write past stream end.");
+            if(baseStream.Position + count > streamEnd) throw new IOException("Cannot write past stream end.");
 
             return baseStream.BeginWrite(buffer, offset, count, callback, state);
         }
@@ -433,8 +373,7 @@ namespace DiscImageChef.Filters
 
         public override void WriteByte(byte value)
         {
-            if(baseStream.Position + 1 > streamEnd)
-                throw new IOException("Cannot write past stream end.");
+            if(baseStream.Position + 1 > streamEnd) throw new IOException("Cannot write past stream end.");
 
             baseStream.WriteByte(value);
         }
@@ -446,8 +385,7 @@ namespace DiscImageChef.Filters
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if(baseStream.Position + count > streamEnd + 1)
-                throw new IOException("Cannot read past stream end.");
+            if(baseStream.Position + count > streamEnd + 1) throw new IOException("Cannot read past stream end.");
 
             return baseStream.Read(buffer, offset, count);
         }
@@ -457,16 +395,17 @@ namespace DiscImageChef.Filters
             switch(origin)
             {
                 case SeekOrigin.Begin:
-                    if(offset + streamStart > streamEnd)
-                        throw new IOException("Cannot seek past stream end.");
+                    if(offset + streamStart > streamEnd) throw new IOException("Cannot seek past stream end.");
+
                     return baseStream.Seek(offset + streamStart, SeekOrigin.Begin) - streamStart;
                 case SeekOrigin.End:
                     if(offset - (baseStream.Length - streamEnd) < streamStart)
                         throw new IOException("Cannot seek before stream start.");
+
                     return baseStream.Seek(offset - (baseStream.Length - streamEnd), SeekOrigin.End) - streamStart;
                 default:
-                    if(offset + baseStream.Position > streamEnd)
-                        throw new IOException("Cannot seek past stream end.");
+                    if(offset + baseStream.Position > streamEnd) throw new IOException("Cannot seek past stream end.");
+
                     return baseStream.Seek(offset, SeekOrigin.Current) - streamStart;
             }
         }
@@ -478,11 +417,9 @@ namespace DiscImageChef.Filters
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if(baseStream.Position + count > streamEnd)
-                throw new IOException("Cannot write past stream end.");
+            if(baseStream.Position + count > streamEnd) throw new IOException("Cannot write past stream end.");
 
             baseStream.Write(buffer, offset, count);
         }
     }
 }
-

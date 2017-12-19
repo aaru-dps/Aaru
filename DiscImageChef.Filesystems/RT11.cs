@@ -53,29 +53,23 @@ namespace DiscImageChef.Filesystems
         {
             Name = "RT-11 file system";
             PluginUUID = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else CurrentEncoding = encoding;
         }
 
         public RT11(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "RT-11 file system";
             PluginUUID = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((1 + partition.Start) >= partition.End)
-                return false;
+            if((1 + partition.Start) >= partition.End) return false;
 
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             byte[] magic_b = new byte[12];
             string magic;
@@ -87,7 +81,8 @@ namespace DiscImageChef.Filesystems
             return magic == "DECRT11A    ";
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
@@ -110,14 +105,17 @@ namespace DiscImageChef.Filesystems
              *      MOV 1,@R0
              */
             ushort check = 0;
-            for(int i = 0; i < 512; i += 2)
-                check += BitConverter.ToUInt16(hb_sector, i);
+            for(int i = 0; i < 512; i += 2) check += BitConverter.ToUInt16(hb_sector, i);
 
-            sb.AppendFormat("Volume format is {0}", StringHandlers.SpacePaddedToString(homeblock.format, CurrentEncoding)).AppendLine();
-            sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512).AppendLine();
+            sb.AppendFormat("Volume format is {0}",
+                            StringHandlers.SpacePaddedToString(homeblock.format, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512)
+              .AppendLine();
             sb.AppendFormat("First directory segment starts at block {0}", homeblock.rootBlock).AppendLine();
-            sb.AppendFormat("Volume owner is \"{0}\"", StringHandlers.SpacePaddedToString(homeblock.ownername, CurrentEncoding)).AppendLine();
-            sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume owner is \"{0}\"",
+                            StringHandlers.SpacePaddedToString(homeblock.ownername, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume label: \"{0}\"",
+                            StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding)).AppendLine();
             sb.AppendFormat("Checksum: 0x{0:X4} (calculated 0x{1:X4})", homeblock.checksum, check).AppendLine();
 
             byte[] bootBlock = imagePlugin.ReadSector(0);
@@ -138,44 +136,32 @@ namespace DiscImageChef.Filesystems
         struct RT11HomeBlock
         {
             /// <summary>Bad block replacement table</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 130)]
-            public byte[] badBlockTable;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 130)] public byte[] badBlockTable;
             /// <summary>Unused</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] unused;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] unused;
             /// <summary>INITIALIZE/RESTORE data area</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 38)]
-            public byte[] initArea;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 38)] public byte[] initArea;
             /// <summary>BUP information area</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
-            public byte[] bupInformation;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] bupInformation;
             /// <summary>Empty</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 260)]
-            public byte[] empty;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 260)] public byte[] empty;
             /// <summary>Reserved</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] reserved1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved1;
             /// <summary>Reserved</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] reserved2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
-            public byte[] empty2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)] public byte[] empty2;
             /// <summary>Cluster size</summary>
             public ushort cluster;
             /// <summary>Block of the first directory segment</summary>
             public ushort rootBlock;
             /// <summary>"V3A" in Radix-50</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] systemVersion;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] systemVersion;
             /// <summary>Name of the volume, 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] volname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] volname;
             /// <summary>Name of the volume owner, 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] ownername;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] ownername;
             /// <summary>RT11 defines it as "DECRT11A    ", 12 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] format;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] format;
             /// <summary>Unused</summary>
             public ushort unused2;
             /// <summary>Checksum of preceding 255 words (16 bit units)</summary>

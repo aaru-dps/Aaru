@@ -38,16 +38,15 @@ namespace DiscImageChef.Filesystems.CPM
     {
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             FileEntryInfo fInfo;
 
-            if(string.IsNullOrEmpty(pathElements[0]) || string.Compare(pathElements[0], "/", StringComparison.OrdinalIgnoreCase) == 0)
+            if(string.IsNullOrEmpty(pathElements[0]) ||
+               string.Compare(pathElements[0], "/", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 attributes = new FileAttributes();
                 attributes = FileAttributes.Directory;
@@ -65,8 +64,7 @@ namespace DiscImageChef.Filesystems.CPM
 
         public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             // TODO: Implementing this would require storing the interleaving
             return Errno.NotImplemented;
@@ -74,8 +72,7 @@ namespace DiscImageChef.Filesystems.CPM
 
         public override Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             if(size == 0)
             {
@@ -83,23 +80,18 @@ namespace DiscImageChef.Filesystems.CPM
                 return Errno.NoError;
             }
 
-            if(offset < 0)
-                return Errno.InvalidArgument;
+            if(offset < 0) return Errno.InvalidArgument;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             byte[] file;
 
-            if(!fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out file))
-                return Errno.NoSuchFile;
+            if(!fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out file)) return Errno.NoSuchFile;
 
-            if(offset >= file.Length)
-                return Errno.EINVAL;
+            if(offset >= file.Length) return Errno.EINVAL;
 
-            if(size + offset >= file.Length)
-                size = file.Length - offset;
+            if(size + offset >= file.Length) size = file.Length - offset;
 
             buf = new byte[size];
             Array.Copy(file, offset, buf, 0, size);
@@ -108,38 +100,30 @@ namespace DiscImageChef.Filesystems.CPM
 
         public override Errno ReadLink(string path, ref string dest)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             return Errno.NotSupported;
         }
 
         public override Errno Stat(string path, ref FileEntryInfo stat)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(string.IsNullOrEmpty(path) || string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                if(labelCreationDate != null)
-                    stat.CreationTime = DateHandlers.CPMToDateTime(labelCreationDate);
-                if(labelUpdateDate != null)
-                    stat.StatusChangeTime = DateHandlers.CPMToDateTime(labelUpdateDate);
+                if(labelCreationDate != null) stat.CreationTime = DateHandlers.CPMToDateTime(labelCreationDate);
+                if(labelUpdateDate != null) stat.StatusChangeTime = DateHandlers.CPMToDateTime(labelUpdateDate);
                 stat.Attributes = FileAttributes.Directory;
                 stat.BlockSize = xmlFSType.ClusterSize;
                 return Errno.NoError;
             }
 
-            if(statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat))
-                return Errno.NoError;
+            if(statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat)) return Errno.NoError;
 
             return Errno.NoSuchFile;
         }
-
     }
 }
-

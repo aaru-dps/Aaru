@@ -46,8 +46,7 @@ namespace DiscImageChef.Core
 
         public void Close()
         {
-            if(dataFs != null)
-                dataFs.Close();
+            if(dataFs != null) dataFs.Close();
         }
 
         public int Read(byte[] array, int offset, int count)
@@ -91,7 +90,10 @@ namespace DiscImageChef.Core
             dataFs.Write(data, offset, count);
         }
 
-        public long Position { get { return dataFs.Position; }}
+        public long Position
+        {
+            get { return dataFs.Position; }
+        }
 
         public static void WriteTo(string who, string outputPrefix, string outputSuffix, string what, byte[] data)
         {
@@ -99,14 +101,14 @@ namespace DiscImageChef.Core
                 WriteTo(who, outputPrefix + outputSuffix, data, what);
         }
 
-        public static void WriteTo(string who, string filename, byte[] data, string whatWriting = null, bool overwrite = false)
+        public static void WriteTo(string who, string filename, byte[] data, string whatWriting = null,
+                                   bool overwrite = false)
         {
             if(!string.IsNullOrEmpty(filename))
             {
                 if(File.Exists(filename))
                 {
-                    if(overwrite)
-                        File.Delete(filename);
+                    if(overwrite) File.Delete(filename);
                     else
                     {
                         DicConsole.ErrorWriteLine("Not overwriting file {0}", filename);
@@ -121,10 +123,7 @@ namespace DiscImageChef.Core
                     outputFs.Write(data, 0, data.Length);
                     outputFs.Close();
                 }
-                catch
-                {
-                    DicConsole.ErrorWriteLine("Unable to write file {0}", filename);
-                }
+                catch { DicConsole.ErrorWriteLine("Unable to write file {0}", filename); }
             }
         }
     }

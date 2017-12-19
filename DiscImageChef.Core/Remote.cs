@@ -51,11 +51,13 @@ namespace DiscImageChef.Core
 #endif
 
                     MemoryStream xmlStream = new MemoryStream();
-                    System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(Metadata.DeviceReport));
+                    System.Xml.Serialization.XmlSerializer xmlSer =
+                        new System.Xml.Serialization.XmlSerializer(typeof(Metadata.DeviceReport));
                     xmlSer.Serialize(xmlStream, report);
                     xmlStream.Seek(0, SeekOrigin.Begin);
                     WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreport");
-                    ((HttpWebRequest)request).UserAgent = string.Format("DiscImageChef {0}", typeof(Version).Assembly.GetName().Version);
+                    ((HttpWebRequest)request).UserAgent =
+                        string.Format("DiscImageChef {0}", typeof(Version).Assembly.GetName().Version);
                     request.Method = "POST";
                     request.ContentLength = xmlStream.Length;
                     request.ContentType = "application/xml";
@@ -64,8 +66,7 @@ namespace DiscImageChef.Core
                     reqStream.Close();
                     WebResponse response = request.GetResponse();
 
-                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
-                        return;
+                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
 
                     Stream data = response.GetResponseStream();
                     StreamReader reader = new StreamReader(data);

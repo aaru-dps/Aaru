@@ -54,8 +54,7 @@ namespace DiscImageChef.PartPlugins
             partitions = new List<Partition>();
 
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
-            if(sector.Length < 512)
-                return false;
+            if(sector.Length < 512) return false;
 
             RioKarmaTable table = new RioKarmaTable();
             IntPtr tablePtr = Marshal.AllocHGlobal(512);
@@ -63,8 +62,7 @@ namespace DiscImageChef.PartPlugins
             table = (RioKarmaTable)Marshal.PtrToStructure(tablePtr, typeof(RioKarmaTable));
             Marshal.FreeHGlobal(tablePtr);
 
-            if(table.magic != KarmaMagic)
-                return false;
+            if(table.magic != KarmaMagic) return false;
 
             ulong counter = 0;
 
@@ -93,12 +91,9 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RioKarmaTable
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 270)]
-            public byte[] reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public RioKarmaEntry[] entries;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 208)]
-            public byte[] padding;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 270)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public RioKarmaEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 208)] public byte[] padding;
             public ushort magic;
         }
 
@@ -107,8 +102,7 @@ namespace DiscImageChef.PartPlugins
         {
             public uint reserved;
             public byte type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] reserved2;
             public uint offset;
             public uint size;
         }

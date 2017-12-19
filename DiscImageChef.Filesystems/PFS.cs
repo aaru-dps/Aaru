@@ -51,20 +51,16 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Professional File System";
             PluginUUID = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else CurrentEncoding = encoding;
         }
 
         public PFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Professional File System";
             PluginUUID = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else CurrentEncoding = encoding;
         }
 
         /// <summary>
@@ -117,8 +113,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Volume label (Pascal string)
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] diskname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] diskname;
             /// <summary>
             /// Last reserved block
             /// </summary>
@@ -192,8 +187,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Length < 3)
-                return false;
+            if(partition.Length < 3) return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -201,10 +195,12 @@ namespace DiscImageChef.Filesystems
 
             uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
-            return magic == AFS_DISK || magic == PFS2_DISK || magic == PFS_DISK || magic == MUAF_DISK || magic == MUPFS_DISK;
+            return magic == AFS_DISK || magic == PFS2_DISK || magic == PFS_DISK || magic == MUAF_DISK ||
+                   magic == MUPFS_DISK;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             byte[] RootBlockSector = imagePlugin.ReadSector(2 + partition.Start);
             RootBlock rootBlock = new RootBlock();
@@ -236,15 +232,22 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendLine();
 
-            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding)).AppendLine();
-            sbInformation.AppendFormat("Volume has {0} free sectors of {1}", rootBlock.blocksfree, rootBlock.diskSize).AppendLine();
-            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick)).AppendLine();
+            sbInformation
+                .AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding))
+                .AppendLine();
+            sbInformation.AppendFormat("Volume has {0} free sectors of {1}", rootBlock.blocksfree, rootBlock.diskSize)
+                         .AppendLine();
+            sbInformation.AppendFormat("Volume created on {0}",
+                                       DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute,
+                                                                    rootBlock.creationtick)).AppendLine();
             if(rootBlock.extension > 0)
-                sbInformation.AppendFormat("Root block extension resides at block {0}", rootBlock.extension).AppendLine();
+                sbInformation.AppendFormat("Root block extension resides at block {0}", rootBlock.extension)
+                             .AppendLine();
 
             information = sbInformation.ToString();
 
-            xmlFSType.CreationDate = DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick);
+            xmlFSType.CreationDate =
+                DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick);
             xmlFSType.CreationDateSpecified = true;
             xmlFSType.FreeClusters = rootBlock.blocksfree;
             xmlFSType.FreeClustersSpecified = true;

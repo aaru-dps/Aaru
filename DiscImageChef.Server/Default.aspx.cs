@@ -36,13 +36,13 @@ using Velyo.AspNet.Markdown;
 
 namespace DiscImageChef.Server
 {
-
     public partial class Default : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
             MarkdownContent mkdown = new MarkdownContent();
-            StreamReader sr = new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "docs", "README.md"));
+            StreamReader sr =
+                new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "docs", "README.md"));
             string mdcontent = sr.ReadToEnd();
             sr.Close();
 

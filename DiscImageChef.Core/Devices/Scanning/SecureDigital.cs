@@ -93,7 +93,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                 if(!sense)
                 {
                     csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
-                    results.blocks = (ulong)(csd.Structure == 0 ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2) : (csd.Size + 1) * 1024);
+                    results.blocks = (ulong)(csd.Structure == 0
+                                                 ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
+                                                 : (csd.Size + 1) * 1024);
                     blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
                     // Structure >=1 for SDHC/SDXC, so that's block addressed
                     byteAddressed = csd.Structure == 0;
@@ -110,13 +112,12 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             while(true)
             {
-                sense = dev.Read(out cmdBuf, out response, 0, blockSize, blocksToRead, byteAddressed, timeout, out duration);
+                sense = dev.Read(out cmdBuf, out response, 0, blockSize, blocksToRead, byteAddressed, timeout,
+                                 out duration);
 
-                if(sense)
-                    blocksToRead /= 2;
+                if(sense) blocksToRead /= 2;
 
-                if(!sense || blocksToRead == 1)
-                    break;
+                if(!sense || blocksToRead == 1) break;
             }
 
             if(sense)
@@ -152,10 +153,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             uint seekPos = (uint)rnd.Next((int)results.blocks);
 
             aborted = false;
-            System.Console.CancelKeyPress += (sender, e) =>
-            {
-                e.Cancel = aborted = true;
-            };
+            System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
 
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
@@ -165,49 +163,28 @@ namespace DiscImageChef.Core.Devices.Scanning
             start = DateTime.UtcNow;
             for(ulong i = 0; i < results.blocks; i += blocksToRead)
             {
-                if(aborted)
-                    break;
+                if(aborted) break;
 
-                if((results.blocks - i) < blocksToRead)
-                    blocksToRead = (byte)(results.blocks - i);
+                if((results.blocks - i) < blocksToRead) blocksToRead = (byte)(results.blocks - i);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                if(currentSpeed > results.maxSpeed && currentSpeed != 0)
-                    results.maxSpeed = currentSpeed;
-                if(currentSpeed < results.minSpeed && currentSpeed != 0)
-                    results.minSpeed = currentSpeed;
+                if(currentSpeed > results.maxSpeed && currentSpeed != 0) results.maxSpeed = currentSpeed;
+                if(currentSpeed < results.minSpeed && currentSpeed != 0) results.minSpeed = currentSpeed;
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.blocks, currentSpeed);
 
-                bool error = dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed, timeout, out duration);
+                bool error = dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed,
+                                      timeout, out duration);
 
                 if(!error)
                 {
-                    if(duration >= 500)
-                    {
-                        results.F += blocksToRead;
-                    }
-                    else if(duration >= 150)
-                    {
-                        results.E += blocksToRead;
-                    }
-                    else if(duration >= 50)
-                    {
-                        results.D += blocksToRead;
-                    }
-                    else if(duration >= 10)
-                    {
-                        results.C += blocksToRead;
-                    }
-                    else if(duration >= 3)
-                    {
-                        results.B += blocksToRead;
-                    }
-                    else
-                    {
-                        results.A += blocksToRead;
-                    }
+                    if(duration >= 500) { results.F += blocksToRead; }
+                    else if(duration >= 150) { results.E += blocksToRead; }
+                    else if(duration >= 50) { results.D += blocksToRead; }
+                    else if(duration >= 10) { results.C += blocksToRead; }
+                    else if(duration >= 3) { results.B += blocksToRead; }
+                    else { results.A += blocksToRead; }
 
                     mhddLog.Write(i, duration);
                     ibgLog.Write(i, currentSpeed * 1024);
@@ -215,12 +192,10 @@ namespace DiscImageChef.Core.Devices.Scanning
                 else
                 {
                     results.errored += blocksToRead;
-                    for(ulong b = i; b < i + blocksToRead; b++)
-                        results.unreadableSectors.Add(b);
-                    if(duration < 500)
-                        mhddLog.Write(i, 65535);
-                    else
-                        mhddLog.Write(i, duration);
+                    for(ulong b = i; b < i + blocksToRead; b++) results.unreadableSectors.Add(b);
+
+                    if(duration < 500) mhddLog.Write(i, 65535);
+                    else mhddLog.Write(i, duration);
 
                     ibgLog.Write(i, 0);
                 }
@@ -230,29 +205,30 @@ namespace DiscImageChef.Core.Devices.Scanning
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                 GC.Collect();
             }
+
             end = DateTime.UtcNow;
             DicConsole.WriteLine();
             mhddLog.Close();
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-            ibgLog.Close(dev, results.blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(results.blocks + 1)) / 1024) / (results.processingTime / 1000), devicePath);
+            ibgLog.Close(dev, results.blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                         (((double)blockSize * (double)(results.blocks + 1)) / 1024) / (results.processingTime / 1000),
+                         devicePath);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
 
             for(int i = 0; i < seekTimes; i++)
             {
-                if(aborted)
-                    break;
+                if(aborted) break;
 
                 seekPos = (uint)rnd.Next((int)results.blocks);
 
                 DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
 
-                dev.Read(out cmdBuf, out response, (uint)seekPos, blockSize, blocksToRead, byteAddressed, timeout, out seekCur);
+                dev.Read(out cmdBuf, out response, (uint)seekPos, blockSize, blocksToRead, byteAddressed, timeout,
+                         out seekCur);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                if(seekCur > results.seekMax && seekCur != 0)
-                    results.seekMax = seekCur;
-                if(seekCur < results.seekMin && seekCur != 0)
-                    results.seekMin = seekCur;
+                if(seekCur > results.seekMax && seekCur != 0) results.seekMax = seekCur;
+                if(seekCur < results.seekMin && seekCur != 0) results.seekMin = seekCur;
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 results.seekTotal += seekCur;

@@ -116,21 +116,28 @@ namespace DiscImageChef.Decoders.SCSI
             switch(type)
             {
                 case MediumTypes.ECMA54:
-                    return "ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side";
+                    return
+                        "ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side";
                 case MediumTypes.ECMA59:
-                    return "ECMA-59 & ANSI X3.121-1984: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on Both Sides";
+                    return
+                        "ECMA-59 & ANSI X3.121-1984: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on Both Sides";
                 case MediumTypes.ECMA69:
                     return "ECMA-69: 200 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides";
                 case MediumTypes.ECMA66:
-                    return "ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side";
+                    return
+                        "ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side";
                 case MediumTypes.ECMA70:
-                    return "ECMA-70 & ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1,9 Tracks per mm";
+                    return
+                        "ECMA-70 & ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1,9 Tracks per mm";
                 case MediumTypes.ECMA78:
-                    return "ECMA-78 & ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3,8 Tracks per mm";
+                    return
+                        "ECMA-78 & ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3,8 Tracks per mm";
                 case MediumTypes.ECMA99:
-                    return "ECMA-99 & ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3,8 Tracks per mm";
+                    return
+                        "ECMA-99 & ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3,8 Tracks per mm";
                 case MediumTypes.ECMA100:
-                    return "ECMA-100 & ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5,3 Tracks per mm";
+                    return
+                        "ECMA-100 & ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5,3 Tracks per mm";
                 // Most probably they will never appear, but magneto-opticals use these codes
                 /*
                 case MediumTypes.Unspecified_SS:
@@ -138,24 +145,16 @@ namespace DiscImageChef.Decoders.SCSI
                 case MediumTypes.Unspecified_DS:
                     return "Unspecified double sided flexible disk";
                 */
-                case MediumTypes.X3_73:
-                    return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side";
-                case MediumTypes.X3_73_DS:
-                    return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides";
-                case MediumTypes.X3_82:
-                    return "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side";
+                case MediumTypes.X3_73: return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side";
+                case MediumTypes.X3_73_DS: return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides";
+                case MediumTypes.X3_82: return "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side";
                 case MediumTypes.Type3Floppy:
                     return "3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)";
-                case MediumTypes.HDFloppy:
-                    return "3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)";
-                case MediumTypes.ReadOnly:
-                    return "a Read-only optical";
-                case MediumTypes.WORM:
-                    return "a Write-once Read-many optical";
-                case MediumTypes.Erasable:
-                    return "a Erasable optical";
-                case MediumTypes.RO_WORM:
-                    return "a combination of read-only and write-once optical";
+                case MediumTypes.HDFloppy: return "3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)";
+                case MediumTypes.ReadOnly: return "a Read-only optical";
+                case MediumTypes.WORM: return "a Write-once Read-many optical";
+                case MediumTypes.Erasable: return "a Erasable optical";
+                case MediumTypes.RO_WORM: return "a combination of read-only and write-once optical";
                 // These magneto-opticals were never manufactured
                 /*
                 case MediumTypes.RO_RW:
@@ -164,17 +163,14 @@ namespace DiscImageChef.Decoders.SCSI
                 case MediumTypes.WORM_RW:
                     return "a combination of write-once and erasable optical";
                 */
-                case MediumTypes.DOW:
-                    return "a direct-overwrite optical";
-                default:
-                    return string.Format("Unknown medium type 0x{0:X2}", (byte)type);
+                case MediumTypes.DOW: return "a direct-overwrite optical";
+                default: return string.Format("Unknown medium type 0x{0:X2}", (byte)type);
             }
         }
 
         public static string PrettifyModeHeader(ModeHeader? header, PeripheralDeviceTypes deviceType)
         {
-            if(!header.HasValue)
-                return null;
+            if(!header.HasValue) return null;
 
             StringBuilder sb = new StringBuilder();
 
@@ -184,1622 +180,1754 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 #region Direct access device mode header
                 case PeripheralDeviceTypes.DirectAccess:
+                {
+                    if(header.Value.MediumType != MediumTypes.Default)
+                        sb.AppendFormat("\tMedium is {0}", GetMediumTypeDescription(header.Value.MediumType))
+                          .AppendLine();
+
+                    if(header.Value.WriteProtected) sb.AppendLine("\tMedium is write protected");
+
+                    if(header.Value.DPOFUA) sb.AppendLine("\tDrive supports DPO and FUA bits");
+
+                    if(header.Value.BlockDescriptors != null)
                     {
-                        if(header.Value.MediumType != MediumTypes.Default)
-                            sb.AppendFormat("\tMedium is {0}", GetMediumTypeDescription(header.Value.MediumType)).AppendLine();
-
-                        if(header.Value.WriteProtected)
-                            sb.AppendLine("\tMedium is write protected");
-
-                        if(header.Value.DPOFUA)
-                            sb.AppendLine("\tDrive supports DPO and FUA bits");
-
-                        if(header.Value.BlockDescriptors != null)
+                        foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                         {
-                            foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                            string density = "";
+                            switch(descriptor.Density)
                             {
-                                string density = "";
-                                switch(descriptor.Density)
-                                {
-                                    case DensityType.Default:
-                                        break;
-                                    case DensityType.Flux7958:
-                                        density = "7958 flux transitions per radian";
-                                        break;
-                                    case DensityType.Flux13262:
-                                        density = "13262 flux transitions per radian";
-                                        break;
-                                    case DensityType.Flux15916:
-                                        density = "15916 flux transitions per radian";
-                                        break;
-                                    default:
-                                        density = string.Format("with unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                        break;
-                                }
-
-                                if(density != "")
-                                {
-                                    if(descriptor.Blocks == 0)
-                                        sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
-                                    else
-                                        sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
-                                }
-                                else
-                                {
-                                    if(descriptor.Blocks == 0)
-                                        sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
-                                    else
-                                        sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
-                                }
-                            }
-                        }
-
-                        break;
-                    }
-                #endregion Direct access device mode header
-                #region Sequential access device mode header
-                case PeripheralDeviceTypes.SequentialAccess:
-                    {
-                        switch(header.Value.BufferedMode)
-                        {
-                            case 0:
-                                sb.AppendLine("\tDevice writes directly to media");
-                                break;
-                            case 1:
-                                sb.AppendLine("\tDevice uses a write cache");
-                                break;
-                            case 2:
-                                sb.AppendLine("\tDevice uses a write cache but doesn't return until cache is flushed");
-                                break;
-                            default:
-                                sb.AppendFormat("\tUnknown buffered mode code 0x{0:X2}", header.Value.BufferedMode).AppendLine();
-                                break;
-                        }
-
-                        if(header.Value.Speed == 0)
-                            sb.AppendLine("\tDevice uses default speed");
-                        else
-                            sb.AppendFormat("\tDevice uses speed {0}", header.Value.Speed).AppendLine();
-
-                        if(header.Value.WriteProtected)
-                            sb.AppendLine("\tMedium is write protected");
-
-                        string medium = "";
-
-                        switch(header.Value.MediumType)
-                        {
-                            case MediumTypes.Default:
-                                medium = "undefined";
-                                break;
-                            case MediumTypes.Tape12:
-                                medium = "6,3 mm tape with 12 tracks at 394 ftpmm or DC-9250";
-                                break;
-                            case MediumTypes.Tape24:
-                                medium = "6,3 mm tape with 24 tracks at 394 ftpmm or MLR1-26GBSL";
-                                break;
-                            case MediumTypes.LTOWORM:
-                                medium = "LTO Ultrium WORM or cleaning cartridge";
-                                break;
-                            case MediumTypes.LTO:
-                                medium = "LTO Ultrium";
-                                break;
-                            case MediumTypes.LTO2:
-                                medium = "LTO Ultrium-2";
-                                break;
-                            case MediumTypes.DC2900SL:
-                                medium = "DC-2900SL";
-                                break;
-                            case MediumTypes.MLR1:
-                                medium = "MLR1-26GB or DDS-3";
-                                break;
-                            case MediumTypes.DC9200:
-                                medium = "DC-9200 or DDS-4";
-                                break;
-                            case MediumTypes.DAT72:
-                                medium = "DAT-72";
-                                break;
-                            case MediumTypes.LTO3:
-                                medium = "LTO Ultrium-3";
-                                break;
-                            case MediumTypes.LTO3WORM:
-                                medium = "LTO Ultrium-3 WORM";
-                                break;
-                            case MediumTypes.DDSCleaning:
-                                medium = "DDS cleaning cartridge";
-                                break;
-                            case MediumTypes.SLR32:
-                                medium = "SLR-32";
-                                break;
-                            case MediumTypes.SLRtape50:
-                                medium = "SLRtape-50";
-                                break;
-                            case MediumTypes.LTO4:
-                                medium = "LTO Ultrium-4";
-                                break;
-                            case MediumTypes.LTO4WORM:
-                                medium = "LTO Ultrium-4 WORM";
-                                break;
-                            case MediumTypes.SLRtape50SL:
-                                medium = "SLRtape-50 SL";
-                                break;
-                            case MediumTypes.SLR32SL:
-                                medium = "SLR-32SL";
-                                break;
-                            case MediumTypes.SLR5:
-                                medium = "SLR-5";
-                                break;
-                            case MediumTypes.SLR5SL:
-                                medium = "SLR-5SL";
-                                break;
-                            case MediumTypes.LTO5:
-                                medium = "LTO Ultrium-5";
-                                break;
-                            case MediumTypes.LTO5WORM:
-                                medium = "LTO Ultrium-5 WORM";
-                                break;
-                            case MediumTypes.SLRtape7:
-                                medium = "SLRtape-7";
-                                break;
-                            case MediumTypes.SLRtape7SL:
-                                medium = "SLRtape-7 SL";
-                                break;
-                            case MediumTypes.SLRtape24:
-                                medium = "SLRtape-24";
-                                break;
-                            case MediumTypes.SLRtape24SL:
-                                medium = "SLRtape-24 SL";
-                                break;
-                            case MediumTypes.LTO6:
-                                medium = "LTO Ultrium-6";
-                                break;
-                            case MediumTypes.LTO6WORM:
-                                medium = "LTO Ultrium-6 WORM";
-                                break;
-                            case MediumTypes.SLRtape140:
-                                medium = "SLRtape-140";
-                                break;
-                            case MediumTypes.SLRtape40:
-                                medium = "SLRtape-40";
-                                break;
-                            case MediumTypes.SLRtape60:
-                                medium = "SLRtape-60 or SLRtape-75";
-                                break;
-                            case MediumTypes.SLRtape100:
-                                medium = "SLRtape-100";
-                                break;
-                            case MediumTypes.SLR40_60_100:
-                                medium = "SLR-40, SLR-60 or SLR-100";
-                                break;
-                            case MediumTypes.LTO7:
-                                medium = "LTO Ultrium-7";
-                                break;
-                            case MediumTypes.LTO7WORM:
-                                medium = "LTO Ultrium-7 WORM";
-                                break;
-                            case MediumTypes.LTOCD:
-                                medium = "LTO Ultrium";
-                                break;
-                            case MediumTypes.Exatape15m:
-                                medium = "Exatape 15m, IBM MagStar or VXA";
-                                break;
-                            case MediumTypes.CT1:
-                                medium = "CompactTape I, Exatape 28m, CompactTape II, VXA-2 or VXA-3";
-                                break;
-                            case MediumTypes.Exatape54m:
-                                medium = "Exatape 54m or DLTtape III";
-                                break;
-                            case MediumTypes.Exatape80m:
-                                medium = "Exatape 80m or DLTtape IIIxt";
-                                break;
-                            case MediumTypes.Exatape106m:
-                                medium = "Exatape 106m, DLTtape IV or Travan 5";
-                                break;
-                            case MediumTypes.Exatape106mXL:
-                                medium = "Exatape 160m XL or Super DLTtape I";
-                                break;
-                            case MediumTypes.SDLT2:
-                                medium = "Super DLTtape II";
-                                break;
-                            case MediumTypes.VStapeI:
-                                medium = "VStape I";
-                                break;
-                            case MediumTypes.DLTtapeS4:
-                                medium = "DLTtape S4";
-                                break;
-                            case MediumTypes.Travan7:
-                                medium = "Travan 7";
-                                break;
-                            case MediumTypes.Exatape22m:
-                                medium = "Exatape 22m";
-                                break;
-                            case MediumTypes.Exatape40m:
-                                medium = "Exatape 40m";
-                                break;
-                            case MediumTypes.Exatape76m:
-                                medium = "Exatape 76m";
-                                break;
-                            case MediumTypes.Exatape112m:
-                                medium = "Exatape 112m";
-                                break;
-                            case MediumTypes.Exatape22mAME:
-                                medium = "Exatape 22m AME";
-                                break;
-                            case MediumTypes.Exatape170m:
-                                medium = "Exatape 170m";
-                                break;
-                            case MediumTypes.Exatape125m:
-                                medium = "Exatape 125m";
-                                break;
-                            case MediumTypes.Exatape45m:
-                                medium = "Exatape 45m";
-                                break;
-                            case MediumTypes.Exatape225m:
-                                medium = "Exatape 225m";
-                                break;
-                            case MediumTypes.Exatape150m:
-                                medium = "Exatape 150m";
-                                break;
-                            case MediumTypes.Exatape75m:
-                                medium = "Exatape 75m";
-                                break;
-                            default:
-                                medium = string.Format("unknown medium type 0x{0:X2}", (byte)header.Value.MediumType);
-                                break;
-                        }
-
-                        sb.AppendFormat("\tMedium is {0}", medium).AppendLine();
-
-                        if(header.Value.BlockDescriptors != null)
-                        {
-                            foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
-                            {
-                                string density = "";
-                                switch(header.Value.MediumType)
-                                {
-                                    case MediumTypes.Default:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    break;
-                                                case DensityType.ECMA62:
-                                                    density = "ECMA-62 & ANSI X3.22-1983: 12,7 mm 9-Track Magnetic Tape, 32 ftpmm, NRZI, 32 cpmm";
-                                                    break;
-                                                case DensityType.ECMA62_Phase:
-                                                    density = "ECMA-62 & ANSI X3.39-1986: 12,7 mm 9-Track Magnetic Tape, 126 ftpmm, Phase Encoding, 63 cpmm";
-                                                    break;
-                                                case DensityType.ECMA62_GCR:
-                                                    density = "ECMA-62 & ANSI X3.54-1986: 12,7 mm 9-Track Magnetic Tape, 356 ftpmm, NRZI, 245 cpmm GCR";
-                                                    break;
-                                                case DensityType.ECMA79:
-                                                    density = "ECMA-79 & ANSI X3.116-1986: 6,30 mm Magnetic Tape Cartridge, 252 ftpmm, MFM";
-                                                    break;
-                                                case DensityType.IBM3480:
-                                                    density = "Draft ECMA & ANSI X3B5/87-099: 12,7 mm 18-Track Magnetic Tape Cartridge, 1944 ftpmm, IFM, GCR (IBM 3480, 3490, 3490E)";
-                                                    break;
-                                                case DensityType.ECMA46:
-                                                    density = "ECMA-46 & ANSI X3.56-1986: 6,30 mm Magnetic Tape Cartridge, Phase Encoding, 63 bpmm";
-                                                    break;
-                                                case DensityType.ECMA98:
-                                                    density = "ECMA-98: 6,30 mm Magnetic Tape Cartridge, NRZI, 394 ftpmm";
-                                                    break;
-                                                case DensityType.X3_136:
-                                                    density = "ANXI X3.136-1986: 6,3 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR (QIC-24)";
-                                                    break;
-                                                case DensityType.X3_157:
-                                                    density = "ANXI X3.157-1987: 12,7 mm 9-Track Magnetic Tape, 126 bpmm, Phase Encoding";
-                                                    break;
-                                                case DensityType.X3_158:
-                                                    density = "ANXI X3.158-1987: 3,81 mm 4-Track Magnetic Tape Cassette, 315 bpmm, GCR";
-                                                    break;
-                                                case DensityType.X3B5_86:
-                                                    density = "ANXI X3B5/86-199: 12,7 mm 22-Track Magnetic Tape Cartridge, 262 bpmm, MFM";
-                                                    break;
-                                                case DensityType.HiTC1:
-                                                    density = "HI-TC1: 12,7 mm 24-Track Magnetic Tape Cartridge, 500 bpmm, GCR";
-                                                    break;
-                                                case DensityType.HiTC2:
-                                                    density = "HI-TC2: 12,7 mm 24-Track Magnetic Tape Cartridge, 999 bpmm, GCR";
-                                                    break;
-                                                case DensityType.QIC120:
-                                                    density = "QIC-120: 6,3 mm 15-Track Magnetic Tape Cartridge, 394 bpmm, GCR";
-                                                    break;
-                                                case DensityType.QIC150:
-                                                    density = "QIC-150: 6,3 mm 18-Track Magnetic Tape Cartridge, 394 bpmm, GCR";
-                                                    break;
-                                                case DensityType.QIC320:
-                                                    density = "QIC-320: 6,3 mm 26-Track Magnetic Tape Cartridge, 630 bpmm, GCR";
-                                                    break;
-                                                case DensityType.QIC1350:
-                                                    density = "QIC-1350: 6,3 mm 30-Track Magnetic Tape Cartridge, 2034 bpmm, RLL";
-                                                    break;
-                                                case DensityType.X3B5_88:
-                                                    density = "ANXI X3B5/88-185A: 3,81 mm Magnetic Tape Cassette, 2400 bpmm, DDS";
-                                                    break;
-                                                case DensityType.X3_202:
-                                                    density = "ANXI X3.202-1991: 8 mm Magnetic Tape Cassette, 1703 bpmm, RLL";
-                                                    break;
-                                                case DensityType.ECMA_TC17:
-                                                    density = "ECMA TC17: 8 mm Magnetic Tape Cassette, 1789 bpmm, RLL";
-                                                    break;
-                                                case DensityType.X3_193:
-                                                    density = "ANXI X3.193-1990: 12,7 mm 48-Track Magnetic Tape Cartridge, 394 bpmm, MFM";
-                                                    break;
-                                                case DensityType.X3B5_91:
-                                                    density = "ANXI X3B5/97-174: 12,7 mm 48-Track Magnetic Tape Cartridge, 1673 bpmm, MFM";
-                                                    break;
-                                                case DensityType.QIC11:
-                                                    density = "QIC-11";
-                                                    break;
-                                                case DensityType.IBM3490E:
-                                                    density = "IBM 3490E";
-                                                    break;
-                                                case DensityType.LTO1:
-                                                    //case DensityType.SAIT1:
-                                                    density = "LTO Ultrium or Super AIT-1";
-                                                    break;
-                                                case DensityType.LTO2Old:
-                                                    density = "LTO Ultrium-2";
-                                                    break;
-                                                case DensityType.LTO2:
-                                                    //case DensityType.T9840:
-                                                    density = "LTO Ultrium-2 or T9840";
-                                                    break;
-                                                case DensityType.T9940:
-                                                    density = "T9940";
-                                                    break;
-                                                case DensityType.LTO3:
-                                                    //case DensityType.T9940:
-                                                    density = "LTO Ultrium-3 or T9940";
-                                                    break;
-                                                case DensityType.T9840C:
-                                                    density = "T9840C";
-                                                    break;
-                                                case DensityType.LTO4:
-                                                    //case DensityType.T9840D:
-                                                    density = "LTO Ultrium-4 or T9840D";
-                                                    break;
-                                                case DensityType.T10000A:
-                                                    density = "T10000A";
-                                                    break;
-                                                case DensityType.T10000B:
-                                                    density = "T10000B";
-                                                    break;
-                                                case DensityType.T10000C:
-                                                    density = "T10000C";
-                                                    break;
-                                                case DensityType.T10000D:
-                                                    density = "T10000D";
-                                                    break;
-                                                case DensityType.AIT1:
-                                                    density = "AIT-1";
-                                                    break;
-                                                case DensityType.AIT2:
-                                                    density = "AIT-2";
-                                                    break;
-                                                case DensityType.AIT3:
-                                                    density = "AIT-3";
-                                                    break;
-                                                case DensityType.DDS2:
-                                                    density = "DDS-2";
-                                                    break;
-                                                case DensityType.DDS3:
-                                                    density = "DDS-3";
-                                                    break;
-                                                case DensityType.DDS4:
-                                                    density = "DDS-4";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.LTOWORM:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "LTO Ultrium cleaning cartridge";
-                                                    break;
-                                                case DensityType.LTO3:
-                                                    density = "LTO Ultrium-3 WORM";
-                                                    break;
-                                                case DensityType.LTO4:
-                                                    density = "LTO Ultrium-4 WORM";
-                                                    break;
-                                                case DensityType.LTO5:
-                                                    density = "LTO Ultrium-5 WORM";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.LTO:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.LTO1:
-                                                    density = "LTO Ultrium";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.LTO2:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.LTO2:
-                                                    density = "LTO Ultrium-2";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.DDS3:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "MLR1-26GB";
-                                                    break;
-                                                case DensityType.DDS3:
-                                                    density = "DDS-3";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.DDS4:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "DC-9200";
-                                                    break;
-                                                case DensityType.DDS4:
-                                                    density = "DDS-4";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.DAT72:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.DAT72:
-                                                    density = "DAT-72";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.LTO3:
-                                    case MediumTypes.LTO3WORM:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.LTO3:
-                                                    density = "LTO Ultrium-3";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.DDSCleaning:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "DDS cleaning cartridge";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.LTO4:
-                                    case MediumTypes.LTO4WORM:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.LTO4:
-                                                    density = "LTO Ultrium-4";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.LTO5:
-                                    case MediumTypes.LTO5WORM:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.LTO5:
-                                                    density = "LTO Ultrium-5";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.LTO6:
-                                    case MediumTypes.LTO6WORM:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.LTO6:
-                                                    density = "LTO Ultrium-6";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.LTO7:
-                                    case MediumTypes.LTO7WORM:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.LTO7:
-                                                    density = "LTO Ultrium-7";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.LTOCD:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.LTO2:
-                                                    density = "LTO Ultrium-2 in CD emulation mode";
-                                                    break;
-                                                case DensityType.LTO3:
-                                                    density = "LTO Ultrium-3 in CD emulation mode";
-                                                    break;
-                                                case DensityType.LTO4:
-                                                    density = "LTO Ultrium-4 in CD emulation mode";
-                                                    break;
-                                                case DensityType.LTO5:
-                                                    density = "LTO Ultrium-5 in CD emulation mode";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape15m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                case DensityType.IBM3590:
-                                                    density = "IBM 3590";
-                                                    break;
-                                                case DensityType.IBM3590E:
-                                                    density = "IBM 3590E";
-                                                    break;
-                                                case DensityType.VXA1:
-                                                    density = "VXA-1";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape28m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                case DensityType.CT1:
-                                                    density = "CompactTape I";
-                                                    break;
-                                                case DensityType.CT2:
-                                                    density = "CompactTape II";
-                                                    break;
-                                                case DensityType.IBM3590:
-                                                    density = "IBM 3590 extended";
-                                                    break;
-                                                case DensityType.IBM3590E:
-                                                    density = "IBM 3590E extended";
-                                                    break;
-                                                case DensityType.VXA2:
-                                                    density = "VXA-2";
-                                                    break;
-                                                case DensityType.VXA3:
-                                                    density = "VXA-3";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape54m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                case DensityType.DLT3_42k:
-                                                    density = "DLTtape III at 42500 bpi";
-                                                    break;
-                                                case DensityType.DLT3_56t:
-                                                    density = "DLTtape III with 56 tracks";
-                                                    break;
-                                                case DensityType.DLT3_62k:
-                                                case DensityType.DLT3_62kAlt:
-                                                    density = "DLTtape III at 62500 bpi";
-                                                    break;
-                                                case DensityType.DLT3c:
-                                                    density = "DLTtape III compressed";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape80m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                case DensityType.DLT3_62k:
-                                                case DensityType.DLT3_62kAlt:
-                                                    density = "DLTtape IIIxt";
-                                                    break;
-                                                case DensityType.DLT3c:
-                                                    density = "DLTtape IIIxt compressed";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape106m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                case DensityType.DLT4:
-                                                case DensityType.DLT4Alt:
-                                                    density = "DLTtape IV";
-                                                    break;
-                                                case DensityType.DLT4_123k:
-                                                case DensityType.DLT4_123kAlt:
-                                                    density = "DLTtape IV at 123090 bpi";
-                                                    break;
-                                                case DensityType.DLT4_98k:
-                                                    density = "DLTtape IV at 98250 bpi";
-                                                    break;
-                                                case DensityType.Travan5:
-                                                    density = "Travan 5";
-                                                    break;
-                                                case DensityType.DLT4c:
-                                                    density = "DLTtape IV compressed";
-                                                    break;
-                                                case DensityType.DLT4_85k:
-                                                    density = "DLTtape IV at 85937 bpi";
-                                                    break;
-                                                case DensityType.DLT4c_85k:
-                                                    density = "DLTtape IV at 85937 bpi compressed";
-                                                    break;
-                                                case DensityType.DLT4c_123k:
-                                                    density = "DLTtape IV at 123090 bpi compressed";
-                                                    break;
-                                                case DensityType.DLT4c_98k:
-                                                    density = "DLTtape IV at 98250 bpi compressed";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape106mXL:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                case DensityType.SDLT1_133k:
-                                                case DensityType.SDLT1_133kAlt:
-                                                    density = "Super DLTtape I at 133000 bpi";
-                                                    break;
-                                                case DensityType.SDLT1:
-                                                    //case DensityType.SDLT1Alt:
-                                                    density = "Super DLTtape I";
-                                                    break;
-                                                case DensityType.SDLT1c:
-                                                    density = "Super DLTtape I compressed";
-                                                    break;
-                                                /*case DensityType.SDLT1_133kAlt:
-                                                    density = "Super DLTtape I at 133000 bpi compressed";
-                                                    break;*/
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SDLT2:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.SDLT2:
-                                                    density = "Super DLTtape II";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.VStapeI:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.VStape1:
-                                                case DensityType.VStape1Alt:
-                                                    density = "VStape I";
-                                                    break;
-                                                case DensityType.VStape1c:
-                                                    density = "VStape I compressed";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.DLTtapeS4:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.DLTS4:
-                                                    density = "DLTtape S4";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape22m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape40m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape76m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape112m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Ex8200:
-                                                    density = "EXB-8200";
-                                                    break;
-                                                case DensityType.Ex8200c:
-                                                    density = "EXB-8200 compressed";
-                                                    break;
-                                                case DensityType.Ex8500:
-                                                    density = "EXB-8500";
-                                                    break;
-                                                case DensityType.Ex8500c:
-                                                    density = "EXB-8500 compressed";
-                                                    break;
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.Exatape22mAME:
-                                    case MediumTypes.Exatape170m:
-                                    case MediumTypes.Exatape125m:
-                                    case MediumTypes.Exatape45m:
-                                    case MediumTypes.Exatape225m:
-                                    case MediumTypes.Exatape150m:
-                                    case MediumTypes.Exatape75m:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Mammoth:
-                                                    density = "Mammoth";
-                                                    break;
-                                                case DensityType.Mammoth2:
-                                                    density = "Mammoth-2";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.DC2900SL:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "DC-2900SL";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.DC9250:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "DC-9250";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLR32:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLR-32";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.MLR1SL:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "MRL1-26GBSL";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape50:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-50";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape50SL:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-50 SL";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLR32SL:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLR-32 SL";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLR5:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLR-5";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLR5SL:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLR-5 SL";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape7:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-7";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape7SL:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-7 SL";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape24:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-24";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape24SL:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-24 SL";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape140:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-140";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape40:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-40";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape60:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-60 or SLRtape-75";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLRtape100:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLRtape-100";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case MediumTypes.SLR40_60_100:
-                                        {
-                                            switch(descriptor.Density)
-                                            {
-                                                case DensityType.Default:
-                                                    density = "SLR40, SLR60 or SLR100";
-                                                    break;
-                                                default:
-                                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    default:
-                                        density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                        break;
-                                }
-
-                                if(density != "")
-                                {
-                                    if(descriptor.Blocks == 0)
-                                    {
-                                        if(descriptor.BlockLength == 0)
-                                            sb.AppendFormat("\tAll remaining blocks conform to {0} and have a variable length", density).AppendLine();
-                                        else
-                                            sb.AppendFormat("\tAll remaining blocks conform to {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
-                                    }
-                                    else
-                                    {
-                                        if(descriptor.BlockLength == 0)
-                                            sb.AppendFormat("\t{0} blocks conform to {1} and have a variable length", descriptor.Blocks, density).AppendLine();
-                                        else
-                                            sb.AppendFormat("\t{0} blocks conform to {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
-                                    }
-                                }
-                                else
-                                {
-                                    if(descriptor.Blocks == 0)
-                                    {
-                                        if(descriptor.BlockLength == 0)
-                                            sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
-                                        else
-                                            sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
-                                    }
-                                    else
-                                    {
-                                        if(descriptor.BlockLength == 0)
-                                            sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
-                                        else
-                                            sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
-                                    }
-                                }
-                            }
-                        }
-
-                        break;
-                    }
-                #endregion Sequential access device mode header
-                #region Printer device mode header
-                case PeripheralDeviceTypes.PrinterDevice:
-                    {
-                        switch(header.Value.BufferedMode)
-                        {
-                            case 0:
-                                sb.AppendLine("\tDevice prints directly");
-                                break;
-                            case 1:
-                                sb.AppendLine("\tDevice uses a print cache");
-                                break;
-                            default:
-                                sb.AppendFormat("\tUnknown buffered mode code 0x{0:X2}", header.Value.BufferedMode).AppendLine();
-                                break;
-                        }
-                        break;
-                    }
-                #endregion Printer device mode header
-                #region Optical device mode header
-                case PeripheralDeviceTypes.OpticalDevice:
-                    {
-                        if(header.Value.MediumType != MediumTypes.Default)
-                        {
-                            sb.Append("\tMedium is ");
-
-                            switch(header.Value.MediumType)
-                            {
-                                case MediumTypes.ReadOnly:
-                                    sb.AppendLine("a Read-only optical");
+                                case DensityType.Default: break;
+                                case DensityType.Flux7958:
+                                    density = "7958 flux transitions per radian";
                                     break;
-                                case MediumTypes.WORM:
-                                    sb.AppendLine("a Write-once Read-many optical");
+                                case DensityType.Flux13262:
+                                    density = "13262 flux transitions per radian";
                                     break;
-                                case MediumTypes.Erasable:
-                                    sb.AppendLine("a Erasable optical");
-                                    break;
-                                case MediumTypes.RO_WORM:
-                                    sb.AppendLine("a combination of read-only and write-once optical");
-                                    break;
-                                case MediumTypes.RO_RW:
-                                    sb.AppendLine("a combination of read-only and erasable optical");
-                                    break;
-                                case MediumTypes.WORM_RW:
-                                    sb.AppendLine("a combination of write-once and erasable optical");
-                                    break;
-                                case MediumTypes.DOW:
-                                    sb.AppendLine("a direct-overwrite optical");
+                                case DensityType.Flux15916:
+                                    density = "15916 flux transitions per radian";
                                     break;
                                 default:
-                                    sb.AppendFormat("an unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
+                                    density = string.Format("with unknown density code 0x{0:X2}",
+                                                            (byte)descriptor.Density);
                                     break;
                             }
-                        }
 
-                        if(header.Value.WriteProtected)
-                            sb.AppendLine("\tMedium is write protected");
-                        if(header.Value.EBC)
-                            sb.AppendLine("\tBlank checking during write is enabled");
-                        if(header.Value.DPOFUA)
-                            sb.AppendLine("\tDrive supports DPO and FUA bits");
-
-                        if(header.Value.BlockDescriptors != null)
-                        {
-                            foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                            if(density != "")
                             {
-                                string density = "";
-                                switch(descriptor.Density)
+                                if(descriptor.Blocks == 0)
+                                    sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density,
+                                                    descriptor.BlockLength).AppendLine();
+                                else
+                                    sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks,
+                                                    density, descriptor.BlockLength).AppendLine();
+                            }
+                            else
+                            {
+                                if(descriptor.Blocks == 0)
+                                    sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
+                                      .AppendLine();
+                                else
+                                    sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
+                                                    descriptor.BlockLength).AppendLine();
+                            }
+                        }
+                    }
+
+                    break;
+                }
+                #endregion Direct access device mode header
+
+                #region Sequential access device mode header
+                case PeripheralDeviceTypes.SequentialAccess:
+                {
+                    switch(header.Value.BufferedMode)
+                    {
+                        case 0:
+                            sb.AppendLine("\tDevice writes directly to media");
+                            break;
+                        case 1:
+                            sb.AppendLine("\tDevice uses a write cache");
+                            break;
+                        case 2:
+                            sb.AppendLine("\tDevice uses a write cache but doesn't return until cache is flushed");
+                            break;
+                        default:
+                            sb.AppendFormat("\tUnknown buffered mode code 0x{0:X2}", header.Value.BufferedMode)
+                              .AppendLine();
+                            break;
+                    }
+
+                    if(header.Value.Speed == 0) sb.AppendLine("\tDevice uses default speed");
+                    else sb.AppendFormat("\tDevice uses speed {0}", header.Value.Speed).AppendLine();
+
+                    if(header.Value.WriteProtected) sb.AppendLine("\tMedium is write protected");
+
+                    string medium = "";
+
+                    switch(header.Value.MediumType)
+                    {
+                        case MediumTypes.Default:
+                            medium = "undefined";
+                            break;
+                        case MediumTypes.Tape12:
+                            medium = "6,3 mm tape with 12 tracks at 394 ftpmm or DC-9250";
+                            break;
+                        case MediumTypes.Tape24:
+                            medium = "6,3 mm tape with 24 tracks at 394 ftpmm or MLR1-26GBSL";
+                            break;
+                        case MediumTypes.LTOWORM:
+                            medium = "LTO Ultrium WORM or cleaning cartridge";
+                            break;
+                        case MediumTypes.LTO:
+                            medium = "LTO Ultrium";
+                            break;
+                        case MediumTypes.LTO2:
+                            medium = "LTO Ultrium-2";
+                            break;
+                        case MediumTypes.DC2900SL:
+                            medium = "DC-2900SL";
+                            break;
+                        case MediumTypes.MLR1:
+                            medium = "MLR1-26GB or DDS-3";
+                            break;
+                        case MediumTypes.DC9200:
+                            medium = "DC-9200 or DDS-4";
+                            break;
+                        case MediumTypes.DAT72:
+                            medium = "DAT-72";
+                            break;
+                        case MediumTypes.LTO3:
+                            medium = "LTO Ultrium-3";
+                            break;
+                        case MediumTypes.LTO3WORM:
+                            medium = "LTO Ultrium-3 WORM";
+                            break;
+                        case MediumTypes.DDSCleaning:
+                            medium = "DDS cleaning cartridge";
+                            break;
+                        case MediumTypes.SLR32:
+                            medium = "SLR-32";
+                            break;
+                        case MediumTypes.SLRtape50:
+                            medium = "SLRtape-50";
+                            break;
+                        case MediumTypes.LTO4:
+                            medium = "LTO Ultrium-4";
+                            break;
+                        case MediumTypes.LTO4WORM:
+                            medium = "LTO Ultrium-4 WORM";
+                            break;
+                        case MediumTypes.SLRtape50SL:
+                            medium = "SLRtape-50 SL";
+                            break;
+                        case MediumTypes.SLR32SL:
+                            medium = "SLR-32SL";
+                            break;
+                        case MediumTypes.SLR5:
+                            medium = "SLR-5";
+                            break;
+                        case MediumTypes.SLR5SL:
+                            medium = "SLR-5SL";
+                            break;
+                        case MediumTypes.LTO5:
+                            medium = "LTO Ultrium-5";
+                            break;
+                        case MediumTypes.LTO5WORM:
+                            medium = "LTO Ultrium-5 WORM";
+                            break;
+                        case MediumTypes.SLRtape7:
+                            medium = "SLRtape-7";
+                            break;
+                        case MediumTypes.SLRtape7SL:
+                            medium = "SLRtape-7 SL";
+                            break;
+                        case MediumTypes.SLRtape24:
+                            medium = "SLRtape-24";
+                            break;
+                        case MediumTypes.SLRtape24SL:
+                            medium = "SLRtape-24 SL";
+                            break;
+                        case MediumTypes.LTO6:
+                            medium = "LTO Ultrium-6";
+                            break;
+                        case MediumTypes.LTO6WORM:
+                            medium = "LTO Ultrium-6 WORM";
+                            break;
+                        case MediumTypes.SLRtape140:
+                            medium = "SLRtape-140";
+                            break;
+                        case MediumTypes.SLRtape40:
+                            medium = "SLRtape-40";
+                            break;
+                        case MediumTypes.SLRtape60:
+                            medium = "SLRtape-60 or SLRtape-75";
+                            break;
+                        case MediumTypes.SLRtape100:
+                            medium = "SLRtape-100";
+                            break;
+                        case MediumTypes.SLR40_60_100:
+                            medium = "SLR-40, SLR-60 or SLR-100";
+                            break;
+                        case MediumTypes.LTO7:
+                            medium = "LTO Ultrium-7";
+                            break;
+                        case MediumTypes.LTO7WORM:
+                            medium = "LTO Ultrium-7 WORM";
+                            break;
+                        case MediumTypes.LTOCD:
+                            medium = "LTO Ultrium";
+                            break;
+                        case MediumTypes.Exatape15m:
+                            medium = "Exatape 15m, IBM MagStar or VXA";
+                            break;
+                        case MediumTypes.CT1:
+                            medium = "CompactTape I, Exatape 28m, CompactTape II, VXA-2 or VXA-3";
+                            break;
+                        case MediumTypes.Exatape54m:
+                            medium = "Exatape 54m or DLTtape III";
+                            break;
+                        case MediumTypes.Exatape80m:
+                            medium = "Exatape 80m or DLTtape IIIxt";
+                            break;
+                        case MediumTypes.Exatape106m:
+                            medium = "Exatape 106m, DLTtape IV or Travan 5";
+                            break;
+                        case MediumTypes.Exatape106mXL:
+                            medium = "Exatape 160m XL or Super DLTtape I";
+                            break;
+                        case MediumTypes.SDLT2:
+                            medium = "Super DLTtape II";
+                            break;
+                        case MediumTypes.VStapeI:
+                            medium = "VStape I";
+                            break;
+                        case MediumTypes.DLTtapeS4:
+                            medium = "DLTtape S4";
+                            break;
+                        case MediumTypes.Travan7:
+                            medium = "Travan 7";
+                            break;
+                        case MediumTypes.Exatape22m:
+                            medium = "Exatape 22m";
+                            break;
+                        case MediumTypes.Exatape40m:
+                            medium = "Exatape 40m";
+                            break;
+                        case MediumTypes.Exatape76m:
+                            medium = "Exatape 76m";
+                            break;
+                        case MediumTypes.Exatape112m:
+                            medium = "Exatape 112m";
+                            break;
+                        case MediumTypes.Exatape22mAME:
+                            medium = "Exatape 22m AME";
+                            break;
+                        case MediumTypes.Exatape170m:
+                            medium = "Exatape 170m";
+                            break;
+                        case MediumTypes.Exatape125m:
+                            medium = "Exatape 125m";
+                            break;
+                        case MediumTypes.Exatape45m:
+                            medium = "Exatape 45m";
+                            break;
+                        case MediumTypes.Exatape225m:
+                            medium = "Exatape 225m";
+                            break;
+                        case MediumTypes.Exatape150m:
+                            medium = "Exatape 150m";
+                            break;
+                        case MediumTypes.Exatape75m:
+                            medium = "Exatape 75m";
+                            break;
+                        default:
+                            medium = string.Format("unknown medium type 0x{0:X2}", (byte)header.Value.MediumType);
+                            break;
+                    }
+
+                    sb.AppendFormat("\tMedium is {0}", medium).AppendLine();
+
+                    if(header.Value.BlockDescriptors != null)
+                    {
+                        foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                        {
+                            string density = "";
+                            switch(header.Value.MediumType)
+                            {
+                                case MediumTypes.Default:
                                 {
-                                    case DensityType.Default:
-                                        break;
-                                    case DensityType.ISO10090:
-                                        density = "ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks";
-                                        break;
-                                    case DensityType.D581:
-                                        density = "89 mm Read/Write double-sided optical disc with 12500 tracks";
-                                        break;
-                                    case DensityType.X3_212:
-                                        density = "ANSI X3.212: 130 mm Read/Write double-sided optical disc with 18750 tracks";
-                                        break;
-                                    case DensityType.X3_191:
-                                        density = "ANSI X3.191: 130 mm Write-Once double-sided optical disc with 30000 tracks";
-                                        break;
-                                    case DensityType.X3_214:
-                                        density = "ANSI X3.214: 130 mm Write-Once double-sided optical disc with 20000 tracks";
-                                        break;
-                                    case DensityType.X3_211:
-                                        density = "ANSI X3.211: 130 mm Write-Once double-sided optical disc with 18750 tracks";
-                                        break;
-                                    case DensityType.D407:
-                                        density = "200 mm optical disc";
-                                        break;
-                                    case DensityType.ISO13614:
-                                        density = "ISO/IEC 13614: 300 mm double-sided optical disc";
-                                        break;
-                                    case DensityType.X3_200:
-                                        density = "ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks";
-                                        break;
-                                    default:
-                                        density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
-                                        break;
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default: break;
+                                        case DensityType.ECMA62:
+                                            density =
+                                                "ECMA-62 & ANSI X3.22-1983: 12,7 mm 9-Track Magnetic Tape, 32 ftpmm, NRZI, 32 cpmm";
+                                            break;
+                                        case DensityType.ECMA62_Phase:
+                                            density =
+                                                "ECMA-62 & ANSI X3.39-1986: 12,7 mm 9-Track Magnetic Tape, 126 ftpmm, Phase Encoding, 63 cpmm";
+                                            break;
+                                        case DensityType.ECMA62_GCR:
+                                            density =
+                                                "ECMA-62 & ANSI X3.54-1986: 12,7 mm 9-Track Magnetic Tape, 356 ftpmm, NRZI, 245 cpmm GCR";
+                                            break;
+                                        case DensityType.ECMA79:
+                                            density =
+                                                "ECMA-79 & ANSI X3.116-1986: 6,30 mm Magnetic Tape Cartridge, 252 ftpmm, MFM";
+                                            break;
+                                        case DensityType.IBM3480:
+                                            density =
+                                                "Draft ECMA & ANSI X3B5/87-099: 12,7 mm 18-Track Magnetic Tape Cartridge, 1944 ftpmm, IFM, GCR (IBM 3480, 3490, 3490E)";
+                                            break;
+                                        case DensityType.ECMA46:
+                                            density =
+                                                "ECMA-46 & ANSI X3.56-1986: 6,30 mm Magnetic Tape Cartridge, Phase Encoding, 63 bpmm";
+                                            break;
+                                        case DensityType.ECMA98:
+                                            density = "ECMA-98: 6,30 mm Magnetic Tape Cartridge, NRZI, 394 ftpmm";
+                                            break;
+                                        case DensityType.X3_136:
+                                            density =
+                                                "ANXI X3.136-1986: 6,3 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR (QIC-24)";
+                                            break;
+                                        case DensityType.X3_157:
+                                            density =
+                                                "ANXI X3.157-1987: 12,7 mm 9-Track Magnetic Tape, 126 bpmm, Phase Encoding";
+                                            break;
+                                        case DensityType.X3_158:
+                                            density =
+                                                "ANXI X3.158-1987: 3,81 mm 4-Track Magnetic Tape Cassette, 315 bpmm, GCR";
+                                            break;
+                                        case DensityType.X3B5_86:
+                                            density =
+                                                "ANXI X3B5/86-199: 12,7 mm 22-Track Magnetic Tape Cartridge, 262 bpmm, MFM";
+                                            break;
+                                        case DensityType.HiTC1:
+                                            density = "HI-TC1: 12,7 mm 24-Track Magnetic Tape Cartridge, 500 bpmm, GCR";
+                                            break;
+                                        case DensityType.HiTC2:
+                                            density = "HI-TC2: 12,7 mm 24-Track Magnetic Tape Cartridge, 999 bpmm, GCR";
+                                            break;
+                                        case DensityType.QIC120:
+                                            density = "QIC-120: 6,3 mm 15-Track Magnetic Tape Cartridge, 394 bpmm, GCR";
+                                            break;
+                                        case DensityType.QIC150:
+                                            density = "QIC-150: 6,3 mm 18-Track Magnetic Tape Cartridge, 394 bpmm, GCR";
+                                            break;
+                                        case DensityType.QIC320:
+                                            density = "QIC-320: 6,3 mm 26-Track Magnetic Tape Cartridge, 630 bpmm, GCR";
+                                            break;
+                                        case DensityType.QIC1350:
+                                            density =
+                                                "QIC-1350: 6,3 mm 30-Track Magnetic Tape Cartridge, 2034 bpmm, RLL";
+                                            break;
+                                        case DensityType.X3B5_88:
+                                            density =
+                                                "ANXI X3B5/88-185A: 3,81 mm Magnetic Tape Cassette, 2400 bpmm, DDS";
+                                            break;
+                                        case DensityType.X3_202:
+                                            density = "ANXI X3.202-1991: 8 mm Magnetic Tape Cassette, 1703 bpmm, RLL";
+                                            break;
+                                        case DensityType.ECMA_TC17:
+                                            density = "ECMA TC17: 8 mm Magnetic Tape Cassette, 1789 bpmm, RLL";
+                                            break;
+                                        case DensityType.X3_193:
+                                            density =
+                                                "ANXI X3.193-1990: 12,7 mm 48-Track Magnetic Tape Cartridge, 394 bpmm, MFM";
+                                            break;
+                                        case DensityType.X3B5_91:
+                                            density =
+                                                "ANXI X3B5/97-174: 12,7 mm 48-Track Magnetic Tape Cartridge, 1673 bpmm, MFM";
+                                            break;
+                                        case DensityType.QIC11:
+                                            density = "QIC-11";
+                                            break;
+                                        case DensityType.IBM3490E:
+                                            density = "IBM 3490E";
+                                            break;
+                                        case DensityType.LTO1:
+                                            //case DensityType.SAIT1:
+                                            density = "LTO Ultrium or Super AIT-1";
+                                            break;
+                                        case DensityType.LTO2Old:
+                                            density = "LTO Ultrium-2";
+                                            break;
+                                        case DensityType.LTO2:
+                                            //case DensityType.T9840:
+                                            density = "LTO Ultrium-2 or T9840";
+                                            break;
+                                        case DensityType.T9940:
+                                            density = "T9940";
+                                            break;
+                                        case DensityType.LTO3:
+                                            //case DensityType.T9940:
+                                            density = "LTO Ultrium-3 or T9940";
+                                            break;
+                                        case DensityType.T9840C:
+                                            density = "T9840C";
+                                            break;
+                                        case DensityType.LTO4:
+                                            //case DensityType.T9840D:
+                                            density = "LTO Ultrium-4 or T9840D";
+                                            break;
+                                        case DensityType.T10000A:
+                                            density = "T10000A";
+                                            break;
+                                        case DensityType.T10000B:
+                                            density = "T10000B";
+                                            break;
+                                        case DensityType.T10000C:
+                                            density = "T10000C";
+                                            break;
+                                        case DensityType.T10000D:
+                                            density = "T10000D";
+                                            break;
+                                        case DensityType.AIT1:
+                                            density = "AIT-1";
+                                            break;
+                                        case DensityType.AIT2:
+                                            density = "AIT-2";
+                                            break;
+                                        case DensityType.AIT3:
+                                            density = "AIT-3";
+                                            break;
+                                        case DensityType.DDS2:
+                                            density = "DDS-2";
+                                            break;
+                                        case DensityType.DDS3:
+                                            density = "DDS-3";
+                                            break;
+                                        case DensityType.DDS4:
+                                            density = "DDS-4";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
                                 }
 
-                                if(density != "")
+                                    break;
+                                case MediumTypes.LTOWORM:
                                 {
-                                    if(descriptor.Blocks == 0)
+                                    switch(descriptor.Density)
                                     {
-                                        if(descriptor.BlockLength == 0)
-                                            sb.AppendFormat("\tAll remaining blocks are {0} and have a variable length", density).AppendLine();
-                                        else
-                                            sb.AppendFormat("\tAll remaining blocks are {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                        case DensityType.Default:
+                                            density = "LTO Ultrium cleaning cartridge";
+                                            break;
+                                        case DensityType.LTO3:
+                                            density = "LTO Ultrium-3 WORM";
+                                            break;
+                                        case DensityType.LTO4:
+                                            density = "LTO Ultrium-4 WORM";
+                                            break;
+                                        case DensityType.LTO5:
+                                            density = "LTO Ultrium-5 WORM";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
                                     }
+                                }
+
+                                    break;
+                                case MediumTypes.LTO:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.LTO1:
+                                            density = "LTO Ultrium";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.LTO2:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.LTO2:
+                                            density = "LTO Ultrium-2";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.DDS3:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "MLR1-26GB";
+                                            break;
+                                        case DensityType.DDS3:
+                                            density = "DDS-3";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.DDS4:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "DC-9200";
+                                            break;
+                                        case DensityType.DDS4:
+                                            density = "DDS-4";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.DAT72:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.DAT72:
+                                            density = "DAT-72";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.LTO3:
+                                case MediumTypes.LTO3WORM:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.LTO3:
+                                            density = "LTO Ultrium-3";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.DDSCleaning:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "DDS cleaning cartridge";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.LTO4:
+                                case MediumTypes.LTO4WORM:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.LTO4:
+                                            density = "LTO Ultrium-4";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.LTO5:
+                                case MediumTypes.LTO5WORM:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.LTO5:
+                                            density = "LTO Ultrium-5";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.LTO6:
+                                case MediumTypes.LTO6WORM:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.LTO6:
+                                            density = "LTO Ultrium-6";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.LTO7:
+                                case MediumTypes.LTO7WORM:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.LTO7:
+                                            density = "LTO Ultrium-7";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.LTOCD:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.LTO2:
+                                            density = "LTO Ultrium-2 in CD emulation mode";
+                                            break;
+                                        case DensityType.LTO3:
+                                            density = "LTO Ultrium-3 in CD emulation mode";
+                                            break;
+                                        case DensityType.LTO4:
+                                            density = "LTO Ultrium-4 in CD emulation mode";
+                                            break;
+                                        case DensityType.LTO5:
+                                            density = "LTO Ultrium-5 in CD emulation mode";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape15m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        case DensityType.IBM3590:
+                                            density = "IBM 3590";
+                                            break;
+                                        case DensityType.IBM3590E:
+                                            density = "IBM 3590E";
+                                            break;
+                                        case DensityType.VXA1:
+                                            density = "VXA-1";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape28m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        case DensityType.CT1:
+                                            density = "CompactTape I";
+                                            break;
+                                        case DensityType.CT2:
+                                            density = "CompactTape II";
+                                            break;
+                                        case DensityType.IBM3590:
+                                            density = "IBM 3590 extended";
+                                            break;
+                                        case DensityType.IBM3590E:
+                                            density = "IBM 3590E extended";
+                                            break;
+                                        case DensityType.VXA2:
+                                            density = "VXA-2";
+                                            break;
+                                        case DensityType.VXA3:
+                                            density = "VXA-3";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape54m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        case DensityType.DLT3_42k:
+                                            density = "DLTtape III at 42500 bpi";
+                                            break;
+                                        case DensityType.DLT3_56t:
+                                            density = "DLTtape III with 56 tracks";
+                                            break;
+                                        case DensityType.DLT3_62k:
+                                        case DensityType.DLT3_62kAlt:
+                                            density = "DLTtape III at 62500 bpi";
+                                            break;
+                                        case DensityType.DLT3c:
+                                            density = "DLTtape III compressed";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape80m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        case DensityType.DLT3_62k:
+                                        case DensityType.DLT3_62kAlt:
+                                            density = "DLTtape IIIxt";
+                                            break;
+                                        case DensityType.DLT3c:
+                                            density = "DLTtape IIIxt compressed";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape106m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        case DensityType.DLT4:
+                                        case DensityType.DLT4Alt:
+                                            density = "DLTtape IV";
+                                            break;
+                                        case DensityType.DLT4_123k:
+                                        case DensityType.DLT4_123kAlt:
+                                            density = "DLTtape IV at 123090 bpi";
+                                            break;
+                                        case DensityType.DLT4_98k:
+                                            density = "DLTtape IV at 98250 bpi";
+                                            break;
+                                        case DensityType.Travan5:
+                                            density = "Travan 5";
+                                            break;
+                                        case DensityType.DLT4c:
+                                            density = "DLTtape IV compressed";
+                                            break;
+                                        case DensityType.DLT4_85k:
+                                            density = "DLTtape IV at 85937 bpi";
+                                            break;
+                                        case DensityType.DLT4c_85k:
+                                            density = "DLTtape IV at 85937 bpi compressed";
+                                            break;
+                                        case DensityType.DLT4c_123k:
+                                            density = "DLTtape IV at 123090 bpi compressed";
+                                            break;
+                                        case DensityType.DLT4c_98k:
+                                            density = "DLTtape IV at 98250 bpi compressed";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape106mXL:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        case DensityType.SDLT1_133k:
+                                        case DensityType.SDLT1_133kAlt:
+                                            density = "Super DLTtape I at 133000 bpi";
+                                            break;
+                                        case DensityType.SDLT1:
+                                            //case DensityType.SDLT1Alt:
+                                            density = "Super DLTtape I";
+                                            break;
+                                        case DensityType.SDLT1c:
+                                            density = "Super DLTtape I compressed";
+                                            break;
+                                        /*case DensityType.SDLT1_133kAlt:
+                                            density = "Super DLTtape I at 133000 bpi compressed";
+                                            break;*/
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SDLT2:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.SDLT2:
+                                            density = "Super DLTtape II";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.VStapeI:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.VStape1:
+                                        case DensityType.VStape1Alt:
+                                            density = "VStape I";
+                                            break;
+                                        case DensityType.VStape1c:
+                                            density = "VStape I compressed";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.DLTtapeS4:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.DLTS4:
+                                            density = "DLTtape S4";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape22m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape40m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape76m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape112m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Ex8200:
+                                            density = "EXB-8200";
+                                            break;
+                                        case DensityType.Ex8200c:
+                                            density = "EXB-8200 compressed";
+                                            break;
+                                        case DensityType.Ex8500:
+                                            density = "EXB-8500";
+                                            break;
+                                        case DensityType.Ex8500c:
+                                            density = "EXB-8500 compressed";
+                                            break;
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.Exatape22mAME:
+                                case MediumTypes.Exatape170m:
+                                case MediumTypes.Exatape125m:
+                                case MediumTypes.Exatape45m:
+                                case MediumTypes.Exatape225m:
+                                case MediumTypes.Exatape150m:
+                                case MediumTypes.Exatape75m:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Mammoth:
+                                            density = "Mammoth";
+                                            break;
+                                        case DensityType.Mammoth2:
+                                            density = "Mammoth-2";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.DC2900SL:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "DC-2900SL";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.DC9250:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "DC-9250";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLR32:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLR-32";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.MLR1SL:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "MRL1-26GBSL";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape50:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-50";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape50SL:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-50 SL";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLR32SL:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLR-32 SL";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLR5:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLR-5";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLR5SL:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLR-5 SL";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape7:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-7";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape7SL:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-7 SL";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape24:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-24";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape24SL:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-24 SL";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape140:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-140";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape40:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-40";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape60:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-60 or SLRtape-75";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLRtape100:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLRtape-100";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                case MediumTypes.SLR40_60_100:
+                                {
+                                    switch(descriptor.Density)
+                                    {
+                                        case DensityType.Default:
+                                            density = "SLR40, SLR60 or SLR100";
+                                            break;
+                                        default:
+                                            density = string.Format("unknown density code 0x{0:X2}",
+                                                                    (byte)descriptor.Density);
+                                            break;
+                                    }
+                                }
+
+                                    break;
+                                default:
+                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
+                                    break;
+                            }
+
+                            if(density != "")
+                            {
+                                if(descriptor.Blocks == 0)
+                                {
+                                    if(descriptor.BlockLength == 0)
+                                        sb
+                                            .AppendFormat("\tAll remaining blocks conform to {0} and have a variable length",
+                                                          density).AppendLine();
                                     else
-                                    {
-                                        if(descriptor.BlockLength == 0)
-                                            sb.AppendFormat("\t{0} blocks are {1} and have a variable length", descriptor.Blocks, density).AppendLine();
-                                        else
-                                            sb.AppendFormat("\t{0} blocks are {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
-                                    }
+                                        sb.AppendFormat("\tAll remaining blocks conform to {0} and are {1} bytes each",
+                                                        density, descriptor.BlockLength).AppendLine();
                                 }
                                 else
                                 {
-                                    if(descriptor.Blocks == 0)
-                                    {
-                                        if(descriptor.BlockLength == 0)
-                                            sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
-                                        else
-                                            sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
-                                    }
+                                    if(descriptor.BlockLength == 0)
+                                        sb.AppendFormat("\t{0} blocks conform to {1} and have a variable length",
+                                                        descriptor.Blocks, density).AppendLine();
                                     else
-                                    {
-                                        if(descriptor.BlockLength == 0)
-                                            sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
-                                        else
-                                            sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
-                                    }
+                                        sb.AppendFormat("\t{0} blocks conform to {1} and are {2} bytes each",
+                                                        descriptor.Blocks, density, descriptor.BlockLength)
+                                          .AppendLine();
+                                }
+                            }
+                            else
+                            {
+                                if(descriptor.Blocks == 0)
+                                {
+                                    if(descriptor.BlockLength == 0)
+                                        sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
+                                    else
+                                        sb.AppendFormat("\tAll remaining blocks are {0} bytes each",
+                                                        descriptor.BlockLength).AppendLine();
+                                }
+                                else
+                                {
+                                    if(descriptor.BlockLength == 0)
+                                        sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks)
+                                          .AppendLine();
+                                    else
+                                        sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
+                                                        descriptor.BlockLength).AppendLine();
                                 }
                             }
                         }
-
-                        break;
                     }
-                #endregion Optical device mode header
-                #region Multimedia device mode header
-                case PeripheralDeviceTypes.MultiMediaDevice:
+
+                    break;
+                }
+                #endregion Sequential access device mode header
+
+                #region Printer device mode header
+                case PeripheralDeviceTypes.PrinterDevice:
+                {
+                    switch(header.Value.BufferedMode)
+                    {
+                        case 0:
+                            sb.AppendLine("\tDevice prints directly");
+                            break;
+                        case 1:
+                            sb.AppendLine("\tDevice uses a print cache");
+                            break;
+                        default:
+                            sb.AppendFormat("\tUnknown buffered mode code 0x{0:X2}", header.Value.BufferedMode)
+                              .AppendLine();
+                            break;
+                    }
+
+                    break;
+                }
+                #endregion Printer device mode header
+
+                #region Optical device mode header
+                case PeripheralDeviceTypes.OpticalDevice:
+                {
+                    if(header.Value.MediumType != MediumTypes.Default)
                     {
                         sb.Append("\tMedium is ");
 
                         switch(header.Value.MediumType)
                         {
-                            case MediumTypes.CDROM:
-                                sb.AppendLine("120 mm CD-ROM");
+                            case MediumTypes.ReadOnly:
+                                sb.AppendLine("a Read-only optical");
                                 break;
-                            case MediumTypes.CDDA:
-                                sb.AppendLine("120 mm Compact Disc Digital Audio");
+                            case MediumTypes.WORM:
+                                sb.AppendLine("a Write-once Read-many optical");
                                 break;
-                            case MediumTypes.MixedCD:
-                                sb.AppendLine("120 mm Compact Disc with data and audio");
+                            case MediumTypes.Erasable:
+                                sb.AppendLine("a Erasable optical");
                                 break;
-                            case MediumTypes.CDROM_80:
-                                sb.AppendLine("80 mm CD-ROM");
+                            case MediumTypes.RO_WORM:
+                                sb.AppendLine("a combination of read-only and write-once optical");
                                 break;
-                            case MediumTypes.CDDA_80:
-                                sb.AppendLine("80 mm Compact Disc Digital Audio");
+                            case MediumTypes.RO_RW:
+                                sb.AppendLine("a combination of read-only and erasable optical");
                                 break;
-                            case MediumTypes.MixedCD_80:
-                                sb.AppendLine("80 mm Compact Disc with data and audio");
+                            case MediumTypes.WORM_RW:
+                                sb.AppendLine("a combination of write-once and erasable optical");
                                 break;
-                            case MediumTypes.Unknown_CD:
-                                sb.AppendLine("Unknown medium type");
-                                break;
-                            case MediumTypes.HybridCD:
-                                sb.AppendLine("120 mm Hybrid disc (Photo CD)");
-                                break;
-                            case MediumTypes.Unknown_CDR:
-                                sb.AppendLine("Unknown size CD-R");
-                                break;
-                            case MediumTypes.CDR:
-                                sb.AppendLine("120 mm CD-R with data only");
-                                break;
-                            case MediumTypes.CDR_DA:
-                                sb.AppendLine("120 mm CD-R with audio only");
-                                break;
-                            case MediumTypes.CDR_Mixed:
-                                sb.AppendLine("120 mm CD-R with data and audio");
-                                break;
-                            case MediumTypes.HybridCDR:
-                                sb.AppendLine("120 mm Hybrid CD-R (Photo CD)");
-                                break;
-                            case MediumTypes.CDR_80:
-                                sb.AppendLine("80 mm CD-R with data only");
-                                break;
-                            case MediumTypes.CDR_DA_80:
-                                sb.AppendLine("80 mm CD-R with audio only");
-                                break;
-                            case MediumTypes.CDR_Mixed_80:
-                                sb.AppendLine("80 mm CD-R with data and audio");
-                                break;
-                            case MediumTypes.HybridCDR_80:
-                                sb.AppendLine("80 mm Hybrid CD-R (Photo CD)");
-                                break;
-                            case MediumTypes.Unknown_CDRW:
-                                sb.AppendLine("Unknown size CD-RW");
-                                break;
-                            case MediumTypes.CDRW:
-                                sb.AppendLine("120 mm CD-RW with data only");
-                                break;
-                            case MediumTypes.CDRW_DA:
-                                sb.AppendLine("120 mm CD-RW with audio only");
-                                break;
-                            case MediumTypes.CDRW_Mixed:
-                                sb.AppendLine("120 mm CD-RW with data and audio");
-                                break;
-                            case MediumTypes.HybridCDRW:
-                                sb.AppendLine("120 mm Hybrid CD-RW (Photo CD)");
-                                break;
-                            case MediumTypes.CDRW_80:
-                                sb.AppendLine("80 mm CD-RW with data only");
-                                break;
-                            case MediumTypes.CDRW_DA_80:
-                                sb.AppendLine("80 mm CD-RW with audio only");
-                                break;
-                            case MediumTypes.CDRW_Mixed_80:
-                                sb.AppendLine("80 mm CD-RW with data and audio");
-                                break;
-                            case MediumTypes.HybridCDRW_80:
-                                sb.AppendLine("80 mm Hybrid CD-RW (Photo CD)");
-                                break;
-                            case MediumTypes.Unknown_HD:
-                                sb.AppendLine("Unknown size HD disc");
-                                break;
-                            case MediumTypes.HD:
-                                sb.AppendLine("120 mm HD disc");
-                                break;
-                            case MediumTypes.HD_80:
-                                sb.AppendLine("80 mm HD disc");
-                                break;
-                            case MediumTypes.NoDisc:
-                                sb.AppendLine("No disc inserted, tray closed or caddy inserted");
-                                break;
-                            case MediumTypes.TrayOpen:
-                                sb.AppendLine("Tray open or no caddy inserted");
-                                break;
-                            case MediumTypes.MediumError:
-                                sb.AppendLine("Tray closed or caddy inserted but medium error");
-                                break;
-                            case MediumTypes.UnknownBlockDevice:
-                                sb.AppendLine("Unknown block device");
-                                break;
-                            case MediumTypes.ReadOnlyBlockDevice:
-                                sb.AppendLine("Read-only block device");
-                                break;
-                            case MediumTypes.ReadWriteBlockDevice:
-                                sb.AppendLine("Read/Write block device");
-                                break;
-                            case MediumTypes.LTOCD:
-                                sb.AppendLine("LTO in CD-ROM emulation mode");
+                            case MediumTypes.DOW:
+                                sb.AppendLine("a direct-overwrite optical");
                                 break;
                             default:
-                                sb.AppendFormat("Unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
+                                sb.AppendFormat("an unknown medium type 0x{0:X2}", header.Value.MediumType)
+                                  .AppendLine();
                                 break;
                         }
+                    }
 
-                        if(header.Value.WriteProtected)
-                            sb.AppendLine("\tMedium is write protected");
+                    if(header.Value.WriteProtected) sb.AppendLine("\tMedium is write protected");
+                    if(header.Value.EBC) sb.AppendLine("\tBlank checking during write is enabled");
+                    if(header.Value.DPOFUA) sb.AppendLine("\tDrive supports DPO and FUA bits");
 
-                        if(header.Value.DPOFUA)
-                            sb.AppendLine("\tDrive supports DPO and FUA bits");
-
-                        if(header.Value.BlockDescriptors != null)
+                    if(header.Value.BlockDescriptors != null)
+                    {
+                        foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                         {
-                            foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                            string density = "";
+                            switch(descriptor.Density)
                             {
-                                string density = "";
-                                switch(descriptor.Density)
-                                {
-                                    case DensityType.Default:
-                                        break;
-                                    case DensityType.User:
-                                        density = "user data only";
-                                        break;
-                                    case DensityType.UserAuxiliary:
-                                        density = "user data plus auxiliary data";
-                                        break;
-                                    case DensityType.UserAuxiliaryTag:
-                                        density = "4-byte tag, user data plus auxiliary data";
-                                        break;
-                                    case DensityType.Audio:
-                                        density = "audio information only";
-                                        break;
-                                    case DensityType.LTO2:
-                                        density = "LTO Ultrium-2";
-                                        break;
-                                    case DensityType.LTO3:
-                                        density = "LTO Ultrium-3";
-                                        break;
-                                    case DensityType.LTO4:
-                                        density = "LTO Ultrium-4";
-                                        break;
-                                    case DensityType.LTO5:
-                                        density = "LTO Ultrium-5";
-                                        break;
-                                    default:
-                                        density = string.Format("with unknown density code 0x{0:X2}", descriptor.Density);
-                                        break;
-                                }
+                                case DensityType.Default: break;
+                                case DensityType.ISO10090:
+                                    density =
+                                        "ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks";
+                                    break;
+                                case DensityType.D581:
+                                    density = "89 mm Read/Write double-sided optical disc with 12500 tracks";
+                                    break;
+                                case DensityType.X3_212:
+                                    density =
+                                        "ANSI X3.212: 130 mm Read/Write double-sided optical disc with 18750 tracks";
+                                    break;
+                                case DensityType.X3_191:
+                                    density =
+                                        "ANSI X3.191: 130 mm Write-Once double-sided optical disc with 30000 tracks";
+                                    break;
+                                case DensityType.X3_214:
+                                    density =
+                                        "ANSI X3.214: 130 mm Write-Once double-sided optical disc with 20000 tracks";
+                                    break;
+                                case DensityType.X3_211:
+                                    density =
+                                        "ANSI X3.211: 130 mm Write-Once double-sided optical disc with 18750 tracks";
+                                    break;
+                                case DensityType.D407:
+                                    density = "200 mm optical disc";
+                                    break;
+                                case DensityType.ISO13614:
+                                    density = "ISO/IEC 13614: 300 mm double-sided optical disc";
+                                    break;
+                                case DensityType.X3_200:
+                                    density = "ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks";
+                                    break;
+                                default:
+                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
+                                    break;
+                            }
 
-                                if(density != "")
+                            if(density != "")
+                            {
+                                if(descriptor.Blocks == 0)
                                 {
-                                    if(descriptor.Blocks == 0)
-                                        sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                    if(descriptor.BlockLength == 0)
+                                        sb.AppendFormat("\tAll remaining blocks are {0} and have a variable length",
+                                                        density).AppendLine();
                                     else
-                                        sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                        sb.AppendFormat("\tAll remaining blocks are {0} and are {1} bytes each",
+                                                        density, descriptor.BlockLength).AppendLine();
                                 }
                                 else
                                 {
-                                    if(descriptor.Blocks == 0)
-                                        sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
+                                    if(descriptor.BlockLength == 0)
+                                        sb.AppendFormat("\t{0} blocks are {1} and have a variable length",
+                                                        descriptor.Blocks, density).AppendLine();
                                     else
-                                        sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
+                                        sb.AppendFormat("\t{0} blocks are {1} and are {2} bytes each",
+                                                        descriptor.Blocks, density, descriptor.BlockLength)
+                                          .AppendLine();
+                                }
+                            }
+                            else
+                            {
+                                if(descriptor.Blocks == 0)
+                                {
+                                    if(descriptor.BlockLength == 0)
+                                        sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
+                                    else
+                                        sb.AppendFormat("\tAll remaining blocks are {0} bytes each",
+                                                        descriptor.BlockLength).AppendLine();
+                                }
+                                else
+                                {
+                                    if(descriptor.BlockLength == 0)
+                                        sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks)
+                                          .AppendLine();
+                                    else
+                                        sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
+                                                        descriptor.BlockLength).AppendLine();
                                 }
                             }
                         }
-
-                        break;
                     }
-                    #endregion Multimedia device mode header
+
+                    break;
+                }
+                #endregion Optical device mode header
+
+                #region Multimedia device mode header
+                case PeripheralDeviceTypes.MultiMediaDevice:
+                {
+                    sb.Append("\tMedium is ");
+
+                    switch(header.Value.MediumType)
+                    {
+                        case MediumTypes.CDROM:
+                            sb.AppendLine("120 mm CD-ROM");
+                            break;
+                        case MediumTypes.CDDA:
+                            sb.AppendLine("120 mm Compact Disc Digital Audio");
+                            break;
+                        case MediumTypes.MixedCD:
+                            sb.AppendLine("120 mm Compact Disc with data and audio");
+                            break;
+                        case MediumTypes.CDROM_80:
+                            sb.AppendLine("80 mm CD-ROM");
+                            break;
+                        case MediumTypes.CDDA_80:
+                            sb.AppendLine("80 mm Compact Disc Digital Audio");
+                            break;
+                        case MediumTypes.MixedCD_80:
+                            sb.AppendLine("80 mm Compact Disc with data and audio");
+                            break;
+                        case MediumTypes.Unknown_CD:
+                            sb.AppendLine("Unknown medium type");
+                            break;
+                        case MediumTypes.HybridCD:
+                            sb.AppendLine("120 mm Hybrid disc (Photo CD)");
+                            break;
+                        case MediumTypes.Unknown_CDR:
+                            sb.AppendLine("Unknown size CD-R");
+                            break;
+                        case MediumTypes.CDR:
+                            sb.AppendLine("120 mm CD-R with data only");
+                            break;
+                        case MediumTypes.CDR_DA:
+                            sb.AppendLine("120 mm CD-R with audio only");
+                            break;
+                        case MediumTypes.CDR_Mixed:
+                            sb.AppendLine("120 mm CD-R with data and audio");
+                            break;
+                        case MediumTypes.HybridCDR:
+                            sb.AppendLine("120 mm Hybrid CD-R (Photo CD)");
+                            break;
+                        case MediumTypes.CDR_80:
+                            sb.AppendLine("80 mm CD-R with data only");
+                            break;
+                        case MediumTypes.CDR_DA_80:
+                            sb.AppendLine("80 mm CD-R with audio only");
+                            break;
+                        case MediumTypes.CDR_Mixed_80:
+                            sb.AppendLine("80 mm CD-R with data and audio");
+                            break;
+                        case MediumTypes.HybridCDR_80:
+                            sb.AppendLine("80 mm Hybrid CD-R (Photo CD)");
+                            break;
+                        case MediumTypes.Unknown_CDRW:
+                            sb.AppendLine("Unknown size CD-RW");
+                            break;
+                        case MediumTypes.CDRW:
+                            sb.AppendLine("120 mm CD-RW with data only");
+                            break;
+                        case MediumTypes.CDRW_DA:
+                            sb.AppendLine("120 mm CD-RW with audio only");
+                            break;
+                        case MediumTypes.CDRW_Mixed:
+                            sb.AppendLine("120 mm CD-RW with data and audio");
+                            break;
+                        case MediumTypes.HybridCDRW:
+                            sb.AppendLine("120 mm Hybrid CD-RW (Photo CD)");
+                            break;
+                        case MediumTypes.CDRW_80:
+                            sb.AppendLine("80 mm CD-RW with data only");
+                            break;
+                        case MediumTypes.CDRW_DA_80:
+                            sb.AppendLine("80 mm CD-RW with audio only");
+                            break;
+                        case MediumTypes.CDRW_Mixed_80:
+                            sb.AppendLine("80 mm CD-RW with data and audio");
+                            break;
+                        case MediumTypes.HybridCDRW_80:
+                            sb.AppendLine("80 mm Hybrid CD-RW (Photo CD)");
+                            break;
+                        case MediumTypes.Unknown_HD:
+                            sb.AppendLine("Unknown size HD disc");
+                            break;
+                        case MediumTypes.HD:
+                            sb.AppendLine("120 mm HD disc");
+                            break;
+                        case MediumTypes.HD_80:
+                            sb.AppendLine("80 mm HD disc");
+                            break;
+                        case MediumTypes.NoDisc:
+                            sb.AppendLine("No disc inserted, tray closed or caddy inserted");
+                            break;
+                        case MediumTypes.TrayOpen:
+                            sb.AppendLine("Tray open or no caddy inserted");
+                            break;
+                        case MediumTypes.MediumError:
+                            sb.AppendLine("Tray closed or caddy inserted but medium error");
+                            break;
+                        case MediumTypes.UnknownBlockDevice:
+                            sb.AppendLine("Unknown block device");
+                            break;
+                        case MediumTypes.ReadOnlyBlockDevice:
+                            sb.AppendLine("Read-only block device");
+                            break;
+                        case MediumTypes.ReadWriteBlockDevice:
+                            sb.AppendLine("Read/Write block device");
+                            break;
+                        case MediumTypes.LTOCD:
+                            sb.AppendLine("LTO in CD-ROM emulation mode");
+                            break;
+                        default:
+                            sb.AppendFormat("Unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
+                            break;
+                    }
+
+                    if(header.Value.WriteProtected) sb.AppendLine("\tMedium is write protected");
+
+                    if(header.Value.DPOFUA) sb.AppendLine("\tDrive supports DPO and FUA bits");
+
+                    if(header.Value.BlockDescriptors != null)
+                    {
+                        foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                        {
+                            string density = "";
+                            switch(descriptor.Density)
+                            {
+                                case DensityType.Default: break;
+                                case DensityType.User:
+                                    density = "user data only";
+                                    break;
+                                case DensityType.UserAuxiliary:
+                                    density = "user data plus auxiliary data";
+                                    break;
+                                case DensityType.UserAuxiliaryTag:
+                                    density = "4-byte tag, user data plus auxiliary data";
+                                    break;
+                                case DensityType.Audio:
+                                    density = "audio information only";
+                                    break;
+                                case DensityType.LTO2:
+                                    density = "LTO Ultrium-2";
+                                    break;
+                                case DensityType.LTO3:
+                                    density = "LTO Ultrium-3";
+                                    break;
+                                case DensityType.LTO4:
+                                    density = "LTO Ultrium-4";
+                                    break;
+                                case DensityType.LTO5:
+                                    density = "LTO Ultrium-5";
+                                    break;
+                                default:
+                                    density = string.Format("with unknown density code 0x{0:X2}", descriptor.Density);
+                                    break;
+                            }
+
+                            if(density != "")
+                            {
+                                if(descriptor.Blocks == 0)
+                                    sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density,
+                                                    descriptor.BlockLength).AppendLine();
+                                else
+                                    sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks,
+                                                    density, descriptor.BlockLength).AppendLine();
+                            }
+                            else
+                            {
+                                if(descriptor.Blocks == 0)
+                                    sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
+                                      .AppendLine();
+                                else
+                                    sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
+                                                    descriptor.BlockLength).AppendLine();
+                            }
+                        }
+                    }
+
+                    break;
+                }
+                #endregion Multimedia device mode header
             }
 
             return sb.ToString();
@@ -1807,8 +1935,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModeHeader? DecodeModeHeader10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
-            if(modeResponse == null || modeResponse.Length < 8)
-                return null;
+            if(modeResponse == null || modeResponse.Length < 8) return null;
 
             ushort modeLength;
             ushort blockDescLength;
@@ -1816,8 +1943,7 @@ namespace DiscImageChef.Decoders.SCSI
             modeLength = (ushort)((modeResponse[0] << 8) + modeResponse[1]);
             blockDescLength = (ushort)((modeResponse[6] << 8) + modeResponse[7]);
 
-            if(modeResponse.Length < modeLength)
-                return null;
+            if(modeResponse.Length < modeLength) return null;
 
             ModeHeader header = new ModeHeader();
             header.MediumType = (MediumTypes)modeResponse[2];
@@ -1906,7 +2032,6 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #region Mode Page 0x0A: Control mode page
-
         /// <summary>
         /// Control mode page
         /// Page code 0x0A
@@ -2031,20 +2156,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0A? DecodeModePage_0A(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x0A)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x0A) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             ModePage_0A decoded = new ModePage_0A();
 
@@ -2062,8 +2182,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.ReadyAENHoldOffPeriod = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
 
-            if(pageResponse.Length < 10)
-                return decoded;
+            if(pageResponse.Length < 10) return decoded;
 
             // SPC-1
             decoded.GLTSD |= (pageResponse[2] & 0x02) == 0x02;
@@ -2102,52 +2221,38 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0A(ModePage_0A? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_0A page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Control mode page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
-            if(page.RLEC)
-                sb.AppendLine("\tIf set, target shall report log exception conditions");
-            if(page.DQue)
-                sb.AppendLine("\tTagged queuing is disabled");
-            if(page.EECA)
-                sb.AppendLine("\tExtended Contingent Allegiance is enabled");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.RLEC) sb.AppendLine("\tIf set, target shall report log exception conditions");
+            if(page.DQue) sb.AppendLine("\tTagged queuing is disabled");
+            if(page.EECA) sb.AppendLine("\tExtended Contingent Allegiance is enabled");
             if(page.RAENP)
                 sb.AppendLine("\tTarget may issue an asynchronous event notification upon completing its initialization");
             if(page.UAAENP)
                 sb.AppendLine("\tTarget may issue an asynchronous event notification instead of a unit attention condition");
             if(page.EAENP)
                 sb.AppendLine("\tTarget may issue an asynchronous event notification instead of a deferred error");
-            if(page.GLTSD)
-                sb.AppendLine("\tGlobal logging target save disabled");
-            if(page.RAC)
-                sb.AppendLine("\tCHECK CONDITION should be reported rather than a long busy condition");
-            if(page.SWP)
-                sb.AppendLine("\tSoftware write protect is active");
+            if(page.GLTSD) sb.AppendLine("\tGlobal logging target save disabled");
+            if(page.RAC) sb.AppendLine("\tCHECK CONDITION should be reported rather than a long busy condition");
+            if(page.SWP) sb.AppendLine("\tSoftware write protect is active");
             if(page.TAS)
                 sb.AppendLine("\tTasks aborted by other initiator's actions should be terminated with TASK ABORTED");
             if(page.TMF_ONLY)
                 sb.AppendLine("\tAll tasks received in nexus with ACA ACTIVE is set and an ACA condition is established shall terminate");
             if(page.D_SENSE)
                 sb.AppendLine("\tDevice shall return descriptor format sense data when returning sense data in the same transactions as a CHECK CONDITION");
-            if(page.ATO)
-                sb.AppendLine("\tLOGICAL BLOCK APPLICATION TAG should not be modified");
-            if(page.DPICZ)
-                sb.AppendLine("\tProtector information checking is disabled");
-            if(page.NUAR)
-                sb.AppendLine("\tNo unit attention on release");
-            if(page.ATMPE)
-                sb.AppendLine("\tApplication Tag mode page is enabled");
-            if(page.RWWP)
-                sb.AppendLine("\tAbort any write command without protection information");
-            if(page.SBLP)
-                sb.AppendLine("\tSupportes block lengths and protection information");
+            if(page.ATO) sb.AppendLine("\tLOGICAL BLOCK APPLICATION TAG should not be modified");
+            if(page.DPICZ) sb.AppendLine("\tProtector information checking is disabled");
+            if(page.NUAR) sb.AppendLine("\tNo unit attention on release");
+            if(page.ATMPE) sb.AppendLine("\tApplication Tag mode page is enabled");
+            if(page.RWWP) sb.AppendLine("\tAbort any write command without protection information");
+            if(page.SBLP) sb.AppendLine("\tSupportes block lengths and protection information");
 
             switch(page.TST)
             {
@@ -2224,14 +2329,16 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(page.ReadyAENHoldOffPeriod > 0)
-                sb.AppendFormat("\t{0} ms before attempting asynchronous event notifications after initialization", page.ReadyAENHoldOffPeriod).AppendLine();
+                sb.AppendFormat("\t{0} ms before attempting asynchronous event notifications after initialization",
+                                page.ReadyAENHoldOffPeriod).AppendLine();
 
             if(page.BusyTimeoutPeriod > 0)
             {
                 if(page.BusyTimeoutPeriod == 0xFFFF)
                     sb.AppendLine("\tThere is no limit on the maximum time that is allowed to remain busy");
                 else
-                    sb.AppendFormat("\tA maximum of {0} ms are allowed to remain busy", page.BusyTimeoutPeriod * 100).AppendLine();
+                    sb.AppendFormat("\tA maximum of {0} ms are allowed to remain busy", page.BusyTimeoutPeriod * 100)
+                      .AppendLine();
             }
 
             if(page.ExtendedSelfTestCompletionTime > 0)
@@ -2239,11 +2346,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x0A: Control mode page
 
         #region Mode Page 0x02: Disconnect-reconnect page
-
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x02
@@ -2304,20 +2409,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_02? DecodeModePage_02(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x02)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x02) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 12)
-                return null;
+            if(pageResponse.Length < 12) return null;
 
             ModePage_02 decoded = new ModePage_02();
 
@@ -2337,8 +2437,7 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.DTDC = (byte)(pageResponse[12] & 0x07);
             }
 
-            if(pageResponse.Length >= 16)
-                decoded.FirstBurstSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+            if(pageResponse.Length >= 16) decoded.FirstBurstSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
 
             return decoded;
         }
@@ -2350,35 +2449,41 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_02(ModePage_02? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_02 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Disconnect-Reconnect mode page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
             if(page.BufferFullRatio > 0)
-                sb.AppendFormat("\t{0} ratio of buffer that shall be full prior to attempting a reselection", page.BufferFullRatio).AppendLine();
+                sb.AppendFormat("\t{0} ratio of buffer that shall be full prior to attempting a reselection",
+                                page.BufferFullRatio).AppendLine();
             if(page.BufferEmptyRatio > 0)
-                sb.AppendFormat("\t{0} ratio of buffer that shall be empty prior to attempting a reselection", page.BufferEmptyRatio).AppendLine();
+                sb.AppendFormat("\t{0} ratio of buffer that shall be empty prior to attempting a reselection",
+                                page.BufferEmptyRatio).AppendLine();
             if(page.BusInactivityLimit > 0)
-                sb.AppendFormat("\t{0} µs maximum permitted to assert BSY without a REQ/ACK handshake", page.BusInactivityLimit * 100).AppendLine();
+                sb.AppendFormat("\t{0} µs maximum permitted to assert BSY without a REQ/ACK handshake",
+                                page.BusInactivityLimit * 100).AppendLine();
             if(page.DisconnectTimeLimit > 0)
-                sb.AppendFormat("\t{0} µs maximum permitted wait after releasing the bus before attempting reselection", page.DisconnectTimeLimit * 100).AppendLine();
+                sb.AppendFormat("\t{0} µs maximum permitted wait after releasing the bus before attempting reselection",
+                                page.DisconnectTimeLimit * 100).AppendLine();
             if(page.ConnectTimeLimit > 0)
-                sb.AppendFormat("\t{0} µs allowed to use the bus before disconnecting, if granted the privilege and not restricted", page.ConnectTimeLimit * 100).AppendLine();
+                sb
+                    .AppendFormat("\t{0} µs allowed to use the bus before disconnecting, if granted the privilege and not restricted",
+                                  page.ConnectTimeLimit * 100).AppendLine();
             if(page.MaxBurstSize > 0)
-                sb.AppendFormat("\t{0} bytes maximum can be transferred before disconnecting", page.MaxBurstSize * 512).AppendLine();
+                sb.AppendFormat("\t{0} bytes maximum can be transferred before disconnecting", page.MaxBurstSize * 512)
+                  .AppendLine();
             if(page.FirstBurstSize > 0)
-                sb.AppendFormat("\t{0} bytes maximum can be transferred for a command along with the disconnect command", page.FirstBurstSize * 512).AppendLine();
+                sb
+                    .AppendFormat("\t{0} bytes maximum can be transferred for a command along with the disconnect command",
+                                  page.FirstBurstSize * 512).AppendLine();
 
             if(page.DIMM)
                 sb.AppendLine("\tTarget shall not transfer data for a command during the same interconnect tenancy");
-            if(page.EMDP)
-                sb.AppendLine("\tTarget is allowed to re-order the data transfer");
+            if(page.EMDP) sb.AppendLine("\tTarget is allowed to re-order the data transfer");
 
             switch(page.DTDC)
             {
@@ -2398,11 +2503,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x02: Disconnect-reconnect page
 
         #region Mode Page 0x08: Caching page
-
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x08
@@ -2502,20 +2605,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_08? DecodeModePage_08(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x08)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x08) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 12)
-                return null;
+            if(pageResponse.Length < 12) return null;
 
             ModePage_08 decoded = new ModePage_08();
 
@@ -2531,8 +2629,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.MaximumPreFetch = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
             decoded.MaximumPreFetchCeiling = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
-            if(pageResponse.Length < 20)
-                return decoded;
+            if(pageResponse.Length < 20) return decoded;
 
             decoded.IC |= (pageResponse[2] & 0x80) == 0x80;
             decoded.ABPF |= (pageResponse[2] & 0x40) == 0x40;
@@ -2560,20 +2657,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_08(ModePage_08? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_08 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Caching mode page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
-            if(page.RCD)
-                sb.AppendLine("\tRead-cache is enabled");
-            if(page.WCE)
-                sb.AppendLine("\tWrite-cache is enabled");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.RCD) sb.AppendLine("\tRead-cache is enabled");
+            if(page.WCE) sb.AppendLine("\tWrite-cache is enabled");
 
             switch(page.DemandReadRetentionPrio)
             {
@@ -2587,7 +2680,8 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("\tData put by READ commands should not be evicted if there is data cached by other means that can be evicted");
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown demand read retention priority value {0}", page.DemandReadRetentionPrio).AppendLine();
+                    sb.AppendFormat("\tUnknown demand read retention priority value {0}", page.DemandReadRetentionPrio)
+                      .AppendLine();
                     break;
             }
 
@@ -2603,52 +2697,54 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("\tData put by WRITE commands should not be evicted if there is data cached by other means that can be evicted");
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown demand write retention priority value {0}", page.DemandReadRetentionPrio).AppendLine();
+                    sb.AppendFormat("\tUnknown demand write retention priority value {0}", page.DemandReadRetentionPrio)
+                      .AppendLine();
                     break;
             }
 
-            if(page.DRA)
-                sb.AppendLine("\tRead-ahead is disabled");
+            if(page.DRA) sb.AppendLine("\tRead-ahead is disabled");
             else
             {
-                if(page.MF)
-                    sb.AppendLine("\tPre-fetch values indicate a block multiplier");
+                if(page.MF) sb.AppendLine("\tPre-fetch values indicate a block multiplier");
 
-                if(page.DisablePreFetch == 0)
-                    sb.AppendLine("\tNo pre-fetch will be done");
+                if(page.DisablePreFetch == 0) sb.AppendLine("\tNo pre-fetch will be done");
                 else
                 {
-                    sb.AppendFormat("\tPre-fetch will be done for READ commands of {0} blocks or less", page.DisablePreFetch).AppendLine();
+                    sb.AppendFormat("\tPre-fetch will be done for READ commands of {0} blocks or less",
+                                    page.DisablePreFetch).AppendLine();
 
                     if(page.MinimumPreFetch > 0)
-                        sb.AppendFormat("At least {0} blocks will be always pre-fetched", page.MinimumPreFetch).AppendLine();
+                        sb.AppendFormat("At least {0} blocks will be always pre-fetched", page.MinimumPreFetch)
+                          .AppendLine();
                     if(page.MaximumPreFetch > 0)
-                        sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch).AppendLine();
+                        sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch)
+                          .AppendLine();
                     if(page.MaximumPreFetchCeiling > 0)
-                        sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more", page.MaximumPreFetchCeiling).AppendLine();
+                        sb
+                            .AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more",
+                                          page.MaximumPreFetchCeiling).AppendLine();
 
                     if(page.IC)
                         sb.AppendLine("\tDevice should use number of cache segments or cache segment size for caching");
-                    if(page.ABPF)
-                        sb.AppendLine("\tPre-fetch should be aborted upong receiving a new command");
-                    if(page.CAP)
-                        sb.AppendLine("\tCaching analysis is permitted");
+                    if(page.ABPF) sb.AppendLine("\tPre-fetch should be aborted upong receiving a new command");
+                    if(page.CAP) sb.AppendLine("\tCaching analysis is permitted");
                     if(page.Disc)
                         sb.AppendLine("\tPre-fetch can continue across discontinuities (such as cylinders or tracks)");
                 }
             }
 
-            if(page.FSW)
-                sb.AppendLine("\tDrive should not reorder the sequence of write commands to be faster");
+            if(page.FSW) sb.AppendLine("\tDrive should not reorder the sequence of write commands to be faster");
 
             if(page.Size)
             {
                 if(page.CacheSegmentSize > 0)
                 {
                     if(page.LBCSS)
-                        sb.AppendFormat("\tDrive cache segments should be {0} blocks long", page.CacheSegmentSize).AppendLine();
+                        sb.AppendFormat("\tDrive cache segments should be {0} blocks long", page.CacheSegmentSize)
+                          .AppendLine();
                     else
-                        sb.AppendFormat("\tDrive cache segments should be {0} bytes long", page.CacheSegmentSize).AppendLine();
+                        sb.AppendFormat("\tDrive cache segments should be {0} bytes long", page.CacheSegmentSize)
+                          .AppendLine();
                 }
             }
             else
@@ -2658,18 +2754,17 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(page.NonCacheSegmentSize > 0)
-                sb.AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted", page.NonCacheSegmentSize).AppendLine();
+                sb
+                    .AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted",
+                                  page.NonCacheSegmentSize).AppendLine();
 
-            if(page.NV_DIS)
-                sb.AppendLine("\tNon-Volatile cache is disabled");
+            if(page.NV_DIS) sb.AppendLine("\tNon-Volatile cache is disabled");
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x08: Caching page
 
         #region Mode Page 0x05: Flexible disk page
-
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x05
@@ -2786,20 +2881,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_05? DecodeModePage_05(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x05)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x05) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 32)
-                return null;
+            if(pageResponse.Length < 32) return null;
 
             ModePage_05 decoded = new ModePage_05();
 
@@ -2839,16 +2929,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_05(ModePage_05? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_05 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Flexible disk page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\tTransfer rate: {0} kbit/s", page.TransferRate).AppendLine();
             sb.AppendFormat("\t{0} heads", page.Heads).AppendLine();
@@ -2856,9 +2944,11 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendFormat("\t{0} sectors per track", page.SectorsPerTrack).AppendLine();
             sb.AppendFormat("\t{0} bytes per sector", page.BytesPerSector).AppendLine();
             if(page.WritePrecompCylinder < page.Cylinders)
-                sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).AppendLine();
+                sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder)
+                  .AppendLine();
             if(page.WriteReduceCylinder < page.Cylinders)
-                sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).AppendLine();
+                sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder)
+                  .AppendLine();
             if(page.DriveStepRate > 0)
                 sb.AppendFormat("\tDrive steps in {0} μs", (uint)page.DriveStepRate * 100).AppendLine();
             if(page.DriveStepPulse > 0)
@@ -2867,31 +2957,29 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendFormat("\tHeads settles in {0} μs", (uint)page.HeadSettleDelay * 100).AppendLine();
 
             if(!page.TRDY)
-                sb.AppendFormat("\tTarget shall wait {0} seconds before attempting to access the medium after motor on is asserted",
-                    (double)page.MotorOnDelay * 10).AppendLine();
+                sb
+                    .AppendFormat("\tTarget shall wait {0} seconds before attempting to access the medium after motor on is asserted",
+                                  (double)page.MotorOnDelay * 10).AppendLine();
             else
-                sb.AppendFormat("\tTarget shall wait {0} seconds after drive is ready before aborting medium access attemps",
-                    (double)page.MotorOnDelay * 10).AppendLine();
+                sb
+                    .AppendFormat("\tTarget shall wait {0} seconds after drive is ready before aborting medium access attemps",
+                                  (double)page.MotorOnDelay * 10).AppendLine();
 
             if(page.MotorOffDelay != 0xFF)
-                sb.AppendFormat("\tTarget shall wait {0} seconds before releasing the motor on signal after becoming idle",
-                    (double)page.MotorOffDelay * 10).AppendLine();
-            else
-                sb.AppendLine("\tTarget shall never release the motor on signal");
+                sb
+                    .AppendFormat("\tTarget shall wait {0} seconds before releasing the motor on signal after becoming idle",
+                                  (double)page.MotorOffDelay * 10).AppendLine();
+            else sb.AppendLine("\tTarget shall never release the motor on signal");
 
-            if(page.TRDY)
-                sb.AppendLine("\tThere is a drive ready signal");
-            if(page.SSN)
-                sb.AppendLine("\tSectors start at 1");
-            if(page.MO)
-                sb.AppendLine("\tThe motor on signal shall remain released");
+            if(page.TRDY) sb.AppendLine("\tThere is a drive ready signal");
+            if(page.SSN) sb.AppendLine("\tSectors start at 1");
+            if(page.MO) sb.AppendLine("\tThe motor on signal shall remain released");
 
             sb.AppendFormat("\tDrive needs to do {0} step pulses per cylinder", page.SPC + 1).AppendLine();
 
             if(page.WriteCompensation > 0)
                 sb.AppendFormat("\tWrite pre-compensation is {0}", page.WriteCompensation).AppendLine();
-            if(page.HeadLoadDelay > 0)
-                sb.AppendFormat("\tHead takes {0} ms to load", page.HeadLoadDelay).AppendLine();
+            if(page.HeadLoadDelay > 0) sb.AppendFormat("\tHead takes {0} ms to load", page.HeadLoadDelay).AppendLine();
             if(page.HeadUnloadDelay > 0)
                 sb.AppendFormat("\tHead takes {0} ms to unload", page.HeadUnloadDelay).AppendLine();
 
@@ -2905,24 +2993,18 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
                 case 1:
                     sb.Append("\tPin 34 indicates drive is ready when active ");
-                    if((page.Pin34 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin34 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
                 case 2:
                     sb.Append("\tPin 34 indicates disk has changed when active ");
-                    if((page.Pin34 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin34 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
                 default:
                     sb.AppendFormat("\tPin 34 indicates unknown function {0} when active ", page.Pin34 & 0x07);
-                    if((page.Pin34 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin34 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
             }
 
@@ -2933,31 +3015,23 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
                 case 1:
                     sb.Append("\tPin 4 indicates drive is in use when active ");
-                    if((page.Pin4 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin4 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
                 case 2:
                     sb.Append("\tPin 4 indicates eject when active ");
-                    if((page.Pin4 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin4 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
                 case 3:
                     sb.Append("\tPin 4 indicates head load when active ");
-                    if((page.Pin4 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin4 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
                 default:
                     sb.AppendFormat("\tPin 4 indicates unknown function {0} when active ", page.Pin4 & 0x07);
-                    if((page.Pin4 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin4 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
             }
 
@@ -2968,10 +3042,8 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
                 default:
                     sb.AppendFormat("\tPin 2 indicates unknown function {0} when active ", page.Pin2 & 0x07);
-                    if((page.Pin2 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin2 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
             }
 
@@ -2982,27 +3054,21 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
                 case 1:
                     sb.Append("\tPin 1 indicates disk change reset when active ");
-                    if((page.Pin1 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin1 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
                 default:
                     sb.AppendFormat("\tPin 1 indicates unknown function {0} when active ", page.Pin1 & 0x07);
-                    if((page.Pin1 & 0x08) == 0x08)
-                        sb.Append("high");
-                    else
-                        sb.Append("low");
+                    if((page.Pin1 & 0x08) == 0x08) sb.Append("high");
+                    else sb.Append("low");
                     break;
             }
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x05: Flexible disk page
 
         #region Mode Page 0x03: Format device page
-
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x03
@@ -3071,20 +3137,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_03? DecodeModePage_03(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x03)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x03) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 24)
-                return null;
+            if(pageResponse.Length < 24) return null;
 
             ModePage_03 decoded = new ModePage_03();
 
@@ -3113,32 +3174,34 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_03(ModePage_03? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_03 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Format device page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            sb.AppendFormat("\t{0} tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors", page.TracksPerZone).AppendLine();
-            sb.AppendFormat("\t{0} sectors per zone that shall be reserved for defect handling", page.AltSectorsPerZone).AppendLine();
-            sb.AppendFormat("\t{0} tracks per zone that shall be reserved for defect handling", page.AltTracksPerZone).AppendLine();
-            sb.AppendFormat("\t{0} tracks per LUN that shall be reserved for defect handling", page.AltTracksPerLun).AppendLine();
+            sb
+                .AppendFormat("\t{0} tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors",
+                              page.TracksPerZone).AppendLine();
+            sb.AppendFormat("\t{0} sectors per zone that shall be reserved for defect handling", page.AltSectorsPerZone)
+              .AppendLine();
+            sb.AppendFormat("\t{0} tracks per zone that shall be reserved for defect handling", page.AltTracksPerZone)
+              .AppendLine();
+            sb.AppendFormat("\t{0} tracks per LUN that shall be reserved for defect handling", page.AltTracksPerLun)
+              .AppendLine();
             sb.AppendFormat("\t{0} physical sectors per track", page.SectorsPerTrack).AppendLine();
             sb.AppendFormat("\t{0} Bytes per physical sector", page.BytesPerSector).AppendLine();
             sb.AppendFormat("\tTarget-dependent interleave value is {0}", page.Interleave).AppendLine();
-            sb.AppendFormat("\t{0} sectors between last block of one track and first block of the next", page.TrackSkew).AppendLine();
-            sb.AppendFormat("\t{0} sectors between last block of a cylinder and first block of the next one", page.CylinderSkew).AppendLine();
-            if(page.SSEC)
-                sb.AppendLine("\tDrive supports soft-sectoring format");
-            if(page.HSEC)
-                sb.AppendLine("\tDrive supports hard-sectoring format");
-            if(page.RMB)
-                sb.AppendLine("\tDrive media is removable");
+            sb.AppendFormat("\t{0} sectors between last block of one track and first block of the next", page.TrackSkew)
+              .AppendLine();
+            sb.AppendFormat("\t{0} sectors between last block of a cylinder and first block of the next one",
+                            page.CylinderSkew).AppendLine();
+            if(page.SSEC) sb.AppendLine("\tDrive supports soft-sectoring format");
+            if(page.HSEC) sb.AppendLine("\tDrive supports hard-sectoring format");
+            if(page.RMB) sb.AppendLine("\tDrive media is removable");
             if(page.SURF)
                 sb.AppendLine("\tSector addressing is progressively incremented in one surface before going to the next");
             else
@@ -3146,11 +3209,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x03: Format device page
 
         #region Mode Page 0x0B: Medium types supported page
-
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x0B
@@ -3170,20 +3231,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0B? DecodeModePage_0B(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x0B)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x0B) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             ModePage_0B decoded = new ModePage_0B();
 
@@ -3203,39 +3259,37 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0B(ModePage_0B? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_0B page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Medium types supported page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             if(page.MediumType1 != MediumTypes.Default)
-                sb.AppendFormat("Supported medium type one: {0}", GetMediumTypeDescription(page.MediumType1)).AppendLine();
+                sb.AppendFormat("Supported medium type one: {0}", GetMediumTypeDescription(page.MediumType1))
+                  .AppendLine();
             if(page.MediumType2 != MediumTypes.Default)
-                sb.AppendFormat("Supported medium type two: {0}", GetMediumTypeDescription(page.MediumType2)).AppendLine();
+                sb.AppendFormat("Supported medium type two: {0}", GetMediumTypeDescription(page.MediumType2))
+                  .AppendLine();
             if(page.MediumType3 != MediumTypes.Default)
-                sb.AppendFormat("Supported medium type three: {0}", GetMediumTypeDescription(page.MediumType3)).AppendLine();
+                sb.AppendFormat("Supported medium type three: {0}", GetMediumTypeDescription(page.MediumType3))
+                  .AppendLine();
             if(page.MediumType4 != MediumTypes.Default)
-                sb.AppendFormat("Supported medium type four: {0}", GetMediumTypeDescription(page.MediumType4)).AppendLine();
+                sb.AppendFormat("Supported medium type four: {0}", GetMediumTypeDescription(page.MediumType4))
+                  .AppendLine();
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x0B: Medium types supported page
 
         #region Mode Page 0x0C: Notch page
-
         // TODO: Implement this page
-
         #endregion Mode Page 0x0C: Notch page
 
         #region Mode Page 0x01: Read-write error recovery page
-
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x01
@@ -3312,20 +3366,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_01? DecodeModePage_01(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x01)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x01) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             ModePage_01 decoded = new ModePage_01();
 
@@ -3344,8 +3393,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.HeadOffsetCount = (sbyte)pageResponse[5];
             decoded.DataStrobeOffsetCount = (sbyte)pageResponse[6];
 
-            if(pageResponse.Length < 12)
-                return decoded;
+            if(pageResponse.Length < 12) return decoded;
 
             decoded.WriteRetryCount = pageResponse[8];
             decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
@@ -3361,49 +3409,39 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_01(ModePage_01? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_01 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Read-write error recovery page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.AWRE)
-                sb.AppendLine("\tAutomatic write reallocation is enabled");
-            if(page.ARRE)
-                sb.AppendLine("\tAutomatic read reallocation is enabled");
+            if(page.AWRE) sb.AppendLine("\tAutomatic write reallocation is enabled");
+            if(page.ARRE) sb.AppendLine("\tAutomatic read reallocation is enabled");
             if(page.TB)
                 sb.AppendLine("\tData not recovered within limits shall be transferred back before a CHECK CONDITION");
             if(page.RC)
                 sb.AppendLine("\tDrive will transfer the entire requested length without delaying to perform error recovery");
-            if(page.EER)
-                sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
-            if(page.PER)
-                sb.AppendLine("\tDrive shall report recovered errors");
-            if(page.DTE)
-                sb.AppendLine("\tTransfer will be terminated upon error detection");
-            if(page.DCR)
-                sb.AppendLine("\tError correction is disabled");
+            if(page.EER) sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
+            if(page.PER) sb.AppendLine("\tDrive shall report recovered errors");
+            if(page.DTE) sb.AppendLine("\tTransfer will be terminated upon error detection");
+            if(page.DCR) sb.AppendLine("\tError correction is disabled");
             if(page.ReadRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat read operations {0} times", page.ReadRetryCount).AppendLine();
             if(page.WriteRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat write operations {0} times", page.WriteRetryCount).AppendLine();
             if(page.RecoveryTimeLimit > 0)
-                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).AppendLine();
-            if(page.LBPERE)
-                sb.AppendLine("Logical block provisioning error reporting is enabled");
+                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit)
+                  .AppendLine();
+            if(page.LBPERE) sb.AppendLine("Logical block provisioning error reporting is enabled");
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x01: Read-write error recovery page
 
         #region Mode Page 0x04: Rigid disk drive geometry page
-
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x04
@@ -3455,20 +3493,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_04? DecodeModePage_04(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x04)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x04) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 20)
-                return null;
+            if(pageResponse.Length < 20) return null;
 
             ModePage_04 decoded = new ModePage_04();
 
@@ -3495,23 +3528,23 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_04(ModePage_04? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_04 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Rigid disk drive geometry page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\t{0} heads", page.Heads).AppendLine();
             sb.AppendFormat("\t{0} cylinders", page.Cylinders).AppendLine();
             if(page.WritePrecompCylinder < page.Cylinders)
-                sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).AppendLine();
+                sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder)
+                  .AppendLine();
             if(page.WriteReduceCylinder < page.Cylinders)
-                sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).AppendLine();
+                sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder)
+                  .AppendLine();
             if(page.DriveStepRate > 0)
                 sb.AppendFormat("\tDrive steps in {0} ns", (uint)page.DriveStepRate * 100).AppendLine();
 
@@ -3538,11 +3571,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x04: Rigid disk drive geometry page
 
         #region Mode Page 0x07: Verify error recovery page
-
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x07
@@ -3586,20 +3617,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_07? DecodeModePage_07(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x07)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x07) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 12)
-                return null;
+            if(pageResponse.Length < 12) return null;
 
             ModePage_07 decoded = new ModePage_07();
 
@@ -3623,37 +3649,30 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_07(ModePage_07? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_07 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Verify error recovery page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.EER)
-                sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
-            if(page.PER)
-                sb.AppendLine("\tDrive shall report recovered errors");
-            if(page.DTE)
-                sb.AppendLine("\tTransfer will be terminated upon error detection");
-            if(page.DCR)
-                sb.AppendLine("\tError correction is disabled");
+            if(page.EER) sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
+            if(page.PER) sb.AppendLine("\tDrive shall report recovered errors");
+            if(page.DTE) sb.AppendLine("\tTransfer will be terminated upon error detection");
+            if(page.DCR) sb.AppendLine("\tError correction is disabled");
             if(page.VerifyRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
             if(page.RecoveryTimeLimit > 0)
-                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).AppendLine();
+                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit)
+                  .AppendLine();
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x07: Verify error recovery page
 
         #region Mode Page 0x10: Device configuration page
-
         /// <summary>
         /// Device configuration page
         /// Page code 0x10
@@ -3779,20 +3798,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_10_SSC? DecodeModePage_10_SSC(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x10)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x10) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 16)
-                return null;
+            if(pageResponse.Length < 16) return null;
 
             ModePage_10_SSC decoded = new ModePage_10_SSC();
 
@@ -3813,7 +3827,8 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.EEG |= (pageResponse[10] & 0x10) == 0x10;
             decoded.SEW |= (pageResponse[10] & 0x08) == 0x08;
             decoded.SOCF = (byte)((pageResponse[8] & 0x0C) >> 2);
-            decoded.BufferSizeEarlyWarning = (uint)((pageResponse[11] << 16) + (pageResponse[12] << 8) + pageResponse[13]);
+            decoded.BufferSizeEarlyWarning =
+                (uint)((pageResponse[11] << 16) + (pageResponse[12] << 8) + pageResponse[13]);
             decoded.SelectedCompression = pageResponse[14];
 
             decoded.SWP |= (pageResponse[10] & 0x04) == 0x04;
@@ -3839,34 +3854,32 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_10_SSC(ModePage_10_SSC? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_10_SSC page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Device configuration page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\tActive format: {0}", page.ActiveFormat).AppendLine();
             sb.AppendFormat("\tActive partition: {0}", page.ActivePartition).AppendLine();
-            sb.AppendFormat("\tWrite buffer shall have a full ratio of {0} before being flushed to medium", page.WriteBufferFullRatio).AppendLine();
-            sb.AppendFormat("\tRead buffer shall have an empty ratio of {0} before more data is read from medium", page.ReadBufferEmptyRatio).AppendLine();
-            sb.AppendFormat("\tDrive will delay {0} ms before buffered data is forcefully written to the medium even before buffer is full", page.WriteDelayTime * 100).AppendLine();
+            sb.AppendFormat("\tWrite buffer shall have a full ratio of {0} before being flushed to medium",
+                            page.WriteBufferFullRatio).AppendLine();
+            sb.AppendFormat("\tRead buffer shall have an empty ratio of {0} before more data is read from medium",
+                            page.ReadBufferEmptyRatio).AppendLine();
+            sb
+                .AppendFormat("\tDrive will delay {0} ms before buffered data is forcefully written to the medium even before buffer is full",
+                              page.WriteDelayTime * 100).AppendLine();
             if(page.DBR)
             {
                 sb.AppendLine("\tDrive supports recovering data from buffer");
-                if(page.RBO)
-                    sb.AppendLine("\tRecovered buffer data comes in LIFO order");
-                else
-                    sb.AppendLine("\tRecovered buffer data comes in FIFO order");
+                if(page.RBO) sb.AppendLine("\tRecovered buffer data comes in LIFO order");
+                else sb.AppendLine("\tRecovered buffer data comes in FIFO order");
             }
-            if(page.BIS)
-                sb.AppendLine("\tMedium supports block IDs");
-            if(page.RSmk)
-                sb.AppendLine("\tDrive reports setmarks");
+            if(page.BIS) sb.AppendLine("\tMedium supports block IDs");
+            if(page.RSmk) sb.AppendLine("\tDrive reports setmarks");
             switch(page.SOCF)
             {
                 case 0:
@@ -3886,14 +3899,12 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.REW)
             {
                 sb.AppendLine("\tDrive reports early warnings");
-                if(page.SEW)
-                    sb.AppendLine("\tDrive will synchronize buffer to medium on early warnings");
+                if(page.SEW) sb.AppendLine("\tDrive will synchronize buffer to medium on early warnings");
             }
 
             switch(page.GapSize)
             {
-                case 0:
-                    break;
+                case 0: break;
                 case 1:
                     sb.AppendLine("\tInter-block gap is long enough to support update in place");
                     break;
@@ -3911,15 +3922,15 @@ namespace DiscImageChef.Decoders.SCSI
                 case 13:
                 case 14:
                 case 15:
-                    sb.AppendFormat("\tInter-block gap is {0} times the device's defined gap size", page.GapSize).AppendLine();
+                    sb.AppendFormat("\tInter-block gap is {0} times the device's defined gap size", page.GapSize)
+                      .AppendLine();
                     break;
                 default:
                     sb.AppendFormat("\tInter-block gap is unknown value {0}", page.GapSize).AppendLine();
                     break;
             }
 
-            if(page.EEG)
-                sb.AppendLine("\tDrive generates end-of-data");
+            if(page.EEG) sb.AppendLine("\tDrive generates end-of-data");
 
             switch(page.SelectedCompression)
             {
@@ -3934,21 +3945,15 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if(page.SWP)
-                sb.AppendLine("\tSoftware write protect is enabled");
-            if(page.ASOCWP)
-                sb.AppendLine("\tAssociated write protect is enabled");
-            if(page.PERSWP)
-                sb.AppendLine("\tPersistent write protect is enabled");
-            if(page.PRMWP)
-                sb.AppendLine("\tPermanent write protect is enabled");
+            if(page.SWP) sb.AppendLine("\tSoftware write protect is enabled");
+            if(page.ASOCWP) sb.AppendLine("\tAssociated write protect is enabled");
+            if(page.PERSWP) sb.AppendLine("\tPersistent write protect is enabled");
+            if(page.PRMWP) sb.AppendLine("\tPermanent write protect is enabled");
 
             if(page.BAML)
             {
-                if(page.BAM)
-                    sb.AppendLine("\tDrive operates using explicit address mode");
-                else
-                    sb.AppendLine("\tDrive operates using implicit address mode");
+                if(page.BAM) sb.AppendLine("\tDrive operates using explicit address mode");
+                else sb.AppendLine("\tDrive operates using implicit address mode");
             }
 
             switch(page.RewindOnReset)
@@ -3971,16 +3976,13 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if(page.OIR)
-                sb.AppendLine("\tDrive will only respond to commands if it has received a reservation");
+            if(page.OIR) sb.AppendLine("\tDrive will only respond to commands if it has received a reservation");
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x10: Device configuration page
 
         #region Mode Page 0x0E: CD-ROM audio control parameters page
-
         /// <summary>
         /// CD-ROM audio control parameters
         /// Page code 0x0E
@@ -4048,20 +4050,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0E? DecodeModePage_0E(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x0E)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x0E) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 16)
-                return null;
+            if(pageResponse.Length < 16) return null;
 
             ModePage_0E decoded = new ModePage_0E();
 
@@ -4090,30 +4087,23 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0E(ModePage_0E? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_0E page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI CD-ROM audio control parameters page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
-            if(page.Immed)
-                sb.AppendLine("\tDrive will return from playback command immediately");
-            else
-                sb.AppendLine("\tDrive will return from playback command when playback ends");
-            if(page.SOTC)
-                sb.AppendLine("\tDrive will stop playback on track end");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.Immed) sb.AppendLine("\tDrive will return from playback command immediately");
+            else sb.AppendLine("\tDrive will return from playback command when playback ends");
+            if(page.SOTC) sb.AppendLine("\tDrive will stop playback on track end");
 
             if(page.APRVal)
             {
                 double blocks;
-                if(page.LBAFormat == 8)
-                    blocks = page.BlocksPerSecondOfAudio * (1 / 256);
-                else
-                    blocks = page.BlocksPerSecondOfAudio;
+                if(page.LBAFormat == 8) blocks = page.BlocksPerSecondOfAudio * (1 / 256);
+                else blocks = page.BlocksPerSecondOfAudio;
 
                 sb.AppendFormat("\tThere are {0} blocks per each second of audio", blocks).AppendLine();
             }
@@ -4121,14 +4111,10 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.OutputPort0ChannelSelection > 0)
             {
                 sb.Append("\tOutput port 0 has channels ");
-                if((page.OutputPort0ChannelSelection & 0x01) == 0x01)
-                    sb.Append("0 ");
-                if((page.OutputPort0ChannelSelection & 0x02) == 0x02)
-                    sb.Append("1 ");
-                if((page.OutputPort0ChannelSelection & 0x04) == 0x04)
-                    sb.Append("2 ");
-                if((page.OutputPort0ChannelSelection & 0x08) == 0x08)
-                    sb.Append("3 ");
+                if((page.OutputPort0ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
+                if((page.OutputPort0ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
+                if((page.OutputPort0ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
+                if((page.OutputPort0ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
 
                 switch(page.OutputPort0Volume)
                 {
@@ -4147,14 +4133,10 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.OutputPort1ChannelSelection > 0)
             {
                 sb.Append("\tOutput port 1 has channels ");
-                if((page.OutputPort1ChannelSelection & 0x01) == 0x01)
-                    sb.Append("0 ");
-                if((page.OutputPort1ChannelSelection & 0x02) == 0x02)
-                    sb.Append("1 ");
-                if((page.OutputPort1ChannelSelection & 0x04) == 0x04)
-                    sb.Append("2 ");
-                if((page.OutputPort1ChannelSelection & 0x08) == 0x08)
-                    sb.Append("3 ");
+                if((page.OutputPort1ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
+                if((page.OutputPort1ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
+                if((page.OutputPort1ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
+                if((page.OutputPort1ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
 
                 switch(page.OutputPort1Volume)
                 {
@@ -4173,14 +4155,10 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.OutputPort2ChannelSelection > 0)
             {
                 sb.Append("\tOutput port 2 has channels ");
-                if((page.OutputPort2ChannelSelection & 0x01) == 0x01)
-                    sb.Append("0 ");
-                if((page.OutputPort2ChannelSelection & 0x02) == 0x02)
-                    sb.Append("1 ");
-                if((page.OutputPort2ChannelSelection & 0x04) == 0x04)
-                    sb.Append("2 ");
-                if((page.OutputPort2ChannelSelection & 0x08) == 0x08)
-                    sb.Append("3 ");
+                if((page.OutputPort2ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
+                if((page.OutputPort2ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
+                if((page.OutputPort2ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
+                if((page.OutputPort2ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
 
                 switch(page.OutputPort2Volume)
                 {
@@ -4199,14 +4177,10 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.OutputPort3ChannelSelection > 0)
             {
                 sb.Append("\tOutput port 3 has channels ");
-                if((page.OutputPort3ChannelSelection & 0x01) == 0x01)
-                    sb.Append("0 ");
-                if((page.OutputPort3ChannelSelection & 0x02) == 0x02)
-                    sb.Append("1 ");
-                if((page.OutputPort3ChannelSelection & 0x04) == 0x04)
-                    sb.Append("2 ");
-                if((page.OutputPort3ChannelSelection & 0x08) == 0x08)
-                    sb.Append("3 ");
+                if((page.OutputPort3ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
+                if((page.OutputPort3ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
+                if((page.OutputPort3ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
+                if((page.OutputPort3ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
 
                 switch(page.OutputPort3Volume)
                 {
@@ -4224,11 +4198,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x0E: CD-ROM audio control parameters page
 
         #region Mode Page 0x0D: CD-ROM parameteres page
-
         /// <summary>
         /// CD-ROM parameteres page
         /// Page code 0x0D
@@ -4256,20 +4228,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0D? DecodeModePage_0D(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x0D)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x0D) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             ModePage_0D decoded = new ModePage_0D();
 
@@ -4288,16 +4255,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0D(ModePage_0D? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_0D page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI CD-ROM parameters page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
             switch(page.InactivityTimerMultiplier)
             {
                 case 0:
@@ -4357,11 +4322,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x0D: CD-ROM parameteres page
 
         #region Mode Page 0x01: Read error recovery page for MultiMedia Devices
-
         /// <summary>
         /// Read error recovery page for MultiMedia Devices
         /// Page code 0x01
@@ -4394,20 +4357,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_01_MMC? DecodeModePage_01_MMC(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x01)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x01) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             ModePage_01_MMC decoded = new ModePage_01_MMC();
 
@@ -4415,8 +4373,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.Parameter = pageResponse[2];
             decoded.ReadRetryCount = pageResponse[3];
 
-            if(pageResponse.Length < 12)
-                return decoded;
+            if(pageResponse.Length < 12) return decoded;
 
             decoded.WriteRetryCount = pageResponse[8];
             decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
@@ -4431,16 +4388,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_01_MMC(ModePage_01_MMC? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_01_MMC page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Read error recovery page for MultiMedia Devices:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
             if(page.ReadRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat read operations {0} times", page.ReadRetryCount).AppendLine();
 
@@ -4455,7 +4410,8 @@ namespace DiscImageChef.Decoders.SCSI
             string UnrecECCNotAbort = "\tUnrecovered ECC errors will not abort the transfer.";
             string UnrecCIRCNotAbort = "\tUnrecovered CIRC errors will not abort the transfer.";
             string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
-            string UnrecCIRCAbortData = "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
+            string UnrecCIRCAbortData =
+                "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 
             switch(page.Parameter)
             {
@@ -4507,14 +4463,10 @@ namespace DiscImageChef.Decoders.SCSI
                 case 0x27:
                     sb.AppendLine(RetriesUsed + RecoveredAbort + UnrecCIRCAbortData);
                     break;
-                case 0x30:
-                    goto case 0x10;
-                case 0x31:
-                    goto case 0x11;
-                case 0x34:
-                    goto case 0x14;
-                case 0x35:
-                    goto case 0x15;
+                case 0x30: goto case 0x10;
+                case 0x31: goto case 0x11;
+                case 0x34: goto case 0x14;
+                case 0x35: goto case 0x15;
                 default:
                     sb.AppendFormat("Unknown recovery parameter 0x{0:X2}", page.Parameter).AppendLine();
                     break;
@@ -4523,15 +4475,14 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.WriteRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat write operations {0} times", page.WriteRetryCount).AppendLine();
             if(page.RecoveryTimeLimit > 0)
-                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).AppendLine();
+                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit)
+                  .AppendLine();
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x01: Read error recovery page for MultiMedia Devices
 
         #region Mode Page 0x07: Verify error recovery page for MultiMedia Devices
-
         /// <summary>
         /// Verify error recovery page for MultiMedia Devices
         /// Page code 0x07
@@ -4555,20 +4506,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_07_MMC? DecodeModePage_07_MMC(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x07)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x07) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             ModePage_07_MMC decoded = new ModePage_07_MMC();
 
@@ -4586,16 +4532,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_07_MMC(ModePage_07_MMC? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_07_MMC page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Verify error recovery page for MultiMedia Devices:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
             if(page.VerifyRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
 
@@ -4610,7 +4554,8 @@ namespace DiscImageChef.Decoders.SCSI
             string UnrecECCNotAbort = "\tUnrecovered ECC errors will not abort the transfer.";
             string UnrecCIRCNotAbort = "\tUnrecovered CIRC errors will not abort the transfer.";
             string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
-            string UnrecCIRCAbortData = "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
+            string UnrecCIRCAbortData =
+                "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 
             switch(page.Parameter)
             {
@@ -4662,14 +4607,10 @@ namespace DiscImageChef.Decoders.SCSI
                 case 0x27:
                     sb.AppendLine(RetriesUsed + RecoveredAbort + UnrecCIRCAbortData);
                     break;
-                case 0x30:
-                    goto case 0x10;
-                case 0x31:
-                    goto case 0x11;
-                case 0x34:
-                    goto case 0x14;
-                case 0x35:
-                    goto case 0x15;
+                case 0x30: goto case 0x10;
+                case 0x31: goto case 0x11;
+                case 0x34: goto case 0x14;
+                case 0x35: goto case 0x15;
                 default:
                     sb.AppendFormat("Unknown recovery parameter 0x{0:X2}", page.Parameter).AppendLine();
                     break;
@@ -4677,11 +4618,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x07: Verify error recovery page for MultiMedia Devices
 
         #region Mode Page 0x06: Optical memory page
-
         /// <summary>
         /// Optical memory page
         /// Page code 0x06
@@ -4701,20 +4640,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_06? DecodeModePage_06(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x06)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x06) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 4)
-                return null;
+            if(pageResponse.Length < 4) return null;
 
             ModePage_06 decoded = new ModePage_06();
 
@@ -4731,26 +4665,21 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_06(ModePage_06? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_06 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI optical memory:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
-            if(page.RUBR)
-                sb.AppendLine("\tOn reading an updated block drive will return RECOVERED ERROR");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.RUBR) sb.AppendLine("\tOn reading an updated block drive will return RECOVERED ERROR");
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x06: Optical memory page
 
         #region Mode Page 0x2A: CD-ROM capabilities page
-
         /// <summary>
         /// CD-ROM capabilities page
         /// Page code 0x2A
@@ -4899,20 +4828,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x2A)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x2A) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 16)
-                return null;
+            if(pageResponse.Length < 16) return null;
 
             ModePage_2A decoded = new ModePage_2A();
 
@@ -4945,8 +4869,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.BufferSize = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
             decoded.CurrentSpeed = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
 
-            if(pageResponse.Length < 20)
-                return decoded;
+            if(pageResponse.Length < 20) return decoded;
 
             decoded.Method2 |= (pageResponse[2] & 0x04) == 0x04;
             decoded.ReadCDRW |= (pageResponse[2] & 0x02) == 0x02;
@@ -4967,8 +4890,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.RCK |= (pageResponse[17] & 0x04) == 0x04;
             decoded.BCK |= (pageResponse[17] & 0x02) == 0x02;
 
-            if(pageResponse.Length < 22)
-                return decoded;
+            if(pageResponse.Length < 22) return decoded;
 
             decoded.TestWrite |= (pageResponse[3] & 0x04) == 0x04;
             decoded.MaxWriteSpeed = (ushort)((pageResponse[18] << 8) + pageResponse[19]);
@@ -4976,8 +4898,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.ReadBarcode |= (pageResponse[5] & 0x80) == 0x80;
 
-            if(pageResponse.Length < 26)
-                return decoded;
+            if(pageResponse.Length < 26) return decoded;
 
             decoded.ReadDVDRAM |= (pageResponse[2] & 0x20) == 0x20;
             decoded.ReadDVDR |= (pageResponse[2] & 0x10) == 0x10;
@@ -4991,8 +4912,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.CMRSupported = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
 
-            if(pageResponse.Length < 32)
-                return decoded;
+            if(pageResponse.Length < 32) return decoded;
 
             decoded.BUF |= (pageResponse[4] & 0x80) == 0x80;
             decoded.RotationControlSelected = (byte)(pageResponse[27] & 0x03);
@@ -5004,8 +4924,10 @@ namespace DiscImageChef.Decoders.SCSI
             for(int i = 0; i < descriptors; i++)
             {
                 decoded.WriteSpeedPerformanceDescriptors[i] = new ModePage_2A_WriteDescriptor();
-                decoded.WriteSpeedPerformanceDescriptors[i].RotationControl = (byte)(pageResponse[1 + 32 + i * 4] & 0x07);
-                decoded.WriteSpeedPerformanceDescriptors[i].WriteSpeed = (ushort)((pageResponse[2 + 32 + i * 4] << 8) + pageResponse[3 + 32 + i * 4]);
+                decoded.WriteSpeedPerformanceDescriptors[i].RotationControl =
+                    (byte)(pageResponse[1 + 32 + i * 4] & 0x07);
+                decoded.WriteSpeedPerformanceDescriptors[i].WriteSpeed =
+                    (ushort)((pageResponse[2 + 32 + i * 4] << 8) + pageResponse[3 + 32 + i * 4]);
             }
 
             return decoded;
@@ -5018,40 +4940,27 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_2A(ModePage_2A? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_2A page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI CD-ROM capabilities page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.AudioPlay)
-                sb.AppendLine("\tDrive can play audio");
-            if(page.Mode2Form1)
-                sb.AppendLine("\tDrive can read sectors in Mode 2 Form 1 format");
-            if(page.Mode2Form2)
-                sb.AppendLine("\tDrive can read sectors in Mode 2 Form 2 format");
-            if(page.MultiSession)
-                sb.AppendLine("\tDrive supports multi-session discs and/or Photo-CD");
+            if(page.AudioPlay) sb.AppendLine("\tDrive can play audio");
+            if(page.Mode2Form1) sb.AppendLine("\tDrive can read sectors in Mode 2 Form 1 format");
+            if(page.Mode2Form2) sb.AppendLine("\tDrive can read sectors in Mode 2 Form 2 format");
+            if(page.MultiSession) sb.AppendLine("\tDrive supports multi-session discs and/or Photo-CD");
 
-            if(page.CDDACommand)
-                sb.AppendLine("\tDrive can read digital audio");
-            if(page.AccurateCDDA)
-                sb.AppendLine("\tDrive can continue from streaming loss");
-            if(page.Subchannel)
-                sb.AppendLine("\tDrive can read uncorrected and interleaved R-W subchannels");
-            if(page.DeinterlaveSubchannel)
-                sb.AppendLine("\tDrive can read, deinterleave and correct R-W subchannels");
-            if(page.C2Pointer)
-                sb.AppendLine("\tDrive supports C2 pointers");
-            if(page.UPC)
-                sb.AppendLine("\tDrive can read Media Catalogue Number");
-            if(page.ISRC)
-                sb.AppendLine("\tDrive can read ISRC");
+            if(page.CDDACommand) sb.AppendLine("\tDrive can read digital audio");
+            if(page.AccurateCDDA) sb.AppendLine("\tDrive can continue from streaming loss");
+            if(page.Subchannel) sb.AppendLine("\tDrive can read uncorrected and interleaved R-W subchannels");
+            if(page.DeinterlaveSubchannel) sb.AppendLine("\tDrive can read, deinterleave and correct R-W subchannels");
+            if(page.C2Pointer) sb.AppendLine("\tDrive supports C2 pointers");
+            if(page.UPC) sb.AppendLine("\tDrive can read Media Catalogue Number");
+            if(page.ISRC) sb.AppendLine("\tDrive can read ISRC");
 
             switch(page.LoadingMechanism)
             {
@@ -5071,39 +4980,32 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("\tDrive is a changer using cartridges");
                     break;
                 default:
-                    sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", page.LoadingMechanism).AppendLine();
+                    sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", page.LoadingMechanism)
+                      .AppendLine();
                     break;
             }
 
-            if(page.Lock)
-                sb.AppendLine("\tDrive can lock media");
+            if(page.Lock) sb.AppendLine("\tDrive can lock media");
             if(page.PreventJumper)
             {
                 sb.AppendLine("\tDrive power ups locked");
-                if(page.LockState)
-                    sb.AppendLine("\tDrive is locked, media cannot be ejected or inserted");
-                else
-                    sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
+                if(page.LockState) sb.AppendLine("\tDrive is locked, media cannot be ejected or inserted");
+                else sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
             }
             else
             {
                 if(page.LockState)
                     sb.AppendLine("\tDrive is locked, media cannot be ejected, but if empty, can be inserted");
-                else
-                    sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
+                else sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
             }
-            if(page.Eject)
-                sb.AppendLine("\tDrive can eject media");
+            if(page.Eject) sb.AppendLine("\tDrive can eject media");
 
-            if(page.SeparateChannelMute)
-                sb.AppendLine("\tEach channel can be muted independently");
-            if(page.SeparateChannelVolume)
-                sb.AppendLine("\tEach channel's volume can be controlled independently");
+            if(page.SeparateChannelMute) sb.AppendLine("\tEach channel can be muted independently");
+            if(page.SeparateChannelVolume) sb.AppendLine("\tEach channel's volume can be controlled independently");
 
             if(page.SupportedVolumeLevels > 0)
                 sb.AppendFormat("\tDrive supports {0} volume levels", page.SupportedVolumeLevels).AppendLine();
-            if(page.BufferSize > 0)
-                sb.AppendFormat("\tDrive has {0} Kbyte of buffer", page.BufferSize).AppendLine();
+            if(page.BufferSize > 0) sb.AppendFormat("\tDrive has {0} Kbyte of buffer", page.BufferSize).AppendLine();
             if(page.MaximumSpeed > 0)
                 sb.AppendFormat("\tDrive's maximum reading speed is {0} Kbyte/sec.", page.MaximumSpeed).AppendLine();
             if(page.CurrentSpeed > 0)
@@ -5111,62 +5013,52 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(page.ReadCDR)
             {
-                if(page.WriteCDR)
-                    sb.AppendLine("\tDrive can read and write CD-R");
-                else
-                    sb.AppendLine("\tDrive can read CD-R");
+                if(page.WriteCDR) sb.AppendLine("\tDrive can read and write CD-R");
+                else sb.AppendLine("\tDrive can read CD-R");
 
-                if(page.Method2)
-                    sb.AppendLine("\tDrive supports reading CD-R packet media");
+                if(page.Method2) sb.AppendLine("\tDrive supports reading CD-R packet media");
             }
 
             if(page.ReadCDRW)
             {
-                if(page.WriteCDRW)
-                    sb.AppendLine("\tDrive can read and write CD-RW");
-                else
-                    sb.AppendLine("\tDrive can read CD-RW");
+                if(page.WriteCDRW) sb.AppendLine("\tDrive can read and write CD-RW");
+                else sb.AppendLine("\tDrive can read CD-RW");
             }
 
-            if(page.ReadDVDROM)
-                sb.AppendLine("\tDrive can read DVD-ROM");
+            if(page.ReadDVDROM) sb.AppendLine("\tDrive can read DVD-ROM");
             if(page.ReadDVDR)
             {
-                if(page.WriteDVDR)
-                    sb.AppendLine("\tDrive can read and write DVD-R");
-                else
-                    sb.AppendLine("\tDrive can read DVD-R");
+                if(page.WriteDVDR) sb.AppendLine("\tDrive can read and write DVD-R");
+                else sb.AppendLine("\tDrive can read DVD-R");
             }
             if(page.ReadDVDRAM)
             {
-                if(page.WriteDVDRAM)
-                    sb.AppendLine("\tDrive can read and write DVD-RAM");
-                else
-                    sb.AppendLine("\tDrive can read DVD-RAM");
+                if(page.WriteDVDRAM) sb.AppendLine("\tDrive can read and write DVD-RAM");
+                else sb.AppendLine("\tDrive can read DVD-RAM");
             }
 
-            if(page.Composite)
-                sb.AppendLine("\tDrive can deliver a composite audio and video data stream");
-            if(page.DigitalPort1)
-                sb.AppendLine("\tDrive supports IEC-958 digital output on port 1");
-            if(page.DigitalPort2)
-                sb.AppendLine("\tDrive supports IEC-958 digital output on port 2");
+            if(page.Composite) sb.AppendLine("\tDrive can deliver a composite audio and video data stream");
+            if(page.DigitalPort1) sb.AppendLine("\tDrive supports IEC-958 digital output on port 1");
+            if(page.DigitalPort2) sb.AppendLine("\tDrive supports IEC-958 digital output on port 2");
 
-            if(page.SDP)
-                sb.AppendLine("\tDrive contains a changer that can report the exact contents of the slots");
+            if(page.SDP) sb.AppendLine("\tDrive contains a changer that can report the exact contents of the slots");
             if(page.CurrentWriteSpeedSelected > 0)
             {
                 if(page.RotationControlSelected == 0)
-                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in CLV mode", page.CurrentWriteSpeedSelected).AppendLine();
+                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in CLV mode",
+                                    page.CurrentWriteSpeedSelected).AppendLine();
                 else if(page.RotationControlSelected == 1)
-                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in pure CAV mode", page.CurrentWriteSpeedSelected).AppendLine();
+                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in pure CAV mode",
+                                    page.CurrentWriteSpeedSelected).AppendLine();
             }
             else
             {
                 if(page.MaxWriteSpeed > 0)
-                    sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", page.MaxWriteSpeed).AppendLine();
+                    sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", page.MaxWriteSpeed)
+                      .AppendLine();
                 if(page.CurrentWriteSpeed > 0)
-                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed).AppendLine();
+                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed)
+                      .AppendLine();
             }
 
             if(page.WriteSpeedPerformanceDescriptors != null)
@@ -5176,37 +5068,31 @@ namespace DiscImageChef.Decoders.SCSI
                     if(descriptor.WriteSpeed > 0)
                     {
                         if(descriptor.RotationControl == 0)
-                            sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode", descriptor.WriteSpeed).AppendLine();
+                            sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode",
+                                            descriptor.WriteSpeed).AppendLine();
                         else if(descriptor.RotationControl == 1)
-                            sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode", descriptor.WriteSpeed).AppendLine();
+                            sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode",
+                                            descriptor.WriteSpeed).AppendLine();
                     }
                 }
             }
 
-            if(page.TestWrite)
-                sb.AppendLine("\tDrive supports test writing");
+            if(page.TestWrite) sb.AppendLine("\tDrive supports test writing");
 
-            if(page.ReadBarcode)
-                sb.AppendLine("\tDrive can read barcode");
+            if(page.ReadBarcode) sb.AppendLine("\tDrive can read barcode");
 
-            if(page.SCC)
-                sb.AppendLine("\tDrive can read both sides of a disc");
-            if(page.LeadInPW)
-                sb.AppendLine("\tDrive an read raw R-W subchannel from the Lead-In");
+            if(page.SCC) sb.AppendLine("\tDrive can read both sides of a disc");
+            if(page.LeadInPW) sb.AppendLine("\tDrive an read raw R-W subchannel from the Lead-In");
 
-            if(page.CMRSupported == 1)
-                sb.AppendLine("\tDrive supports DVD CSS and/or DVD CPPM");
+            if(page.CMRSupported == 1) sb.AppendLine("\tDrive supports DVD CSS and/or DVD CPPM");
 
-            if(page.BUF)
-                sb.AppendLine("\tDrive supports buffer under-run free recording");
+            if(page.BUF) sb.AppendLine("\tDrive supports buffer under-run free recording");
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x2A: CD-ROM capabilities page
 
         #region Mode Page 0x1C: Informational exceptions control page
-
         /// <summary>
         /// Informational exceptions control page
         /// Page code 0x1C
@@ -5264,20 +5150,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1C? DecodeModePage_1C(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x1C)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x1C) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             ModePage_1C decoded = new ModePage_1C();
 
@@ -5290,7 +5171,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.MRIE = (byte)(pageResponse[3] & 0x0F);
 
-            decoded.IntervalTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
+            decoded.IntervalTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
+                                           pageResponse[7]);
 
             decoded.EBF |= (pageResponse[2] & 0x20) == 0x20;
             decoded.EWasc |= (pageResponse[2] & 0x10) == 0x10;
@@ -5298,7 +5180,8 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.EBACKERR |= (pageResponse[2] & 0x02) == 0x02;
 
             if(pageResponse.Length >= 12)
-                decoded.ReportCount = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+                decoded.ReportCount = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) +
+                                             (pageResponse[10] << 8) + pageResponse[11]);
 
             return decoded;
         }
@@ -5310,19 +5193,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1C(ModePage_1C? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_1C page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Informational exceptions control page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.DExcpt)
-                sb.AppendLine("\tInformational exceptions are disabled");
+            if(page.DExcpt) sb.AppendLine("\tInformational exceptions are disabled");
             else
             {
                 sb.AppendLine("\tInformational exceptions are enabled");
@@ -5355,39 +5235,30 @@ namespace DiscImageChef.Decoders.SCSI
                         break;
                 }
 
-                if(page.Perf)
-                    sb.AppendLine("\tInformational exceptions reporting should not affect drive performance");
-                if(page.Test)
-                    sb.AppendLine("\tA test informational exception will raise on next timer");
-                if(page.LogErr)
-                    sb.AppendLine("\tDrive shall log informational exception conditions");
+                if(page.Perf) sb.AppendLine("\tInformational exceptions reporting should not affect drive performance");
+                if(page.Test) sb.AppendLine("\tA test informational exception will raise on next timer");
+                if(page.LogErr) sb.AppendLine("\tDrive shall log informational exception conditions");
 
                 if(page.IntervalTimer > 0)
                 {
-                    if(page.IntervalTimer == 0xFFFFFFFF)
-                        sb.AppendLine("\tTimer interval is vendor-specific");
-                    else
-                        sb.AppendFormat("\tTimer interval is {0} ms", page.IntervalTimer * 100).AppendLine();
+                    if(page.IntervalTimer == 0xFFFFFFFF) sb.AppendLine("\tTimer interval is vendor-specific");
+                    else sb.AppendFormat("\tTimer interval is {0} ms", page.IntervalTimer * 100).AppendLine();
                 }
 
                 if(page.ReportCount > 0)
-                    sb.AppendFormat("\tInformational exception conditions will be reported a maximum of {0} times", page.ReportCount);
+                    sb.AppendFormat("\tInformational exception conditions will be reported a maximum of {0} times",
+                                    page.ReportCount);
             }
 
-            if(page.EWasc)
-                sb.AppendLine("\tWarning reporting is enabled");
-            if(page.EBF)
-                sb.AppendLine("\tBackground functions are enabled");
-            if(page.EBACKERR)
-                sb.AppendLine("\tDrive will report background self-test errors");
+            if(page.EWasc) sb.AppendLine("\tWarning reporting is enabled");
+            if(page.EBF) sb.AppendLine("\tBackground functions are enabled");
+            if(page.EBACKERR) sb.AppendLine("\tDrive will report background self-test errors");
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x1C: Informational exceptions control page
 
         #region Mode Page 0x1A: Power condition page
-
         /// <summary>
         /// Power condition page
         /// Page code 0x1A
@@ -5452,20 +5323,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1A? DecodeModePage_1A(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x1A)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x1A) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 12)
-                return null;
+            if(pageResponse.Length < 12) return null;
 
             ModePage_1A decoded = new ModePage_1A();
 
@@ -5474,20 +5340,24 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.Standby |= (pageResponse[3] & 0x01) == 0x01;
             decoded.Idle |= (pageResponse[3] & 0x02) == 0x02;
 
-            decoded.IdleTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
-            decoded.StandbyTimer = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+            decoded.IdleTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
+                                       pageResponse[7]);
+            decoded.StandbyTimer = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
+                                          pageResponse[11]);
 
-            if(pageResponse.Length < 40)
-                return decoded;
+            if(pageResponse.Length < 40) return decoded;
 
             decoded.PM_BG_Precedence = (byte)((pageResponse[2] & 0xC0) >> 6);
             decoded.Standby_Y |= (pageResponse[2] & 0x01) == 0x01;
             decoded.Idle_B |= (pageResponse[3] & 0x04) == 0x04;
             decoded.Idle_C |= (pageResponse[3] & 0x08) == 0x08;
 
-            decoded.IdleTimer_B = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) + (pageResponse[14] << 8) + pageResponse[15]);
-            decoded.IdleTimer_C = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) + pageResponse[19]);
-            decoded.StandbyTimer_Y = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) + pageResponse[23]);
+            decoded.IdleTimer_B = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) + (pageResponse[14] << 8) +
+                                         pageResponse[15]);
+            decoded.IdleTimer_C = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) +
+                                         pageResponse[19]);
+            decoded.StandbyTimer_Y = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) +
+                                            (pageResponse[22] << 8) + pageResponse[23]);
 
             decoded.CCF_Idle = (byte)((pageResponse[39] & 0xC0) >> 6);
             decoded.CCF_Standby = (byte)((pageResponse[39] & 0x30) >> 4);
@@ -5503,31 +5373,26 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1A(ModePage_1A? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_1A page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Power condition page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if((page.Standby && page.StandbyTimer > 0) ||
-                (page.Standby_Y && page.StandbyTimer_Y > 0))
+            if((page.Standby && page.StandbyTimer > 0) || (page.Standby_Y && page.StandbyTimer_Y > 0))
             {
                 if(page.Standby && page.StandbyTimer > 0)
                     sb.AppendFormat("\tStandby timer Z is set to {0} ms", page.StandbyTimer * 100).AppendLine();
                 if(page.Standby_Y && page.StandbyTimer_Y > 0)
                     sb.AppendFormat("\tStandby timer Y is set to {0} ms", page.StandbyTimer_Y * 100).AppendLine();
             }
-            else
-                sb.AppendLine("\tDrive will not enter standy mode");
+            else sb.AppendLine("\tDrive will not enter standy mode");
 
-            if((page.Idle && page.IdleTimer > 0) ||
-                (page.Idle_B && page.IdleTimer_B > 0) ||
-                (page.Idle_C && page.IdleTimer_C > 0))
+            if((page.Idle && page.IdleTimer > 0) || (page.Idle_B && page.IdleTimer_B > 0) ||
+               (page.Idle_C && page.IdleTimer_C > 0))
             {
                 if(page.Idle && page.IdleTimer > 0)
                     sb.AppendFormat("\tIdle timer A is set to {0} ms", page.IdleTimer * 100).AppendLine();
@@ -5536,13 +5401,11 @@ namespace DiscImageChef.Decoders.SCSI
                 if(page.Idle_C && page.IdleTimer_C > 0)
                     sb.AppendFormat("\tIdle timer C is set to {0} ms", page.IdleTimer_C * 100).AppendLine();
             }
-            else
-                sb.AppendLine("\tDrive will not enter idle mode");
+            else sb.AppendLine("\tDrive will not enter idle mode");
 
             switch(page.PM_BG_Precedence)
             {
-                case 0:
-                    break;
+                case 0: break;
                 case 1:
                     sb.AppendLine("\tPerforming background functions take precedence over maintaining low power conditions");
                     break;
@@ -5553,11 +5416,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x1A: Power condition page
 
         #region Mode Page 0x0A subpage 0x01: Control Extension mode page
-
         /// <summary>
         /// Control Extension mode page
         /// Page code 0x0A
@@ -5599,23 +5460,17 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0A_S01? DecodeModePage_0A_S01(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) != 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) != 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x0A)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x0A) return null;
 
-            if(pageResponse[1] != 0x01)
-                return null;
+            if(pageResponse[1] != 0x01) return null;
 
-            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
-                return null;
+            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 32)
-                return null;
+            if(pageResponse.Length < 32) return null;
 
             ModePage_0A_S01 decoded = new ModePage_0A_S01();
 
@@ -5637,45 +5492,38 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0A_S01(ModePage_0A_S01? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_0A_S01 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Control extension page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             if(page.TCMOS)
             {
                 sb.Append("\tTimestamp can be initialized by methods outside of the SCSI standards");
 
-                if(page.SCSIP)
-                    sb.Append(", but SCSI's SET TIMESTAMP shall take precedence over them");
+                if(page.SCSIP) sb.Append(", but SCSI's SET TIMESTAMP shall take precedence over them");
 
                 sb.AppendLine();
             }
 
-            if(page.IALUAE)
-                sb.AppendLine("\tImplicit Asymmetric Logical Unit Access is enabled");
+            if(page.IALUAE) sb.AppendLine("\tImplicit Asymmetric Logical Unit Access is enabled");
 
             sb.AppendFormat("\tInitial priority is {0}", page.InitialPriority).AppendLine();
 
-            if(page.DLC)
-                sb.AppendLine("\tDevice will not degrade performance to extend its life");
+            if(page.DLC) sb.AppendLine("\tDevice will not degrade performance to extend its life");
 
             if(page.MaximumSenseLength > 0)
                 sb.AppendFormat("\tMaximum sense data would be {0} bytes", page.MaximumSenseLength).AppendLine();
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x0A subpage 0x01: Control Extension mode page
 
         #region Mode Page 0x1A subpage 0x01: Power Consumption mode page
-
         /// <summary>
         /// Power Consumption mode page
         /// Page code 0x1A
@@ -5700,23 +5548,17 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1A_S01? DecodeModePage_1A_S01(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) != 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) != 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x1A)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x1A) return null;
 
-            if(pageResponse[1] != 0x01)
-                return null;
+            if(pageResponse[1] != 0x01) return null;
 
-            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
-                return null;
+            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 16)
-                return null;
+            if(pageResponse.Length < 16) return null;
 
             ModePage_1A_S01 decoded = new ModePage_1A_S01();
 
@@ -5734,21 +5576,20 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1A_S01(ModePage_1A_S01? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_1A_S01 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Power Consumption page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             switch(page.ActiveLevel)
             {
                 case 0:
-                    sb.AppendFormat("\tDevice power consumption is dictated by identifier {0} of Power Consumption VPD", page.PowerConsumptionIdentifier).AppendLine();
+                    sb.AppendFormat("\tDevice power consumption is dictated by identifier {0} of Power Consumption VPD",
+                                    page.PowerConsumptionIdentifier).AppendLine();
                     break;
                 case 1:
                     sb.AppendLine("\tDevice is in highest relative power consumption level");
@@ -5763,11 +5604,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x1A subpage 0x01: Power Consumption mode page
 
         #region Mode Page 0x10: XOR control mode page
-
         /// <summary>
         /// XOR control mode page
         /// Page code 0x10
@@ -5803,29 +5642,27 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_10? DecodeModePage_10(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x10)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x10) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 24)
-                return null;
+            if(pageResponse.Length < 24) return null;
 
             ModePage_10 decoded = new ModePage_10();
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
             decoded.XORDIS |= (pageResponse[2] & 0x02) == 0x02;
-            decoded.MaxXorWrite = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
-            decoded.MaxRegenSize = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) + (pageResponse[14] << 8) + pageResponse[15]);
-            decoded.MaxRebuildRead = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) + pageResponse[19]);
+            decoded.MaxXorWrite = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
+                                         pageResponse[7]);
+            decoded.MaxRegenSize = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) +
+                                          (pageResponse[14] << 8) + pageResponse[15]);
+            decoded.MaxRebuildRead = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) +
+                                            (pageResponse[18] << 8) + pageResponse[19]);
             decoded.RebuildDelay = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
 
             return decoded;
@@ -5838,38 +5675,37 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_10(ModePage_10? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_10 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI XOR control mode page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.XORDIS)
-                sb.AppendLine("\tXOR operations are disabled");
+            if(page.XORDIS) sb.AppendLine("\tXOR operations are disabled");
             else
             {
                 if(page.MaxXorWrite > 0)
-                    sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a single XOR WRITE command", page.MaxXorWrite).AppendLine();
+                    sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a single XOR WRITE command",
+                                    page.MaxXorWrite).AppendLine();
                 if(page.MaxRegenSize > 0)
-                    sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a REGENERATE command", page.MaxRegenSize).AppendLine();
+                    sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a REGENERATE command",
+                                    page.MaxRegenSize).AppendLine();
                 if(page.MaxRebuildRead > 0)
-                    sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a READ command during rebuild", page.MaxRebuildRead).AppendLine();
+                    sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a READ command during rebuild",
+                                    page.MaxRebuildRead).AppendLine();
                 if(page.RebuildDelay > 0)
-                    sb.AppendFormat("\tDrive needs a minimum of {0} ms between READ commands during rebuild", page.RebuildDelay).AppendLine();
+                    sb.AppendFormat("\tDrive needs a minimum of {0} ms between READ commands during rebuild",
+                                    page.RebuildDelay).AppendLine();
             }
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x10: XOR control mode page
 
         #region Mode Page 0x1C subpage 0x01: Background Control mode page
-
         /// <summary>
         /// Background Control mode page
         /// Page code 0x1A
@@ -5918,23 +5754,17 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1C_S01? DecodeModePage_1C_S01(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) != 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) != 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x1C)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x1C) return null;
 
-            if(pageResponse[1] != 0x01)
-                return null;
+            if(pageResponse[1] != 0x01) return null;
 
-            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
-                return null;
+            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 16)
-                return null;
+            if(pageResponse.Length < 16) return null;
 
             ModePage_1C_S01 decoded = new ModePage_1C_S01();
 
@@ -5960,45 +5790,42 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1C_S01(ModePage_1C_S01? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_1C_S01 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Background Control page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.S_L_Full)
-                sb.AppendLine("\tBackground scans will be halted if log is full");
-            if(page.LOWIR)
-                sb.AppendLine("\tBackground scans will only be logged if they require intervention");
-            if(page.En_Bms)
-                sb.AppendLine("\tBackground medium scans are enabled");
-            if(page.En_Ps)
-                sb.AppendLine("\tBackground pre-scans are enabled");
+            if(page.S_L_Full) sb.AppendLine("\tBackground scans will be halted if log is full");
+            if(page.LOWIR) sb.AppendLine("\tBackground scans will only be logged if they require intervention");
+            if(page.En_Bms) sb.AppendLine("\tBackground medium scans are enabled");
+            if(page.En_Ps) sb.AppendLine("\tBackground pre-scans are enabled");
 
             if(page.BackgroundScanInterval > 0)
-                sb.AppendFormat("\t{0} hours shall be between the start of a background scan operation and the next", page.BackgroundScanInterval).AppendLine();
+                sb.AppendFormat("\t{0} hours shall be between the start of a background scan operation and the next",
+                                page.BackgroundScanInterval).AppendLine();
 
             if(page.BackgroundPrescanTimeLimit > 0)
-                sb.AppendFormat("\tBackgroun pre-scan operations can take a maximum of {0} hours", page.BackgroundPrescanTimeLimit).AppendLine();
+                sb.AppendFormat("\tBackgroun pre-scan operations can take a maximum of {0} hours",
+                                page.BackgroundPrescanTimeLimit).AppendLine();
 
             if(page.MinIdleBeforeBgScan > 0)
-                sb.AppendFormat("\tAt least {0} ms must be idle before resuming a suspended background scan operation", page.MinIdleBeforeBgScan).AppendLine();
+                sb.AppendFormat("\tAt least {0} ms must be idle before resuming a suspended background scan operation",
+                                page.MinIdleBeforeBgScan).AppendLine();
 
             if(page.MaxTimeSuspendBgScan > 0)
-                sb.AppendFormat("\tAt most {0} ms must be before suspending a background scan operation and processing received commands", page.MaxTimeSuspendBgScan).AppendLine();
+                sb
+                    .AppendFormat("\tAt most {0} ms must be before suspending a background scan operation and processing received commands",
+                                  page.MaxTimeSuspendBgScan).AppendLine();
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x1C subpage 0x01: Background Control mode page
 
         #region Mode Page 0x0F: Data compression page
-
         /// <summary>
         /// Data compression page
         /// Page code 0x0F
@@ -6038,20 +5865,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0F? DecodeModePage_0F(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x0F)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x0F) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 16)
-                return null;
+            if(pageResponse.Length < 16) return null;
 
             ModePage_0F decoded = new ModePage_0F();
 
@@ -6062,8 +5884,10 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.DDE |= (pageResponse[3] & 0x80) == 0x80;
             decoded.RED = (byte)((pageResponse[3] & 0x60) >> 5);
 
-            decoded.CompressionAlgo = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
-            decoded.DecompressionAlgo = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+            decoded.CompressionAlgo = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) +
+                                             (pageResponse[6] << 8) + pageResponse[7]);
+            decoded.DecompressionAlgo = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) +
+                                               (pageResponse[10] << 8) + pageResponse[11]);
 
             return decoded;
         }
@@ -6075,16 +5899,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0F(ModePage_0F? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_0F page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Data compression page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             if(page.DCC)
             {
@@ -6117,11 +5939,11 @@ namespace DiscImageChef.Decoders.SCSI
                             break;
                     }
                 }
+
                 if(page.DDE)
                 {
                     sb.AppendLine("\tData decompression is enabled");
-                    if(page.DecompressionAlgo == 0)
-                        sb.AppendLine("\tLast data read was uncompressed");
+                    if(page.DecompressionAlgo == 0) sb.AppendLine("\tLast data read was uncompressed");
                     else
                     {
                         sb.Append("\tLast data read was compressed with ");
@@ -6154,16 +5976,13 @@ namespace DiscImageChef.Decoders.SCSI
 
                 sb.AppendFormat("\tReport exception on compression is set to {0}", page.RED).AppendLine();
             }
-            else
-                sb.AppendLine("\tDrive does not support data compression");
+            else sb.AppendLine("\tDrive does not support data compression");
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x0F: Data compression page
 
         #region Mode Page 0x1B: Removable Block Access Capabilities page
-
         /// <summary>
         /// Removable Block Access Capabilities page
         /// Page code 0x1B
@@ -6199,20 +6018,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1B? DecodeModePage_1B(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x1B)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x1B) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 12)
-                return null;
+            if(pageResponse.Length < 12) return null;
 
             ModePage_1B decoded = new ModePage_1B();
 
@@ -6234,35 +6048,26 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1B(ModePage_1B? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_1B page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Removable Block Access Capabilities page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.SFLP)
-                sb.AppendLine("\tDrive can be used as a system floppy device");
-            if(page.SRFP)
-                sb.AppendLine("\tDrive supports reporting progress of format");
-            if(page.NCD)
-                sb.AppendLine("\tDrive is a Non-CD Optical Device");
-            if(page.SML)
-                sb.AppendLine("\tDevice is a dual device supporting CD and Non-CD Optical");
-            if(page.TLUN > 0)
-                sb.AppendFormat("\tDrive supports {0} LUNs", page.TLUN).AppendLine();
+            if(page.SFLP) sb.AppendLine("\tDrive can be used as a system floppy device");
+            if(page.SRFP) sb.AppendLine("\tDrive supports reporting progress of format");
+            if(page.NCD) sb.AppendLine("\tDrive is a Non-CD Optical Device");
+            if(page.SML) sb.AppendLine("\tDevice is a dual device supporting CD and Non-CD Optical");
+            if(page.TLUN > 0) sb.AppendFormat("\tDrive supports {0} LUNs", page.TLUN).AppendLine();
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x1B: Removable Block Access Capabilities page
 
         #region Mode Page 0x1C: Timer & Protect page
-
         /// <summary>
         /// Timer &amp; Protect page
         /// Page code 0x1C
@@ -6290,20 +6095,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1C_SFF? DecodeModePage_1C_SFF(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x1C)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x1C) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             ModePage_1C_SFF decoded = new ModePage_1C_SFF();
 
@@ -6323,21 +6123,17 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1C_SFF(ModePage_1C_SFF? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_1C_SFF page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Timer & Protect page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.DISP)
-                sb.AppendLine("\tDrive is disabled until power is cycled");
-            if(page.SWPP)
-                sb.AppendLine("\tDrive is software write-protected until powered down");
+            if(page.DISP) sb.AppendLine("\tDrive is disabled until power is cycled");
+            if(page.SWPP) sb.AppendLine("\tDrive is software write-protected until powered down");
 
             switch(page.InactivityTimeMultiplier)
             {
@@ -6393,11 +6189,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x1C: Timer & Protect page
 
         #region Mode Page 0x00: Drive Operation Mode page
-
         /// <summary>
         /// Drive Operation Mode page
         /// Page code 0x00
@@ -6429,20 +6223,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_00_SFF? DecodeModePage_00_SFF(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x00)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x00) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 4)
-                return null;
+            if(pageResponse.Length < 4) return null;
 
             ModePage_00_SFF decoded = new ModePage_00_SFF();
 
@@ -6464,34 +6253,27 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_00_SFF(ModePage_00_SFF? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_00_SFF page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Drive Operation Mode page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.DVW)
-                sb.AppendLine("\tVerifying after writing is disabled");
-            if(page.DDE)
-                sb.AppendLine("\tDrive will abort when a writing error is detected");
+            if(page.DVW) sb.AppendLine("\tVerifying after writing is disabled");
+            if(page.DDE) sb.AppendLine("\tDrive will abort when a writing error is detected");
 
             if(page.SLM)
             {
                 sb.Append("\tDrive has two LUNs with rewritable being ");
-                if(page.SLM)
-                    sb.AppendLine("LUN 1");
-                else
-                    sb.AppendLine("LUN 0");
+                if(page.SLM) sb.AppendLine("LUN 1");
+                else sb.AppendLine("LUN 0");
             }
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x00: Drive Operation Mode page
 
         public struct ModePage
@@ -6510,20 +6292,17 @@ namespace DiscImageChef.Decoders.SCSI
         public static DecodedMode? DecodeMode6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
             ModeHeader? hdr = DecodeModeHeader6(modeResponse, deviceType);
-            if(!hdr.HasValue)
-                return null;
+            if(!hdr.HasValue) return null;
 
             DecodedMode decoded = new DecodedMode();
             decoded.Header = hdr.Value;
             int blkDrLength = 0;
-            if(decoded.Header.BlockDescriptors != null)
-                blkDrLength = decoded.Header.BlockDescriptors.Length;
+            if(decoded.Header.BlockDescriptors != null) blkDrLength = decoded.Header.BlockDescriptors.Length;
 
             int offset = 4 + blkDrLength * 8;
             int length = modeResponse[0] + 1;
 
-            if(length != modeResponse.Length)
-                return decoded;
+            if(length != modeResponse.Length) return decoded;
 
             List<ModePage> listpages = new List<ModePage>();
 
@@ -6545,12 +6324,11 @@ namespace DiscImageChef.Decoders.SCSI
                 {
                     if(isSubpage)
                     {
-                        if (offset + 3 >= modeResponse.Length)
-                            break;
+                        if(offset + 3 >= modeResponse.Length) break;
 
                         pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
-                        if((pg.PageResponse.Length + offset) > modeResponse.Length)
-                            return decoded;
+                        if((pg.PageResponse.Length + offset) > modeResponse.Length) return decoded;
+
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
                         pg.Subpage = modeResponse[offset + 1];
@@ -6558,12 +6336,11 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     else
                     {
-                        if (offset + 1 >= modeResponse.Length)
-                            break;
-                        
+                        if(offset + 1 >= modeResponse.Length) break;
+
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
-                        if((pg.PageResponse.Length + offset) > modeResponse.Length)
-                            return decoded;
+                        if((pg.PageResponse.Length + offset) > modeResponse.Length) return decoded;
+
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
                         pg.Subpage = 0;
@@ -6582,27 +6359,22 @@ namespace DiscImageChef.Decoders.SCSI
         public static DecodedMode? DecodeMode10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
             ModeHeader? hdr = DecodeModeHeader10(modeResponse, deviceType);
-            if(!hdr.HasValue)
-                return null;
+            if(!hdr.HasValue) return null;
 
             DecodedMode decoded = new DecodedMode();
             decoded.Header = hdr.Value;
             bool longlba = (modeResponse[4] & 0x01) == 0x01;
             int offset;
             int blkDrLength = 0;
-            if(decoded.Header.BlockDescriptors != null)
-                blkDrLength = decoded.Header.BlockDescriptors.Length;
+            if(decoded.Header.BlockDescriptors != null) blkDrLength = decoded.Header.BlockDescriptors.Length;
 
-            if(longlba)
-                offset = 8 + blkDrLength * 16;
-            else
-                offset = 8 + blkDrLength * 8;
+            if(longlba) offset = 8 + blkDrLength * 16;
+            else offset = 8 + blkDrLength * 8;
             int length = (modeResponse[0] << 8);
             length += modeResponse[1];
             length += 2;
 
-            if(length != modeResponse.Length)
-                return decoded;
+            if(length != modeResponse.Length) return decoded;
 
             List<ModePage> listpages = new List<ModePage>();
 
@@ -6626,8 +6398,7 @@ namespace DiscImageChef.Decoders.SCSI
                     {
                         pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
 
-                        if((pg.PageResponse.Length + offset) > modeResponse.Length)
-                            return decoded;
+                        if((pg.PageResponse.Length + offset) > modeResponse.Length) return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
@@ -6638,8 +6409,7 @@ namespace DiscImageChef.Decoders.SCSI
                     {
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
 
-                        if((pg.PageResponse.Length + offset) > modeResponse.Length)
-                            return decoded;
+                        if((pg.PageResponse.Length + offset) > modeResponse.Length) return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
@@ -6703,20 +6473,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Fujitsu_ModePage_3E? DecodeFujitsuModePage_3E(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x3E)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x3E) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length != 8)
-                return null;
+            if(pageResponse.Length != 8) return null;
 
             Fujitsu_ModePage_3E decoded = new Fujitsu_ModePage_3E();
 
@@ -6743,19 +6508,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyFujitsuModePage_3E(Fujitsu_ModePage_3E? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Fujitsu_ModePage_3E page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("Fujitsu Verify Control Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.audioVisualMode)
-                sb.AppendLine("\tAudio/Visual data support mode is applied");
+            if(page.audioVisualMode) sb.AppendLine("\tAudio/Visual data support mode is applied");
             if(page.streamingMode)
                 sb.AppendLine("\tTest write operation is restricted during read or write operations.");
 
@@ -6772,16 +6534,14 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            sb.AppendFormat("\tThe device type that would be provided in the INQUIRY response is {0}",
-                page.devType).AppendLine();
+            sb.AppendFormat("\tThe device type that would be provided in the INQUIRY response is {0}", page.devType)
+              .AppendLine();
 
             return sb.ToString();
         }
-
         #endregion Fujitsu Mode Page 0x3E: Verify Control page
 
         #region Mode Page 0x11: Medium partition page (1)
-
         public enum PartitionSizeUnitOfMeasures : byte
         {
             /// <summary>
@@ -6872,20 +6632,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_11? DecodeModePage_11(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x11)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x11) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             ModePage_11 decoded = new ModePage_11();
 
@@ -6904,10 +6659,10 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.MediumFormatRecognition = (MediumFormatRecognitionValues)pageResponse[5];
             decoded.PartitionSizes = new ushort[(pageResponse.Length - 8) / 2];
 
-            for(int i = 8; i < pageResponse.Length; i+=2)
+            for(int i = 8; i < pageResponse.Length; i += 2)
             {
                 decoded.PartitionSizes[(i - 8) / 2] = (ushort)(pageResponse[i] << 8);
-                decoded.PartitionSizes[(i - 8) / 2] += pageResponse[i+1];
+                decoded.PartitionSizes[(i - 8) / 2] += pageResponse[i + 1];
             }
 
             return decoded;
@@ -6920,26 +6675,21 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_11(ModePage_11? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_11 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI medium partition page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\t{0} maximum additional partitions", page.MaxAdditionalPartitions).AppendLine();
             sb.AppendFormat("\t{0} additional partitions defined", page.AdditionalPartitionsDefined).AppendLine();
 
-            if(page.FDP)
-                sb.AppendLine("\tPartitions are fixed under device definitions");
-            if(page.SDP)
-                sb.AppendLine("\tNumber of partitions can be defined but their size is defined by the device");
-            if(page.IDP)
-                sb.AppendLine("\tNumber and size of partitions can be manually defined");
+            if(page.FDP) sb.AppendLine("\tPartitions are fixed under device definitions");
+            if(page.SDP) sb.AppendLine("\tNumber of partitions can be defined but their size is defined by the device");
+            if(page.IDP) sb.AppendLine("\tNumber and size of partitions can be manually defined");
             if(page.POFM)
                 sb.AppendLine("\tPartition parameters will not be applied until a FORMAT MEDIUM command is received");
             if(!page.CLEAR && !page.ADDP)
@@ -6968,7 +6718,8 @@ namespace DiscImageChef.Decoders.SCSI
                     measure = "megabytes";
                     break;
                 case PartitionSizeUnitOfMeasures.Exponential:
-                    sb.AppendFormat("\tPartitions are defined in units of {0} bytes", Math.Pow(10, page.PartitionUnits)).AppendLine();
+                    sb.AppendFormat("\tPartitions are defined in units of {0} bytes", Math.Pow(10, page.PartitionUnits))
+                      .AppendLine();
                     measure = string.Format("units of {0} bytes", Math.Pow(10, page.PartitionUnits));
                     break;
                 default:
@@ -6992,7 +6743,8 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("\tDevice is not capable of recognizing neither medium partitions nor format");
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown medium recognition code {0}", (byte)page.MediumFormatRecognition).AppendLine();
+                    sb.AppendFormat("\tUnknown medium recognition code {0}", (byte)page.MediumFormatRecognition)
+                      .AppendLine();
                     break;
             }
 
@@ -7004,8 +6756,7 @@ namespace DiscImageChef.Decoders.SCSI
                 {
                     if(page.PartitionSizes.Length == 1)
                         sb.AppendLine("\tDevice recognizes one single partition spanning whole medium");
-                    else
-                        sb.AppendFormat("\tPartition {0} runs for rest of medium", i).AppendLine();
+                    else sb.AppendFormat("\tPartition {0} runs for rest of medium", i).AppendLine();
                 }
                 else
                     sb.AppendFormat("\tPartition {0} is {1} {2} long", i, page.PartitionSizes[i], measure).AppendLine();
@@ -7013,11 +6764,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x11: Medium partition page (1)
 
         #region Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)
-
         /// <summary>
         /// Medium partition page (2-4)
         /// Page codes 0x12, 0x13 and 0x14
@@ -7036,22 +6785,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_12_13_14? DecodeModePage_12_13_14(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x12 &&
-                (pageResponse[0] & 0x3F) != 0x13 &&
-                (pageResponse[0] & 0x3F) != 0x14)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x12 && (pageResponse[0] & 0x3F) != 0x13 &&
+               (pageResponse[0] & 0x3F) != 0x14) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 2)
-                return null;
+            if(pageResponse.Length < 2) return null;
 
             ModePage_12_13_14 decoded = new ModePage_12_13_14();
 
@@ -7075,16 +6818,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_12_13_14(ModePage_12_13_14? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_12_13_14 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI medium partition page (extra):");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\tMedium has defined {0} partitions", page.PartitionSizes.Length).AppendLine();
 
@@ -7093,7 +6834,6 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)
 
         #region Certance Mode Page 0x21: Drive Capabilities Control Mode page
@@ -7115,20 +6855,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Certance_ModePage_21? DecodeCertanceModePage_21(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x21)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x21) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length != 9)
-                return null;
+            if(pageResponse.Length != 9) return null;
 
             Certance_ModePage_21 decoded = new Certance_ModePage_21();
 
@@ -7152,16 +6887,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyCertanceModePage_21(Certance_ModePage_21? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Certance_ModePage_21 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("Certance Drive Capabilities Control Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             switch(page.OperatingSystemsSupport)
             {
@@ -7169,7 +6902,8 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("\tOperating systems support is standard LTO");
                     break;
                 default:
-                    sb.AppendFormat("\tOperating systems support is unknown code {0}", page.OperatingSystemsSupport).AppendLine();
+                    sb.AppendFormat("\tOperating systems support is unknown code {0}", page.OperatingSystemsSupport)
+                      .AppendLine();
                     break;
             }
 
@@ -7221,8 +6955,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if(page.HostUnloadOverride)
-                sb.AppendLine("\tSCSI UNLOAD command will not eject the cartridge");
+            if(page.HostUnloadOverride) sb.AppendLine("\tSCSI UNLOAD command will not eject the cartridge");
 
             sb.Append("\tHow should tapes be unloaded in a power cycle, tape incompatibility, firmware download or cleaning end: ");
             switch(page.AutoUnloadMode)
@@ -7246,7 +6979,6 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion Certance Mode Page 0x21: Drive Capabilities Control Mode page
 
         #region Certance Mode Page 0x22: Interface Control Mode Page
@@ -7271,20 +7003,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Certance_ModePage_22? DecodeCertanceModePage_22(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x22)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x22) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length != 16)
-                return null;
+            if(pageResponse.Length != 16) return null;
 
             Certance_ModePage_22 decoded = new Certance_ModePage_22();
 
@@ -7311,16 +7038,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyCertanceModePage_22(Certance_ModePage_22? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             Certance_ModePage_22 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("Certance Interface Control Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             switch(page.BaudRate)
             {
@@ -7346,10 +7071,8 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if(page.StopBits)
-                sb.AppendLine("Library interface transmits 2 stop bits per byte");
-            else
-                sb.AppendLine("Library interface transmits 1 stop bits per byte");
+            if(page.StopBits) sb.AppendLine("Library interface transmits 2 stop bits per byte");
+            else sb.AppendLine("Library interface transmits 1 stop bits per byte");
 
             switch(page.CmdFwd)
             {
@@ -7380,22 +7103,18 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.PortATransportType > 0)
                 sb.AppendFormat("\tDrive responds to SCSI ID {0}", page.PortAPresentSelectionID).AppendLine();
 
-            sb.AppendFormat("\tDrive will respond to SCSI ID {0} on Port A enabling", page.NextSelectionID).AppendLine();
+            sb.AppendFormat("\tDrive will respond to SCSI ID {0} on Port A enabling", page.NextSelectionID)
+              .AppendLine();
             sb.AppendFormat("\tDrive jumpers choose SCSI ID {0}", page.JumperedSelectionID).AppendLine();
 
-            if(page.PortAEnabled)
-                sb.AppendLine("\tSCSI port is enabled");
-            else
-                sb.AppendLine("\tSCSI port is disabled");
+            if(page.PortAEnabled) sb.AppendLine("\tSCSI port is enabled");
+            else sb.AppendLine("\tSCSI port is disabled");
 
-            if(page.PortAEnabledOnPower)
-                sb.AppendLine("\tSCSI port will be enabled on next power up");
-            else
-                sb.AppendLine("\tSCSI port will be disabled on next power up");
+            if(page.PortAEnabledOnPower) sb.AppendLine("\tSCSI port will be enabled on next power up");
+            else sb.AppendLine("\tSCSI port will be disabled on next power up");
 
             return sb.ToString();
         }
-
         #endregion Certance Mode Page 0x22: Interface Control Mode Page
 
         #region Mode Page 0x1D: Medium Configuration Mode Page
@@ -7412,20 +7131,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1D? DecodeModePage_1D(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x1D)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x1D) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 32)
-                return null;
+            if(pageResponse.Length < 32) return null;
 
             ModePage_1D decoded = new ModePage_1D();
 
@@ -7444,19 +7158,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1D(ModePage_1D? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             ModePage_1D page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Medium Configuration Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.WORMM)
-                sb.AppendLine("\tDrive is operating in WORM mode");
+            if(page.WORMM) sb.AppendLine("\tDrive is operating in WORM mode");
 
             switch(page.WormModeLabelRestrictions)
             {
@@ -7470,7 +7181,8 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("\tDrive allows all format labels to be overwritten");
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown WORM mode label restrictions code {0}", page.WormModeLabelRestrictions).AppendLine();
+                    sb.AppendFormat("\tUnknown WORM mode label restrictions code {0}", page.WormModeLabelRestrictions)
+                      .AppendLine();
                     break;
             }
 
@@ -7483,13 +7195,13 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("\tDrive allows any number of filemarks immediately preceding EOD to be overwritten");
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown WORM mode filemark restrictions code {0}", page.WormModeLabelRestrictions).AppendLine();
+                    sb.AppendFormat("\tUnknown WORM mode filemark restrictions code {0}",
+                                    page.WormModeLabelRestrictions).AppendLine();
                     break;
             }
 
             return sb.ToString();
         }
-
         #endregion Mode Page 0x1D: Medium Configuration Mode Page
 
         #region IBM Mode Page 0x24: Drive Capabilities Control Mode page
@@ -7507,20 +7219,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static IBM_ModePage_24? DecodeIBMModePage_24(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x24)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x24) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length != 8)
-                return null;
+            if(pageResponse.Length != 8) return null;
 
             IBM_ModePage_24 decoded = new IBM_ModePage_24();
 
@@ -7540,16 +7247,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyIBMModePage_24(IBM_ModePage_24? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             IBM_ModePage_24 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("IBM Vendor-Specific Control Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\tVendor-specific mode control: {0}", page.ModeControl);
             sb.AppendFormat("\tVendor-specific velocity setting: {0}", page.VelocitySetting);
@@ -7557,13 +7262,11 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.EncryptionCapable)
             {
                 sb.AppendLine("\tDrive supports encryption");
-                if(page.EncryptionEnabled)
-                    sb.AppendLine("\tDrive has encryption enabled");
+                if(page.EncryptionEnabled) sb.AppendLine("\tDrive has encryption enabled");
             }
 
             return sb.ToString();
         }
-
         #endregion IBM Mode Page 0x24: Drive Capabilities Control Mode page
 
         #region IBM Mode Page 0x2F: Behaviour Configuration Mode page
@@ -7588,20 +7291,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static IBM_ModePage_2F? DecodeIBMModePage_2F(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x2F)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x2F) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length < 8)
-                return null;
+            if(pageResponse.Length < 8) return null;
 
             IBM_ModePage_2F decoded = new IBM_ModePage_2F();
 
@@ -7628,16 +7326,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyIBMModePage_2F(IBM_ModePage_2F? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             IBM_ModePage_2F page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("IBM Behaviour Configuration Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             switch(page.FenceBehaviour)
             {
@@ -7691,25 +7387,18 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if(page.CLNCHK)
-                sb.AppendLine("\tDrive will set Check Condition when cleaning is needed");
-            if(page.DDEOR)
-                sb.AppendLine("\tNo deferred error will be reported to a rewind command");
-            if(page.CCDM)
-                sb.AppendLine("\tDrive will set Check Condition when the criteria for Dead Media is met");
+            if(page.CLNCHK) sb.AppendLine("\tDrive will set Check Condition when cleaning is needed");
+            if(page.DDEOR) sb.AppendLine("\tNo deferred error will be reported to a rewind command");
+            if(page.CCDM) sb.AppendLine("\tDrive will set Check Condition when the criteria for Dead Media is met");
             if(page.FirmwareUpdateBehaviour > 0)
                 sb.AppendLine("\tDrive will not accept downlevel firmware via an FMR tape");
 
-            if(page.UOE_C == 1)
-                sb.AppendLine("\tDrive will eject cleaning cartridges on error");
-            if(page.UOE_F == 1)
-                sb.AppendLine("\tDrive will eject firmware cartridges on error");
-            if(page.UOE_D == 1)
-                sb.AppendLine("\tDrive will eject data cartridges on error");
+            if(page.UOE_C == 1) sb.AppendLine("\tDrive will eject cleaning cartridges on error");
+            if(page.UOE_F == 1) sb.AppendLine("\tDrive will eject firmware cartridges on error");
+            if(page.UOE_D == 1) sb.AppendLine("\tDrive will eject data cartridges on error");
 
             return sb.ToString();
         }
-
         #endregion IBM Mode Page 0x24: Drive Capabilities Control Mode page
 
         #region IBM Mode Page 0x3D: Behaviour Configuration Mode page
@@ -7724,20 +7413,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static IBM_ModePage_3D? DecodeIBMModePage_3D(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x3D)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x3D) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length != 5)
-                return null;
+            if(pageResponse.Length != 5) return null;
 
             IBM_ModePage_3D decoded = new IBM_ModePage_3D();
 
@@ -7754,22 +7438,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyIBMModePage_3D(IBM_ModePage_3D? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             IBM_ModePage_3D page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("IBM LEOT Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\t{0} wraps", page.NumberOfWraps).AppendLine();
 
             return sb.ToString();
         }
-
         #endregion IBM Mode Page 0x3D: Behaviour Configuration Mode page
 
         #region HP Mode Page 0x3B: Serial Number Override Mode page
@@ -7785,20 +7466,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static HP_ModePage_3B? DecodeHPModePage_3B(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x3B)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x3B) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length != 16)
-                return null;
+            if(pageResponse.Length != 16) return null;
 
             HP_ModePage_3B decoded = new HP_ModePage_3B();
 
@@ -7817,16 +7493,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyHPModePage_3B(HP_ModePage_3B? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             HP_ModePage_3B page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("HP Serial Number Override Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             switch(page.MSN)
             {
@@ -7842,7 +7516,6 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion HP Mode Page 0x3B: Serial Number Override Mode page
 
         #region HP Mode Page 0x3C: Device Time Mode page
@@ -7868,20 +7541,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static HP_ModePage_3C? DecodeHPModePage_3C(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x3C)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x3C) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length != 36)
-                return null;
+            if(pageResponse.Length != 36) return null;
 
             HP_ModePage_3C decoded = new HP_ModePage_3C();
 
@@ -7890,14 +7558,17 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.WT |= (pageResponse[2] & 0x02) == 0x02;
             decoded.PT |= (pageResponse[2] & 0x01) == 0x01;
             decoded.CurrentPowerOn = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.PowerOnTime = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+            decoded.PowerOnTime = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
+                                         pageResponse[11]);
             decoded.UTC |= (pageResponse[14] & 0x02) == 0x02;
             decoded.NTP |= (pageResponse[14] & 0x01) == 0x01;
-            decoded.WorldTime = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) + pageResponse[19]);
+            decoded.WorldTime = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) +
+                                       pageResponse[19]);
             decoded.LibraryHours = pageResponse[23];
             decoded.LibraryMinutes = pageResponse[24];
             decoded.LibrarySeconds = pageResponse[25];
-            decoded.CumulativePowerOn = (uint)((pageResponse[32] << 24) + (pageResponse[33] << 16) + (pageResponse[34] << 8) + pageResponse[35]);
+            decoded.CumulativePowerOn = (uint)((pageResponse[32] << 24) + (pageResponse[33] << 16) +
+                                               (pageResponse[34] << 8) + pageResponse[35]);
 
             return decoded;
         }
@@ -7909,39 +7580,39 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyHPModePage_3C(HP_ModePage_3C? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             HP_ModePage_3C page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("HP Device Time Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             if(page.PT)
             {
                 sb.AppendFormat("\tDrive has been powered up {0} times", page.CurrentPowerOn);
-                sb.AppendFormat("\tDrive has been powered up since {0} this time", TimeSpan.FromSeconds(page.PowerOnTime)).AppendLine();
-                sb.AppendFormat("\tDrive has been powered up a total of {0}", TimeSpan.FromSeconds(page.CumulativePowerOn)).AppendLine();
+                sb.AppendFormat("\tDrive has been powered up since {0} this time",
+                                TimeSpan.FromSeconds(page.PowerOnTime)).AppendLine();
+                sb.AppendFormat("\tDrive has been powered up a total of {0}",
+                                TimeSpan.FromSeconds(page.CumulativePowerOn)).AppendLine();
             }
 
             if(page.WT)
             {
-                sb.AppendFormat("\tDrive's date/time is: {0}", DateHandlers.UNIXUnsignedToDateTime(page.WorldTime)).AppendLine();
-                if(page.UTC)
-                    sb.AppendLine("\tDrive's time is UTC");
-                if(page.NTP)
-                    sb.AppendLine("\tDrive's time is synchronized with a NTP source");
+                sb.AppendFormat("\tDrive's date/time is: {0}", DateHandlers.UNIXUnsignedToDateTime(page.WorldTime))
+                  .AppendLine();
+                if(page.UTC) sb.AppendLine("\tDrive's time is UTC");
+                if(page.NTP) sb.AppendLine("\tDrive's time is synchronized with a NTP source");
             }
 
             if(page.LT)
-                sb.AppendFormat("\tLibrary time is {0}", new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, page.LibraryHours, page.LibraryMinutes, page.LibrarySeconds)).AppendLine();
+                sb.AppendFormat("\tLibrary time is {0}",
+                                new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, page.LibraryHours,
+                                             page.LibraryMinutes, page.LibrarySeconds)).AppendLine();
 
             return sb.ToString();
         }
-
         #endregion HP Mode Page 0x3C: Device Time Mode page
 
         #region HP Mode Page 0x3D: Extended Reset Mode page
@@ -7956,20 +7627,15 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static HP_ModePage_3D? DecodeHPModePage_3D(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x3D)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x3D) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length != 4)
-                return null;
+            if(pageResponse.Length != 4) return null;
 
             HP_ModePage_3D decoded = new HP_ModePage_3D();
 
@@ -7986,16 +7652,14 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyHPModePage_3D(HP_ModePage_3D? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             HP_ModePage_3D page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("HP Extended Reset Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
             switch(page.ResetBehaviour)
             {
@@ -8012,7 +7676,6 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
-
         #endregion HP Mode Page 0x3D: Extended Reset Mode page
 
         #region HP Mode Page 0x3E: CD-ROM Emulation/Disaster Recovery Mode page
@@ -8028,26 +7691,21 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static HP_ModePage_3E? DecodeHPModePage_3E(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return null;
+            if(pageResponse == null) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return null;
+            if((pageResponse[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x3F) != 0x3E)
-                return null;
+            if((pageResponse[0] & 0x3F) != 0x3E) return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
+            if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-            if(pageResponse.Length != 4)
-                return null;
+            if(pageResponse.Length != 4) return null;
 
             HP_ModePage_3E decoded = new HP_ModePage_3E();
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
             decoded.NonAuto |= (pageResponse[2] & 0x02) == 0x02;
-            decoded.CDmode|= (pageResponse[2] & 0x01) == 0x01;
+            decoded.CDmode |= (pageResponse[2] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -8059,48 +7717,41 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyHPModePage_3E(HP_ModePage_3E? modePage)
         {
-            if(!modePage.HasValue)
-                return null;
+            if(!modePage.HasValue) return null;
 
             HP_ModePage_3E page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("HP CD-ROM Emulation/Disaster Recovery Mode Page:");
 
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
+            if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if(page.CDmode)
-                sb.AppendLine("\tDrive is emulating a CD-ROM drive");
-            else
-                sb.AppendLine("\tDrive is not emulating a CD-ROM drive");
-            if(page.NonAuto)
-                sb.AppendLine("\tDrive will not exit emulation automatically");
+            if(page.CDmode) sb.AppendLine("\tDrive is emulating a CD-ROM drive");
+            else sb.AppendLine("\tDrive is not emulating a CD-ROM drive");
+            if(page.NonAuto) sb.AppendLine("\tDrive will not exit emulation automatically");
 
             return sb.ToString();
         }
-
         #endregion HP Mode Page 0x3E: CD-ROM Emulation/Disaster Recovery Mode page
 
         #region Apple Mode Page 0x30: Apple OEM String
-        static readonly byte[] AppleOEMString = { 0x41, 0x50, 0x50, 0x4C, 0x45, 0x20, 0x43, 0x4F, 0x4D, 0x50, 0x55, 0x54, 0x45, 0x52, 0x2C, 0x20, 0x49, 0x4E, 0x43, 0x2E };
+        static readonly byte[] AppleOEMString =
+        {
+            0x41, 0x50, 0x50, 0x4C, 0x45, 0x20, 0x43, 0x4F, 0x4D, 0x50, 0x55, 0x54, 0x45, 0x52, 0x2C, 0x20, 0x49, 0x4E,
+            0x43, 0x2E
+        };
 
         public static bool IsAppleModePage_30(byte[] pageResponse)
         {
-            if(pageResponse == null)
-                return false;
+            if(pageResponse == null) return false;
 
-            if((pageResponse[0] & 0x40) == 0x40)
-                return false;
+            if((pageResponse[0] & 0x40) == 0x40) return false;
 
-            if((pageResponse[0] & 0x3F) != 0x30)
-                return false;
+            if((pageResponse[0] & 0x3F) != 0x30) return false;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return false;
+            if(pageResponse[1] + 2 != pageResponse.Length) return false;
 
-            if(pageResponse.Length != 30)
-                return false;
+            if(pageResponse.Length != 30) return false;
 
             byte[] str = new byte[20];
             Array.Copy(pageResponse, 10, str, 0, 20);
@@ -8110,4 +7761,3 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Apple Mode Page 0x30: Apple OEM String
     }
 }
-

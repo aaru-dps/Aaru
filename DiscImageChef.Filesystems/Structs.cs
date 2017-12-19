@@ -157,26 +157,66 @@ namespace DiscImageChef.Filesystems
         public FileAttributes Attributes;
 
         /// <summary>File creation date in UTC</summary>
-        public DateTime CreationTimeUtc { get { return crtimeUtc; } set { crtimeUtc = value; } }
+        public DateTime CreationTimeUtc
+        {
+            get { return crtimeUtc; }
+            set { crtimeUtc = value; }
+        }
         /// <summary>File last access date in UTC</summary>
-        public DateTime AccessTimeUtc { get { return atimeUtc; } set { atimeUtc = value; } }
+        public DateTime AccessTimeUtc
+        {
+            get { return atimeUtc; }
+            set { atimeUtc = value; }
+        }
         /// <summary>File attributes change date in UTC</summary>
-        public DateTime StatusChangeTimeUtc { get { return ctimeUtc; } set { ctimeUtc = value; } }
+        public DateTime StatusChangeTimeUtc
+        {
+            get { return ctimeUtc; }
+            set { ctimeUtc = value; }
+        }
         /// <summary>File last backup date in UTC</summary>
-        public DateTime BackupTimeUtc { get { return btimeUtc; } set { btimeUtc = value; } }
+        public DateTime BackupTimeUtc
+        {
+            get { return btimeUtc; }
+            set { btimeUtc = value; }
+        }
         /// <summary>File last modification date in UTC</summary>
-        public DateTime LastWriteTimeUtc { get { return mtimeUtc; } set { mtimeUtc = value; } }
+        public DateTime LastWriteTimeUtc
+        {
+            get { return mtimeUtc; }
+            set { mtimeUtc = value; }
+        }
 
         /// <summary>File creation date</summary>
-        public DateTime CreationTime { get { return crtimeUtc.ToLocalTime(); } set { crtimeUtc = value.ToUniversalTime(); } }
+        public DateTime CreationTime
+        {
+            get { return crtimeUtc.ToLocalTime(); }
+            set { crtimeUtc = value.ToUniversalTime(); }
+        }
         /// <summary>File last access date</summary>
-        public DateTime AccessTime { get { return atimeUtc.ToLocalTime(); } set { atimeUtc = value.ToUniversalTime(); } }
+        public DateTime AccessTime
+        {
+            get { return atimeUtc.ToLocalTime(); }
+            set { atimeUtc = value.ToUniversalTime(); }
+        }
         /// <summary>File attributes change date</summary>
-        public DateTime StatusChangeTime { get { return ctimeUtc.ToLocalTime(); } set { ctimeUtc = value.ToUniversalTime(); } }
+        public DateTime StatusChangeTime
+        {
+            get { return ctimeUtc.ToLocalTime(); }
+            set { ctimeUtc = value.ToUniversalTime(); }
+        }
         /// <summary>File last backup date</summary>
-        public DateTime BackupTime { get { return btimeUtc.ToLocalTime(); } set { btimeUtc = value.ToUniversalTime(); } }
+        public DateTime BackupTime
+        {
+            get { return btimeUtc.ToLocalTime(); }
+            set { btimeUtc = value.ToUniversalTime(); }
+        }
         /// <summary>File last modification date</summary>
-        public DateTime LastWriteTime { get { return mtimeUtc.ToLocalTime(); } set { mtimeUtc = value.ToUniversalTime(); } }
+        public DateTime LastWriteTime
+        {
+            get { return mtimeUtc.ToLocalTime(); }
+            set { mtimeUtc = value.ToUniversalTime(); }
+        }
 
         /// <summary>inode number for this file</summary>
         public ulong Inode;
@@ -226,19 +266,13 @@ namespace DiscImageChef.Filesystems
     [StructLayout(LayoutKind.Explicit)]
     public struct FileSystemId
     {
-        [FieldOffset(0)]
-        public bool IsInt;
-        [FieldOffset(1)]
-        public bool IsLong;
-        [FieldOffset(2)]
-        public bool IsGuid;
+        [FieldOffset(0)] public bool IsInt;
+        [FieldOffset(1)] public bool IsLong;
+        [FieldOffset(2)] public bool IsGuid;
 
-        [FieldOffset(3)]
-        public uint Serial32;
-        [FieldOffset(3)]
-        public ulong Serial64;
-        [FieldOffset(3)]
-        public Guid uuid;
+        [FieldOffset(3)] public uint Serial32;
+        [FieldOffset(3)] public ulong Serial64;
+        [FieldOffset(3)] public Guid uuid;
     }
 
     /// <summary>

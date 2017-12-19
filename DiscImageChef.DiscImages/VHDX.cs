@@ -41,10 +41,9 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class VHDX : ImagePlugin
+    public class VHDX : ImagePlugin
     {
         #region Internal Structures
-
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VHDXIdentifier
         {
@@ -55,8 +54,7 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// UTF-16 string containing creator
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] creator;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] creator;
         }
 
         struct VHDXHeader
@@ -101,8 +99,7 @@ namespace DiscImageChef.ImagePlugins
             /// Offset from image start to the log
             /// </summary>
             public ulong logOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4016)]
-            public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4016)] public byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -165,8 +162,7 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Reserved
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public uint[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] reserved2;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -241,11 +237,9 @@ namespace DiscImageChef.ImagePlugins
             /// </summary>
             public ushort valueLength;
         }
-
         #endregion
 
         #region Internal Constants
-
         const ulong VHDXSignature = 0x656C696678646876;
         const uint VHDXHeaderSig = 0x64616568;
         const uint VHDXRegionSig = 0x69676572;
@@ -292,13 +286,11 @@ namespace DiscImageChef.ImagePlugins
         const ulong SectorBitmapPresent = 0x06;
 
         const ulong BATFileOffsetMask = 0xFFFFFFFFFFFC0000;
-        const ulong BATFlagsMask      = 0x7;
-        const ulong BATReservedMask   = 0x3FFF8;
-
+        const ulong BATFlagsMask = 0x7;
+        const ulong BATReservedMask = 0x3FFF8;
         #endregion
 
         #region Internal variables
-
         ulong VirtualDiskSize;
         Guid Page83Data;
         uint LogicalSectorSize;
@@ -333,7 +325,6 @@ namespace DiscImageChef.ImagePlugins
 
         Dictionary<ulong, byte[]> sectorCache;
         Dictionary<ulong, byte[]> blockCache;
-
         #endregion
 
         public VHDX()
@@ -364,14 +355,12 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region public methods
-
         public override bool IdentifyImage(Filter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+            if(stream.Length < 512) return false;
 
             byte[] vhdxId_b = new byte[Marshal.SizeOf(vhdxId)];
             stream.Read(vhdxId_b, 0, Marshal.SizeOf(vhdxId));
@@ -389,8 +378,7 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+            if(stream.Length < 512) return false;
 
             byte[] vhdxId_b = new byte[Marshal.SizeOf(vhdxId)];
             stream.Read(vhdxId_b, 0, Marshal.SizeOf(vhdxId));
@@ -400,8 +388,7 @@ namespace DiscImageChef.ImagePlugins
             vhdxId = (VHDXIdentifier)Marshal.PtrToStructure(idPtr, typeof(VHDXIdentifier));
             Marshal.FreeHGlobal(idPtr);
 
-            if(vhdxId.signature != VHDXSignature)
-               return false;
+            if(vhdxId.signature != VHDXSignature) return false;
 
             ImageInfo.imageApplication = Encoding.Unicode.GetString(vhdxId.creator);
 
@@ -425,8 +412,7 @@ namespace DiscImageChef.ImagePlugins
                 vHdr = (VHDXHeader)Marshal.PtrToStructure(headerPtr, typeof(VHDXHeader));
                 Marshal.FreeHGlobal(headerPtr);
 
-                if(vHdr.signature != VHDXHeaderSig)
-                    throw new ImageNotSupportedException("VHDX header not found");
+                if(vHdr.signature != VHDXHeaderSig) throw new ImageNotSupportedException("VHDX header not found");
             }
 
             stream.Seek(192 * 1024, SeekOrigin.Begin);
@@ -464,19 +450,17 @@ namespace DiscImageChef.ImagePlugins
                 vRegs[i] = (VHDXRegionTableEntry)Marshal.PtrToStructure(vRegPtr, typeof(VHDXRegionTableEntry));
                 Marshal.FreeHGlobal(vRegPtr);
 
-                if(vRegs[i].guid == BATGuid)
-                    batOffset = (long)vRegs[i].offset;
-                else if(vRegs[i].guid == MetadataGuid)
-                    metadataOffset = (long)vRegs[i].offset;
+                if(vRegs[i].guid == BATGuid) batOffset = (long)vRegs[i].offset;
+                else if(vRegs[i].guid == MetadataGuid) metadataOffset = (long)vRegs[i].offset;
                 else if((vRegs[i].flags & RegionFlagsRequired) == RegionFlagsRequired)
-                    throw new ImageNotSupportedException(string.Format("Found unsupported and required region Guid {0}, not proceeding with image.", vRegs[i].guid));
+                    throw new
+                        ImageNotSupportedException(string.Format("Found unsupported and required region Guid {0}, not proceeding with image.",
+                                                                 vRegs[i].guid));
             }
 
-            if(batOffset == 0)
-                throw new Exception("BAT not found, cannot continue.");
+            if(batOffset == 0) throw new Exception("BAT not found, cannot continue.");
 
-            if(metadataOffset == 0)
-                throw new Exception("Metadata not found, cannot continue.");
+            if(metadataOffset == 0) throw new Exception("Metadata not found, cannot continue.");
 
             uint fileParamsOff = 0, vdSizeOff = 0, p83Off = 0, logOff = 0, physOff = 0, parentOff = 0;
 
@@ -500,20 +484,16 @@ namespace DiscImageChef.ImagePlugins
                 vMets[i] = (VHDXMetadataTableEntry)Marshal.PtrToStructure(vMetPtr, typeof(VHDXMetadataTableEntry));
                 Marshal.FreeHGlobal(vMetPtr);
 
-                if(vMets[i].itemId == FileParametersGuid)
-                    fileParamsOff = vMets[i].offset;
-                else if(vMets[i].itemId == VirtualDiskSizeGuid)
-                    vdSizeOff = vMets[i].offset;
-                else if(vMets[i].itemId == Page83DataGuid)
-                    p83Off = vMets[i].offset;
-                else if(vMets[i].itemId == LogicalSectorSizeGuid)
-                    logOff = vMets[i].offset;
-                else if(vMets[i].itemId == PhysicalSectorSizeGuid)
-                    physOff = vMets[i].offset;
-                else if(vMets[i].itemId == ParentLocatorGuid)
-                    parentOff = vMets[i].offset;
+                if(vMets[i].itemId == FileParametersGuid) fileParamsOff = vMets[i].offset;
+                else if(vMets[i].itemId == VirtualDiskSizeGuid) vdSizeOff = vMets[i].offset;
+                else if(vMets[i].itemId == Page83DataGuid) p83Off = vMets[i].offset;
+                else if(vMets[i].itemId == LogicalSectorSizeGuid) logOff = vMets[i].offset;
+                else if(vMets[i].itemId == PhysicalSectorSizeGuid) physOff = vMets[i].offset;
+                else if(vMets[i].itemId == ParentLocatorGuid) parentOff = vMets[i].offset;
                 else if((vMets[i].flags & MetadataFlagsRequired) == MetadataFlagsRequired)
-                    throw new ImageNotSupportedException(string.Format("Found unsupported and required metadata Guid {0}, not proceeding with image.", vMets[i].itemId));
+                    throw new
+                        ImageNotSupportedException(string.Format("Found unsupported and required metadata Guid {0}, not proceeding with image.",
+                                                                 vMets[i].itemId));
             }
 
             byte[] tmp;
@@ -527,8 +507,7 @@ namespace DiscImageChef.ImagePlugins
                 vFileParms.blockSize = BitConverter.ToUInt32(tmp, 0);
                 vFileParms.flags = BitConverter.ToUInt32(tmp, 4);
             }
-            else
-                throw new Exception("File parameters not found.");
+            else throw new Exception("File parameters not found.");
 
             if(vdSizeOff != 0)
             {
@@ -537,8 +516,7 @@ namespace DiscImageChef.ImagePlugins
                 stream.Read(tmp, 0, 8);
                 VirtualDiskSize = BitConverter.ToUInt64(tmp, 0);
             }
-            else
-                throw new Exception("Virtual disk size not found.");
+            else throw new Exception("Virtual disk size not found.");
 
             if(p83Off != 0)
             {
@@ -555,9 +533,8 @@ namespace DiscImageChef.ImagePlugins
                 stream.Read(tmp, 0, 4);
                 LogicalSectorSize = BitConverter.ToUInt32(tmp, 0);
             }
-            else
-                throw new Exception("Logical sector size not found.");
-            
+            else throw new Exception("Logical sector size not found.");
+
             if(physOff != 0)
             {
                 stream.Seek(physOff + metadataOffset, SeekOrigin.Begin);
@@ -565,8 +542,7 @@ namespace DiscImageChef.ImagePlugins
                 stream.Read(tmp, 0, 4);
                 PhysicalSectorSize = BitConverter.ToUInt32(tmp, 0);
             }
-            else
-                throw new Exception("Physical sector size not found.");
+            else throw new Exception("Physical sector size not found.");
 
             if(parentOff != 0 && (vFileParms.flags & FileFlagsHasParent) == FileFlagsHasParent)
             {
@@ -580,7 +556,9 @@ namespace DiscImageChef.ImagePlugins
                 Marshal.FreeHGlobal(vParHdrPtr);
 
                 if(vParHdr.locatorType != ParentTypeVHDXGuid)
-                    throw new ImageNotSupportedException(string.Format("Found unsupported and required parent locator type {0}, not proceeding with image.", vParHdr.locatorType));
+                    throw new
+                        ImageNotSupportedException(string.Format("Found unsupported and required parent locator type {0}, not proceeding with image.",
+                                                                 vParHdr.locatorType));
 
                 vPars = new VHDXParentLocatorEntry[vParHdr.keyValueCount];
                 for(int i = 0; i < vPars.Length; i++)
@@ -592,13 +570,13 @@ namespace DiscImageChef.ImagePlugins
                     Marshal.Copy(vPar_b, 0, vParPtr, Marshal.SizeOf(vPars[i]));
                     vPars[i] = (VHDXParentLocatorEntry)Marshal.PtrToStructure(vParPtr, typeof(VHDXParentLocatorEntry));
                     Marshal.FreeHGlobal(vParPtr);
-
                 }
             }
             else if((vFileParms.flags & FileFlagsHasParent) == FileFlagsHasParent)
                 throw new Exception("Parent locator not found.");
 
-            if((vFileParms.flags & FileFlagsHasParent) == FileFlagsHasParent && vParHdr.locatorType == ParentTypeVHDXGuid)
+            if((vFileParms.flags & FileFlagsHasParent) == FileFlagsHasParent &&
+               vParHdr.locatorType == ParentTypeVHDXGuid)
             {
                 parentImage = new VHDX();
                 bool parentWorks = false;
@@ -620,7 +598,8 @@ namespace DiscImageChef.ImagePlugins
 
                         try
                         {
-                            parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
+                            parentFilter =
+                                new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
                             if(parentFilter != null && parentImage.OpenImage(parentFilter))
                             {
                                 parentWorks = true;
@@ -633,7 +612,8 @@ namespace DiscImageChef.ImagePlugins
 
                         try
                         {
-                            parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), relEntry));
+                            parentFilter =
+                                new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), relEntry));
                             if(parentFilter != null && parentImage.OpenImage(parentFilter))
                             {
                                 parentWorks = true;
@@ -652,7 +632,8 @@ namespace DiscImageChef.ImagePlugins
 
                         try
                         {
-                            parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
+                            parentFilter =
+                                new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
                             if(parentFilter != null && parentImage.OpenImage(parentFilter))
                             {
                                 parentWorks = true;
@@ -663,29 +644,25 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
-                if(!parentWorks)
-                    throw new Exception("Image is differential but parent cannot be opened.");
+                if(!parentWorks) throw new Exception("Image is differential but parent cannot be opened.");
 
                 hasParent = true;
             }
 
             chunkRatio = (long)((Math.Pow(2, 23) * LogicalSectorSize) / vFileParms.blockSize);
             dataBlocks = VirtualDiskSize / vFileParms.blockSize;
-            if((VirtualDiskSize % vFileParms.blockSize) > 0)
-                dataBlocks++;
+            if((VirtualDiskSize % vFileParms.blockSize) > 0) dataBlocks++;
 
             long batEntries;
             if(hasParent)
             {
                 long sectorBitmapBlocks = (long)dataBlocks / chunkRatio;
-                if((dataBlocks % (ulong)chunkRatio) > 0)
-                    sectorBitmapBlocks++;
+                if((dataBlocks % (ulong)chunkRatio) > 0) sectorBitmapBlocks++;
                 sectorBitmapPointers = new ulong[sectorBitmapBlocks];
 
                 batEntries = sectorBitmapBlocks * (chunkRatio - 1);
             }
-            else
-                batEntries = (long)(dataBlocks + ((dataBlocks - 1) / (ulong)chunkRatio));
+            else batEntries = (long)(dataBlocks + ((dataBlocks - 1) / (ulong)chunkRatio));
 
             DicConsole.DebugWriteLine("VHDX plugin", "Reading BAT");
 
@@ -732,8 +709,12 @@ namespace DiscImageChef.ImagePlugins
                         sectorBmpMs.Write(bmp, 0, bmp.Length);
                     }
                     else if((pt & BATFlagsMask) != 0)
-                        throw new ImageNotSupportedException(string.Format("Unsupported sector bitmap block flags (0x{0:X16}) found, not proceeding.", pt & BATFlagsMask));
+                        throw new
+                            ImageNotSupportedException(string
+                                                           .Format("Unsupported sector bitmap block flags (0x{0:X16}) found, not proceeding.",
+                                                                   pt & BATFlagsMask));
                 }
+
                 sectorBitmap = sectorBmpMs.ToArray();
                 sectorBmpMs.Close();
             }
@@ -756,13 +737,13 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.sectors = ImageInfo.imageSize / ImageInfo.sectorSize;
             ImageInfo.driveSerialNumber = Page83Data.ToString();
 
-			// TODO: Separate image application from version, need several samples.
+            // TODO: Separate image application from version, need several samples.
 
-			ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-			ImageInfo.heads = 16;
-			ImageInfo.sectorsPerTrack = 63;
+            ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+            ImageInfo.heads = 16;
+            ImageInfo.sectorsPerTrack = 63;
 
-			return true;
+            return true;
         }
 
         bool CheckBitmap(ulong sectorAddress)
@@ -771,8 +752,7 @@ namespace DiscImageChef.ImagePlugins
             int shift = (int)(sectorAddress % 8);
             byte val = (byte)(1 << shift);
 
-            if(index > sectorBitmap.LongLength)
-                return false;
+            if(index > sectorBitmap.LongLength) return false;
 
             return ((sectorBitmap[index] & val) == val);
         }
@@ -845,12 +825,12 @@ namespace DiscImageChef.ImagePlugins
         public override byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                      string.Format("Sector address {0} not found", sectorAddress));
 
             byte[] sector;
 
-            if(sectorCache.TryGetValue(sectorAddress, out sector))
-                return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
 
             ulong index = (sectorAddress * LogicalSectorSize) / vFileParms.blockSize;
             ulong secOff = (sectorAddress * LogicalSectorSize) % vFileParms.blockSize;
@@ -859,22 +839,20 @@ namespace DiscImageChef.ImagePlugins
             ulong blkFlags = blkPtr & BATFlagsMask;
 
             if((blkPtr & BATReservedMask) != 0)
-                throw new ImageNotSupportedException(string.Format("Unknown flags (0x{0:X16}) set in block pointer", blkPtr & BATReservedMask));
+                throw new ImageNotSupportedException(string.Format("Unknown flags (0x{0:X16}) set in block pointer",
+                                                                   blkPtr & BATReservedMask));
 
             if((blkFlags & BATFlagsMask) == PayloadBlockNotPresent)
                 return hasParent ? parentImage.ReadSector(sectorAddress) : new byte[LogicalSectorSize];
 
-            if((blkFlags & BATFlagsMask) == PayloadBlockUndefined ||
-               (blkFlags & BATFlagsMask) == PayloadBlockZero ||
-               (blkFlags & BATFlagsMask) == PayloadBlockUnmapper)
-                return new byte[LogicalSectorSize];
+            if((blkFlags & BATFlagsMask) == PayloadBlockUndefined || (blkFlags & BATFlagsMask) == PayloadBlockZero ||
+               (blkFlags & BATFlagsMask) == PayloadBlockUnmapper) return new byte[LogicalSectorSize];
 
             bool partialBlock;
             partialBlock = !((blkFlags & BATFlagsMask) == PayloadBlockFullyPresent);
             partialBlock = (blkFlags & BATFlagsMask) == PayloadBlockPartiallyPresent;
 
-            if(partialBlock && hasParent && !CheckBitmap(sectorAddress))
-                return parentImage.ReadSector(sectorAddress);
+            if(partialBlock && hasParent && !CheckBitmap(sectorAddress)) return parentImage.ReadSector(sectorAddress);
 
             byte[] block;
 
@@ -884,8 +862,7 @@ namespace DiscImageChef.ImagePlugins
                 imageStream.Seek((long)((blkPtr & BATFileOffsetMask)), SeekOrigin.Begin);
                 imageStream.Read(block, 0, block.Length);
 
-                if(blockCache.Count >= maxBlockCache)
-                    blockCache.Clear();
+                if(blockCache.Count >= maxBlockCache) blockCache.Clear();
 
                 blockCache.Add(blkPtr & BATFileOffsetMask, block);
             }
@@ -893,8 +870,7 @@ namespace DiscImageChef.ImagePlugins
             sector = new byte[LogicalSectorSize];
             Array.Copy(block, (int)secOff, sector, 0, sector.Length);
 
-            if(sectorCache.Count >= maxSectorCache)
-                sectorCache.Clear();
+            if(sectorCache.Count >= maxSectorCache) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 
@@ -904,10 +880,13 @@ namespace DiscImageChef.ImagePlugins
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                      string.Format("Sector address {0} not found", sectorAddress));
 
             if(sectorAddress + length > ImageInfo.sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than available ({1})", sectorAddress + length, ImageInfo.sectors));
+                throw new ArgumentOutOfRangeException(nameof(length),
+                                                      string.Format("Requested more sectors ({0}) than available ({1})",
+                                                                    sectorAddress + length, ImageInfo.sectors));
 
             MemoryStream ms = new MemoryStream();
 
@@ -919,23 +898,19 @@ namespace DiscImageChef.ImagePlugins
 
             return ms.ToArray();
         }
-
         #endregion
 
         #region private methods
-
         static uint VHDXChecksum(byte[] data)
         {
             uint checksum = 0;
-            foreach(byte b in data)
-                checksum += b;
+            foreach(byte b in data) checksum += b;
+
             return ~checksum;
         }
-
         #endregion
 
         #region Unsupported features
-
         public override string GetImageComments()
         {
             return null;
@@ -1081,16 +1056,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -1099,8 +1076,6 @@ namespace DiscImageChef.ImagePlugins
         {
             return null;
         }
-
         #endregion
     }
 }
-

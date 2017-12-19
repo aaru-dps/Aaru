@@ -82,4 +82,3 @@ namespace DiscImageChef.Filesystems.CPM
         }
     }
 }
-

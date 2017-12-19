@@ -82,16 +82,16 @@ namespace DiscImageChef.PartPlugins
             partitions = new List<Partition>();
 
             // Xbox partitions always start on 0
-            if(sectorOffset != 0)
-                return false;
+            if(sectorOffset != 0) return false;
 
             byte[] sector = imagePlugin.ReadSector(0);
-            if(sector.Length < 512)
-                return false;
+            if(sector.Length < 512) return false;
 
-            Xbox360DevKitPartitionTable table = BigEndianMarshal.ByteArrayToStructureBigEndian<Xbox360DevKitPartitionTable>(sector);
+            Xbox360DevKitPartitionTable table =
+                BigEndianMarshal.ByteArrayToStructureBigEndian<Xbox360DevKitPartitionTable>(sector);
 
-            if(table.magic == Xbox360DevKitMagic && table.contentOff + table.contentLen <= imagePlugin.ImageInfo.sectors &&
+            if(table.magic == Xbox360DevKitMagic &&
+               table.contentOff + table.contentLen <= imagePlugin.ImageInfo.sectors &&
                table.dashboardOff + table.dashboardLen <= imagePlugin.ImageInfo.sectors)
             {
                 Partition contentPart = new Partition
@@ -145,7 +145,8 @@ namespace DiscImageChef.PartPlugins
                     Partition dataPart = new Partition
                     {
                         Description = "Data volume",
-                        Size = (ulong)imagePlugin.ImageInfo.sectors * imagePlugin.ImageInfo.sectorSize - MemoryUnitDataOff,
+                        Size =
+                            (ulong)imagePlugin.ImageInfo.sectors * imagePlugin.ImageInfo.sectorSize - MemoryUnitDataOff,
                         Length = imagePlugin.ImageInfo.sectors - sysCachePart.Length,
                         Sequence = 2,
                         Offset = MemoryUnitDataOff,

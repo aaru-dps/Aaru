@@ -134,8 +134,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static CDPMA? Decode(byte[] CDPMAResponse)
         {
-            if(CDPMAResponse == null)
-                return null;
+            if(CDPMAResponse == null) return null;
 
             CDPMA decoded = new CDPMA();
 
@@ -148,7 +147,9 @@ namespace DiscImageChef.Decoders.CD
 
             if(decoded.DataLength + 2 != CDPMAResponse.Length)
             {
-                DicConsole.DebugWriteLine("CD PMA decoder", "Expected CDPMA size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDPMAResponse.Length);
+                DicConsole.DebugWriteLine("CD PMA decoder",
+                                          "Expected CDPMA size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                          decoded.DataLength + 2, CDPMAResponse.Length);
                 return null;
             }
 
@@ -174,25 +175,21 @@ namespace DiscImageChef.Decoders.CD
 
         public static string Prettify(CDPMA? CDPMAResponse)
         {
-            if(CDPMAResponse == null)
-                return null;
+            if(CDPMAResponse == null) return null;
 
             CDPMA response = CDPMAResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
 #if DEBUG
-            if(response.Reserved1 != 0)
-                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-            if(response.Reserved2 != 0)
-                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
 #endif
 
             foreach(CDPMADescriptors descriptor in response.PMADescriptors)
             {
 #if DEBUG
-                if(descriptor.Reserved != 0)
-                    sb.AppendFormat("Reserved = 0x{0:X2}", descriptor.Reserved).AppendLine();
+                if(descriptor.Reserved != 0) sb.AppendFormat("Reserved = 0x{0:X2}", descriptor.Reserved).AppendLine();
 #endif
 
                 switch(descriptor.ADR)
@@ -222,19 +219,24 @@ namespace DiscImageChef.Decoders.CD
                                     sb.Append(" (Data track, recorded incrementally)");
                                     break;
                             }
+
                             if(descriptor.PHOUR > 0)
-                                sb.AppendFormat(" starts at {3}:{0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR);
+                                sb.AppendFormat(" starts at {3}:{0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC,
+                                                descriptor.PFRAME, descriptor.PHOUR);
                             else
-                                sb.AppendFormat(" starts at {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME);
+                                sb.AppendFormat(" starts at {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC,
+                                                descriptor.PFRAME);
                             if(descriptor.PHOUR > 0)
-                                sb.AppendFormat(" and ends at {3}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR);
+                                sb.AppendFormat(" and ends at {3}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec,
+                                                descriptor.Frame, descriptor.HOUR);
                             else
-                                sb.AppendFormat(" and ends at {0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame);
+                                sb.AppendFormat(" and ends at {0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec,
+                                                descriptor.Frame);
 
                             sb.AppendLine();
                         }
-                        else
-                            goto default;
+                        else goto default;
+
                         break;
                     case 2:
                         uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
@@ -242,58 +244,50 @@ namespace DiscImageChef.Decoders.CD
                         break;
                     case 3:
                         sb.AppendFormat("Skip track assignment {0} says that tracks ", descriptor.POINT);
-                        if(descriptor.Min > 0)
-                            sb.AppendFormat("{0} ", descriptor.Min);
-                        if(descriptor.Sec > 0)
-                            sb.AppendFormat("{0} ", descriptor.Sec);
-                        if(descriptor.Frame > 0)
-                            sb.AppendFormat("{0} ", descriptor.Frame);
-                        if(descriptor.PMIN > 0)
-                            sb.AppendFormat("{0} ", descriptor.PMIN);
-                        if(descriptor.PSEC > 0)
-                            sb.AppendFormat("{0} ", descriptor.PSEC);
-                        if(descriptor.PFRAME > 0)
-                            sb.AppendFormat("{0} ", descriptor.PFRAME);
+                        if(descriptor.Min > 0) sb.AppendFormat("{0} ", descriptor.Min);
+                        if(descriptor.Sec > 0) sb.AppendFormat("{0} ", descriptor.Sec);
+                        if(descriptor.Frame > 0) sb.AppendFormat("{0} ", descriptor.Frame);
+                        if(descriptor.PMIN > 0) sb.AppendFormat("{0} ", descriptor.PMIN);
+                        if(descriptor.PSEC > 0) sb.AppendFormat("{0} ", descriptor.PSEC);
+                        if(descriptor.PFRAME > 0) sb.AppendFormat("{0} ", descriptor.PFRAME);
                         sb.AppendLine("should be skipped");
                         break;
                     case 4:
                         sb.AppendFormat("Unskip track assignment {0} says that tracks ", descriptor.POINT);
-                        if(descriptor.Min > 0)
-                            sb.AppendFormat("{0} ", descriptor.Min);
-                        if(descriptor.Sec > 0)
-                            sb.AppendFormat("{0} ", descriptor.Sec);
-                        if(descriptor.Frame > 0)
-                            sb.AppendFormat("{0} ", descriptor.Frame);
-                        if(descriptor.PMIN > 0)
-                            sb.AppendFormat("{0} ", descriptor.PMIN);
-                        if(descriptor.PSEC > 0)
-                            sb.AppendFormat("{0} ", descriptor.PSEC);
-                        if(descriptor.PFRAME > 0)
-                            sb.AppendFormat("{0} ", descriptor.PFRAME);
+                        if(descriptor.Min > 0) sb.AppendFormat("{0} ", descriptor.Min);
+                        if(descriptor.Sec > 0) sb.AppendFormat("{0} ", descriptor.Sec);
+                        if(descriptor.Frame > 0) sb.AppendFormat("{0} ", descriptor.Frame);
+                        if(descriptor.PMIN > 0) sb.AppendFormat("{0} ", descriptor.PMIN);
+                        if(descriptor.PSEC > 0) sb.AppendFormat("{0} ", descriptor.PSEC);
+                        if(descriptor.PFRAME > 0) sb.AppendFormat("{0} ", descriptor.PFRAME);
                         sb.AppendLine("should not be skipped");
                         break;
                     case 5:
                         sb.AppendFormat("Skip time interval assignment {0} says that from ", descriptor.POINT);
                         if(descriptor.PHOUR > 0)
-                            sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR);
+                            sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC,
+                                            descriptor.PFRAME, descriptor.PHOUR);
                         else
-                            sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME);
+                            sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC,
+                                            descriptor.PFRAME);
                         if(descriptor.PHOUR > 0)
-                            sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR);
-                        else
-                            sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame);
+                            sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec,
+                                            descriptor.Frame, descriptor.HOUR);
+                        else sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame);
                         sb.AppendLine("should be skipped");
                         break;
                     case 6:
                         sb.AppendFormat("Unskip time interval assignment {0} says that from ", descriptor.POINT);
                         if(descriptor.PHOUR > 0)
-                            sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR);
+                            sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC,
+                                            descriptor.PFRAME, descriptor.PHOUR);
                         else
-                            sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME);
+                            sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC,
+                                            descriptor.PFRAME);
                         if(descriptor.PHOUR > 0)
-                            sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR);
-                        else
-                            sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame);
+                            sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec,
+                                            descriptor.Frame, descriptor.HOUR);
+                        else sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame);
                         sb.AppendLine("should not be skipped");
                         break;
                     default:
@@ -324,4 +318,3 @@ namespace DiscImageChef.Decoders.CD
         }
     }
 }
-

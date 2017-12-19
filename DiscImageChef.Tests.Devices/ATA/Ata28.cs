@@ -111,11 +111,12 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadBuffer(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.ReadBuffer(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense = dev.ReadBuffer(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+                                        out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ BUFFER to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -148,8 +149,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ BUFFER response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -165,8 +165,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
+                case 3: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -177,11 +176,12 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadBufferDma(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.ReadBufferDma(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense = dev.ReadBufferDma(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+                                           out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ BUFFER DMA to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -214,8 +214,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ BUFFER DMA response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -231,8 +230,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
+                case 3: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -248,7 +246,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -285,9 +283,12 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         if(lba > 0xFFFFFFF)
                         {
-                            DicConsole.WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...", 0xFFFFFFF);
+                            DicConsole
+                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                           0xFFFFFFF);
                             lba = 0xFFFFFFF;
                         }
                         DicConsole.Write("How many sectors?: ");
@@ -299,17 +300,18 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, retries, lba, count, dev.Timeout, out double duration);
+            bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, retries, lba, count,
+                                     dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ DMA {0}to the device:", retries ? "WITH RETRIES " : "");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -343,8 +345,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ DMA {0}response:", retries ? "WITH RETRIES " : "");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -360,10 +361,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
-                case 4:
-                    goto parameters;
+                case 3: goto start;
+                case 4: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -379,7 +378,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -416,22 +415,25 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         if(lba > 0xFFFFFFF)
                         {
-                            DicConsole.WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...", 0xFFFFFFF);
+                            DicConsole
+                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                           0xFFFFFFF);
                             lba = 0xFFFFFFF;
                         }
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.ReadLong(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, retries, lba, blockSize, dev.Timeout, out double duration);
+            bool sense = dev.ReadLong(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, retries, lba,
+                                      blockSize, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ LONG {0}to the device:", retries ? "WITH RETRIES " : "");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -465,8 +467,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ LONG {0}response:", retries ? "WITH RETRIES " : "");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -482,10 +483,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
-                case 4:
-                    goto parameters;
+                case 3: goto start;
+                case 4: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -501,7 +500,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -538,9 +537,12 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         if(lba > 0xFFFFFFF)
                         {
-                            DicConsole.WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...", 0xFFFFFFF);
+                            DicConsole
+                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                           0xFFFFFFF);
                             lba = 0xFFFFFFF;
                         }
                         DicConsole.Write("How many sectors?: ");
@@ -552,17 +554,18 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, lba, count, dev.Timeout, out double duration);
+            bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, lba, count,
+                                          dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ MULTIPLE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -596,8 +599,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ MULTIPLE response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -613,10 +615,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
-                case 4:
-                    goto parameters;
+                case 3: goto start;
+                case 4: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -627,11 +627,12 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadNativeMaxAddress(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.ReadNativeMaxAddress(out uint lba, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense = dev.ReadNativeMaxAddress(out uint lba, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+                                                  out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ NATIVE MAX ADDRESS to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -668,8 +669,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 2:
-                    goto start;
+                case 2: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -685,7 +685,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -722,9 +722,12 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         if(lba > 0xFFFFFFF)
                         {
-                            DicConsole.WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...", 0xFFFFFFF);
+                            DicConsole
+                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                           0xFFFFFFF);
                             lba = 0xFFFFFFF;
                         }
                         DicConsole.Write("How many sectors?: ");
@@ -736,17 +739,18 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, retries, lba, count, dev.Timeout, out double duration);
+            bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, retries, lba, count,
+                                  dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ SECTORS {0}to the device:", retries ? "WITH RETRIES " : "");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -780,8 +784,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ SECTORS {0}response:", retries ? "WITH RETRIES " : "");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -797,10 +800,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
-                case 4:
-                    goto parameters;
+                case 3: goto start;
+                case 4: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -815,7 +816,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -851,22 +852,24 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         if(lba > 0xFFFFFFF)
                         {
-                            DicConsole.WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...", 0xFFFFFFF);
+                            DicConsole
+                                .WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                                           0xFFFFFFF);
                             lba = 0xFFFFFFF;
                         }
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.Seek(out AtaErrorRegistersLBA28 errorRegisters, lba, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending SEEK to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -903,10 +906,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 2:
-                    goto start;
-                case 3:
-                    goto parameters;
+                case 2: goto start;
+                case 3: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -916,4 +917,3 @@ namespace DiscImageChef.Tests.Devices.ATA
         }
     }
 }
-

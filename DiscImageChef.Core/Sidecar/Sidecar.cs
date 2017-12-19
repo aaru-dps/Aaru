@@ -39,7 +39,8 @@ namespace DiscImageChef.Core
 {
     public static partial class Sidecar
     {
-        public static CICMMetadataType Create(ImagePlugin image, string imagePath, System.Guid filterId, System.Text.Encoding encoding)
+        public static CICMMetadataType Create(ImagePlugin image, string imagePath, System.Guid filterId,
+                                              System.Text.Encoding encoding)
         {
             CICMMetadataType sidecar = new CICMMetadataType();
             PluginBase plugins = new PluginBase();

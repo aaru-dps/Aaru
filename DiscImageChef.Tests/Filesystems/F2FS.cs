@@ -41,33 +41,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class F2FS
     {
-        readonly string[] testfiles = {
-            "linux.vdi.lz",
-        };
+        readonly string[] testfiles = {"linux.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            262144,
-        };
+        readonly ulong[] sectors = {262144,};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            32512,
-        };
+        readonly long[] clusters = {32512,};
 
-        readonly int[] clustersize = {
-            4096,
-        };
+        readonly int[] clustersize = {4096,};
 
-        readonly string[] volumename = {
-            "VolumeLabel",
-        };
+        readonly string[] volumename = {"VolumeLabel",};
 
-        readonly string[] volumeserial = {
-            "81bd3a4e-de0c-484c-becc-aaa479b2070a",
-        };
+        readonly string[] volumeserial = {"81bd3a4e-de0c-484c-becc-aaa479b2070a",};
 
         [Test]
         public void Test()
@@ -93,6 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

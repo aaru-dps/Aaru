@@ -37,14 +37,12 @@ using System.Runtime.InteropServices;
 // Copyright "Fort Hood TX", public domain, 2007
 namespace DiscImageChef.Devices.Windows
 {
-
     // 
     // A place for "higher level" related functions 
     // You might not want to keep these in the USB class... your choice 
     // 
     public partial class Usb
     {
-
         // 
         // Get a list of all connected devices 
         // 
@@ -52,10 +50,8 @@ namespace DiscImageChef.Devices.Windows
         {
             List<USBDevice> DevList = new List<USBDevice>();
 
-            foreach(USBController Controller in GetHostControllers())
-            {
-                ListHub(Controller.GetRootHub(), DevList);
-            }
+            foreach(USBController Controller in GetHostControllers()) { ListHub(Controller.GetRootHub(), DevList); }
+
             return DevList;
         }
 
@@ -69,13 +65,7 @@ namespace DiscImageChef.Devices.Windows
                     // recursive 
                     ListHub(Port.GetHub(), DevList);
                 }
-                else
-                {
-                    if(Port.IsDeviceConnected)
-                    {
-                        DevList.Add(Port.GetDevice());
-                    }
-                }
+                else { if(Port.IsDeviceConnected) { DevList.Add(Port.GetDevice()); } }
             }
         }
 
@@ -89,9 +79,9 @@ namespace DiscImageChef.Devices.Windows
             foreach(USBController Controller in GetHostControllers())
             {
                 SearchHubDriverKeyName(Controller.GetRootHub(), ref FoundDevice, DriverKeyName);
-                if(FoundDevice != null)
-                    break;
+                if(FoundDevice != null) break;
             }
+
             return FoundDevice;
         }
 
@@ -130,9 +120,9 @@ namespace DiscImageChef.Devices.Windows
             foreach(USBController Controller in GetHostControllers())
             {
                 SearchHubInstanceID(Controller.GetRootHub(), ref FoundDevice, InstanceID);
-                if(FoundDevice != null)
-                    break;
+                if(FoundDevice != null) break;
             }
+
             return FoundDevice;
         }
 
@@ -185,11 +175,7 @@ namespace DiscImageChef.Devices.Windows
         //   IN ULONG  ulFlags 
         //); 
         [DllImport("setupapi.dll")]
-        static extern int CM_Get_Parent(
-            out IntPtr pdnDevInst,
-            IntPtr dnDevInst,
-            int ulFlags
-        );
+        static extern int CM_Get_Parent(out IntPtr pdnDevInst, IntPtr dnDevInst, int ulFlags);
 
         //CMAPI CONFIGRET WINAPI  CM_Get_Device_ID( 
         //    IN DEVINST  dnDevInst, 
@@ -198,12 +184,7 @@ namespace DiscImageChef.Devices.Windows
         //    IN ULONG  ulFlags 
         //); 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-        static extern int CM_Get_Device_ID(
-            IntPtr dnDevInst,
-            IntPtr Buffer,
-            int BufferLen,
-            int ulFlags
-        );
+        static extern int CM_Get_Device_ID(IntPtr dnDevInst, IntPtr Buffer, int BufferLen, int ulFlags);
 
         // 
         // Find a device based upon a Drive Letter 
@@ -217,10 +198,7 @@ namespace DiscImageChef.Devices.Windows
             // DriveLetter.  We'll use this later to find a matching 
             // DevicePath "symbolic name" 
             int DevNum = GetDeviceNumber(@"\\.\" + DriveLetter.TrimEnd('\\'));
-            if(DevNum < 0)
-            {
-                return null;
-            }
+            if(DevNum < 0) { return null; }
 
             return FindDeviceNumber(DevNum, deviceGuid);
         }
@@ -234,10 +212,7 @@ namespace DiscImageChef.Devices.Windows
             // DriveLetter.  We'll use this later to find a matching 
             // DevicePath "symbolic name" 
             int DevNum = GetDeviceNumber(DrivePath);
-            if(DevNum < 0)
-            {
-                return null;
-            }
+            if(DevNum < 0) { return null; }
 
             return FindDeviceNumber(DevNum, deviceGuid);
         }
@@ -304,15 +279,14 @@ namespace DiscImageChef.Devices.Windows
                         }
                     }
                     i++;
-                } while(Success);
+                }
+                while(Success);
+
                 SetupDiDestroyDeviceInfoList(h);
             }
 
             // Did we find an InterfaceID of a USB device? 
-            if(InstanceID.StartsWith("USB\\"))
-            {
-                FoundDevice = FindDeviceByInstanceID(InstanceID);
-            }
+            if(InstanceID.StartsWith("USB\\")) { FoundDevice = FindDeviceByInstanceID(InstanceID); }
             return FoundDevice;
         }
 
@@ -330,7 +304,7 @@ namespace DiscImageChef.Devices.Windows
                 IntPtr ptrSdn = Marshal.AllocHGlobal(nBytes);
 
                 if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out requiredSize,
-                    IntPtr.Zero))
+                                   IntPtr.Zero))
                 {
                     Sdn = (STORAGE_DEVICE_NUMBER)Marshal.PtrToStructure(ptrSdn, typeof(STORAGE_DEVICE_NUMBER));
                     // just my way of combining the relevant parts of the 
@@ -343,4 +317,4 @@ namespace DiscImageChef.Devices.Windows
             return ans;
         }
     }
-} 
+}

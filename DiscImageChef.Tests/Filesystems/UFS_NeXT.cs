@@ -40,45 +40,25 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class UFS_NeXT
     {
-        readonly string[] testfiles = {
-            "nextstep_3.3.vdi.lz","openstep_4.0.vdi.lz","openstep_4.2.vdi.lz",
-            "rhapsody_dr1.vdi.lz","rhapsody_dr2.vdi.lz",
+        readonly string[] testfiles =
+        {
+            "nextstep_3.3.vdi.lz", "openstep_4.0.vdi.lz", "openstep_4.2.vdi.lz", "rhapsody_dr1.vdi.lz",
+            "rhapsody_dr2.vdi.lz",
         };
 
-        readonly ulong[] sectors = {
-            409600,409600,409600,
-            409600,409600,
-        };
+        readonly ulong[] sectors = {409600, 409600, 409600, 409600, 409600,};
 
-        readonly uint[] sectorsize = {
-            512, 512, 512,
-            512, 512,
-        };
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512,};
 
-        readonly long[] clusters = {
-            204640,204640,204640,
-            204640,204464,
-        };
+        readonly long[] clusters = {204640, 204640, 204640, 204640, 204464,};
 
-        readonly int[] clustersize = {
-            1024, 1024, 1024,
-            1024, 1024,
-        };
+        readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024,};
 
-        readonly string[] volumename = {
-            null, null, null,
-            null, null,
-        };
+        readonly string[] volumename = {null, null, null, null, null,};
 
-        readonly string[] volumeserial = {
-            null, null, null,
-            null, null,
-        };
+        readonly string[] volumeserial = {null, null, null, null, null,};
 
-        readonly string[] type = {
-            "UFS", "UFS", "UFS",
-            "UFS", "UFS",
-        };
+        readonly string[] type = {"UFS", "UFS", "UFS", "UFS", "UFS",};
 
         [Test]
         public void Test()
@@ -103,6 +83,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

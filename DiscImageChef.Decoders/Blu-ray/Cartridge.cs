@@ -56,12 +56,13 @@ namespace DiscImageChef.Decoders.Bluray
         #region Public methods
         public static CartridgeStatus? Decode(byte[] CSResponse)
         {
-            if(CSResponse == null)
-                return null;
+            if(CSResponse == null) return null;
 
             if(CSResponse.Length != 8)
             {
-                DicConsole.DebugWriteLine("BD Cartridge Status decoder", "Found incorrect Blu-ray Cartridge Status size ({0} bytes)", CSResponse.Length);
+                DicConsole.DebugWriteLine("BD Cartridge Status decoder",
+                                          "Found incorrect Blu-ray Cartridge Status size ({0} bytes)",
+                                          CSResponse.Length);
                 return null;
             }
 
@@ -86,47 +87,35 @@ namespace DiscImageChef.Decoders.Bluray
 
         public static string Prettify(CartridgeStatus? CSResponse)
         {
-            if(CSResponse == null)
-                return null;
+            if(CSResponse == null) return null;
 
             CartridgeStatus response = CSResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
 #if DEBUG
-            if(response.Reserved1 != 0)
-                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-            if(response.Reserved2 != 0)
-                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            if(response.Reserved3 != 0)
-                sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
-            if(response.Reserved4 != 0)
-                sb.AppendFormat("Reserved4 = 0x{0:X8}", response.Reserved4).AppendLine();
-            if(response.Reserved5 != 0)
-                sb.AppendFormat("Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
-            if(response.Reserved6 != 0)
-                sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
-            if(response.Reserved7 != 0)
-                sb.AppendFormat("Reserved7 = 0x{0:X8}", response.Reserved7).AppendLine();
+            if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0) sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
+            if(response.Reserved4 != 0) sb.AppendFormat("Reserved4 = 0x{0:X8}", response.Reserved4).AppendLine();
+            if(response.Reserved5 != 0) sb.AppendFormat("Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
+            if(response.Reserved6 != 0) sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
+            if(response.Reserved7 != 0) sb.AppendFormat("Reserved7 = 0x{0:X8}", response.Reserved7).AppendLine();
 #endif
 
             if(response.Cartridge)
             {
                 sb.AppendLine("Media is inserted in a cartridge");
-                if(response.OUT)
-                    sb.AppendLine("Media has been taken out, or inserted in, the cartridge");
-                if(response.CWP)
-                    sb.AppendLine("Media is write protected");
+                if(response.OUT) sb.AppendLine("Media has been taken out, or inserted in, the cartridge");
+                if(response.CWP) sb.AppendLine("Media is write protected");
             }
             else
             {
                 sb.AppendLine("Media is not in a cartridge");
 
 #if DEBUG
-                if(response.OUT)
-                    sb.AppendLine("Media has out bit marked, shouldn't");
-                if(response.CWP)
-                    sb.AppendLine("Media has write protection bit marked, shouldn't");
+                if(response.OUT) sb.AppendLine("Media has out bit marked, shouldn't");
+                if(response.CWP) sb.AppendLine("Media has write protection bit marked, shouldn't");
 #endif
             }
             return sb.ToString();
@@ -200,4 +189,3 @@ namespace DiscImageChef.Decoders.Bluray
         #endregion Public structures
     }
 }
-

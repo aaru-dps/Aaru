@@ -45,8 +45,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public XaAttributes attributes;
             public ushort signature;
             public byte filenumber;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] reserved;
         }
     }
 }

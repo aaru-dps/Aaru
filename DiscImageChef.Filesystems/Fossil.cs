@@ -112,13 +112,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Venti score of last successful archive
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] last;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] last;
             /// <summary>
             /// name of file system(just a comment)
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] name;
         }
 
         const uint Fossil_HdrMagic = 0x3776AE89;
@@ -155,22 +153,22 @@ namespace DiscImageChef.Filesystems
 
             FossilHeader hdr = new FossilHeader();
 
-            if(partition.Start + hdrSector > imagePlugin.GetSectors())
-                return false;
+            if(partition.Start + hdrSector > imagePlugin.GetSectors()) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
             hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
-            DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic, Fossil_HdrMagic);
+            DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
+                                      Fossil_HdrMagic);
 
             return hdr.magic == Fossil_HdrMagic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512)
-                return;
+            if(imagePlugin.GetSectorSize() < 512) return;
 
             ulong hdrSector = HeaderPos / imagePlugin.GetSectorSize();
 
@@ -179,7 +177,8 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
             hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
-            DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic, Fossil_HdrMagic);
+            DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
+                                      Fossil_HdrMagic);
 
             StringBuilder sb = new StringBuilder();
 
@@ -205,7 +204,8 @@ namespace DiscImageChef.Filesystems
                 sector = imagePlugin.ReadSector(sbLocation);
                 FossilSuperBlock fsb = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilSuperBlock>(sector);
 
-                DicConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic, Fossil_SbMagic);
+                DicConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,
+                                          Fossil_SbMagic);
 
                 if(fsb.magic == Fossil_SbMagic)
                 {
@@ -215,7 +215,8 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("Active root block {0}", fsb.active).AppendLine();
                     sb.AppendFormat("Next root block {0}", fsb.next).AppendLine();
                     sb.AppendFormat("Curren root block {0}", fsb.current).AppendLine();
-                    sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.CToString(fsb.name, CurrentEncoding)).AppendLine();
+                    sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.CToString(fsb.name, CurrentEncoding))
+                      .AppendLine();
                     xmlFSType.VolumeName = StringHandlers.CToString(fsb.name, CurrentEncoding);
                 }
             }

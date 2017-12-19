@@ -51,20 +51,16 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Squash filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            if(encoding == null)
-                CurrentEncoding = Encoding.UTF8;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.UTF8;
+            else CurrentEncoding = encoding;
         }
 
         public Squash(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Squash filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            if(encoding == null)
-                CurrentEncoding = Encoding.UTF8;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.UTF8;
+            else CurrentEncoding = encoding;
         }
 
         enum SquashCompression : ushort
@@ -109,8 +105,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End)
-                return false;
+            if(partition.Start >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
@@ -119,7 +114,8 @@ namespace DiscImageChef.Filesystems
             return magic == Squash_MAGIC || magic == Squash_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
@@ -143,14 +139,13 @@ namespace DiscImageChef.Filesystems
             StringBuilder sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Squash file system");
-            if(littleEndian)
-                sbInformation.AppendLine("Little-endian");
-            else
-                sbInformation.AppendLine("Big-endian");
+            if(littleEndian) sbInformation.AppendLine("Little-endian");
+            else sbInformation.AppendLine("Big-endian");
             sbInformation.AppendFormat("Volume version {0}.{1}", sqSb.s_major, sqSb.s_minor).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes", sqSb.bytes_used).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes per block", sqSb.block_size).AppendLine();
-            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time)).AppendLine();
+            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time))
+                         .AppendLine();
             sbInformation.AppendFormat("Volume has {0} inodes", sqSb.inodes).AppendLine();
             switch(sqSb.compression)
             {
@@ -173,7 +168,8 @@ namespace DiscImageChef.Filesystems
                     sbInformation.AppendLine("Volume is compressed using Zstandard");
                     break;
                 default:
-                    sbInformation.AppendFormat("Volume is compressed using unknown algorithm {0}", sqSb.compression).AppendLine();
+                    sbInformation.AppendFormat("Volume is compressed using unknown algorithm {0}", sqSb.compression)
+                                 .AppendLine();
                     break;
             }
 
@@ -183,7 +179,8 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "Squash file system";
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time);
             xmlFSType.CreationDateSpecified = true;
-            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize) / sqSb.block_size);
+            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize) /
+                                        sqSb.block_size);
             xmlFSType.ClusterSize = (int)sqSb.block_size;
             xmlFSType.Files = sqSb.inodes;
             xmlFSType.FilesSpecified = true;

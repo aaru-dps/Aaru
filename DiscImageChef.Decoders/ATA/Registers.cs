@@ -101,4 +101,3 @@ namespace DiscImageChef.Decoders.ATA
         public byte command;
     }
 }
-

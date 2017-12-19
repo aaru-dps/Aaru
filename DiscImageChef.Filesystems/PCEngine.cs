@@ -50,26 +50,21 @@ namespace DiscImageChef.Filesystems
         {
             Name = "PC Engine CD Plugin";
             PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("shift_jis");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("shift_jis");
+            else CurrentEncoding = encoding;
         }
 
         public PCEnginePlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "PC Engine CD Plugin";
             PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("shift_jis");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("shift_jis");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
-                return false;
+            if((2 + partition.Start) >= partition.End) return false;
 
             byte[] system_descriptor = new byte[23];
             byte[] sector = imagePlugin.ReadSector(1 + partition.Start);
@@ -79,7 +74,8 @@ namespace DiscImageChef.Filesystems
             return Encoding.ASCII.GetString(system_descriptor) == "PC Engine CD-ROM SYSTEM";
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
             xmlFSType = new Schemas.FileSystemType();

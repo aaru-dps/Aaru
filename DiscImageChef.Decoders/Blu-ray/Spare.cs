@@ -56,12 +56,13 @@ namespace DiscImageChef.Decoders.Bluray
         #region Public methods
         public static SpareAreaInformation? Decode(byte[] SAIResponse)
         {
-            if(SAIResponse == null)
-                return null;
+            if(SAIResponse == null) return null;
 
             if(SAIResponse.Length != 16)
             {
-                DicConsole.DebugWriteLine("BD Spare Area Information decoder", "Found incorrect Blu-ray Spare Area Information size ({0} bytes)", SAIResponse.Length);
+                DicConsole.DebugWriteLine("BD Spare Area Information decoder",
+                                          "Found incorrect Blu-ray Spare Area Information size ({0} bytes)",
+                                          SAIResponse.Length);
                 return null;
             }
 
@@ -81,20 +82,16 @@ namespace DiscImageChef.Decoders.Bluray
 
         public static string Prettify(SpareAreaInformation? SAIResponse)
         {
-            if(SAIResponse == null)
-                return null;
+            if(SAIResponse == null) return null;
 
             SpareAreaInformation response = SAIResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
 #if DEBUG
-            if(response.Reserved1 != 0)
-                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-            if(response.Reserved2 != 0)
-                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            if(response.Reserved3 != 0)
-                sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
+            if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0) sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
 #endif
             sb.AppendFormat("{0} free spare blocks", response.FreeSpareBlocks).AppendLine();
             sb.AppendFormat("{0} allocated spare blocks", response.AllocatedSpareBlocks).AppendLine();
@@ -145,4 +142,3 @@ namespace DiscImageChef.Decoders.Bluray
         #endregion Public structures
     }
 }
-

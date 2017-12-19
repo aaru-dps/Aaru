@@ -41,12 +41,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
     {
         public override Errno ListXAttr(string path, ref List<string> xattrs)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             xattrs = new List<string>();
 
@@ -67,11 +65,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
             uint fileID;
             MFS_FileEntry entry;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID))
-                return Errno.NoSuchFile;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileID, out entry))
-                return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
 
             if(entry.flRLgLen > 0)
             {
@@ -80,11 +76,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     xattrs.Add("com.apple.ResourceFork.tags");
             }
 
-            if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds))
-                xattrs.Add("com.apple.FinderInfo");
+            if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds)) xattrs.Add("com.apple.FinderInfo");
 
-            if(debug && device.ImageInfo.readableSectorTags.Contains(ImagePlugins.SectorTagType.AppleSectorTag) && entry.flLgLen > 0)
-                xattrs.Add("com.apple.macintosh.tags");
+            if(debug && device.ImageInfo.readableSectorTags.Contains(ImagePlugins.SectorTagType.AppleSectorTag) &&
+               entry.flLgLen > 0) xattrs.Add("com.apple.macintosh.tags");
 
             xattrs.Sort();
 
@@ -93,12 +88,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
         public override Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
             {
@@ -138,8 +131,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                             return Errno.NoError;
                         }
                     }
-                    else
-                        return Errno.NoSuchExtendedAttribute;
+                    else return Errno.NoSuchExtendedAttribute;
                 }
             }
 
@@ -147,25 +139,26 @@ namespace DiscImageChef.Filesystems.AppleMFS
             MFS_FileEntry entry;
             Errno error;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID))
-                return Errno.NoSuchFile;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileID, out entry))
-                return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
 
-            if(entry.flRLgLen > 0 && string.Compare(xattr, "com.apple.ResourceFork", StringComparison.InvariantCulture) == 0)
+            if(entry.flRLgLen > 0 &&
+               string.Compare(xattr, "com.apple.ResourceFork", StringComparison.InvariantCulture) == 0)
             {
                 error = ReadFile(path, out buf, true, false);
                 return error;
             }
 
-            if(entry.flRLgLen > 0 && string.Compare(xattr, "com.apple.ResourceFork.tags", StringComparison.InvariantCulture) == 0)
+            if(entry.flRLgLen > 0 &&
+               string.Compare(xattr, "com.apple.ResourceFork.tags", StringComparison.InvariantCulture) == 0)
             {
                 error = ReadFile(path, out buf, true, true);
                 return error;
             }
 
-            if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds) && string.Compare(xattr, "com.apple.FinderInfo", StringComparison.InvariantCulture) == 0)
+            if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds) &&
+               string.Compare(xattr, "com.apple.FinderInfo", StringComparison.InvariantCulture) == 0)
             {
                 buf = new byte[16];
                 Array.Copy(entry.flUsrWds, 0, buf, 0, 16);
@@ -183,4 +176,3 @@ namespace DiscImageChef.Filesystems.AppleMFS
         }
     }
 }
-

@@ -67,7 +67,11 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        readonly byte[] UDF_Magic = { 0x2A, 0x4F, 0x53, 0x54, 0x41, 0x20, 0x55, 0x44, 0x46, 0x20, 0x43, 0x6F, 0x6D, 0x70, 0x6C, 0x69, 0x61, 0x6E, 0x74, 0x00, 0x00, 0x00, 0x00 };
+        readonly byte[] UDF_Magic =
+        {
+            0x2A, 0x4F, 0x53, 0x54, 0x41, 0x20, 0x55, 0x44, 0x46, 0x20, 0x43, 0x6F, 0x6D, 0x70, 0x6C, 0x69, 0x61, 0x6E,
+            0x74, 0x00, 0x00, 0x00, 0x00
+        };
 
         [Flags]
         enum EntityFlags : byte
@@ -86,13 +90,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Structure identifier
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 23)]
-            public byte[] identifier;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 23)] public byte[] identifier;
             /// <summary>
             /// Structure data
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] identifierSuffix;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] identifierSuffix;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -147,8 +149,7 @@ namespace DiscImageChef.Filesystems
         struct CharacterSpecification
         {
             public byte type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
-            public byte[] information;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)] public byte[] information;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -157,8 +158,7 @@ namespace DiscImageChef.Filesystems
             public DescriptorTag tag;
             public ExtentDescriptor mainVolumeDescriptorSequenceExtent;
             public ExtentDescriptor reserveVolumeDescriptorSequenceExtent;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 480)]
-            public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 480)] public byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -167,16 +167,14 @@ namespace DiscImageChef.Filesystems
             public DescriptorTag tag;
             public uint volumeDescriptorSequenceNumber;
             public uint primaryVolumeDescriptorNumber;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volumeIdentifier;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] volumeIdentifier;
             public ushort volumeSequenceNumber;
             public ushort maximumVolumeSequenceNumber;
             public ushort interchangeLevel;
             public ushort maximumInterchangeLevel;
             public uint characterSetList;
             public uint maximumCharacterSetList;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] volumeSetIdentifier;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] volumeSetIdentifier;
             public CharacterSpecification descriptorCharacterSet;
             public CharacterSpecification explanatoryCharacterSet;
             public ExtentDescriptor volumeAbstract;
@@ -184,12 +182,10 @@ namespace DiscImageChef.Filesystems
             public EntityIdentifier applicationIdentifier;
             public Timestamp recordingDateTime;
             public EntityIdentifier implementationIdentifier;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] implementationUse;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] implementationUse;
             public uint predecessorVolumeDescriptorSequenceLocation;
             public ushort flags;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
-            public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)] public byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -198,17 +194,14 @@ namespace DiscImageChef.Filesystems
             public DescriptorTag tag;
             public uint volumeDescriptorSequenceNumber;
             public CharacterSpecification descriptorCharacterSet;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] logicalVolumeIdentifier;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] logicalVolumeIdentifier;
             public uint logicalBlockSize;
             public EntityIdentifier domainIdentifier;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] logicalVolumeContentsUse;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] logicalVolumeContentsUse;
             public uint mapTableLength;
             public uint numberOfPartitionMaps;
             public EntityIdentifier implementationIdentifier;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] implementationUse;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] implementationUse;
             public ExtentDescriptor integritySequenceExtent;
         }
 
@@ -219,8 +212,7 @@ namespace DiscImageChef.Filesystems
             public Timestamp recordingDateTime;
             public uint integrityType;
             public ExtentDescriptor nextIntegrityExtent;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] logicalVolumeContentsUse;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] logicalVolumeContentsUse;
             public uint numberOfPartitions;
             public uint lengthOfImplementationUse;
             // Follows uint[numberOfPartitions] freeSpaceTable;
@@ -242,43 +234,49 @@ namespace DiscImageChef.Filesystems
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             // UDF needs at least that
-            if(partition.End - partition.Start < 256)
-                return false;
+            if(partition.End - partition.Start < 256) return false;
 
             // UDF needs at least that
-            if(imagePlugin.ImageInfo.sectorSize < 512)
-                return false;
+            if(imagePlugin.ImageInfo.sectorSize < 512) return false;
 
             byte[] sector;
             AnchorVolumeDescriptorPointer anchor = new AnchorVolumeDescriptorPointer();
             // All positions where anchor may reside
-            ulong[] positions = { 256, 512, partition.End - 256, partition.End };
+            ulong[] positions = {256, 512, partition.End - 256, partition.End};
             bool anchorFound = false;
 
             foreach(ulong position in positions)
             {
-                if(position + partition.Start >= partition.End)
-                    continue;
-                
+                if(position + partition.Start >= partition.End) continue;
+
                 sector = imagePlugin.ReadSector(position);
                 anchor = new AnchorVolumeDescriptorPointer();
                 IntPtr anchorPtr = Marshal.AllocHGlobal(Marshal.SizeOf(anchor));
                 Marshal.Copy(sector, 0, anchorPtr, Marshal.SizeOf(anchor));
-                anchor = (AnchorVolumeDescriptorPointer)Marshal.PtrToStructure(anchorPtr, typeof(AnchorVolumeDescriptorPointer));
+                anchor =
+                    (AnchorVolumeDescriptorPointer)Marshal.PtrToStructure(anchorPtr,
+                                                                          typeof(AnchorVolumeDescriptorPointer));
                 Marshal.FreeHGlobal(anchorPtr);
 
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorVersion = {0}", anchor.tag.descriptorVersion);
+                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorVersion = {0}",
+                                          anchor.tag.descriptorVersion);
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagChecksum = 0x{0:X2}", anchor.tag.tagChecksum);
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.reserved = {0}", anchor.tag.reserved);
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagSerialNumber = {0}", anchor.tag.tagSerialNumber);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrc = 0x{0:X4}", anchor.tag.descriptorCrc);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrcLength = {0}", anchor.tag.descriptorCrcLength);
+                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrc = 0x{0:X4}",
+                                          anchor.tag.descriptorCrc);
+                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrcLength = {0}",
+                                          anchor.tag.descriptorCrcLength);
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagLocation = {0}", anchor.tag.tagLocation);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.length = {0}", anchor.mainVolumeDescriptorSequenceExtent.length);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.location = {0}", anchor.mainVolumeDescriptorSequenceExtent.location);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.length = {0}", anchor.reserveVolumeDescriptorSequenceExtent.length);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.location = {0}", anchor.reserveVolumeDescriptorSequenceExtent.location);
+                DicConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.length = {0}",
+                                          anchor.mainVolumeDescriptorSequenceExtent.length);
+                DicConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.location = {0}",
+                                          anchor.mainVolumeDescriptorSequenceExtent.location);
+                DicConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.length = {0}",
+                                          anchor.reserveVolumeDescriptorSequenceExtent.length);
+                DicConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.location = {0}",
+                                          anchor.reserveVolumeDescriptorSequenceExtent.location);
 
                 if(anchor.tag.tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer &&
                    anchor.tag.tagLocation == position &&
@@ -289,21 +287,20 @@ namespace DiscImageChef.Filesystems
                 }
             }
 
-            if(!anchorFound)
-                return false;
+            if(!anchorFound) return false;
 
             ulong count = 0;
 
             while(count < 256)
             {
-                sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count);
+                sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location +
+                                                count);
                 TagIdentifier tagId = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
                 uint location = BitConverter.ToUInt32(sector, 0x0C);
 
                 if(location == partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count)
                 {
-                    if(tagId == TagIdentifier.TerminatingDescriptor)
-                        break;
+                    if(tagId == TagIdentifier.TerminatingDescriptor) break;
 
                     if(tagId == TagIdentifier.LogicalVolumeDescriptor)
                     {
@@ -316,8 +313,7 @@ namespace DiscImageChef.Filesystems
                         return UDF_Magic.SequenceEqual(lvd.domainIdentifier.identifier);
                     }
                 }
-                else
-                    break;
+                else break;
 
                 count++;
             }
@@ -325,7 +321,8 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             byte[] sector;
 
@@ -335,7 +332,7 @@ namespace DiscImageChef.Filesystems
 
             AnchorVolumeDescriptorPointer anchor = new AnchorVolumeDescriptorPointer();
             // All positions where anchor may reside
-            ulong[] positions = { 256, 512, partition.End - 256, partition.End };
+            ulong[] positions = {256, 512, partition.End - 256, partition.End};
 
             foreach(ulong position in positions)
             {
@@ -343,13 +340,14 @@ namespace DiscImageChef.Filesystems
                 anchor = new AnchorVolumeDescriptorPointer();
                 IntPtr anchorPtr = Marshal.AllocHGlobal(Marshal.SizeOf(anchor));
                 Marshal.Copy(sector, 0, anchorPtr, Marshal.SizeOf(anchor));
-                anchor = (AnchorVolumeDescriptorPointer)Marshal.PtrToStructure(anchorPtr, typeof(AnchorVolumeDescriptorPointer));
+                anchor =
+                    (AnchorVolumeDescriptorPointer)Marshal.PtrToStructure(anchorPtr,
+                                                                          typeof(AnchorVolumeDescriptorPointer));
                 Marshal.FreeHGlobal(anchorPtr);
 
                 if(anchor.tag.tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer &&
                    anchor.tag.tagLocation == position &&
-                   (anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start) < partition.End)
-                    break;
+                   (anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start) < partition.End) break;
             }
 
             ulong count = 0;
@@ -357,18 +355,19 @@ namespace DiscImageChef.Filesystems
             PrimaryVolumeDescriptor pvd = new PrimaryVolumeDescriptor();
             LogicalVolumeDescriptor lvd = new LogicalVolumeDescriptor();
             LogicalVolumeIntegrityDescriptor lvid = new LogicalVolumeIntegrityDescriptor();
-            LogicalVolumeIntegrityDescriptorImplementationUse lvidiu = new LogicalVolumeIntegrityDescriptorImplementationUse();
+            LogicalVolumeIntegrityDescriptorImplementationUse lvidiu =
+                new LogicalVolumeIntegrityDescriptorImplementationUse();
 
             while(count < 256)
             {
-                sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count);
+                sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location +
+                                                count);
                 TagIdentifier tagId = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
                 uint location = BitConverter.ToUInt32(sector, 0x0C);
 
                 if(location == partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count)
                 {
-                    if(tagId == TagIdentifier.TerminatingDescriptor)
-                        break;
+                    if(tagId == TagIdentifier.TerminatingDescriptor) break;
 
                     if(tagId == TagIdentifier.LogicalVolumeDescriptor)
                     {
@@ -386,8 +385,7 @@ namespace DiscImageChef.Filesystems
                         Marshal.FreeHGlobal(pvdPtr);
                     }
                 }
-                else
-                    break;
+                else break;
 
                 count++;
             }
@@ -395,56 +393,89 @@ namespace DiscImageChef.Filesystems
             sector = imagePlugin.ReadSector(lvd.integritySequenceExtent.location);
             IntPtr lvidPtr = Marshal.AllocHGlobal(Marshal.SizeOf(lvid));
             Marshal.Copy(sector, 0, lvidPtr, Marshal.SizeOf(lvid));
-            lvid = (LogicalVolumeIntegrityDescriptor)Marshal.PtrToStructure(lvidPtr, typeof(LogicalVolumeIntegrityDescriptor));
+            lvid =
+                (LogicalVolumeIntegrityDescriptor)
+                Marshal.PtrToStructure(lvidPtr, typeof(LogicalVolumeIntegrityDescriptor));
             Marshal.FreeHGlobal(lvidPtr);
 
-            if(lvid.tag.tagIdentifier == TagIdentifier.LogicalVolumeIntegrityDescriptor && lvid.tag.tagLocation == lvd.integritySequenceExtent.location)
+            if(lvid.tag.tagIdentifier == TagIdentifier.LogicalVolumeIntegrityDescriptor &&
+               lvid.tag.tagLocation == lvd.integritySequenceExtent.location)
             {
                 IntPtr lvidiuPtr = Marshal.AllocHGlobal(Marshal.SizeOf(lvidiu));
                 Marshal.Copy(sector, (int)(lvid.numberOfPartitions * 8 + 80), lvidiuPtr, Marshal.SizeOf(lvidiu));
-                lvidiu = (LogicalVolumeIntegrityDescriptorImplementationUse)Marshal.PtrToStructure(lvidiuPtr, typeof(LogicalVolumeIntegrityDescriptorImplementationUse));
+                lvidiu =
+                    (LogicalVolumeIntegrityDescriptorImplementationUse)Marshal.PtrToStructure(lvidiuPtr,
+                                                                                              typeof(
+                                                                                                  LogicalVolumeIntegrityDescriptorImplementationUse
+                                                                                              ));
                 Marshal.FreeHGlobal(lvidiuPtr);
             }
-            else
-                lvid = new LogicalVolumeIntegrityDescriptor();
+            else lvid = new LogicalVolumeIntegrityDescriptor();
 
-            sbInformation.AppendFormat("Volume is number {0} of {1}", pvd.volumeSequenceNumber, pvd.maximumVolumeSequenceNumber).AppendLine();
-            sbInformation.AppendFormat("Volume set identifier: {0}", StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier)).AppendLine();
-            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier)).AppendLine();
+            sbInformation.AppendFormat("Volume is number {0} of {1}", pvd.volumeSequenceNumber,
+                                       pvd.maximumVolumeSequenceNumber).AppendLine();
+            sbInformation.AppendFormat("Volume set identifier: {0}",
+                                       StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier)).AppendLine();
+            sbInformation
+                .AppendFormat("Volume name: {0}", StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier))
+                .AppendLine();
             sbInformation.AppendFormat("Volume uses {0} bytes per block", lvd.logicalBlockSize).AppendLine();
-            sbInformation.AppendFormat("Volume was las written in {0}", ECMAToDateTime(lvid.recordingDateTime)).AppendLine();
+            sbInformation.AppendFormat("Volume was las written in {0}", ECMAToDateTime(lvid.recordingDateTime))
+                         .AppendLine();
             sbInformation.AppendFormat("Volume contains {0} partitions", lvid.numberOfPartitions).AppendLine();
-            sbInformation.AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories).AppendLine();
-            sbInformation.AppendFormat("Volume conforms to {0}", CurrentEncoding.GetString(lvd.domainIdentifier.identifier).TrimEnd(new char[] { '\u0000' })).AppendLine();
-            sbInformation.AppendFormat("Volume was last written by: {0}", CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[]{ '\u0000' })).AppendLine();
-            sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be read", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumReadUDF & 0xFF00) >> 8), 10),
-                                      Convert.ToInt32(string.Format("{0}", lvidiu.minimumReadUDF & 0xFF), 10)).AppendLine();
-            sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be written to", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumWriteUDF & 0xFF00) >> 8), 10),
-                          Convert.ToInt32(string.Format("{0}", lvidiu.minimumWriteUDF & 0xFF), 10)).AppendLine();
-            sbInformation.AppendFormat("Volume cannot be written by any UDF version higher than {0}.{1:X2}", Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8), 10),
-                          Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10)).AppendLine();
+            sbInformation
+                .AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories)
+                .AppendLine();
+            sbInformation.AppendFormat("Volume conforms to {0}",
+                                       CurrentEncoding
+                                           .GetString(lvd.domainIdentifier.identifier).TrimEnd(new char[] {'\u0000'}))
+                         .AppendLine();
+            sbInformation.AppendFormat("Volume was last written by: {0}",
+                                       CurrentEncoding
+                                           .GetString(pvd.implementationIdentifier.identifier)
+                                           .TrimEnd(new char[] {'\u0000'})).AppendLine();
+            sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be read",
+                                       Convert.ToInt32(string.Format("{0}", (lvidiu.minimumReadUDF & 0xFF00) >> 8), 10),
+                                       Convert.ToInt32(string.Format("{0}", lvidiu.minimumReadUDF & 0xFF), 10))
+                         .AppendLine();
+            sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be written to",
+                                       Convert.ToInt32(string.Format("{0}", (lvidiu.minimumWriteUDF & 0xFF00) >> 8),
+                                                       10),
+                                       Convert.ToInt32(string.Format("{0}", lvidiu.minimumWriteUDF & 0xFF), 10))
+                         .AppendLine();
+            sbInformation.AppendFormat("Volume cannot be written by any UDF version higher than {0}.{1:X2}",
+                                       Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8),
+                                                       10),
+                                       Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10))
+                         .AppendLine();
 
             xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.Type = string.Format("UDF v{0}.{1:X2}", Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8), 10),
-                                      Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10));
-            xmlFSType.ApplicationIdentifier = CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] { '\u0000' });
+            xmlFSType.Type = string.Format("UDF v{0}.{1:X2}",
+                                           Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8),
+                                                           10),
+                                           Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10));
+            xmlFSType.ApplicationIdentifier = CurrentEncoding
+                .GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] {'\u0000'});
             xmlFSType.ClusterSize = (int)lvd.logicalBlockSize;
-            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize) / (ulong)xmlFSType.ClusterSize);
+            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize) /
+                                        (ulong)xmlFSType.ClusterSize);
             xmlFSType.ModificationDate = ECMAToDateTime(lvid.recordingDateTime);
             xmlFSType.ModificationDateSpecified = true;
             xmlFSType.Files = lvidiu.files;
             xmlFSType.FilesSpecified = true;
             xmlFSType.VolumeName = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier);
             xmlFSType.VolumeSetIdentifier = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier);
-            xmlFSType.SystemIdentifier = CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] { '\u0000' });
+            xmlFSType.SystemIdentifier = CurrentEncoding
+                .GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] {'\u0000'});
 
             information = sbInformation.ToString();
         }
 
         static DateTime ECMAToDateTime(Timestamp timestamp)
         {
-            return DateHandlers.ECMAToDateTime(timestamp.typeAndZone, timestamp.year, timestamp.month, timestamp.day, timestamp.hour,
-                                               timestamp.minute, timestamp.second, timestamp.centiseconds, timestamp.hundredsMicroseconds,
+            return DateHandlers.ECMAToDateTime(timestamp.typeAndZone, timestamp.year, timestamp.month, timestamp.day,
+                                               timestamp.hour, timestamp.minute, timestamp.second,
+                                               timestamp.centiseconds, timestamp.hundredsMicroseconds,
                                                timestamp.microseconds);
         }
 

@@ -41,7 +41,6 @@ namespace DiscImageChef.Devices.Windows
     public partial class Usb
     {
         #region "API Region" 
-
         // ********************** Constants ************************ 
 
         const int GENERIC_WRITE = 0x40000000;
@@ -373,19 +372,10 @@ namespace DiscImageChef.Devices.Windows
         //); 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
         static extern IntPtr SetupDiGetClassDevs( // 1st form using a ClassGUID 
-            ref Guid ClassGuid,
-            int Enumerator,
-            IntPtr hwndParent,
-            int Flags
-        );
+            ref Guid ClassGuid, int Enumerator, IntPtr hwndParent, int Flags);
 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)] // 2nd form uses an Enumerator 
-        static extern IntPtr SetupDiGetClassDevs(
-            int ClassGuid,
-            string Enumerator,
-            IntPtr hwndParent,
-            int Flags
-        );
+        static extern IntPtr SetupDiGetClassDevs(int ClassGuid, string Enumerator, IntPtr hwndParent, int Flags);
 
         //BOOL SetupDiEnumDeviceInterfaces( 
         //  HDEVINFO DeviceInfoSet, 
@@ -395,13 +385,9 @@ namespace DiscImageChef.Devices.Windows
         //  PSP_DEVICE_INTERFACE_DATA DeviceInterfaceData 
         //); 
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool SetupDiEnumDeviceInterfaces(
-            IntPtr DeviceInfoSet,
-            IntPtr DeviceInfoData,
-            ref Guid InterfaceClassGuid,
-            int MemberIndex,
-            ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData
-        );
+        static extern bool SetupDiEnumDeviceInterfaces(IntPtr DeviceInfoSet, IntPtr DeviceInfoData,
+                                                       ref Guid InterfaceClassGuid, int MemberIndex,
+                                                       ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
         //BOOL SetupDiGetDeviceInterfaceDetail( 
         //  HDEVINFO DeviceInfoSet, 
@@ -412,14 +398,12 @@ namespace DiscImageChef.Devices.Windows
         //  PSP_DEVINFO_DATA DeviceInfoData 
         //); 
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool SetupDiGetDeviceInterfaceDetail(
-            IntPtr DeviceInfoSet,
-            ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData,
-            ref SP_DEVICE_INTERFACE_DETAIL_DATA DeviceInterfaceDetailData,
-            int DeviceInterfaceDetailDataSize,
-            ref int RequiredSize,
-            ref SP_DEVINFO_DATA DeviceInfoData
-        );
+        static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet,
+                                                           ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData,
+                                                           ref SP_DEVICE_INTERFACE_DETAIL_DATA
+                                                               DeviceInterfaceDetailData,
+                                                           int DeviceInterfaceDetailDataSize, ref int RequiredSize,
+                                                           ref SP_DEVINFO_DATA DeviceInfoData);
 
         //BOOL SetupDiGetDeviceRegistryProperty( 
         //  HDEVINFO DeviceInfoSet, 
@@ -431,15 +415,10 @@ namespace DiscImageChef.Devices.Windows
         //  PDWORD RequiredSize 
         //); 
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool SetupDiGetDeviceRegistryProperty(
-            IntPtr DeviceInfoSet,
-            ref SP_DEVINFO_DATA DeviceInfoData,
-            int iProperty,
-            ref int PropertyRegDataType,
-            IntPtr PropertyBuffer,
-            int PropertyBufferSize,
-            ref int RequiredSize
-        );
+        static extern bool SetupDiGetDeviceRegistryProperty(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData,
+                                                            int iProperty, ref int PropertyRegDataType,
+                                                            IntPtr PropertyBuffer, int PropertyBufferSize,
+                                                            ref int RequiredSize);
 
         //BOOL SetupDiEnumDeviceInfo( 
         //  HDEVINFO DeviceInfoSet, 
@@ -447,19 +426,14 @@ namespace DiscImageChef.Devices.Windows
         //  PSP_DEVINFO_DATA DeviceInfoData 
         //); 
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool SetupDiEnumDeviceInfo(
-            IntPtr DeviceInfoSet,
-            int MemberIndex,
-            ref SP_DEVINFO_DATA DeviceInfoData
-        );
+        static extern bool SetupDiEnumDeviceInfo(IntPtr DeviceInfoSet, int MemberIndex,
+                                                 ref SP_DEVINFO_DATA DeviceInfoData);
 
         //BOOL SetupDiDestroyDeviceInfoList( 
         //  HDEVINFO DeviceInfoSet 
         //); 
         [DllImport("setupapi.dll", SetLastError = true)]
-        static extern bool SetupDiDestroyDeviceInfoList(
-            IntPtr DeviceInfoSet
-        );
+        static extern bool SetupDiDestroyDeviceInfoList(IntPtr DeviceInfoSet);
 
         //WINSETUPAPI BOOL WINAPI  SetupDiGetDeviceInstanceId( 
         //    IN HDEVINFO  DeviceInfoSet, 
@@ -469,13 +443,9 @@ namespace DiscImageChef.Devices.Windows
         //    OUT PDWORD  RequiredSize  OPTIONAL 
         //); 
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool SetupDiGetDeviceInstanceId(
-            IntPtr DeviceInfoSet,
-            ref SP_DEVINFO_DATA DeviceInfoData,
-            StringBuilder DeviceInstanceId,
-            int DeviceInstanceIdSize,
-            out int RequiredSize
-        );
+        static extern bool SetupDiGetDeviceInstanceId(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData,
+                                                      StringBuilder DeviceInstanceId, int DeviceInstanceIdSize,
+                                                      out int RequiredSize);
 
         //BOOL DeviceIoControl( 
         //  HANDLE hDevice, 
@@ -488,16 +458,9 @@ namespace DiscImageChef.Devices.Windows
         //  LPOVERLAPPED lpOverlapped 
         //); 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool DeviceIoControl(
-            IntPtr hDevice,
-            int dwIoControlCode,
-            IntPtr lpInBuffer,
-            int nInBufferSize,
-            IntPtr lpOutBuffer,
-            int nOutBufferSize,
-            out int lpBytesReturned,
-            IntPtr lpOverlapped
-        );
+        static extern bool DeviceIoControl(IntPtr hDevice, int dwIoControlCode, IntPtr lpInBuffer, int nInBufferSize,
+                                           IntPtr lpOutBuffer, int nOutBufferSize, out int lpBytesReturned,
+                                           IntPtr lpOverlapped);
 
         //HANDLE CreateFile( 
         //  LPCTSTR lpFileName, 
@@ -509,24 +472,15 @@ namespace DiscImageChef.Devices.Windows
         //  HANDLE hTemplateFile 
         //); 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern IntPtr CreateFile(
-            string lpFileName,
-            int dwDesiredAccess,
-            int dwShareMode,
-            IntPtr lpSecurityAttributes,
-            int dwCreationDisposition,
-            int dwFlagsAndAttributes,
-            IntPtr hTemplateFile
-        );
+        static extern IntPtr CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode,
+                                        IntPtr lpSecurityAttributes, int dwCreationDisposition,
+                                        int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
         //BOOL CloseHandle( 
         //  HANDLE hObject 
         //); 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool CloseHandle(
-            IntPtr hObject
-        );
-
+        static extern bool CloseHandle(IntPtr hObject);
         #endregion
 
         // 
@@ -578,12 +532,12 @@ namespace DiscImageChef.Devices.Windows
                             int RegType = REG_SZ;
 
                             if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DEVICEDESC, ref RegType, ptrBuf,
-                                BUFFER_SIZE, ref RequiredSize))
+                                                                BUFFER_SIZE, ref RequiredSize))
                             {
                                 host.ControllerDeviceDesc = Marshal.PtrToStringAuto(ptrBuf);
                             }
                             if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref RegType, ptrBuf,
-                                BUFFER_SIZE, ref RequiredSize))
+                                                                BUFFER_SIZE, ref RequiredSize))
                             {
                                 host.ControllerDriverKeyName = Marshal.PtrToStringAuto(ptrBuf);
                             }
@@ -591,7 +545,8 @@ namespace DiscImageChef.Devices.Windows
                         HostList.Add(host);
                     }
                     i++;
-                } while(Success);
+                }
+                while(Success);
 
                 Marshal.FreeHGlobal(ptrBuf);
                 SetupDiDestroyDeviceInfoList(h);
@@ -652,7 +607,7 @@ namespace DiscImageChef.Devices.Windows
 
                 // Open a handle to the Host Controller 
                 h = CreateFile(ControllerDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                    IntPtr.Zero);
+                               IntPtr.Zero);
                 if(h.ToInt32() != INVALID_HANDLE_VALUE)
                 {
                     int nBytesReturned;
@@ -662,7 +617,7 @@ namespace DiscImageChef.Devices.Windows
 
                     // get the Hub Name 
                     if(DeviceIoControl(h, IOCTL_USB_GET_ROOT_HUB_NAME, ptrHubName, nBytes, ptrHubName, nBytes,
-                        out nBytesReturned, IntPtr.Zero))
+                                       out nBytesReturned, IntPtr.Zero))
                     {
                         HubName = (USB_ROOT_HUB_NAME)Marshal.PtrToStructure(ptrHubName, typeof(USB_ROOT_HUB_NAME));
                         Root.HubDevicePath = @"\\.\" + HubName.RootHubName;
@@ -672,7 +627,7 @@ namespace DiscImageChef.Devices.Windows
 
                     // Now let's open the Hub (based upon the HubName we got above) 
                     h2 = CreateFile(Root.HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                        IntPtr.Zero);
+                                    IntPtr.Zero);
                     if(h2.ToInt32() != INVALID_HANDLE_VALUE)
                     {
                         USB_NODE_INFORMATION NodeInfo = new USB_NODE_INFORMATION();
@@ -683,10 +638,10 @@ namespace DiscImageChef.Devices.Windows
 
                         // get the Hub Information 
                         if(DeviceIoControl(h2, IOCTL_USB_GET_NODE_INFORMATION, ptrNodeInfo, nBytes, ptrNodeInfo, nBytes,
-                            out nBytesReturned, IntPtr.Zero))
+                                           out nBytesReturned, IntPtr.Zero))
                         {
                             NodeInfo = (USB_NODE_INFORMATION)Marshal.PtrToStructure(ptrNodeInfo,
-                                typeof(USB_NODE_INFORMATION));
+                                                                                    typeof(USB_NODE_INFORMATION));
                             Root.HubIsBusPowered = Convert.ToBoolean(NodeInfo.HubInformation.HubIsBusPowered);
                             Root.HubPortCount = NodeInfo.HubInformation.HubDescriptor.bNumberOfPorts;
                         }
@@ -790,7 +745,7 @@ namespace DiscImageChef.Devices.Windows
 
                 // Open a handle to the Hub device 
                 IntPtr h = CreateFile(HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                    IntPtr.Zero);
+                                      IntPtr.Zero);
                 if(h.ToInt32() != INVALID_HANDLE_VALUE)
                 {
                     int nBytes = Marshal.SizeOf(typeof(USB_NODE_CONNECTION_INFORMATION_EX));
@@ -806,11 +761,13 @@ namespace DiscImageChef.Devices.Windows
                         Marshal.StructureToPtr(NodeConnection, ptrNodeConnection, true);
 
                         if(DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX, ptrNodeConnection, nBytes,
-                            ptrNodeConnection, nBytes, out nBytesReturned, IntPtr.Zero))
+                                           ptrNodeConnection, nBytes, out nBytesReturned, IntPtr.Zero))
                         {
                             NodeConnection =
                                 (USB_NODE_CONNECTION_INFORMATION_EX)Marshal.PtrToStructure(ptrNodeConnection,
-                                    typeof(USB_NODE_CONNECTION_INFORMATION_EX));
+                                                                                           typeof(
+                                                                                               USB_NODE_CONNECTION_INFORMATION_EX
+                                                                                           ));
 
                             // load up the USBPort class 
                             USBPort port = new USBPort();
@@ -829,6 +786,7 @@ namespace DiscImageChef.Devices.Windows
                             PortList.Add(port);
                         }
                     }
+
                     Marshal.FreeHGlobal(ptrNodeConnection);
                     CloseHandle(h);
                 }
@@ -897,10 +855,8 @@ namespace DiscImageChef.Devices.Windows
             // return a down stream external hub 
             public USBDevice GetDevice()
             {
-                if(!PortIsDeviceConnected)
-                {
-                    return null;
-                }
+                if(!PortIsDeviceConnected) { return null; }
+
                 USBDevice Device = new USBDevice();
 
                 // Copy over some values from the Port class 
@@ -911,7 +867,7 @@ namespace DiscImageChef.Devices.Windows
 
                 // Open a handle to the Hub device 
                 IntPtr h = CreateFile(PortHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                    IntPtr.Zero);
+                                      IntPtr.Zero);
                 if(h.ToInt32() != INVALID_HANDLE_VALUE)
                 {
                     int nBytesReturned;
@@ -938,7 +894,7 @@ namespace DiscImageChef.Devices.Windows
 
                         // Use an IOCTL call to request the String Descriptor 
                         if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, ptrRequest, nBytes,
-                            ptrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
+                                           ptrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
                         {
                             // The location of the string descriptor is immediately after 
                             // the Request structure.  Because this location is not "covered" 
@@ -947,7 +903,7 @@ namespace DiscImageChef.Devices.Windows
                             IntPtr ptrStringDesc = new IntPtr(ptrRequest.ToInt32() + Marshal.SizeOf(Request));
                             USB_STRING_DESCRIPTOR StringDesc =
                                 (USB_STRING_DESCRIPTOR)Marshal.PtrToStructure(ptrStringDesc,
-                                    typeof(USB_STRING_DESCRIPTOR));
+                                                                              typeof(USB_STRING_DESCRIPTOR));
                             Device.DeviceManufacturer = StringDesc.bString;
                         }
                         Marshal.FreeHGlobal(ptrRequest);
@@ -967,13 +923,13 @@ namespace DiscImageChef.Devices.Windows
 
                         // Use an IOCTL call to request the String Descriptor 
                         if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, ptrRequest, nBytes,
-                            ptrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
+                                           ptrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
                         {
                             // the location of the string descriptor is immediately after the Request structure 
                             IntPtr ptrStringDesc = new IntPtr(ptrRequest.ToInt32() + Marshal.SizeOf(Request));
                             USB_STRING_DESCRIPTOR StringDesc =
                                 (USB_STRING_DESCRIPTOR)Marshal.PtrToStructure(ptrStringDesc,
-                                    typeof(USB_STRING_DESCRIPTOR));
+                                                                              typeof(USB_STRING_DESCRIPTOR));
                             Device.DeviceProduct = StringDesc.bString;
                         }
                         Marshal.FreeHGlobal(ptrRequest);
@@ -993,13 +949,13 @@ namespace DiscImageChef.Devices.Windows
 
                         // Use an IOCTL call to request the String Descriptor 
                         if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, ptrRequest, nBytes,
-                            ptrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
+                                           ptrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
                         {
                             // the location of the string descriptor is immediately after the Request structure 
                             IntPtr ptrStringDesc = new IntPtr(ptrRequest.ToInt32() + Marshal.SizeOf(Request));
                             USB_STRING_DESCRIPTOR StringDesc =
                                 (USB_STRING_DESCRIPTOR)Marshal.PtrToStructure(ptrStringDesc,
-                                    typeof(USB_STRING_DESCRIPTOR));
+                                                                              typeof(USB_STRING_DESCRIPTOR));
                             Device.DeviceSerialNumber = StringDesc.bString;
                         }
                         Marshal.FreeHGlobal(ptrRequest);
@@ -1010,14 +966,14 @@ namespace DiscImageChef.Devices.Windows
                     dcrRequest.ConnectionIndex = PortPortNumber;
                     dcrRequest.SetupPacket.wValue = (short)((USB_CONFIGURATION_DESCRIPTOR_TYPE << 8));
                     dcrRequest.SetupPacket.wLength = (short)(nBytes - Marshal.SizeOf(dcrRequest));
-                    dcrRequest.SetupPacket.wIndex = 0; 
+                    dcrRequest.SetupPacket.wIndex = 0;
                     // Geez, I wish C# had a Marshal.MemSet() method 
                     IntPtr dcrPtrRequest = Marshal.StringToHGlobalAuto(NullString);
                     Marshal.StructureToPtr(dcrRequest, dcrPtrRequest, true);
 
                     // Use an IOCTL call to request the String Descriptor 
                     if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, dcrPtrRequest, nBytes,
-                        dcrPtrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
+                                       dcrPtrRequest, nBytes, out nBytesReturned, IntPtr.Zero))
                     {
                         IntPtr ptrStringDesc = new IntPtr(dcrPtrRequest.ToInt32() + Marshal.SizeOf(dcrRequest));
                         Device.BinaryDeviceDescriptors = new byte[nBytesReturned];
@@ -1034,10 +990,12 @@ namespace DiscImageChef.Devices.Windows
 
                     // Use an IOCTL call to request the Driver Key Name 
                     if(DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_DRIVERKEY_NAME, ptrDriverKey, nBytes,
-                        ptrDriverKey, nBytes, out nBytesReturned, IntPtr.Zero))
+                                       ptrDriverKey, nBytes, out nBytesReturned, IntPtr.Zero))
                     {
                         DriverKey = (USB_NODE_CONNECTION_DRIVERKEY_NAME)Marshal.PtrToStructure(ptrDriverKey,
-                            typeof(USB_NODE_CONNECTION_DRIVERKEY_NAME));
+                                                                                               typeof(
+                                                                                                   USB_NODE_CONNECTION_DRIVERKEY_NAME
+                                                                                               ));
                         Device.DeviceDriverKey = DriverKey.DriverKeyName;
 
                         // use the DriverKeyName to get the Device Description and Instance ID 
@@ -1053,10 +1011,8 @@ namespace DiscImageChef.Devices.Windows
             // return a down stream external hub 
             public USBHub GetHub()
             {
-                if(!PortIsHub)
-                {
-                    return null;
-                }
+                if(!PortIsHub) { return null; }
+
                 USBHub Hub = new USBHub();
                 IntPtr h, h2;
                 Hub.HubIsRootHub = false;
@@ -1064,7 +1020,7 @@ namespace DiscImageChef.Devices.Windows
 
                 // Open a handle to the Host Controller 
                 h = CreateFile(PortHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                    IntPtr.Zero);
+                               IntPtr.Zero);
                 if(h.ToInt32() != INVALID_HANDLE_VALUE)
                 {
                     // Get the DevicePath for downstream hub 
@@ -1077,16 +1033,16 @@ namespace DiscImageChef.Devices.Windows
 
                     // Use an IOCTL call to request the Node Name 
                     if(DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_NAME, ptrNodeName, nBytes, ptrNodeName, nBytes,
-                        out nBytesReturned, IntPtr.Zero))
+                                       out nBytesReturned, IntPtr.Zero))
                     {
                         NodeName = (USB_NODE_CONNECTION_NAME)Marshal.PtrToStructure(ptrNodeName,
-                            typeof(USB_NODE_CONNECTION_NAME));
+                                                                                    typeof(USB_NODE_CONNECTION_NAME));
                         Hub.HubDevicePath = @"\\.\" + NodeName.NodeName;
                     }
 
                     // Now let's open the Hub (based upon the HubName we got above) 
                     h2 = CreateFile(Hub.HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                        IntPtr.Zero);
+                                    IntPtr.Zero);
                     if(h2.ToInt32() != INVALID_HANDLE_VALUE)
                     {
                         USB_NODE_INFORMATION NodeInfo = new USB_NODE_INFORMATION();
@@ -1097,10 +1053,10 @@ namespace DiscImageChef.Devices.Windows
 
                         // get the Hub Information 
                         if(DeviceIoControl(h2, IOCTL_USB_GET_NODE_INFORMATION, ptrNodeInfo, nBytes, ptrNodeInfo, nBytes,
-                            out nBytesReturned, IntPtr.Zero))
+                                           out nBytesReturned, IntPtr.Zero))
                         {
                             NodeInfo = (USB_NODE_INFORMATION)Marshal.PtrToStructure(ptrNodeInfo,
-                                typeof(USB_NODE_INFORMATION));
+                                                                                    typeof(USB_NODE_INFORMATION));
                             Hub.HubIsBusPowered = Convert.ToBoolean(NodeInfo.HubInformation.HubIsBusPowered);
                             Hub.HubPortCount = NodeInfo.HubInformation.HubDescriptor.bNumberOfPorts;
                         }
@@ -1193,7 +1149,7 @@ namespace DiscImageChef.Devices.Windows
             {
                 get { return DeviceSerialNumber; }
             }
-            
+
             public byte[] BinaryDescriptors
             {
                 get { return BinaryDeviceDescriptors; }
@@ -1233,7 +1189,7 @@ namespace DiscImageChef.Devices.Windows
                         KeyName = "";
 
                         if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref RegType, ptrBuf, BUFFER_SIZE,
-                            ref RequiredSize))
+                                                            ref RequiredSize))
                         {
                             KeyName = Marshal.PtrToStringAuto(ptrBuf);
                         }
@@ -1242,19 +1198,22 @@ namespace DiscImageChef.Devices.Windows
                         if(KeyName == DriverKeyName)
                         {
                             if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DEVICEDESC, ref RegType, ptrBuf,
-                                BUFFER_SIZE, ref RequiredSize))
+                                                                BUFFER_SIZE, ref RequiredSize))
                             {
                                 ans = Marshal.PtrToStringAuto(ptrBuf);
                             }
                             break;
                         }
                     }
+
                     i++;
-                } while(Success);
+                }
+                while(Success);
 
                 Marshal.FreeHGlobal(ptrBuf);
                 SetupDiDestroyDeviceInfoList(h);
             }
+
             return ans;
         }
 
@@ -1291,7 +1250,7 @@ namespace DiscImageChef.Devices.Windows
 
                         KeyName = "";
                         if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref RegType, ptrBuf, BUFFER_SIZE,
-                            ref RequiredSize))
+                                                            ref RequiredSize))
                         {
                             KeyName = Marshal.PtrToStringAuto(ptrBuf);
                         }
@@ -1306,13 +1265,16 @@ namespace DiscImageChef.Devices.Windows
                             break;
                         }
                     }
+
                     i++;
-                } while(Success);
+                }
+                while(Success);
 
                 Marshal.FreeHGlobal(ptrBuf);
                 SetupDiDestroyDeviceInfoList(h);
             }
+
             return ans;
         }
     }
-} 
+}

@@ -81,7 +81,8 @@ namespace DiscImageChef.Devices
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, uint timeout, out double duration)
+        public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, uint timeout,
+                                out double duration)
         {
             buffer = new byte[512];
             AtaRegistersCHS registers = new AtaRegistersCHS();
@@ -89,8 +90,9 @@ namespace DiscImageChef.Devices
 
             registers.command = (byte)AtaCommands.IdentifyDevice;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
-                ref buffer, timeout, false, out duration, out sense);
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                       out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "IDENTIFY DEVICE took {0} ms.", duration);
@@ -98,24 +100,22 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadDma(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head, byte sector, byte count, uint timeout, out double duration)
+        public bool ReadDma(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head,
+                            byte sector, byte count, uint timeout, out double duration)
         {
             return ReadDma(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
         }
 
-        public bool ReadDma(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, bool retry, ushort cylinder, byte head, byte sector, byte count, uint timeout, out double duration)
+        public bool ReadDma(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, bool retry, ushort cylinder,
+                            byte head, byte sector, byte count, uint timeout, out double duration)
         {
-            if(count == 0)
-                buffer = new byte[512 * 256];
-            else
-                buffer = new byte[512 * count];
+            if(count == 0) buffer = new byte[512 * 256];
+            else buffer = new byte[512 * count];
             AtaRegistersCHS registers = new AtaRegistersCHS();
             bool sense;
 
-            if(retry)
-                registers.command = (byte)AtaCommands.ReadDmaRetry;
-            else
-                registers.command = (byte)AtaCommands.ReadDma;
+            if(retry) registers.command = (byte)AtaCommands.ReadDmaRetry;
+            else registers.command = (byte)AtaCommands.ReadDma;
             registers.sectorCount = count;
             registers.cylinderHigh = (byte)((cylinder & 0xFF00) / 0x100);
             registers.cylinderLow = (byte)((cylinder & 0xFF) / 0x1);
@@ -131,12 +131,11 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head, byte sector, byte count, uint timeout, out double duration)
+        public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder,
+                                 byte head, byte sector, byte count, uint timeout, out double duration)
         {
-            if(count == 0)
-                buffer = new byte[512 * 256];
-            else
-                buffer = new byte[512 * count];
+            if(count == 0) buffer = new byte[512 * 256];
+            else buffer = new byte[512 * count];
             AtaRegistersCHS registers = new AtaRegistersCHS();
             bool sense;
 
@@ -147,8 +146,9 @@ namespace DiscImageChef.Devices
             registers.deviceHead = (byte)(head & 0x0F);
             registers.sector = sector;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                       ref buffer, timeout, true, out duration, out sense);
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
+                                       out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ MULTIPLE took {0} ms.", duration);
@@ -156,33 +156,31 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-
-        public bool Read(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head, byte sector, byte count, uint timeout, out double duration)
+        public bool Read(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head,
+                         byte sector, byte count, uint timeout, out double duration)
         {
             return Read(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
         }
 
-        public bool Read(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, bool retry, ushort cylinder, byte head, byte sector, byte count, uint timeout, out double duration)
+        public bool Read(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, bool retry, ushort cylinder,
+                         byte head, byte sector, byte count, uint timeout, out double duration)
         {
-            if(count == 0)
-                buffer = new byte[512 * 256];
-            else
-                buffer = new byte[512 * count];
+            if(count == 0) buffer = new byte[512 * 256];
+            else buffer = new byte[512 * count];
             AtaRegistersCHS registers = new AtaRegistersCHS();
             bool sense;
 
-            if(retry)
-                registers.command = (byte)AtaCommands.ReadRetry;
-            else
-                registers.command = (byte)AtaCommands.Read;
+            if(retry) registers.command = (byte)AtaCommands.ReadRetry;
+            else registers.command = (byte)AtaCommands.Read;
             registers.sectorCount = count;
             registers.cylinderHigh = (byte)((cylinder & 0xFF00) / 0x100);
             registers.cylinderLow = (byte)((cylinder & 0xFF) / 0x1);
             registers.deviceHead = (byte)(head & 0x0F);
             registers.sector = sector;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                       ref buffer, timeout, true, out duration, out sense);
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
+                                       out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ SECTORS took {0} ms.", duration);
@@ -190,29 +188,31 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadLong(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head, byte sector, uint blockSize, uint timeout, out double duration)
+        public bool ReadLong(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head,
+                             byte sector, uint blockSize, uint timeout, out double duration)
         {
-            return ReadLong(out buffer, out statusRegisters, true, cylinder, head, sector, blockSize, timeout, out duration);
+            return ReadLong(out buffer, out statusRegisters, true, cylinder, head, sector, blockSize, timeout,
+                            out duration);
         }
 
-        public bool ReadLong(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, bool retry, ushort cylinder, byte head, byte sector, uint blockSize, uint timeout, out double duration)
+        public bool ReadLong(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, bool retry, ushort cylinder,
+                             byte head, byte sector, uint blockSize, uint timeout, out double duration)
         {
             buffer = new byte[blockSize];
             AtaRegistersCHS registers = new AtaRegistersCHS();
             bool sense;
 
-            if(retry)
-                registers.command = (byte)AtaCommands.ReadLongRetry;
-            else
-                registers.command = (byte)AtaCommands.ReadLong;
+            if(retry) registers.command = (byte)AtaCommands.ReadLongRetry;
+            else registers.command = (byte)AtaCommands.ReadLong;
             registers.sectorCount = 1;
             registers.cylinderHigh = (byte)((cylinder & 0xFF00) / 0x100);
             registers.cylinderLow = (byte)((cylinder & 0xFF) / 0x1);
             registers.deviceHead = (byte)(head & 0x0F);
             registers.sector = sector;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                       ref buffer, timeout, true, out duration, out sense);
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
+                                       out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ LONG took {0} ms.", duration);
@@ -220,7 +220,8 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool Seek(out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head, byte sector, uint timeout, out double duration)
+        public bool Seek(out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head, byte sector,
+                         uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
             AtaRegistersCHS registers = new AtaRegistersCHS();
@@ -232,8 +233,9 @@ namespace DiscImageChef.Devices
             registers.deviceHead = (byte)(head & 0x0F);
             registers.sector = sector;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                       ref buffer, timeout, true, out duration, out sense);
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,
+                                       out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SEEK took {0} ms.", duration);
@@ -242,4 +244,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

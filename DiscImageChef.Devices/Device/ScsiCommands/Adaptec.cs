@@ -46,7 +46,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">SCSI Logical Block Address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout, out double duration)
+        public bool AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout,
+                                     out double duration)
         {
             return AdaptecTranslate(out buffer, out senseBuffer, false, lba, timeout, out duration);
         }
@@ -60,7 +61,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">SCSI Logical Block Address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, bool drive1, uint lba, uint timeout, out double duration)
+        public bool AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, bool drive1, uint lba, uint timeout,
+                                     out double duration)
         {
             buffer = new byte[8];
             byte[] cdb = new byte[6];
@@ -71,10 +73,10 @@ namespace DiscImageChef.Devices
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
             cdb[2] = (byte)((lba & 0xFF00) >> 8);
             cdb[3] = (byte)(lba & 0xFF);
-            if(drive1)
-                cdb[1] += 0x20;
+            if(drive1) cdb[1] += 0x20;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC TRANSLATE took {0} ms.", duration);
@@ -104,7 +106,8 @@ namespace DiscImageChef.Devices
         /// <param name="drive1">If set to <c>true</c> set the threshold from drive 1.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, bool drive1, uint timeout, out double duration)
+        public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, bool drive1, uint timeout,
+                                             out double duration)
         {
             byte[] buffer = new byte[1];
             buffer[0] = threshold;
@@ -113,11 +116,11 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.Adaptec_SetErrorThreshold;
-            if(drive1)
-                cdb[1] += 0x20;
+            if(drive1) cdb[1] += 0x20;
             cdb[4] = 1;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC SET ERROR THRESHOLD took {0} ms.", duration);
@@ -132,7 +135,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        public bool AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout,
+                                            out double duration)
         {
             return AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
         }
@@ -145,7 +149,8 @@ namespace DiscImageChef.Devices
         /// <param name="drive1">If set to <c>true</c> get the counters from drive 1.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, bool drive1, uint timeout, out double duration)
+        public bool AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, bool drive1, uint timeout,
+                                            out double duration)
         {
             buffer = new byte[9];
             byte[] cdb = new byte[6];
@@ -153,11 +158,11 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.Adaptec_Translate;
-            if(drive1)
-                cdb[1] += 0x20;
+            if(drive1) cdb[1] += 0x20;
             cdb[4] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ/RESET USAGE COUNTER took {0} ms.", duration);
@@ -175,10 +180,8 @@ namespace DiscImageChef.Devices
         public bool AdaptecWriteBuffer(byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             byte[] oneKBuffer = new byte[1024];
-            if(buffer.Length < 1024)
-                Array.Copy(buffer, 0, oneKBuffer, 0, buffer.Length);
-            else
-                Array.Copy(buffer, 0, oneKBuffer, 0, 1024);
+            if(buffer.Length < 1024) Array.Copy(buffer, 0, oneKBuffer, 0, buffer.Length);
+            else Array.Copy(buffer, 0, oneKBuffer, 0, 1024);
 
             byte[] cdb = new byte[6];
             senseBuffer = new byte[32];
@@ -186,7 +189,8 @@ namespace DiscImageChef.Devices
 
             cdb[0] = (byte)ScsiCommands.Adaptec_WriteBuffer;
 
-            lastError = SendScsiCommand(cdb, ref oneKBuffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref oneKBuffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC WRITE DATA BUFFER took {0} ms.", duration);
@@ -210,7 +214,8 @@ namespace DiscImageChef.Devices
 
             cdb[0] = (byte)ScsiCommands.Adaptec_ReadBuffer;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ DATA BUFFER took {0} ms.", duration);
@@ -219,4 +224,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

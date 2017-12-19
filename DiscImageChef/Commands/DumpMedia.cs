@@ -67,8 +67,7 @@ namespace DiscImageChef.Commands
                 try
                 {
                     encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
-                    if(options.Verbose)
-                        DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                    if(options.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
                 }
                 catch(ArgumentException)
                 {
@@ -78,8 +77,8 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
-                options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
+            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
+               char.IsLetter(options.DevicePath[0]))
             {
                 options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
             }
@@ -122,18 +121,24 @@ namespace DiscImageChef.Commands
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    ATA.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
+                    ATA.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
+                             options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    SecureDigital.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
+                    SecureDigital.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses,
+                                       options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume,
+                                       ref dumpLog, encoding);
                     break;
                 case DeviceType.NVMe:
-                    NVMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
+                    NVMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
+                              options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel, ref resume, ref dumpLog, options.LeadIn, encoding);
+                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
+                              options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel,
+                              ref resume, ref dumpLog, options.LeadIn, encoding);
                     break;
                 default:
                     dumpLog.WriteLine("Unknown device type.");
@@ -146,10 +151,10 @@ namespace DiscImageChef.Commands
                 resume.LastWriteDate = DateTime.UtcNow;
                 resume.BadBlocks.Sort();
 
-                if(File.Exists(options.OutputPrefix + ".resume.xml"))
-                    File.Delete(options.OutputPrefix + ".resume.xml");
+                if(File.Exists(options.OutputPrefix + ".resume.xml")) File.Delete(options.OutputPrefix + ".resume.xml");
 
-                FileStream fs = new FileStream(options.OutputPrefix + ".resume.xml", FileMode.Create, FileAccess.ReadWrite);
+                FileStream fs = new FileStream(options.OutputPrefix + ".resume.xml", FileMode.Create,
+                                               FileAccess.ReadWrite);
                 xs = new XmlSerializer(resume.GetType());
                 xs.Serialize(fs, resume);
                 fs.Close();

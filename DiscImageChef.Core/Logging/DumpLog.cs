@@ -54,21 +54,22 @@ namespace DiscImageChef.Core.Logging
                 Type monoRunType = Type.GetType("Mono.Runtime");
 
                 logSw.WriteLine("################# System information #################");
-                logSw.WriteLine("{0} {1} ({2}-bit)", Interop.DetectOS.GetPlatformName(platId, platVer), platVer, Environment.Is64BitOperatingSystem ? 64 : 32);
+                logSw.WriteLine("{0} {1} ({2}-bit)", Interop.DetectOS.GetPlatformName(platId, platVer), platVer,
+                                Environment.Is64BitOperatingSystem ? 64 : 32);
                 if(monoRunType != null)
                 {
                     string monoVer = "unknown version";
-                    MethodInfo monoDisplayName = monoRunType.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
-                    if(monoDisplayName != null)
-                        monoVer = (string)monoDisplayName.Invoke(null, null);
+                    MethodInfo monoDisplayName =
+                        monoRunType.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
+                    if(monoDisplayName != null) monoVer = (string)monoDisplayName.Invoke(null, null);
                     logSw.WriteLine("Mono {0}", monoVer);
                 }
-                else
-                    logSw.WriteLine(".NET Framework {0}", Environment.Version);
+                else logSw.WriteLine(".NET Framework {0}", Environment.Version);
                 logSw.WriteLine();
 
                 logSw.WriteLine("################# Program information ################");
-                logSw.WriteLine("DiscImageChef {0} running in {1}-bit", Version.GetVersion(), Environment.Is64BitProcess ? 64 : 32);
+                logSw.WriteLine("DiscImageChef {0} running in {1}-bit", Version.GetVersion(),
+                                Environment.Is64BitProcess ? 64 : 32);
 #if DEBUG
                 logSw.WriteLine("DEBUG version");
 #endif

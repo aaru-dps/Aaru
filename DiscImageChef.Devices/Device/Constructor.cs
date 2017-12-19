@@ -54,33 +54,33 @@ namespace DiscImageChef.Devices
             switch(platformID)
             {
                 case Interop.PlatformID.Win32NT:
+                {
+                    fd = Windows.Extern.CreateFile(devicePath,
+                                                   Windows.FileAccess.GenericRead | Windows.FileAccess.GenericWrite,
+                                                   Windows.FileShare.Read | Windows.FileShare.Write, IntPtr.Zero,
+                                                   Windows.FileMode.OpenExisting, Windows.FileAttributes.Normal,
+                                                   IntPtr.Zero);
+
+                    if(((SafeFileHandle)fd).IsInvalid)
                     {
-                        fd = Windows.Extern.CreateFile(devicePath,
-                            Windows.FileAccess.GenericRead | Windows.FileAccess.GenericWrite,
-                            Windows.FileShare.Read | Windows.FileShare.Write,
-                            IntPtr.Zero, Windows.FileMode.OpenExisting,
-                            Windows.FileAttributes.Normal, IntPtr.Zero);
-
-                        if(((SafeFileHandle)fd).IsInvalid)
-                        {
-                            error = true;
-                            lastError = Marshal.GetLastWin32Error();
-                        }
-
-                        break;
+                        error = true;
+                        lastError = Marshal.GetLastWin32Error();
                     }
+
+                    break;
+                }
                 case Interop.PlatformID.Linux:
+                {
+                    fd = Linux.Extern.open(devicePath, Linux.FileFlags.Readonly | Linux.FileFlags.NonBlocking);
+
+                    if((int)fd < 0)
                     {
-                        fd = Linux.Extern.open(devicePath, Linux.FileFlags.Readonly | Linux.FileFlags.NonBlocking);
-
-                        if((int)fd < 0)
-                        {
-                            error = true;
-                            lastError = Marshal.GetLastWin32Error();
-                        }
-
-                        break;
+                        error = true;
+                        lastError = Marshal.GetLastWin32Error();
                     }
+
+                    break;
+                }
                 case Interop.PlatformID.FreeBSD:
                 {
                     fd = FreeBSD.Extern.cam_open_device(devicePath, FreeBSD.FileFlags.ReadWrite);
@@ -93,9 +93,10 @@ namespace DiscImageChef.Devices
 
                     FreeBSD.cam_device camDevice =
                         (FreeBSD.cam_device)Marshal.PtrToStructure((IntPtr)fd, typeof(FreeBSD.cam_device));
-                    
+
                     if(StringHandlers.CToString(camDevice.sim_name) == "ata")
-                        throw new InvalidOperationException("Parallel ATA devices are not supported on FreeBSD due to upstream bug #224250.");
+                        throw new
+                            InvalidOperationException("Parallel ATA devices are not supported on FreeBSD due to upstream bug #224250.");
 
                     break;
                 }
@@ -103,8 +104,7 @@ namespace DiscImageChef.Devices
                     throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", platformID));
             }
 
-            if(error)
-                throw new SystemException(string.Format("Error {0} opening device.", lastError));
+            if(error) throw new SystemException(string.Format("Error {0} opening device.", lastError));
 
             type = DeviceType.Unknown;
             scsiType = Decoders.SCSI.PeripheralDeviceTypes.UnknownDevice;
@@ -115,8 +115,7 @@ namespace DiscImageChef.Devices
             byte[] senseBuf;
             byte[] inqBuf = null;
 
-            if(error)
-                throw new SystemException(string.Format("Error {0} trying device.", lastError));
+            if(error) throw new SystemException(string.Format("Error {0} trying device.", lastError));
 
             bool scsiSense = true;
             string ntDevicePath = null;
@@ -135,21 +134,24 @@ namespace DiscImageChef.Devices
                 uint returned = 0;
                 int error = 0;
 
-                bool hasError = !Windows.Extern.DeviceIoControlStorageQuery((SafeFileHandle)fd, Windows.WindowsIoctl.IOCTL_STORAGE_QUERY_PROPERTY, ref query, (uint)Marshal.SizeOf(query), descriptorPtr, 1000, ref returned, IntPtr.Zero);
+                bool hasError = !Windows.Extern.DeviceIoControlStorageQuery((SafeFileHandle)fd,
+                                                                            Windows.WindowsIoctl
+                                                                                   .IOCTL_STORAGE_QUERY_PROPERTY,
+                                                                            ref query, (uint)Marshal.SizeOf(query),
+                                                                            descriptorPtr, 1000, ref returned,
+                                                                            IntPtr.Zero);
 
-                if(hasError)
-                    error = Marshal.GetLastWin32Error();
+                if(hasError) error = Marshal.GetLastWin32Error();
 
                 Marshal.Copy(descriptorPtr, descriptor_b, 0, 1000);
 
                 if(!hasError && error == 0)
                 {
-
                     Windows.StorageDeviceDescriptor descriptor = new Windows.StorageDeviceDescriptor();
                     descriptor.Version = BitConverter.ToUInt32(descriptor_b, 0);
                     descriptor.Size = BitConverter.ToUInt32(descriptor_b, 4);
                     descriptor.DeviceType = descriptor_b[8];
-                    descriptor.DeviceTypeModifier= descriptor_b[9];
+                    descriptor.DeviceTypeModifier = descriptor_b[9];
                     descriptor.RemovableMedia = descriptor_b[10] > 0;
                     descriptor.CommandQueueing = descriptor_b[11] > 0;
                     descriptor.VendorIdOffset = BitConverter.ToUInt32(descriptor_b, 12);
@@ -207,14 +209,12 @@ namespace DiscImageChef.Devices
                             type = DeviceType.ATAPI;
                             Identify.IdentifyDevice? ATAID = Identify.Decode(ataBuf);
 
-                            if(ATAID.HasValue)
-                                scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
+                            if(ATAID.HasValue) scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
                         }
-                        else
-                            manufacturer = "ATA";
+                        else manufacturer = "ATA";
                     }
                 }
-                
+
                 ntDevicePath = Windows.Command.GetDevicePath((SafeFileHandle)fd);
                 DicConsole.DebugWriteLine("Windows devices", "NT device path: {0}", ntDevicePath);
                 Marshal.FreeHGlobal(descriptorPtr);
@@ -224,9 +224,11 @@ namespace DiscImageChef.Devices
                     byte[] sdBuffer = new byte[16];
                     bool sense = false;
 
-                    lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, MmcCommands.SendCSD, false, false, MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 | MmcFlags.CommandAC,
-                        0, 16, 1, ref sdBuffer, out uint[] response, out double duration, out sense, 0);
-                    
+                    lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, MmcCommands.SendCSD, false, false,
+                                                               MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 |
+                                                               MmcFlags.CommandAC, 0, 16, 1, ref sdBuffer,
+                                                               out uint[] response, out double duration, out sense, 0);
+
                     if(!sense)
                     {
                         cachedCsd = new byte[16];
@@ -236,8 +238,10 @@ namespace DiscImageChef.Devices
                     sdBuffer = new byte[16];
                     sense = false;
 
-                    lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, MmcCommands.SendCID, false, false, MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 | MmcFlags.CommandAC,
-                        0, 16, 1, ref sdBuffer, out response, out duration, out sense, 0);
+                    lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, MmcCommands.SendCID, false, false,
+                                                               MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 |
+                                                               MmcFlags.CommandAC, 0, 16, 1, ref sdBuffer, out response,
+                                                               out duration, out sense, 0);
 
                     if(!sense)
                     {
@@ -248,8 +252,11 @@ namespace DiscImageChef.Devices
                     sdBuffer = new byte[8];
                     sense = false;
 
-                    lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, (MmcCommands)SecureDigitalCommands.SendSCR, false, true, MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandADTC,
-                        0, 8, 1, ref sdBuffer, out response, out duration, out sense, 0);
+                    lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd,
+                                                               (MmcCommands)SecureDigitalCommands.SendSCR, false, true,
+                                                               MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 |
+                                                               MmcFlags.CommandADTC, 0, 8, 1, ref sdBuffer,
+                                                               out response, out duration, out sense, 0);
 
                     if(!sense)
                     {
@@ -262,8 +269,12 @@ namespace DiscImageChef.Devices
                         sdBuffer = new byte[4];
                         sense = false;
 
-                        lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, (MmcCommands)SecureDigitalCommands.SendOperatingCondition, false, true, MmcFlags.ResponseSPI_R3 | MmcFlags.Response_R3 | MmcFlags.CommandBCR,
-                            0, 4, 1, ref sdBuffer, out response, out duration, out sense, 0);
+                        lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd,
+                                                                   (MmcCommands)SecureDigitalCommands
+                                                                       .SendOperatingCondition, false, true,
+                                                                   MmcFlags.ResponseSPI_R3 | MmcFlags.Response_R3 |
+                                                                   MmcFlags.CommandBCR, 0, 4, 1, ref sdBuffer,
+                                                                   out response, out duration, out sense, 0);
 
                         if(!sense)
                         {
@@ -276,8 +287,11 @@ namespace DiscImageChef.Devices
                         sdBuffer = new byte[4];
                         sense = false;
 
-                        lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, MmcCommands.SendOpCond, false, true, MmcFlags.ResponseSPI_R3 | MmcFlags.Response_R3 | MmcFlags.CommandBCR,
-                            0, 4, 1, ref sdBuffer, out response, out duration, out sense, 0);
+                        lastError = Windows.Command.SendMmcCommand((SafeFileHandle)fd, MmcCommands.SendOpCond, false,
+                                                                   true,
+                                                                   MmcFlags.ResponseSPI_R3 | MmcFlags.Response_R3 |
+                                                                   MmcFlags.CommandBCR, 0, 4, 1, ref sdBuffer,
+                                                                   out response, out duration, out sense, 0);
 
                         if(!sense)
                         {
@@ -289,7 +303,9 @@ namespace DiscImageChef.Devices
             }
             else if(platformID == Interop.PlatformID.Linux)
             {
-                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
+                   devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
+                   devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                     scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
                 // MultiMediaCard and SecureDigital go here
                 else if(devicePath.StartsWith("/dev/mmcblk", StringComparison.Ordinal))
@@ -298,31 +314,26 @@ namespace DiscImageChef.Devices
                     if(System.IO.File.Exists("/sys/block/" + devPath + "/device/csd"))
                     {
                         int len = ConvertFromHexASCII("/sys/block/" + devPath + "/device/csd", out cachedCsd);
-                        if(len == 0)
-                            cachedCsd = null;
+                        if(len == 0) cachedCsd = null;
                     }
                     if(System.IO.File.Exists("/sys/block/" + devPath + "/device/cid"))
                     {
                         int len = ConvertFromHexASCII("/sys/block/" + devPath + "/device/cid", out cachedCid);
-                        if(len == 0)
-                            cachedCid = null;
+                        if(len == 0) cachedCid = null;
                     }
                     if(System.IO.File.Exists("/sys/block/" + devPath + "/device/scr"))
                     {
                         int len = ConvertFromHexASCII("/sys/block/" + devPath + "/device/scr", out cachedScr);
-                        if(len == 0)
-                            cachedScr = null;
+                        if(len == 0) cachedScr = null;
                     }
                     if(System.IO.File.Exists("/sys/block/" + devPath + "/device/ocr"))
                     {
                         int len = ConvertFromHexASCII("/sys/block/" + devPath + "/device/ocr", out cachedOcr);
-                        if(len == 0)
-                            cachedOcr = null;
+                        if(len == 0) cachedOcr = null;
                     }
                 }
             }
-            else
-                scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
+            else scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
 
             #region SecureDigital / MultiMediaCard
             if(cachedCid != null)
@@ -336,7 +347,8 @@ namespace DiscImageChef.Devices
                     Decoders.SecureDigital.CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
                     manufacturer = Decoders.SecureDigital.VendorString.Prettify(decoded.Manufacturer);
                     model = decoded.ProductName;
-                    revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4, decoded.ProductRevision & 0x0F);
+                    revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4,
+                                             decoded.ProductRevision & 0x0F);
                     serial = string.Format("{0}", decoded.ProductSerialNumber);
                 }
                 else
@@ -345,14 +357,14 @@ namespace DiscImageChef.Devices
                     Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(cachedCid);
                     manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
                     model = decoded.ProductName;
-                    revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4, decoded.ProductRevision & 0x0F);
+                    revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4,
+                                             decoded.ProductRevision & 0x0F);
                     serial = string.Format("{0}", decoded.ProductSerialNumber);
                 }
             }
             #endregion SecureDigital / MultiMediaCard
-            
-            #region USB
 
+            #region USB
             if(platformID == Interop.PlatformID.Linux)
             {
                 if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
@@ -378,7 +390,8 @@ namespace DiscImageChef.Devices
                                     string usbTemp;
 
                                     usbFs = new System.IO.FileStream(resolvedLink + "/descriptors",
-                                        System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                                                                     System.IO.FileMode.Open,
+                                                                     System.IO.FileAccess.Read);
                                     byte[] usbBuf = new byte[65536];
                                     int usbCount = usbFs.Read(usbBuf, 0, 65536);
                                     usbDescriptors = new byte[usbCount];
@@ -388,13 +401,13 @@ namespace DiscImageChef.Devices
                                     usbSr = new System.IO.StreamReader(resolvedLink + "/idProduct");
                                     usbTemp = usbSr.ReadToEnd();
                                     ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber,
-                                        System.Globalization.CultureInfo.InvariantCulture, out usbProduct);
+                                                    System.Globalization.CultureInfo.InvariantCulture, out usbProduct);
                                     usbSr.Close();
 
                                     usbSr = new System.IO.StreamReader(resolvedLink + "/idVendor");
                                     usbTemp = usbSr.ReadToEnd();
                                     ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber,
-                                        System.Globalization.CultureInfo.InvariantCulture, out usbVendor);
+                                                    System.Globalization.CultureInfo.InvariantCulture, out usbVendor);
                                     usbSr.Close();
 
                                     if(System.IO.File.Exists(resolvedLink + "/manufacturer"))
@@ -429,13 +442,16 @@ namespace DiscImageChef.Devices
             else if(platformID == Interop.PlatformID.Win32NT)
             {
                 Windows.Usb.USBDevice usbDevice = null;
-                
+
                 // I have to search for USB disks, floppies and CD-ROMs as separate device types
-                foreach(string devGuid in new [] { Windows.Usb.GUID_DEVINTERFACE_FLOPPY, Windows.Usb.GUID_DEVINTERFACE_CDROM , Windows.Usb.GUID_DEVINTERFACE_DISK })
+                foreach(string devGuid in new[]
+                {
+                    Windows.Usb.GUID_DEVINTERFACE_FLOPPY, Windows.Usb.GUID_DEVINTERFACE_CDROM,
+                    Windows.Usb.GUID_DEVINTERFACE_DISK
+                })
                 {
                     usbDevice = Windows.Usb.FindDrivePath(devicePath, devGuid);
-                    if (usbDevice != null)
-                        break;
+                    if(usbDevice != null) break;
                 }
 
                 if(usbDevice != null)
@@ -445,19 +461,20 @@ namespace DiscImageChef.Devices
                     usbProduct = (ushort)usbDevice.DeviceDescriptor.idProduct;
                     usbManufacturerString = usbDevice.Manufacturer;
                     usbProductString = usbDevice.Product;
-                    usbSerialString = usbDevice.SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
+                    usbSerialString =
+                        usbDevice.SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
                 }
-
             }
             // TODO: Implement for other operating systems
-            else
-                usb = false;
+            else usb = false;
             #endregion USB
 
             #region FireWire
             if(platformID == Interop.PlatformID.Linux)
             {
-                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
+                   devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
+                   devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                 {
                     string devPath = devicePath.Substring(5);
                     if(System.IO.Directory.Exists("/sys/block/" + devPath))
@@ -470,25 +487,29 @@ namespace DiscImageChef.Devices
                             {
                                 resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
                                 if(System.IO.File.Exists(resolvedLink + "/model") &&
-                                    System.IO.File.Exists(resolvedLink + "/vendor") &&
-                                    System.IO.File.Exists(resolvedLink + "/guid"))
+                                   System.IO.File.Exists(resolvedLink + "/vendor") &&
+                                   System.IO.File.Exists(resolvedLink + "/guid"))
                                 {
                                     System.IO.StreamReader fwSr;
                                     string fwTemp;
 
                                     fwSr = new System.IO.StreamReader(resolvedLink + "/model");
                                     fwTemp = fwSr.ReadToEnd();
-                                    uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out firewireModel);
+                                    uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber,
+                                                  System.Globalization.CultureInfo.InvariantCulture, out firewireModel);
                                     fwSr.Close();
 
                                     fwSr = new System.IO.StreamReader(resolvedLink + "/vendor");
                                     fwTemp = fwSr.ReadToEnd();
-                                    uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out firewireVendor);
+                                    uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber,
+                                                  System.Globalization.CultureInfo.InvariantCulture,
+                                                  out firewireVendor);
                                     fwSr.Close();
 
                                     fwSr = new System.IO.StreamReader(resolvedLink + "/guid");
                                     fwTemp = fwSr.ReadToEnd();
-                                    ulong.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out firewireGuid);
+                                    ulong.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber,
+                                                   System.Globalization.CultureInfo.InvariantCulture, out firewireGuid);
                                     fwSr.Close();
 
                                     if(System.IO.File.Exists(resolvedLink + "/model_name"))
@@ -514,14 +535,15 @@ namespace DiscImageChef.Devices
                 }
             }
             // TODO: Implement for other operating systems
-            else
-                firewire = false;
+            else firewire = false;
             #endregion FireWire
 
             #region PCMCIA
             if(platformID == Interop.PlatformID.Linux)
             {
-                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
+                   devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
+                   devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                 {
                     string devPath = devicePath.Substring(5);
                     if(System.IO.Directory.Exists("/sys/block/" + devPath))
@@ -535,17 +557,23 @@ namespace DiscImageChef.Devices
                                 resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
                                 if(System.IO.Directory.Exists(resolvedLink + "/pcmcia_socket"))
                                 {
-                                    string[] subdirs = System.IO.Directory.GetDirectories(resolvedLink + "/pcmcia_socket", "pcmcia_socket*", System.IO.SearchOption.TopDirectoryOnly);
+                                    string[] subdirs =
+                                        System.IO.Directory.GetDirectories(resolvedLink + "/pcmcia_socket",
+                                                                           "pcmcia_socket*",
+                                                                           System.IO.SearchOption.TopDirectoryOnly);
 
                                     if(subdirs.Length > 0)
                                     {
-                                        string possibleDir = System.IO.Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
+                                        string possibleDir =
+                                            System.IO.Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
                                         if(System.IO.File.Exists(possibleDir + "/card_type") &&
                                            System.IO.File.Exists(possibleDir + "/cis"))
                                         {
                                             System.IO.FileStream cisFs;
 
-                                            cisFs = new System.IO.FileStream(possibleDir + "/cis", System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                                            cisFs = new System.IO.FileStream(possibleDir + "/cis",
+                                                                             System.IO.FileMode.Open,
+                                                                             System.IO.FileAccess.Read);
                                             byte[] cisBuf = new byte[65536];
                                             int cisCount = cisFs.Read(cisBuf, 0, 65536);
                                             cis = new byte[cisCount];
@@ -563,8 +591,7 @@ namespace DiscImageChef.Devices
                 }
             }
             // TODO: Implement for other operating systems
-            else
-                pcmcia = false;
+            else pcmcia = false;
             #endregion PCMCIA
 
             if(!scsiSense)
@@ -573,20 +600,16 @@ namespace DiscImageChef.Devices
 
                 type = DeviceType.SCSI;
                 bool serialSense = ScsiInquiry(out inqBuf, out senseBuf, 0x80);
-                if(!serialSense)
-                    serial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
+                if(!serialSense) serial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
 
                 if(Inquiry.HasValue)
                 {
                     string tmp = StringHandlers.CToString(Inquiry.Value.ProductRevisionLevel);
-                    if(tmp != null)
-                        revision = tmp.Trim();
+                    if(tmp != null) revision = tmp.Trim();
                     tmp = StringHandlers.CToString(Inquiry.Value.ProductIdentification);
-                    if(tmp != null)
-                        model = tmp.Trim();
+                    if(tmp != null) model = tmp.Trim();
                     tmp = StringHandlers.CToString(Inquiry.Value.VendorIdentification);
-                    if(tmp != null)
-                        manufacturer = tmp.Trim();
+                    if(tmp != null) manufacturer = tmp.Trim();
                     removable = Inquiry.Value.RMB;
 
                     scsiType = (Decoders.SCSI.PeripheralDeviceTypes)Inquiry.Value.PeripheralDeviceType;
@@ -599,8 +622,7 @@ namespace DiscImageChef.Devices
                     type = DeviceType.ATAPI;
                     Identify.IdentifyDevice? ATAID = Identify.Decode(ataBuf);
 
-                    if(ATAID.HasValue)
-                        serial = ATAID.Value.SerialNumber;
+                    if(ATAID.HasValue) serial = ATAID.Value.SerialNumber;
                 }
                 else
                 {
@@ -609,7 +631,7 @@ namespace DiscImageChef.Devices
                 }
             }
 
-            if ((scsiSense && (usb || firewire)) || manufacturer == "ATA")
+            if((scsiSense && (usb || firewire)) || manufacturer == "ATA")
             {
                 bool ataSense = AtaIdentify(out ataBuf, out errorRegisters);
                 if(!ataSense)
@@ -621,8 +643,7 @@ namespace DiscImageChef.Devices
                     {
                         string[] separated = ATAID.Value.Model.Split(' ');
 
-                        if(separated.Length == 1)
-                            model = separated[0];
+                        if(separated.Length == 1) model = separated[0];
                         else
                         {
                             manufacturer = separated[0];
@@ -636,10 +657,11 @@ namespace DiscImageChef.Devices
 
                         if((ushort)ATAID.Value.GeneralConfiguration != 0x848A)
                         {
-                            removable |= (ATAID.Value.GeneralConfiguration & Identify.GeneralConfigurationBit.Removable) == Identify.GeneralConfigurationBit.Removable;
+                            removable |=
+                                (ATAID.Value.GeneralConfiguration & Identify.GeneralConfigurationBit.Removable) ==
+                                Identify.GeneralConfigurationBit.Removable;
                         }
-                        else
-                            compactFlash = true;
+                        else compactFlash = true;
                     }
                 }
             }
@@ -654,37 +676,20 @@ namespace DiscImageChef.Devices
 
             if(usb)
             {
-                if(string.IsNullOrEmpty(manufacturer))
-                    manufacturer = usbManufacturerString;
-                if(string.IsNullOrEmpty(model))
-                    model = usbProductString;
-                if(string.IsNullOrEmpty(serial))
-                    serial = usbSerialString;
-                else
-                {
-                    foreach(char c in serial)
-                    {
-                        if(char.IsControl(c))
-                            serial = usbSerialString;
-                    }
-                }
+                if(string.IsNullOrEmpty(manufacturer)) manufacturer = usbManufacturerString;
+                if(string.IsNullOrEmpty(model)) model = usbProductString;
+                if(string.IsNullOrEmpty(serial)) serial = usbSerialString;
+                else { foreach(char c in serial) { if(char.IsControl(c)) serial = usbSerialString; } }
             }
 
             if(firewire)
             {
-                if(string.IsNullOrEmpty(manufacturer))
-                    manufacturer = firewireVendorName;
-                if(string.IsNullOrEmpty(model))
-                    model = firewireModelName;
-                if(string.IsNullOrEmpty(serial))
-                    serial = string.Format("{0:X16}", firewireGuid);
+                if(string.IsNullOrEmpty(manufacturer)) manufacturer = firewireVendorName;
+                if(string.IsNullOrEmpty(model)) model = firewireModelName;
+                if(string.IsNullOrEmpty(serial)) serial = string.Format("{0:X16}", firewireGuid);
                 else
                 {
-                    foreach(char c in serial)
-                    {
-                        if(char.IsControl(c))
-                            serial = string.Format("{0:X16}", firewireGuid);
-                    }
+                    foreach(char c in serial) { if(char.IsControl(c)) serial = string.Format("{0:X16}", firewireGuid); }
                 }
             }
         }
@@ -698,20 +703,16 @@ namespace DiscImageChef.Devices
 
             try
             {
-                for(int i = 0; i < ins.Length; i+=2)
+                for(int i = 0; i < ins.Length; i += 2)
                 {
-                    outBuf[i/2] = Convert.ToByte(ins.Substring(i, 2), 16);
+                    outBuf[i / 2] = Convert.ToByte(ins.Substring(i, 2), 16);
                     count++;
                 }
             }
-            catch
-            {
-                count = 0;
-            }
+            catch { count = 0; }
 
             sr.Close();
             return count;
         }
     }
 }
-

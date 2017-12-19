@@ -60,8 +60,7 @@ namespace DiscImageChef.Filters
             baseStream = (T)Activator.CreateInstance(typeof(T), parameters);
             backFile = Path.GetTempFileName();
             backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            if(length == 0)
-                CalculateLength();
+            if(length == 0) CalculateLength();
         }
 
         /// <summary>
@@ -100,53 +99,34 @@ namespace DiscImageChef.Filters
 
         public override bool CanRead
         {
-            get
-            {
-                return baseStream.CanRead;
-            }
+            get { return baseStream.CanRead; }
         }
 
         public override bool CanSeek
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         public override bool CanWrite
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         public override long Length
         {
-            get
-            {
-                return streamLength;
-            }
+            get { return streamLength; }
         }
 
         public override long Position
         {
-            get
-            {
-                return backStream.Position;
-            }
+            get { return backStream.Position; }
 
-            set
-            {
-                SetPosition(value);
-            }
+            set { SetPosition(value); }
         }
 
         void SetPosition(long position)
         {
-            if(position == backStream.Position)
-                return;
+            if(position == backStream.Position) return;
 
             if(position < backStream.Length)
             {
@@ -205,15 +185,14 @@ namespace DiscImageChef.Filters
             switch(origin)
             {
                 case SeekOrigin.Begin:
-                    if(offset < 0)
-                        throw new IOException("Cannot seek before stream start.");
+                    if(offset < 0) throw new IOException("Cannot seek before stream start.");
+
                     SetPosition(offset);
                     break;
                 case SeekOrigin.End:
-                    if(offset > 0)
-                        throw new IOException("Cannot seek after stream end.");
-                    if(streamLength == 0)
-                        CalculateLength();
+                    if(offset > 0) throw new IOException("Cannot seek after stream end.");
+
+                    if(streamLength == 0) CalculateLength();
                     SetPosition(streamLength + offset);
                     break;
                 default:
@@ -236,17 +215,14 @@ namespace DiscImageChef.Filters
 
         public override void Close()
         {
-            if(backStream!=null)
-                backStream.Close();
+            if(backStream != null) backStream.Close();
             File.Delete(backFile);
         }
 
         ~ForcedSeekStream()
         {
-            if(backStream != null)
-                backStream.Close();
+            if(backStream != null) backStream.Close();
             File.Delete(backFile);
         }
     }
 }
-

@@ -64,10 +64,8 @@ namespace DiscImageChef.Core
                             }
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                        catch
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                        {
-                        }
+                        catch { }
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
                     }
                 }
 
@@ -88,27 +86,18 @@ namespace DiscImageChef.Core
                                 }
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                            catch
+                            catch { }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                            {
-                            }
                         }
                     }
                 }
 
                 // Still not recognized
-                if(_imageFormat == null)
-                {
-                    return null;
-                }
+                if(_imageFormat == null) { return null; }
 
                 return _imageFormat;
             }
-            catch
-            {
-                return null;
-            }
+            catch { return null; }
         }
     }
 }
-

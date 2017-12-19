@@ -40,37 +40,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class FAT16_APM
     {
-        readonly string[] testfiles = {
-            "macosx_10.11.vdi.lz",
-        };
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            1024000,
-        };
+        readonly ulong[] sectors = {1024000,};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            63995,
-        };
+        readonly long[] clusters = {63995,};
 
-        readonly int[] clustersize = {
-            8192,
-        };
+        readonly int[] clustersize = {8192,};
 
-        readonly string[] volumename = {
-            "VOLUMELABEL",
-        };
+        readonly string[] volumename = {"VOLUMELABEL",};
 
-        readonly string[] volumeserial = {
-            "063D1F09",
-        };
+        readonly string[] volumeserial = {"063D1F09",};
 
-        readonly string[] oemid = {
-            "BSD  4.4",
-        };
+        readonly string[] oemid = {"BSD  4.4",};
 
         [Test]
         public void Test()
@@ -95,6 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

@@ -55,10 +55,7 @@ namespace DiscImageChef.Devices.Linux
                 udev = Extern.udev_new();
                 hasUdev = udev != IntPtr.Zero;
             }
-            catch
-            {
-                hasUdev = false;
-            }
+            catch { hasUdev = false; }
 
             for(int i = 0; i < sysdevs.Length; i++)
             {
@@ -67,11 +64,11 @@ namespace DiscImageChef.Devices.Linux
 
                 if(hasUdev)
                 {
-                    udevDev = Extern.udev_device_new_from_subsystem_sysname(udev, "block", Path.GetFileName(sysdevs[i]));
+                    udevDev = Extern.udev_device_new_from_subsystem_sysname(udev, "block",
+                                                                            Path.GetFileName(sysdevs[i]));
                     devices[i].vendor = Extern.udev_device_get_property_value(udevDev, "ID_VENDOR");
                     devices[i].model = Extern.udev_device_get_property_value(udevDev, "ID_MODEL");
-                    if(!string.IsNullOrEmpty(devices[i].model))
-                        devices[i].model = devices[i].model.Replace('_', ' ');
+                    if(!string.IsNullOrEmpty(devices[i].model)) devices[i].model = devices[i].model.Replace('_', ' ');
                     devices[i].serial = Extern.udev_device_get_property_value(udevDev, "ID_SCSI_SERIAL");
                     if(string.IsNullOrEmpty(devices[i].serial))
                         devices[i].serial = Extern.udev_device_get_property_value(udevDev, "ID_SERIAL_SHORT");
@@ -86,7 +83,8 @@ namespace DiscImageChef.Devices.Linux
                 else if(devices[i].path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
                     devices[i].vendor = "Linux";
 
-                if(File.Exists(Path.Combine(sysdevs[i], "device/model")) && (string.IsNullOrEmpty(devices[i].model) || devices[i].bus == "ata"))
+                if(File.Exists(Path.Combine(sysdevs[i], "device/model")) &&
+                   (string.IsNullOrEmpty(devices[i].model) || devices[i].bus == "ata"))
                 {
                     sr = new StreamReader(Path.Combine(sysdevs[i], "device/model"), Encoding.ASCII);
                     devices[i].model = sr.ReadLine().Trim();
@@ -123,8 +121,7 @@ namespace DiscImageChef.Devices.Linux
                     else if(devices[i].path.StartsWith("/dev/mmc", StringComparison.CurrentCulture))
                         devices[i].bus = "MMC/SD";
                 }
-                else
-                    devices[i].bus = devices[i].bus.ToUpper();
+                else devices[i].bus = devices[i].bus.ToUpper();
 
                 switch(devices[i].bus)
                 {

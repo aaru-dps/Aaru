@@ -66,59 +66,75 @@ namespace DiscImageChef.Filesystems.CPM
                 // Head changes after every track
                 if(string.Compare(workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
-                    sectorMask = new int[workingDefinition.side1.sectorIds.Length + workingDefinition.side2.sectorIds.Length];
+                    sectorMask = new int[workingDefinition.side1.sectorIds.Length +
+                                         workingDefinition.side2.sectorIds.Length];
                     for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
                         sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
                     // Skip first track (first side)
                     for(int m = 0; m < workingDefinition.side2.sectorIds.Length; m++)
-                        sectorMask[m + workingDefinition.side1.sectorIds.Length] = (workingDefinition.side2.sectorIds[m] - workingDefinition.side2.sectorIds[0]) + workingDefinition.side1.sectorIds.Length;
+                        sectorMask[m + workingDefinition.side1.sectorIds.Length] =
+                            (workingDefinition.side2.sectorIds[m] - workingDefinition.side2.sectorIds[0]) +
+                            workingDefinition.side1.sectorIds.Length;
                 }
                 // Head changes after whole side
-                else if(string.Compare(workingDefinition.order, "CYLINDERS", StringComparison.InvariantCultureIgnoreCase) == 0)
+                else if(string.Compare(workingDefinition.order, "CYLINDERS",
+                                       StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
                     for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
                         sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
                     // Skip first track (first side) and first track (second side)
                     for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
-                        sectorMask[m + workingDefinition.side1.sectorIds.Length] = (workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0]) + workingDefinition.side1.sectorIds.Length + workingDefinition.side2.sectorIds.Length;
+                        sectorMask[m + workingDefinition.side1.sectorIds.Length] =
+                            (workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0]) +
+                            workingDefinition.side1.sectorIds.Length + workingDefinition.side2.sectorIds.Length;
 
                     // TODO: Implement CYLINDERS ordering
                     DicConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
                     return Errno.NotImplemented;
                 }
                 // TODO: Implement COLUMBIA ordering
-                else if(string.Compare(workingDefinition.order, "COLUMBIA", StringComparison.InvariantCultureIgnoreCase) == 0)
+                else if(
+                    string.Compare(workingDefinition.order, "COLUMBIA", StringComparison.InvariantCultureIgnoreCase) ==
+                    0)
                 {
-                    DicConsole.DebugWriteLine("CP/M Plugin", "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
+                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                              "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
                     return Errno.NotImplemented;
                 }
                 // TODO: Implement EAGLE ordering
-                else if(string.Compare(workingDefinition.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) == 0)
+                else if(string.Compare(workingDefinition.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) ==
+                        0)
                 {
-                    DicConsole.DebugWriteLine("CP/M Plugin", "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
+                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                              "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
                     return Errno.NotImplemented;
                 }
                 else
                 {
-                    DicConsole.DebugWriteLine("CP/M Plugin", "Unknown order type \"{0}\", not proceeding with this definition.", workingDefinition.order);
+                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                              "Unknown order type \"{0}\", not proceeding with this definition.",
+                                              workingDefinition.order);
                     return Errno.NotSupported;
                 }
             }
 
             // Deinterleave whole volume
             Dictionary<ulong, byte[]> deinterleavedSectors = new Dictionary<ulong, byte[]>();
-            if(workingDefinition.sides == 1 || string.Compare(workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
+            if(workingDefinition.sides == 1 ||
+               string.Compare(workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 DicConsole.DebugWriteLine("CP/M Plugin", "Deinterleaving whole volume.");
 
                 for(int p = 0; p <= (int)(partition.End - partition.Start); p++)
                 {
-                    byte[] readSector = device.ReadSector((ulong)((int)partition.Start + (p / sectorMask.Length) * sectorMask.Length + sectorMask[p % sectorMask.Length]));
+                    byte[] readSector =
+                        device.ReadSector((ulong)((int)partition.Start + (p / sectorMask.Length) * sectorMask.Length +
+                                                  sectorMask[p % sectorMask.Length]));
                     if(workingDefinition.complement)
                     {
-                        for(int b = 0; b < readSector.Length; b++)
-                            readSector[b] = (byte)(~readSector[b] & 0xFF);
+                        for(int b = 0; b < readSector.Length; b++) readSector[b] = (byte)(~readSector[b] & 0xFF);
                     }
+
                     deinterleavedSectors.Add((ulong)p, readSector);
                 }
             }
@@ -161,18 +177,15 @@ namespace DiscImageChef.Filesystems.CPM
                     }
                 }
                 // CP/M blocks are same size than physical sectors
-                else
-                    allocationBlocks.Add(blockNo++, sector);
+                else allocationBlocks.Add(blockNo++, sector);
             }
 
             DicConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
 
             int dirOff;
             int dirSectors = ((dpb.drm + 1) * 32) / workingDefinition.bytesPerSector;
-            if(workingDefinition.sofs > 0)
-                dirOff = workingDefinition.sofs;
-            else
-                dirOff = workingDefinition.ofs * workingDefinition.sectorsPerTrack;
+            if(workingDefinition.sofs > 0) dirOff = workingDefinition.sofs;
+            else dirOff = workingDefinition.ofs * workingDefinition.sectorsPerTrack;
 
             // Read the whole directory blocks
             MemoryStream dirMs = new MemoryStream();
@@ -182,16 +195,17 @@ namespace DiscImageChef.Filesystems.CPM
                 deinterleavedSectors.TryGetValue((ulong)(d + dirOff), out sector);
                 dirMs.Write(sector, 0, sector.Length);
             }
+
             byte[] directory = dirMs.ToArray();
 
-            if(directory == null)
-                return Errno.InvalidArgument;
+            if(directory == null) return Errno.InvalidArgument;
 
             int dirCnt = 0;
             string file1 = null;
             string file2 = null;
             string file3 = null;
-            Dictionary<string, Dictionary<int, List<ushort>>> fileExtents = new Dictionary<string, Dictionary<int, List<ushort>>>();
+            Dictionary<string, Dictionary<int, List<ushort>>> fileExtents =
+                new Dictionary<string, Dictionary<int, List<ushort>>>();
             statCache = new Dictionary<string, FileEntryInfo>();
             cpmStat = new FileSystemInfo();
             bool atime = false;
@@ -236,17 +250,14 @@ namespace DiscImageChef.Filesystems.CPM
                             validEntry &= entry.extension[i] >= 0x20;
                         }
 
-                        if(!validEntry)
-                            continue;
+                        if(!validEntry) continue;
 
                         string filename = Encoding.ASCII.GetString(entry.filename).Trim();
                         string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                         // If user is != 0, append user to name to have identical filenames
-                        if(user > 0)
-                            filename = string.Format("{0:X1}:{1}", user, filename);
-                        if(!string.IsNullOrEmpty(extension))
-                            filename = filename + "." + extension;
+                        if(user > 0) filename = string.Format("{0:X1}:{1}", user, filename);
+                        if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                         int entryNo = ((32 * entry.extentCounter) + entry.extentCounterHigh) / (dpb.exm + 1);
                         List<ushort> blocks;
@@ -254,8 +265,7 @@ namespace DiscImageChef.Filesystems.CPM
                         FileEntryInfo fInfo;
 
                         // Do we have a stat for the file already?
-                        if(statCache.TryGetValue(filename, out fInfo))
-                            statCache.Remove(filename);
+                        if(statCache.TryGetValue(filename, out fInfo)) statCache.Remove(filename);
                         else
                         {
                             fInfo = new FileEntryInfo();
@@ -263,24 +273,17 @@ namespace DiscImageChef.Filesystems.CPM
                         }
 
                         // And any extent?
-                        if(fileExtents.TryGetValue(filename, out extentBlocks))
-                            fileExtents.Remove(filename);
-                        else
-                            extentBlocks = new Dictionary<int, List<ushort>>();
+                        if(fileExtents.TryGetValue(filename, out extentBlocks)) fileExtents.Remove(filename);
+                        else extentBlocks = new Dictionary<int, List<ushort>>();
 
                         // Do we already have this extent? Should never happen
-                        if(extentBlocks.TryGetValue(entryNo, out blocks))
-                            extentBlocks.Remove(entryNo);
-                        else
-                            blocks = new List<ushort>();
+                        if(extentBlocks.TryGetValue(entryNo, out blocks)) extentBlocks.Remove(entryNo);
+                        else blocks = new List<ushort>();
 
                         // Attributes
-                        if(hidden)
-                            fInfo.Attributes |= FileAttributes.Hidden;
-                        if(rdOnly)
-                            fInfo.Attributes |= FileAttributes.ReadOnly;
-                        if(system)
-                            fInfo.Attributes |= FileAttributes.System;
+                        if(hidden) fInfo.Attributes |= FileAttributes.Hidden;
+                        if(rdOnly) fInfo.Attributes |= FileAttributes.ReadOnly;
+                        if(system) fInfo.Attributes |= FileAttributes.System;
 
                         // Supposedly there is a value in the directory entry telling how many blocks are designated in this entry
                         // However some implementations tend to do whatever they wish, but none will ever allocate block 0 for a file
@@ -289,8 +292,7 @@ namespace DiscImageChef.Filesystems.CPM
                         // we must ignore it.
                         foreach(ushort blk in entry.allocations)
                         {
-                            if(!blocks.Contains(blk) && blk != 0)
-                                blocks.Add(blk);
+                            if(!blocks.Contains(blk) && blk != 0) blocks.Add(blk);
                         }
 
                         // Save the file
@@ -300,8 +302,7 @@ namespace DiscImageChef.Filesystems.CPM
                         statCache.Add(filename, fInfo);
 
                         // Add the file to the directory listing
-                        if(!dirList.Contains(filename))
-                            dirList.Add(filename);
+                        if(!dirList.Contains(filename)) dirList.Add(filename);
 
                         // Count entries 3 by 3 for timestamps
                         switch(dirCnt % 3)
@@ -316,6 +317,7 @@ namespace DiscImageChef.Filesystems.CPM
                                 file3 = filename;
                                 break;
                         }
+
                         dirCnt++;
                     }
                     else
@@ -345,17 +347,14 @@ namespace DiscImageChef.Filesystems.CPM
                             validEntry &= entry.extension[i] >= 0x20;
                         }
 
-                        if(!validEntry)
-                            continue;
+                        if(!validEntry) continue;
 
                         string filename = Encoding.ASCII.GetString(entry.filename).Trim();
                         string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                         // If user is != 0, append user to name to have identical filenames
-                        if(user > 0)
-                            filename = string.Format("{0:X1}:{1}", user, filename);
-                        if(!string.IsNullOrEmpty(extension))
-                            filename = filename + "." + extension;
+                        if(user > 0) filename = string.Format("{0:X1}:{1}", user, filename);
+                        if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                         int entryNo = ((32 * entry.extentCounterHigh) + entry.extentCounter) / (dpb.exm + 1);
                         List<ushort> blocks;
@@ -363,8 +362,7 @@ namespace DiscImageChef.Filesystems.CPM
                         FileEntryInfo fInfo;
 
                         // Do we have a stat for the file already?
-                        if(statCache.TryGetValue(filename, out fInfo))
-                            statCache.Remove(filename);
+                        if(statCache.TryGetValue(filename, out fInfo)) statCache.Remove(filename);
                         else
                         {
                             fInfo = new FileEntryInfo();
@@ -372,24 +370,17 @@ namespace DiscImageChef.Filesystems.CPM
                         }
 
                         // And any extent?
-                        if(fileExtents.TryGetValue(filename, out extentBlocks))
-                            fileExtents.Remove(filename);
-                        else
-                            extentBlocks = new Dictionary<int, List<ushort>>();
+                        if(fileExtents.TryGetValue(filename, out extentBlocks)) fileExtents.Remove(filename);
+                        else extentBlocks = new Dictionary<int, List<ushort>>();
 
                         // Do we already have this extent? Should never happen
-                        if(extentBlocks.TryGetValue(entryNo, out blocks))
-                            extentBlocks.Remove(entryNo);
-                        else
-                            blocks = new List<ushort>();
+                        if(extentBlocks.TryGetValue(entryNo, out blocks)) extentBlocks.Remove(entryNo);
+                        else blocks = new List<ushort>();
 
                         // Attributes
-                        if(hidden)
-                            fInfo.Attributes |= FileAttributes.Hidden;
-                        if(rdOnly)
-                            fInfo.Attributes |= FileAttributes.ReadOnly;
-                        if(system)
-                            fInfo.Attributes |= FileAttributes.System;
+                        if(hidden) fInfo.Attributes |= FileAttributes.Hidden;
+                        if(rdOnly) fInfo.Attributes |= FileAttributes.ReadOnly;
+                        if(system) fInfo.Attributes |= FileAttributes.System;
 
                         // Supposedly there is a value in the directory entry telling how many blocks are designated in this entry
                         // However some implementations tend to do whatever they wish, but none will ever allocate block 0 for a file
@@ -398,8 +389,7 @@ namespace DiscImageChef.Filesystems.CPM
                         // we must ignore it.
                         foreach(ushort blk in entry.allocations)
                         {
-                            if(!blocks.Contains(blk) && blk != 0)
-                                blocks.Add(blk);
+                            if(!blocks.Contains(blk) && blk != 0) blocks.Add(blk);
                         }
 
                         // Save the file
@@ -409,8 +399,7 @@ namespace DiscImageChef.Filesystems.CPM
                         statCache.Add(filename, fInfo);
 
                         // Add the file to the directory listing
-                        if(!dirList.Contains(filename))
-                            dirList.Add(filename);
+                        if(!dirList.Contains(filename)) dirList.Add(filename);
 
                         // Count entries 3 by 3 for timestamps
                         switch(dirCnt % 3)
@@ -425,6 +414,7 @@ namespace DiscImageChef.Filesystems.CPM
                                 file3 = filename;
                                 break;
                         }
+
                         dirCnt++;
                     }
                 }
@@ -439,23 +429,18 @@ namespace DiscImageChef.Filesystems.CPM
 
                     int user = (entry.userNumber & 0x0F);
 
-                    for(int i = 0; i < 8; i++)
-                        entry.filename[i] &= 0x7F;
-                    for(int i = 0; i < 3; i++)
-                        entry.extension[i] &= 0x7F;
+                    for(int i = 0; i < 8; i++) entry.filename[i] &= 0x7F;
+                    for(int i = 0; i < 3; i++) entry.extension[i] &= 0x7F;
 
                     string filename = Encoding.ASCII.GetString(entry.filename).Trim();
                     string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                     // If user is != 0, append user to name to have identical filenames
-                    if(user > 0)
-                        filename = string.Format("{0:X1}:{1}", user, filename);
-                    if(!string.IsNullOrEmpty(extension))
-                        filename = filename + "." + extension;
+                    if(user > 0) filename = string.Format("{0:X1}:{1}", user, filename);
+                    if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                     // Do not repeat passwords
-                    if(passwordCache.ContainsKey(filename))
-                        passwordCache.Remove(filename);
+                    if(passwordCache.ContainsKey(filename)) passwordCache.Remove(filename);
 
                     // Copy whole password entry
                     byte[] tmp = new byte[32];
@@ -475,6 +460,7 @@ namespace DiscImageChef.Filesystems.CPM
                             file3 = filename;
                             break;
                     }
+
                     dirCnt++;
                 }
                 // Volume label and password entry. Volume password is ignored.
@@ -508,15 +494,14 @@ namespace DiscImageChef.Filesystems.CPM
                             file3 = null;
                             break;
                     }
+
                     dirCnt++;
                 }
                 // Timestamp entry
                 else if((directory[dOff] & 0x7F) == 0x21)
                 {
                     // These places must be zero on CP/M 3 timestamp
-                    if(directory[dOff + 10] == 0x00 &&
-                       directory[dOff + 20] == 0x00 &&
-                       directory[dOff + 30] == 0x00 &&
+                    if(directory[dOff + 10] == 0x00 && directory[dOff + 20] == 0x00 && directory[dOff + 30] == 0x00 &&
                        directory[dOff + 31] == 0x00)
                     {
                         DateEntry entry = new DateEntry();
@@ -530,15 +515,11 @@ namespace DiscImageChef.Filesystems.CPM
                         // Entry contains timestamps for last 3 entries, whatever the kind they are.
                         if(!string.IsNullOrEmpty(file1))
                         {
-                            if(statCache.TryGetValue(file1, out fInfo))
-                                statCache.Remove(file1);
-                            else
-                                fInfo = new FileEntryInfo();
+                            if(statCache.TryGetValue(file1, out fInfo)) statCache.Remove(file1);
+                            else fInfo = new FileEntryInfo();
 
-                            if(atime)
-                                fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.date1);
-                            else
-                                fInfo.CreationTime = DateHandlers.CPMToDateTime(entry.date1);
+                            if(atime) fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.date1);
+                            else fInfo.CreationTime = DateHandlers.CPMToDateTime(entry.date1);
 
                             fInfo.LastWriteTime = DateHandlers.CPMToDateTime(entry.date2);
 
@@ -547,15 +528,11 @@ namespace DiscImageChef.Filesystems.CPM
 
                         if(!string.IsNullOrEmpty(file2))
                         {
-                            if(statCache.TryGetValue(file2, out fInfo))
-                                statCache.Remove(file2);
-                            else
-                                fInfo = new FileEntryInfo();
+                            if(statCache.TryGetValue(file2, out fInfo)) statCache.Remove(file2);
+                            else fInfo = new FileEntryInfo();
 
-                            if(atime)
-                                fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.date3);
-                            else
-                                fInfo.CreationTime = DateHandlers.CPMToDateTime(entry.date3);
+                            if(atime) fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.date3);
+                            else fInfo.CreationTime = DateHandlers.CPMToDateTime(entry.date3);
 
                             fInfo.LastWriteTime = DateHandlers.CPMToDateTime(entry.date4);
 
@@ -564,15 +541,11 @@ namespace DiscImageChef.Filesystems.CPM
 
                         if(!string.IsNullOrEmpty(file3))
                         {
-                            if(statCache.TryGetValue(file3, out fInfo))
-                                statCache.Remove(file3);
-                            else
-                                fInfo = new FileEntryInfo();
+                            if(statCache.TryGetValue(file3, out fInfo)) statCache.Remove(file3);
+                            else fInfo = new FileEntryInfo();
 
-                            if(atime)
-                                fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.date5);
-                            else
-                                fInfo.CreationTime = DateHandlers.CPMToDateTime(entry.date5);
+                            if(atime) fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.date5);
+                            else fInfo.CreationTime = DateHandlers.CPMToDateTime(entry.date5);
 
                             fInfo.LastWriteTime = DateHandlers.CPMToDateTime(entry.date6);
 
@@ -598,10 +571,8 @@ namespace DiscImageChef.Filesystems.CPM
                         // Entry contains timestamps for last 3 entries, whatever the kind they are.
                         if(!string.IsNullOrEmpty(file1))
                         {
-                            if(statCache.TryGetValue(file1, out fInfo))
-                                statCache.Remove(file1);
-                            else
-                                fInfo = new FileEntryInfo();
+                            if(statCache.TryGetValue(file1, out fInfo)) statCache.Remove(file1);
+                            else fInfo = new FileEntryInfo();
 
                             byte[] ctime = new byte[4];
                             ctime[0] = entry.create1[0];
@@ -616,10 +587,8 @@ namespace DiscImageChef.Filesystems.CPM
 
                         if(!string.IsNullOrEmpty(file2))
                         {
-                            if(statCache.TryGetValue(file2, out fInfo))
-                                statCache.Remove(file2);
-                            else
-                                fInfo = new FileEntryInfo();
+                            if(statCache.TryGetValue(file2, out fInfo)) statCache.Remove(file2);
+                            else fInfo = new FileEntryInfo();
 
                             byte[] ctime = new byte[4];
                             ctime[0] = entry.create2[0];
@@ -634,10 +603,8 @@ namespace DiscImageChef.Filesystems.CPM
 
                         if(!string.IsNullOrEmpty(file3))
                         {
-                            if(statCache.TryGetValue(file1, out fInfo))
-                                statCache.Remove(file3);
-                            else
-                                fInfo = new FileEntryInfo();
+                            if(statCache.TryGetValue(file1, out fInfo)) statCache.Remove(file3);
+                            else fInfo = new FileEntryInfo();
 
                             byte[] ctime = new byte[4];
                             ctime[0] = entry.create3[0];
@@ -668,8 +635,7 @@ namespace DiscImageChef.Filesystems.CPM
                 MemoryStream fileMs = new MemoryStream();
                 FileEntryInfo fInfo = new FileEntryInfo();
 
-                if(statCache.TryGetValue(filename, out fInfo))
-                    statCache.Remove(filename);
+                if(statCache.TryGetValue(filename, out fInfo)) statCache.Remove(filename);
 
                 fInfo.Blocks = 0;
 
@@ -712,8 +678,7 @@ namespace DiscImageChef.Filesystems.CPM
                 {
                     byte[] tmp = new byte[8];
                     Array.Copy(kvp.Value, 16, tmp, 0, 8);
-                    for(int t = 0; t < 8; t++)
-                        tmp[t] ^= kvp.Value[13];
+                    for(int t = 0; t < 8; t++) tmp[t] ^= kvp.Value[13];
 
                     decodedPasswordCache.Add(kvp.Key, tmp);
                 }
@@ -746,8 +711,7 @@ namespace DiscImageChef.Filesystems.CPM
             xmlFSType.FreeClusters = cpmStat.FreeBlocks;
             xmlFSType.FreeClustersSpecified = true;
             xmlFSType.Type = "CP/M filesystem";
-            if(!string.IsNullOrEmpty(label))
-                xmlFSType.VolumeName = label;
+            if(!string.IsNullOrEmpty(label)) xmlFSType.VolumeName = label;
 
             mounted = true;
             return Errno.NoError;
@@ -759,8 +723,7 @@ namespace DiscImageChef.Filesystems.CPM
         /// <param name="stat">Information about the mounted volume.</param>
         public override Errno StatFs(ref FileSystemInfo stat)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             stat = cpmStat;
 
@@ -773,7 +736,7 @@ namespace DiscImageChef.Filesystems.CPM
             definitions = null;
             cpmFound = false;
             workingDefinition = null;
-            dpb = null; 
+            dpb = null;
             sectorMask = null;
             label = null;
             thirdPartyTimestamps = false;
@@ -784,4 +747,3 @@ namespace DiscImageChef.Filesystems.CPM
         }
     }
 }
-

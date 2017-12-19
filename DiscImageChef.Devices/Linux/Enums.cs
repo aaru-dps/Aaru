@@ -183,4 +183,3 @@ namespace DiscImageChef.Devices.Linux
         MixedIo = 0x04
     }
 }
-

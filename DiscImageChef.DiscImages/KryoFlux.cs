@@ -41,7 +41,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class KryoFlux : ImagePlugin
+    public class KryoFlux : ImagePlugin
     {
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -85,7 +85,7 @@ namespace DiscImageChef.ImagePlugins
         const string hostDate = "host_date";
         const string hostTime = "host_time";
         const string kfName = "name";
-        const string kfVersion= "version";
+        const string kfVersion = "version";
         const string kfDate = "date";
         const string kfTime = "time";
         const string kfHwId = "hwid";
@@ -134,8 +134,7 @@ namespace DiscImageChef.ImagePlugins
             OobBlock header = new OobBlock();
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf(header))
-                return false;
+            if(stream.Length < Marshal.SizeOf(header)) return false;
 
             byte[] hdr = new byte[Marshal.SizeOf(header)];
             stream.Read(hdr, 0, Marshal.SizeOf(header));
@@ -165,8 +164,7 @@ namespace DiscImageChef.ImagePlugins
             OobBlock header = new OobBlock();
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf(header))
-                return false;
+            if(stream.Length < Marshal.SizeOf(header)) return false;
 
             byte[] hdr = new byte[Marshal.SizeOf(header)];
             stream.Read(hdr, 0, Marshal.SizeOf(header));
@@ -197,15 +195,16 @@ namespace DiscImageChef.ImagePlugins
             byte heads = 2;
             bool topHead = false;
             string basename = Path.Combine(imageFilter.GetParentFolder(),
-                imageFilter.GetFilename().Substring(0, imageFilter.GetFilename().Length - 8));
+                                           imageFilter.GetFilename()
+                                                      .Substring(0, imageFilter.GetFilename().Length - 8));
 
             for(byte t = 0; t < 166; t += step)
             {
                 int cylinder = t / heads;
                 int head = topHead ? 1 : t % heads;
                 string trackfile = Directory.Exists(basename)
-                    ? Path.Combine(basename, string.Format("{0:D2}.{1:D1}.raw", cylinder, head))
-                    : string.Format("{0}{1:D2}.{2:D1}.raw", basename, cylinder, head);
+                                       ? Path.Combine(basename, string.Format("{0:D2}.{1:D1}.raw", cylinder, head))
+                                       : string.Format("{0}{1:D2}.{2:D1}.raw", basename, cylinder, head);
 
                 if(!File.Exists(trackfile))
                 {
@@ -213,13 +212,15 @@ namespace DiscImageChef.ImagePlugins
                     {
                         if(head == 0)
                         {
-                            DicConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 0 hd 0, supposing only top head was dumped");
+                            DicConsole.DebugWriteLine("KryoFlux plugin",
+                                                      "Cannot find cyl 0 hd 0, supposing only top head was dumped");
                             topHead = true;
                             heads = 1;
                             continue;
                         }
 
-                        DicConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
+                        DicConsole.DebugWriteLine("KryoFlux plugin",
+                                                  "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
                         heads = 1;
                         continue;
                     }
@@ -239,8 +240,7 @@ namespace DiscImageChef.ImagePlugins
 
                 ZZZNoFilter trackFilter = new ZZZNoFilter();
                 trackFilter.Open(trackfile);
-                if(!trackFilter.IsOpened())
-                    throw new IOException("Could not open KryoFlux track file.");
+                if(!trackFilter.IsOpened()) throw new IOException("Could not open KryoFlux track file.");
 
                 ImageInfo.imageCreationTime = DateTime.MaxValue;
                 ImageInfo.imageLastModificationTime = DateTime.MinValue;
@@ -288,8 +288,7 @@ namespace DiscImageChef.ImagePlugins
                             foreach(string line in lines)
                             {
                                 string[] kvp = line.Split('=');
-                                if(kvp.Length != 2)
-                                    continue;
+                                if(kvp.Length != 2) continue;
 
                                 kvp[0] = kvp[0].Trim();
                                 kvp[1] = kvp[1].Trim();
@@ -297,30 +296,29 @@ namespace DiscImageChef.ImagePlugins
 
                                 if(kvp[0] == hostDate)
                                 {
-                                    if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal,
-                                        out blockDate))
+                                    if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
+                                                              DateTimeStyles.AssumeLocal, out blockDate))
                                         foundDate = true;
                                 }
                                 else if(kvp[0] == hostTime)
                                 {
-                                    DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal,
-                                        out blockTime);
+                                    DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
+                                                           DateTimeStyles.AssumeLocal, out blockTime);
                                 }
-                                else if(kvp[0] == kfName)
-                                    ImageInfo.imageApplication = kvp[1];
-                                else if(kvp[0] == kfVersion)
-                                    ImageInfo.imageApplicationVersion = kvp[1];
+                                else if(kvp[0] == kfName) ImageInfo.imageApplication = kvp[1];
+                                else if(kvp[0] == kfVersion) ImageInfo.imageApplicationVersion = kvp[1];
                             }
 
                             if(foundDate)
                             {
                                 DateTime blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
-                                    blockTime.Hour, blockTime.Minute, blockTime.Second);
+                                                                       blockTime.Hour, blockTime.Minute,
+                                                                       blockTime.Second);
                                 DicConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
                                 if(blockTimestamp < ImageInfo.imageCreationTime)
                                     ImageInfo.imageCreationTime = blockTimestamp;
                                 if(blockTimestamp > ImageInfo.imageLastModificationTime)
-                                    ImageInfo.imageLastModificationTime= blockTimestamp;
+                                    ImageInfo.imageLastModificationTime = blockTimestamp;
                             }
 
                             break;
@@ -340,17 +338,15 @@ namespace DiscImageChef.ImagePlugins
                         case (byte)BlockIds.Flux3:
                             trackStream.Position += 2;
                             continue;
-                        default:
-                            continue;
+                        default: continue;
                     }
                 }
-                
+
                 tracks.Add(t, trackFilter);
             }
 
             ImageInfo.heads = heads;
             ImageInfo.cylinders = (uint)(tracks.Count / heads);
-            
             #endregion TODO: This is supposing NoFilter, shouldn't
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
@@ -521,7 +517,8 @@ namespace DiscImageChef.ImagePlugins
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -537,6 +534,7 @@ namespace DiscImageChef.ImagePlugins
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -582,7 +580,8 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

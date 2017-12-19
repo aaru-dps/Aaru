@@ -51,8 +51,7 @@ namespace DiscImageChef.Filters
 
         public override void Close()
         {
-            if(dataStream != null)
-                dataStream.Close();
+            if(dataStream != null) dataStream.Close();
             dataStream = null;
             basePath = null;
             opened = false;
@@ -168,4 +167,3 @@ namespace DiscImageChef.Filters
         }
     }
 }
-

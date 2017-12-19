@@ -35,8 +35,16 @@ namespace DiscImageChef.Tests.Checksums
     [TestFixture]
     public class RIPEMD160
     {
-        static readonly byte[] ExpectedEmpty = { 0x59, 0xf4, 0x4e, 0x7d, 0xaf, 0xba, 0xe0, 0xfa, 0x30, 0x15, 0xc1, 0x96, 0x41, 0xc5, 0xa5, 0xaf, 0x2d, 0x93, 0x99, 0x8d };
-        static readonly byte[] ExpectedRandom = { 0x2a, 0x7b, 0x6c, 0x0e, 0xc1, 0x80, 0xce, 0x6a, 0xe2, 0xfd, 0x77, 0xb4, 0xe0, 0xb6, 0x80, 0xc5, 0xd9, 0x9f, 0xf6, 0x7b };
+        static readonly byte[] ExpectedEmpty =
+        {
+            0x59, 0xf4, 0x4e, 0x7d, 0xaf, 0xba, 0xe0, 0xfa, 0x30, 0x15, 0xc1, 0x96, 0x41, 0xc5, 0xa5, 0xaf, 0x2d, 0x93,
+            0x99, 0x8d
+        };
+        static readonly byte[] ExpectedRandom =
+        {
+            0x2a, 0x7b, 0x6c, 0x0e, 0xc1, 0x80, 0xce, 0x6a, 0xe2, 0xfd, 0x77, 0xb4, 0xe0, 0xb6, 0x80, 0xc5, 0xd9, 0x9f,
+            0xf6, 0x7b
+        };
 
         [Test]
         public void RIPEMD160EmptyFile()
@@ -51,7 +59,8 @@ namespace DiscImageChef.Tests.Checksums
         public void RIPEMD160EmptyData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -65,7 +74,8 @@ namespace DiscImageChef.Tests.Checksums
         public void RIPEMD160EmptyInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -89,7 +99,8 @@ namespace DiscImageChef.Tests.Checksums
         public void RIPEMD160RandomData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -103,7 +114,8 @@ namespace DiscImageChef.Tests.Checksums
         public void RIPEMD160RandomInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();

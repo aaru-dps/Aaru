@@ -40,37 +40,22 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class SysV_MBR
     {
-        readonly string[] testfiles = {
-            "att_unix_svr4v2.1.vdi.lz", "att_unix_svr4v2.1_2k.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz"
-        };
+        readonly string[] testfiles =
+            {"att_unix_svr4v2.1.vdi.lz", "att_unix_svr4v2.1_2k.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz"};
 
-        readonly ulong[] sectors = {
-            1024000, 1024000, 2097152,
-        };
+        readonly ulong[] sectors = {1024000, 1024000, 2097152,};
 
-        readonly uint[] sectorsize = {
-            512, 512, 512,
-        };
+        readonly uint[] sectorsize = {512, 512, 512,};
 
-        readonly long[] clusters = {
-            511056, 255528, 1020096, 
-        };
+        readonly long[] clusters = {511056, 255528, 1020096,};
 
-        readonly int[] clustersize = {
-            1024, 2048, 1024,
-        };
+        readonly int[] clustersize = {1024, 2048, 1024,};
 
-        readonly string[] volumename = {
-            "/usr3", "/usr3", "Volume label",
-        };
+        readonly string[] volumename = {"/usr3", "/usr3", "Volume label",};
 
-        readonly string[] volumeserial = {
-            null, null, null,
-        };
+        readonly string[] volumeserial = {null, null, null,};
 
-        readonly string[] type = {
-            "SVR4 fs", "SVR4 fs", "SVR4 fs",
-        };
+        readonly string[] type = {"SVR4 fs", "SVR4 fs", "SVR4 fs",};
 
         [Test]
         public void Test()
@@ -95,6 +80,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

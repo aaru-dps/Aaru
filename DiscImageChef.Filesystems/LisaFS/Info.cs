@@ -45,18 +45,15 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             try
             {
-                if(imagePlugin.ImageInfo.readableSectorTags == null)
-                    return false;
+                if(imagePlugin.ImageInfo.readableSectorTags == null) return false;
 
-                if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
-                    return false;
+                if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag)) return false;
 
                 // LisaOS is big-endian
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-                if(imagePlugin.GetSectors() < 800)
-                    return false;
+                if(imagePlugin.GetSectors() < 800) return false;
 
                 int before_mddf = -1;
 
@@ -68,8 +65,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);
 
-                    if(before_mddf == -1 && searchTag.fileID == FILEID_LOADER_SIGNED)
-                        before_mddf = i - 1;
+                    if(before_mddf == -1 && searchTag.fileID == FILEID_LOADER_SIGNED) before_mddf = i - 1;
 
                     if(searchTag.fileID == FILEID_MDDF)
                     {
@@ -87,32 +83,29 @@ namespace DiscImageChef.Filesystems.LisaFS
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.mddf_block = {0}", info_mddf.mddf_block);
                         DicConsole.DebugWriteLine("LisaFS plugin", "Disk size = {0} sectors", imagePlugin.GetSectors());
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size = {0} sectors", info_mddf.vol_size);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - 1 = {0}", info_mddf.volsize_minus_one);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - mddf.mddf_block -1 = {0}", info_mddf.volsize_minus_mddf_minus_one);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "Disk sector = {0} bytes", imagePlugin.GetSectorSize());
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - 1 = {0}",
+                                                  info_mddf.volsize_minus_one);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - mddf.mddf_block -1 = {0}",
+                                                  info_mddf.volsize_minus_mddf_minus_one);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "Disk sector = {0} bytes",
+                                                  imagePlugin.GetSectorSize());
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.blocksize = {0} bytes", info_mddf.blocksize);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.datasize = {0} bytes", info_mddf.datasize);
 
-                        if(info_mddf.mddf_block != i - before_mddf)
-                            return false;
+                        if(info_mddf.mddf_block != i - before_mddf) return false;
 
-                        if(info_mddf.vol_size > imagePlugin.GetSectors())
-                            return false;
+                        if(info_mddf.vol_size > imagePlugin.GetSectors()) return false;
 
-                        if(info_mddf.vol_size - 1 != info_mddf.volsize_minus_one)
-                            return false;
+                        if(info_mddf.vol_size - 1 != info_mddf.volsize_minus_one) return false;
 
                         if(info_mddf.vol_size - i - 1 != info_mddf.volsize_minus_mddf_minus_one - before_mddf)
                             return false;
 
-                        if(info_mddf.datasize > info_mddf.blocksize)
-                            return false;
+                        if(info_mddf.datasize > info_mddf.blocksize) return false;
 
-                        if(info_mddf.blocksize < imagePlugin.GetSectorSize())
-                            return false;
+                        if(info_mddf.blocksize < imagePlugin.GetSectorSize()) return false;
 
-                        if(info_mddf.datasize != imagePlugin.GetSectorSize())
-                            return false;
+                        if(info_mddf.datasize != imagePlugin.GetSectorSize()) return false;
 
                         return true;
                     }
@@ -134,18 +127,15 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             try
             {
-                if(imagePlugin.ImageInfo.readableSectorTags == null)
-                    return;
+                if(imagePlugin.ImageInfo.readableSectorTags == null) return;
 
-                if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
-                    return;
+                if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag)) return;
 
                 // LisaOS is big-endian
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-                if(imagePlugin.GetSectors() < 800)
-                    return;
+                if(imagePlugin.GetSectors() < 800) return;
 
                 int before_mddf = -1;
 
@@ -157,8 +147,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);
 
-                    if(before_mddf == -1 && searchTag.fileID == FILEID_LOADER_SIGNED)
-                        before_mddf = i - 1;
+                    if(before_mddf == -1 && searchTag.fileID == FILEID_LOADER_SIGNED) before_mddf = i - 1;
 
                     if(searchTag.fileID == FILEID_MDDF)
                     {
@@ -177,8 +166,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         // Prevent garbage
                         if(pString[0] <= 32)
                             info_mddf.password = StringHandlers.PascalToString(pString, CurrentEncoding);
-                        else
-                            info_mddf.password = "";
+                        else info_mddf.password = "";
                         info_mddf.unknown2 = sector[0x4F];
                         info_mddf.machine_id = BigEndianBitConverter.ToUInt32(sector, 0x50);
                         info_mddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
@@ -249,65 +237,97 @@ namespace DiscImageChef.Filesystems.LisaFS
                         info_mddf.vol_sequence = BigEndianBitConverter.ToUInt16(sector, 0x136);
                         info_mddf.vol_left_mounted = sector[0x138];
 
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown1 = 0x{0:X2} ({0})", info_mddf.unknown1);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown2 = 0x{0:X2} ({0})", info_mddf.unknown2);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown3 = 0x{0:X8} ({0})", info_mddf.unknown3);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown4 = 0x{0:X4} ({0})", info_mddf.unknown4);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown5 = 0x{0:X8} ({0})", info_mddf.unknown5);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown6 = 0x{0:X8} ({0})", info_mddf.unknown6);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown7 = 0x{0:X8} ({0})", info_mddf.unknown7);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown9 = 0x{0:X4} ({0})", info_mddf.unknown9);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown10 = 0x{0:X8} ({0})", info_mddf.unknown10);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown11 = 0x{0:X8} ({0})", info_mddf.unknown11);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown12 = 0x{0:X8} ({0})", info_mddf.unknown12);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown13 = 0x{0:X8} ({0})", info_mddf.unknown13);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown14 = 0x{0:X8} ({0})", info_mddf.unknown14);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown15 = 0x{0:X8} ({0})", info_mddf.unknown15);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown16 = 0x{0:X8} ({0})", info_mddf.unknown16);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown17 = 0x{0:X4} ({0})", info_mddf.unknown17);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown18 = 0x{0:X8} ({0})", info_mddf.unknown18);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown19 = 0x{0:X8} ({0})", info_mddf.unknown19);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown20 = 0x{0:X8} ({0})", info_mddf.unknown20);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown21 = 0x{0:X8} ({0})", info_mddf.unknown21);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown22 = 0x{0:X8} ({0})", info_mddf.unknown22);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown23 = 0x{0:X8} ({0})", info_mddf.unknown23);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown24 = 0x{0:X8} ({0})", info_mddf.unknown24);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown25 = 0x{0:X8} ({0})", info_mddf.unknown25);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown26 = 0x{0:X8} ({0})", info_mddf.unknown26);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown27 = 0x{0:X8} ({0})", info_mddf.unknown27);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown28 = 0x{0:X8} ({0})", info_mddf.unknown28);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown29 = 0x{0:X8} ({0})", info_mddf.unknown29);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown30 = 0x{0:X8} ({0})", info_mddf.unknown30);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown31 = 0x{0:X8} ({0})", info_mddf.unknown31);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown32 = 0x{0:X8} ({0})", info_mddf.unknown32);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown33 = 0x{0:X8} ({0})", info_mddf.unknown33);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown34 = 0x{0:X8} ({0})", info_mddf.unknown34);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown35 = 0x{0:X8} ({0})", info_mddf.unknown35);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown36 = 0x{0:X8} ({0})", info_mddf.unknown36);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown37 = 0x{0:X8} ({0})", info_mddf.unknown37);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown38 = 0x{0:X8} ({0})", info_mddf.unknown38);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown_timestamp = 0x{0:X8} ({0}, {1})", info_mddf.unknown_timestamp, DateHandlers.LisaToDateTime(info_mddf.unknown_timestamp));
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown1 = 0x{0:X2} ({0})",
+                                                  info_mddf.unknown1);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown2 = 0x{0:X2} ({0})",
+                                                  info_mddf.unknown2);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown3 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown3);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown4 = 0x{0:X4} ({0})",
+                                                  info_mddf.unknown4);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown5 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown5);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown6 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown6);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown7 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown7);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown9 = 0x{0:X4} ({0})",
+                                                  info_mddf.unknown9);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown10 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown10);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown11 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown11);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown12 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown12);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown13 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown13);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown14 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown14);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown15 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown15);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown16 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown16);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown17 = 0x{0:X4} ({0})",
+                                                  info_mddf.unknown17);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown18 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown18);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown19 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown19);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown20 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown20);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown21 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown21);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown22 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown22);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown23 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown23);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown24 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown24);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown25 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown25);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown26 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown26);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown27 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown27);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown28 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown28);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown29 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown29);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown30 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown30);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown31 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown31);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown32 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown32);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown33 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown33);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown34 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown34);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown35 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown35);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown36 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown36);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown37 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown37);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown38 = 0x{0:X8} ({0})",
+                                                  info_mddf.unknown38);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown_timestamp = 0x{0:X8} ({0}, {1})",
+                                                  info_mddf.unknown_timestamp,
+                                                  DateHandlers.LisaToDateTime(info_mddf.unknown_timestamp));
 
-                        if(info_mddf.mddf_block != i - before_mddf)
-                            return;
+                        if(info_mddf.mddf_block != i - before_mddf) return;
 
-                        if(info_mddf.vol_size > imagePlugin.GetSectors())
-                            return;
+                        if(info_mddf.vol_size > imagePlugin.GetSectors()) return;
 
-                        if(info_mddf.vol_size - 1 != info_mddf.volsize_minus_one)
-                            return;
+                        if(info_mddf.vol_size - 1 != info_mddf.volsize_minus_one) return;
 
-                        if(info_mddf.vol_size - i - 1 != info_mddf.volsize_minus_mddf_minus_one - before_mddf)
-                            return;
+                        if(info_mddf.vol_size - i - 1 != info_mddf.volsize_minus_mddf_minus_one - before_mddf) return;
 
-                        if(info_mddf.datasize > info_mddf.blocksize)
-                            return;
+                        if(info_mddf.datasize > info_mddf.blocksize) return;
 
-                        if(info_mddf.blocksize < imagePlugin.GetSectorSize())
-                            return;
+                        if(info_mddf.blocksize < imagePlugin.GetSectorSize()) return;
 
-                        if(info_mddf.datasize != imagePlugin.GetSectorSize())
-                            return;
+                        if(info_mddf.datasize != imagePlugin.GetSectorSize()) return;
 
                         switch(info_mddf.fsversion)
                         {
@@ -332,10 +352,13 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                         sb.AppendFormat("Master copy ID: 0x{0:X8}", info_mddf.master_copy_id).AppendLine();
 
-                        sb.AppendFormat("Volume is number {0} of {1}", info_mddf.volnum, info_mddf.vol_sequence).AppendLine();
+                        sb.AppendFormat("Volume is number {0} of {1}", info_mddf.volnum, info_mddf.vol_sequence)
+                          .AppendLine();
 
-                        sb.AppendFormat("Serial number of Lisa computer that created this volume: {0}", info_mddf.machine_id).AppendLine();
-                        sb.AppendFormat("Serial number of Lisa computer that can use this volume's software {0}", info_mddf.serialization).AppendLine();
+                        sb.AppendFormat("Serial number of Lisa computer that created this volume: {0}",
+                                        info_mddf.machine_id).AppendLine();
+                        sb.AppendFormat("Serial number of Lisa computer that can use this volume's software {0}",
+                                        info_mddf.serialization).AppendLine();
 
                         sb.AppendFormat("Volume created on {0}", info_mddf.dtvc).AppendLine();
                         sb.AppendFormat("Some timestamp, says {0}", info_mddf.dtcc).AppendLine();
@@ -344,7 +367,8 @@ namespace DiscImageChef.Filesystems.LisaFS
                         sb.AppendFormat("MDDF is in block {0}", info_mddf.mddf_block + before_mddf).AppendLine();
                         sb.AppendFormat("There are {0} reserved blocks before volume", before_mddf).AppendLine();
                         sb.AppendFormat("{0} blocks minus one", info_mddf.volsize_minus_one).AppendLine();
-                        sb.AppendFormat("{0} blocks minus one minus MDDF offset", info_mddf.volsize_minus_mddf_minus_one).AppendLine();
+                        sb.AppendFormat("{0} blocks minus one minus MDDF offset",
+                                        info_mddf.volsize_minus_mddf_minus_one).AppendLine();
                         sb.AppendFormat("{0} blocks in volume", info_mddf.vol_size).AppendLine();
                         sb.AppendFormat("{0} bytes per sector (uncooked)", info_mddf.blocksize).AppendLine();
                         sb.AppendFormat("{0} bytes per sector", info_mddf.datasize).AppendLine();
@@ -358,12 +382,12 @@ namespace DiscImageChef.Filesystems.LisaFS
                         sb.AppendFormat("Boot code: 0x{0:X8}", info_mddf.boot_code).AppendLine();
                         sb.AppendFormat("Boot environment:  0x{0:X8}", info_mddf.boot_environ).AppendLine();
                         sb.AppendFormat("Overmount stamp: 0x{0:X16}", info_mddf.overmount_stamp).AppendLine();
-                        sb.AppendFormat("S-Records start at {0} and spans for {1} blocks", info_mddf.srec_ptr + info_mddf.mddf_block + before_mddf, info_mddf.srec_len).AppendLine();
+                        sb.AppendFormat("S-Records start at {0} and spans for {1} blocks",
+                                        info_mddf.srec_ptr + info_mddf.mddf_block + before_mddf, info_mddf.srec_len)
+                          .AppendLine();
 
-                        if(info_mddf.vol_left_mounted == 0)
-                            sb.AppendLine("Volume is clean");
-                        else
-                            sb.AppendLine("Volume is dirty");
+                        if(info_mddf.vol_left_mounted == 0) sb.AppendLine("Volume is clean");
+                        else sb.AppendLine("Volume is dirty");
 
                         information = sb.ToString();
 
@@ -403,4 +427,3 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
     }
 }
-

@@ -209,9 +209,9 @@ namespace DiscImageChef.Core.Logging
                         ibgStartSet = true;
                     }
 
-                    ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", ibgIntSpeed / ibgSnaps / ibgDivider, ibgIntSector, ibgSampleRate).AppendLine();
-                    if((ibgIntSpeed / ibgSnaps / ibgDivider) > ibgMaxSpeed)
-                        ibgMaxSpeed = ibgIntSpeed / ibgDivider;
+                    ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", ibgIntSpeed / ibgSnaps / ibgDivider, ibgIntSector,
+                                       ibgSampleRate).AppendLine();
+                    if((ibgIntSpeed / ibgSnaps / ibgDivider) > ibgMaxSpeed) ibgMaxSpeed = ibgIntSpeed / ibgDivider;
 
                     ibgDatePoint = DateTime.Now;
                     ibgIntSpeed = 0;
@@ -222,19 +222,17 @@ namespace DiscImageChef.Core.Logging
             }
         }
 
-        public void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed, double averageSpeed, string devicePath)
+        public void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed,
+                          double averageSpeed, string devicePath)
         {
             if(ibgFs != null)
             {
                 StringBuilder ibgHeader = new StringBuilder();
                 string ibgBusType;
 
-                if(dev.IsUSB)
-                    ibgBusType = "USB";
-                else if(dev.IsFireWire)
-                    ibgBusType = "FireWire";
-                else
-                    ibgBusType = dev.Type.ToString();
+                if(dev.IsUSB) ibgBusType = "USB";
+                else if(dev.IsFireWire) ibgBusType = "FireWire";
+                else ibgBusType = dev.Type.ToString();
 
                 ibgHeader.AppendLine("IBGD");
                 ibgHeader.AppendLine();
@@ -246,8 +244,8 @@ namespace DiscImageChef.Core.Logging
                 ibgHeader.AppendFormat("SAMPLE_RATE={0}", 100).AppendLine();
 
                 ibgHeader.AppendLine();
-                ibgHeader.AppendFormat("DEVICE=[0:0:0] {0} {1} ({2}) ({3})",
-                                       dev.Manufacturer, dev.Model, devicePath, ibgBusType).AppendLine();
+                ibgHeader.AppendFormat("DEVICE=[0:0:0] {0} {1} ({2}) ({3})", dev.Manufacturer, dev.Model, devicePath,
+                                       ibgBusType).AppendLine();
                 ibgHeader.AppendLine("DEVICE_ADDRESS=0:0:0");
                 ibgHeader.AppendFormat("DEVICE_MAKEMODEL={0} {1}", dev.Manufacturer, dev.Model).AppendLine();
                 ibgHeader.AppendFormat("DEVICE_FIRMWAREVERSION={0}", dev.Revision).AppendLine();
@@ -270,7 +268,8 @@ namespace DiscImageChef.Core.Logging
                 ibgHeader.AppendLine();
                 ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_START={0:0.00}", ibgStartSpeed).AppendLine();
                 ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_END={0:0.00}", currentSpeed / ibgDivider).AppendLine();
-                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / ibgDivider).AppendLine();
+                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / ibgDivider)
+                         .AppendLine();
                 ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_MAX={0:0.00}", ibgMaxSpeed).AppendLine();
                 ibgHeader.AppendFormat(ibgCulture, "VERIFY_TIME_TAKEN={0:0}", Math.Floor(totalSeconds)).AppendLine();
                 ibgHeader.AppendLine("[END_CONFIGURATION]");
@@ -291,5 +290,3 @@ namespace DiscImageChef.Core.Logging
         }
     }
 }
-
-

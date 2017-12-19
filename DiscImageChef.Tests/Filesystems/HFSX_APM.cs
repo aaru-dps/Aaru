@@ -40,45 +40,29 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class HFSX_APM
     {
-        readonly string[] testfiles = {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz","darwin_8.0.1_journal.vdi.lz","darwin_8.0.1.vdi.lz",
-            "macosx_10.4_journal.vdi.lz","macosx_10.4.vdi.lz",
+        readonly string[] testfiles =
+        {
+            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz",
+            "macosx_10.4_journal.vdi.lz", "macosx_10.4.vdi.lz",
         };
 
-        readonly ulong[] sectors = {
-            819200, 1228800, 1638400, 1433600,
-            4194304, 1024000,
+        readonly ulong[] sectors = {819200, 1228800, 1638400, 1433600, 4194304, 1024000,};
+
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512,};
+
+        readonly long[] clusters = {102390, 153590, 204792, 179192, 491290, 127770,};
+
+        readonly int[] clustersize = {4096, 4096, 4096, 4096, 4096, 4096,};
+
+        readonly string[] volumename = {null, null, null, null, null, null,};
+
+        readonly string[] volumeserial =
+        {
+            "CC2D56884950D9AE", "7AF1175D8EA7A072", "BB4ABD7E7E2FF5AF", "E2F212D815EF77B5", "5A8C646A5D77EB16",
+            "258C51A750F6A485",
         };
 
-        readonly uint[] sectorsize = {
-            512, 512, 512, 512,
-            512, 512,
-        };
-
-        readonly long[] clusters = {
-            102390, 153590, 204792, 179192,
-            491290, 127770,
-        };
-
-        readonly int[] clustersize = {
-            4096, 4096,4096, 4096,
-            4096, 4096,
-        };
-
-        readonly string[] volumename = {
-            null, null, null, null,
-            null, null,
-        };
-
-        readonly string[] volumeserial = {
-            "CC2D56884950D9AE","7AF1175D8EA7A072","BB4ABD7E7E2FF5AF","E2F212D815EF77B5",
-            "5A8C646A5D77EB16","258C51A750F6A485",
-        };
-
-        readonly string[] oemid = {
-            "10.0","HFSJ","10.0","10.0",
-            "HFSJ","10.0",
-        };
+        readonly string[] oemid = {"10.0", "HFSJ", "10.0", "10.0", "HFSJ", "10.0",};
 
         [Test]
         public void Test()
@@ -103,6 +87,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

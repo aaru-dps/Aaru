@@ -51,8 +51,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             short fileId;
             bool isDir;
             Errno error = LookupFileId(path, out fileId, out isDir);
-            if(error != Errno.NoError)
-                return error;
+            if(error != Errno.NoError) return error;
 
             return isDir ? Errno.InvalidArgument : ListXAttr(fileId, ref xattrs);
         }
@@ -69,8 +68,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             short fileId;
             bool isDir;
             Errno error = LookupFileId(path, out fileId, out isDir);
-            if(error != Errno.NoError)
-                return error;
+            if(error != Errno.NoError) return error;
 
             return isDir ? Errno.InvalidArgument : GetXattr(fileId, xattr, out buf);
         }
@@ -85,14 +83,12 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             xattrs = null;
 
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             // System files
             if(fileId < 4)
             {
-                if(!debug || fileId == 0)
-                    return Errno.InvalidArgument;
+                if(!debug || fileId == 0) return Errno.InvalidArgument;
 
                 xattrs = new List<string>();
 
@@ -102,8 +98,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     byte[] buf = Encoding.ASCII.GetBytes(mddf.password);
 
                     // If the MDDF contains a password, show it
-                    if(buf.Length > 0)
-                        xattrs.Add("com.apple.lisa.password");
+                    if(buf.Length > 0) xattrs.Add("com.apple.lisa.password");
                 }
             }
             else
@@ -112,27 +107,22 @@ namespace DiscImageChef.Filesystems.LisaFS
                 ExtentFile file;
                 Errno error = ReadExtentsFile(fileId, out file);
 
-                if(error != Errno.NoError)
-                    return error;
+                if(error != Errno.NoError) return error;
 
                 xattrs = new List<string>();
 
                 // Password field is never emptied, check if valid
-                if(file.password_valid > 0)
-                    xattrs.Add("com.apple.lisa.password");
+                if(file.password_valid > 0) xattrs.Add("com.apple.lisa.password");
 
                 // Check for a valid copy-protection serial number
-                if(file.serial > 0)
-                    xattrs.Add("com.apple.lisa.serial");
+                if(file.serial > 0) xattrs.Add("com.apple.lisa.serial");
 
                 // Check if the label contains something or is empty
-                if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo))
-                    xattrs.Add("com.apple.lisa.label");
+                if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo)) xattrs.Add("com.apple.lisa.label");
             }
 
             // On debug mode allow sector tags to be accessed as an xattr
-            if(debug)
-                xattrs.Add("com.apple.lisa.tags");
+            if(debug) xattrs.Add("com.apple.lisa.tags");
 
             xattrs.Sort();
 
@@ -150,14 +140,12 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             buf = null;
 
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             // System files
             if(fileId < 4)
             {
-                if(!debug || fileId == 0)
-                    return Errno.InvalidArgument;
+                if(!debug || fileId == 0) return Errno.InvalidArgument;
 
                 // Only MDDF contains an extended attributes
                 if(fileId == FILEID_MDDF)
@@ -170,8 +158,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 }
 
                 // But on debug mode even system files contain tags
-                if(debug && xattr == "com.apple.lisa.tags")
-                    return ReadSystemFile(fileId, out buf, true);
+                if(debug && xattr == "com.apple.lisa.tags") return ReadSystemFile(fileId, out buf, true);
 
                 return Errno.NoSuchExtendedAttribute;
             }
@@ -180,8 +167,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             ExtentFile file;
             Errno error = ReadExtentsFile(fileId, out file);
 
-            if(error != Errno.NoError)
-                return error;
+            if(error != Errno.NoError) return error;
 
             if(xattr == "com.apple.lisa.password" && file.password_valid > 0)
             {
@@ -203,8 +189,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 return Errno.NoError;
             }
 
-            if(debug && xattr == "com.apple.lisa.tags")
-                return ReadFile(fileId, out buf, true);
+            if(debug && xattr == "com.apple.lisa.tags") return ReadFile(fileId, out buf, true);
 
             return Errno.NoSuchExtendedAttribute;
         }
@@ -220,8 +205,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             decoded = new LisaTag.PriamTag();
             LisaTag.PriamTag? pmTag = LisaTag.DecodeTag(tag);
 
-            if(!pmTag.HasValue)
-                return Errno.InvalidArgument;
+            if(!pmTag.HasValue) return Errno.InvalidArgument;
 
             decoded = pmTag.Value;
             return Errno.NoError;

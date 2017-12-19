@@ -54,7 +54,6 @@ namespace DiscImageChef.Commands
             Sidecar.EndProgressEvent2 += Progress.EndProgress2;
             Sidecar.UpdateStatusEvent += Progress.UpdateStatus;
 
-
             Encoding encoding = null;
 
             if(options.EncodingName != null)
@@ -62,8 +61,7 @@ namespace DiscImageChef.Commands
                 try
                 {
                     encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
-                    if(options.Verbose)
-                        DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                    if(options.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
                 }
                 catch(ArgumentException)
                 {
@@ -104,9 +102,9 @@ namespace DiscImageChef.Commands
                     else
                     {
                         if(options.Verbose)
-                            DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", _imageFormat.Name, _imageFormat.PluginUUID);
-                        else
-                            DicConsole.WriteLine("Image format identified by {0}.", _imageFormat.Name);
+                            DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", _imageFormat.Name,
+                                                        _imageFormat.PluginUUID);
+                        else DicConsole.WriteLine("Image format identified by {0}.", _imageFormat.Name);
                     }
 
                     try
@@ -130,15 +128,18 @@ namespace DiscImageChef.Commands
                     Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
                     Core.Statistics.AddFilter(inputFilter.Name);
 
-                    CICMMetadataType sidecar = Sidecar.Create(_imageFormat, options.InputFile, inputFilter.UUID, encoding);
+                    CICMMetadataType sidecar =
+                        Sidecar.Create(_imageFormat, options.InputFile, inputFilter.UUID, encoding);
 
                     DicConsole.WriteLine("Writing metadata sidecar");
 
-                    FileStream xmlFs = new FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile),
-                                                                   Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
-                                                      FileMode.CreateNew);
+                    FileStream xmlFs =
+                        new
+                            FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
+                                       FileMode.CreateNew);
 
-                    System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+                    System.Xml.Serialization.XmlSerializer xmlSer =
+                        new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
                     xmlSer.Serialize(xmlFs, sidecar);
                     xmlFs.Close();
 
@@ -163,21 +164,23 @@ namespace DiscImageChef.Commands
 
                 foreach(string file in contents)
                 {
-                    if(new FileInfo(file).Length % options.BlockSize == 0)
-                        files.Add(file);
+                    if(new FileInfo(file).Length % options.BlockSize == 0) files.Add(file);
                 }
 
                 files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
-                CICMMetadataType sidecar = Sidecar.Create(Path.GetFileName(options.InputFile), files, options.BlockSize);
+                CICMMetadataType sidecar =
+                    Sidecar.Create(Path.GetFileName(options.InputFile), files, options.BlockSize);
 
                 DicConsole.WriteLine("Writing metadata sidecar");
 
-                FileStream xmlFs = new FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile),
-                                                               Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
-                                                  FileMode.CreateNew);
+                FileStream xmlFs =
+                    new
+                        FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
+                                   FileMode.CreateNew);
 
-                System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+                System.Xml.Serialization.XmlSerializer xmlSer =
+                    new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
 
@@ -191,4 +194,3 @@ namespace DiscImageChef.Commands
         }
     }
 }
-

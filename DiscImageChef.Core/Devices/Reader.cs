@@ -48,15 +48,42 @@ namespace DiscImageChef.Core.Devices
         uint physicalsectorsize;
         uint longBlockSize;
 
-        public string ErrorMessage { get { return errorMessage; } }
-        public ulong Blocks { get { return blocks; } }
-        public uint BlocksToRead { get { return blocksToRead; } }
-        public uint LogicalBlockSize { get { return blockSize; } }
-        public uint PhysicalBlockSize { get { return physicalsectorsize; } }
-        public uint LongBlockSize { get { return longBlockSize; } }
-        public bool CanReadRaw { get { return readRaw; } }
-        public bool CanSeek { get { return ataSeek || seek6 || seek10; } }
-        public bool CanSeekLBA { get { return ataSeekLba || seek6 || seek10; } }
+        public string ErrorMessage
+        {
+            get { return errorMessage; }
+        }
+        public ulong Blocks
+        {
+            get { return blocks; }
+        }
+        public uint BlocksToRead
+        {
+            get { return blocksToRead; }
+        }
+        public uint LogicalBlockSize
+        {
+            get { return blockSize; }
+        }
+        public uint PhysicalBlockSize
+        {
+            get { return physicalsectorsize; }
+        }
+        public uint LongBlockSize
+        {
+            get { return longBlockSize; }
+        }
+        public bool CanReadRaw
+        {
+            get { return readRaw; }
+        }
+        public bool CanSeek
+        {
+            get { return ataSeek || seek6 || seek10; }
+        }
+        public bool CanSeekLBA
+        {
+            get { return ataSeekLba || seek6 || seek10; }
+        }
 
         public Reader(Device dev, uint timeout, byte[] identification, bool raw = false)
         {
@@ -68,11 +95,9 @@ namespace DiscImageChef.Core.Devices
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    if(Identify.Decode(identification).HasValue)
-                        ataId = Identify.Decode(identification).Value;
+                    if(Identify.Decode(identification).HasValue) ataId = Identify.Decode(identification).Value;
                     break;
-                case DeviceType.NVMe:
-                    throw new NotImplementedException("NVMe devices not yet supported.");
+                case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
             }
         }
 
@@ -80,11 +105,9 @@ namespace DiscImageChef.Core.Devices
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA:
-                    return AtaGetBlocks();
+                case DeviceType.ATA: return AtaGetBlocks();
                 case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    return ScsiGetBlocks();
+                case DeviceType.SCSI: return ScsiGetBlocks();
                 default:
                     errorMessage = string.Format("Unknown device type {0}.", dev.Type);
                     return 0;
@@ -95,11 +118,9 @@ namespace DiscImageChef.Core.Devices
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA:
-                    return AtaFindReadCommand();
+                case DeviceType.ATA: return AtaFindReadCommand();
                 case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    return ScsiFindReadCommand();
+                case DeviceType.SCSI: return ScsiFindReadCommand();
                 default:
                     errorMessage = string.Format("Unknown device type {0}.", dev.Type);
                     return true;
@@ -110,11 +131,9 @@ namespace DiscImageChef.Core.Devices
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA:
-                    return AtaGetBlockSize();
+                case DeviceType.ATA: return AtaGetBlockSize();
                 case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    return ScsiGetBlockSize();
+                case DeviceType.SCSI: return ScsiGetBlockSize();
                 default:
                     errorMessage = string.Format("Unknown device type {0}.", dev.Type);
                     return true;
@@ -125,11 +144,9 @@ namespace DiscImageChef.Core.Devices
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA:
-                    return AtaGetBlocksToRead(startWithBlocks);
+                case DeviceType.ATA: return AtaGetBlocksToRead(startWithBlocks);
                 case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    return ScsiGetBlocksToRead(startWithBlocks);
+                case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
                 default:
                     errorMessage = string.Format("Unknown device type {0}.", dev.Type);
                     return true;
@@ -150,11 +167,9 @@ namespace DiscImageChef.Core.Devices
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA:
-                    return AtaReadBlocks(out buffer, block, count, out duration);
+                case DeviceType.ATA: return AtaReadBlocks(out buffer, block, count, out duration);
                 case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    return ScsiReadBlocks(out buffer, block, count, out duration);
+                case DeviceType.SCSI: return ScsiReadBlocks(out buffer, block, count, out duration);
                 default:
                     buffer = null;
                     duration = 0d;
@@ -166,8 +181,7 @@ namespace DiscImageChef.Core.Devices
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA:
-                    return AtaReadCHS(out buffer, cylinder, head, sector, out duration);
+                case DeviceType.ATA: return AtaReadCHS(out buffer, cylinder, head, sector, out duration);
                 default:
                     buffer = null;
                     duration = 0d;
@@ -179,11 +193,9 @@ namespace DiscImageChef.Core.Devices
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA:
-                    return AtaSeek(block, out duration);
+                case DeviceType.ATA: return AtaSeek(block, out duration);
                 case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    return ScsiSeek(block, out duration);
+                case DeviceType.SCSI: return ScsiSeek(block, out duration);
                 default:
                     duration = 0d;
                     return true;
@@ -194,8 +206,7 @@ namespace DiscImageChef.Core.Devices
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA:
-                    return AtaSeekCHS(cylinder, head, sector, out duration);
+                case DeviceType.ATA: return AtaSeekCHS(cylinder, head, sector, out duration);
                 default:
                     duration = 0;
                     return true;

@@ -81,7 +81,8 @@ namespace DiscImageChef.Devices
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, uint timeout, out double duration)
+        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, uint timeout,
+                                  out double duration)
         {
             buffer = new byte[512];
             AtaRegistersCHS registers = new AtaRegistersCHS();
@@ -89,8 +90,9 @@ namespace DiscImageChef.Devices
 
             registers.command = (byte)AtaCommands.IdentifyPacketDevice;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
-                ref buffer, timeout, false, out duration, out sense);
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                       out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "IDENTIFY PACKET DEVICE took {0} ms.", duration);
@@ -99,4 +101,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

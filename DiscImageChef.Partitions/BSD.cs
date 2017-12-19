@@ -45,9 +45,9 @@ namespace DiscImageChef.PartPlugins
         public const uint DISKMAGIC = 0x82564557;
         public const uint DISKCIGAM = 0x57455682;
         /// <summary>Known sector locations for BSD disklabel</summary>
-        readonly ulong[] labelLocations = { 0, 1, 2, 9 };
+        readonly ulong[] labelLocations = {0, 1, 2, 9};
         /// <summary>Known byte offsets for BSD disklabel</summary>
-        readonly uint[] labelOffsets = { 0, 9, 64, 128, 516 };
+        readonly uint[] labelOffsets = {0, 9, 64, 128, 516};
         /// <summary>Maximum size of a disklabel with 22 partitions</summary>
         const uint maxLabelSize = 500;
 
@@ -61,8 +61,7 @@ namespace DiscImageChef.PartPlugins
         {
             partitions = new List<Partition>();
             uint run = (maxLabelSize + labelOffsets.Last()) / imagePlugin.GetSectorSize();
-            if((maxLabelSize + labelOffsets.Last()) % imagePlugin.GetSectorSize() > 0)
-                run++;
+            if((maxLabelSize + labelOffsets.Last()) % imagePlugin.GetSectorSize() > 0) run++;
 
             byte[] sector;
             DiskLabel dl = new DiskLabel();
@@ -70,8 +69,7 @@ namespace DiscImageChef.PartPlugins
 
             foreach(ulong location in labelLocations)
             {
-                if(location + run + sectorOffset >= imagePlugin.GetSectors())
-                    return false;
+                if(location + run + sectorOffset >= imagePlugin.GetSectors()) return false;
 
                 byte[] tmp = imagePlugin.ReadSectors(location + sectorOffset, run);
                 foreach(uint offset in labelOffsets)
@@ -79,7 +77,9 @@ namespace DiscImageChef.PartPlugins
                     sector = new byte[maxLabelSize];
                     Array.Copy(tmp, offset, sector, 0, maxLabelSize);
                     dl = GetDiskLabel(sector);
-                    DicConsole.DebugWriteLine("BSD plugin", "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})", location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
+                    DicConsole.DebugWriteLine("BSD plugin",
+                                              "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",
+                                              location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
                     if((dl.d_magic == DISKMAGIC && dl.d_magic2 == DISKMAGIC) ||
                        (dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM))
                     {
@@ -88,15 +88,12 @@ namespace DiscImageChef.PartPlugins
                     }
                 }
 
-                if(found)
-                    break;
+                if(found) break;
             }
 
-            if(!found)
-                return false;
+            if(!found) return false;
 
-            if(dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM)
-                dl = SwapDiskLabel(dl);
+            if(dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM) dl = SwapDiskLabel(dl);
 
             DicConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}", dl.d_type);
             DicConsole.DebugWriteLine("BSD plugin", "dl.d_subtype = {0}", dl.d_subtype);
@@ -139,9 +136,11 @@ namespace DiscImageChef.PartPlugins
 
             for(int i = 0; i < dl.d_npartitions && i < 22; i++)
             {
-                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_offset = {0}", dl.d_partitions[i].p_offset);
+                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_offset = {0}",
+                                          dl.d_partitions[i].p_offset);
                 DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_size = {0}", dl.d_partitions[i].p_size);
-                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_fstype = {0} ({1})", dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
+                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_fstype = {0} ({1})",
+                                          dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
                 Partition part = new Partition
                 {
                     Start = ((dl.d_partitions[i].p_offset * dl.d_secsize) / imagePlugin.GetSectorSize()),
@@ -155,8 +154,7 @@ namespace DiscImageChef.PartPlugins
                 if(dl.d_partitions[i].p_fstype != fsType.Unused)
                 {
                     // Crude and dirty way to know if the disklabel is relative to its parent partition...
-                    if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset)
-                        addSectorOffset = true;
+                    if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset) addSectorOffset = true;
 
                     if(addSectorOffset)
                     {
@@ -331,11 +329,9 @@ namespace DiscImageChef.PartPlugins
             /// <summary>Disk subtype</summary>
             public ushort d_subtype;
             /// <summary>Type name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] d_typename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] d_typename;
             /// <summary>Pack identifier</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] d_packname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] d_packname;
             /// <summary>Bytes per sector</summary>
             public uint d_secsize;
             /// <summary>Sectors per track</summary>
@@ -369,8 +365,7 @@ namespace DiscImageChef.PartPlugins
             /// <summary><see cref="dFlags"/></summary>
             public dFlags d_flags;
             /// <summary>Drive-specific information</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public uint[] d_drivedata;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] d_drivedata;
             /// <summary>Reserved</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             /// <summary></summary>
@@ -386,8 +381,7 @@ namespace DiscImageChef.PartPlugins
             /// <summary>Maximum size of superblock in bytes</summary>
             public uint d_sbsize;
             /// <summary>Partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
-            public BSDPartition[] d_partitions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)] public BSDPartition[] d_partitions;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -411,65 +405,36 @@ namespace DiscImageChef.PartPlugins
         {
             switch(typ)
             {
-                case fsType.Unused:
-                    return "Unused entry";
-                case fsType.Swap:
-                    return "Swap partition";
-                case fsType.V6:
-                    return "UNIX 6th Edition";
-                case fsType.V7:
-                    return "UNIX 7th Edition";
-                case fsType.SystemV:
-                    return "UNIX System V";
-                case fsType.V7_1K:
-                    return "UNIX 7th Edition with 1K blocks";
-                case fsType.V8:
-                    return "UNIX 8th Edition with 4K blocks";
-                case fsType.BSDFFS:
-                    return "4.2BSD Fast File System";
-                case fsType.BSDLFS:
-                    return "4.4LFS";
-                case fsType.HPFS:
-                    return "HPFS";
-                case fsType.ISO9660:
-                    return "ISO9660";
+                case fsType.Unused: return "Unused entry";
+                case fsType.Swap: return "Swap partition";
+                case fsType.V6: return "UNIX 6th Edition";
+                case fsType.V7: return "UNIX 7th Edition";
+                case fsType.SystemV: return "UNIX System V";
+                case fsType.V7_1K: return "UNIX 7th Edition with 1K blocks";
+                case fsType.V8: return "UNIX 8th Edition with 4K blocks";
+                case fsType.BSDFFS: return "4.2BSD Fast File System";
+                case fsType.BSDLFS: return "4.4LFS";
+                case fsType.HPFS: return "HPFS";
+                case fsType.ISO9660: return "ISO9660";
                 case fsType.Boot:
-                case fsType.SysVBoot:
-                    return "Boot";
-                case fsType.AFFS:
-                    return "Amiga FFS";
-                case fsType.HFS:
-                    return "Apple HFS";
-                case fsType.ADVfs:
-                    return "Digital Advanced File System";
-                case fsType.LSMpublic:
-                    return "Digital LSM Public Region";
-                case fsType.LSMprivate:
-                    return "Digital LSM Private Region";
-                case fsType.LSMsimple:
-                    return "Digital LSM Simple Disk";
-                case fsType.CCD:
-                    return "Concatenated disk";
-                case fsType.JFS2:
-                    return "IBM JFS2";
-                case fsType.HAMMER:
-                    return "Hammer";
-                case fsType.HAMMER2:
-                    return "Hammer2";
-                case fsType.UDF:
-                    return "UDF";
-                case fsType.EFS:
-                    return "EFS";
-                case fsType.ZFS:
-                    return "ZFS";
-                case fsType.NANDFS:
-                    return "FreeBSD nandfs";
-                case fsType.MSDOS:
-                    return "FAT";
-                case fsType.Other:
-                    return "Other or unknown";
-                default:
-                    return "Unknown";
+                case fsType.SysVBoot: return "Boot";
+                case fsType.AFFS: return "Amiga FFS";
+                case fsType.HFS: return "Apple HFS";
+                case fsType.ADVfs: return "Digital Advanced File System";
+                case fsType.LSMpublic: return "Digital LSM Public Region";
+                case fsType.LSMprivate: return "Digital LSM Private Region";
+                case fsType.LSMsimple: return "Digital LSM Simple Disk";
+                case fsType.CCD: return "Concatenated disk";
+                case fsType.JFS2: return "IBM JFS2";
+                case fsType.HAMMER: return "Hammer";
+                case fsType.HAMMER2: return "Hammer2";
+                case fsType.UDF: return "UDF";
+                case fsType.EFS: return "EFS";
+                case fsType.ZFS: return "ZFS";
+                case fsType.NANDFS: return "FreeBSD nandfs";
+                case fsType.MSDOS: return "FAT";
+                case fsType.Other: return "Other or unknown";
+                default: return "Unknown";
             }
         }
 
@@ -484,10 +449,8 @@ namespace DiscImageChef.PartPlugins
         public static DiskLabel SwapDiskLabel(DiskLabel disklabel)
         {
             DiskLabel dl = BigEndianMarshal.SwapStructureMembersEndian(disklabel);
-            for(int i = 0; i < dl.d_drivedata.Length; i++)
-                dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
-            for(int i = 0; i < dl.d_spare.Length; i++)
-                dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
+            for(int i = 0; i < dl.d_drivedata.Length; i++) dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
+            for(int i = 0; i < dl.d_spare.Length; i++) dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
             for(int i = 0; i < dl.d_partitions.Length; i++)
                 dl.d_partitions[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_partitions[i]);
 

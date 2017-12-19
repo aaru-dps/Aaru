@@ -51,20 +51,16 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Cram filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public Cram(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Cram filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         enum CramCompression : ushort
@@ -83,14 +79,12 @@ namespace DiscImageChef.Filesystems
             public uint size;
             public uint flags;
             public uint future;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] signature;
             public uint crc;
             public uint edition;
             public uint blocks;
             public uint files;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
         }
 
         /// <summary>
@@ -101,8 +95,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End)
-                return false;
+            if(partition.Start >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
@@ -111,7 +104,8 @@ namespace DiscImageChef.Filesystems
             return magic == Cram_MAGIC || magic == Cram_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
@@ -135,12 +129,11 @@ namespace DiscImageChef.Filesystems
             StringBuilder sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Cram file system");
-            if(littleEndian)
-                sbInformation.AppendLine("Little-endian");
-            else
-                sbInformation.AppendLine("Big-endian");
+            if(littleEndian) sbInformation.AppendLine("Little-endian");
+            else sbInformation.AppendLine("Big-endian");
             sbInformation.AppendFormat("Volume edition {0}", crSb.edition).AppendLine();
-            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name, CurrentEncoding)).AppendLine();
+            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name, CurrentEncoding))
+                         .AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes", crSb.size).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", crSb.blocks).AppendLine();
             sbInformation.AppendFormat("Volume has {0} files", crSb.files).AppendLine();

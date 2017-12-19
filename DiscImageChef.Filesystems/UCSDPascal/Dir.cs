@@ -40,9 +40,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     {
         public override Errno ReadDir(string path, ref List<string> contents)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
-            
+            if(!mounted) return Errno.AccessDenied;
+
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
@@ -61,4 +60,3 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         }
     }
 }
-

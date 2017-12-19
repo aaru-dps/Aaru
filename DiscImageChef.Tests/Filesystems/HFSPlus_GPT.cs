@@ -40,37 +40,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class HFSPlus_GPT
     {
-        readonly string[] testfiles = {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz",
-        };
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            409600, 614400,
-        };
+        readonly ulong[] sectors = {409600, 614400,};
 
-        readonly uint[] sectorsize = {
-            512, 512
-        };
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {
-            51190, 76790,
-        };
+        readonly long[] clusters = {51190, 76790,};
 
-        readonly int[] clustersize = {
-            4096, 4096,
-        };
+        readonly int[] clustersize = {4096, 4096,};
 
-        readonly string[] volumename = {
-            null, null,
-        };
+        readonly string[] volumename = {null, null,};
 
-        readonly string[] volumeserial = {
-            "D8C68470046E67BE","FD3CB598F3C6294A",
-        };
+        readonly string[] volumeserial = {"D8C68470046E67BE", "FD3CB598F3C6294A",};
 
-        readonly string[] oemid = {
-            "10.0","HFSJ"
-        };
+        readonly string[] oemid = {"10.0", "HFSJ"};
 
         [Test]
         public void Test()
@@ -95,6 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

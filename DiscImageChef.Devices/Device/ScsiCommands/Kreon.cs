@@ -56,7 +56,8 @@ namespace DiscImageChef.Devices
             cdb[2] = 0x01;
             cdb[3] = 0x01;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "KREON DEPRECATED UNLOCK took {0} ms.", duration);
@@ -121,7 +122,8 @@ namespace DiscImageChef.Devices
             cdb[3] = 0x11;
             cdb[4] = (byte)state;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "KREON SET LOCK STATE took {0} ms.", duration);
@@ -137,7 +139,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         /// <param name="features">Features supported by drive.</param>
-        public bool KreonGetFeatureList(out byte[] senseBuffer, out KreonFeatures features, uint timeout, out double duration)
+        public bool KreonGetFeatureList(out byte[] senseBuffer, out KreonFeatures features, uint timeout,
+                                        out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
@@ -150,23 +153,21 @@ namespace DiscImageChef.Devices
             cdb[2] = 0x01;
             cdb[3] = 0x10;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "KREON GET FEATURE LIST took {0} ms.", duration);
 
-            if(sense)
-                return sense;
+            if(sense) return sense;
 
-            if(buffer[0] != 0xA5 || buffer[1] != 0x5A || buffer[2] != 0x5A || buffer[3] != 0xA5)
-                return true;
+            if(buffer[0] != 0xA5 || buffer[1] != 0x5A || buffer[2] != 0x5A || buffer[3] != 0xA5) return true;
 
             for(int i = 4; i < 26; i += 2)
             {
                 ushort feature = BitConverter.ToUInt16(buffer, i);
 
-                if(feature == 0x0000)
-                    break;
+                if(feature == 0x0000) break;
 
                 switch(feature)
                 {
@@ -214,7 +215,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         /// <param name="buffer">The SS sector.</param>
-        public bool KreonExtractSS(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration, byte requestNumber = 0x00)
+        public bool KreonExtractSS(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration,
+                                   byte requestNumber = 0x00)
         {
             buffer = new byte[2048];
             byte[] cdb = new byte[12];
@@ -234,7 +236,8 @@ namespace DiscImageChef.Devices
             cdb[10] = requestNumber;
             cdb[11] = 0xC0;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "KREON EXTRACT SS took {0} ms.", duration);
@@ -243,4 +246,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

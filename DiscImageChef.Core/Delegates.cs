@@ -30,21 +30,23 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-
 namespace DiscImageChef.Core
 {
     /// <summary>
     /// Initializates a progress indicator (e.g. makes a progress bar visible)
     /// </summary>
     public delegate void InitProgressHandler();
+
     /// <summary>
     /// Updates a progress indicator with text
     /// </summary>
     public delegate void UpdateProgressHandler(string text, long current, long maximum);
+
     /// <summary>
     /// Pulses a progress indicator with indeterminate boundaries
     /// </summary>
     public delegate void PulseProgressHandler(string text);
+
     /// <summary>
     /// Uninitializates a progress indicator (e.g. adds a newline to the console)
     /// </summary>
@@ -54,14 +56,17 @@ namespace DiscImageChef.Core
     /// Initializates a secondary progress indicator (e.g. makes a progress bar visible)
     /// </summary>
     public delegate void InitProgressHandler2();
+
     /// <summary>
     /// Updates a secondary progress indicator with text
     /// </summary>
     public delegate void UpdateProgressHandler2(string text, long current, long maximum);
+
     /// <summary>
     /// Pulses a secondary progress indicator with indeterminate boundaries
     /// </summary>
     public delegate void PulseProgressHandler2(string text);
+
     /// <summary>
     /// Uninitializates a secondary progress indicator (e.g. adds a newline to the console)
     /// </summary>
@@ -71,14 +76,18 @@ namespace DiscImageChef.Core
     /// Initializates two progress indicators (e.g. makes a progress bar visible)
     /// </summary>
     public delegate void InitTwoProgressHandler();
+
     /// <summary>
     /// Updates two progress indicators with text
     /// </summary>
-    public delegate void UpdateTwoProgressHandler(string text, long current, long maximum, string text2, long current2, long maximum2);
+    public delegate void UpdateTwoProgressHandler(string text, long current, long maximum, string text2, long current2,
+                                                  long maximum2);
+
     /// <summary>
     /// Pulses a progress indicator with indeterminate boundaries
     /// </summary>
     public delegate void PulseTwoProgressHandler(string text, string text2);
+
     /// <summary>
     /// Uninitializates a progress indicator (e.g. adds a newline to the console)
     /// </summary>

@@ -41,28 +41,23 @@ namespace DiscImageChef.Filesystems.AppleDOS
     {
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
 
-            if(!fileCache.ContainsKey(filename))
-                return Errno.NoSuchFile;
+            if(!fileCache.ContainsKey(filename)) return Errno.NoSuchFile;
 
             attributes = new FileAttributes();
             attributes = FileAttributes.Extents;
             attributes |= FileAttributes.File;
-            if(lockedFiles.Contains(filename))
-                attributes |= FileAttributes.ReadOnly;
+            if(lockedFiles.Contains(filename)) attributes |= FileAttributes.ReadOnly;
 
-            if(debug &&
-                (string.Compare(path, "$", StringComparison.InvariantCulture) == 0
-                || string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0
-                || string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             {
                 attributes |= FileAttributes.System;
             }
@@ -72,49 +67,38 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
         public override Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             byte[] file;
             Errno error;
             string filename = pathElements[0].ToUpperInvariant();
-            if(filename.Length > 30)
-                return Errno.NameTooLong;
+            if(filename.Length > 30) return Errno.NameTooLong;
 
-            if(debug &&
-                (string.Compare(path, "$", StringComparison.InvariantCulture) == 0
-                || string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0
-                || string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             {
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                    file = catalogBlocks;
-                if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)
-                    file = vtocBlocks;
-                else
-                    file = bootBlocks;
+                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0) file = catalogBlocks;
+                if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0) file = vtocBlocks;
+                else file = bootBlocks;
             }
             else
             {
                 if(!fileCache.TryGetValue(filename, out file))
                 {
                     error = CacheFile(filename);
-                    if(error != Errno.NoError)
-                        return error;
+                    if(error != Errno.NoError) return error;
 
-                    if(!fileCache.TryGetValue(filename, out file))
-                        return Errno.InvalidArgument;
+                    if(!fileCache.TryGetValue(filename, out file)) return Errno.InvalidArgument;
                 }
             }
 
-            if(offset >= file.Length)
-                return Errno.InvalidArgument;
+            if(offset >= file.Length) return Errno.InvalidArgument;
 
-            if(size + offset >= file.Length)
-                size = file.Length - offset;
+            if(size + offset >= file.Length) size = file.Length - offset;
 
             buf = new byte[size];
 
@@ -125,19 +109,15 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
         public override Errno Stat(string path, ref FileEntryInfo stat)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
-            if(filename.Length > 30)
-                return Errno.NameTooLong;
+            if(filename.Length > 30) return Errno.NameTooLong;
 
-            if(!fileCache.ContainsKey(filename))
-                return Errno.NoSuchFile;
+            if(!fileCache.ContainsKey(filename)) return Errno.NoSuchFile;
 
             int filesize;
             FileAttributes attrs = new FileAttributes();
@@ -147,10 +127,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             stat = new FileEntryInfo();
 
-            if(debug &&
-                (string.Compare(path, "$", StringComparison.InvariantCulture) == 0
-                || string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0
-                || string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             {
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                     stat.Length = catalogBlocks.Length;
@@ -176,8 +155,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
         public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             // TODO: Not really important.
             return Errno.NotImplemented;
@@ -185,18 +163,15 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
         Errno CacheFile(string path)
         {
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
-            if(filename.Length > 30)
-                return Errno.NameTooLong;
+            if(filename.Length > 30) return Errno.NameTooLong;
 
             ushort ts;
 
-            if(!catalogCache.TryGetValue(filename, out ts))
-                return Errno.NoSuchFile;
+            if(!catalogCache.TryGetValue(filename, out ts)) return Errno.NoSuchFile;
 
             ulong lba = (ulong)((((ts & 0xFF00) >> 8) * sectorsPerTrack) + (ts & 0xFF));
             MemoryStream fileMs = new MemoryStream();
@@ -207,8 +182,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             {
                 usedSectors++;
                 byte[] tsSector_b = device.ReadSector(lba);
-                if(debug)
-                    tsListMs.Write(tsSector_b, 0, tsSector_b.Length);
+                if(debug) tsListMs.Write(tsSector_b, 0, tsSector_b.Length);
 
                 // Read the track/sector list sector
                 TrackSectorList tsSector = new TrackSectorList();
@@ -231,8 +205,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                     usedSectors++;
 
                     ulong blockLba = (ulong)((entry.track * sectorsPerTrack) + entry.sector);
-                    if(blockLba == 0)
-                        break;
+                    if(blockLba == 0) break;
 
                     byte[] fileBlock = device.ReadSector(blockLba);
                     fileMs.Write(fileBlock, 0, fileBlock.Length);
@@ -242,10 +215,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 lba = (ulong)((tsSector.nextListTrack * sectorsPerTrack) + tsSector.nextListSector);
             }
 
-            if(fileCache.ContainsKey(filename))
-                fileCache.Remove(filename);
-            if(extentCache.ContainsKey(filename))
-                extentCache.Remove(filename);
+            if(fileCache.ContainsKey(filename)) fileCache.Remove(filename);
+            if(extentCache.ContainsKey(filename)) extentCache.Remove(filename);
 
             fileCache.Add(filename, fileMs.ToArray());
             extentCache.Add(filename, tsListMs.ToArray());
@@ -262,15 +233,12 @@ namespace DiscImageChef.Filesystems.AppleDOS
             foreach(string file in catalogCache.Keys)
             {
                 error = CacheFile(file);
-                if(error != Errno.NoError)
-                    return error;
+                if(error != Errno.NoError) return error;
             }
 
             uint tracksOnBoot = 1;
-            if(!track1UsedByFiles)
-                tracksOnBoot++;
-            if(!track2UsedByFiles)
-                tracksOnBoot++;
+            if(!track1UsedByFiles) tracksOnBoot++;
+            if(!track2UsedByFiles) tracksOnBoot++;
 
             bootBlocks = device.ReadSectors(0, (uint)(tracksOnBoot * sectorsPerTrack));
             usedSectors += bootBlocks.Length / vtoc.bytesPerSector;

@@ -121,16 +121,13 @@ namespace DiscImageChef.Metadata
 
     public class ChecksumStats
     {
-        [XmlAttribute]
-        public string algorithm;
-        [XmlText]
-        public double Value;
+        [XmlAttribute] public string algorithm;
+        [XmlText] public double Value;
     }
 
     public class BenchmarkStats
     {
-        [XmlElement("Checksum")]
-        public List<ChecksumStats> Checksum;
+        [XmlElement("Checksum")] public List<ChecksumStats> Checksum;
         public double Entropy;
         public double All;
         public double Sequential;
@@ -140,12 +137,9 @@ namespace DiscImageChef.Metadata
 
     public class MediaStats
     {
-        [XmlAttribute]
-        public bool real;
-        [XmlAttribute]
-        public string type;
-        [XmlText]
-        public long Value;
+        [XmlAttribute] public bool real;
+        [XmlAttribute] public string type;
+        [XmlText] public long Value;
     }
 
     public class DeviceStats
@@ -155,8 +149,7 @@ namespace DiscImageChef.Metadata
         public string Revision { get; set; }
         public string Bus { get; set; }
 
-        [XmlIgnore]
-        public bool ManufacturerSpecified;
+        [XmlIgnore] public bool ManufacturerSpecified;
     }
 
     public class NameValueStats

@@ -40,7 +40,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class QED : ImagePlugin
+    public class QED : ImagePlugin
     {
         #region Internal constants
         /// <summary>
@@ -176,8 +176,7 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+            if(stream.Length < 512) return false;
 
             byte[] qHdr_b = new byte[64];
             stream.Read(qHdr_b, 0, 64);
@@ -195,8 +194,7 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+            if(stream.Length < 512) return false;
 
             byte[] qHdr_b = new byte[64];
             stream.Read(qHdr_b, 0, 64);
@@ -225,16 +223,20 @@ namespace DiscImageChef.ImagePlugins
                 throw new ArgumentOutOfRangeException(nameof(qHdr.cluster_size), "Cluster size must be a power of 2");
 
             if(qHdr.cluster_size < 4096 || qHdr.cluster_size > 67108864)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.cluster_size), "Cluster size must be between 4 Kbytes and 64 Mbytes");
+                throw new ArgumentOutOfRangeException(nameof(qHdr.cluster_size),
+                                                      "Cluster size must be between 4 Kbytes and 64 Mbytes");
 
             if(!IsPowerOfTwo(qHdr.table_size))
                 throw new ArgumentOutOfRangeException(nameof(qHdr.table_size), "Table size must be a power of 2");
 
             if(qHdr.table_size < 1 || qHdr.table_size > 16)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.table_size), "Table size must be between 1 and 16 clusters");
+                throw new ArgumentOutOfRangeException(nameof(qHdr.table_size),
+                                                      "Table size must be between 1 and 16 clusters");
 
             if((qHdr.features & QedFeatureMask) > 0)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.features), string.Format("Image uses unknown incompatible features {0:X}", qHdr.features & QedFeatureMask));
+                throw new ArgumentOutOfRangeException(nameof(qHdr.features),
+                                                      string.Format("Image uses unknown incompatible features {0:X}",
+                                                                    qHdr.features & QedFeatureMask));
 
             if((qHdr.features & QedFeature_BackingFile) == QedFeature_BackingFile)
                 throw new NotImplementedException("Differencing images not yet supported");
@@ -250,14 +252,13 @@ namespace DiscImageChef.ImagePlugins
             stream.Read(l1Table_b, 0, (int)tableSize * 8);
             l1Table = new ulong[tableSize];
             DicConsole.DebugWriteLine("QED plugin", "Reading L1 table");
-			for(long i = 0; i < l1Table.LongLength; i++)
-				l1Table[i] = BitConverter.ToUInt64(l1Table_b, (int)(i * 8));
+            for(long i = 0; i < l1Table.LongLength; i++) l1Table[i] = BitConverter.ToUInt64(l1Table_b, (int)(i * 8));
 
             l1Mask = 0;
             int c = 0;
             clusterBits = ctz32(qHdr.cluster_size);
-			l2Mask = (tableSize - 1) << clusterBits;
-			l1Shift = clusterBits + ctz32(tableSize);
+            l2Mask = (tableSize - 1) << clusterBits;
+            l1Shift = clusterBits + ctz32(tableSize);
 
             for(int i = 0; i < 64; i++)
             {
@@ -270,10 +271,8 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-
             sectorMask = 0;
-            for(int i = 0; i < clusterBits; i++)
-                sectorMask = (sectorMask << 1) + 1;
+            for(int i = 0; i < clusterBits; i++) sectorMask = (sectorMask << 1) + 1;
 
             DicConsole.DebugWriteLine("QED plugin", "qHdr.clusterBits = {0}", clusterBits);
             DicConsole.DebugWriteLine("QED plugin", "qHdr.l1Mask = {0:X}", l1Mask);
@@ -299,34 +298,36 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.mediaType = MediaType.GENERIC_HDD;
             ImageInfo.imageSize = qHdr.image_size;
 
-			ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-			ImageInfo.heads = 16;
-			ImageInfo.sectorsPerTrack = 63;
+            ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+            ImageInfo.heads = 16;
+            ImageInfo.sectorsPerTrack = 63;
 
-			return true;
+            return true;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                      string.Format("Sector address {0} not found", sectorAddress));
 
             byte[] sector;
 
             // Check cache
-            if(sectorCache.TryGetValue(sectorAddress, out sector))
-                return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
 
             ulong byteAddress = sectorAddress * 512;
 
             ulong l1Off = (byteAddress & l1Mask) >> l1Shift;
 
             if((long)l1Off >= l1Table.LongLength)
-                throw new ArgumentOutOfRangeException(nameof(l1Off), string.Format("Trying to read past L1 table, position {0} of a max {1}", l1Off, l1Table.LongLength));
+                throw new ArgumentOutOfRangeException(nameof(l1Off),
+                                                      string
+                                                          .Format("Trying to read past L1 table, position {0} of a max {1}",
+                                                                  l1Off, l1Table.LongLength));
 
             // TODO: Implement differential images
-            if(l1Table[l1Off] == 0)
-                return new byte[512];
+            if(l1Table[l1Off] == 0) return new byte[512];
 
             ulong[] l2Table;
 
@@ -337,18 +338,17 @@ namespace DiscImageChef.ImagePlugins
                 byte[] l2Table_b = new byte[tableSize * 8];
                 imageStream.Read(l2Table_b, 0, (int)tableSize * 8);
                 DicConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
-				for(long i = 0; i < l2Table.LongLength; i++)
-					l2Table[i] = BitConverter.ToUInt64(l2Table_b, (int)(i * 8));
+                for(long i = 0; i < l2Table.LongLength; i++)
+                    l2Table[i] = BitConverter.ToUInt64(l2Table_b, (int)(i * 8));
 
-                if(l2TableCache.Count >= maxL2TableCache)
-                    l2TableCache.Clear();
+                if(l2TableCache.Count >= maxL2TableCache) l2TableCache.Clear();
 
                 l2TableCache.Add(l1Off, l2Table);
             }
 
             ulong l2Off = (byteAddress & l2Mask) >> clusterBits;
 
-			ulong offset = l2Table[l2Off];
+            ulong offset = l2Table[l2Off];
 
             sector = new byte[512];
 
@@ -361,8 +361,7 @@ namespace DiscImageChef.ImagePlugins
                     imageStream.Seek((long)offset, SeekOrigin.Begin);
                     imageStream.Read(cluster, 0, (int)qHdr.cluster_size);
 
-                    if(clusterCache.Count >= maxClusterCache)
-                        clusterCache.Clear();
+                    if(clusterCache.Count >= maxClusterCache) clusterCache.Clear();
 
                     clusterCache.Add(offset, cluster);
                 }
@@ -370,8 +369,7 @@ namespace DiscImageChef.ImagePlugins
                 Array.Copy(cluster, (int)(byteAddress & sectorMask), sector, 0, 512);
             }
 
-            if(sectorCache.Count >= maxCachedSectors)
-                sectorCache.Clear();
+            if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 
@@ -381,7 +379,8 @@ namespace DiscImageChef.ImagePlugins
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                      string.Format("Sector address {0} not found", sectorAddress));
 
             if(sectorAddress + length > ImageInfo.sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
@@ -469,8 +468,8 @@ namespace DiscImageChef.ImagePlugins
 
         bool IsPowerOfTwo(uint x)
         {
-            while(((x & 1) == 0) && x > 1)
-                x >>= 1;
+            while(((x & 1) == 0) && x > 1) x >>= 1;
+
             return (x == 1);
         }
 
@@ -502,16 +501,12 @@ namespace DiscImageChef.ImagePlugins
                 cnt++;
                 val >>= 1;
             }
-            if((val & 0x1) == 0)
-            {
-                cnt++;
-            }
+            if((val & 0x1) == 0) { cnt++; }
 
             return cnt;
         }
 
         #region Unsupported features
-
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -652,16 +647,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -670,8 +667,6 @@ namespace DiscImageChef.ImagePlugins
         {
             return null;
         }
-
         #endregion
     }
 }
-

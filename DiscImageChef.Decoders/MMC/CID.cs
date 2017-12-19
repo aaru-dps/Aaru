@@ -51,11 +51,9 @@ namespace DiscImageChef.Decoders.MMC
     {
         public static CID DecodeCID(uint[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 4)
-                return null;
+            if(response.Length != 4) return null;
 
             byte[] data = new byte[16];
             byte[] tmp = new byte[4];
@@ -74,11 +72,9 @@ namespace DiscImageChef.Decoders.MMC
 
         public static CID DecodeCID(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 16)
-                return null;
+            if(response.Length != 16) return null;
 
             byte[] tmp;
 
@@ -99,8 +95,7 @@ namespace DiscImageChef.Decoders.MMC
 
         public static string PrettifyCID(CID cid)
         {
-            if(cid == null)
-                return null;
+            if(cid == null) return null;
 
             StringBuilder sb = new StringBuilder();
 
@@ -118,9 +113,11 @@ namespace DiscImageChef.Decoders.MMC
                     sb.AppendLine("\tPOP device");
                     break;
             }
+
             sb.AppendFormat("\tApplication ID: {0}", cid.ApplicationID).AppendLine();
             sb.AppendFormat("\tProduct name: {0}", cid.ProductName).AppendLine();
-            sb.AppendFormat("\tProduct revision: {0:X2}.{1:X2}", (cid.ProductRevision & 0xF0) >> 4, cid.ProductRevision & 0x0F).AppendLine();
+            sb.AppendFormat("\tProduct revision: {0:X2}.{1:X2}", (cid.ProductRevision & 0xF0) >> 4,
+                            cid.ProductRevision & 0x0F).AppendLine();
             sb.AppendFormat("\tProduct serial number: {0}", cid.ProductSerialNumber).AppendLine();
             string year = "";
             switch(cid.ManufacturingDate & 0x0F)
@@ -174,7 +171,9 @@ namespace DiscImageChef.Decoders.MMC
                     year = "2012";
                     break;
             }
-            sb.AppendFormat("\tDevice manufactured month {0} of {1}", (cid.ManufacturingDate & 0xF0) >> 4, year).AppendLine();
+
+            sb.AppendFormat("\tDevice manufactured month {0} of {1}", (cid.ManufacturingDate & 0xF0) >> 4, year)
+              .AppendLine();
             sb.AppendFormat("\tCID CRC: 0x{0:X2}", cid.CRC).AppendLine();
 
             return sb.ToString();

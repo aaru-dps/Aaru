@@ -79,7 +79,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -88,8 +88,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                 DicConsole.WriteLine("{0} Block Address: {1}", physical ? "Physical" : "Logical", address);
                 DicConsole.WriteLine("Relative?: {0}", relative);
                 DicConsole.WriteLine("Will transfer {0} {1}", length, sectorCount ? "sectors" : "bytes");
-                if(sectorCount)
-                    DicConsole.WriteLine("Expected sector size: {0} bytes", bps);
+                if(sectorCount) DicConsole.WriteLine("Expected sector size: {0} bytes", bps);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -119,6 +118,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("Relative address?: ");
                         strDev = System.Console.ReadLine();
                         if(!bool.TryParse(strDev, out relative))
@@ -128,6 +128,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("{0} Block Address?: ", physical ? "Physical" : "Logical");
                         strDev = System.Console.ReadLine();
                         if(!uint.TryParse(strDev, out address))
@@ -137,6 +138,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("Transfer sectors?: ");
                         strDev = System.Console.ReadLine();
                         if(!bool.TryParse(strDev, out sectorCount))
@@ -146,6 +148,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("How many {0} to transfer?: ", sectorCount ? "sectors" : "bytes");
                         strDev = System.Console.ReadLine();
                         if(!ushort.TryParse(strDev, out length))
@@ -155,6 +158,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         if(sectorCount)
                         {
                             DicConsole.Write("How many bytes to expect per sector?");
@@ -167,24 +171,26 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                 continue;
                             }
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.HPReadLong(out byte[] buffer, out byte[] senseBuffer, relative, address, length, bps, physical, sectorCount, dev.Timeout, out double duration);
+            bool sense = dev.HPReadLong(out byte[] buffer, out byte[] senseBuffer, relative, address, length, bps,
+                                        physical, sectorCount, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ LONG to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",
+                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -214,8 +220,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ LONG response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -225,8 +230,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ LONG sense:");
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -242,10 +246,8 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
-                case 5:
-                    goto parameters;
+                case 4: goto start;
+                case 5: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();

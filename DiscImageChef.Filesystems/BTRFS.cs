@@ -57,27 +57,22 @@ namespace DiscImageChef.Filesystems
         {
             Name = "B-tree file system";
             PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public BTRFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "B-tree file system";
             PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SuperBlock
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20)]
-            public byte[] checksum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20)] public byte[] checksum;
             public Guid uuid;
             public ulong pba;
             public ulong flags;
@@ -105,14 +100,10 @@ namespace DiscImageChef.Filesystems
             public byte chunk_root_level;
             public byte log_root_level;
             public DevItem dev_item;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x100)]
-            public string label;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)]
-            public byte[] reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x800)]
-            public byte[] chunkpairs;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x4D5)]
-            public byte[] unused;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x100)] public string label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x800)] public byte[] chunkpairs;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x4D5)] public byte[] unused;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -136,14 +127,12 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End)
-                return false;
+            if(partition.Start >= partition.End) return false;
 
             ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
             uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
 
-            if((sbSectorOff + partition.Start) >= partition.End)
-                return false;
+            if((sbSectorOff + partition.Start) >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
             SuperBlock btrfsSb;
@@ -154,10 +143,7 @@ namespace DiscImageChef.Filesystems
                 btrfsSb = (SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SuperBlock));
                 handle.Free();
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
 
             DicConsole.DebugWriteLine("BTRFS Plugin", "sbSectorOff = {0}", sbSectorOff);
             DicConsole.DebugWriteLine("BTRFS Plugin", "sbSectorSize = {0}", sbSectorSize);
@@ -167,7 +153,8 @@ namespace DiscImageChef.Filesystems
             return btrfsSb.magic == btrfsMagic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             xmlFSType = new Schemas.FileSystemType();
@@ -202,7 +189,8 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.leafsize = {0}", btrfsSb.leafsize);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.stripesize = {0}", btrfsSb.stripesize);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.n = {0}", btrfsSb.n);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_root_generation = {0}", btrfsSb.chunk_root_generation);
+            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_root_generation = {0}",
+                                      btrfsSb.chunk_root_generation);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.compat_flags = 0x{0:X16}", btrfsSb.compat_flags);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.compat_ro_flags = 0x{0:X16}", btrfsSb.compat_ro_flags);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.incompat_flags = 0x{0:X16}", btrfsSb.incompat_flags);
@@ -213,16 +201,21 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.id = 0x{0:X16}", btrfsSb.dev_item.id);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bytes = {0}", btrfsSb.dev_item.bytes);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.used = {0}", btrfsSb.dev_item.used);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_align = {0}", btrfsSb.dev_item.optimal_align);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_width = {0}", btrfsSb.dev_item.optimal_width);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.minimal_size = {0}", btrfsSb.dev_item.minimal_size);
+            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_align = {0}",
+                                      btrfsSb.dev_item.optimal_align);
+            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_width = {0}",
+                                      btrfsSb.dev_item.optimal_width);
+            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.minimal_size = {0}",
+                                      btrfsSb.dev_item.minimal_size);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.type = {0}", btrfsSb.dev_item.type);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.generation = {0}", btrfsSb.dev_item.generation);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.start_offset = {0}", btrfsSb.dev_item.start_offset);
+            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.start_offset = {0}",
+                                      btrfsSb.dev_item.start_offset);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.dev_group = {0}", btrfsSb.dev_item.dev_group);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.seek_speed = {0}", btrfsSb.dev_item.seek_speed);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bandwitdh = {0}", btrfsSb.dev_item.bandwitdh);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.device_uuid = {0}", btrfsSb.dev_item.device_uuid);
+            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.device_uuid = {0}",
+                                      btrfsSb.dev_item.device_uuid);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.uuid = {0}", btrfsSb.dev_item.uuid);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.label = {0}", btrfsSb.label);
 
@@ -232,7 +225,8 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Root tree starts at LBA {0}", btrfsSb.root_lba).AppendLine();
             sbInformation.AppendFormat("Chunk tree starts at LBA {0}", btrfsSb.chunk_lba).AppendLine();
             sbInformation.AppendFormat("Log tree starts at LBA {0}", btrfsSb.log_lba).AppendLine();
-            sbInformation.AppendFormat("Volume has {0} bytes spanned in {1} devices", btrfsSb.total_bytes, btrfsSb.num_devices).AppendLine();
+            sbInformation.AppendFormat("Volume has {0} bytes spanned in {1} devices", btrfsSb.total_bytes,
+                                       btrfsSb.num_devices).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes used", btrfsSb.bytes_used).AppendLine();
             sbInformation.AppendFormat("{0} bytes/sector", btrfsSb.sectorsize).AppendLine();
             sbInformation.AppendFormat("{0} bytes/node", btrfsSb.nodesize).AppendLine();
@@ -319,4 +313,3 @@ namespace DiscImageChef.Filesystems
         }
     }
 }
-

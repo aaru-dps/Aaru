@@ -40,37 +40,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class AFS_MBR
     {
-        readonly string[] testfiles = {
-            "scoopenserver_5.0.7hw.vdi.lz"
-        };
+        readonly string[] testfiles = {"scoopenserver_5.0.7hw.vdi.lz"};
 
-        readonly ulong[] sectors = {
-            1024000,
-        };
+        readonly ulong[] sectors = {1024000,};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            510048,
-        };
+        readonly long[] clusters = {510048,};
 
-        readonly int[] clustersize = {
-            1024,
-        };
+        readonly int[] clustersize = {1024,};
 
-        readonly string[] volumename = {
-            "Volume label",
-        };
+        readonly string[] volumename = {"Volume label",};
 
-        readonly string[] volumeserial = {
-            null, null,
-        };
+        readonly string[] volumeserial = {null, null,};
 
-        readonly string[] type = {
-            "Acer Fast Filesystem",
-        };
+        readonly string[] type = {"Acer Fast Filesystem",};
 
         [Test]
         public void Test()
@@ -95,6 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

@@ -60,11 +60,9 @@ namespace DiscImageChef.Filesystems.LisaFS
             short fileId;
             bool isDir;
             Errno error = LookupFileId(path, out fileId, out isDir);
-            if(error != Errno.NoError)
-                return error;
+            if(error != Errno.NoError) return error;
 
-            if(!isDir)
-                return Errno.NotDirectory;
+            if(!isDir) return Errno.NotDirectory;
 
             /*List<CatalogEntry> catalog;
             error = ReadCatalog(fileId, out catalog);
@@ -108,8 +106,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         Errno ReadCatalog()
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             catalogCache = new List<CatalogEntry>();
 
@@ -186,8 +183,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
 
             // Catalog not found
-            if(firstCatalogBlock == null)
-                return Errno.NoSuchFile;
+            if(firstCatalogBlock == null) return Errno.NoSuchFile;
 
             ulong prevCatalogPointer;
             prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
@@ -196,10 +192,10 @@ namespace DiscImageChef.Filesystems.LisaFS
             while(prevCatalogPointer != 0xFFFFFFFF)
             {
                 LisaTag.PriamTag prevTag;
-                DecodeTag(device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag), out prevTag);
+                DecodeTag(device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
+                          out prevTag);
 
-                if(prevTag.fileID != FILEID_CATALOG)
-                    return Errno.InvalidArgument;
+                if(prevTag.fileID != FILEID_CATALOG) return Errno.InvalidArgument;
 
                 firstCatalogBlock = device.ReadSectors(prevCatalogPointer + mddf.mddf_block + volumePrefix, 4);
                 prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
@@ -215,10 +211,10 @@ namespace DiscImageChef.Filesystems.LisaFS
             while(nextCatalogPointer != 0xFFFFFFFF)
             {
                 LisaTag.PriamTag nextTag;
-                DecodeTag(device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag), out nextTag);
+                DecodeTag(device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
+                          out nextTag);
 
-                if(nextTag.fileID != FILEID_CATALOG)
-                    return Errno.InvalidArgument;
+                if(nextTag.fileID != FILEID_CATALOG) return Errno.InvalidArgument;
 
                 byte[] nextCatalogBlock = device.ReadSectors(nextCatalogPointer + mddf.mddf_block + volumePrefix, 4);
                 nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);
@@ -234,14 +230,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                 while((offset + 64) <= buf.Length)
                 {
                     // Catalog block header
-                    if(buf[offset + 0x24] == 0x08)
-                        offset += 78;
+                    if(buf[offset + 0x24] == 0x08) offset += 78;
                     // Maybe just garbage? Found in more than 1 disk
-                    else if(buf[offset + 0x24] == 0x7C)
-                        offset += 50;
+                    else if(buf[offset + 0x24] == 0x7C) offset += 50;
                     // Apparently reserved to indicate end of catalog?
-                    else if(buf[offset + 0x24] == 0xFF)
-                        break;
+                    else if(buf[offset + 0x24] == 0xFF) break;
                     // Normal entry
                     else if(buf[offset + 0x24] == 0x03 && buf[offset] == 0x24)
                     {
@@ -298,8 +291,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                         offset += 48;
                     }
-                    else
-                        break;
+                    else break;
                 }
             }
 
@@ -310,8 +302,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             stat = null;
 
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             stat = new FileEntryInfo();
             stat.Attributes = new FileAttributes();

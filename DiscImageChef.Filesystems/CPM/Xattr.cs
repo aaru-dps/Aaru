@@ -46,26 +46,21 @@ namespace DiscImageChef.Filesystems.CPM
         /// <param name="buf">Buffer.</param>
         public override Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
-            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
-                return Errno.NoSuchFile;
+            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return Errno.NoSuchFile;
 
             if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0)
             {
-                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
-                    return Errno.NoError;
+                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return Errno.NoError;
             }
 
             if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) == 0)
             {
-                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
-                    return Errno.NoError;
+                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return Errno.NoError;
             }
 
             return Errno.NoSuchExtendedAttribute;
@@ -79,19 +74,15 @@ namespace DiscImageChef.Filesystems.CPM
         /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
         public override Errno ListXAttr(string path, ref List<string> xattrs)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
-            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
-                return Errno.NoSuchFile;
+            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return Errno.NoSuchFile;
 
             xattrs = new List<string>();
-            if(passwordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
-                xattrs.Add("com.caldera.cpm.password");
+            if(passwordCache.ContainsKey(pathElements[0].ToUpperInvariant())) xattrs.Add("com.caldera.cpm.password");
 
             if(decodedPasswordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
                 xattrs.Add("com.caldera.cpm.password.text");
@@ -100,4 +91,3 @@ namespace DiscImageChef.Filesystems.CPM
         }
     }
 }
-

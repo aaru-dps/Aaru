@@ -187,4 +187,3 @@ namespace DiscImageChef.Filesystems.AppleMFS
         }
     }
 }
-

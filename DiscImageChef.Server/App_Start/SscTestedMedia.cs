@@ -43,14 +43,14 @@ namespace DiscImageChef.Server.App_Start
             {
                 if(!string.IsNullOrWhiteSpace(media.MediumTypeName))
                 {
-                    mediaOneValue.Add(string.Format("<i>Information for medium named \"{0}\"</i>", media.MediumTypeName));
+                    mediaOneValue.Add(string.Format("<i>Information for medium named \"{0}\"</i>",
+                                                    media.MediumTypeName));
                     if(media.MediumTypeSpecified)
                         mediaOneValue.Add(string.Format("Medium type code: {0:X2}h", media.MediumType));
                 }
                 else if(media.MediumTypeSpecified)
                     mediaOneValue.Add(string.Format("<i>Information for medium type {0:X2}h</i>", media.MediumType));
-                else
-                    mediaOneValue.Add("<i>Information for unknown medium type</i>");
+                else mediaOneValue.Add("<i>Information for unknown medium type</i>");
 
                 if(!string.IsNullOrWhiteSpace(media.Manufacturer))
                     mediaOneValue.Add(string.Format("Medium manufactured by: {0}", media.Manufacturer));
@@ -59,10 +59,8 @@ namespace DiscImageChef.Server.App_Start
 
                 if(media.DensitySpecified)
                     mediaOneValue.Add(string.Format("Medium has density code {0:X2}h", media.Density));
-                if(media.CanReadMediaSerial)
-                    mediaOneValue.Add("Drive can read medium serial number.");
-                if(media.MediaIsRecognized)
-                    mediaOneValue.Add("DiscImageChef recognizes this medium.");
+                if(media.CanReadMediaSerial) mediaOneValue.Add("Drive can read medium serial number.");
+                if(media.MediaIsRecognized) mediaOneValue.Add("DiscImageChef recognizes this medium.");
 
                 mediaOneValue.Add("");
             }

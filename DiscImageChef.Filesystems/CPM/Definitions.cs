@@ -48,7 +48,9 @@ namespace DiscImageChef.Filesystems.CPM
         {
             try
             {
-                XmlReader defsReader = XmlReader.Create(Assembly.GetExecutingAssembly().GetManifestResourceStream("DiscImageChef.Filesystems.CPM.cpmdefs.xml"));
+                XmlReader defsReader =
+                    XmlReader.Create(Assembly.GetExecutingAssembly()
+                                             .GetManifestResourceStream("DiscImageChef.Filesystems.CPM.cpmdefs.xml"));
                 XmlSerializer defsSerializer = new XmlSerializer(typeof(CpmDefinitions));
                 definitions = (CpmDefinitions)defsSerializer.Deserialize(defsReader);
 
@@ -60,8 +62,7 @@ namespace DiscImageChef.Filesystems.CPM
                         def.side1 = new Side();
                         def.side1.sideId = 0;
                         def.side1.sectorIds = new int[def.sectorsPerTrack];
-                        for(int i = 0; i < def.sectorsPerTrack; i++)
-                            def.side1.sectorIds[i] = i + 1;
+                        for(int i = 0; i < def.sectorsPerTrack; i++) def.side1.sectorIds[i] = i + 1;
                     }
 
                     if(def.sides == 2 && def.side2 == null)
@@ -69,17 +70,13 @@ namespace DiscImageChef.Filesystems.CPM
                         def.side2 = new Side();
                         def.side2.sideId = 1;
                         def.side2.sectorIds = new int[def.sectorsPerTrack];
-                        for(int i = 0; i < def.sectorsPerTrack; i++)
-                            def.side2.sectorIds[i] = i + 1;
+                        for(int i = 0; i < def.sectorsPerTrack; i++) def.side2.sectorIds[i] = i + 1;
                     }
                 }
 
                 return true;
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
         }
     }
 
@@ -212,4 +209,3 @@ namespace DiscImageChef.Filesystems.CPM
         public int[] sectorIds;
     }
 }
-

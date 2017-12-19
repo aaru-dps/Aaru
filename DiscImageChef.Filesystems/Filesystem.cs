@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems
     /// <summary>
     /// Abstract class to implement filesystem plugins.
     /// </summary>
-	public abstract class Filesystem
+    public abstract class Filesystem
     {
         /// <summary>Plugin name.</summary>
         public string Name;
@@ -55,20 +55,13 @@ namespace DiscImageChef.Filesystems
         /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
         public Schemas.FileSystemType XmlFSType
         {
-            get
-            {
-                return xmlFSType;
-            }
+            get { return xmlFSType; }
         }
 
-        protected Filesystem()
-        {
-        }
+        protected Filesystem() { }
 
         // TODO: Call other constructors
-        protected Filesystem(Encoding encoding)
-        {
-        }
+        protected Filesystem(Encoding encoding) { }
 
         /// <summary>
         /// Initializes a filesystem instance prepared for reading contents
@@ -76,9 +69,7 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin">Image plugin.</param>
         /// <param name="partition">Partition.</param>
         /// <param name="encoding">Which encoding to use for this filesystem.</param>
-        protected Filesystem(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
-        {
-        }
+        protected Filesystem(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding) { }
 
         /// <summary>
         /// Identifies the filesystem in the specified LBA
@@ -94,7 +85,8 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partition">Partition.</param>
         /// <param name="information">Filesystem information.</param>
-        public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information);
+        public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information);
 
         /// <summary>
         /// Initializates whatever internal structures the filesystem plugin needs to be able to read files and directories from the filesystem.
@@ -182,4 +174,3 @@ namespace DiscImageChef.Filesystems
         public abstract Errno ReadLink(string path, ref string dest);
     }
 }
-

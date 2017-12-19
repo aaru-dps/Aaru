@@ -40,33 +40,20 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class JFS2
     {
-        readonly string[] testfiles = {
-            "linux.vdi.lz","linux_caseinsensitive.vdi.lz",
-        };
+        readonly string[] testfiles = {"linux.vdi.lz", "linux_caseinsensitive.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            262144, 262144,
-        };
+        readonly ulong[] sectors = {262144, 262144,};
 
-        readonly uint[] sectorsize = {
-            512, 512,
-        };
+        readonly uint[] sectorsize = {512, 512,};
 
-        readonly long[] clusters = {
-            257632, 257632,
-        };
+        readonly long[] clusters = {257632, 257632,};
 
-        readonly int[] clustersize = {
-            4096, 4096,
-        };
+        readonly int[] clustersize = {4096, 4096,};
 
-        readonly string[] volumename = {
-            "Volume labe", "Volume labe",
-        };
+        readonly string[] volumename = {"Volume labe", "Volume labe",};
 
-        readonly string[] volumeserial = {
-            "8033b783-0cd1-1645-8ecc-f8f113ad6a47", "d6cd91e9-3899-7e40-8468-baab688ee2e2",
-        };
+        readonly string[] volumeserial =
+            {"8033b783-0cd1-1645-8ecc-f8f113ad6a47", "d6cd91e9-3899-7e40-8468-baab688ee2e2",};
 
         [Test]
         public void Test()
@@ -91,6 +78,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

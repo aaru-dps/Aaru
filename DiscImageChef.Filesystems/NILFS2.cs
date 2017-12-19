@@ -85,8 +85,7 @@ namespace DiscImageChef.Filesystems
             public ushort checkpoint_size;
             public ushort segment_usage_size;
             public Guid uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
-            public byte[] volume_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)] public byte[] volume_name;
             public uint c_interval;
             public uint c_block_max;
             public ulong feature_compat;
@@ -108,43 +107,34 @@ namespace DiscImageChef.Filesystems
         {
             Name = "NILFS2 Plugin";
             PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
-            if(encoding == null)
-                CurrentEncoding = Encoding.UTF8;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.UTF8;
+            else CurrentEncoding = encoding;
         }
 
         public NILFS2(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "NILFS2 Plugin";
             PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
-            if(encoding == null)
-                CurrentEncoding = Encoding.UTF8;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.UTF8;
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             uint sbAddr = NILFS2_SuperOffset / imagePlugin.GetSectorSize();
-            if(sbAddr == 0)
-                sbAddr = 1;
+            if(sbAddr == 0) sbAddr = 1;
 
             NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
 
             uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(nilfsSb) % imagePlugin.GetSectorSize() != 0)
-                sbSize++;
+            if(Marshal.SizeOf(nilfsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
-            if(partition.Start + sbAddr + sbSize >= partition.End)
-                return false;
+            if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(nilfsSb))
-                return false;
+            if(sector.Length < Marshal.SizeOf(nilfsSb)) return false;
 
             IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(nilfsSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(nilfsSb));
@@ -154,33 +144,29 @@ namespace DiscImageChef.Filesystems
             return nilfsSb.magic == NILFS2_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512)
-                return;
+            if(imagePlugin.GetSectorSize() < 512) return;
 
             uint sbAddr = NILFS2_SuperOffset / imagePlugin.GetSectorSize();
-            if(sbAddr == 0)
-                sbAddr = 1;
+            if(sbAddr == 0) sbAddr = 1;
 
             NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
 
             uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(nilfsSb) % imagePlugin.GetSectorSize() != 0)
-                sbSize++;
+            if(Marshal.SizeOf(nilfsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(nilfsSb))
-                return;
+            if(sector.Length < Marshal.SizeOf(nilfsSb)) return;
 
             IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(nilfsSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(nilfsSb));
             nilfsSb = (NILFS2_Superblock)Marshal.PtrToStructure(sbPtr, typeof(NILFS2_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            if(nilfsSb.magic != NILFS2_Magic)
-                return;
+            if(nilfsSb.magic != NILFS2_Magic) return;
 
             StringBuilder sb = new StringBuilder();
 
@@ -190,23 +176,23 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} bytes in volume", nilfsSb.dev_size).AppendLine();
             sb.AppendFormat("{0} blocks per segment", nilfsSb.blocks_per_segment).AppendLine();
             sb.AppendFormat("{0} segments", nilfsSb.nsegments).AppendLine();
-            if(nilfsSb.creator_os == 0)
-                sb.AppendLine("Filesystem created on Linux");
-            else
-                sb.AppendFormat("Creator OS code: {0}", nilfsSb.creator_os).AppendLine();
+            if(nilfsSb.creator_os == 0) sb.AppendLine("Filesystem created on Linux");
+            else sb.AppendFormat("Creator OS code: {0}", nilfsSb.creator_os).AppendLine();
             sb.AppendFormat("{0} bytes per inode", nilfsSb.inode_size).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", nilfsSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, CurrentEncoding))
+              .AppendLine();
             sb.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.ctime)).AppendLine();
-            sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.mtime)).AppendLine();
-            sb.AppendFormat("Volume last written on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.wtime)).AppendLine();
+            sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.mtime))
+              .AppendLine();
+            sb.AppendFormat("Volume last written on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.wtime))
+              .AppendLine();
 
             information = sb.ToString();
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "NILFS2 filesystem";
-            if(nilfsSb.creator_os == 0)
-                xmlFSType.SystemIdentifier = "Linux";
+            if(nilfsSb.creator_os == 0) xmlFSType.SystemIdentifier = "Linux";
             xmlFSType.ClusterSize = 1 << (int)(nilfsSb.log_block_size + 10);
             xmlFSType.Clusters = (long)nilfsSb.dev_size / xmlFSType.ClusterSize;
             xmlFSType.VolumeName = StringHandlers.CToString(nilfsSb.volume_name, CurrentEncoding);

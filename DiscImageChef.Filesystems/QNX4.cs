@@ -50,8 +50,7 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct QNX4_Inode
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] di_fname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] di_fname;
             public uint di_size;
             public QNX4_Extent di_first_xtnt;
             public uint di_xblk;
@@ -72,12 +71,10 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct QNX4_LinkInfo
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
-            public byte[] dl_fname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)] public byte[] dl_fname;
             public uint dl_inode_blk;
             public byte dl_inode_ndx;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] dl_spare;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] dl_spare;
             public byte dl_status;
         }
 
@@ -87,13 +84,10 @@ namespace DiscImageChef.Filesystems
             public uint next_xblk;
             public uint prev_xblk;
             public byte num_xtnts;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] spare;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] spare;
             public uint num_blocks;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]
-            public QNX4_Extent[] xtnts;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)] public QNX4_Extent[] xtnts;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] signature;
             public QNX4_Extent first_xtnt;
         }
 
@@ -106,7 +100,8 @@ namespace DiscImageChef.Filesystems
             public QNX4_Inode altBoot;
         }
 
-        readonly byte[] QNX4_RootDir_Fname = { 0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+        readonly byte[] QNX4_RootDir_Fname =
+            {0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
         public QNX4()
         {
@@ -119,30 +114,24 @@ namespace DiscImageChef.Filesystems
         {
             Name = "QNX4 Plugin";
             PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public QNX4(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX4 Plugin";
             PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start + 1 >= imagePlugin.GetSectors())
-                return false;
+            if(partition.Start + 1 >= imagePlugin.GetSectors()) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
-            if(sector.Length < 512)
-                return false;
+            if(sector.Length < 512) return false;
 
             QNX4_Superblock qnxSb = new QNX4_Superblock();
             IntPtr sbPtr = Marshal.AllocHGlobal(512);
@@ -151,39 +140,32 @@ namespace DiscImageChef.Filesystems
             Marshal.FreeHGlobal(sbPtr);
 
             // Check root directory name
-            if(!QNX4_RootDir_Fname.SequenceEqual(qnxSb.rootDir.di_fname))
-                return false;
+            if(!QNX4_RootDir_Fname.SequenceEqual(qnxSb.rootDir.di_fname)) return false;
 
             // Check sizes are multiple of blocks
-            if(qnxSb.rootDir.di_size % 512 != 0 ||
-               qnxSb.inode.di_size % 512 != 0 ||
-               qnxSb.boot.di_size % 512 != 0 ||
-               qnxSb.altBoot.di_size % 512 != 0)
-                return false;
+            if(qnxSb.rootDir.di_size % 512 != 0 || qnxSb.inode.di_size % 512 != 0 || qnxSb.boot.di_size % 512 != 0 ||
+               qnxSb.altBoot.di_size % 512 != 0) return false;
 
             // Check extents are not past device
             if(qnxSb.rootDir.di_first_xtnt.block + partition.Start >= partition.End ||
                qnxSb.inode.di_first_xtnt.block + partition.Start >= partition.End ||
                qnxSb.boot.di_first_xtnt.block + partition.Start >= partition.End ||
-               qnxSb.altBoot.di_first_xtnt.block + partition.Start >= partition.End)
-                return false;
+               qnxSb.altBoot.di_first_xtnt.block + partition.Start >= partition.End) return false;
 
             // Check inodes are in use
-            if((qnxSb.rootDir.di_status & 0x01) != 0x01 ||
-               (qnxSb.inode.di_status & 0x01) != 0x01 ||
-               (qnxSb.boot.di_status & 0x01) != 0x01)
-                return false;
+            if((qnxSb.rootDir.di_status & 0x01) != 0x01 || (qnxSb.inode.di_status & 0x01) != 0x01 ||
+               (qnxSb.boot.di_status & 0x01) != 0x01) return false;
 
             // All hail filesystems without identification marks
             return true;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
-            if(sector.Length < 512)
-                return;
+            if(sector.Length < 512) return;
 
             QNX4_Superblock qnxSb = new QNX4_Superblock();
             IntPtr sbPtr = Marshal.AllocHGlobal(512);
@@ -266,7 +248,8 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.altBoot.di_status = {0}", qnxSb.altBoot.di_status);
             */
 
-            information = string.Format("QNX4 filesystem\nCreated on {0}\n", DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime));
+            information = string.Format("QNX4 filesystem\nCreated on {0}\n",
+                                        DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime));
 
             xmlFSType = new Schemas.FileSystemType
             {

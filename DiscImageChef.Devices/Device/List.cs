@@ -50,16 +50,13 @@ namespace DiscImageChef.Devices
         {
             switch(Interop.DetectOS.GetRealPlatformID())
             {
-                case Interop.PlatformID.Win32NT:
-                    return Windows.ListDevices.GetList();
-                case Interop.PlatformID.Linux:
-                    return Linux.ListDevices.GetList();
-                case Interop.PlatformID.FreeBSD:
-                    return FreeBSD.ListDevices.GetList();
+                case Interop.PlatformID.Win32NT: return Windows.ListDevices.GetList();
+                case Interop.PlatformID.Linux: return Linux.ListDevices.GetList();
+                case Interop.PlatformID.FreeBSD: return FreeBSD.ListDevices.GetList();
                 default:
-                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", Interop.DetectOS.GetRealPlatformID()));
+                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.",
+                                                                      Interop.DetectOS.GetRealPlatformID()));
             }
-
         }
     }
 }

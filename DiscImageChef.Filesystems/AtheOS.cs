@@ -59,20 +59,16 @@ namespace DiscImageChef.Filesystems
         {
             Name = "AtheOS Filesystem";
             PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public AtheOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "AtheOS Filesystem";
             PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
@@ -84,8 +80,7 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.GetSectorSize() < AFS_SUPERBLOCK_SIZE)
                 run = AFS_SUPERBLOCK_SIZE / imagePlugin.GetSectorSize();
 
-            if((sector + partition.Start) >= partition.End)
-                return false;
+            if((sector + partition.Start) >= partition.End) return false;
 
             uint magic;
 
@@ -98,7 +93,8 @@ namespace DiscImageChef.Filesystems
             return magic == AFS_MAGIC1;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
@@ -123,26 +119,37 @@ namespace DiscImageChef.Filesystems
 
             sb.AppendLine("Atheos filesystem");
 
-            if(afs_sb.flags == 1)
-                sb.AppendLine("Filesystem is read-only");
+            if(afs_sb.flags == 1) sb.AppendLine("Filesystem is read-only");
 
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afs_sb.name, CurrentEncoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks in volume ({1} bytes)", afs_sb.num_blocks, afs_sb.num_blocks * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} used blocks ({1} bytes)", afs_sb.used_blocks, afs_sb.used_blocks * afs_sb.block_size).AppendLine();
+            sb.AppendFormat("{0} blocks in volume ({1} bytes)", afs_sb.num_blocks,
+                            afs_sb.num_blocks * afs_sb.block_size).AppendLine();
+            sb.AppendFormat("{0} used blocks ({1} bytes)", afs_sb.used_blocks, afs_sb.used_blocks * afs_sb.block_size)
+              .AppendLine();
             sb.AppendFormat("{0} bytes per i-node", afs_sb.inode_size).AppendLine();
-            sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", afs_sb.blocks_per_ag, afs_sb.blocks_per_ag * afs_sb.block_size).AppendLine();
+            sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", afs_sb.blocks_per_ag,
+                            afs_sb.blocks_per_ag * afs_sb.block_size).AppendLine();
             sb.AppendFormat("{0} allocation groups in volume", afs_sb.num_ags).AppendLine();
-            sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", afs_sb.log_blocks_start,
-                afs_sb.log_blocks_ag, afs_sb.log_blocks_len, afs_sb.log_blocks_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("Journal starts in byte {0} and has {1} bytes in {2} blocks", afs_sb.log_start, afs_sb.log_size, afs_sb.log_valid_blocks).AppendLine();
-            sb.AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", afs_sb.root_dir_start,
-                afs_sb.root_dir_ag, afs_sb.root_dir_len, afs_sb.root_dir_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("Directory containing files scheduled for deletion's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", afs_sb.deleted_start,
-                            afs_sb.deleted_ag, afs_sb.deleted_len, afs_sb.deleted_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", afs_sb.indices_start,
-                afs_sb.indices_ag, afs_sb.indices_len, afs_sb.indices_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks for bootloader ({1} bytes)", afs_sb.boot_size, afs_sb.boot_size * afs_sb.block_size).AppendLine();
+            sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                            afs_sb.log_blocks_start, afs_sb.log_blocks_ag, afs_sb.log_blocks_len,
+                            afs_sb.log_blocks_len * afs_sb.block_size).AppendLine();
+            sb.AppendFormat("Journal starts in byte {0} and has {1} bytes in {2} blocks", afs_sb.log_start,
+                            afs_sb.log_size, afs_sb.log_valid_blocks).AppendLine();
+            sb
+                .AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                              afs_sb.root_dir_start, afs_sb.root_dir_ag, afs_sb.root_dir_len,
+                              afs_sb.root_dir_len * afs_sb.block_size).AppendLine();
+            sb
+                .AppendFormat("Directory containing files scheduled for deletion's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                              afs_sb.deleted_start, afs_sb.deleted_ag, afs_sb.deleted_len,
+                              afs_sb.deleted_len * afs_sb.block_size).AppendLine();
+            sb
+                .AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                              afs_sb.indices_start, afs_sb.indices_ag, afs_sb.indices_len,
+                              afs_sb.indices_len * afs_sb.block_size).AppendLine();
+            sb.AppendFormat("{0} blocks for bootloader ({1} bytes)", afs_sb.boot_size,
+                            afs_sb.boot_size * afs_sb.block_size).AppendLine();
 
             information = sb.ToString();
 
@@ -165,8 +172,7 @@ namespace DiscImageChef.Filesystems
         struct AtheosSuperBlock
         {
             /// <summary>0x000, Volume name, 32 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] name;
             /// <summary>0x020, "AFS1", 0x41465331</summary>
             public uint magic1;
             /// <summary>0x024, "BIGE", 0x42494745</summary>

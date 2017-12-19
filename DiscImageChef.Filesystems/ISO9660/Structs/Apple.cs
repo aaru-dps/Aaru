@@ -87,8 +87,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public AppleOldId id;
             public ushort type;
             public ushort creator;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] icon;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] icon;
         }
 
         // Big-endian

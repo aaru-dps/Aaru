@@ -51,20 +51,16 @@ namespace DiscImageChef.Filesystems
         {
             Name = "VMware filesystem";
             PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
-            if(encoding == null)
-                CurrentEncoding = Encoding.UTF8;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.UTF8;
+            else CurrentEncoding = encoding;
         }
 
         public VMfs(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "VMware filesystem";
             PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
-            if(encoding == null)
-                CurrentEncoding = Encoding.UTF8;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.UTF8;
+            else CurrentEncoding = encoding;
         }
 
         [Flags]
@@ -79,18 +75,13 @@ namespace DiscImageChef.Filesystems
         {
             public uint magic;
             public uint version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] unknown1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] unknown1;
             public byte lun;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] unknown2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
-            public byte[] name;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 49)]
-            public byte[] unknown3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] unknown2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)] public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 49)] public byte[] unknown3;
             public uint size;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)]
-            public byte[] unknown4;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)] public byte[] unknown4;
             public Guid uuid;
             public ulong ctime;
             public ulong mtime;
@@ -104,14 +95,12 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End)
-                return false;
+            if(partition.Start >= partition.End) return false;
 
             ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.sectorSize;
 
-            if(partition.Start + vmfsSuperOff > partition.End)
-                return false;
-            
+            if(partition.Start + vmfsSuperOff > partition.End) return false;
+
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
@@ -119,7 +108,8 @@ namespace DiscImageChef.Filesystems
             return magic == VMfs_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.sectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
@@ -140,11 +130,15 @@ namespace DiscImageChef.Filesystems
             uint mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
 
             sbInformation.AppendFormat("Volume version {0}", volInfo.version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, CurrentEncoding)).AppendLine();
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, CurrentEncoding))
+                         .AppendLine();
             sbInformation.AppendFormat("Volume size {0} bytes", volInfo.size * 256).AppendLine();
             sbInformation.AppendFormat("Volume UUID {0}", volInfo.uuid).AppendLine();
-            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(ctimeSecs, ctimeNanoSecs)).AppendLine();
-            sbInformation.AppendFormat("Volume last modified on {0}", DateHandlers.UNIXUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).AppendLine();
+            sbInformation
+                .AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(ctimeSecs, ctimeNanoSecs))
+                .AppendLine();
+            sbInformation.AppendFormat("Volume last modified on {0}",
+                                       DateHandlers.UNIXUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).AppendLine();
 
             information = sbInformation.ToString();
 

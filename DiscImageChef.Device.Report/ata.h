@@ -875,44 +875,45 @@ typedef struct
     uint8_t Checksum;
 } IdentifyDevice;
 
-unsigned char *AtaToCString (unsigned char *string, int len);
+unsigned char *AtaToCString(unsigned char *string, int len);
 
-int SendAtaCommandChs (int fd, AtaRegistersCHS registers, AtaErrorRegistersCHS **errorRegisters, int protocol,
-                       int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
+int SendAtaCommandChs(int fd, AtaRegistersCHS registers, AtaErrorRegistersCHS **errorRegisters, int protocol,
+                      int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
 
-int SendAtaCommandLba28 (int fd, AtaRegistersLBA28 registers, AtaErrorRegistersLBA28 **errorRegisters, int protocol,
-                         int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
+int SendAtaCommandLba28(int fd, AtaRegistersLBA28 registers, AtaErrorRegistersLBA28 **errorRegisters, int protocol,
+                        int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
 
-int SendAtaCommandLba48 (int fd, AtaRegistersLBA48 registers, AtaErrorRegistersLBA48 **errorRegisters, int protocol,
-                         int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
+int SendAtaCommandLba48(int fd, AtaRegistersLBA48 registers, AtaErrorRegistersLBA48 **errorRegisters, int protocol,
+                        int transferRegister, unsigned char *buffer, unsigned int buffer_len, int transferBlocks);
 
-int Identify (int fd, unsigned char **buffer, AtaErrorRegistersCHS **errorRegisters);
-
-int Read (int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
-          uint8_t head, uint8_t sector, uint8_t count);
-
-int ReadLong (int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
-              uint8_t head, uint8_t sector, uint32_t blockSize);
-
-int Seek (int fd, AtaErrorRegistersCHS **statusRegisters, uint16_t cylinder, uint8_t head, uint8_t sector);
-
-int ReadDma (int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
-             uint8_t head, uint8_t sector, uint8_t count);
-
-int ReadDmaLba (int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
-                uint8_t count);
-
-int ReadLba (int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
-             uint8_t count);
-
-int ReadLongLba (int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
-                 uint32_t blockSize);
-
-int SeekLba (int fd, AtaErrorRegistersLBA28 **statusRegisters, uint32_t lba);
+int Identify(int fd, unsigned char **buffer, AtaErrorRegistersCHS **errorRegisters);
 
 int
-ReadDmaLba48 (int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
+Read(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder, uint8_t head,
+     uint8_t sector, uint8_t count);
 
-int ReadLba48 (int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
+int ReadLong(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
+             uint8_t head, uint8_t sector, uint32_t blockSize);
+
+int Seek(int fd, AtaErrorRegistersCHS **statusRegisters, uint16_t cylinder, uint8_t head, uint8_t sector);
+
+int ReadDma(int fd, unsigned char **buffer, AtaErrorRegistersCHS **statusRegisters, int retry, uint16_t cylinder,
+            uint8_t head, uint8_t sector, uint8_t count);
+
+int ReadDmaLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
+               uint8_t count);
+
+int ReadLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
+            uint8_t count);
+
+int ReadLongLba(int fd, unsigned char **buffer, AtaErrorRegistersLBA28 **statusRegisters, int retry, uint32_t lba,
+                uint32_t blockSize);
+
+int SeekLba(int fd, AtaErrorRegistersLBA28 **statusRegisters, uint32_t lba);
+
+int
+ReadDmaLba48(int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
+
+int ReadLba48(int fd, unsigned char **buffer, AtaErrorRegistersLBA48 **statusRegisters, uint64_t lba, uint16_t count);
 
 #endif //DISCIMAGECHEF_DEVICE_REPORT_ATA_H

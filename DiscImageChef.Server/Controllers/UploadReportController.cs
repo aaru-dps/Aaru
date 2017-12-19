@@ -76,7 +76,9 @@ namespace DiscImageChef.Server.Controllers
                     filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
                 }
 
-                FileStream newFile = new FileStream(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Upload", filename), FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                FileStream newFile =
+                    new FileStream(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Upload", filename),
+                                   FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
                 xs.Serialize(newFile, newReport);
                 newFile.Close();
 

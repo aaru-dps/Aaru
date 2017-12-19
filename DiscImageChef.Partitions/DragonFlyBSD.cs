@@ -52,15 +52,12 @@ namespace DiscImageChef.PartPlugins
         {
             partitions = new List<Partition>();
             uint nSectors = 2048 / imagePlugin.GetSectorSize();
-            if(2048 % imagePlugin.GetSectorSize() > 0)
-                nSectors++;
+            if(2048 % imagePlugin.GetSectorSize() > 0) nSectors++;
 
-            if(sectorOffset + nSectors >= imagePlugin.GetSectors())
-                return false;
+            if(sectorOffset + nSectors >= imagePlugin.GetSectors()) return false;
 
             byte[] sectors = imagePlugin.ReadSectors(sectorOffset, nSectors);
-            if(sectors.Length < 2048)
-                return false;
+            if(sectors.Length < 2048) return false;
 
             Disklabel64 disklabel = new Disklabel64();
             IntPtr labelPtr = Marshal.AllocHGlobal(2048);
@@ -68,8 +65,7 @@ namespace DiscImageChef.PartPlugins
             disklabel = (Disklabel64)Marshal.PtrToStructure(labelPtr, typeof(Disklabel64));
             Marshal.FreeHGlobal(labelPtr);
 
-            if(disklabel.d_magic != 0xC4464C59)
-                return false;
+            if(disklabel.d_magic != 0xC4464C59) return false;
 
             ulong counter = 0;
 
@@ -86,13 +82,10 @@ namespace DiscImageChef.PartPlugins
                     Scheme = Name
                 };
 
-                if((entry.p_bsize % imagePlugin.GetSectorSize()) > 0)
-                    part.Length++;
+                if((entry.p_bsize % imagePlugin.GetSectorSize()) > 0) part.Length++;
 
-                if((BSD.fsType)entry.p_fstype == BSD.fsType.Other)
-                    part.Type = entry.p_type_uuid.ToString();
-                else
-                    part.Type = BSD.fsTypeToString((BSD.fsType)entry.p_fstype);
+                if((BSD.fsType)entry.p_fstype == BSD.fsType.Other) part.Type = entry.p_type_uuid.ToString();
+                else part.Type = BSD.fsTypeToString((BSD.fsType)entry.p_fstype);
                 if(entry.p_bsize > 0 && entry.p_boffset > 0)
                 {
                     partitions.Add(part);
@@ -106,8 +99,7 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Disklabel64
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] d_reserved0;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] d_reserved0;
             public uint d_magic;
             public uint d_crc;
             public uint d_align;
@@ -118,12 +110,9 @@ namespace DiscImageChef.PartPlugins
             public ulong d_pbase;
             public ulong d_pstop;
             public ulong d_abase;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] d_packname;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] d_reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public Partition64[] d_partitions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] d_packname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] d_reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public Partition64[] d_partitions;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

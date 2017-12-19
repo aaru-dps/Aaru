@@ -40,45 +40,51 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     public static class ResumeSupport
     {
-        public static void Process(bool isLba, bool removable, ulong blocks, string Manufacturer, string Model, string Serial, Interop.PlatformID platform, ref Resume resume, ref DumpHardwareType currentTry, ref ExtentsULong extents)
+        public static void Process(bool isLba, bool removable, ulong blocks, string Manufacturer, string Model,
+                                   string Serial, Interop.PlatformID platform, ref Resume resume,
+                                   ref DumpHardwareType currentTry, ref ExtentsULong extents)
         {
             if(resume != null)
             {
-                if(!isLba)
-                    throw new NotImplementedException("Resuming CHS devices is currently not supported.");
+                if(!isLba) throw new NotImplementedException("Resuming CHS devices is currently not supported.");
 
                 if(resume.Removable != removable)
-                    throw new Exception(string.Format("Resume file specifies a {0} device but you're requesting to dump a {1} device, not continuing...",
-                                                      resume.Removable ? "removable" : "non removable",
-                                                      removable ? "removable" : "non removable"));
+                    throw new
+                        Exception(string.Format("Resume file specifies a {0} device but you're requesting to dump a {1} device, not continuing...",
+                                                resume.Removable ? "removable" : "non removable",
+                                                removable ? "removable" : "non removable"));
 
                 if(resume.LastBlock != blocks - 1)
-                    throw new Exception(string.Format("Resume file specifies a device with {0} blocks but you're requesting to dump one with {1} blocks, not continuing...",
-                                                      resume.LastBlock + 1, blocks));
-
+                    throw new
+                        Exception(string.Format("Resume file specifies a device with {0} blocks but you're requesting to dump one with {1} blocks, not continuing...",
+                                                resume.LastBlock + 1, blocks));
 
                 foreach(DumpHardwareType oldtry in resume.Tries)
                 {
                     if(oldtry.Manufacturer != Manufacturer && !removable)
-                        throw new Exception(string.Format("Resume file specifies a device manufactured by {0} but you're requesting to dump one by {1}, not continuing...",
-                                                          oldtry.Manufacturer, Manufacturer));
+                        throw new
+                            Exception(string.Format("Resume file specifies a device manufactured by {0} but you're requesting to dump one by {1}, not continuing...",
+                                                    oldtry.Manufacturer, Manufacturer));
 
                     if(oldtry.Model != Model && !removable)
-                        throw new Exception(string.Format("Resume file specifies a device model {0} but you're requesting to dump model {1}, not continuing...",
-                                                          oldtry.Model, Model));
+                        throw new
+                            Exception(string.Format("Resume file specifies a device model {0} but you're requesting to dump model {1}, not continuing...",
+                                                    oldtry.Model, Model));
 
                     if(oldtry.Serial != Serial && !removable)
-                        throw new Exception(string.Format("Resume file specifies a device with serial {0} but you're requesting to dump one with serial {1}, not continuing...",
-                                                          oldtry.Serial, Serial));
+                        throw new
+                            Exception(string.Format("Resume file specifies a device with serial {0} but you're requesting to dump one with serial {1}, not continuing...",
+                                                    oldtry.Serial, Serial));
 
-                    if(oldtry.Software == null)
-                        throw new Exception("Found corrupt resume file, cannot continue...");
+                    if(oldtry.Software == null) throw new Exception("Found corrupt resume file, cannot continue...");
 
-                    if(oldtry.Software.Name == "DiscImageChef" && oldtry.Software.OperatingSystem == platform.ToString() && oldtry.Software.Version == Version.GetVersion())
+                    if(oldtry.Software.Name == "DiscImageChef" &&
+                       oldtry.Software.OperatingSystem == platform.ToString() &&
+                       oldtry.Software.Version == Version.GetVersion())
                     {
-                        if(removable && (oldtry.Manufacturer != Manufacturer || oldtry.Model != Model || oldtry.Serial != Serial))
-                            continue;
-                        
+                        if(removable && (oldtry.Manufacturer != Manufacturer || oldtry.Model != Model ||
+                                         oldtry.Serial != Serial)) continue;
+
                         currentTry = oldtry;
                         extents = ExtentsConverter.FromMetadata(currentTry.Extents);
                         break;

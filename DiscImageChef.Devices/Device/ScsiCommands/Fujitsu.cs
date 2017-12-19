@@ -37,7 +37,8 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        public bool FujitsuDisplay(out byte[] senseBuffer, bool flash, FujitsuDisplayModes mode, string firstHalf, string secondHalf, uint timeout, out double duration)
+        public bool FujitsuDisplay(out byte[] senseBuffer, bool flash, FujitsuDisplayModes mode, string firstHalf,
+                                   string secondHalf, uint timeout, out double duration)
         {
             byte[] tmp;
             byte[] firstHalfBytes = new byte[8];
@@ -62,19 +63,19 @@ namespace DiscImageChef.Devices
             if(mode != FujitsuDisplayModes.Half)
             {
                 if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
-                    !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
+                   !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 {
                     displayLen = true;
                     halfMsg = false;
                 }
                 else if(ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
-                    !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
+                        !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 {
                     displayLen = false;
                     halfMsg = false;
                 }
                 else if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
-                    ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
+                        ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 {
                     displayLen = false;
                     halfMsg = true;
@@ -87,12 +88,9 @@ namespace DiscImageChef.Devices
             }
 
             buffer[0] = (byte)((byte)mode << 5);
-            if(displayLen)
-                buffer[0] += 0x10;
-            if(flash)
-                buffer[0] += 0x08;
-            if(halfMsg)
-                buffer[0] += 0x04;
+            if(displayLen) buffer[0] += 0x10;
+            if(flash) buffer[0] += 0x08;
+            if(halfMsg) buffer[0] += 0x04;
             buffer[0] += 0x01; // Always ASCII
 
             Array.Copy(firstHalfBytes, 0, buffer, 1, 8);
@@ -101,7 +99,8 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.Fujitsu_Display;
             cdb[6] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "FUJITSU DISPLAY took {0} ms.", duration);
@@ -110,4 +109,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

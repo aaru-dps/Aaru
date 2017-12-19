@@ -40,33 +40,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class SFS_MBR_RDB
     {
-        readonly string[] testfiles = {
-            "aros.vdi.lz",
-        };
+        readonly string[] testfiles = {"aros.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            409600,
-        };
+        readonly ulong[] sectors = {409600,};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            406224,
-        };
+        readonly long[] clusters = {406224,};
 
-        readonly int[] clustersize = {
-            512,
-        };
+        readonly int[] clustersize = {512,};
 
-        readonly string[] volumename = {
-            null,
-        };
+        readonly string[] volumename = {null,};
 
-        readonly string[] volumeserial = {
-            null,
-        };
+        readonly string[] volumeserial = {null,};
 
         [Test]
         public void Test()
@@ -91,6 +77,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

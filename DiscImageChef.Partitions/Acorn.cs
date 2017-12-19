@@ -63,18 +63,14 @@ namespace DiscImageChef.PartPlugins
             ulong sbSector;
 
             // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
-            if(sectorOffset != 0)
-                return false;
+            if(sectorOffset != 0) return false;
 
-            if(imagePlugin.GetSectorSize() > ADFS_SB_POS)
-                sbSector = 0;
-            else
-                sbSector = ADFS_SB_POS / imagePlugin.GetSectorSize();
+            if(imagePlugin.GetSectorSize() > ADFS_SB_POS) sbSector = 0;
+            else sbSector = ADFS_SB_POS / imagePlugin.GetSectorSize();
 
             byte[] sector = imagePlugin.ReadSector(sbSector);
 
-            if(sector.Length < 512)
-                return false;
+            if(sector.Length < 512) return false;
 
             AcornBootBlock bootBlock = new AcornBootBlock();
             IntPtr bbPtr = Marshal.AllocHGlobal(512);
@@ -83,15 +79,13 @@ namespace DiscImageChef.PartPlugins
             Marshal.FreeHGlobal(bbPtr);
 
             int checksum = 0;
-            for(int i = 0; i < 0x1FF; i++)
-                checksum = ((checksum & 0xFF) + (checksum >> 8) + sector[i]);
+            for(int i = 0; i < 0x1FF; i++) checksum = ((checksum & 0xFF) + (checksum >> 8) + sector[i]);
 
             int heads = bootBlock.discRecord.heads + ((bootBlock.discRecord.lowsector >> 6) & 1);
             int secCyl = bootBlock.discRecord.spt * heads;
             int mapSector = bootBlock.startCylinder * secCyl;
 
-            if((ulong)mapSector >= imagePlugin.GetSectors())
-                return false;
+            if((ulong)mapSector >= imagePlugin.GetSectors()) return false;
 
             byte[] map = imagePlugin.ReadSector((ulong)mapSector);
 
@@ -102,7 +96,9 @@ namespace DiscImageChef.PartPlugins
                 Partition part = new Partition
                 {
                     Size = (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
-                    Length = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) / imagePlugin.ImageInfo.sectorSize,
+                    Length =
+                        ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) /
+                        imagePlugin.ImageInfo.sectorSize,
                     Type = "ADFS",
                     Name = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
                 };
@@ -191,23 +187,20 @@ namespace DiscImageChef.PartPlugins
             public uint root;
             public uint disc_size;
             public ushort disc_id;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] disc_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public byte[] disc_name;
             public uint disc_type;
             public uint disc_size_high;
             public byte flags;
             public byte nzones_high;
             public uint format_version;
             public uint root_size;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AcornBootBlock
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
-            public byte[] spare;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)] public byte[] spare;
             public DiscRecord discRecord;
             public byte flags;
             public ushort startCylinder;
@@ -217,10 +210,8 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct LinuxTable
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)]
-            public LinuxEntry[] entries;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] padding;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)] public LinuxEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] padding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -236,8 +227,7 @@ namespace DiscImageChef.PartPlugins
         {
             public uint magic;
             public uint date;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public RiscIxEntry[] partitions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public RiscIxEntry[] partitions;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -246,8 +236,7 @@ namespace DiscImageChef.PartPlugins
             public uint start;
             public uint length;
             public uint one;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] name;
         }
     }
 }

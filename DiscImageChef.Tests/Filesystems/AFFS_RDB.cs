@@ -40,40 +40,28 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class AFFS_RDB
     {
-        readonly string[] testfiles = {
-            "amigaos_3.9.vdi.lz","amigaos_3.9_intl.vdi.lz","aros.vdi.lz","aros_intl.vdi.lz",
-            "amigaos_4.0.vdi.lz","amigaos_4.0_intl.vdi.lz","amigaos_4.0_cache.vdi.lz"
+        readonly string[] testfiles =
+        {
+            "amigaos_3.9.vdi.lz", "amigaos_3.9_intl.vdi.lz", "aros.vdi.lz", "aros_intl.vdi.lz", "amigaos_4.0.vdi.lz",
+            "amigaos_4.0_intl.vdi.lz", "amigaos_4.0_cache.vdi.lz"
         };
 
-        readonly ulong[] sectors = {
-            1024128,1024128,409600,409600,
-            1024128,1024128,1024128,
+        readonly ulong[] sectors = {1024128, 1024128, 409600, 409600, 1024128, 1024128, 1024128,};
+
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512,};
+
+        readonly long[] clusters = {510032, 510032, 407232, 407232, 511040, 511040, 511040,};
+
+        readonly int[] clustersize = {1024, 1024, 512, 512, 1024, 1024, 1024,};
+
+        readonly string[] volumename =
+        {
+            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label",
         };
 
-        readonly uint[] sectorsize = {
-            512,512,512,512,
-            512,512,512,
-        };
-
-        readonly long[] clusters = {
-            510032,510032,407232,407232,
-            511040,511040,511040,
-        };
-
-        readonly int[] clustersize = {
-            1024,1024,512,512,
-            1024,1024,1024,
-        };
-
-        readonly string[] volumename = {
-            "Volume label","Volume label","Volume label","Volume label",
-            "Volume label","Volume label","Volume label",
-        };
-
-        readonly string[] volumeserial = {
-            "A56D0F5C","A56D049C","A58307A9","A58304BE",
-            "A56CC7EE","A56CDDC4","A56CC133",
-        };
+        readonly string[] volumeserial =
+            {"A56D0F5C", "A56D049C", "A58307A9", "A58304BE", "A56CC7EE", "A56CDDC4", "A56CC133",};
 
         [Test]
         public void Test()
@@ -92,12 +80,14 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].Type == "\"DOS\\1\"" || partitions[j].Type == "\"DOS\\3\"" || partitions[j].Type == "\"DOS\\5\"")
+                    if(partitions[j].Type == "\"DOS\\1\"" || partitions[j].Type == "\"DOS\\3\"" ||
+                       partitions[j].Type == "\"DOS\\5\"")
                     {
                         part = j;
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

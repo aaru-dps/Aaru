@@ -165,10 +165,8 @@ namespace DiscImageChef.Devices.FreeBSD
         public ulong target_lun;
         public ccb_flags flags;
         public uint xflags;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public IntPtr[] periph_priv;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public IntPtr[] sim_priv;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public IntPtr[] periph_priv;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public IntPtr[] sim_priv;
         public ccb_qos_area qos;
         public uint timeout;
         public timeval softtimeout;
@@ -257,7 +255,7 @@ namespace DiscImageChef.Devices.FreeBSD
         public sbyte sense_resid;
         /// <summary>Transfer residual length: 2's comp</summary>
         public int resid;
-        public uint alignment; 
+        public uint alignment;
         /// <summary>
         /// Area for the CDB send, or pointer to the CDB bytes to send
         /// </summary>
@@ -274,6 +272,7 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>initiator id of who selected</summary>
         public uint init_id;
     }
+
     /// <summary>
     /// ATA I/O Request CCB used for the XPT_ATA_IO function code.
     /// </summary>
@@ -788,4 +787,3 @@ namespace DiscImageChef.Devices.FreeBSD
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public IntPtr[] padding;
     }
 }
-

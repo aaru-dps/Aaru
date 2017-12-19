@@ -41,27 +41,24 @@ namespace DiscImageChef.Metadata
     {
         public static ExtentType[] ToMetadata(ExtentsULong extents)
         {
-            if(extents == null)
-                return null;
-            
+            if(extents == null) return null;
+
             Tuple<ulong, ulong>[] tuples = extents.ToArray();
             ExtentType[] array = new ExtentType[tuples.Length];
 
             for(ulong i = 0; i < (ulong)array.LongLength; i++)
-                array[i] = new ExtentType { Start = tuples[i].Item1, End = tuples[i].Item2 };
+                array[i] = new ExtentType {Start = tuples[i].Item1, End = tuples[i].Item2};
 
             return array;
         }
 
         public static ExtentsULong FromMetadata(ExtentType[] extents)
         {
-            if(extents == null)
-                return null;
+            if(extents == null) return null;
 
             List<Tuple<ulong, ulong>> tuples = new List<Tuple<ulong, ulong>>();
 
-            foreach(ExtentType extent in extents)
-                tuples.Add(new Tuple<ulong, ulong>(extent.Start, extent.End));
+            foreach(ExtentType extent in extents) tuples.Add(new Tuple<ulong, ulong>(extent.Start, extent.End));
 
             return new ExtentsULong(tuples);
         }

@@ -40,37 +40,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class UFS_Suni86
     {
-        readonly string[] testfiles = {
-            "solaris_7.vdi.lz",
-        };
+        readonly string[] testfiles = {"solaris_7.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            4194304,
-        };
+        readonly ulong[] sectors = {4194304,};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            2063376,
-        };
+        readonly long[] clusters = {2063376,};
 
-        readonly int[] clustersize = {
-            1024,
-        };
+        readonly int[] clustersize = {1024,};
 
-        readonly string[] volumename = {
-            null,
-        };
+        readonly string[] volumename = {null,};
 
-        readonly string[] volumeserial = {
-            null,
-        };
+        readonly string[] volumeserial = {null,};
 
-        readonly string[] type = {
-            "UFS",
-        };
+        readonly string[] type = {"UFS",};
 
         [Test]
         public void Test()
@@ -95,6 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

@@ -46,8 +46,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         public override Errno Mount(bool debug)
         {
             this.debug = debug;
-            if(device.GetSectors() < 3)
-                return Errno.InvalidArgument;
+            if(device.GetSectors() < 3) return Errno.InvalidArgument;
 
             // Blocks 0 and 1 are boot code
             catalogBlocks = device.ReadSector(2);
@@ -67,10 +66,10 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             if(mountedVolEntry.firstBlock != 0 || mountedVolEntry.lastBlock <= mountedVolEntry.firstBlock ||
                (ulong)mountedVolEntry.lastBlock > device.GetSectors() - 2 ||
-               (mountedVolEntry.entryType != PascalFileKind.Volume && mountedVolEntry.entryType != PascalFileKind.Secure) ||
-               mountedVolEntry.volumeName[0] > 7 || mountedVolEntry.blocks < 0 || (ulong)mountedVolEntry.blocks != device.GetSectors() ||
-               mountedVolEntry.files < 0)
-                return Errno.InvalidArgument;
+               (mountedVolEntry.entryType != PascalFileKind.Volume &&
+                mountedVolEntry.entryType != PascalFileKind.Secure) || mountedVolEntry.volumeName[0] > 7 ||
+               mountedVolEntry.blocks < 0 || (ulong)mountedVolEntry.blocks != device.GetSectors() ||
+               mountedVolEntry.files < 0) return Errno.InvalidArgument;
 
             catalogBlocks = device.ReadSectors(2, (uint)(mountedVolEntry.lastBlock - mountedVolEntry.firstBlock - 2));
             int offset = 26;
@@ -87,8 +86,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 entry.lastBytes = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x16);
                 entry.mtime = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x18);
 
-                if(entry.filename[0] <= 15 && entry.filename[0] > 0)
-                    fileEntries.Add(entry);
+                if(entry.filename[0] <= 15 && entry.filename[0] > 0) fileEntries.Add(entry);
 
                 offset += 26;
             }
@@ -127,11 +125,9 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             stat.Type = "UCSD Pascal";
 
             stat.FreeBlocks = mountedVolEntry.blocks - (mountedVolEntry.lastBlock - mountedVolEntry.firstBlock);
-            foreach(PascalFileEntry entry in fileEntries)
-                stat.FreeBlocks -= (entry.lastBlock - entry.firstBlock);
+            foreach(PascalFileEntry entry in fileEntries) stat.FreeBlocks -= (entry.lastBlock - entry.firstBlock);
 
             return Errno.NotImplemented;
         }
     }
 }
-

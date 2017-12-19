@@ -47,8 +47,7 @@ namespace DiscImageChef.Core
 
             foreach(Filesystem _plugin in plugins.PluginsList.Values)
             {
-                if(_plugin.Identify(imagePlugin, partition))
-                    id_plugins.Add(_plugin.Name.ToLower());
+                if(_plugin.Identify(imagePlugin, partition)) id_plugins.Add(_plugin.Name.ToLower());
             }
         }
     }

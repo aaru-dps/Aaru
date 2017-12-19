@@ -39,21 +39,57 @@ namespace DiscImageChef.Tests.Partitions
     [TestFixture]
     public class MINIX
     {
-        readonly string[] testfiles = {
-            "minix_3.1.2a.vdi.lz",
-        };
+        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz",};
 
-        readonly Partition[][] wanted = {
+        readonly Partition[][] wanted =
+        {
             // Parted
-            new []{
-                new Partition{ Description = null, Size = 268369408, Name = "MINIX", Type = "MINIX", Offset = 2064896, Length = 524159,
-                    Sequence = 0, Start = 4033 },
-                new Partition{ Description = null, Size = 270434304, Name = "MINIX", Type = "MINIX", Offset = 270434304, Length = 528192,
-                    Sequence = 1, Start = 528192 },
-                new Partition{ Description = null, Size = 270434304, Name = "MINIX", Type = "MINIX", Offset = 540868608, Length = 528192,
-                    Sequence = 2, Start = 1056384 },
-                new Partition{ Description = null, Size = 262176768, Name = "MINIX", Type = "MINIX", Offset = 811302912, Length = 512064,
-                    Sequence = 3, Start = 1584576 },
+            new[]
+            {
+                new Partition
+                {
+                    Description = null,
+                    Size = 268369408,
+                    Name = "MINIX",
+                    Type = "MINIX",
+                    Offset = 2064896,
+                    Length = 524159,
+                    Sequence = 0,
+                    Start = 4033
+                },
+                new Partition
+                {
+                    Description = null,
+                    Size = 270434304,
+                    Name = "MINIX",
+                    Type = "MINIX",
+                    Offset = 270434304,
+                    Length = 528192,
+                    Sequence = 1,
+                    Start = 528192
+                },
+                new Partition
+                {
+                    Description = null,
+                    Size = 270434304,
+                    Name = "MINIX",
+                    Type = "MINIX",
+                    Offset = 540868608,
+                    Length = 528192,
+                    Sequence = 2,
+                    Start = 1056384
+                },
+                new Partition
+                {
+                    Description = null,
+                    Size = 262176768,
+                    Name = "MINIX",
+                    Type = "MINIX",
+                    Offset = 811302912,
+                    Length = 512064,
+                    Sequence = 3,
+                    Start = 1584576
+                },
             },
         };
 
@@ -74,7 +110,7 @@ namespace DiscImageChef.Tests.Partitions
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Size, partitions[j].Size, testfiles[i]);
-//                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
+                    //                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Offset, partitions[j].Offset, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);

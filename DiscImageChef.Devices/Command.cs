@@ -51,11 +51,13 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        public static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ScsiDirection direction, out double duration, out bool sense)
+        public static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
+                                          uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
 
-            return SendScsiCommand(ptID, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration, out sense);
+            return SendScsiCommand(ptID, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration,
+                                   out sense);
         }
 
         /// <summary>
@@ -71,54 +73,58 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        public static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ScsiDirection direction, out double duration, out bool sense)
+        public static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer,
+                                          out byte[] senseBuffer, uint timeout, ScsiDirection direction,
+                                          out double duration, out bool sense)
         {
             switch(ptID)
             {
                 case Interop.PlatformID.Win32NT:
+                {
+                    Windows.ScsiIoctlDirection dir;
+
+                    switch(direction)
                     {
-                        Windows.ScsiIoctlDirection dir;
-
-                        switch(direction)
-                        {
-                            case ScsiDirection.In:
-                                dir = Windows.ScsiIoctlDirection.In;
-                                break;
-                            case ScsiDirection.Out:
-                                dir = Windows.ScsiIoctlDirection.Out;
-                                break;
-                            default:
-                                dir = Windows.ScsiIoctlDirection.Unspecified;
-                                break;
-                        }
-
-                        return Windows.Command.SendScsiCommand((SafeFileHandle)fd, cdb, ref buffer, out senseBuffer, timeout, dir, out duration, out sense);
+                        case ScsiDirection.In:
+                            dir = Windows.ScsiIoctlDirection.In;
+                            break;
+                        case ScsiDirection.Out:
+                            dir = Windows.ScsiIoctlDirection.Out;
+                            break;
+                        default:
+                            dir = Windows.ScsiIoctlDirection.Unspecified;
+                            break;
                     }
+
+                    return Windows.Command.SendScsiCommand((SafeFileHandle)fd, cdb, ref buffer, out senseBuffer,
+                                                           timeout, dir, out duration, out sense);
+                }
                 case Interop.PlatformID.Linux:
+                {
+                    Linux.ScsiIoctlDirection dir;
+
+                    switch(direction)
                     {
-                        Linux.ScsiIoctlDirection dir;
-
-                        switch(direction)
-                        {
-                            case ScsiDirection.In:
-                                dir = Linux.ScsiIoctlDirection.In;
-                                break;
-                            case ScsiDirection.Out:
-                                dir = Linux.ScsiIoctlDirection.Out;
-                                break;
-                            case ScsiDirection.Bidirectional:
-                                dir = Linux.ScsiIoctlDirection.Unspecified;
-                                break;
-                            case ScsiDirection.None:
-                                dir = Linux.ScsiIoctlDirection.None;
-                                break;
-                            default:
-                                dir = Linux.ScsiIoctlDirection.Unknown;
-                                break;
-                        }
-
-                        return Linux.Command.SendScsiCommand((int)fd, cdb, ref buffer, out senseBuffer, timeout, dir, out duration, out sense);
+                        case ScsiDirection.In:
+                            dir = Linux.ScsiIoctlDirection.In;
+                            break;
+                        case ScsiDirection.Out:
+                            dir = Linux.ScsiIoctlDirection.Out;
+                            break;
+                        case ScsiDirection.Bidirectional:
+                            dir = Linux.ScsiIoctlDirection.Unspecified;
+                            break;
+                        case ScsiDirection.None:
+                            dir = Linux.ScsiIoctlDirection.None;
+                            break;
+                        default:
+                            dir = Linux.ScsiIoctlDirection.Unknown;
+                            break;
                     }
+
+                    return Linux.Command.SendScsiCommand((int)fd, cdb, ref buffer, out senseBuffer, timeout, dir,
+                                                         out duration, out sense);
+                }
                 case Interop.PlatformID.FreeBSD:
                 {
                     FreeBSD.ccb_flags flags = 0;
@@ -140,192 +146,184 @@ namespace DiscImageChef.Devices
                     }
 
                     return IntPtr.Size == 8
-                               ? FreeBSD.Command.SendScsiCommand64((IntPtr)fd, cdb, ref buffer, out senseBuffer, timeout,
-                                                                 flags, out duration, out sense)
+                               ? FreeBSD.Command.SendScsiCommand64((IntPtr)fd, cdb, ref buffer, out senseBuffer,
+                                                                   timeout, flags, out duration, out sense)
                                : FreeBSD.Command.SendScsiCommand((IntPtr)fd, cdb, ref buffer, out senseBuffer, timeout,
                                                                  flags, out duration, out sense);
                 }
-                default:
-                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
 
-        public static int SendAtaCommand(object fd, AtaRegistersCHS registers,
-            out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-            bool transferBlocks, out double duration, out bool sense)
+        public static int SendAtaCommand(object fd, AtaRegistersCHS registers, out AtaErrorRegistersCHS errorRegisters,
+                                         AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                         uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol,
-                transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
+            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+                                  timeout, transferBlocks, out duration, out sense);
         }
 
         public static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersCHS registers,
-            out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-            bool transferBlocks, out double duration, out bool sense)
+                                         out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                         bool transferBlocks, out double duration, out bool sense)
         {
             switch(ptID)
             {
                 case Interop.PlatformID.Win32NT:
-                    {
-                        if(
-                           ( // Windows XP <= SP1
-                            Environment.OSVersion.Version.Major == 5 &&
-                            Environment.OSVersion.Version.Minor == 1 &&
-                            (Environment.OSVersion.ServicePack == "Service Pack 1" || Environment.OSVersion.ServicePack == "")) ||
-                            ( // Windows 2000
-                             Environment.OSVersion.Version.Major == 5 &&
-                             Environment.OSVersion.Version.Minor == 0)
-                          )
-                            return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
-                                      protocol, ref buffer, timeout, out duration, out sense);
-                        // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
-                        if(
-                            Environment.OSVersion.Version.Major <= 4
-                          )
-                            throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
-
-                        return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters,
+                {
+                    if(( // Windows XP <= SP1
+                           Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
+                           (Environment.OSVersion.ServicePack == "Service Pack 1" ||
+                            Environment.OSVersion.ServicePack == "")) || ( // Windows 2000
+                                                                             Environment.OSVersion.Version.Major == 5 &&
+                                                                             Environment.OSVersion.Version.Minor == 0))
+                        return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
-                    }
+                    // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
+                    if(Environment.OSVersion.Version.Major <= 4)
+                        throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
+
+                    return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
+                }
                 case Interop.PlatformID.Linux:
-                    {
-                        return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
-                            transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
-                    }
+                {
+                    return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
+                                                        transferRegister, ref buffer, timeout, transferBlocks,
+                                                        out duration, out sense);
+                }
                 case Interop.PlatformID.FreeBSD:
                 {
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                default:
-                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
 
         public static int SendAtaCommand(object fd, AtaRegistersLBA28 registers,
-            out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-            bool transferBlocks, out double duration, out bool sense)
+                                         out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                         bool transferBlocks, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol,
-                transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
+            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+                                  timeout, transferBlocks, out duration, out sense);
         }
 
         public static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA28 registers,
-            out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-            bool transferBlocks, out double duration, out bool sense)
+                                         out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                         bool transferBlocks, out double duration, out bool sense)
         {
             switch(ptID)
             {
                 case Interop.PlatformID.Win32NT:
-                    {
-                        if(
-                           ( // Windows XP <= SP1
-                            Environment.OSVersion.Version.Major == 5 &&
-                            Environment.OSVersion.Version.Minor == 1 &&
-                            (Environment.OSVersion.ServicePack == "Service Pack 1" || Environment.OSVersion.ServicePack == "")) ||
-                            ( // Windows 2000
-                             Environment.OSVersion.Version.Major == 5 &&
-                             Environment.OSVersion.Version.Minor == 0)
-                          )
-                            return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
-                                      protocol, ref buffer, timeout, out duration, out sense);
-                        // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
-                        if(
-                            Environment.OSVersion.Version.Major <= 4
-                          )
-                            throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
-
-                        return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters,
+                {
+                    if(( // Windows XP <= SP1
+                           Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
+                           (Environment.OSVersion.ServicePack == "Service Pack 1" ||
+                            Environment.OSVersion.ServicePack == "")) || ( // Windows 2000
+                                                                             Environment.OSVersion.Version.Major == 5 &&
+                                                                             Environment.OSVersion.Version.Minor == 0))
+                        return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
-                    }
+                    // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
+                    if(Environment.OSVersion.Version.Major <= 4)
+                        throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
+
+                    return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
+                }
                 case Interop.PlatformID.Linux:
-                    {
-                        return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
-                            transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
-                    }
+                {
+                    return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
+                                                        transferRegister, ref buffer, timeout, transferBlocks,
+                                                        out duration, out sense);
+                }
                 case Interop.PlatformID.FreeBSD:
                 {
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                default:
-                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
 
         public static int SendAtaCommand(object fd, AtaRegistersLBA48 registers,
-            out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-            bool transferBlocks, out double duration, out bool sense)
+                                         out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                         bool transferBlocks, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol,
-                transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
+            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+                                  timeout, transferBlocks, out duration, out sense);
         }
 
         public static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA48 registers,
-            out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-            bool transferBlocks, out double duration, out bool sense)
+                                         out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+                                         AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                         bool transferBlocks, out double duration, out bool sense)
         {
             switch(ptID)
             {
                 case Interop.PlatformID.Win32NT:
-                    {
-                        // No check for Windows version. A 48-bit ATA disk simply does not work on earlier systems
-                        return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters,
-                                                              protocol, ref buffer, timeout, out duration, out sense);
-                    }
+                {
+                    // No check for Windows version. A 48-bit ATA disk simply does not work on earlier systems
+                    return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
+                }
                 case Interop.PlatformID.Linux:
-                    {
-                        return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
-                            transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
-                    }
+                {
+                    return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
+                                                        transferRegister, ref buffer, timeout, transferBlocks,
+                                                        out duration, out sense);
+                }
                 case Interop.PlatformID.FreeBSD:
                 {
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                default:
-                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
 
-        public static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication,
-                                         MmcFlags flags, uint argument, uint blockSize, uint blocks,
-                                         ref byte[] buffer, out uint[] response, out double duration, out bool sense, uint timeout = 0)
+        public static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication, MmcFlags flags,
+                                         uint argument, uint blockSize, uint blocks, ref byte[] buffer,
+                                         out uint[] response, out double duration, out bool sense, uint timeout = 0)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
 
-            return SendMmcCommand(ptID, (int)fd, command, write, isApplication, flags, argument, blockSize, blocks, ref buffer, out response, out duration, out sense, timeout);
+            return SendMmcCommand(ptID, (int)fd, command, write, isApplication, flags, argument, blockSize, blocks,
+                                  ref buffer, out response, out duration, out sense, timeout);
         }
 
-        public static int SendMmcCommand(Interop.PlatformID ptID, object fd, MmcCommands command, bool write, bool isApplication,
-                                         MmcFlags flags, uint argument, uint blockSize, uint blocks, ref byte[] buffer,
-                                         out uint[] response, out double duration, out bool sense, uint timeout = 0)
+        public static int SendMmcCommand(Interop.PlatformID ptID, object fd, MmcCommands command, bool write,
+                                         bool isApplication, MmcFlags flags, uint argument, uint blockSize, uint blocks,
+                                         ref byte[] buffer, out uint[] response, out double duration, out bool sense,
+                                         uint timeout = 0)
         {
             switch(ptID)
             {
                 case Interop.PlatformID.Win32NT:
-                    {
-                        return Windows.Command.SendMmcCommand((SafeFileHandle)fd, command, write, isApplication, flags, argument, blockSize, blocks, ref buffer, out response, out duration, out sense, timeout);
-                    }
+                {
+                    return Windows.Command.SendMmcCommand((SafeFileHandle)fd, command, write, isApplication, flags,
+                                                          argument, blockSize, blocks, ref buffer, out response,
+                                                          out duration, out sense, timeout);
+                }
                 case Interop.PlatformID.Linux:
-                    {
-                        return Linux.Command.SendMmcCommand((int)fd, command, write, isApplication, flags, argument, blockSize, blocks, ref buffer, out response, out duration, out sense, timeout);
-                    }
-                default:
-                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                {
+                    return Linux.Command.SendMmcCommand((int)fd, command, write, isApplication, flags, argument,
+                                                        blockSize, blocks, ref buffer, out response, out duration,
+                                                        out sense, timeout);
+                }
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
     }
 }
-

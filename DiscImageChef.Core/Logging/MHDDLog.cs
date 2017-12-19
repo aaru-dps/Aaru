@@ -83,8 +83,10 @@ namespace DiscImageChef.Core.Logging
                 fw = string.Format("F/W: {0}", dev.Revision);
                 sn = string.Format("S/N: {0}", dev.Serial);
                 sectors = string.Format(new System.Globalization.CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
-                sectorsize = string.Format(new System.Globalization.CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
-                scanblocksize = string.Format(new System.Globalization.CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
+                sectorsize = string.Format(new System.Globalization.CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes",
+                                           blockSize);
+                scanblocksize = string.Format(new System.Globalization.CultureInfo("en-US"),
+                                              "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
                 ver = "VER:2 ";
 
                 byte[] deviceBytes = Encoding.ASCII.GetBytes(device);
@@ -96,11 +98,10 @@ namespace DiscImageChef.Core.Logging
                 byte[] scanblocksizeBytes = Encoding.ASCII.GetBytes(scanblocksize);
                 byte[] verBytes = Encoding.ASCII.GetBytes(ver);
 
-                uint Pointer = (uint)(deviceBytes.Length + modeBytes.Length + fwBytes.Length +
-                                  snBytes.Length + sectorsBytes.Length + sectorsizeBytes.Length +
-                                  scanblocksizeBytes.Length + verBytes.Length +
-                                  2 * 9 + // New lines
-                                  4); // Pointer
+                uint Pointer = (uint)(deviceBytes.Length + modeBytes.Length + fwBytes.Length + snBytes.Length +
+                                      sectorsBytes.Length + sectorsizeBytes.Length + scanblocksizeBytes.Length +
+                                      verBytes.Length + 2 * 9 + // New lines
+                                      4); // Pointer
 
                 byte[] newLine = new byte[2];
                 newLine[0] = 0x0D;
@@ -141,10 +142,7 @@ namespace DiscImageChef.Core.Logging
 
         public void Close()
         {
-            if(mhddFs != null)
-                mhddFs.Close();
+            if(mhddFs != null) mhddFs.Close();
         }
     }
 }
-
-

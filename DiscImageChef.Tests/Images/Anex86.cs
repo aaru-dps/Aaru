@@ -38,34 +38,30 @@ namespace DiscImageChef.Tests.Images
     [TestFixture]
     public class Anex86
     {
-        readonly string[] testfiles = {
+        readonly string[] testfiles =
+        {
             "anex86_10mb.hdi.lz", "anex86_15mb.hdi.lz", "anex86_20mb.hdi.lz", "anex86_30mb.hdi.lz",
             "anex86_40mb.hdi.lz", "anex86_5mb.hdi.lz", "blank_md2hd.fdi.lz", "msdos33d_md2hd.fdi.lz",
             "msdos50_epson_md2hd.fdi.lz", "msdos50_md2hd.fdi.lz", "msdos62_md2hd.fdi.lz",
         };
 
-        readonly ulong[] sectors = {
-            40920, 61380, 81840, 121770,
-            162360, 20196, 1232, 1232,
-            1232, 1232, 1232, 
-        };
+        readonly ulong[] sectors = {40920, 61380, 81840, 121770, 162360, 20196, 1232, 1232, 1232, 1232, 1232,};
 
-        readonly uint[] sectorsize = {
-            256, 256, 256, 256,
-            256, 256, 1024, 1024,
-            1024, 1024, 1024
-        };
+        readonly uint[] sectorsize = {256, 256, 256, 256, 256, 256, 1024, 1024, 1024, 1024, 1024};
 
-        readonly MediaType[] mediatypes = {
+        readonly MediaType[] mediatypes =
+        {
             MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
             MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.NEC_525_HD, MediaType.NEC_525_HD,
             MediaType.NEC_525_HD, MediaType.NEC_525_HD, MediaType.NEC_525_HD,
         };
 
-        readonly string[] md5s = {
-            "1c5387e38e58165c517c059e5d48905d", "a84366658c1c3bd09af4d0d42fbf716e", "919c9eecf1b65b10870f617cb976668a", "02d35af02581afb2e56792dcaba2c1af",
-            "b8c3f858f1a9d300d3e74f36eea04354", "c348bbbaf99fcb8c8e66de157aef62f4", "c3587f7020743067cf948c9d5c5edb27", "a23874a4474334b035a24c6924140744",
-            "bc1ef3236e75cb09575037b884ee9dce", "243036c4617b666a6c886cc23d7274e0", "09bb2ff964a0c5c223a1900f085e3955",
+        readonly string[] md5s =
+        {
+            "1c5387e38e58165c517c059e5d48905d", "a84366658c1c3bd09af4d0d42fbf716e", "919c9eecf1b65b10870f617cb976668a",
+            "02d35af02581afb2e56792dcaba2c1af", "b8c3f858f1a9d300d3e74f36eea04354", "c348bbbaf99fcb8c8e66de157aef62f4",
+            "c3587f7020743067cf948c9d5c5edb27", "a23874a4474334b035a24c6924140744", "bc1ef3236e75cb09575037b884ee9dce",
+            "243036c4617b666a6c886cc23d7274e0", "09bb2ff964a0c5c223a1900f085e3955",
         };
 
         [Test]

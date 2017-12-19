@@ -43,8 +43,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             ushort drSigWord;
 
-            if((2 + partition.Start) >= partition.End)
-                return false;
+            if((2 + partition.Start) >= partition.End) return false;
 
             byte[] mdb_sector = imagePlugin.ReadSector(2 + partition.Start);
 
@@ -55,7 +54,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return drSigWord == MFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
@@ -73,8 +73,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             MDB.drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
-            if(MDB.drSigWord != MFS_MAGIC)
-                return;
+            if(MDB.drSigWord != MFS_MAGIC) return;
 
             MDB.drCrDate = BigEndianBitConverter.ToUInt32(mdb_sector, 0x002);
             MDB.drLsBkUp = BigEndianBitConverter.ToUInt32(mdb_sector, 0x006);
@@ -89,8 +88,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             MDB.drNxtFNum = BigEndianBitConverter.ToUInt32(mdb_sector, 0x01E);
             MDB.drFreeBks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x022);
             MDB.drVNSiz = mdb_sector[0x024];
-            variable_size = new byte[MDB.drVNSiz+1];
-            Array.Copy(mdb_sector, 0x024, variable_size, 0, MDB.drVNSiz+1);
+            variable_size = new byte[MDB.drVNSiz + 1];
+            Array.Copy(mdb_sector, 0x024, variable_size, 0, MDB.drVNSiz + 1);
             MDB.drVN = StringHandlers.PascalToString(variable_size, CurrentEncoding);
 
             BB.signature = BigEndianBitConverter.ToUInt16(bb_sector, 0x000);
@@ -124,18 +123,15 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 BB.heap_256k = BigEndianBitConverter.ToUInt32(bb_sector, 0x082);
                 BB.heap_512k = BigEndianBitConverter.ToUInt32(bb_sector, 0x086);
             }
-            else
-                BB.signature = 0x0000;
+            else BB.signature = 0x0000;
 
             sb.AppendLine("Apple Macintosh File System");
             sb.AppendLine();
             sb.AppendLine("Master Directory Block:");
             sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(MDB.drCrDate)).AppendLine();
             sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(MDB.drLsBkUp)).AppendLine();
-            if((MDB.drAtrb & 0x80) == 0x80)
-                sb.AppendLine("Volume is locked by hardware.");
-            if((MDB.drAtrb & 0x8000) == 0x8000)
-                sb.AppendLine("Volume is locked by software.");
+            if((MDB.drAtrb & 0x80) == 0x80) sb.AppendLine("Volume is locked by hardware.");
+            if((MDB.drAtrb & 0x8000) == 0x8000) sb.AppendLine("Volume is locked by software.");
             sb.AppendFormat("{0} files on volume", MDB.drNmFls).AppendLine();
             sb.AppendFormat("First directory sector: {0}", MDB.drDirSt).AppendLine();
             sb.AppendFormat("{0} sectors in directory.", MDB.drBlLen).AppendLine();
@@ -152,18 +148,12 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 sb.AppendLine("Volume is bootable.");
                 sb.AppendLine();
                 sb.AppendLine("Boot Block:");
-                if((BB.boot_flags & 0x40) == 0x40)
-                    sb.AppendLine("Boot block should be executed.");
-                if((BB.boot_flags & 0x80) == 0x80)
-                {
-                    sb.AppendLine("Boot block is in new unknown format.");
-                }
+                if((BB.boot_flags & 0x40) == 0x40) sb.AppendLine("Boot block should be executed.");
+                if((BB.boot_flags & 0x80) == 0x80) { sb.AppendLine("Boot block is in new unknown format."); }
                 else
                 {
-                    if(BB.sec_sv_pages > 0)
-                        sb.AppendLine("Allocate secondary sound buffer at boot.");
-                    else if(BB.sec_sv_pages < 0)
-                        sb.AppendLine("Allocate secondary sound and video buffers at boot.");
+                    if(BB.sec_sv_pages > 0) sb.AppendLine("Allocate secondary sound buffer at boot.");
+                    else if(BB.sec_sv_pages < 0) sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
                     sb.AppendFormat("System filename: {0}", BB.system_name).AppendLine();
                     sb.AppendFormat("Finder filename: {0}", BB.finder_name).AppendLine();
@@ -179,8 +169,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", BB.heap_512k).AppendLine();
                 }
             }
-            else
-                sb.AppendLine("Volume is not bootable.");
+            else sb.AppendLine("Volume is not bootable.");
 
             information = sb.ToString();
 
@@ -209,4 +198,3 @@ namespace DiscImageChef.Filesystems.AppleMFS
         }
     }
 }
-

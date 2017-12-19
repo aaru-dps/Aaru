@@ -66,40 +66,38 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Apple Hierarchical File System";
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("macintosh");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("macintosh");
+            else CurrentEncoding = encoding;
         }
 
         public AppleHFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple Hierarchical File System";
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("macintosh");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("macintosh");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
-                return false;
+            if((2 + partition.Start) >= partition.End) return false;
 
             byte[] mdb_sector;
             ushort drSigWord;
 
-            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 ||
+               imagePlugin.GetSectorSize() == 2048)
             {
                 mdb_sector = imagePlugin.ReadSectors(partition.Start, 2);
 
-                foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 })
+                foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00})
                 {
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, offset);
                     if(drSigWord == HFS_MAGIC)
                     {
-                        drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, offset + 0x7C); // Seek to embedded HFS+ signature
+                        drSigWord =
+                            BigEndianBitConverter
+                                .ToUInt16(mdb_sector, offset + 0x7C); // Seek to embedded HFS+ signature
 
                         return drSigWord != HFSP_MAGIC;
                     }
@@ -117,10 +115,12 @@ namespace DiscImageChef.Filesystems
                     return drSigWord != HFSP_MAGIC;
                 }
             }
+
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
@@ -135,37 +135,34 @@ namespace DiscImageChef.Filesystems
 
             bool APMFromHDDOnCD = false;
 
-            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 ||
+               imagePlugin.GetSectorSize() == 2048)
             {
                 byte[] tmp_sector = imagePlugin.ReadSectors(partition.Start, 2);
 
-                foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 })
+                foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00})
                 {
                     drSigWord = BigEndianBitConverter.ToUInt16(tmp_sector, offset);
                     if(drSigWord == HFS_MAGIC)
                     {
                         bb_sector = new byte[1024];
                         mdb_sector = new byte[512];
-                        if(offset >= 0x400)
-                            Array.Copy(tmp_sector, offset - 0x400, bb_sector, 0, 1024);
+                        if(offset >= 0x400) Array.Copy(tmp_sector, offset - 0x400, bb_sector, 0, 1024);
                         Array.Copy(tmp_sector, offset, mdb_sector, 0, 512);
                         APMFromHDDOnCD = true;
                         break;
                     }
                 }
 
-                if(!APMFromHDDOnCD)
-                    return;
+                if(!APMFromHDDOnCD) return;
             }
             else
             {
                 mdb_sector = imagePlugin.ReadSector(2 + partition.Start);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
-                if(drSigWord == HFS_MAGIC)
-                    bb_sector = imagePlugin.ReadSector(partition.Start);
-                else
-                    return;
+                if(drSigWord == HFS_MAGIC) bb_sector = imagePlugin.ReadSector(partition.Start);
+                else return;
             }
 
             MDB = BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_MasterDirectoryBlock>(mdb_sector);
@@ -183,29 +180,18 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(MDB.drVolBkUp)).AppendLine();
                 sb.AppendFormat("Backup sequence number: {0}", MDB.drVSeqNum).AppendLine();
             }
-            else
-                sb.AppendLine("Volume has never been backed up");
+            else sb.AppendLine("Volume has never been backed up");
 
-            if((MDB.drAtrb & 0x80) == 0x80)
-                sb.AppendLine("Volume is locked by hardware.");
-            if((MDB.drAtrb & 0x100) == 0x100)
-                sb.AppendLine("Volume was unmonted.");
-            else
-                sb.AppendLine("Volume is mounted.");
-            if((MDB.drAtrb & 0x200) == 0x200)
-                sb.AppendLine("Volume has spared bad blocks.");
-            if((MDB.drAtrb & 0x400) == 0x400)
-                sb.AppendLine("Volume does not need cache.");
-            if((MDB.drAtrb & 0x800) == 0x800)
-                sb.AppendLine("Boot volume is inconsistent.");
-            if((MDB.drAtrb & 0x1000) == 0x1000)
-                sb.AppendLine("There are reused CNIDs.");
-            if((MDB.drAtrb & 0x2000) == 0x2000)
-                sb.AppendLine("Volume is journaled.");
-            if((MDB.drAtrb & 0x4000) == 0x4000)
-                sb.AppendLine("Volume is seriously inconsistent.");
-            if((MDB.drAtrb & 0x8000) == 0x8000)
-                sb.AppendLine("Volume is locked by software.");
+            if((MDB.drAtrb & 0x80) == 0x80) sb.AppendLine("Volume is locked by hardware.");
+            if((MDB.drAtrb & 0x100) == 0x100) sb.AppendLine("Volume was unmonted.");
+            else sb.AppendLine("Volume is mounted.");
+            if((MDB.drAtrb & 0x200) == 0x200) sb.AppendLine("Volume has spared bad blocks.");
+            if((MDB.drAtrb & 0x400) == 0x400) sb.AppendLine("Volume does not need cache.");
+            if((MDB.drAtrb & 0x800) == 0x800) sb.AppendLine("Boot volume is inconsistent.");
+            if((MDB.drAtrb & 0x1000) == 0x1000) sb.AppendLine("There are reused CNIDs.");
+            if((MDB.drAtrb & 0x2000) == 0x2000) sb.AppendLine("Volume is journaled.");
+            if((MDB.drAtrb & 0x4000) == 0x4000) sb.AppendLine("Volume is seriously inconsistent.");
+            if((MDB.drAtrb & 0x8000) == 0x8000) sb.AppendLine("Volume is locked by software.");
 
             sb.AppendFormat("{0} files on root directory", MDB.drNmFls).AppendLine();
             sb.AppendFormat("{0} directories on root directory", MDB.drNmRtDirs).AppendLine();
@@ -256,26 +242,27 @@ namespace DiscImageChef.Filesystems
                 sb.AppendLine("Volume is bootable.");
                 sb.AppendLine();
                 sb.AppendLine("Boot Block:");
-                if((BB.boot_flags & 0x40) == 0x40)
-                    sb.AppendLine("Boot block should be executed.");
-                if((BB.boot_flags & 0x80) == 0x80)
-                {
-                    sb.AppendLine("Boot block is in new unknown format.");
-                }
+                if((BB.boot_flags & 0x40) == 0x40) sb.AppendLine("Boot block should be executed.");
+                if((BB.boot_flags & 0x80) == 0x80) { sb.AppendLine("Boot block is in new unknown format."); }
                 else
                 {
-                    if(BB.boot_flags > 0)
-                        sb.AppendLine("Allocate secondary sound buffer at boot.");
-                    else if(BB.boot_flags < 0)
-                        sb.AppendLine("Allocate secondary sound and video buffers at boot.");
+                    if(BB.boot_flags > 0) sb.AppendLine("Allocate secondary sound buffer at boot.");
+                    else if(BB.boot_flags < 0) sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
-                    sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(BB.system_name, CurrentEncoding)).AppendLine();
-                    sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(BB.finder_name, CurrentEncoding)).AppendLine();
-                    sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(BB.debug_name, CurrentEncoding)).AppendLine();
-                    sb.AppendFormat("Disassembler filename: {0}", StringHandlers.PascalToString(BB.disasm_name, CurrentEncoding)).AppendLine();
-                    sb.AppendFormat("Startup screen filename: {0}", StringHandlers.PascalToString(BB.stupscr_name, CurrentEncoding)).AppendLine();
-                    sb.AppendFormat("First program to execute at boot: {0}", StringHandlers.PascalToString(BB.bootup_name, CurrentEncoding)).AppendLine();
-                    sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(BB.clipbrd_name, CurrentEncoding)).AppendLine();
+                    sb.AppendFormat("System filename: {0}",
+                                    StringHandlers.PascalToString(BB.system_name, CurrentEncoding)).AppendLine();
+                    sb.AppendFormat("Finder filename: {0}",
+                                    StringHandlers.PascalToString(BB.finder_name, CurrentEncoding)).AppendLine();
+                    sb.AppendFormat("Debugger filename: {0}",
+                                    StringHandlers.PascalToString(BB.debug_name, CurrentEncoding)).AppendLine();
+                    sb.AppendFormat("Disassembler filename: {0}",
+                                    StringHandlers.PascalToString(BB.disasm_name, CurrentEncoding)).AppendLine();
+                    sb.AppendFormat("Startup screen filename: {0}",
+                                    StringHandlers.PascalToString(BB.stupscr_name, CurrentEncoding)).AppendLine();
+                    sb.AppendFormat("First program to execute at boot: {0}",
+                                    StringHandlers.PascalToString(BB.bootup_name, CurrentEncoding)).AppendLine();
+                    sb.AppendFormat("Clipboard filename: {0}",
+                                    StringHandlers.PascalToString(BB.clipbrd_name, CurrentEncoding)).AppendLine();
                     sb.AppendFormat("Maximum opened files: {0}", BB.max_files * 4).AppendLine();
                     sb.AppendFormat("Event queue size: {0}", BB.queue_size).AppendLine();
                     sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", BB.heap_128k).AppendLine();
@@ -283,10 +270,9 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", BB.heap_512k).AppendLine();
                 }
             }
-            else if (MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0)
+            else if(MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0)
                 sb.AppendLine("Volume is bootable.");
-            else
-                sb.AppendLine("Volume is not bootable.");
+            else sb.AppendLine("Volume is not bootable.");
 
             information = sb.ToString();
 
@@ -296,7 +282,8 @@ namespace DiscImageChef.Filesystems
                 xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
                 xmlFSType.BackupDateSpecified = true;
             }
-            xmlFSType.Bootable = BB.signature == HFSBB_MAGIC || (MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0);
+            xmlFSType.Bootable = BB.signature == HFSBB_MAGIC ||
+                                 (MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0);
             xmlFSType.Clusters = MDB.drNmAlBlks;
             xmlFSType.ClusterSize = (int)MDB.drAlBlkSiz;
             if(MDB.drCrDate > 0)
@@ -368,8 +355,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x022, Free allocation blocks</summary>
             public ushort drFreeBks;
             /// <summary>0x024, Volume name (28 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
-            public byte[] drVN;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)] public byte[] drVN;
             /// <summary>0x040, Volume last backup time</summary>
             public uint drVolBkUp;
             /// <summary>0x044, Volume backup sequence number</summary>
@@ -440,26 +426,19 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x006, Boot block flags</summary>
             public short boot_flags;
             /// <summary>0x00A, System file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] system_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] system_name;
             /// <summary>0x01A, Finder file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] finder_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] finder_name;
             /// <summary>0x02A, Debugger file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] debug_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] debug_name;
             /// <summary>0x03A, Disassembler file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] disasm_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] disasm_name;
             /// <summary>0x04A, Startup screen file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] stupscr_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] stupscr_name;
             /// <summary>0x05A, First program to execute on boot (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] bootup_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] bootup_name;
             /// <summary>0x06A, Clipboard file name (16 bytes)</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] clipbrd_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] clipbrd_name;
             /// <summary>0x07A, 1/4 of maximum opened at a time files</summary>
             public ushort max_files;
             /// <summary>0x07C, Event queue size</summary>

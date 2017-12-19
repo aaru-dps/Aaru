@@ -84,7 +84,7 @@ namespace DiscImageChef.Decoders
             public bool isFirst;
             /// <summary>On-memory value for easy last block search.</summary>
             public bool isLast;
-}
+        }
 
         /// <summary>
         /// LisaOS tag as stored on Priam DataTower disks (24 bytes)
@@ -176,8 +176,7 @@ namespace DiscImageChef.Decoders
 
         public static SonyTag? DecodeSonyTag(byte[] tag)
         {
-            if(tag == null || tag.Length != 12)
-                return null;
+            if(tag == null || tag.Length != 12) return null;
 
             SonyTag snTag = new SonyTag();
 
@@ -200,8 +199,7 @@ namespace DiscImageChef.Decoders
 
         public static ProfileTag? DecodeProfileTag(byte[] tag)
         {
-            if(tag == null || tag.Length != 20)
-                return null;
+            if(tag == null || tag.Length != 20) return null;
 
             ProfileTag phTag = new ProfileTag();
 
@@ -246,8 +244,7 @@ namespace DiscImageChef.Decoders
 
         public static PriamTag? DecodePriamTag(byte[] tag)
         {
-            if(tag == null || tag.Length != 24)
-                return null;
+            if(tag == null || tag.Length != 24) return null;
 
             PriamTag pmTag = new PriamTag();
 
@@ -294,8 +291,7 @@ namespace DiscImageChef.Decoders
 
         public static PriamTag? DecodeTag(byte[] tag)
         {
-            if(tag == null)
-                return null;
+            if(tag == null) return null;
 
             PriamTag pmTag = new PriamTag();
 
@@ -304,8 +300,7 @@ namespace DiscImageChef.Decoders
                 case 12:
                     SonyTag? snTag = DecodeSonyTag(tag);
 
-                    if(snTag == null)
-                        return null;
+                    if(snTag == null) return null;
 
                     pmTag = new PriamTag();
                     pmTag.absPage = 0;
@@ -328,8 +323,7 @@ namespace DiscImageChef.Decoders
                 case 20:
                     ProfileTag? phTag = DecodeProfileTag(tag);
 
-                    if(phTag == null)
-                        return null;
+                    if(phTag == null) return null;
 
                     pmTag = new PriamTag();
                     pmTag.absPage = phTag.Value.absPage;
@@ -349,12 +343,9 @@ namespace DiscImageChef.Decoders
                     pmTag.isLast = phTag.Value.isLast;
 
                     return pmTag;
-                case 24:
-                    return DecodePriamTag(tag);
-                default:
-                    return null;
+                case 24: return DecodePriamTag(tag);
+                default: return null;
             }
         }
     }
 }
-

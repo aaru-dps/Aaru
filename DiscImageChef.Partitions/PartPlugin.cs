@@ -46,9 +46,7 @@ namespace DiscImageChef.PartPlugins
         /// <summary>Plugin UUID.</summary>
         public Guid PluginUUID;
 
-        protected PartPlugin()
-        {
-        }
+        protected PartPlugin() { }
 
         /// <summary>
         /// Interprets a partitioning scheme.
@@ -57,6 +55,7 @@ namespace DiscImageChef.PartPlugins
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partitions">Returns list of partitions.</param>
         /// <param name="sectorOffset">At which sector to start searching for the partition scheme.</param>
-        public abstract bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset);
+        public abstract bool GetInformation(ImagePlugins.ImagePlugin imagePlugin,
+                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset);
     }
 }

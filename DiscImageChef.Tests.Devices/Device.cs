@@ -56,7 +56,8 @@ namespace DiscImageChef.Tests.Devices
                 DicConsole.WriteLine("dev.IsUSB = {0}", dev.IsUSB);
                 DicConsole.WriteLine("dev.USBVendorID = 0x{0:X4}", dev.USBVendorID);
                 DicConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.USBProductID);
-                DicConsole.WriteLine("dev.USBDescriptors.Length = {0}", dev.USBDescriptors == null ? "null" : dev.USBDescriptors.Length.ToString());
+                DicConsole.WriteLine("dev.USBDescriptors.Length = {0}",
+                                     dev.USBDescriptors == null ? "null" : dev.USBDescriptors.Length.ToString());
                 DicConsole.WriteLine("dev.USBManufacturerString = \"{0}\"", dev.USBManufacturerString);
                 DicConsole.WriteLine("dev.USBProductString = \"{0}\"", dev.USBProductString);
                 DicConsole.WriteLine("dev.USBSerialString = \"{0}\"", dev.USBSerialString);
@@ -100,8 +101,7 @@ namespace DiscImageChef.Tests.Devices
                         System.Console.Clear();
                         DicConsole.WriteLine("Device: {0}", devPath);
                         DicConsole.WriteLine("USB descriptors:");
-                        if(dev.USBDescriptors != null)
-                            PrintHex.PrintHexArray(dev.USBDescriptors, 64);
+                        if(dev.USBDescriptors != null) PrintHex.PrintHexArray(dev.USBDescriptors, 64);
                         DicConsole.WriteLine("Press any key to continue...");
                         System.Console.ReadKey();
                         goto menu;
@@ -109,8 +109,7 @@ namespace DiscImageChef.Tests.Devices
                         System.Console.Clear();
                         DicConsole.WriteLine("Device: {0}", devPath);
                         DicConsole.WriteLine("PCMCIA CIS:");
-                        if(dev.CIS != null)
-                            PrintHex.PrintHexArray(dev.CIS, 64);
+                        if(dev.CIS != null) PrintHex.PrintHexArray(dev.CIS, 64);
                         DicConsole.WriteLine("Press any key to continue...");
                         System.Console.ReadKey();
                         goto menu;

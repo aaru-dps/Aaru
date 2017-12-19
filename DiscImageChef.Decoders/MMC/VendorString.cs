@@ -38,10 +38,8 @@ namespace DiscImageChef.Decoders.MMC
         {
             switch(MMCVendorID)
             {
-                case 0x15:
-                    return "Samsung";
-                default:
-                    return string.Format("Unknown manufacturer ID 0x{0:X2}", MMCVendorID);
+                case 0x15: return "Samsung";
+                default: return string.Format("Unknown manufacturer ID 0x{0:X2}", MMCVendorID);
             }
         }
     }

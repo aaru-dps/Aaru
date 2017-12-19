@@ -71,36 +71,23 @@ namespace DiscImageChef.Filesystems
             public uint node_ino;
             public uint meta_ino;
             public Guid uuid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024)]
-            public byte[] volume_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024)] public byte[] volume_name;
             public uint extension_count;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list3;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list4;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list5;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list6;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list7;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list8;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] extension_list1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] extension_list2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] extension_list3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] extension_list4;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] extension_list5;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] extension_list6;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] extension_list7;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] extension_list8;
             public uint cp_payload;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-            public byte[] version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-            public byte[] init_version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] version;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] init_version;
             public uint feature;
             public byte encryption_level;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] encrypt_pw_salt;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 871)]
-            public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] encrypt_pw_salt;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 871)] public byte[] reserved;
         }
 
         const uint F2FS_Magic = 0xF2F52010;
@@ -136,21 +123,17 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             uint sbAddr = F2FS_SuperOffset / imagePlugin.GetSectorSize();
-            if(sbAddr == 0)
-                sbAddr = 1;
+            if(sbAddr == 0) sbAddr = 1;
 
             F2FS_Superblock f2fsSb = new F2FS_Superblock();
 
             uint sbSize = (uint)(Marshal.SizeOf(f2fsSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(f2fsSb) % imagePlugin.GetSectorSize() != 0)
-                sbSize++;
+            if(Marshal.SizeOf(f2fsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
-            if(partition.Start + sbAddr >= partition.End)
-                return false;
+            if(partition.Start + sbAddr >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(f2fsSb))
-                return false;
+            if(sector.Length < Marshal.SizeOf(f2fsSb)) return false;
 
             IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(f2fsSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(f2fsSb));
@@ -160,40 +143,37 @@ namespace DiscImageChef.Filesystems
             return f2fsSb.magic == F2FS_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < F2FS_MinSector || imagePlugin.GetSectorSize() > F2FS_MaxSector)
-                return;
+            if(imagePlugin.GetSectorSize() < F2FS_MinSector || imagePlugin.GetSectorSize() > F2FS_MaxSector) return;
 
             uint sbAddr = F2FS_SuperOffset / imagePlugin.GetSectorSize();
-            if(sbAddr == 0)
-                sbAddr = 1;
+            if(sbAddr == 0) sbAddr = 1;
 
             F2FS_Superblock f2fsSb = new F2FS_Superblock();
 
             uint sbSize = (uint)(Marshal.SizeOf(f2fsSb) / imagePlugin.GetSectorSize());
-            if(Marshal.SizeOf(f2fsSb) % imagePlugin.GetSectorSize() != 0)
-                sbSize++;
+            if(Marshal.SizeOf(f2fsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(f2fsSb))
-                return;
+            if(sector.Length < Marshal.SizeOf(f2fsSb)) return;
 
             IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(f2fsSb));
             Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(f2fsSb));
             f2fsSb = (F2FS_Superblock)Marshal.PtrToStructure(sbPtr, typeof(F2FS_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            if(f2fsSb.magic != F2FS_Magic)
-                return;
+            if(f2fsSb.magic != F2FS_Magic) return;
 
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("F2FS filesystem");
             sb.AppendFormat("Version {0}.{1}", f2fsSb.major_ver, f2fsSb.minor_ver).AppendLine();
             sb.AppendFormat("{0} bytes per sector", 1 << (int)f2fsSb.log_sectorsize).AppendLine();
-            sb.AppendFormat("{0} sectors ({1} bytes) per block", 1 << (int)f2fsSb.log_sectors_per_block, 1 << (int)f2fsSb.log_blocksize).AppendLine();
+            sb.AppendFormat("{0} sectors ({1} bytes) per block", 1 << (int)f2fsSb.log_sectors_per_block,
+                            1 << (int)f2fsSb.log_blocksize).AppendLine();
             sb.AppendFormat("{0} blocks per segment", f2fsSb.log_blocks_per_seg).AppendLine();
             sb.AppendFormat("{0} blocks in volume", f2fsSb.block_count).AppendLine();
             sb.AppendFormat("{0} segments per section", f2fsSb.segs_per_sec).AppendLine();
@@ -202,9 +182,12 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} segments", f2fsSb.segment_count).AppendLine();
             sb.AppendFormat("Root directory resides on inode {0}", f2fsSb.root_ino).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", f2fsSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true)).AppendLine();
-            sb.AppendFormat("Volume last mounted on kernel version: {0}", StringHandlers.CToString(f2fsSb.version)).AppendLine();
-            sb.AppendFormat("Volume created on kernel version: {0}", StringHandlers.CToString(f2fsSb.init_version)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true))
+              .AppendLine();
+            sb.AppendFormat("Volume last mounted on kernel version: {0}", StringHandlers.CToString(f2fsSb.version))
+              .AppendLine();
+            sb.AppendFormat("Volume created on kernel version: {0}", StringHandlers.CToString(f2fsSb.init_version))
+              .AppendLine();
 
             information = sb.ToString();
 

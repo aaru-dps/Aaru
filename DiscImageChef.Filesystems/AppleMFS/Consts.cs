@@ -49,4 +49,3 @@ namespace DiscImageChef.Filesystems.AppleMFS
         const int BMAP_DIR = 0xFFF;
     }
 }
-

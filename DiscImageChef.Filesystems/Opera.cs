@@ -65,8 +65,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
-                return false;
+            if((2 + partition.Start) >= partition.End) return false;
 
             byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
 
@@ -78,13 +77,13 @@ namespace DiscImageChef.Filesystems
             Array.Copy(sb_sector, 0x001, sync_bytes, 0, 5);
             record_version = sb_sector[0x006];
 
-            if(record_type != 1 || record_version != 1)
-                return false;
-            return Encoding.ASCII.GetString(sync_bytes) == "ZZZZZ";
+            if(record_type != 1 || record_version != 1) return false;
 
+            return Encoding.ASCII.GetString(sync_bytes) == "ZZZZZ";
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
             StringBuilder SuperBlockMetadata = new StringBuilder();
@@ -95,32 +94,43 @@ namespace DiscImageChef.Filesystems
             byte[] cString = new byte[32];
             sb.sync_bytes = new byte[5];
 
-
-            if(sb.record_type != 1 || sb.record_version != 1)
-                return;
-            if(Encoding.ASCII.GetString(sb.sync_bytes) != "ZZZZZ")
-                return;
+            if(sb.record_type != 1 || sb.record_version != 1) return;
+            if(Encoding.ASCII.GetString(sb.sync_bytes) != "ZZZZZ") return;
 
             SuperBlockMetadata.AppendFormat("Opera filesystem disc.").AppendLine();
-            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, CurrentEncoding))) 
-                SuperBlockMetadata.AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, CurrentEncoding)).AppendLine();
-            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, CurrentEncoding))) 
-                SuperBlockMetadata.AppendFormat("Volume comment: {0}", StringHandlers.CToString(sb.volume_comment, CurrentEncoding)).AppendLine();
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, CurrentEncoding)))
+                SuperBlockMetadata
+                    .AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, CurrentEncoding))
+                    .AppendLine();
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, CurrentEncoding)))
+                SuperBlockMetadata.AppendFormat("Volume comment: {0}",
+                                                StringHandlers.CToString(sb.volume_comment, CurrentEncoding))
+                                  .AppendLine();
             SuperBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
             SuperBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
-            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
+               imagePlugin.GetSectorSize() == 2448)
             {
                 if(sb.block_size != 2048)
-                    SuperBlockMetadata.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block", sb.block_size, 2048);
+                    SuperBlockMetadata
+                        .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
+                                      sb.block_size, 2048);
             }
             else if(imagePlugin.GetSectorSize() != sb.block_size)
-                SuperBlockMetadata.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block", sb.block_size, imagePlugin.GetSectorSize());
-            SuperBlockMetadata.AppendFormat("Volume size: {0} blocks, {1} bytes", sb.block_count, sb.block_size * sb.block_count).AppendLine();
+                SuperBlockMetadata
+                    .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
+                                  sb.block_size, imagePlugin.GetSectorSize());
+            SuperBlockMetadata
+                .AppendFormat("Volume size: {0} blocks, {1} bytes", sb.block_count, sb.block_size * sb.block_count)
+                .AppendLine();
             if((ulong)sb.block_count > imagePlugin.GetSectors())
-                SuperBlockMetadata.AppendFormat("WARNING: Filesystem indicates {0} blocks while device indicates {1} blocks", sb.block_count, imagePlugin.GetSectors());
+                SuperBlockMetadata
+                    .AppendFormat("WARNING: Filesystem indicates {0} blocks while device indicates {1} blocks",
+                                  sb.block_count, imagePlugin.GetSectors());
             SuperBlockMetadata.AppendFormat("Root directory identifier: 0x{0:X8}", sb.root_dirid).AppendLine();
             SuperBlockMetadata.AppendFormat("Root directory block size: {0} bytes", sb.rootdir_bsize).AppendLine();
-            SuperBlockMetadata.AppendFormat("Root directory size: {0} blocks, {1} bytes", sb.rootdir_blocks, sb.rootdir_bsize * sb.rootdir_blocks).AppendLine();
+            SuperBlockMetadata.AppendFormat("Root directory size: {0} blocks, {1} bytes", sb.rootdir_blocks,
+                                            sb.rootdir_bsize * sb.rootdir_blocks).AppendLine();
             SuperBlockMetadata.AppendFormat("Last root directory copy: {0}", sb.last_root_copy).AppendLine();
 
             information = SuperBlockMetadata.ToString();
@@ -140,18 +150,15 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x000, Record type, must be 1</summary>
             public byte record_type;
             /// <summary>0x001, 5 bytes, "ZZZZZ"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] sync_bytes;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] sync_bytes;
             /// <summary>0x006, Record version, must be 1</summary>
             public byte record_version;
             /// <summary>0x007, Volume flags</summary>
             public byte volume_flags;
             /// <summary>0x008, 32 bytes, volume comment</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volume_comment;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] volume_comment;
             /// <summary>0x028, 32 bytes, volume label</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volume_label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] volume_label;
             /// <summary>0x048, Volume ID</summary>
             public int volume_id;
             /// <summary>0x04C, Block size in bytes</summary>

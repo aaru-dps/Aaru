@@ -54,11 +54,9 @@ namespace DiscImageChef.Decoders.SecureDigital
     {
         public static SCR DecodeSCR(uint[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 2)
-                return null;
+            if(response.Length != 2) return null;
 
             byte[] data = new byte[8];
             byte[] tmp = new byte[4];
@@ -73,11 +71,9 @@ namespace DiscImageChef.Decoders.SecureDigital
 
         public static SCR DecodeSCR(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 8)
-                return null;
+            if(response.Length != 8) return null;
 
             SCR scr = new SCR();
             scr.Structure = (byte)((response[0] & 0xF0) >> 4);
@@ -98,14 +94,12 @@ namespace DiscImageChef.Decoders.SecureDigital
 
         public static string PrettifySCR(SCR scr)
         {
-            if(scr == null)
-                return null;
+            if(scr == null) return null;
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("SecureDigital Device Configuration Register:");
 
-            if(scr.Structure != 0)
-                sb.AppendFormat("\tUnknown register version {0}", scr.Structure).AppendLine();
+            if(scr.Structure != 0) sb.AppendFormat("\tUnknown register version {0}", scr.Structure).AppendLine();
 
             if(scr.Spec == 0 && scr.Spec3 == false && scr.Spec4 == false && scr.SpecX == 0)
                 sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 1.0x");
@@ -120,8 +114,9 @@ namespace DiscImageChef.Decoders.SecureDigital
             else if(scr.Spec == 2 && scr.Spec3 == true && scr.SpecX == 1)
                 sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 5.xx");
             else
-                sb.AppendFormat("\tDevice follows SecureDigital Physical Layer Specification with unknown version {0}.{1}.{2}.{3}",
-                                scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).AppendLine();
+                sb
+                    .AppendFormat("\tDevice follows SecureDigital Physical Layer Specification with unknown version {0}.{1}.{2}.{3}",
+                                  scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).AppendLine();
             switch(scr.Security)
             {
                 case 0:
@@ -140,26 +135,22 @@ namespace DiscImageChef.Decoders.SecureDigital
                     sb.AppendLine("\tDevice uses CPRM according to specification version 3.xx");
                     break;
                 default:
-                    sb.AppendFormat("\tDevice uses unknown CPRM specification with code {0}", scr.Security).AppendLine();
+                    sb.AppendFormat("\tDevice uses unknown CPRM specification with code {0}", scr.Security)
+                      .AppendLine();
                     break;
             }
 
-            if((scr.BusWidth & 0x01) == 0x01)
-                sb.AppendLine("\tDevice supports 1-bit data bus");
-            if((scr.BusWidth & 0x04) == 0x04)
-                sb.AppendLine("\tDevice supports 4-bit data bus");
+            if((scr.BusWidth & 0x01) == 0x01) sb.AppendLine("\tDevice supports 1-bit data bus");
+            if((scr.BusWidth & 0x04) == 0x04) sb.AppendLine("\tDevice supports 4-bit data bus");
 
-            if(scr.ExtendedSecurity != 0)
-                sb.AppendLine("\tDevice supports extended security");
+            if(scr.ExtendedSecurity != 0) sb.AppendLine("\tDevice supports extended security");
 
             if((scr.CommandSupport & 0x08) == 0x08)
                 sb.AppendLine("\tDevice supports extension register multi-block commands");
             if((scr.CommandSupport & 0x04) == 0x04)
                 sb.AppendLine("\tDevice supports extension register single-block commands");
-            if((scr.CommandSupport & 0x02) == 0x02)
-                sb.AppendLine("\tDevice supports set block count command");
-            if((scr.CommandSupport & 0x01) == 0x01)
-                sb.AppendLine("\tDevice supports speed class control command");
+            if((scr.CommandSupport & 0x02) == 0x02) sb.AppendLine("\tDevice supports set block count command");
+            if((scr.CommandSupport & 0x01) == 0x01) sb.AppendLine("\tDevice supports speed class control command");
 
             return sb.ToString();
         }

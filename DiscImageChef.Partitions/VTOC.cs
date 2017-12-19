@@ -46,7 +46,7 @@ namespace DiscImageChef.PartPlugins
         const uint PD_CIGAM = 0x0D605ECA;
         const uint VTOC_ENAS = 0xEEDE0D60;
         const int V_NUMPAR = 16;
-        const uint XPDVERS = 3;       /* 1st version of extended pdinfo */
+        const uint XPDVERS = 3; /* 1st version of extended pdinfo */
 
         public VTOC()
         {
@@ -66,12 +66,12 @@ namespace DiscImageChef.PartPlugins
 
             foreach(ulong i in new ulong[] {0, 1, 8, 29})
             {
-                if(i + sectorOffset >= imagePlugin.GetSectors())
-                    break;
-                
+                if(i + sectorOffset >= imagePlugin.GetSectors()) break;
+
                 pdsector = imagePlugin.ReadSector(i + sectorOffset);
                 magic = BitConverter.ToUInt32(pdsector, 4);
-                DicConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})", i + sectorOffset, magic, PD_MAGIC, PD_CIGAM);
+                DicConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})",
+                                          i + sectorOffset, magic, PD_MAGIC, PD_CIGAM);
                 if(magic == PD_MAGIC || magic == PD_CIGAM)
                 {
                     magic_found = true;
@@ -80,8 +80,7 @@ namespace DiscImageChef.PartPlugins
                 }
             }
 
-            if(!magic_found)
-                return false;
+            if(!magic_found) return false;
 
             PDInfo pd;
             PDInfoOld pdold;
@@ -101,7 +100,8 @@ namespace DiscImageChef.PartPlugins
             }
 
             DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.driveid = {0}", pd.driveid);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.sanity = 0x{0:X8} (should be 0x{1:X8})", pd.sanity, PD_MAGIC);
+            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.sanity = 0x{0:X8} (should be 0x{1:X8})", pd.sanity,
+                                      PD_MAGIC);
             DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.version = {0}", pd.version);
             DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.serial = \"{0}\"", StringHandlers.CToString(pd.serial));
             DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.cyls = {0}", pd.cyls);
@@ -208,11 +208,12 @@ namespace DiscImageChef.PartPlugins
             {
                 DicConsole.DebugWriteLine("VTOC plugin", "Searching for VTOC on relative byte {0}", pd.vtoc_ptr);
                 ulong rel_sec_ptr = pd.vtoc_ptr / imagePlugin.GetSectorSize();
-                uint rel_sec_off =pd.vtoc_ptr % imagePlugin.GetSectorSize();
+                uint rel_sec_off = pd.vtoc_ptr % imagePlugin.GetSectorSize();
                 uint sec_count = (rel_sec_off + pd.vtoc_len) / imagePlugin.GetSectorSize();
-                if((rel_sec_off + pd.vtoc_len) % imagePlugin.GetSectorSize() > 0)
-                    sec_count++;
-                DicConsole.DebugWriteLine("VTOC plugin", "Going to read {0} sectors from sector {1}, getting VTOC from byte {2}", sec_count, rel_sec_ptr + sectorOffset, rel_sec_off);
+                if((rel_sec_off + pd.vtoc_len) % imagePlugin.GetSectorSize() > 0) sec_count++;
+                DicConsole.DebugWriteLine("VTOC plugin",
+                                          "Going to read {0} sectors from sector {1}, getting VTOC from byte {2}",
+                                          sec_count, rel_sec_ptr + sectorOffset, rel_sec_off);
                 if(rel_sec_ptr + sectorOffset + sec_count >= imagePlugin.GetSectors())
                 {
                     DicConsole.DebugWriteLine("VTOC plugin", "Going to read past device size, aborting...");
@@ -258,34 +259,47 @@ namespace DiscImageChef.PartPlugins
 
             if(useOld)
             {
-                DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_sanity = 0x{0:X8} (should be 0x{1:X8})", vtocOld.v_sanity, VTOC_SANE);
+                DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_sanity = 0x{0:X8} (should be 0x{1:X8})",
+                                          vtocOld.v_sanity, VTOC_SANE);
                 DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_version = {0}", vtocOld.v_version);
-                DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_volume = \"{0}\"", StringHandlers.CToString(vtocOld.v_volume));
+                DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_volume = \"{0}\"",
+                                          StringHandlers.CToString(vtocOld.v_volume));
                 DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_sectorsz = {0}", vtocOld.v_sectorsz);
                 DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_nparts = {0}", vtocOld.v_nparts);
                 for(int i = 0; i < V_NUMPAR; i++)
                 {
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_tag = {1} ({2})", i, vtocOld.v_part[i].p_tag, (ushort)vtocOld.v_part[i].p_tag);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_flag = {1} ({2})", i, vtocOld.v_part[i].p_flag, (ushort)vtocOld.v_part[i].p_flag);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_start = {1}", i, vtocOld.v_part[i].p_start);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_size = {1}", i, vtocOld.v_part[i].p_size);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.timestamp[{0}] = {1}", i, DateHandlers.UNIXToDateTime(vtocOld.timestamp[i]));
+                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_tag = {1} ({2})", i,
+                                              vtocOld.v_part[i].p_tag, (ushort)vtocOld.v_part[i].p_tag);
+                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_flag = {1} ({2})", i,
+                                              vtocOld.v_part[i].p_flag, (ushort)vtocOld.v_part[i].p_flag);
+                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_start = {1}", i,
+                                              vtocOld.v_part[i].p_start);
+                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_size = {1}", i,
+                                              vtocOld.v_part[i].p_size);
+                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.timestamp[{0}] = {1}", i,
+                                              DateHandlers.UNIXToDateTime(vtocOld.timestamp[i]));
                 }
             }
             else
             {
-                DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_sanity = 0x{0:X8} (should be 0x{1:X8})", vtoc.v_sanity, VTOC_SANE);
+                DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_sanity = 0x{0:X8} (should be 0x{1:X8})", vtoc.v_sanity,
+                                          VTOC_SANE);
                 DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_version = {0}", vtoc.v_version);
-                DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_volume = \"{0}\"", StringHandlers.CToString(vtoc.v_volume));
+                DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_volume = \"{0}\"",
+                                          StringHandlers.CToString(vtoc.v_volume));
                 DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_pad = {0}", vtoc.v_pad);
                 DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_nparts = {0}", vtoc.v_nparts);
                 for(int i = 0; i < V_NUMPAR; i++)
                 {
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_tag = {1} ({2})", i, vtoc.v_part[i].p_tag, (ushort)vtoc.v_part[i].p_tag);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_flag = {1} ({2})", i, vtoc.v_part[i].p_flag, (ushort)vtoc.v_part[i].p_flag);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_start = {1}", i, vtoc.v_part[i].p_start);
+                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_tag = {1} ({2})", i,
+                                              vtoc.v_part[i].p_tag, (ushort)vtoc.v_part[i].p_tag);
+                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_flag = {1} ({2})", i,
+                                              vtoc.v_part[i].p_flag, (ushort)vtoc.v_part[i].p_flag);
+                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_start = {1}", i,
+                                              vtoc.v_part[i].p_start);
                     DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_size = {1}", i, vtoc.v_part[i].p_size);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.timestamp[{0}] = {1}", i, DateHandlers.UNIXToDateTime(vtoc.timestamp[i]));
+                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.timestamp[{0}] = {1}", i,
+                                              DateHandlers.UNIXToDateTime(vtoc.timestamp[i]));
                 }
             }
 
@@ -340,23 +354,17 @@ namespace DiscImageChef.PartPlugins
                         part.Offset += sectorOffset * imagePlugin.GetSectorSize();
                     }
 
-                    if(parts[i].p_flag.HasFlag(pFlag.V_VALID))
-                        info += " (valid)";
-                    if(parts[i].p_flag.HasFlag(pFlag.V_UNMNT))
-                        info += " (unmountable)";
-                    if(parts[i].p_flag.HasFlag(pFlag.V_OPEN))
-                        info += " (open)";
-                    if(parts[i].p_flag.HasFlag(pFlag.V_REMAP))
-                        info += " (alternate sector mapping)";
-                    if(parts[i].p_flag.HasFlag(pFlag.V_RONLY))
-                        info += " (read-only)";
+                    if(parts[i].p_flag.HasFlag(pFlag.V_VALID)) info += " (valid)";
+                    if(parts[i].p_flag.HasFlag(pFlag.V_UNMNT)) info += " (unmountable)";
+                    if(parts[i].p_flag.HasFlag(pFlag.V_OPEN)) info += " (open)";
+                    if(parts[i].p_flag.HasFlag(pFlag.V_REMAP)) info += " (alternate sector mapping)";
+                    if(parts[i].p_flag.HasFlag(pFlag.V_RONLY)) info += " (read-only)";
                     if(timestamps[i] != 0)
                         info += string.Format(" created on {0}", DateHandlers.UNIXToDateTime(timestamps[i]));
 
                     part.Description = "UNIX slice" + info + ".";
 
-                    if(part.End < imagePlugin.GetSectors())
-                        partitions.Add(part);
+                    if(part.End < imagePlugin.GetSectors()) partitions.Add(part);
                 }
             }
 
@@ -366,68 +374,65 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct PDInfo
         {
-            public uint driveid;      /*identifies the device type*/
-            public uint sanity;       /*verifies device sanity*/
-            public uint version;      /*version number*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] serial;        /*serial number of the device*/
-            public uint cyls;     /*number of cylinders per drive*/
-            public uint tracks;       /*number tracks per cylinder*/
-            public uint sectors;      /*number sectors per track*/
-            public uint bytes;        /*number of bytes per sector*/
-            public uint logicalst;    /*sector address of logical sector 0*/
-            public uint errlogst;     /*sector address of error log area*/
-            public uint errlogsz;     /*size in bytes of error log area*/
-            public uint mfgst;        /*sector address of mfg. defect info*/
-            public uint mfgsz;        /*size in bytes of mfg. defect info*/
-            public uint defectst;     /*sector address of the defect map*/
-            public uint defectsz;     /*size in bytes of defect map*/
-            public uint relno;        /*number of relocation areas*/
-            public uint relst;        /*sector address of relocation area*/
-            public uint relsz;        /*size in sectors of relocation area*/
-            public uint relnext;      /*address of next avail reloc sector*/
-                               /* the previous items are left intact from AT&T's 3b2 pdinfo.  Following
-                                  are added for the 80386 port */
-            public uint vtoc_ptr;         /*byte offset of vtoc block*/
-            public ushort vtoc_len;        /*byte length of vtoc block*/
-            public ushort vtoc_pad;        /* pad for 16-bit machine alignment */
-            public uint alt_ptr;          /*byte offset of alternates table*/
-            public ushort alt_len;         /*byte length of alternates table*/
-                                    /* new in version 3 */
-            public uint pcyls;        /*physical cylinders per drive*/
-            public uint ptracks;      /*physical tracks per cylinder*/
-            public uint psectors;     /*physical sectors per track*/
-            public uint pbytes;       /*physical bytes per sector*/
-            public uint secovhd;      /*sector overhead bytes per sector*/
-            public ushort interleave;  /*interleave factor*/
-            public ushort skew;        /*skew factor*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public uint[] pad;       /*space for more stuff*/
+            public uint driveid; /*identifies the device type*/
+            public uint sanity; /*verifies device sanity*/
+            public uint version; /*version number*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] serial; /*serial number of the device*/
+            public uint cyls; /*number of cylinders per drive*/
+            public uint tracks; /*number tracks per cylinder*/
+            public uint sectors; /*number sectors per track*/
+            public uint bytes; /*number of bytes per sector*/
+            public uint logicalst; /*sector address of logical sector 0*/
+            public uint errlogst; /*sector address of error log area*/
+            public uint errlogsz; /*size in bytes of error log area*/
+            public uint mfgst; /*sector address of mfg. defect info*/
+            public uint mfgsz; /*size in bytes of mfg. defect info*/
+            public uint defectst; /*sector address of the defect map*/
+            public uint defectsz; /*size in bytes of defect map*/
+            public uint relno; /*number of relocation areas*/
+            public uint relst; /*sector address of relocation area*/
+            public uint relsz; /*size in sectors of relocation area*/
+            public uint relnext; /*address of next avail reloc sector*/
+            /* the previous items are left intact from AT&T's 3b2 pdinfo.  Following
+               are added for the 80386 port */
+            public uint vtoc_ptr; /*byte offset of vtoc block*/
+            public ushort vtoc_len; /*byte length of vtoc block*/
+            public ushort vtoc_pad; /* pad for 16-bit machine alignment */
+            public uint alt_ptr; /*byte offset of alternates table*/
+            public ushort alt_len; /*byte length of alternates table*/
+            /* new in version 3 */
+            public uint pcyls; /*physical cylinders per drive*/
+            public uint ptracks; /*physical tracks per cylinder*/
+            public uint psectors; /*physical sectors per track*/
+            public uint pbytes; /*physical bytes per sector*/
+            public uint secovhd; /*sector overhead bytes per sector*/
+            public ushort interleave; /*interleave factor*/
+            public ushort skew; /*skew factor*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] pad; /*space for more stuff*/
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct PDInfoOld
         {
-            public uint driveid;      /*identifies the device type*/
-            public uint sanity;       /*verifies device sanity*/
-            public uint version;      /*version number*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] serial;        /*serial number of the device*/
-            public uint cyls;     /*number of cylinders per drive*/
-            public uint tracks;       /*number tracks per cylinder*/
-            public uint sectors;      /*number sectors per track*/
-            public uint bytes;        /*number of bytes per sector*/
-            public uint logicalst;    /*sector address of logical sector 0*/
-            public uint errlogst;     /*sector address of error log area*/
-            public uint errlogsz;     /*size in bytes of error log area*/
-            public uint mfgst;        /*sector address of mfg. defect info*/
-            public uint mfgsz;        /*size in bytes of mfg. defect info*/
-            public uint defectst;     /*sector address of the defect map*/
-            public uint defectsz;     /*size in bytes of defect map*/
-            public uint relno;        /*number of relocation areas*/
-            public uint relst;        /*sector address of relocation area*/
-            public uint relsz;        /*size in sectors of relocation area*/
-            public uint relnext;      /*address of next avail reloc sector*/
+            public uint driveid; /*identifies the device type*/
+            public uint sanity; /*verifies device sanity*/
+            public uint version; /*version number*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] serial; /*serial number of the device*/
+            public uint cyls; /*number of cylinders per drive*/
+            public uint tracks; /*number tracks per cylinder*/
+            public uint sectors; /*number sectors per track*/
+            public uint bytes; /*number of bytes per sector*/
+            public uint logicalst; /*sector address of logical sector 0*/
+            public uint errlogst; /*sector address of error log area*/
+            public uint errlogsz; /*size in bytes of error log area*/
+            public uint mfgst; /*sector address of mfg. defect info*/
+            public uint mfgsz; /*size in bytes of mfg. defect info*/
+            public uint defectst; /*sector address of the defect map*/
+            public uint defectsz; /*size in bytes of defect map*/
+            public uint relno; /*number of relocation areas*/
+            public uint relst; /*sector address of relocation area*/
+            public uint relsz; /*size in sectors of relocation area*/
+            public uint relnext; /*address of next avail reloc sector*/
             public uint allcstrt; /*start of the allocatable disk*/
             public uint allcend; /*end of allocatable disk*/
         }
@@ -435,46 +440,37 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct vtocold
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public uint[] v_bootinfo; /*info needed by mboot*/
-            public uint v_sanity;         /*to verify vtoc sanity*/
-            public uint v_version;        /*layout version*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] v_volume;           /*volume name*/
-            public ushort v_sectorsz;          /*sector size in bytes*/
-            public ushort v_nparts;            /*number of partitions*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public uint[] v_reserved;       /*free space*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-            public partition[] v_part;  /*partition headers*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-            public int[] timestamp;     /* SCSI time stamp */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] v_bootinfo; /*info needed by mboot*/
+            public uint v_sanity; /*to verify vtoc sanity*/
+            public uint v_version; /*layout version*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] v_volume; /*volume name*/
+            public ushort v_sectorsz; /*sector size in bytes*/
+            public ushort v_nparts; /*number of partitions*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public uint[] v_reserved; /*free space*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)] public partition[] v_part; /*partition headers*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)] public int[] timestamp; /* SCSI time stamp */
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-struct vtoc
+        struct vtoc
         {
-            public uint v_sanity;         /*to verify vtoc sanity*/
-            public uint v_version;        /*layout version*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] v_volume;           /*volume name*/
-            public ushort v_nparts;            /*number of partitions*/
-            public ushort v_pad;                          /*pad for 286 compiler*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public uint[] v_reserved;       /*free space*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-            public partition[] v_part;  /*partition headers*/
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-            public int[] timestamp;     /* SCSI time stamp */
+            public uint v_sanity; /*to verify vtoc sanity*/
+            public uint v_version; /*layout version*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] v_volume; /*volume name*/
+            public ushort v_nparts; /*number of partitions*/
+            public ushort v_pad; /*pad for 286 compiler*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public uint[] v_reserved; /*free space*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)] public partition[] v_part; /*partition headers*/
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)] public int[] timestamp; /* SCSI time stamp */
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct partition
         {
-            public pTag p_tag;           /*ID tag of partition*/
-            public pFlag p_flag;          /*permision flags*/
-            public int p_start;        /*start sector no of partition*/
-            public int p_size;            /*# of blocks in partition*/
+            public pTag p_tag; /*ID tag of partition*/
+            public pFlag p_flag; /*permision flags*/
+            public int p_start; /*start sector no of partition*/
+            public int p_size; /*# of blocks in partition*/
         };
 
         public enum pTag : ushort
@@ -529,54 +525,36 @@ struct vtoc
         enum pFlag : ushort
         {
             /* Partition permission flags */
-            V_UNMNT = 0x01,        /* Unmountable partition */
-            V_RONLY = 0x10,       /* Read only */
-            V_REMAP = 0x20,            /* do alternate sector mapping */
-            V_OPEN = 0x100,          /* Partition open (for driver use) */
-            V_VALID = 0x200,         /* Partition is valid to use */
-            V_VOMASK = 0x300           /* mask for open and valid */
+            V_UNMNT = 0x01, /* Unmountable partition */
+            V_RONLY = 0x10, /* Read only */
+            V_REMAP = 0x20, /* do alternate sector mapping */
+            V_OPEN = 0x100, /* Partition open (for driver use) */
+            V_VALID = 0x200, /* Partition is valid to use */
+            V_VOMASK = 0x300 /* mask for open and valid */
         }
 
         public static string decodeUNIXTAG(pTag type, bool isNew)
         {
             switch(type)
             {
-                case pTag.V_UNUSED:
-                    return "Unused";
-                case pTag.V_BOOT:
-                    return "Boot";
-                case pTag.V_ROOT:
-                    return "/";
-                case pTag.V_SWAP:
-                    return "Swap";
-                case pTag.V_USER:
-                    return "/usr";
-                case pTag.V_BACKUP:
-                    return "Whole disk";
-                case pTag.V_STAND_OLD:
-                    return isNew ? "Stand" : "Alternate sector space";
-                case pTag.V_VAR_OLD:
-                    return isNew ? "/var" : "non UNIX";
-                case pTag.V_HOME_OLD:
-                    return isNew ? "/home" : "Alternate track space";
-                case pTag.V_ALTSCTR_OLD:
-                    return isNew ? "Alternate sector track" : "Stand";
-                case pTag.V_CACHE:
-                    return isNew ? "Cache" : "/var";
-                case pTag.V_RESERVED:
-                    return isNew ? "Reserved" : "/home";
-                case pTag.V_DUMP:
-                    return "dump";
-                case pTag.V_ALTSCTR:
-                    return "Alternate sector track";
-                case pTag.V_VMPUBLIC:
-                    return "volume mgt public partition";
-                case pTag.V_VMPRIVATE:
-                    return "volume mgt private partition";
-                default:
-                    return string.Format("Unknown TAG: 0x{0:X4}", type);
+                case pTag.V_UNUSED: return "Unused";
+                case pTag.V_BOOT: return "Boot";
+                case pTag.V_ROOT: return "/";
+                case pTag.V_SWAP: return "Swap";
+                case pTag.V_USER: return "/usr";
+                case pTag.V_BACKUP: return "Whole disk";
+                case pTag.V_STAND_OLD: return isNew ? "Stand" : "Alternate sector space";
+                case pTag.V_VAR_OLD: return isNew ? "/var" : "non UNIX";
+                case pTag.V_HOME_OLD: return isNew ? "/home" : "Alternate track space";
+                case pTag.V_ALTSCTR_OLD: return isNew ? "Alternate sector track" : "Stand";
+                case pTag.V_CACHE: return isNew ? "Cache" : "/var";
+                case pTag.V_RESERVED: return isNew ? "Reserved" : "/home";
+                case pTag.V_DUMP: return "dump";
+                case pTag.V_ALTSCTR: return "Alternate sector track";
+                case pTag.V_VMPUBLIC: return "volume mgt public partition";
+                case pTag.V_VMPRIVATE: return "volume mgt private partition";
+                default: return string.Format("Unknown TAG: 0x{0:X4}", type);
             }
         }
-
     }
 }

@@ -36,7 +36,7 @@ using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public struct ImageInfo
+    public struct ImageInfo
     {
         public bool imageHasPartitions;
         public bool imageHasSessions;
@@ -66,10 +66,9 @@ namespace DiscImageChef.ImagePlugins
         public string driveSerialNumber;
         public string driveFirmwareRevision;
         public XmlMediaType xmlMediaType;
-		// CHS geometry...
-		public uint cylinders;
-		public uint heads;
-		public uint sectorsPerTrack;
+        // CHS geometry...
+        public uint cylinders;
+        public uint heads;
+        public uint sectorsPerTrack;
     }
 }
-

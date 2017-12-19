@@ -99,11 +99,13 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void DisableAttributeAutosave(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.SmartDisableAttributeAutosave(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense =
+                dev.SmartDisableAttributeAutosave(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+                                                  out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending DISABLE ATTRIBUTE AUTOSAVE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -130,8 +132,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 0:
                     DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
                     return;
-                case 1:
-                    goto start;
+                case 1: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -142,11 +143,11 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void DisableOperations(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.SmartDisable(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending DISABLE OPERATIONS to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -173,8 +174,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 0:
                     DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
                     return;
-                case 1:
-                    goto start;
+                case 1: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -185,11 +185,13 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void EnableAttributeAutosave(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.SmartEnableAttributeAutosave(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense =
+                dev.SmartEnableAttributeAutosave(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+                                                 out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending ENABLE ATTRIBUTE AUTOSAVE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -216,8 +218,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 0:
                     DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
                     return;
-                case 1:
-                    goto start;
+                case 1: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -228,11 +229,11 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void EnableOperations(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.SmartEnable(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending ENABLE OPERATIONS to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -259,8 +260,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 0:
                     DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
                     return;
-                case 1:
-                    goto start;
+                case 1: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -275,7 +275,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -311,17 +311,18 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.SmartExecuteOffLineImmediate(out AtaErrorRegistersLBA28 errorRegisters, subcommand, dev.Timeout, out double duration);
+            bool sense = dev.SmartExecuteOffLineImmediate(out AtaErrorRegistersLBA28 errorRegisters, subcommand,
+                                                          dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending EXECUTE OFF-LINE IMMEDIATE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -349,10 +350,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 0:
                     DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
                     return;
-                case 1:
-                    goto start;
-                case 2:
-                    goto parameters;
+                case 1: goto start;
+                case 2: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -363,11 +362,12 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReadData(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.SmartReadData(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense = dev.SmartReadData(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+                                           out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ DATA to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -400,8 +400,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ DATA response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -417,8 +416,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
+                case 4: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -433,7 +431,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -471,17 +469,18 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.SmartReadLog(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, address, dev.Timeout, out double duration);
+            bool sense = dev.SmartReadLog(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, address,
+                                          dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ LOG to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -515,8 +514,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ LOG response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -532,10 +530,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
-                case 4:
-                    goto parameters;
+                case 3: goto start;
+                case 4: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -546,11 +542,12 @@ namespace DiscImageChef.Tests.Devices.ATA
 
         static void ReturnStatus(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.SmartReturnStatus(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense = dev.SmartReturnStatus(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+                                               out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending RETURN STATUS to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -577,8 +574,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 0:
                     DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
                     return;
-                case 1:
-                    goto start;
+                case 1: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -588,4 +584,3 @@ namespace DiscImageChef.Tests.Devices.ATA
         }
     }
 }
-

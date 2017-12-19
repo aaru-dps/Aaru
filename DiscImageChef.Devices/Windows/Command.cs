@@ -53,14 +53,15 @@ namespace DiscImageChef.Devices.Windows
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        internal static int SendScsiCommand(SafeFileHandle fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ScsiIoctlDirection direction, out double duration, out bool sense)
+        internal static int SendScsiCommand(SafeFileHandle fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
+                                            uint timeout, ScsiIoctlDirection direction, out double duration,
+                                            out bool sense)
         {
             senseBuffer = null;
             duration = 0;
             sense = false;
 
-            if(buffer == null)
-                return -1;
+            if(buffer == null) return -1;
 
             ScsiPassThroughDirectAndSenseBuffer sptd_sb = new ScsiPassThroughDirectAndSenseBuffer();
             sptd_sb.sptd = new ScsiPassThroughDirect();
@@ -82,12 +83,12 @@ namespace DiscImageChef.Devices.Windows
             Marshal.Copy(buffer, 0, sptd_sb.sptd.DataBuffer, buffer.Length);
 
             DateTime start = DateTime.Now;
-            bool hasError = !Extern.DeviceIoControlScsi(fd, WindowsIoctl.IOCTL_SCSI_PASS_THROUGH_DIRECT, ref sptd_sb, (uint)Marshal.SizeOf(sptd_sb), ref sptd_sb,
-                            (uint)Marshal.SizeOf(sptd_sb), ref k, IntPtr.Zero);
+            bool hasError = !Extern.DeviceIoControlScsi(fd, WindowsIoctl.IOCTL_SCSI_PASS_THROUGH_DIRECT, ref sptd_sb,
+                                                        (uint)Marshal.SizeOf(sptd_sb), ref sptd_sb,
+                                                        (uint)Marshal.SizeOf(sptd_sb), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
-            if(hasError)
-                error = Marshal.GetLastWin32Error();
+            if(hasError) error = Marshal.GetLastWin32Error();
 
             Marshal.Copy(sptd_sb.sptd.DataBuffer, buffer, 0, buffer.Length);
 
@@ -103,15 +104,15 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
-        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersCHS registers, out AtaErrorRegistersCHS errorRegisters,
-                                           AtaProtocol protocol, ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersCHS registers,
+                                           out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
             errorRegisters = new AtaErrorRegistersCHS();
 
-            if(buffer == null)
-                return -1;
+            if(buffer == null) return -1;
 
             uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughDirect)) + Marshal.SizeOf(typeof(uint)));
 
@@ -138,7 +139,7 @@ namespace DiscImageChef.Devices.Windows
                 dataBuffer = new byte[64 * 512]
             };
 
-            if (protocol == AtaProtocol.PioIn || protocol == AtaProtocol.UDmaIn || protocol == AtaProtocol.Dma)
+            if(protocol == AtaProtocol.PioIn || protocol == AtaProtocol.UDmaIn || protocol == AtaProtocol.Dma)
                 aptd_buf.aptd.AtaFlags = AtaFlags.DataIn;
             else if(protocol == AtaProtocol.PioOut || protocol == AtaProtocol.UDmaOut)
                 aptd_buf.aptd.AtaFlags = AtaFlags.DataOut;
@@ -163,12 +164,12 @@ namespace DiscImageChef.Devices.Windows
             Array.Copy(buffer, 0, aptd_buf.dataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd_buf, (uint)Marshal.SizeOf(aptd_buf), ref aptd_buf,
-                            (uint)Marshal.SizeOf(aptd_buf), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd_buf,
+                                               (uint)Marshal.SizeOf(aptd_buf), ref aptd_buf,
+                                               (uint)Marshal.SizeOf(aptd_buf), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
-            if(sense)
-                error = Marshal.GetLastWin32Error();
+            if(sense) error = Marshal.GetLastWin32Error();
 
             Array.Copy(aptd_buf.dataBuffer, 0, buffer, 0, buffer.Length);
 
@@ -188,15 +189,15 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
-        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLBA28 registers, out AtaErrorRegistersLBA28 errorRegisters,
-                                           AtaProtocol protocol, ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLBA28 registers,
+                                           out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
             errorRegisters = new AtaErrorRegistersLBA28();
 
-            if(buffer == null)
-                return -1;
+            if(buffer == null) return -1;
 
             uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughDirect)) + Marshal.SizeOf(typeof(uint)));
 
@@ -248,12 +249,12 @@ namespace DiscImageChef.Devices.Windows
             Array.Copy(buffer, 0, aptd_buf.dataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd_buf, (uint)Marshal.SizeOf(aptd_buf), ref aptd_buf,
-                            (uint)Marshal.SizeOf(aptd_buf), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd_buf,
+                                               (uint)Marshal.SizeOf(aptd_buf), ref aptd_buf,
+                                               (uint)Marshal.SizeOf(aptd_buf), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
-            if(sense)
-                error = Marshal.GetLastWin32Error();
+            if(sense) error = Marshal.GetLastWin32Error();
 
             Array.Copy(aptd_buf.dataBuffer, 0, buffer, 0, buffer.Length);
 
@@ -273,15 +274,15 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
-        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLBA48 registers, out AtaErrorRegistersLBA48 errorRegisters,
-                                   AtaProtocol protocol, ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLBA48 registers,
+                                           out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
             errorRegisters = new AtaErrorRegistersLBA48();
 
-            if(buffer == null)
-                return -1;
+            if(buffer == null) return -1;
 
             uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughDirect)) + Marshal.SizeOf(typeof(uint)));
 
@@ -293,14 +294,15 @@ namespace DiscImageChef.Devices.Windows
                     DataBuffer = (IntPtr)offsetForBuffer,
                     Length = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
                     DataTransferLength = (uint)buffer.Length,
-                    PreviousTaskFile = new AtaTaskFile
-                    {
-                        CylinderHigh = (byte)((registers.lbaHigh & 0xFF00) >> 8),
-                        CylinderLow = (byte)((registers.lbaMid & 0xFF00) >> 8),
-                        Features = (byte)((registers.feature & 0xFF00) >> 8),
-                        SectorCount = (byte)((registers.sectorCount & 0xFF00) >> 8),
-                        SectorNumber = (byte)((registers.lbaLow & 0xFF00) >> 8)
-                    },
+                    PreviousTaskFile =
+                        new AtaTaskFile
+                        {
+                            CylinderHigh = (byte)((registers.lbaHigh & 0xFF00) >> 8),
+                            CylinderLow = (byte)((registers.lbaMid & 0xFF00) >> 8),
+                            Features = (byte)((registers.feature & 0xFF00) >> 8),
+                            SectorCount = (byte)((registers.sectorCount & 0xFF00) >> 8),
+                            SectorNumber = (byte)((registers.lbaLow & 0xFF00) >> 8)
+                        },
                     CurrentTaskFile = new AtaTaskFile
                     {
                         Command = registers.command,
@@ -340,21 +342,25 @@ namespace DiscImageChef.Devices.Windows
             Array.Copy(buffer, 0, aptd_buf.dataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd_buf, (uint)Marshal.SizeOf(aptd_buf), ref aptd_buf,
-                            (uint)Marshal.SizeOf(aptd_buf), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd_buf,
+                                               (uint)Marshal.SizeOf(aptd_buf), ref aptd_buf,
+                                               (uint)Marshal.SizeOf(aptd_buf), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
-            if(sense)
-                error = Marshal.GetLastWin32Error();
+            if(sense) error = Marshal.GetLastWin32Error();
 
             Array.Copy(aptd_buf.dataBuffer, 0, buffer, 0, buffer.Length);
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.sectorCount = (ushort)((aptd_buf.aptd.PreviousTaskFile.SectorCount << 8) + aptd_buf.aptd.CurrentTaskFile.SectorCount);
-            errorRegisters.lbaLow = (ushort)((aptd_buf.aptd.PreviousTaskFile.SectorNumber << 8) + aptd_buf.aptd.CurrentTaskFile.SectorNumber);
-            errorRegisters.lbaMid = (ushort)((aptd_buf.aptd.PreviousTaskFile.CylinderLow << 8) + aptd_buf.aptd.CurrentTaskFile.CylinderLow);
-            errorRegisters.lbaHigh = (ushort)((aptd_buf.aptd.PreviousTaskFile.CylinderHigh << 8) + aptd_buf.aptd.CurrentTaskFile.CylinderHigh);
+            errorRegisters.sectorCount = (ushort)((aptd_buf.aptd.PreviousTaskFile.SectorCount << 8) +
+                                                  aptd_buf.aptd.CurrentTaskFile.SectorCount);
+            errorRegisters.lbaLow = (ushort)((aptd_buf.aptd.PreviousTaskFile.SectorNumber << 8) +
+                                             aptd_buf.aptd.CurrentTaskFile.SectorNumber);
+            errorRegisters.lbaMid = (ushort)((aptd_buf.aptd.PreviousTaskFile.CylinderLow << 8) +
+                                             aptd_buf.aptd.CurrentTaskFile.CylinderLow);
+            errorRegisters.lbaHigh = (ushort)((aptd_buf.aptd.PreviousTaskFile.CylinderHigh << 8) +
+                                              aptd_buf.aptd.CurrentTaskFile.CylinderHigh);
             errorRegisters.command = aptd_buf.aptd.CurrentTaskFile.Command;
             errorRegisters.deviceHead = aptd_buf.aptd.CurrentTaskFile.DeviceHead;
             errorRegisters.error = aptd_buf.aptd.CurrentTaskFile.Error;
@@ -365,15 +371,15 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
-        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersCHS registers, out AtaErrorRegistersCHS errorRegisters,
-                                           AtaProtocol protocol, ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersCHS registers,
+                                           out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
             errorRegisters = new AtaErrorRegistersCHS();
 
-            if(buffer == null || buffer.Length > 512)
-                return -1;
+            if(buffer == null || buffer.Length > 512) return -1;
 
             IdePassThroughDirect iptd = new IdePassThroughDirect
             {
@@ -397,12 +403,12 @@ namespace DiscImageChef.Devices.Windows
             Array.Copy(buffer, 0, iptd.DataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IOCTL_IDE_PASS_THROUGH, ref iptd, (uint)Marshal.SizeOf(iptd), ref iptd,
-                            (uint)Marshal.SizeOf(iptd), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IOCTL_IDE_PASS_THROUGH, ref iptd,
+                                               (uint)Marshal.SizeOf(iptd), ref iptd, (uint)Marshal.SizeOf(iptd), ref k,
+                                               IntPtr.Zero);
             DateTime end = DateTime.Now;
 
-            if(sense)
-                error = Marshal.GetLastWin32Error();
+            if(sense) error = Marshal.GetLastWin32Error();
 
             buffer = new byte[k - 12];
             Array.Copy(iptd.DataBuffer, 0, buffer, 0, buffer.Length);
@@ -423,15 +429,15 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
-        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersLBA28 registers, out AtaErrorRegistersLBA28 errorRegisters,
-                                           AtaProtocol protocol, ref byte[] buffer, uint timeout, out double duration, out bool sense)
+        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersLBA28 registers,
+                                           out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
             errorRegisters = new AtaErrorRegistersLBA28();
 
-            if(buffer == null)
-                return -1;
+            if(buffer == null) return -1;
 
             uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughDirect)) + Marshal.SizeOf(typeof(uint)));
 
@@ -457,12 +463,12 @@ namespace DiscImageChef.Devices.Windows
             Array.Copy(buffer, 0, iptd.DataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IOCTL_IDE_PASS_THROUGH, ref iptd, (uint)Marshal.SizeOf(iptd), ref iptd,
-                            (uint)Marshal.SizeOf(iptd), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IOCTL_IDE_PASS_THROUGH, ref iptd,
+                                               (uint)Marshal.SizeOf(iptd), ref iptd, (uint)Marshal.SizeOf(iptd), ref k,
+                                               IntPtr.Zero);
             DateTime end = DateTime.Now;
 
-            if(sense)
-                error = Marshal.GetLastWin32Error();
+            if(sense) error = Marshal.GetLastWin32Error();
 
             buffer = new byte[k - 12];
             Array.Copy(iptd.DataBuffer, 0, buffer, 0, buffer.Length);
@@ -486,13 +492,11 @@ namespace DiscImageChef.Devices.Windows
         internal static uint GetDeviceNumber(SafeFileHandle deviceHandle)
         {
             StorageDeviceNumber sdn = new StorageDeviceNumber();
-            sdn.deviceNumber = - 1;
+            sdn.deviceNumber = -1;
             uint k = 0;
-            if(!Extern.DeviceIoControlGetDeviceNumber(deviceHandle, WindowsIoctl.IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero,
-                0, ref sdn, (uint)Marshal.SizeOf(sdn), ref k, IntPtr.Zero))
-            {
-                return uint.MaxValue;
-            }
+            if(!Extern.DeviceIoControlGetDeviceNumber(deviceHandle, WindowsIoctl.IOCTL_STORAGE_GET_DEVICE_NUMBER,
+                                                      IntPtr.Zero, 0, ref sdn, (uint)Marshal.SizeOf(sdn), ref k,
+                                                      IntPtr.Zero)) { return uint.MaxValue; }
 
             return (uint)sdn.deviceNumber;
         }
@@ -501,28 +505,27 @@ namespace DiscImageChef.Devices.Windows
         {
             uint devNumber = GetDeviceNumber(fd);
 
-            if(devNumber == uint.MaxValue)
-                return null;
+            if(devNumber == uint.MaxValue) return null;
 
             SafeFileHandle hDevInfo = Extern.SetupDiGetClassDevs(ref Consts.GUID_DEVINTERFACE_DISK, IntPtr.Zero,
-                IntPtr.Zero, DeviceGetClassFlags.Present | DeviceGetClassFlags.DeviceInterface);
+                                                                 IntPtr.Zero,
+                                                                 DeviceGetClassFlags.Present |
+                                                                 DeviceGetClassFlags.DeviceInterface);
 
-            if(hDevInfo.IsInvalid)
-                return null;
+            if(hDevInfo.IsInvalid) return null;
 
             uint index = 0;
             DeviceInterfaceData spdid = new DeviceInterfaceData();
             spdid.cbSize = Marshal.SizeOf(spdid);
-            
+
             byte[] buffer;
-            
+
             while(true)
             {
                 buffer = new byte[2048];
-                
+
                 if(!Extern.SetupDiEnumDeviceInterfaces(hDevInfo, IntPtr.Zero, ref Consts.GUID_DEVINTERFACE_DISK, index,
-                    ref spdid))
-                    break;
+                                                       ref spdid)) break;
 
                 uint size = 0;
 
@@ -530,13 +533,16 @@ namespace DiscImageChef.Devices.Windows
 
                 if(size > 0 && size < buffer.Length)
                 {
-                    buffer[0] = (byte)(IntPtr.Size == 8 ? IntPtr.Size : IntPtr.Size + Marshal.SystemDefaultCharSize); // Funny...
+                    buffer[0] = (byte)(IntPtr.Size == 8
+                                           ? IntPtr.Size
+                                           : IntPtr.Size + Marshal.SystemDefaultCharSize); // Funny...
 
                     IntPtr pspdidd = Marshal.AllocHGlobal(buffer.Length);
                     Marshal.Copy(buffer, 0, pspdidd, buffer.Length);
 
                     bool result =
-                        Extern.SetupDiGetDeviceInterfaceDetail(hDevInfo, ref spdid, pspdidd, size, ref size, IntPtr.Zero);
+                        Extern.SetupDiGetDeviceInterfaceDetail(hDevInfo, ref spdid, pspdidd, size, ref size,
+                                                               IntPtr.Zero);
 
                     buffer = new byte[size];
                     Marshal.Copy(pspdidd, buffer, 0, buffer.Length);
@@ -546,7 +552,7 @@ namespace DiscImageChef.Devices.Windows
                     {
                         string devicePath = Encoding.Unicode.GetString(buffer, 4, (int)size - 4);
                         SafeFileHandle hDrive = Extern.CreateFile(devicePath, 0, FileShare.Read | FileShare.Write,
-                            IntPtr.Zero, FileMode.OpenExisting, 0, IntPtr.Zero);
+                                                                  IntPtr.Zero, FileMode.OpenExisting, 0, IntPtr.Zero);
 
                         if(!hDrive.IsInvalid)
                         {
@@ -558,11 +564,11 @@ namespace DiscImageChef.Devices.Windows
                                 return devicePath;
                             }
                         }
-                        
+
                         Extern.CloseHandle(hDrive);
                     }
                 }
-                
+
                 index++;
             }
 
@@ -575,8 +581,8 @@ namespace DiscImageChef.Devices.Windows
             SffdiskQueryDeviceProtocolData queryData1 = new SffdiskQueryDeviceProtocolData();
             queryData1.size = (ushort)Marshal.SizeOf(queryData1);
             uint bytesReturned;
-            Extern.DeviceIoControl(fd, WindowsIoctl.IOCTL_SFFDISK_QUERY_DEVICE_PROTOCOL, IntPtr.Zero, 0,
-                ref queryData1, queryData1.size, out bytesReturned, IntPtr.Zero);
+            Extern.DeviceIoControl(fd, WindowsIoctl.IOCTL_SFFDISK_QUERY_DEVICE_PROTOCOL, IntPtr.Zero, 0, ref queryData1,
+                                   queryData1.size, out bytesReturned, IntPtr.Zero);
             return queryData1.protocolGuid.Equals(Consts.GUID_SFF_PROTOCOL_SD);
         }
 
@@ -598,8 +604,9 @@ namespace DiscImageChef.Devices.Windows
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
         internal static int SendMmcCommand(SafeFileHandle fd, MmcCommands command, bool write, bool isApplication,
-            MmcFlags flags, uint argument, uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
-            out double duration, out bool sense, uint timeout = 0)
+                                           MmcFlags flags, uint argument, uint blockSize, uint blocks,
+                                           ref byte[] buffer, out uint[] response, out double duration, out bool sense,
+                                           uint timeout = 0)
         {
             SffdiskDeviceCommandData commandData = new SffdiskDeviceCommandData();
             SdCmdDescriptor commandDescriptor = new SdCmdDescriptor();
@@ -610,7 +617,9 @@ namespace DiscImageChef.Devices.Windows
             commandDescriptor.commandCode = (byte)command;
             commandDescriptor.cmdClass = isApplication ? SdCommandClass.AppCmd : SdCommandClass.Standard;
             commandDescriptor.transferDirection = write ? SdTransferDirection.Write : SdTransferDirection.Read;
-            commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandADTC) ? SdTransferType.SingleBlock : SdTransferType.CmdOnly;
+            commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandADTC)
+                                                 ? SdTransferType.SingleBlock
+                                                 : SdTransferType.CmdOnly;
             commandDescriptor.responseType = 0;
 
             if(flags.HasFlag(MmcFlags.Response_R1) || flags.HasFlag(MmcFlags.ResponseSPI_R1))
@@ -625,10 +634,10 @@ namespace DiscImageChef.Devices.Windows
                 commandDescriptor.responseType = SdResponseType.R4;
             if(flags.HasFlag(MmcFlags.Response_R5) || flags.HasFlag(MmcFlags.ResponseSPI_R5))
                 commandDescriptor.responseType = SdResponseType.R5;
-            if(flags.HasFlag(MmcFlags.Response_R6))
-                commandDescriptor.responseType = SdResponseType.R6;
+            if(flags.HasFlag(MmcFlags.Response_R6)) commandDescriptor.responseType = SdResponseType.R6;
 
-            byte[] command_b = new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
+            byte[] command_b = new byte[commandData.size + commandData.protocolArgumentSize +
+                                        commandData.deviceDataBufferSize];
             IntPtr hBuf = Marshal.AllocHGlobal(command_b.Length);
             Marshal.StructureToPtr(commandData, hBuf, true);
             IntPtr descriptorOffset = new IntPtr(hBuf.ToInt32() + commandData.size);
@@ -640,15 +649,15 @@ namespace DiscImageChef.Devices.Windows
             int error = 0;
             DateTime start = DateTime.Now;
             sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IOCTL_SFFDISK_DEVICE_COMMAND, command_b,
-                (uint)command_b.Length, command_b, (uint)command_b.Length, out bytesReturned, IntPtr.Zero);
+                                            (uint)command_b.Length, command_b, (uint)command_b.Length,
+                                            out bytesReturned, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
-            if(sense)
-                error = Marshal.GetLastWin32Error();
+            if(sense) error = Marshal.GetLastWin32Error();
 
             buffer = new byte[blockSize * blocks];
             Buffer.BlockCopy(command_b, command_b.Length - buffer.Length, buffer, 0, buffer.Length);
-            
+
             response = new uint[4];
             duration = (end - start).TotalMilliseconds;
 
@@ -656,4 +665,3 @@ namespace DiscImageChef.Devices.Windows
         }
     }
 }
-

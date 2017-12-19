@@ -371,7 +371,6 @@ namespace DiscImageChef.Filesystems.LisaFS
             public ushort flags;
         }
 
-
         /// <summary>
         /// The catalog entry for the V1 and V2 volume formats.
         /// It merely contains the file name, type and ID, plus a few (mostly empty) unknown fields.
@@ -400,4 +399,3 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
     }
 }
-

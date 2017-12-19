@@ -34,15 +34,12 @@ namespace DiscImageChef
         public static void ArrayFill<T>(T[] destinationArray, T value)
         {
             // if called with a single value, wrap the value in an array and call the main function
-            ArrayFill(destinationArray, new T[] { value });
+            ArrayFill(destinationArray, new T[] {value});
         }
 
         public static void ArrayFill<T>(T[] destinationArray, T[] value)
         {
-            if(destinationArray == null)
-            {
-                throw new ArgumentNullException(nameof(destinationArray));
-            }
+            if(destinationArray == null) { throw new ArgumentNullException(nameof(destinationArray)); }
 
             if(value.Length > destinationArray.Length)
             {
@@ -71,11 +68,9 @@ namespace DiscImageChef
         public static string ByteArrayToHex(byte[] array, bool upper)
         {
             StringBuilder sb = new StringBuilder();
-            for(long i = 0; i < array.LongLength; i++)
-                sb.AppendFormat("{0:x2}", array[i]);
+            for(long i = 0; i < array.LongLength; i++) sb.AppendFormat("{0:x2}", array[i]);
 
             return upper ? sb.ToString().ToUpper() : sb.ToString();
         }
     }
 }
-

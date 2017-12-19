@@ -61,13 +61,15 @@ namespace DiscImageChef.Tests.Devices
 
                 DicConsole.WriteLine("DiscImageChef device handling tests");
 
-                DicConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}",
-                                     "Path", "Vendor", "Model", "Serial", "Bus", "Supported?", "Number");
-                DicConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
-                                     "----------------------", "----------------", "------------------------",
-                                     "------------------------", "----------", "----------", "--------");
+                DicConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor",
+                                     "Model", "Serial", "Bus", "Supported?", "Number");
+                DicConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
+                                     "----------------", "------------------------", "------------------------",
+                                     "----------", "----------", "--------");
                 for(int i = 0; i < devices.Length; i++)
-                    DicConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].path, devices[i].vendor, devices[i].model, devices[i].serial, devices[i].bus, devices[i].supported, i + 1);
+                    DicConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].path,
+                                         devices[i].vendor, devices[i].model, devices[i].serial, devices[i].bus,
+                                         devices[i].supported, i + 1);
 
                 DicConsole.Write("Please choose which drive to test (0 to exit): ");
                 strDev = System.Console.ReadLine();

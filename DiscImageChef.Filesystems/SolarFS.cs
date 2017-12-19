@@ -52,26 +52,21 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Solar_OS filesystem";
             PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public SolarFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Solar_OS filesystem";
             PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
-                return false;
+            if((2 + partition.Start) >= partition.End) return false;
 
             byte signature; /// <summary>0x29
             string fs_type; // "SOL_FS  "
@@ -84,12 +79,13 @@ namespace DiscImageChef.Filesystems
             Array.Copy(bpb, 0x35, fs_type_b, 0, 8);
             fs_type = StringHandlers.CToString(fs_type_b);
 
-            if(signature == 0x29 && fs_type == "SOL_FS  ")
-                return true;
+            if(signature == 0x29 && fs_type == "SOL_FS  ") return true;
+
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
@@ -125,7 +121,8 @@ namespace DiscImageChef.Filesystems
             Array.Copy(bpb_sector, 0x1B, BPB.unk3, 0, 10);
             BPB.unk4 = BitConverter.ToUInt32(bpb_sector, 0x26);
 
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", BPB.x86_jump[0], BPB.x86_jump[1], BPB.x86_jump[2]);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", BPB.x86_jump[0],
+                                      BPB.x86_jump[1], BPB.x86_jump[2]);
             DicConsole.DebugWriteLine("SolarFS plugin", "BPB.OEMName: \"{0}\"", BPB.OEMName);
             DicConsole.DebugWriteLine("SolarFS plugin", "BPB.bps: {0}", BPB.bps);
             DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk1: 0x{0:X2}", BPB.unk1);
@@ -136,7 +133,10 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("SolarFS plugin", "BPB.spfat: {0}", BPB.spfat);
             DicConsole.DebugWriteLine("SolarFS plugin", "BPB.sptrk: {0}", BPB.sptrk);
             DicConsole.DebugWriteLine("SolarFS plugin", "BPB.heads: {0}", BPB.heads);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk3: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}", BPB.unk3[0], BPB.unk3[1], BPB.unk3[2], BPB.unk3[3], BPB.unk3[4], BPB.unk3[5], BPB.unk3[6], BPB.unk3[7], BPB.unk3[8], BPB.unk3[9]);
+            DicConsole.DebugWriteLine("SolarFS plugin",
+                                      "BPB.unk3: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}",
+                                      BPB.unk3[0], BPB.unk3[1], BPB.unk3[2], BPB.unk3[3], BPB.unk3[4], BPB.unk3[5],
+                                      BPB.unk3[6], BPB.unk3[7], BPB.unk3[8], BPB.unk3[9]);
             DicConsole.DebugWriteLine("SolarFS plugin", "BPB.signature: 0x{0:X2}", BPB.signature);
             DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk4: 0x{0:X8}", BPB.unk4);
             DicConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"", BPB.vol_name);
@@ -145,20 +145,26 @@ namespace DiscImageChef.Filesystems
             sb.AppendLine("Solar_OS filesystem");
             sb.AppendFormat("Media descriptor: 0x{0:X2}", BPB.media).AppendLine();
             sb.AppendFormat("{0} bytes per sector", BPB.bps).AppendLine();
-            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
+               imagePlugin.GetSectorSize() == 2448)
             {
                 if(BPB.bps != imagePlugin.GetSectorSize())
                 {
-                    sb.AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector", BPB.bps, 2048).AppendLine();
+                    sb
+                        .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
+                                      BPB.bps, 2048).AppendLine();
                 }
             }
             else if(BPB.bps != imagePlugin.GetSectorSize())
             {
-                sb.AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector", BPB.bps, imagePlugin.GetSectorSize()).AppendLine();
+                sb
+                    .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
+                                  BPB.bps, imagePlugin.GetSectorSize()).AppendLine();
             }
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", BPB.sectors, BPB.sectors * BPB.bps).AppendLine();
             if(BPB.sectors > imagePlugin.GetSectors())
-                sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)", BPB.sectors, imagePlugin.GetSectors());
+                sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)",
+                                BPB.sectors, imagePlugin.GetSectors());
             sb.AppendFormat("{0} heads", BPB.heads).AppendLine();
             sb.AppendFormat("{0} sectors per track", BPB.sptrk).AppendLine();
             sb.AppendFormat("Volume name: {0}", BPB.vol_name).AppendLine();

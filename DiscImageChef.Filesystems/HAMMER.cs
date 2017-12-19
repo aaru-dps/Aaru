@@ -59,31 +59,25 @@ namespace DiscImageChef.Filesystems
         {
             Name = "HAMMER Filesystem";
             PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public HAMMER(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "HAMMER Filesystem";
             PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
 
-            if(HAMMER_VOLHDR_SIZE % imagePlugin.GetSectorSize() > 0)
-                run++;
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.GetSectorSize() > 0) run++;
 
-            if((run + partition.Start) >= partition.End)
-                return false;
+            if((run + partition.Start) >= partition.End) return false;
 
             ulong magic;
 
@@ -94,7 +88,8 @@ namespace DiscImageChef.Filesystems
             return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
@@ -104,8 +99,7 @@ namespace DiscImageChef.Filesystems
 
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
 
-            if(HAMMER_VOLHDR_SIZE % imagePlugin.GetSectorSize() > 0)
-                run++;
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.GetSectorSize() > 0) run++;
 
             ulong magic;
 
@@ -116,19 +110,19 @@ namespace DiscImageChef.Filesystems
             if(magic == HAMMER_FSBUF_VOLUME)
             {
                 GCHandle handle = GCHandle.Alloc(sb_sector, GCHandleType.Pinned);
-                hammer_sb = (HammerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HammerSuperBlock));
+                hammer_sb = (HammerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                     typeof(HammerSuperBlock));
                 handle.Free();
             }
-            else
-            {
-                hammer_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sb_sector);
-            }
+            else { hammer_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sb_sector); }
 
             sb.AppendLine("HAMMER filesystem");
 
             sb.AppendFormat("Volume version: {0}", hammer_sb.vol_version).AppendLine();
-            sb.AppendFormat("Volume {0} of {1} on this filesystem", hammer_sb.vol_no + 1, hammer_sb.vol_count).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammer_sb.vol_label, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume {0} of {1} on this filesystem", hammer_sb.vol_no + 1, hammer_sb.vol_count)
+              .AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammer_sb.vol_label, CurrentEncoding))
+              .AppendLine();
             sb.AppendFormat("Volume serial: {0}", hammer_sb.vol_fsid).AppendLine();
             sb.AppendFormat("Filesystem type: {0}", hammer_sb.vol_fstype).AppendLine();
             sb.AppendFormat("Boot area starts at {0}", hammer_sb.vol_bot_beg).AppendLine();
@@ -148,8 +142,10 @@ namespace DiscImageChef.Filesystems
 
             if(hammer_sb.vol_no == hammer_sb.vol_rootvol)
             {
-                sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", hammer_sb.vol0_stat_bigblocks, hammer_sb.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
-                sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)", hammer_sb.vol0_stat_freebigblocks, hammer_sb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", hammer_sb.vol0_stat_bigblocks,
+                                hammer_sb.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)", hammer_sb.vol0_stat_freebigblocks,
+                                hammer_sb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
                 sb.AppendFormat("Filesystem has {0} inode used", hammer_sb.vol0_stat_inodes).AppendLine();
 
                 xmlFSType.Clusters = hammer_sb.vol0_stat_bigblocks;
@@ -173,7 +169,7 @@ namespace DiscImageChef.Filesystems
             /// <summary><see cref="HAMMER_FSBUF_VOLUME"/> for a valid header</summary>
             public ulong vol_signature;
 
-             /* These are relative to block device offset, not zone offsets. */
+            /* These are relative to block device offset, not zone offsets. */
             /// <summary>offset of boot area</summary>
             public long vol_bot_beg;
             /// <summary>offset of memory log</summary>
@@ -189,8 +185,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>identify filesystem type</summary>
             public Guid vol_fstype;
             /// <summary>filesystem label</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] vol_label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] vol_label;
 
             /// <summary>volume number within filesystem</summary>
             public int vol_no;
@@ -206,8 +201,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>the root volume number (must be 0)</summary>
             public uint vol_rootvol;
 
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public uint[] vol_reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] vol_reserved;
 
             /*
              * These fields are initialized and space is reserved in every
@@ -231,12 +225,10 @@ namespace DiscImageChef.Filesystems
             public hammer_off_t vol0_reserved03;
 
             /// <summary>Blockmaps for zones.  Not all zones use a blockmap.  Note that the entire root blockmap is cached in the hammer_mount structure.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public HammerBlockMap[] vol0_blockmap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public HammerBlockMap[] vol0_blockmap;
 
             /// <summary>Array of zone-2 addresses for undo FIFO.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public hammer_off_t[] vol0_undo_array;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public hammer_off_t[] vol0_undo_array;
         }
 
         struct HammerBlockMap
@@ -314,4 +306,3 @@ namespace DiscImageChef.Filesystems
         }
     }
 }
- 

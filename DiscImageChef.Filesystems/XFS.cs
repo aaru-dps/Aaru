@@ -63,8 +63,7 @@ namespace DiscImageChef.Filesystems
             public ushort sectsize;
             public ushort inodesize;
             public ushort inopblock;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] fname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] fname;
             public byte blocklog;
             public byte sectlog;
             public byte inodelog;
@@ -116,26 +115,21 @@ namespace DiscImageChef.Filesystems
         {
             Name = "XFS Filesystem Plugin";
             PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public XFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "XFS Filesystem Plugin";
             PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             // Misaligned
             if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
@@ -143,58 +137,54 @@ namespace DiscImageChef.Filesystems
                 XFS_Superblock xfsSb = new XFS_Superblock();
 
                 uint sbSize = (uint)((Marshal.SizeOf(xfsSb) + 0x400) / imagePlugin.GetSectorSize());
-                if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.GetSectorSize() != 0)
-                    sbSize++;
+                if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-                if(sector.Length < Marshal.SizeOf(xfsSb))
-                    return false;
+                if(sector.Length < Marshal.SizeOf(xfsSb)) return false;
 
                 byte[] sbpiece = new byte[Marshal.SizeOf(xfsSb)];
 
-                foreach(int location in new[] { 0, 0x200, 0x400 })
+                foreach(int location in new[] {0, 0x200, 0x400})
                 {
                     Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf(xfsSb));
 
                     xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
 
-                    DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})", location, xfsSb.magicnum, XFS_Magic);
+                    DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
+                                              location, xfsSb.magicnum, XFS_Magic);
 
-                    if(xfsSb.magicnum == XFS_Magic)
-                        return true;
+                    if(xfsSb.magicnum == XFS_Magic) return true;
                 }
             }
             else
             {
-                foreach(ulong location in new[] { 0, 1, 2 })
+                foreach(ulong location in new[] {0, 1, 2})
                 {
                     XFS_Superblock xfsSb = new XFS_Superblock();
 
                     uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.GetSectorSize());
-                    if(Marshal.SizeOf(xfsSb) % imagePlugin.GetSectorSize() != 0)
-                        sbSize++;
+                    if(Marshal.SizeOf(xfsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
                     byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                    if(sector.Length < Marshal.SizeOf(xfsSb))
-                        return false;
+                    if(sector.Length < Marshal.SizeOf(xfsSb)) return false;
 
                     xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
 
-                    DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location, xfsSb.magicnum, XFS_Magic);
+                    DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
+                                              xfsSb.magicnum, XFS_Magic);
 
-                    if(xfsSb.magicnum == XFS_Magic)
-                        return true;
+                    if(xfsSb.magicnum == XFS_Magic) return true;
                 }
             }
 
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512)
-                return;
+            if(imagePlugin.GetSectorSize() < 512) return;
 
             XFS_Superblock xfsSb = new XFS_Superblock();
 
@@ -202,50 +192,45 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
             {
                 uint sbSize = (uint)((Marshal.SizeOf(xfsSb) + 0x400) / imagePlugin.GetSectorSize());
-                if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.GetSectorSize() != 0)
-                    sbSize++;
+                if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-                if(sector.Length < Marshal.SizeOf(xfsSb))
-                    return;
+                if(sector.Length < Marshal.SizeOf(xfsSb)) return;
 
                 byte[] sbpiece = new byte[Marshal.SizeOf(xfsSb)];
 
-                foreach(int location in new[] { 0, 0x200, 0x400 })
+                foreach(int location in new[] {0, 0x200, 0x400})
                 {
                     Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf(xfsSb));
 
                     xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
 
-                    DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})", location, xfsSb.magicnum, XFS_Magic);
+                    DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
+                                              location, xfsSb.magicnum, XFS_Magic);
 
-                    if(xfsSb.magicnum == XFS_Magic)
-                        break;
+                    if(xfsSb.magicnum == XFS_Magic) break;
                 }
             }
             else
             {
-                foreach(ulong location in new[] { 0, 1, 2 })
+                foreach(ulong location in new[] {0, 1, 2})
                 {
                     uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.GetSectorSize());
-                    if(Marshal.SizeOf(xfsSb) % imagePlugin.GetSectorSize() != 0)
-                        sbSize++;
+                    if(Marshal.SizeOf(xfsSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
                     byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                    if(sector.Length < Marshal.SizeOf(xfsSb))
-                        return;
+                    if(sector.Length < Marshal.SizeOf(xfsSb)) return;
 
                     xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
 
-                    DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location, xfsSb.magicnum, XFS_Magic);
+                    DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
+                                              xfsSb.magicnum, XFS_Magic);
 
-                    if(xfsSb.magicnum == XFS_Magic)
-                        break;
+                    if(xfsSb.magicnum == XFS_Magic) break;
                 }
             }
 
-            if(xfsSb.magicnum != XFS_Magic)
-                return;
+            if(xfsSb.magicnum != XFS_Magic) return;
 
             StringBuilder sb = new StringBuilder();
 
@@ -258,8 +243,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} blocks per allocation group", xfsSb.agblocks).AppendLine();
             sb.AppendFormat("{0} allocation groups in volume", xfsSb.agcount).AppendLine();
             sb.AppendFormat("{0} inodes in volume, {1} free", xfsSb.icount, xfsSb.ifree).AppendLine();
-            if(xfsSb.inprogress > 0)
-                sb.AppendLine("fsck in progress");
+            if(xfsSb.inprogress > 0) sb.AppendLine("fsck in progress");
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(xfsSb.fname, CurrentEncoding)).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", xfsSb.uuid).AppendLine();
 

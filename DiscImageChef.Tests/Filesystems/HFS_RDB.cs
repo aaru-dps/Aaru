@@ -40,33 +40,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class HFS_RDB
     {
-        readonly string[] testfiles = {
-            "amigaos_3.9.vdi.lz",
-        };
+        readonly string[] testfiles = {"amigaos_3.9.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            1024128
-        };
+        readonly ulong[] sectors = {1024128};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            63752,
-        };
+        readonly long[] clusters = {63752,};
 
-        readonly int[] clustersize = {
-            8192,
-        };
+        readonly int[] clustersize = {8192,};
 
-        readonly string[] volumename = {
-            "Volume label",
-        };
+        readonly string[] volumename = {"Volume label",};
 
-        readonly string[] volumeserial = {
-            null,
-        };
+        readonly string[] volumeserial = {null,};
 
         [Test]
         public void Test()
@@ -91,6 +77,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

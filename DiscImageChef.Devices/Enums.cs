@@ -52,7 +52,6 @@ namespace DiscImageChef.Devices
     public enum AtaCommands : byte
     {
         #region Commands defined on Western Digital WD1000 Winchester Disk Controller
-
         /// <summary>
         /// Formats a track
         /// </summary>
@@ -81,7 +80,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on Western Digital WD1000 Winchester Disk Controller
 
         #region Commands defined on ATA rev. 4c
-
         /// <summary>
         /// Acknowledges media change
         /// </summary>
@@ -349,7 +347,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA rev. 4c
 
         #region Commands defined on ATA-2 rev. 4c
-
         /// <summary>
         /// Alters the device microcode
         /// </summary>
@@ -361,7 +358,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA-2 rev. 4c
 
         #region Commands defined on ATA-3 rev. 7b
-
         /// <summary>
         /// Gets a sector containing drive identification and capabilities
         /// </summary>
@@ -397,7 +393,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA-3 rev. 7b
 
         #region Commands defined on CompactFlash Specification
-
         /// <summary>
         /// Pre-erases and conditions data sectors
         /// </summary>
@@ -426,7 +421,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on CompactFlash Specification
 
         #region Commands defined on ATA/ATAPI-4 rev. 18
-
         /// <summary>
         /// Resets a device
         /// </summary>
@@ -482,7 +476,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA/ATAPI-4 rev. 18
 
         #region Commands defined on ATA/ATAPI-6 rev. 3b
-
         /// <summary>
         /// Determines if the device supports the Media Card Pass Through Command feature set
         /// </summary>
@@ -554,7 +547,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA/ATAPI-6 rev. 3b
 
         #region Commands defined on ATA/ATAPI-7 rev. 4b
-
         /// <summary>
         /// Configurates the operating parameters for a stream
         /// </summary>
@@ -578,7 +570,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA/ATAPI-7 rev. 4b
 
         #region Commands defined on ATA/ATAPI-8 rev. 3f
-
         /// <summary>
         /// Sends a Non Volatile Cache subcommand. <see cref="AtaNonVolatileCacheSubCommands"/> 
         /// </summary>
@@ -618,7 +609,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA/ATAPI-8 rev. 3f
 
         #region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
-
         /// <summary>
         /// Provides information for device optimization
         /// In SSDs, this contains trimming
@@ -660,7 +650,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
 
         #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
-
         /// <summary>
         /// Sends <see cref="AtaNCQQueueManagementSubcommands"/>
         /// </summary>
@@ -669,7 +658,6 @@ namespace DiscImageChef.Devices
         /// Sets the device date and time
         /// </summary>
         SetDateAndTimeExt = 0x77,
-
         #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
 
         #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 6
@@ -685,7 +673,6 @@ namespace DiscImageChef.Devices
     public enum AtaSmartSubCommands : byte
     {
         #region Commands defined on ATA-3 rev. 7b
-
         /// <summary>
         /// Disables all SMART capabilities
         /// </summary>
@@ -717,7 +704,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA-3 rev. 7b
 
         #region Commands defined on ATA/ATAPI-4 rev. 18
-
         /// <summary>
         /// Causes the device to immediately initiate a SMART data collection and saves it to the device
         /// </summary>
@@ -729,7 +715,6 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA/ATAPI-4 rev. 18
 
         #region Commands defined on ATA/ATAPI-5 rev. 3
-
         /// <summary>
         /// Returns the indicated log to the host
         /// </summary>
@@ -738,7 +723,6 @@ namespace DiscImageChef.Devices
         /// Writes data to the indicated log
         /// </summary>
         WriteLog = 0xD6
-
         #endregion Commands defined on ATA/ATAPI-5 rev. 3
     }
     #endregion ATA SMART SubCommands
@@ -750,7 +734,6 @@ namespace DiscImageChef.Devices
     public enum AtaDeviceConfigurationSubCommands : byte
     {
         #region Commands defined on ATA/ATAPI-6 rev. 3b
-
         /// <summary>
         /// Disables any change made by <see cref="Set"/> 
         /// </summary>
@@ -767,7 +750,6 @@ namespace DiscImageChef.Devices
         /// Modifies the commands, modes and features sets the device will obey to
         /// </summary>
         Set = 0xC3
-
         #endregion Commands defined on ATA/ATAPI-6 rev. 3b
     }
     #endregion ATA Device Configuration Overlay SubCommands
@@ -779,7 +761,6 @@ namespace DiscImageChef.Devices
     public enum AtaSetMaxSubCommands : byte
     {
         #region Commands defined on ATA/ATAPI-6 rev. 3b
-
         /// <summary>
         /// Redefines the maximum user-accessible address space
         /// </summary>
@@ -811,7 +792,6 @@ namespace DiscImageChef.Devices
     public enum AtaNonVolatileCacheSubCommands : byte
     {
         #region Commands defined on ATA/ATAPI-8 rev. 3f
-
         /// <summary>
         /// Adds the specified LBA to the Non Volatile Cache
         /// </summary>
@@ -841,7 +821,6 @@ namespace DiscImageChef.Devices
         /// Enables the Non Volatile Cache Power Mode, so the device tries to serve all accesses from the Non Volatile Cache
         /// </summary>
         SetNvCachePowerMode = 0x00
-
         #endregion Commands defined on ATA/ATAPI-8 rev. 3f
     }
     #endregion ATA Non Volatile Cache SubCommands
@@ -853,7 +832,6 @@ namespace DiscImageChef.Devices
     public enum AtaSanitizeSubCommands : ushort
     {
         #region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
-
         /// <summary>
         /// Causes a block erase on all user data
         /// </summary>
@@ -877,12 +855,10 @@ namespace DiscImageChef.Devices
         #endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
 
         #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
-
         /// <summary>
         /// Disables the <see cref="FreezeLockExt"/> command
         /// </summary>
         AntiFreezeLockExt = 0x0040
-
         #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
     }
     #endregion ATA Sanitize SubCommands
@@ -894,7 +870,6 @@ namespace DiscImageChef.Devices
     public enum AtaNCQQueueManagementSubcommands : byte
     {
         #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
-
         /// <summary>
         /// Aborts pending NCQ commands
         /// </summary>
@@ -914,11 +889,11 @@ namespace DiscImageChef.Devices
     /// Commands 0x40 to 0x5F are 8-byte
     /// Commands 0xA0 to 0xBF are 12-byte
     /// </summary>
+
     #region SASI Commands
     public enum SasiCommands : byte
     {
         #region SASI Class 0 commands
-
         /// <summary>
         /// Returns zero status if requested unit is on and ready.
         /// SASI rev. 0a
@@ -1101,7 +1076,6 @@ namespace DiscImageChef.Devices
         #endregion SASI Class 0 commands
 
         #region SASI Class 1 commands
-
         /// <summary>
         /// SASI rev. 0a
         /// Unknown
@@ -1162,11 +1136,9 @@ namespace DiscImageChef.Devices
         /// ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         SearchDataLow = 0x32,
-
         #endregion SASI Class 1 commands
 
         #region SASI Class 2 commands
-
         /// <summary>
         /// Unknown
         /// SASI rev. 0a
@@ -1275,7 +1247,6 @@ namespace DiscImageChef.Devices
         #endregion SASI Class 2 commands
 
         #region SASI Class 3 commands
-
         /// <summary>
         /// SASI rev. 0a
         /// </summary>
@@ -1307,7 +1278,6 @@ namespace DiscImageChef.Devices
         #endregion SASI Class 3 commands
 
         #region SASI Class 5 commands
-
         /// <summary>
         /// Gets the number of blocks in device.
         /// ANSI X3T9.3 No. 185 (SASI)
@@ -1318,11 +1288,9 @@ namespace DiscImageChef.Devices
         /// ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         SetBlockLimits = 0xA9,
-
         #endregion SASI Class 5 commands
 
         #region SASI Class 6 commands
-
         /// <summary>
         /// SASI rev. 0a
         /// </summary>
@@ -1346,7 +1314,6 @@ namespace DiscImageChef.Devices
         #endregion SASI Class 6 commands
 
         #region SASI Class 7 commands
-
         /// <summary>
         /// SASI rev. 0a
         /// </summary>
@@ -1375,7 +1342,6 @@ namespace DiscImageChef.Devices
         /// Found on a vendor document
         /// </summary>
         WriteLong = 0xE6
-
         #endregion SASI Class 7 commands
     }
     #endregion SASI Commands
@@ -1387,7 +1353,6 @@ namespace DiscImageChef.Devices
     public enum ScsiCommands : byte
     {
         #region SCSI Primary Commands (SPC)
-
         /// <summary>
         /// Commands used to obtain information about the access controls that are active
         /// SPC-4 rev. 16
@@ -1581,7 +1546,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Primary Commands (SPC)
 
         #region SCSI Block Commands (SBC)
-
         /// <summary>
         /// Compares blocks with sent data, and if equal, writes those block to device, atomically
         /// SBC-3 rev. 25
@@ -1799,7 +1763,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Block Commands (SBC)
 
         #region SCSI Streaming Commands (SSC)
-
         /// <summary>
         /// Prepares the medium for use by the LUN
         /// SSC-1 rev. 22
@@ -1883,7 +1846,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Streaming Commands (SSC)
 
         #region SCSI Streaming Commands for Printers (SSC)
-
         /// <summary>
         /// Assures that the data in the buffer has been printed, or, for other devices, written to media
         /// ECMA-111 (SCSI-1)
@@ -1917,7 +1879,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Streaming Commands for Printers (SSC)
 
         #region SCSI Processor Commands
-
         /// <summary>
         /// Transfers data from the device
         /// ECMA-111 (SCSI-1)
@@ -1931,7 +1892,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Processor Commands
 
         #region SCSI Multimedia Commands (MMC)
-
         /// <summary>
         /// Erases any part of a CD-RW
         /// MMC-1 rev. 9
@@ -2150,7 +2110,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Multimedia Commands (MMC)
 
         #region SCSI Scanner Commands
-
         /// <summary>
         /// Gets information about the data buffer
         /// SCSI-2 X3T9.2/375R rev. 10l
@@ -2184,7 +2143,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Scanner Commands
 
         #region SCSI Block Commands for Optical Media (SBC)
-
         /// <summary>
         /// Erases the specified number of blocks
         /// </summary>
@@ -2257,7 +2215,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Block Commands for Optical Media (SBC)
 
         #region SCSI Medium Changer Commands (SMC)
-
         /// <summary>
         /// Provides a means to exchange the medium in the source element with the medium at destination element
         /// SCSI-2 X3T9.2/375R rev. 10l
@@ -2341,7 +2298,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Medium Changer Commands (SMC)
 
         #region SCSI Communication Commands
-
         /// <summary>
         /// Gets data from the device
         /// SCSI-2 X3T9.2/375R rev. 10l
@@ -2375,7 +2331,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Communication Commands
 
         #region SCSI Controller Commands
-
         /// <summary>
         /// Commands that get information about redundancy groups
         /// SCC-2 rev. 4
@@ -2399,7 +2354,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Controller Commands
 
         #region Pioneer CD-ROM SCSI-2 Command Set
-
         /// <summary>
         /// Scans for a block playing a block on each track cross
         /// </summary>
@@ -2436,7 +2390,6 @@ namespace DiscImageChef.Devices
         #endregion
 
         #region ATA Command Pass-Through
-
         /// <summary>
         /// Sends a 24-bit ATA command to the device
         /// Clashes with <see cref="Blank"/>
@@ -2451,7 +2404,6 @@ namespace DiscImageChef.Devices
         #endregion ATA Command Pass-Through
 
         #region 6-byte CDB aliases
-
         ModeSelect6 = ModeSelect,
         ModeSense6 = ModeSense,
         Read6 = Read,
@@ -2460,7 +2412,6 @@ namespace DiscImageChef.Devices
         #endregion 6-byte CDB aliases
 
         #region SCSI Zoned Block Commands
-
         /// <summary>
         /// ZBC commands with host->device information
         /// </summary>
@@ -2472,7 +2423,6 @@ namespace DiscImageChef.Devices
         #endregion
 
         #region SCSI Commands with unknown meaning, mostly vendor specific
-
         SetCdSpeedUnk = 0xB8,
         WriteCdMsf = 0xA2,
         WriteCd = 0xAA,
@@ -2489,7 +2439,6 @@ namespace DiscImageChef.Devices
         #endregion SCSI Commands with unknown meaning, mostly vendor specific
 
         #region SEGA Packet Interface (all are 12-byte CDB)
-
         /// <summary>
         /// Verifies that the device can be accessed
         /// Sega SPI ver. 1.30
@@ -2864,13 +2813,11 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Allows medium removal from data transport but prevents it from medium changer
         /// </summary>
-        [Obsolete]
-        PreventChanger = 0x02,
+        [Obsolete] PreventChanger = 0x02,
         /// <summary>
         /// Prevents medium removal from both data transport and medium changer
         /// </summary>
-        [Obsolete]
-        PreventAll = 0x03
+        [Obsolete] PreventAll = 0x03
     }
 
     public enum MmcGetConfigurationRt : byte
@@ -3528,8 +3475,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Reads data stream from device, starting at given address, until a <see cref="StopTransmission"/> follows (ADTC, R1)
         /// </summary>
-        [Obsolete]
-        ReadDatUntilStop = 11,
+        [Obsolete] ReadDatUntilStop = 11,
         /// <summary>
         /// Terminates a read/write stream/multiple block operation (AC, R1 / R1b)
         /// </summary>
@@ -3577,8 +3523,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Writes data stream from host until a <see cref="StopTransmission"/> follows (ADTC, R1)
         /// </summary>
-        [Obsolete]
-        WriteDatUntilStop = 20,
+        [Obsolete] WriteDatUntilStop = 20,
         #endregion Class 3 MMC Commands (Stream write)
 
         #region Class 4 MMC Commands (Block-oriented write)
@@ -3869,4 +3814,3 @@ namespace DiscImageChef.Devices
         Wxripper = 2
     }
 }
-

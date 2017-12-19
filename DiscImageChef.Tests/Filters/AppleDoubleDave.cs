@@ -46,7 +46,8 @@ namespace DiscImageChef.Tests.Filters
         public AppleDoubleDave()
         {
             location = Path.Combine(Consts.TestFilesRoot, "filters", "appledouble", "dave", "DOS_720.dmg");
-            sidecar = Path.Combine(Consts.TestFilesRoot, "filters", "appledouble", "dave", "resource.frk", "DOS_720.dmg");
+            sidecar = Path.Combine(Consts.TestFilesRoot, "filters", "appledouble", "dave", "resource.frk",
+                                   "DOS_720.dmg");
         }
 
         [Test]

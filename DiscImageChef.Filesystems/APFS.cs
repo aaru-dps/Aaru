@@ -78,8 +78,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End)
-                return false;
+            if(partition.Start >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
@@ -87,28 +86,25 @@ namespace DiscImageChef.Filesystems
             try
             {
                 GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                nxSb = (ApfsContainerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApfsContainerSuperBlock));
+                nxSb = (ApfsContainerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                       typeof(ApfsContainerSuperBlock));
                 handle.Free();
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
 
-            if(nxSb.magic == ApfsContainerMagic)
-                return true;
+            if(nxSb.magic == ApfsContainerMagic) return true;
 
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             xmlFSType = new Schemas.FileSystemType();
             information = "";
 
-            if(partition.Start >= partition.End)
-                return;
+            if(partition.Start >= partition.End) return;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
@@ -116,21 +112,19 @@ namespace DiscImageChef.Filesystems
             try
             {
                 GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                nxSb = (ApfsContainerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApfsContainerSuperBlock));
+                nxSb = (ApfsContainerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                       typeof(ApfsContainerSuperBlock));
                 handle.Free();
             }
-            catch
-            {
-                return;
-            }
+            catch { return; }
 
-            if(nxSb.magic != ApfsContainerMagic)
-                return;
+            if(nxSb.magic != ApfsContainerMagic) return;
 
             sbInformation.AppendLine("Apple File System");
             sbInformation.AppendLine();
             sbInformation.AppendFormat("{0} bytes per block", nxSb.blockSize).AppendLine();
-            sbInformation.AppendFormat("Container has {0} bytes in {1} blocks", nxSb.containerBlocks * nxSb.blockSize, nxSb.containerBlocks).AppendLine();
+            sbInformation.AppendFormat("Container has {0} bytes in {1} blocks", nxSb.containerBlocks * nxSb.blockSize,
+                                       nxSb.containerBlocks).AppendLine();
 
             information = sbInformation.ToString();
 
@@ -202,4 +196,3 @@ namespace DiscImageChef.Filesystems
         }
     }
 }
-

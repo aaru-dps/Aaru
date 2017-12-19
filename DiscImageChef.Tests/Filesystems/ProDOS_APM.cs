@@ -40,40 +40,27 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class ProDOS_APM
     {
-        readonly string[] testfiles = {
-            "macos_7.5.3.vdi.lz","macos_7.6.vdi.lz","macos_8.0.vdi.lz","macos_8.1.vdi.lz",
-            "macos_9.0.4.vdi.lz","macos_9.1.vdi.lz","macos_9.2.1.vdi.lz","macos_9.2.2.vdi.lz",
+        readonly string[] testfiles =
+        {
+            "macos_7.5.3.vdi.lz", "macos_7.6.vdi.lz", "macos_8.0.vdi.lz", "macos_8.1.vdi.lz", "macos_9.0.4.vdi.lz",
+            "macos_9.1.vdi.lz", "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz",
         };
 
-        readonly ulong[] sectors = {
-            49152,49152,49152,49152,
-            49152,49152,49152,49152,
+        readonly ulong[] sectors = {49152, 49152, 49152, 49152, 49152, 49152, 49152, 49152,};
+
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512,};
+
+        readonly long[] clusters = {48438, 48438, 48438, 48438, 46326, 46326, 46326, 46326,};
+
+        readonly int[] clustersize = {512, 512, 512, 512, 512, 512, 512, 512,};
+
+        readonly string[] volumename =
+        {
+            "VOLUME.LABEL", "VOLUME.LABEL", "VOLUME.LABEL", "VOLUME.LABEL", "VOLUME.LABEL", "VOLUME.LABEL",
+            "VOLUME.LABEL", "VOLUME.LABEL",
         };
 
-        readonly uint[] sectorsize = {
-            512,512,512,512,
-            512,512,512,512,
-        };
-
-        readonly long[] clusters = {
-            48438,48438,48438,48438,
-            46326,46326,46326,46326,
-        };
-
-        readonly int[] clustersize = {
-            512,512,512,512,
-            512,512,512,512,
-        };
-
-        readonly string[] volumename = {
-            "VOLUME.LABEL","VOLUME.LABEL","VOLUME.LABEL","VOLUME.LABEL",
-            "VOLUME.LABEL","VOLUME.LABEL","VOLUME.LABEL","VOLUME.LABEL",
-        };
-
-        readonly string[] volumeserial = {
-            null,null,null,null,
-            null,null,null,null,
-        };
+        readonly string[] volumeserial = {null, null, null, null, null, null, null, null,};
 
         [Test]
         public void Test()
@@ -98,6 +85,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

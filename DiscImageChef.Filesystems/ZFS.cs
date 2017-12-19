@@ -64,8 +64,7 @@ namespace DiscImageChef.Filesystems
 
         struct ZIO_Checksum
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public ulong[] word;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public ulong[] word;
         }
 
         /// <summary>
@@ -74,8 +73,7 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ZIO_Empty
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 472)]
-            public byte[] empty;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 472)] public byte[] empty;
             public ulong magic;
             public ZIO_Checksum checksum;
         }
@@ -175,8 +173,7 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct DVA
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public ulong[] word;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ulong[] word;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -185,8 +182,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Data virtual address
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public DVA[] dataVirtualAddress;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public DVA[] dataVirtualAddress;
             /// <summary>
             /// Block properties
             /// </summary>
@@ -251,8 +247,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             byte[] sector;
             ulong magic;
@@ -261,26 +256,24 @@ namespace DiscImageChef.Filesystems
             {
                 sector = imagePlugin.ReadSector(partition.Start + 31);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_Magic || magic == ZEC_Cigam)
-                    return true;
+                if(magic == ZEC_Magic || magic == ZEC_Cigam) return true;
             }
 
             if(partition.Start + 16 < partition.End)
             {
                 sector = imagePlugin.ReadSector(partition.Start + 16);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_Magic || magic == ZEC_Cigam)
-                    return true;
+                if(magic == ZEC_Magic || magic == ZEC_Cigam) return true;
             }
 
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512)
-                return;
+            if(imagePlugin.GetSectorSize() < 512) return;
 
             byte[] sector;
             ulong magic;
@@ -293,16 +286,14 @@ namespace DiscImageChef.Filesystems
             {
                 sector = imagePlugin.ReadSector(partition.Start + 31);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_Magic || magic == ZEC_Cigam)
-                    nvlistOff = 32;
+                if(magic == ZEC_Magic || magic == ZEC_Cigam) nvlistOff = 32;
             }
 
             if(partition.Start + 16 < partition.End)
             {
                 sector = imagePlugin.ReadSector(partition.Start + 16);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_Magic || magic == ZEC_Cigam)
-                    nvlistOff = 17;
+                if(magic == ZEC_Magic || magic == ZEC_Cigam) nvlistOff = 17;
             }
 
             StringBuilder sb = new StringBuilder();
@@ -311,10 +302,8 @@ namespace DiscImageChef.Filesystems
             nvlist = imagePlugin.ReadSectors(partition.Start + nvlistOff, nvlistLen);
             Dictionary<string, NVS_Item> decodedNvList;
 
-            if(!DecodeNvList(nvlist, out decodedNvList))
-                sb.AppendLine("Could not decode nvlist");
-            else
-                sb.AppendLine(PrintNvList(decodedNvList));
+            if(!DecodeNvList(nvlist, out decodedNvList)) sb.AppendLine("Could not decode nvlist");
+            else sb.AppendLine(PrintNvList(decodedNvList));
 
             information = sb.ToString();
 
@@ -322,8 +311,7 @@ namespace DiscImageChef.Filesystems
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "ZFS filesystem";
-            if(decodedNvList.TryGetValue("name", out tmpObj))
-                xmlFSType.VolumeName = (string)tmpObj.value;
+            if(decodedNvList.TryGetValue("name", out tmpObj)) xmlFSType.VolumeName = (string)tmpObj.value;
             if(decodedNvList.TryGetValue("guid", out tmpObj))
                 xmlFSType.VolumeSerial = string.Format("{0}", (ulong)tmpObj.value);
             if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
@@ -341,16 +329,15 @@ namespace DiscImageChef.Filesystems
         }
 
         // TODO: Decode native nvlist
-        static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList, bool xdr, bool littleEndian)
+        static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList, bool xdr,
+                                 bool littleEndian)
         {
             decodedNvList = new Dictionary<string, NVS_Item>();
 
-            if(nvlist == null || nvlist.Length < 16)
-                return false;
+            if(nvlist == null || nvlist.Length < 16) return false;
 
             int offset = 0;
-            if(!xdr)
-                return false;
+            if(!xdr) return false;
 
             BigEndianBitConverter.IsLittleEndian = littleEndian;
 
@@ -365,16 +352,14 @@ namespace DiscImageChef.Filesystems
                 item.encodedSize = BigEndianBitConverter.ToUInt32(nvlist, offset);
 
                 // Finished
-                if(item.encodedSize == 0)
-                    break;
-                
+                if(item.encodedSize == 0) break;
+
                 offset += 4;
                 item.decodedSize = BigEndianBitConverter.ToUInt32(nvlist, offset);
                 offset += 4;
                 nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
                 offset += 4;
-                if(nameLength % 4 > 0)
-                    nameLength += 4 - (nameLength % 4);
+                if(nameLength % 4 > 0) nameLength += 4 - (nameLength % 4);
                 nameBytes = new byte[nameLength];
                 Array.Copy(nvlist, offset, nameBytes, 0, nameLength);
                 item.name = StringHandlers.CToString(nameBytes);
@@ -404,6 +389,7 @@ namespace DiscImageChef.Filesystems
                                 boolArray[i] = temp > 0;
                                 offset += 4;
                             }
+
                             item.value = boolArray;
                         }
                         else
@@ -412,6 +398,7 @@ namespace DiscImageChef.Filesystems
                             item.value = (temp > 0);
                             offset += 4;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_BYTE:
                     case NVS_DataTypes.DATA_TYPE_BYTE_ARRAY:
@@ -422,8 +409,7 @@ namespace DiscImageChef.Filesystems
                             byte[] byteArray = new byte[item.elements];
                             Array.Copy(nvlist, offset, byteArray, 0, item.elements);
                             offset += (int)item.elements;
-                            if(item.elements % 4 > 0)
-                                offset += 4 - (int)(item.elements % 4);
+                            if(item.elements % 4 > 0) offset += 4 - (int)(item.elements % 4);
                             item.value = byteArray;
                         }
                         else
@@ -442,6 +428,7 @@ namespace DiscImageChef.Filesystems
                                 doubleArray[i] = temp;
                                 offset += 8;
                             }
+
                             item.value = doubleArray;
                         }
                         else
@@ -449,6 +436,7 @@ namespace DiscImageChef.Filesystems
                             item.value = BigEndianBitConverter.ToDouble(nvlist, offset);
                             offset += 8;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_HRTIME:
                         if(item.elements > 1)
@@ -456,17 +444,21 @@ namespace DiscImageChef.Filesystems
                             DateTime[] hrtimeArray = new DateTime[item.elements];
                             for(int i = 0; i < item.elements; i++)
                             {
-                                DateTime temp = DateHandlers.UNIXHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
+                                DateTime temp =
+                                    DateHandlers.UNIXHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
                                 hrtimeArray[i] = temp;
                                 offset += 8;
                             }
+
                             item.value = hrtimeArray;
                         }
                         else
                         {
-                            item.value = DateHandlers.UNIXHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
+                            item.value =
+                                DateHandlers.UNIXHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
                             offset += 8;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT16:
                     case NVS_DataTypes.DATA_TYPE_INT16_ARRAY:
@@ -479,6 +471,7 @@ namespace DiscImageChef.Filesystems
                                 shortArray[i] = temp;
                                 offset += 4;
                             }
+
                             item.value = shortArray;
                         }
                         else
@@ -486,6 +479,7 @@ namespace DiscImageChef.Filesystems
                             item.value = BigEndianBitConverter.ToInt16(nvlist, offset);
                             offset += 4;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT32:
                     case NVS_DataTypes.DATA_TYPE_INT32_ARRAY:
@@ -498,6 +492,7 @@ namespace DiscImageChef.Filesystems
                                 intArray[i] = temp;
                                 offset += 4;
                             }
+
                             item.value = intArray;
                         }
                         else
@@ -505,6 +500,7 @@ namespace DiscImageChef.Filesystems
                             item.value = BigEndianBitConverter.ToInt32(nvlist, offset);
                             offset += 4;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT64:
                     case NVS_DataTypes.DATA_TYPE_INT64_ARRAY:
@@ -517,6 +513,7 @@ namespace DiscImageChef.Filesystems
                                 longArray[i] = temp;
                                 offset += 8;
                             }
+
                             item.value = longArray;
                         }
                         else
@@ -524,6 +521,7 @@ namespace DiscImageChef.Filesystems
                             item.value = BigEndianBitConverter.ToInt64(nvlist, offset);
                             offset += 8;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT8:
                     case NVS_DataTypes.DATA_TYPE_INT8_ARRAY:
@@ -536,15 +534,16 @@ namespace DiscImageChef.Filesystems
                                 sbyteArray[i] = temp;
                                 offset++;
                             }
+
                             item.value = sbyteArray;
-                            if(sbyteArray.Length % 4 > 0)
-                                offset += 4 - sbyteArray.Length % 4;
+                            if(sbyteArray.Length % 4 > 0) offset += 4 - sbyteArray.Length % 4;
                         }
                         else
                         {
                             item.value = BigEndianBitConverter.ToInt64(nvlist, offset);
                             offset += 4;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_STRING:
                     case NVS_DataTypes.DATA_TYPE_STRING_ARRAY:
@@ -559,9 +558,9 @@ namespace DiscImageChef.Filesystems
                                 Array.Copy(nvlist, offset, strBytes, 0, strLength);
                                 stringArray[i] = StringHandlers.CToString(strBytes);
                                 offset += (int)strLength;
-                                if(strLength % 4 > 0)
-                                    offset += 4 - (int)(strLength % 4);
+                                if(strLength % 4 > 0) offset += 4 - (int)(strLength % 4);
                             }
+
                             item.value = stringArray;
                         }
                         else
@@ -572,9 +571,9 @@ namespace DiscImageChef.Filesystems
                             Array.Copy(nvlist, offset, strBytes, 0, strLength);
                             item.value = StringHandlers.CToString(strBytes);
                             offset += (int)strLength;
-                            if(strLength % 4 > 0)
-                                offset += 4 - (int)(strLength % 4);
+                            if(strLength % 4 > 0) offset += 4 - (int)(strLength % 4);
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT16:
                     case NVS_DataTypes.DATA_TYPE_UINT16_ARRAY:
@@ -587,6 +586,7 @@ namespace DiscImageChef.Filesystems
                                 ushortArray[i] = temp;
                                 offset += 4;
                             }
+
                             item.value = ushortArray;
                         }
                         else
@@ -594,6 +594,7 @@ namespace DiscImageChef.Filesystems
                             item.value = BigEndianBitConverter.ToUInt16(nvlist, offset);
                             offset += 4;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT32:
                     case NVS_DataTypes.DATA_TYPE_UINT32_ARRAY:
@@ -606,6 +607,7 @@ namespace DiscImageChef.Filesystems
                                 uintArray[i] = temp;
                                 offset += 4;
                             }
+
                             item.value = uintArray;
                         }
                         else
@@ -613,6 +615,7 @@ namespace DiscImageChef.Filesystems
                             item.value = BigEndianBitConverter.ToUInt32(nvlist, offset);
                             offset += 4;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT64:
                     case NVS_DataTypes.DATA_TYPE_UINT64_ARRAY:
@@ -625,6 +628,7 @@ namespace DiscImageChef.Filesystems
                                 ulongArray[i] = temp;
                                 offset += 8;
                             }
+
                             item.value = ulongArray;
                         }
                         else
@@ -632,18 +636,16 @@ namespace DiscImageChef.Filesystems
                             item.value = BigEndianBitConverter.ToUInt64(nvlist, offset);
                             offset += 8;
                         }
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_NVLIST:
-                        if(item.elements > 1)
-                            goto default;
+                        if(item.elements > 1) goto default;
 
                         byte[] subListBytes = new byte[item.encodedSize - (offset - currOff)];
                         Array.Copy(nvlist, offset, subListBytes, 0, subListBytes.Length);
                         Dictionary<string, NVS_Item> subList;
-                        if(DecodeNvList(subListBytes, out subList, xdr, littleEndian))
-                            item.value = subList;
-                        else
-                            goto default;
+                        if(DecodeNvList(subListBytes, out subList, xdr, littleEndian)) item.value = subList;
+                        else goto default;
                         offset = (int)(currOff + item.encodedSize);
                         break;
                     default:
@@ -681,8 +683,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((bool[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (bool)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (bool)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_BYTE:
                     case NVS_DataTypes.DATA_TYPE_BYTE_ARRAY:
@@ -693,8 +695,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((byte[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (byte)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (byte)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_DOUBLE:
                         if(item.elements > 1)
@@ -702,17 +704,18 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((double[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (double)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (double)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_HRTIME:
                         if(item.elements > 1)
                         {
                             for(int i = 0; i < item.elements; i++)
-                                sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((DateTime[])item.value)[i]).AppendLine();
+                                sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((DateTime[])item.value)[i])
+                                  .AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (DateTime)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (DateTime)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT16:
                     case NVS_DataTypes.DATA_TYPE_INT16_ARRAY:
@@ -721,8 +724,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((short[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (short)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (short)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT32:
                     case NVS_DataTypes.DATA_TYPE_INT32_ARRAY:
@@ -731,8 +734,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((int[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (int)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (int)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT64:
                     case NVS_DataTypes.DATA_TYPE_INT64_ARRAY:
@@ -741,8 +744,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((long[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (long)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (long)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT8:
                     case NVS_DataTypes.DATA_TYPE_INT8_ARRAY:
@@ -751,8 +754,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((sbyte[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (sbyte)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (sbyte)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_STRING:
                     case NVS_DataTypes.DATA_TYPE_STRING_ARRAY:
@@ -761,8 +764,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((string[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (string)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (string)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT16:
                     case NVS_DataTypes.DATA_TYPE_UINT16_ARRAY:
@@ -771,8 +774,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ushort[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (ushort)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (ushort)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT32:
                     case NVS_DataTypes.DATA_TYPE_UINT32_ARRAY:
@@ -781,8 +784,8 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((uint[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (uint)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (uint)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT64:
                     case NVS_DataTypes.DATA_TYPE_UINT64_ARRAY:
@@ -791,23 +794,26 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ulong[])item.value)[i]).AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = {1}", item.name, (ulong)item.value).AppendLine();
+                        else sb.AppendFormat("{0} = {1}", item.name, (ulong)item.value).AppendLine();
+
                         break;
                     case NVS_DataTypes.DATA_TYPE_NVLIST:
                         if(item.elements == 1)
-                            sb.AppendFormat("{0} =\n{1}", item.name, PrintNvList((Dictionary<string, NVS_Item>)item.value)).AppendLine();
+                            sb.AppendFormat("{0} =\n{1}", item.name,
+                                            PrintNvList((Dictionary<string, NVS_Item>)item.value)).AppendLine();
                         else
-                            sb.AppendFormat("{0} = {1} elements nvlist[], unable to print", item.name, item.elements).AppendLine();
+                            sb.AppendFormat("{0} = {1} elements nvlist[], unable to print", item.name, item.elements)
+                              .AppendLine();
                         break;
                     default:
                         if(item.elements > 1)
                         {
                             for(int i = 0; i < item.elements; i++)
-                                sb.AppendFormat("{0}[{1}] = Unknown data type {2}", item.name, i, item.dataType).AppendLine();
+                                sb.AppendFormat("{0}[{1}] = Unknown data type {2}", item.name, i, item.dataType)
+                                  .AppendLine();
                         }
-                        else
-                            sb.AppendFormat("{0} = Unknown data type {1}", item.name, item.dataType).AppendLine();
+                        else sb.AppendFormat("{0} = Unknown data type {1}", item.name, item.dataType).AppendLine();
+
                         break;
                 }
             }

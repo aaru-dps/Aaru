@@ -77,7 +77,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -113,8 +113,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.WriteLine("Display mode");
-                        DicConsole.WriteLine("Available values: {0} {1} {2} {3} {4}", FujitsuDisplayModes.Cancel, FujitsuDisplayModes.Cart, FujitsuDisplayModes.Half, FujitsuDisplayModes.Idle, FujitsuDisplayModes.Ready);
+                        DicConsole.WriteLine("Available values: {0} {1} {2} {3} {4}", FujitsuDisplayModes.Cancel,
+                                             FujitsuDisplayModes.Cart, FujitsuDisplayModes.Half,
+                                             FujitsuDisplayModes.Idle, FujitsuDisplayModes.Ready);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
                         if(!System.Enum.TryParse(strDev, true, out mode))
@@ -124,26 +127,28 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("First display half (will be cut to 7-bit ASCII, 8 chars?: ");
                         firstHalf = System.Console.ReadLine();
                         DicConsole.Write("Second display half (will be cut to 7-bit ASCII, 8 chars?: ");
                         secondHalf = System.Console.ReadLine();
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.FujitsuDisplay(out byte[] senseBuffer, flash, mode, firstHalf, secondHalf, dev.Timeout, out double duration);
+            bool sense = dev.FujitsuDisplay(out byte[] senseBuffer, flash, mode, firstHalf, secondHalf, dev.Timeout,
+                                            out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending DISPLAY to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+            DicConsole.WriteLine("Sense buffer is {0} bytes.",
+                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("DISPLAY decoded sense:");
             DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
@@ -173,17 +178,14 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("DISPLAY sense:");
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 2:
-                    goto start;
-                case 3:
-                    goto parameters;
+                case 2: goto start;
+                case 3: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();

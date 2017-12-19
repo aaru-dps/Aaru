@@ -68,8 +68,7 @@ namespace DiscImageChef.Commands
                 try
                 {
                     encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
-                    if(options.Verbose)
-                        DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                    if(options.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
                 }
                 catch(ArgumentException)
                 {
@@ -100,9 +99,9 @@ namespace DiscImageChef.Commands
                 else
                 {
                     if(options.Verbose)
-                        DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", _imageFormat.Name, _imageFormat.PluginUUID);
-                    else
-                        DicConsole.WriteLine("Image format identified by {0}.", _imageFormat.Name);
+                        DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", _imageFormat.Name,
+                                                    _imageFormat.PluginUUID);
+                    else DicConsole.WriteLine("Image format identified by {0}.", _imageFormat.Name);
                 }
 
                 try
@@ -115,9 +114,11 @@ namespace DiscImageChef.Commands
                     }
 
                     DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
-                    DicConsole.DebugWriteLine("Analyze command", "Image without headers is {0} bytes.", _imageFormat.GetImageSize());
+                    DicConsole.DebugWriteLine("Analyze command", "Image without headers is {0} bytes.",
+                                              _imageFormat.GetImageSize());
                     DicConsole.DebugWriteLine("Analyze command", "Image has {0} sectors.", _imageFormat.GetSectors());
-                    DicConsole.DebugWriteLine("Analyze command", "Image identifies disk type as {0}.", _imageFormat.GetMediaType());
+                    DicConsole.DebugWriteLine("Analyze command", "Image identifies disk type as {0}.",
+                                              _imageFormat.GetMediaType());
 
                     Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
                     Core.Statistics.AddMedia(_imageFormat.ImageInfo.mediaType, false);
@@ -144,6 +145,7 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("No partitions founds, not searching for filesystems");
                             return;
                         }
+
                         checkraw = true;
                     }
                     else
@@ -156,8 +158,10 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Partition {0}:", partitions[i].Sequence);
                             DicConsole.WriteLine("Partition name: {0}", partitions[i].Name);
                             DicConsole.WriteLine("Partition type: {0}", partitions[i].Type);
-                            DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].Start, partitions[i].Offset);
-                            DicConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].Length, partitions[i].Size);
+                            DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].Start,
+                                                 partitions[i].Offset);
+                            DicConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].Length,
+                                                 partitions[i].Size);
                             DicConsole.WriteLine("Partition scheme: {0}", partitions[i].Scheme);
                             DicConsole.WriteLine("Partition description:");
                             DicConsole.WriteLine(partitions[i].Description);
@@ -167,8 +171,7 @@ namespace DiscImageChef.Commands
                                 DicConsole.WriteLine("Identifying filesystem on partition");
 
                                 Core.Filesystems.Identify(_imageFormat, out id_plugins, partitions[i]);
-                                if(id_plugins.Count == 0)
-                                    DicConsole.WriteLine("Filesystem not identified");
+                                if(id_plugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
                                 else if(id_plugins.Count > 1)
                                 {
                                     DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
@@ -207,8 +210,7 @@ namespace DiscImageChef.Commands
                     };
 
                     Core.Filesystems.Identify(_imageFormat, out id_plugins, wholePart);
-                    if(id_plugins.Count == 0)
-                        DicConsole.WriteLine("Filesystem not identified");
+                    if(id_plugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
                     else if(id_plugins.Count > 1)
                     {
                         DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
@@ -244,4 +246,3 @@ namespace DiscImageChef.Commands
         }
     }
 }
-

@@ -113,8 +113,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static WriteProtectionStatus? DecodeWriteProtectionStatus(byte[] WPSResponse)
         {
-            if(WPSResponse == null)
-                return null;
+            if(WPSResponse == null) return null;
 
             WriteProtectionStatus decoded = new WriteProtectionStatus();
 
@@ -137,35 +136,24 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyWriteProtectionStatus(WriteProtectionStatus? WPSResponse)
         {
-            if(WPSResponse == null)
-                return null;
+            if(WPSResponse == null) return null;
 
             WriteProtectionStatus response = WPSResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            if(response.MSWI)
-                sb.AppendLine("Writing inhibited by media specific reason");
-            if(response.CWP)
-                sb.AppendLine("Cartridge sets write protection");
-            if(response.PWP)
-                sb.AppendLine("Media surface sets write protection");
-            if(response.SWPP)
-                sb.AppendLine("Software write protection is set until power down");
+            if(response.MSWI) sb.AppendLine("Writing inhibited by media specific reason");
+            if(response.CWP) sb.AppendLine("Cartridge sets write protection");
+            if(response.PWP) sb.AppendLine("Media surface sets write protection");
+            if(response.SWPP) sb.AppendLine("Software write protection is set until power down");
 
 #if DEBUG
-            if(response.Reserved1 != 0)
-                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-            if(response.Reserved2 != 0)
-                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            if(response.Reserved3 != 0)
-                sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
-            if(response.Reserved4 != 0)
-                sb.AppendFormat("Reserved4 = 0x{0:X2}", response.Reserved4).AppendLine();
-            if(response.Reserved5 != 0)
-                sb.AppendFormat("Reserved5 = 0x{0:X2}", response.Reserved5).AppendLine();
-            if(response.Reserved6 != 0)
-                sb.AppendFormat("Reserved6 = 0x{0:X2}", response.Reserved6).AppendLine();
+            if(response.Reserved1 != 0) sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0) sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0) sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
+            if(response.Reserved4 != 0) sb.AppendFormat("Reserved4 = 0x{0:X2}", response.Reserved4).AppendLine();
+            if(response.Reserved5 != 0) sb.AppendFormat("Reserved5 = 0x{0:X2}", response.Reserved5).AppendLine();
+            if(response.Reserved6 != 0) sb.AppendFormat("Reserved6 = 0x{0:X2}", response.Reserved6).AppendLine();
 #endif
 
             return sb.ToString();
@@ -178,4 +166,3 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         }
     }
 }
-

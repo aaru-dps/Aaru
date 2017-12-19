@@ -42,7 +42,6 @@ using DiscImageChef.Server.App_Start;
 
 namespace DiscImageChef.Server
 {
-
     public partial class ViewReport : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
@@ -55,23 +54,31 @@ namespace DiscImageChef.Server
 
                 // Strip non-ascii, strip slashes and question marks
                 if(manufacturer != null)
-                    manufacturer = Encoding.ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII, Encoding.UTF8.GetBytes(manufacturer))).Replace('/', '_').Replace('\\', '_').Replace('?', '_');
+                    manufacturer = Encoding
+                        .ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII,
+                                                          Encoding.UTF8.GetBytes(manufacturer))).Replace('/', '_')
+                        .Replace('\\', '_').Replace('?', '_');
                 if(model != null)
-                    model = Encoding.ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII, Encoding.UTF8.GetBytes(model))).Replace('/', '_').Replace('\\', '_').Replace('?', '_');
+                    model = Encoding
+                        .ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII, Encoding.UTF8.GetBytes(model)))
+                        .Replace('/', '_').Replace('\\', '_').Replace('?', '_');
                 if(revision != null)
-                    revision = Encoding.ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII, Encoding.UTF8.GetBytes(revision))).Replace('/', '_').Replace('\\', '_').Replace('?', '_');
+                    revision = Encoding
+                        .ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII,
+                                                          Encoding.UTF8.GetBytes(revision))).Replace('/', '_')
+                        .Replace('\\', '_').Replace('?', '_');
 
                 string xmlFile = null;
-                if(!string.IsNullOrWhiteSpace(manufacturer)  && !string.IsNullOrWhiteSpace(model) && !string.IsNullOrWhiteSpace(revision))
-                    xmlFile = manufacturer + "_" + model + "_" + revision + ".xml";
+                if(!string.IsNullOrWhiteSpace(manufacturer) && !string.IsNullOrWhiteSpace(model) &&
+                   !string.IsNullOrWhiteSpace(revision)) xmlFile = manufacturer + "_" + model + "_" + revision + ".xml";
                 else if(!string.IsNullOrWhiteSpace(manufacturer) && !string.IsNullOrWhiteSpace(model))
                     xmlFile = manufacturer + "_" + model + ".xml";
                 else if(!string.IsNullOrWhiteSpace(model) && !string.IsNullOrWhiteSpace(revision))
                     xmlFile = model + "_" + revision + ".xml";
-                else if(!string.IsNullOrWhiteSpace(model))
-                    xmlFile = model + ".xml";
+                else if(!string.IsNullOrWhiteSpace(model)) xmlFile = model + ".xml";
 
-                if(xmlFile==null || !File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Reports", xmlFile)))
+                if(xmlFile == null ||
+                   !File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Reports", xmlFile)))
                 {
                     content.InnerHtml = "<b>Could not find the specified report</b>";
                     return;
@@ -83,7 +90,9 @@ namespace DiscImageChef.Server
 
                 DeviceReport report = new DeviceReport();
                 XmlSerializer xs = new XmlSerializer(report.GetType());
-                StreamReader sr = new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Reports", xmlFile));
+                StreamReader sr =
+                    new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Reports",
+                                                  xmlFile));
                 report = (DeviceReport)xs.Deserialize(sr);
                 sr.Close();
 
@@ -91,19 +100,21 @@ namespace DiscImageChef.Server
                 {
                     string usbVendorDescription = null;
                     string usbProductDescription = null;
-                    GetUsbDescriptions(report.USB.VendorID, report.USB.ProductID, out usbVendorDescription, out usbProductDescription);
+                    GetUsbDescriptions(report.USB.VendorID, report.USB.ProductID, out usbVendorDescription,
+                                       out usbProductDescription);
 
                     lblUsbManufacturer.Text = HttpUtility.HtmlEncode(report.USB.Manufacturer);
                     lblUsbProduct.Text = HttpUtility.HtmlEncode(report.USB.Product);
                     lblUsbVendor.Text = string.Format("0x{0:x4}", report.USB.VendorID);
                     if(usbVendorDescription != null)
-                        lblUsbVendorDescription.Text = string.Format("({0})", HttpUtility.HtmlEncode(usbVendorDescription));
+                        lblUsbVendorDescription.Text =
+                            string.Format("({0})", HttpUtility.HtmlEncode(usbVendorDescription));
                     lblUsbProductId.Text = string.Format("0x{0:x4}", report.USB.ProductID);
                     if(usbProductDescription != null)
-                        lblUsbProductDescription.Text = string.Format("({0})", HttpUtility.HtmlEncode(usbProductDescription));
+                        lblUsbProductDescription.Text =
+                            string.Format("({0})", HttpUtility.HtmlEncode(usbProductDescription));
                 }
-                else
-                    divUsb.Visible = false;
+                else divUsb.Visible = false;
 
                 if(report.FireWire != null)
                 {
@@ -112,8 +123,7 @@ namespace DiscImageChef.Server
                     lblFirewireVendor.Text = string.Format("0x{0:x8}", report.FireWire.VendorID);
                     lblFirewireProductId.Text = string.Format("0x{0:x8}", report.FireWire.ProductID);
                 }
-                else
-                    divFirewire.Visible = false;
+                else divFirewire.Visible = false;
 
                 if(report.PCMCIA != null)
                 {
@@ -133,22 +143,38 @@ namespace DiscImageChef.Server
                                 case Decoders.PCMCIA.TupleCodes.CISTPL_NULL:
                                 case Decoders.PCMCIA.TupleCodes.CISTPL_END:
                                 case Decoders.PCMCIA.TupleCodes.CISTPL_MANFID:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_VERS_1:
-                                    break;
+                                case Decoders.PCMCIA.TupleCodes.CISTPL_VERS_1: break;
                                 case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICEGEO:
                                 case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICEGEO_A:
-                                    Decoders.PCMCIA.DeviceGeometryTuple geom = Decoders.PCMCIA.CIS.DecodeDeviceGeometryTuple(tuple.Data);
+                                    Decoders.PCMCIA.DeviceGeometryTuple geom =
+                                        Decoders.PCMCIA.CIS.DecodeDeviceGeometryTuple(tuple.Data);
                                     if(geom != null && geom.Geometries != null)
                                     {
                                         foreach(Decoders.PCMCIA.DeviceGeometry geometry in geom.Geometries)
                                         {
-                                            decodedTuples.Add("Device width", string.Format("{0} bits", (1 << (geometry.CardInterface - 1)) * 8));
-                                            decodedTuples.Add("Erase block", string.Format("{0} bytes", (1 << (geometry.EraseBlockSize - 1)) * (1 << (geometry.Interleaving - 1))));
-                                            decodedTuples.Add("Read block", string.Format("{0} bytes", (1 << (geometry.ReadBlockSize - 1)) * (1 << (geometry.Interleaving - 1))));
-                                            decodedTuples.Add("Write block", string.Format("{0} bytes", (1 << (geometry.WriteBlockSize - 1)) * (1 << (geometry.Interleaving - 1))));
-                                            decodedTuples.Add("Partition alignment", string.Format("{0} bytes", (1 << (geometry.EraseBlockSize - 1)) * (1 << (geometry.Interleaving - 1)) * (1 << (geometry.Partitions - 1))));
+                                            decodedTuples.Add("Device width",
+                                                              string.Format("{0} bits",
+                                                                            (1 << (geometry.CardInterface - 1)) * 8));
+                                            decodedTuples.Add("Erase block",
+                                                              string.Format("{0} bytes",
+                                                                            (1 << (geometry.EraseBlockSize - 1)) *
+                                                                            (1 << (geometry.Interleaving - 1))));
+                                            decodedTuples.Add("Read block",
+                                                              string.Format("{0} bytes",
+                                                                            (1 << (geometry.ReadBlockSize - 1)) *
+                                                                            (1 << (geometry.Interleaving - 1))));
+                                            decodedTuples.Add("Write block",
+                                                              string.Format("{0} bytes",
+                                                                            (1 << (geometry.WriteBlockSize - 1)) *
+                                                                            (1 << (geometry.Interleaving - 1))));
+                                            decodedTuples.Add("Partition alignment",
+                                                              string.Format("{0} bytes",
+                                                                            (1 << (geometry.EraseBlockSize - 1)) *
+                                                                            (1 << (geometry.Interleaving - 1)) *
+                                                                            (1 << (geometry.Partitions - 1))));
                                         }
                                     }
+
                                     break;
                                 case Decoders.PCMCIA.TupleCodes.CISTPL_ALTSTR:
                                 case Decoders.PCMCIA.TupleCodes.CISTPL_BAR:
@@ -189,7 +215,6 @@ namespace DiscImageChef.Server
                                 default:
                                     decodedTuples.Add("Unknown tuple ID", string.Format("0x{0:X2}", (byte)tuple.Code));
                                     break;
-
                             }
                         }
 
@@ -198,14 +223,11 @@ namespace DiscImageChef.Server
                             repPcmciaTuples.DataSource = decodedTuples;
                             repPcmciaTuples.DataBind();
                         }
-                        else
-                            repPcmciaTuples.Visible = false;
+                        else repPcmciaTuples.Visible = false;
                     }
-                    else
-                        repPcmciaTuples.Visible = false;
+                    else repPcmciaTuples.Visible = false;
                 }
-                else
-                    divPcmcia.Visible = false;
+                else divPcmcia.Visible = false;
 
                 bool removable = true;
                 testedMediaType[] testedMedia = null;
@@ -226,17 +248,13 @@ namespace DiscImageChef.Server
                         ataReport = report.ATAPI;
                         atapi = true;
                     }
-                    else
-                        ataReport = report.ATA;
+                    else ataReport = report.ATA;
 
                     bool cfa = report.CompactFlashSpecified && report.CompactFlash;
 
-                    if(atapi && !cfa)
-                        lblAtaDeviceType.Text = "ATAPI device";
-                    else if(!atapi && cfa)
-                        lblAtaDeviceType.Text = "CompactFlash device";
-                    else
-                        lblAtaDeviceType.Text = "ATA device";
+                    if(atapi && !cfa) lblAtaDeviceType.Text = "ATAPI device";
+                    else if(!atapi && cfa) lblAtaDeviceType.Text = "CompactFlash device";
+                    else lblAtaDeviceType.Text = "ATA device";
 
                     Ata.Report(ataReport, cfa, atapi, ref removable, ref ataOneValue, ref ataTwoValue, ref testedMedia);
 
@@ -245,8 +263,7 @@ namespace DiscImageChef.Server
                     repAtaTwo.DataSource = ataTwoValue;
                     repAtaTwo.DataBind();
                 }
-                else
-                    divAta.Visible = false;
+                else divAta.Visible = false;
 
                 if(report.SCSI != null)
                 {
@@ -254,32 +271,31 @@ namespace DiscImageChef.Server
                     Dictionary<string, string> modePages = new Dictionary<string, string>();
                     Dictionary<string, string> evpdPages = new Dictionary<string, string>();
 
-                    if(VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification) != report.SCSI.Inquiry.VendorIdentification)
-                        lblScsiVendor.Text = string.Format("{0} ({1})", report.SCSI.Inquiry.VendorIdentification, VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification));
-                    else
-                        lblScsiVendor.Text = report.SCSI.Inquiry.VendorIdentification;
+                    if(VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification) !=
+                       report.SCSI.Inquiry.VendorIdentification)
+                        lblScsiVendor.Text = string.Format("{0} ({1})", report.SCSI.Inquiry.VendorIdentification,
+                                                           VendorString.Prettify(report.SCSI.Inquiry
+                                                                                       .VendorIdentification));
+                    else lblScsiVendor.Text = report.SCSI.Inquiry.VendorIdentification;
                     lblScsiProduct.Text = report.SCSI.Inquiry.ProductIdentification;
                     lblScsiRevision.Text = report.SCSI.Inquiry.ProductRevisionLevel;
 
                     scsiOneValue.AddRange(ScsiInquiry.Report(report.SCSI.Inquiry));
 
-                    if(report.SCSI.SupportsModeSense6)
-                        scsiOneValue.Add("Device supports MODE SENSE (6)");
-                    if(report.SCSI.SupportsModeSense10)
-                        scsiOneValue.Add("Device supports MODE SENSE (10)");
-                    if(report.SCSI.SupportsModeSubpages)
-                        scsiOneValue.Add("Device supports MODE SENSE subpages");
+                    if(report.SCSI.SupportsModeSense6) scsiOneValue.Add("Device supports MODE SENSE (6)");
+                    if(report.SCSI.SupportsModeSense10) scsiOneValue.Add("Device supports MODE SENSE (10)");
+                    if(report.SCSI.SupportsModeSubpages) scsiOneValue.Add("Device supports MODE SENSE subpages");
 
                     if(report.SCSI.ModeSense != null)
-                        ScsiModeSense.Report(report.SCSI.ModeSense, report.SCSI.Inquiry.VendorIdentification, report.SCSI.Inquiry.PeripheralDeviceType, ref scsiOneValue, ref modePages);
+                        ScsiModeSense.Report(report.SCSI.ModeSense, report.SCSI.Inquiry.VendorIdentification,
+                                             report.SCSI.Inquiry.PeripheralDeviceType, ref scsiOneValue, ref modePages);
 
                     if(modePages.Count > 0)
                     {
                         repModeSense.DataSource = modePages;
                         repModeSense.DataBind();
                     }
-                    else
-                        divScsiModeSense.Visible = false;
+                    else divScsiModeSense.Visible = false;
 
                     if(report.SCSI.EVPDPages != null)
                         ScsiEvpd.Report(report.SCSI.EVPDPages, report.SCSI.Inquiry.VendorIdentification, ref evpdPages);
@@ -289,8 +305,7 @@ namespace DiscImageChef.Server
                         repEvpd.DataSource = evpdPages;
                         repEvpd.DataBind();
                     }
-                    else
-                        divScsiEvpd.Visible = false;
+                    else divScsiEvpd.Visible = false;
 
                     divScsiMmcMode.Visible = false;
                     divScsiMmcFeatures.Visible = false;
@@ -330,84 +345,107 @@ namespace DiscImageChef.Server
 
                         if(report.SCSI.SequentialDevice.BlockSizeGranularitySpecified)
                             lblScsiSscGranularity.Text = report.SCSI.SequentialDevice.BlockSizeGranularity.ToString();
-                        else
-                            lblScsiSscGranularity.Text = "Unspecified";
-                        
+                        else lblScsiSscGranularity.Text = "Unspecified";
+
                         if(report.SCSI.SequentialDevice.MaxBlockLengthSpecified)
                             lblScsiSscMaxBlock.Text = report.SCSI.SequentialDevice.MaxBlockLength.ToString();
-                        else
-                            lblScsiSscMaxBlock.Text = "Unspecified";
-                        
+                        else lblScsiSscMaxBlock.Text = "Unspecified";
+
                         if(report.SCSI.SequentialDevice.MinBlockLengthSpecified)
                             lblScsiSscMinBlock.Text = report.SCSI.SequentialDevice.MinBlockLength.ToString();
-                        else
-                            lblScsiSscMinBlock.Text = "Unspecified";
+                        else lblScsiSscMinBlock.Text = "Unspecified";
 
                         if(report.SCSI.SequentialDevice.SupportedDensities != null)
                         {
                             repScsiSscDensities.DataSource = report.SCSI.SequentialDevice.SupportedDensities;
                             repScsiSscDensities.DataBind();
                         }
-                        else
-                            repScsiSscDensities.Visible = false;
+                        else repScsiSscDensities.Visible = false;
 
                         if(report.SCSI.SequentialDevice.SupportedMediaTypes != null)
                         {
                             repScsiSscMedias.DataSource = report.SCSI.SequentialDevice.SupportedMediaTypes;
                             repScsiSscMedias.DataBind();
                         }
-                        else
-                            repScsiSscMedias.Visible = false;
+                        else repScsiSscMedias.Visible = false;
 
                         if(report.SCSI.SequentialDevice.TestedMedia != null)
                         {
                             List<string> mediaOneValue = new List<string>();
                             SscTestedMedia.Report(report.SCSI.SequentialDevice.TestedMedia, ref mediaOneValue);
-                            if(mediaOneValue.Count>0)
+                            if(mediaOneValue.Count > 0)
                             {
                                 sscMedia = true;
                                 repTestedMedia.DataSource = mediaOneValue;
                                 repTestedMedia.DataBind();
                             }
-                            else
-                                divTestedMedia.Visible = false;
+                            else divTestedMedia.Visible = false;
                         }
-                        else
-                            divTestedMedia.Visible = false;
+                        else divTestedMedia.Visible = false;
                     }
                     else if(report.SCSI.ReadCapabilities != null)
                     {
                         removable = false;
                         scsiOneValue.Add("");
 
-                        if(report.SCSI.ReadCapabilities.BlocksSpecified && report.SCSI.ReadCapabilities.BlockSizeSpecified)
+                        if(report.SCSI.ReadCapabilities.BlocksSpecified &&
+                           report.SCSI.ReadCapabilities.BlockSizeSpecified)
                         {
-                            scsiOneValue.Add(string.Format("Device has {0} blocks of {1} bytes each", report.SCSI.ReadCapabilities.Blocks, report.SCSI.ReadCapabilities.BlockSize));
+                            scsiOneValue.Add(string.Format("Device has {0} blocks of {1} bytes each",
+                                                           report.SCSI.ReadCapabilities.Blocks,
+                                                           report.SCSI.ReadCapabilities.BlockSize));
 
-                            if(((report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024) > 1000000)
+                            if(((report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 /
+                                1024) > 1000000)
                             {
-                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Tb, {2:F2} TiB", report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize,
-                                    (report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000 / 1000 / 1000, (double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024 / 1024 / 1024));
+                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Tb, {2:F2} TiB",
+                                                               report.SCSI.ReadCapabilities.Blocks *
+                                                               report.SCSI.ReadCapabilities.BlockSize,
+                                                               (report.SCSI.ReadCapabilities.Blocks *
+                                                                report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000 /
+                                                               1000 / 1000,
+                                                               (double)(report.SCSI.ReadCapabilities.Blocks *
+                                                                        report.SCSI.ReadCapabilities.BlockSize) / 1024 /
+                                                               1024 / 1024 / 1024));
                             }
-                            else if(((report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024) > 1000)
+                            else if(
+                                ((report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 /
+                                 1024) > 1000)
                             {
-                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Gb, {2:F2} GiB", report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize,
-                                    (report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000 / 1000, (double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024 / 1024));
+                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Gb, {2:F2} GiB",
+                                                               report.SCSI.ReadCapabilities.Blocks *
+                                                               report.SCSI.ReadCapabilities.BlockSize,
+                                                               (report.SCSI.ReadCapabilities.Blocks *
+                                                                report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000 /
+                                                               1000,
+                                                               (double)(report.SCSI.ReadCapabilities.Blocks *
+                                                                        report.SCSI.ReadCapabilities.BlockSize) / 1024 /
+                                                               1024 / 1024));
                             }
                             else
                             {
-                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Mb, {2:F2} MiB", report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize,
-                                    (report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000, (double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024));
+                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Mb, {2:F2} MiB",
+                                                               report.SCSI.ReadCapabilities.Blocks *
+                                                               report.SCSI.ReadCapabilities.BlockSize,
+                                                               (report.SCSI.ReadCapabilities.Blocks *
+                                                                report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000,
+                                                               (double)(report.SCSI.ReadCapabilities.Blocks *
+                                                                        report.SCSI.ReadCapabilities.BlockSize) / 1024 /
+                                                               1024));
                             }
                         }
 
                         if(report.SCSI.ReadCapabilities.MediumTypeSpecified)
-                            scsiOneValue.Add(string.Format("Medium type code: {0:X2}h", report.SCSI.ReadCapabilities.MediumType));
+                            scsiOneValue.Add(string.Format("Medium type code: {0:X2}h",
+                                                           report.SCSI.ReadCapabilities.MediumType));
                         if(report.SCSI.ReadCapabilities.DensitySpecified)
-                            scsiOneValue.Add(string.Format("Density code: {0:X2}h", report.SCSI.ReadCapabilities.Density));
-                        if((report.SCSI.ReadCapabilities.SupportsReadLong || report.SCSI.ReadCapabilities.SupportsReadLong16) &&
+                            scsiOneValue.Add(string.Format("Density code: {0:X2}h",
+                                                           report.SCSI.ReadCapabilities.Density));
+                        if((report.SCSI.ReadCapabilities.SupportsReadLong ||
+                            report.SCSI.ReadCapabilities.SupportsReadLong16) &&
                            report.SCSI.ReadCapabilities.LongBlockSizeSpecified)
-                            scsiOneValue.Add(string.Format("Long block size: {0} bytes", report.SCSI.ReadCapabilities.LongBlockSize));
+                            scsiOneValue.Add(string.Format("Long block size: {0} bytes",
+                                                           report.SCSI.ReadCapabilities.LongBlockSize));
                         if(report.SCSI.ReadCapabilities.SupportsReadCapacity)
                             scsiOneValue.Add("Device supports READ CAPACITY (10) command.");
                         if(report.SCSI.ReadCapabilities.SupportsReadCapacity16)
@@ -425,14 +463,12 @@ namespace DiscImageChef.Server
                         if(report.SCSI.ReadCapabilities.SupportsReadLong16)
                             scsiOneValue.Add("Device supports READ LONG (16) command.");
                     }
-                    else
-                        testedMedia = report.SCSI.RemovableMedias;
+                    else testedMedia = report.SCSI.RemovableMedias;
 
                     repScsi.DataSource = scsiOneValue;
                     repScsi.DataBind();
                 }
-                else
-                    divScsi.Visible = false;
+                else divScsi.Visible = false;
 
                 if(report.MultiMediaCard != null)
                 {
@@ -440,33 +476,36 @@ namespace DiscImageChef.Server
 
                     if(report.MultiMediaCard.CID != null)
                     {
-                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyCID(report.MultiMediaCard.CID).Replace("\n", "<br/>"));
+                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyCID(report.MultiMediaCard.CID)
+                                                .Replace("\n", "<br/>"));
                         mmcOneValue.Add("");
                     }
 
                     if(report.MultiMediaCard.CSD != null)
                     {
-                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyCSD(report.MultiMediaCard.CSD).Replace("\n", "<br/>"));
+                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyCSD(report.MultiMediaCard.CSD)
+                                                .Replace("\n", "<br/>"));
                         mmcOneValue.Add("");
                     }
 
                     if(report.MultiMediaCard.ExtendedCSD != null)
                     {
-                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyExtendedCSD(report.MultiMediaCard.ExtendedCSD).Replace("\n", "<br/>"));
+                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyExtendedCSD(report.MultiMediaCard.ExtendedCSD)
+                                                .Replace("\n", "<br/>"));
                         mmcOneValue.Add("");
                     }
 
                     if(report.MultiMediaCard.OCR != null)
                     {
-                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyCSD(report.MultiMediaCard.OCR).Replace("\n", "<br/>"));
+                        mmcOneValue.Add(Decoders.MMC.Decoders.PrettifyCSD(report.MultiMediaCard.OCR)
+                                                .Replace("\n", "<br/>"));
                         mmcOneValue.Add("");
                     }
 
                     repMMC.DataSource = mmcOneValue;
                     repMMC.DataBind();
                 }
-                else
-                    divMMC.Visible = false;
+                else divMMC.Visible = false;
 
                 if(report.SecureDigital != null)
                 {
@@ -474,35 +513,38 @@ namespace DiscImageChef.Server
 
                     if(report.SecureDigital.CID != null)
                     {
-                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifyCID(report.SecureDigital.CID).Replace("\n", "<br/>"));
+                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifyCID(report.SecureDigital.CID)
+                                               .Replace("\n", "<br/>"));
                         sdOneValue.Add("");
                     }
 
                     if(report.SecureDigital.CSD != null)
                     {
-                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifyCSD(report.SecureDigital.CSD).Replace("\n", "<br/>"));
+                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifyCSD(report.SecureDigital.CSD)
+                                               .Replace("\n", "<br/>"));
                         sdOneValue.Add("");
                     }
 
                     if(report.SecureDigital.SCR != null)
                     {
-                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifySCR(report.SecureDigital.SCR).Replace("\n", "<br/>"));
+                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifySCR(report.SecureDigital.SCR)
+                                               .Replace("\n", "<br/>"));
                         sdOneValue.Add("");
                     }
 
                     if(report.SecureDigital.OCR != null)
                     {
-                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifyCSD(report.SecureDigital.OCR).Replace("\n", "<br/>"));
+                        sdOneValue.Add(Decoders.SecureDigital.Decoders.PrettifyCSD(report.SecureDigital.OCR)
+                                               .Replace("\n", "<br/>"));
                         sdOneValue.Add("");
                     }
 
                     repSD.DataSource = sdOneValue;
                     repSD.DataBind();
                 }
-                else
-                    divSD.Visible = false;
+                else divSD.Visible = false;
 
-                if(removable && !sscMedia && testedMedia!=null)
+                if(removable && !sscMedia && testedMedia != null)
                 {
                     List<string> mediaOneValue = new List<string>();
                     TestedMedia.Report(testedMedia, ata, ref mediaOneValue);
@@ -512,8 +554,7 @@ namespace DiscImageChef.Server
                         repTestedMedia.DataSource = mediaOneValue;
                         repTestedMedia.DataBind();
                     }
-                    else
-                        divTestedMedia.Visible = false;
+                    else divTestedMedia.Visible = false;
                 }
                 else divTestedMedia.Visible &= sscMedia;
             }
@@ -526,15 +567,16 @@ namespace DiscImageChef.Server
             }
         }
 
-        static void GetUsbDescriptions(ushort vendor, ushort product, out string vendorDescription, out string productDescription)
+        static void GetUsbDescriptions(ushort vendor, ushort product, out string vendorDescription,
+                                       out string productDescription)
         {
             vendorDescription = null;
             productDescription = null;
 
-            if(!File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "usb.ids")))
-                return;
+            if(!File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "usb.ids"))) return;
 
-            StreamReader tocStream = new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "usb.ids"));
+            StreamReader tocStream =
+                new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "usb.ids"));
             string _line;
             bool inManufacturer = false;
             ushort number;
@@ -543,14 +585,12 @@ namespace DiscImageChef.Server
             {
                 _line = tocStream.ReadLine();
 
-                if(_line.Length == 0 || _line[0] == '#')
-                    continue;
+                if(_line.Length == 0 || _line[0] == '#') continue;
 
                 if(inManufacturer)
                 {
                     // Finished with the manufacturer
-                    if(_line[0] != '\t')
-                        return;
+                    if(_line[0] != '\t') return;
 
                     number = Convert.ToUInt16(_line.Substring(1, 4), 16);
 
@@ -563,17 +603,10 @@ namespace DiscImageChef.Server
                 else
                 {
                     // Skip products
-                    if(_line[0] == '\t')
-                        continue;
+                    if(_line[0] == '\t') continue;
 
-                    try
-                    {
-                        number = Convert.ToUInt16(_line.Substring(0, 4), 16);
-                    }
-                    catch(FormatException)
-                    {
-                        continue;
-                    }
+                    try { number = Convert.ToUInt16(_line.Substring(0, 4), 16); }
+                    catch(FormatException) { continue; }
 
                     if(number == vendor)
                     {

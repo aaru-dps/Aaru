@@ -46,7 +46,8 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
-        public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout, out double duration)
+        public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
+                                 out double duration)
         {
             return SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false, false, timeout, out duration);
         }
@@ -61,7 +62,8 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
-        public bool SyQuestReadLong6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout, out double duration)
+        public bool SyQuestReadLong6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
+                                     out double duration)
         {
             return SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false, true, timeout, out duration);
         }
@@ -79,7 +81,8 @@ namespace DiscImageChef.Devices
         /// <param name="readLong">If set to <c>true</c> drive will return ECC bytes and disable error detection.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
+        public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
+                                 byte transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
@@ -90,30 +93,27 @@ namespace DiscImageChef.Devices
             cdb[2] = (byte)((lba & 0xFF00) >> 8);
             cdb[3] = (byte)(lba & 0xFF);
             cdb[4] = transferLength;
-            if(inhibitDma)
-                cdb[5] += 0x80;
-            if(readLong)
-                cdb[5] += 0x40;
+            if(inhibitDma) cdb[5] += 0x80;
+            if(readLong) cdb[5] += 0x40;
 
             if(!inhibitDma && !readLong)
             {
-                if(transferLength == 0)
-                    buffer = new byte[256 * blockSize];
-                else
-                    buffer = new byte[transferLength * blockSize];
+                if(transferLength == 0) buffer = new byte[256 * blockSize];
+                else buffer = new byte[transferLength * blockSize];
             }
             else if(readLong)
             {
                 buffer = new byte[blockSize];
                 cdb[4] = 1;
             }
-            else
-                buffer = new byte[0];
+            else buffer = new byte[0];
 
             if(!inhibitDma)
-                lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+                lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                            out sense);
             else
-                lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+                lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+                                            out sense);
 
             error = lastError != 0;
 
@@ -129,7 +129,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool SyQuestReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        public bool SyQuestReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout,
+                                            out double duration)
         {
             return AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
         }
@@ -144,7 +145,8 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
-        public bool SyQuestReadLong10(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout, out double duration)
+        public bool SyQuestReadLong10(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
+                                      out double duration)
         {
             return SyQuestRead10(out buffer, out senseBuffer, lba, blockSize, 1, false, true, timeout, out duration);
         }
@@ -162,7 +164,9 @@ namespace DiscImageChef.Devices
         /// <param name="readLong">If set to <c>true</c> drive will return ECC bytes and disable error detection.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool SyQuestRead10(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, ushort transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
+        public bool SyQuestRead10(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
+                                  ushort transferLength, bool inhibitDma, bool readLong, uint timeout,
+                                  out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
@@ -175,27 +179,23 @@ namespace DiscImageChef.Devices
             cdb[5] = (byte)(lba & 0xFF);
             cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
             cdb[8] = (byte)(transferLength & 0xFF);
-            if(inhibitDma)
-                cdb[9] += 0x80;
-            if(readLong)
-                cdb[9] += 0x40;
+            if(inhibitDma) cdb[9] += 0x80;
+            if(readLong) cdb[9] += 0x40;
 
-            if(!inhibitDma && !readLong)
-            {
-                buffer = new byte[transferLength * blockSize];
-            }
+            if(!inhibitDma && !readLong) { buffer = new byte[transferLength * blockSize]; }
             else if(readLong)
             {
                 buffer = new byte[blockSize];
                 cdb[4] = 1;
             }
-            else
-                buffer = new byte[0];
+            else buffer = new byte[0];
 
             if(!inhibitDma)
-                lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+                lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                            out sense);
             else
-                lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+                lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+                                            out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "SYQUEST READ (10) took {0} ms.", duration);
@@ -204,4 +204,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

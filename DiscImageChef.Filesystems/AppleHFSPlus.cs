@@ -77,8 +77,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
-                return false;
+            if((2 + partition.Start) >= partition.End) return false;
 
             ushort drSigWord;
             ushort xdrStABNt;
@@ -89,10 +88,10 @@ namespace DiscImageChef.Filesystems
             ulong hfsp_offset;
 
             uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.sectorSize;
-            if(0x800 % imagePlugin.ImageInfo.sectorSize > 0)
-                sectorsToRead++;
+            if(0x800 % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
 
-            vh_sector = imagePlugin.ReadSectors(partition.Start, sectorsToRead); // Read volume header, of HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSectors(partition.Start,
+                                                sectorsToRead); // Read volume header, of HFS Wrapper MDB
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x400); // Check for HFS Wrapper MDB
 
@@ -102,33 +101,30 @@ namespace DiscImageChef.Filesystems
 
                 if(drSigWord == HFSP_MAGIC) // "H+"
                 {
-                    xdrStABNt = BigEndianBitConverter.ToUInt16(vh_sector, 0x47E); // Starting block number of embedded HFS+ volume
+                    xdrStABNt = BigEndianBitConverter
+                        .ToUInt16(vh_sector, 0x47E); // Starting block number of embedded HFS+ volume
 
                     drAlBlkSiz = BigEndianBitConverter.ToUInt32(vh_sector, 0x414); // Block size
 
-                    drAlBlSt = BigEndianBitConverter.ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
+                    drAlBlSt = BigEndianBitConverter
+                        .ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
 
                     hfsp_offset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.GetSectorSize());
                 }
-                else
-                {
-                    hfsp_offset = 0;
-                }
+                else { hfsp_offset = 0; }
             }
-            else
-            {
-                hfsp_offset = 0;
-            }
+            else { hfsp_offset = 0; }
 
             vh_sector = imagePlugin.ReadSectors(partition.Start + hfsp_offset, sectorsToRead); // Read volume header
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x400);
-            if(drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC)
-                return true;
+            if(drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC) return true;
+
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
@@ -143,10 +139,10 @@ namespace DiscImageChef.Filesystems
             byte[] vh_sector;
 
             uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.sectorSize;
-            if(0x800 % imagePlugin.ImageInfo.sectorSize > 0)
-                sectorsToRead++;
+            if(0x800 % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
 
-            vh_sector = imagePlugin.ReadSectors(partition.Start, sectorsToRead); // Read volume header, of HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSectors(partition.Start,
+                                                sectorsToRead); // Read volume header, of HFS Wrapper MDB
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x400); // Check for HFS Wrapper MDB
 
@@ -156,11 +152,13 @@ namespace DiscImageChef.Filesystems
 
                 if(drSigWord == HFSP_MAGIC) // "H+"
                 {
-                    xdrStABNt = BigEndianBitConverter.ToUInt16(vh_sector, 0x47E); // Starting block number of embedded HFS+ volume
+                    xdrStABNt = BigEndianBitConverter
+                        .ToUInt16(vh_sector, 0x47E); // Starting block number of embedded HFS+ volume
 
                     drAlBlkSiz = BigEndianBitConverter.ToUInt32(vh_sector, 0x414); // Block size
 
-                    drAlBlSt = BigEndianBitConverter.ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
+                    drAlBlSt = BigEndianBitConverter
+                        .ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
 
                     hfsp_offset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.GetSectorSize());
                     wrapped = true;
@@ -184,12 +182,9 @@ namespace DiscImageChef.Filesystems
             {
                 StringBuilder sb = new StringBuilder();
 
-                if(HPVH.signature == 0x482B)
-                    sb.AppendLine("HFS+ filesystem.");
-                if(HPVH.signature == 0x4858)
-                    sb.AppendLine("HFSX filesystem.");
-                if(wrapped)
-                    sb.AppendLine("Volume is wrapped inside an HFS volume.");
+                if(HPVH.signature == 0x482B) sb.AppendLine("HFS+ filesystem.");
+                if(HPVH.signature == 0x4858) sb.AppendLine("HFSX filesystem.");
+                if(wrapped) sb.AppendLine("Volume is wrapped inside an HFS volume.");
 
                 byte[] tmp = new byte[0x400];
                 Array.Copy(vh_sector, 0x400, tmp, 0, 0x400);
@@ -199,39 +194,32 @@ namespace DiscImageChef.Filesystems
 
                 if(HPVH.version == 4 || HPVH.version == 5)
                 {
-
                     sb.AppendFormat("Filesystem version is {0}.", HPVH.version).AppendLine();
 
-                    if((HPVH.attributes & 0x80) == 0x80)
-                        sb.AppendLine("Volume is locked on hardware.");
-                    if((HPVH.attributes & 0x100) == 0x100)
-                        sb.AppendLine("Volume is unmounted.");
-                    if((HPVH.attributes & 0x200) == 0x200)
-                        sb.AppendLine("There are bad blocks in the extents file.");
-                    if((HPVH.attributes & 0x400) == 0x400)
-                        sb.AppendLine("Volume does not require cache.");
-                    if((HPVH.attributes & 0x800) == 0x800)
-                        sb.AppendLine("Volume state is inconsistent.");
-                    if((HPVH.attributes & 0x1000) == 0x1000)
-                        sb.AppendLine("CNIDs are reused.");
-                    if((HPVH.attributes & 0x2000) == 0x2000)
-                        sb.AppendLine("Volume is journaled.");
-                    if((HPVH.attributes & 0x8000) == 0x8000)
-                        sb.AppendLine("Volume is locked on software.");
+                    if((HPVH.attributes & 0x80) == 0x80) sb.AppendLine("Volume is locked on hardware.");
+                    if((HPVH.attributes & 0x100) == 0x100) sb.AppendLine("Volume is unmounted.");
+                    if((HPVH.attributes & 0x200) == 0x200) sb.AppendLine("There are bad blocks in the extents file.");
+                    if((HPVH.attributes & 0x400) == 0x400) sb.AppendLine("Volume does not require cache.");
+                    if((HPVH.attributes & 0x800) == 0x800) sb.AppendLine("Volume state is inconsistent.");
+                    if((HPVH.attributes & 0x1000) == 0x1000) sb.AppendLine("CNIDs are reused.");
+                    if((HPVH.attributes & 0x2000) == 0x2000) sb.AppendLine("Volume is journaled.");
+                    if((HPVH.attributes & 0x8000) == 0x8000) sb.AppendLine("Volume is locked on software.");
 
-                    sb.AppendFormat("Implementation that last mounted the volume: \"{0}\".", Encoding.ASCII.GetString(HPVH.lastMountedVersion)).AppendLine();
+                    sb.AppendFormat("Implementation that last mounted the volume: \"{0}\".",
+                                    Encoding.ASCII.GetString(HPVH.lastMountedVersion)).AppendLine();
                     if((HPVH.attributes & 0x2000) == 0x2000)
                         sb.AppendFormat("Journal starts at allocation block {0}.", HPVH.journalInfoBlock).AppendLine();
                     sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(HPVH.createDate)).AppendLine();
-                    sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(HPVH.modifyDate)).AppendLine();
+                    sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(HPVH.modifyDate))
+                      .AppendLine();
                     if(HPVH.backupDate > 0)
-                        sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(HPVH.backupDate)).AppendLine();
-                    else
-                        sb.AppendLine("Volume has never been backed up");
+                        sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(HPVH.backupDate))
+                          .AppendLine();
+                    else sb.AppendLine("Volume has never been backed up");
                     if(HPVH.backupDate > 0)
-                        sb.AppendFormat("Last check date: {0}", DateHandlers.MacToDateTime(HPVH.checkedDate)).AppendLine();
-                    else
-                        sb.AppendLine("Volume has never been checked up");
+                        sb.AppendFormat("Last check date: {0}", DateHandlers.MacToDateTime(HPVH.checkedDate))
+                          .AppendLine();
+                    else sb.AppendLine("Volume has never been checked up");
                     sb.AppendFormat("{0} files on volume.", HPVH.fileCount).AppendLine();
                     sb.AppendFormat("{0} folders on volume.", HPVH.folderCount).AppendLine();
                     sb.AppendFormat("{0} bytes per allocation block.", HPVH.blockSize).AppendLine();
@@ -254,7 +242,8 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("CNID of bootable Mac OS 8 or 9 directory: {0}", HPVH.drFndrInfo3).AppendLine();
                     sb.AppendFormat("CNID of bootable Mac OS X directory: {0}", HPVH.drFndrInfo5).AppendLine();
                     if(HPVH.drFndrInfo6 != 0 && HPVH.drFndrInfo7 != 0)
-                        sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7).AppendLine();
+                        sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7)
+                          .AppendLine();
 
                     xmlFSType = new Schemas.FileSystemType();
                     if(HPVH.backupDate > 0)
@@ -280,10 +269,8 @@ namespace DiscImageChef.Filesystems
                         xmlFSType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
                         xmlFSType.ModificationDateSpecified = true;
                     }
-                    if(HPVH.signature == 0x482B)
-                        xmlFSType.Type = "HFS+";
-                    if(HPVH.signature == 0x4858)
-                        xmlFSType.Type = "HFSX";
+                    if(HPVH.signature == 0x482B) xmlFSType.Type = "HFS+";
+                    if(HPVH.signature == 0x4858) xmlFSType.Type = "HFSX";
                     if(HPVH.drFndrInfo6 != 0 && HPVH.drFndrInfo7 != 0)
                         xmlFSType.VolumeSerial = string.Format("{0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7);
                     xmlFSType.SystemIdentifier = Encoding.ASCII.GetString(HPVH.lastMountedVersion);
@@ -296,8 +283,7 @@ namespace DiscImageChef.Filesystems
 
                 information = sb.ToString();
             }
-            else
-                return;
+            else return;
         }
 
         /// <summary>
@@ -318,8 +304,7 @@ namespace DiscImageChef.Filesystems
             /// "10.0" Mac OS X
             /// "HFSJ" Journaled implementation
             /// "fsck" /sbin/fsck</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public byte[] lastMountedVersion;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] lastMountedVersion;
             /// <summary>0x00C, Allocation block number containing the journal</summary>
             public uint journalInfoBlock;
             /// <summary>0x010, Date of volume creation</summary>

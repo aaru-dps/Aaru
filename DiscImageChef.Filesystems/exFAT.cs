@@ -54,30 +54,24 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Microsoft Extended File Allocation Table";
             PluginUUID = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public exFAT(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Microsoft Extended File Allocation Table";
             PluginUUID = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if((12 + partition.Start) >= partition.End)
-                return false;
+            if((12 + partition.Start) >= partition.End) return false;
 
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
-            if(vbrSector.Length < 512)
-                return false;
+            if(vbrSector.Length < 512) return false;
 
             VolumeBootRecord vbr = new VolumeBootRecord();
             IntPtr vbrPtr = Marshal.AllocHGlobal(512);
@@ -118,21 +112,23 @@ namespace DiscImageChef.Filesystems
 
             sb.AppendLine("Microsoft exFAT");
             sb.AppendFormat("Partition offset: {0}", vbr.offset).AppendLine();
-            sb.AppendFormat("Volume has {0} sectors of {1} bytes each for a total of {2} bytes", vbr.sectors, 1 << vbr.sectorShift, vbr.sectors * (ulong)(1 << vbr.sectorShift)).AppendLine();
-            sb.AppendFormat("Volume uses clusters of {0} sectors ({1} bytes) each", 1 << vbr.clusterShift, (1 << vbr.sectorShift) * (1 << vbr.clusterShift)).AppendLine();
-            sb.AppendFormat("First FAT starts at sector {0} and runs for {1} sectors", vbr.fatOffset, vbr.fatLength).AppendLine();
+            sb.AppendFormat("Volume has {0} sectors of {1} bytes each for a total of {2} bytes", vbr.sectors,
+                            1 << vbr.sectorShift, vbr.sectors * (ulong)(1 << vbr.sectorShift)).AppendLine();
+            sb.AppendFormat("Volume uses clusters of {0} sectors ({1} bytes) each", 1 << vbr.clusterShift,
+                            (1 << vbr.sectorShift) * (1 << vbr.clusterShift)).AppendLine();
+            sb.AppendFormat("First FAT starts at sector {0} and runs for {1} sectors", vbr.fatOffset, vbr.fatLength)
+              .AppendLine();
             sb.AppendFormat("Volume uses {0} FATs", vbr.fats).AppendLine();
-            sb.AppendFormat("Cluster heap starts at sector {0}, contains {1} clusters and is {2}% used", vbr.clusterHeapOffset, vbr.clusterHeapLength, vbr.heapUsage).AppendLine();
+            sb.AppendFormat("Cluster heap starts at sector {0}, contains {1} clusters and is {2}% used",
+                            vbr.clusterHeapOffset, vbr.clusterHeapLength, vbr.heapUsage).AppendLine();
             sb.AppendFormat("Root directory starts at cluster {0}", vbr.rootDirectoryCluster).AppendLine();
-            sb.AppendFormat("Filesystem revision is {0}.{1:D2}", (vbr.revision & 0xFF00) >> 8, (vbr.revision & 0xFF)).AppendLine();
+            sb.AppendFormat("Filesystem revision is {0}.{1:D2}", (vbr.revision & 0xFF00) >> 8, (vbr.revision & 0xFF))
+              .AppendLine();
             sb.AppendFormat("Volume serial number: {0:X8}", vbr.volumeSerial).AppendLine();
             sb.AppendFormat("BIOS drive is {0:X2}h", vbr.drive).AppendLine();
-            if(vbr.flags.HasFlag(VolumeFlags.SecondFATActive))
-                sb.AppendLine("2nd FAT is in use");
-            if(vbr.flags.HasFlag(VolumeFlags.VolumeDirty))
-                sb.AppendLine("Volume is dirty");
-            if(vbr.flags.HasFlag(VolumeFlags.MediaFailure))
-                sb.AppendLine("Underlying media presented errors");
+            if(vbr.flags.HasFlag(VolumeFlags.SecondFATActive)) sb.AppendLine("2nd FAT is in use");
+            if(vbr.flags.HasFlag(VolumeFlags.VolumeDirty)) sb.AppendLine("Volume is dirty");
+            if(vbr.flags.HasFlag(VolumeFlags.MediaFailure)) sb.AppendLine("Underlying media presented errors");
 
             int count = 1;
             foreach(OemParameter parameter in parametersTable.parameters)
@@ -164,7 +160,7 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
-        readonly byte[] Signature = { 0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20 };
+        readonly byte[] Signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
         readonly Guid OEM_FLASH_PARAMETER_GUID = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
 
         [Flags]
@@ -179,12 +175,9 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VolumeBootRecord
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] jump;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] signature;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)]
-            public byte[] zero;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)] public byte[] zero;
             public ulong offset;
             public ulong sectors;
             public uint fatOffset;
@@ -200,10 +193,8 @@ namespace DiscImageChef.Filesystems
             public byte fats;
             public byte drive;
             public byte heapUsage;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)]
-            public byte[] reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)]
-            public byte[] bootCode;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)] public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)] public byte[] bootCode;
             public ushort bootSignature;
         }
 
@@ -218,25 +209,20 @@ namespace DiscImageChef.Filesystems
             public uint programTime;
             public uint readCycleTime;
             public uint writeCycleTime;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public byte[] reserved;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OemParameterTable
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public OemParameter[] parameters;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] padding;
-
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] public OemParameter[] parameters;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] padding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ChecksumSector
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public uint[] checksum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public uint[] checksum;
         }
 
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
@@ -300,4 +286,3 @@ namespace DiscImageChef.Filesystems
         }
     }
 }
-

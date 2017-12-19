@@ -121,7 +121,6 @@ namespace DiscImageChef.Devices.FreeBSD
                     }
                     case cam_proto.PROTO_SCSI:
                     {
-
                         Decoders.SCSI.Inquiry.SCSIInquiry? inq = Decoders.SCSI.Inquiry.Decode(cgd.inq_data);
                         if(inq.HasValue)
                         {

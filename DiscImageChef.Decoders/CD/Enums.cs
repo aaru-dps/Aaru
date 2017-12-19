@@ -96,4 +96,3 @@ namespace DiscImageChef.Decoders.CD
         ReservedMask = 0x0C
     }
 }
-

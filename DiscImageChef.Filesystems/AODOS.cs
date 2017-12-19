@@ -82,13 +82,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// " AO-DOS "
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] identifier;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] identifier;
             /// <summary>
             /// Volume label
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] volumeLabel;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] volumeLabel;
             /// <summary>
             /// How many files are present in disk
             /// </summary>
@@ -99,21 +97,18 @@ namespace DiscImageChef.Filesystems
             public ushort usedSectors;
         }
 
-        readonly byte[] AODOSIdentifier = { 0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20 };
+        readonly byte[] AODOSIdentifier = {0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20};
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             // Does AO-DOS support hard disks?
-            if(partition.Start > 0)
-                return false;
+            if(partition.Start > 0) return false;
 
             // How is it really?
-            if(imagePlugin.ImageInfo.sectorSize != 512)
-                return false;
+            if(imagePlugin.ImageInfo.sectorSize != 512) return false;
 
             // Does AO-DOS support any other kind of disk?
-            if(imagePlugin.ImageInfo.sectors != 800 && imagePlugin.ImageInfo.sectors != 1600)
-                return false;
+            if(imagePlugin.ImageInfo.sectors != 800 && imagePlugin.ImageInfo.sectors != 1600) return false;
 
             byte[] sector;
 
@@ -127,7 +122,8 @@ namespace DiscImageChef.Filesystems
             return bb.identifier.SequenceEqual(AODOSIdentifier);
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             byte[] sector;
 
@@ -157,7 +153,8 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendFormat("{0} files on volume", bb.files).AppendLine();
             sbInformation.AppendFormat("{0} used sectors on volume", bb.usedSectors).AppendLine();
-            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(bb.volumeLabel, CurrentEncoding)).AppendLine();
+            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(bb.volumeLabel, CurrentEncoding))
+                         .AppendLine();
 
             information = sbInformation.ToString();
         }

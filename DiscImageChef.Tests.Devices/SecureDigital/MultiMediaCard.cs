@@ -105,7 +105,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -113,8 +113,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                 DicConsole.WriteLine("Parameters for READ_{0}_BLOCK command:", multiple ? "MULTIPLE" : "SINGLE");
                 DicConsole.WriteLine("Read from {1}: {0}", address, byteAddr ? "byte" : "block");
                 DicConsole.WriteLine("Expected block size: {0} bytes", blockSize);
-                if(multiple)
-                    DicConsole.WriteLine("Will read {0} blocks", count);
+                if(multiple) DicConsole.WriteLine("Will read {0} blocks", count);
                 DicConsole.WriteLine();
                 DicConsole.WriteLine("Choose what to do:");
                 DicConsole.WriteLine("1.- Change parameters.");
@@ -144,6 +143,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                             System.Console.ReadKey();
                             continue;
                         }
+
                         DicConsole.Write("Read from {0}?: ", byteAddr ? "byte" : "block");
                         strDev = System.Console.ReadLine();
                         if(!uint.TryParse(strDev, out address))
@@ -153,6 +153,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                             System.Console.ReadKey();
                             continue;
                         }
+
                         if(multiple)
                         {
                             DicConsole.Write("How many blocks to read?");
@@ -165,6 +166,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                                 continue;
                             }
                         }
+
                         DicConsole.Write("How many bytes to expect in a block?");
                         strDev = System.Console.ReadLine();
                         if(!uint.TryParse(strDev, out blockSize))
@@ -174,17 +176,18 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.Read(out byte[] buffer, out uint[] response, address, blockSize, multiple ? count : 1, byteAddr, dev.Timeout, out double duration);
+            bool sense = dev.Read(out byte[] buffer, out uint[] response, address, blockSize, multiple ? count : 1,
+                                  byteAddr, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending READ_{0}_BLOCK to the device:", multiple ? "MULTIPLE" : "SINGLE");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -219,8 +222,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ_{0}_BLOCK buffer:", multiple ? "MULTIPLE" : "SINGLE");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -232,19 +234,18 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     DicConsole.WriteLine("READ_{0}_BLOCK response:", multiple ? "MULTIPLE" : "SINGLE");
                     if(response != null)
                     {
-                        foreach(uint res in response)
-                            DicConsole.Write("0x{0:x8} ", res);
+                        foreach(uint res in response) DicConsole.Write("0x{0:x8} ", res);
+
                         DicConsole.WriteLine();
                     }
+
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
-                case 4:
-                    goto parameters;
+                case 3: goto start;
+                case 4: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -255,11 +256,11 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
 
         static void SendOpCond(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.ReadOCR(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending SEND_OP_COND to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -294,8 +295,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEND_OP_COND buffer:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -305,8 +305,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEND_OP_COND decoded buffer:");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyOCR(buffer));
+                    if(buffer != null) DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyOCR(buffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -318,17 +317,17 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     DicConsole.WriteLine("SEND_OP_COND response:");
                     if(response != null)
                     {
-                        foreach(uint res in response)
-                            DicConsole.Write("0x{0:x8} ", res);
+                        foreach(uint res in response) DicConsole.Write("0x{0:x8} ", res);
+
                         DicConsole.WriteLine();
                     }
+
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
+                case 4: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -339,11 +338,11 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
 
         static void Status(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.ReadSDStatus(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending SEND_STATUS to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -377,8 +376,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEND_STATUS buffer:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -390,17 +388,17 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     DicConsole.WriteLine("SEND_STATUS response:");
                     if(response != null)
                     {
-                        foreach(uint res in response)
-                            DicConsole.Write("0x{0:x8} ", res);
+                        foreach(uint res in response) DicConsole.Write("0x{0:x8} ", res);
+
                         DicConsole.WriteLine();
                     }
+
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 3:
-                    goto start;
+                case 3: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -411,11 +409,11 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
 
         static void SendCID(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.ReadCID(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending SEND_CID to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -450,8 +448,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEND_CID buffer:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -461,8 +458,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEND_CID decoded buffer:");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCID(buffer));
+                    if(buffer != null) DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCID(buffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -474,17 +470,17 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     DicConsole.WriteLine("SEND_CID response:");
                     if(response != null)
                     {
-                        foreach(uint res in response)
-                            DicConsole.Write("0x{0:x8} ", res);
+                        foreach(uint res in response) DicConsole.Write("0x{0:x8} ", res);
+
                         DicConsole.WriteLine();
                     }
+
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
+                case 4: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -495,11 +491,11 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
 
         static void SendCSD(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.ReadCSD(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending SEND_CSD to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -534,8 +530,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEND_CSD buffer:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -545,8 +540,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEND_CSD decoded buffer:");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCSD(buffer));
+                    if(buffer != null) DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCSD(buffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -558,17 +552,17 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     DicConsole.WriteLine("SEND_CSD response:");
                     if(response != null)
                     {
-                        foreach(uint res in response)
-                            DicConsole.Write("0x{0:x8} ", res);
+                        foreach(uint res in response) DicConsole.Write("0x{0:x8} ", res);
+
                         DicConsole.WriteLine();
                     }
+
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
+                case 4: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -579,11 +573,11 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
 
         static void SendExtendedCSD(string devPath, Device dev)
         {
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.ReadExtendedCSD(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending SEND_EXT_CSD to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -618,8 +612,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEND_EXT_CSD buffer:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -629,8 +622,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("SEND_EXT_CSD decoded buffer:");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(buffer));
+                    if(buffer != null) DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(buffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -642,17 +634,17 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                     DicConsole.WriteLine("SEND_EXT_CSD response:");
                     if(response != null)
                     {
-                        foreach(uint res in response)
-                            DicConsole.Write("0x{0:x8} ", res);
+                        foreach(uint res in response) DicConsole.Write("0x{0:x8} ", res);
+
                         DicConsole.WriteLine();
                     }
+
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
+                case 4: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -667,7 +659,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -703,17 +695,17 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
             bool sense = dev.SetBlockLength(blockSize, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending SET_BLOCKLEN to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -722,10 +714,11 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             DicConsole.WriteLine("SET_BLOCKLEN response:");
             if(response != null)
             {
-                foreach(uint res in response)
-                    DicConsole.Write("0x{0:x8} ", res);
+                foreach(uint res in response) DicConsole.Write("0x{0:x8} ", res);
+
                 DicConsole.WriteLine();
             }
+
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Send command again.");
@@ -747,10 +740,8 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                 case 0:
                     DicConsole.WriteLine("Returning to MultiMediaCard commands menu...");
                     return;
-                case 1:
-                    goto start;
-                case 2:
-                    goto parameters;
+                case 1: goto start;
+                case 2: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();

@@ -42,11 +42,10 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	// Checked using several images and strings inside Apple's DiskImages.framework
-	public class DiskCopy42 : ImagePlugin
+    // Checked using several images and strings inside Apple's DiskImages.framework
+    public class DiskCopy42 : ImagePlugin
     {
         #region Internal Structures
-
         // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
         struct DC42Header
         {
@@ -69,11 +68,9 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>0x53, reserved, always 0x00</summary>
             public byte reserved;
         }
-
         #endregion
 
         #region Internal Constants
-
         // format byte
         /// <summary>3.5", single side, double density, GCR</summary>
         const byte kSonyFormat400K = 0x00;
@@ -112,15 +109,13 @@ namespace DiscImageChef.ImagePlugins
         const byte kInvalidFmtByte = 0x96;
         /// <summary>Defined by LisaEm</summary>
         const byte kFmtNotStandard = 0x93;
-		/// <summary>Used incorrectly by Mac OS X with certaing disk images</summary>
-		const byte kMacOSXFmtByte = 0x00;
+        /// <summary>Used incorrectly by Mac OS X with certaing disk images</summary>
+        const byte kMacOSXFmtByte = 0x00;
+        #endregion
 
-		#endregion
-
-		#region Internal variables
-
-		/// <summary>Start of data sectors in disk image, should be 0x58</summary>
-		uint dataOffset;
+        #region Internal variables
+        /// <summary>Start of data sectors in disk image, should be 0x58</summary>
+        uint dataOffset;
         /// <summary>Start of tags in disk image, after data sectors</summary>
         uint tagOffset;
         /// <summary>Bytes per tag, should be 12</summary>
@@ -133,7 +128,6 @@ namespace DiscImageChef.ImagePlugins
         byte[] twiggyCache;
         byte[] twiggyCacheTags;
         bool twiggy;
-
         #endregion
 
         public DiskCopy42()
@@ -172,8 +166,7 @@ namespace DiscImageChef.ImagePlugins
             stream.Read(buffer, 0, 0x58);
 
             // Incorrect pascal string length, not DC42
-            if(buffer[0] > 63)
-                return false;
+            if(buffer[0] > 63) return false;
 
             DC42Header tmp_header = new DC42Header();
 
@@ -201,35 +194,39 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.valid = {0}", tmp_header.valid);
             DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.reserved = {0}", tmp_header.reserved);
 
-            if(tmp_header.valid != 1 || tmp_header.reserved != 0)
-                return false;
+            if(tmp_header.valid != 1 || tmp_header.reserved != 0) return false;
 
-			// Some versions seem to incorrectly create little endian fields
-            if(tmp_header.dataSize + tmp_header.tagSize + 0x54 != imageFilter.GetDataForkLength() && tmp_header.format != kSigmaFormatTwiggy)
-			{
-				tmp_header.dataSize = BitConverter.ToUInt32(buffer, 0x40);
-				tmp_header.tagSize = BitConverter.ToUInt32(buffer, 0x44);
-				tmp_header.dataChecksum = BitConverter.ToUInt32(buffer, 0x48);
-				tmp_header.tagChecksum = BitConverter.ToUInt32(buffer, 0x4C);
+            // Some versions seem to incorrectly create little endian fields
+            if(tmp_header.dataSize + tmp_header.tagSize + 0x54 != imageFilter.GetDataForkLength() &&
+               tmp_header.format != kSigmaFormatTwiggy)
+            {
+                tmp_header.dataSize = BitConverter.ToUInt32(buffer, 0x40);
+                tmp_header.tagSize = BitConverter.ToUInt32(buffer, 0x44);
+                tmp_header.dataChecksum = BitConverter.ToUInt32(buffer, 0x48);
+                tmp_header.tagChecksum = BitConverter.ToUInt32(buffer, 0x4C);
 
-				if(tmp_header.dataSize + tmp_header.tagSize + 0x54 != imageFilter.GetDataForkLength() && tmp_header.format != kSigmaFormatTwiggy)
-					return false;
-			}
+                if(tmp_header.dataSize + tmp_header.tagSize + 0x54 != imageFilter.GetDataForkLength() &&
+                   tmp_header.format != kSigmaFormatTwiggy) return false;
+            }
 
-            if(tmp_header.format != kSonyFormat400K && tmp_header.format != kSonyFormat800K && tmp_header.format != kSonyFormat720K &&
-                tmp_header.format != kSonyFormat1440K && tmp_header.format != kSonyFormat1680K && tmp_header.format != kSigmaFormatTwiggy &&
+            if(tmp_header.format != kSonyFormat400K && tmp_header.format != kSonyFormat800K &&
+               tmp_header.format != kSonyFormat720K && tmp_header.format != kSonyFormat1440K &&
+               tmp_header.format != kSonyFormat1680K && tmp_header.format != kSigmaFormatTwiggy &&
                tmp_header.format != kNotStandardFormat)
             {
-                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value", tmp_header.format);
+                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value",
+                                          tmp_header.format);
 
                 return false;
             }
 
-            if(tmp_header.fmtByte != kSonyFmtByte400K && tmp_header.fmtByte != kSonyFmtByte800K && tmp_header.fmtByte != kSonyFmtByte800KIncorrect &&
-               tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSigmaFmtByteTwiggy &&
-			   tmp_header.fmtByte != kFmtNotStandard && tmp_header.fmtByte != kMacOSXFmtByte)
+            if(tmp_header.fmtByte != kSonyFmtByte400K && tmp_header.fmtByte != kSonyFmtByte800K &&
+               tmp_header.fmtByte != kSonyFmtByte800KIncorrect && tmp_header.fmtByte != kSonyFmtByteProDos &&
+               tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSigmaFmtByteTwiggy &&
+               tmp_header.fmtByte != kFmtNotStandard && tmp_header.fmtByte != kMacOSXFmtByte)
             {
-                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", tmp_header.fmtByte);
+                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value",
+                                          tmp_header.fmtByte);
 
                 return false;
             }
@@ -253,8 +250,7 @@ namespace DiscImageChef.ImagePlugins
             stream.Read(buffer, 0, 0x58);
 
             // Incorrect pascal string length, not DC42
-            if(buffer[0] > 63)
-                return false;
+            if(buffer[0] > 63) return false;
 
             header = new DC42Header();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -280,31 +276,35 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("DC42 plugin", "header.valid = {0}", header.valid);
             DicConsole.DebugWriteLine("DC42 plugin", "header.reserved = {0}", header.reserved);
 
-            if(header.valid != 1 || header.reserved != 0)
-                return false;
+            if(header.valid != 1 || header.reserved != 0) return false;
 
-			// Some versions seem to incorrectly create little endian fields
-			if(header.dataSize + header.tagSize + 0x54 != imageFilter.GetDataForkLength() && header.format != kSigmaFormatTwiggy)
-			{
-				header.dataSize = BitConverter.ToUInt32(buffer, 0x40);
-				header.tagSize = BitConverter.ToUInt32(buffer, 0x44);
-				header.dataChecksum = BitConverter.ToUInt32(buffer, 0x48);
-				header.tagChecksum = BitConverter.ToUInt32(buffer, 0x4C);
+            // Some versions seem to incorrectly create little endian fields
+            if(header.dataSize + header.tagSize + 0x54 != imageFilter.GetDataForkLength() &&
+               header.format != kSigmaFormatTwiggy)
+            {
+                header.dataSize = BitConverter.ToUInt32(buffer, 0x40);
+                header.tagSize = BitConverter.ToUInt32(buffer, 0x44);
+                header.dataChecksum = BitConverter.ToUInt32(buffer, 0x48);
+                header.tagChecksum = BitConverter.ToUInt32(buffer, 0x4C);
 
-				if(header.dataSize + header.tagSize + 0x54 != imageFilter.GetDataForkLength() && header.format != kSigmaFormatTwiggy)
-					return false;
-			}
+                if(header.dataSize + header.tagSize + 0x54 != imageFilter.GetDataForkLength() &&
+                   header.format != kSigmaFormatTwiggy) return false;
+            }
 
-			if(header.format != kSonyFormat400K && header.format != kSonyFormat800K && header.format != kSonyFormat720K &&
-                header.format != kSonyFormat1440K && header.format != kSonyFormat1680K && header.format != kSigmaFormatTwiggy && header.format != kNotStandardFormat)
+            if(header.format != kSonyFormat400K && header.format != kSonyFormat800K &&
+               header.format != kSonyFormat720K && header.format != kSonyFormat1440K &&
+               header.format != kSonyFormat1680K && header.format != kSigmaFormatTwiggy &&
+               header.format != kNotStandardFormat)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Unknown header.format = 0x{0:X2} value", header.format);
 
                 return false;
             }
 
-            if(header.fmtByte != kSonyFmtByte400K && header.fmtByte != kSonyFmtByte800K && header.fmtByte != kSonyFmtByte800KIncorrect &&
-                header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSigmaFmtByteTwiggy && header.fmtByte != kFmtNotStandard && header.fmtByte != kMacOSXFmtByte)
+            if(header.fmtByte != kSonyFmtByte400K && header.fmtByte != kSonyFmtByte800K &&
+               header.fmtByte != kSonyFmtByte800KIncorrect && header.fmtByte != kSonyFmtByteProDos &&
+               header.fmtByte != kInvalidFmtByte && header.fmtByte != kSigmaFmtByteTwiggy &&
+               header.fmtByte != kFmtNotStandard && header.fmtByte != kMacOSXFmtByte)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
 
@@ -348,10 +348,8 @@ namespace DiscImageChef.ImagePlugins
             switch(header.format)
             {
                 case kSonyFormat400K:
-					if(ImageInfo.sectors == 1600)
-						ImageInfo.mediaType = MediaType.AppleSonyDS;
-					else 
-						ImageInfo.mediaType = MediaType.AppleSonySS;
+                    if(ImageInfo.sectors == 1600) ImageInfo.mediaType = MediaType.AppleSonyDS;
+                    else ImageInfo.mediaType = MediaType.AppleSonySS;
                     break;
                 case kSonyFormat800K:
                     ImageInfo.mediaType = MediaType.AppleSonyDS;
@@ -387,6 +385,7 @@ namespace DiscImageChef.ImagePlugins
                             ImageInfo.mediaType = MediaType.Unknown;
                             break;
                     }
+
                     break;
                 default:
                     ImageInfo.mediaType = MediaType.Unknown;
@@ -433,25 +432,20 @@ namespace DiscImageChef.ImagePlugins
 
                     for(int i = 0; i < 46; i++)
                     {
-                        if(i >= 0 && i <= 3)
-                            sectorsToCopy = 22;
-                        if(i >= 4 && i <= 10)
-                            sectorsToCopy = 21;
-                        if(i >= 11 && i <= 16)
-                            sectorsToCopy = 20;
-                        if(i >= 17 && i <= 22)
-                            sectorsToCopy = 19;
-                        if(i >= 23 && i <= 28)
-                            sectorsToCopy = 18;
-                        if(i >= 29 && i <= 34)
-                            sectorsToCopy = 17;
-                        if(i >= 35 && i <= 41)
-                            sectorsToCopy = 16;
-                        if(i >= 42 && i <= 45)
-                            sectorsToCopy = 15;
+                        if(i >= 0 && i <= 3) sectorsToCopy = 22;
+                        if(i >= 4 && i <= 10) sectorsToCopy = 21;
+                        if(i >= 11 && i <= 16) sectorsToCopy = 20;
+                        if(i >= 17 && i <= 22) sectorsToCopy = 19;
+                        if(i >= 23 && i <= 28) sectorsToCopy = 18;
+                        if(i >= 29 && i <= 34) sectorsToCopy = 17;
+                        if(i >= 35 && i <= 41) sectorsToCopy = 16;
+                        if(i >= 42 && i <= 45) sectorsToCopy = 15;
 
-                        Array.Copy(data, header.dataSize / 2 + copiedSectors * 512, twiggyCache, twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
-                        Array.Copy(tags, header.tagSize / 2 + copiedSectors * bptag, twiggyCacheTags, twiggyCacheTags.Length - copiedSectors * bptag - sectorsToCopy * bptag, sectorsToCopy * bptag);
+                        Array.Copy(data, header.dataSize / 2 + copiedSectors * 512, twiggyCache,
+                                   twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
+                        Array.Copy(tags, header.tagSize / 2 + copiedSectors * bptag, twiggyCacheTags,
+                                   twiggyCacheTags.Length - copiedSectors * bptag - sectorsToCopy * bptag,
+                                   sectorsToCopy * bptag);
 
                         copiedSectors += sectorsToCopy;
                     }
@@ -497,13 +491,12 @@ namespace DiscImageChef.ImagePlugins
                                         break;
                                 }
 
-                                if(dev == null && version.PreReleaseVersion > 0)
-                                    dev = "f";
+                                if(dev == null && version.PreReleaseVersion > 0) dev = "f";
 
-                                if(dev != null)
-                                    pre = string.Format("{0}", version.PreReleaseVersion);
+                                if(dev != null) pre = string.Format("{0}", version.PreReleaseVersion);
 
-                                ImageInfo.imageApplicationVersion = string.Format("{0}{1}{2}{3}{4}", major, minor, release, dev, pre);
+                                ImageInfo.imageApplicationVersion =
+                                    string.Format("{0}{1}{2}{3}{4}", major, minor, release, dev, pre);
                                 ImageInfo.imageApplication = version.VersionString;
                                 ImageInfo.imageComments = version.VersionMessage;
                             }
@@ -515,8 +508,10 @@ namespace DiscImageChef.ImagePlugins
                         Resource dCpyRsrc = rsrcFork.GetResource(0x64437079);
                         if(dCpyRsrc != null)
                         {
-                            string dCpy = StringHandlers.PascalToString(dCpyRsrc.GetResource(dCpyRsrc.GetIds()[0]), Encoding.GetEncoding("macintosh"));
-                            string dCpyRegEx = "(?<application>\\S+)\\s(?<version>\\S+)\\rData checksum=\\$(?<checksum>\\S+)$";
+                            string dCpy = StringHandlers.PascalToString(dCpyRsrc.GetResource(dCpyRsrc.GetIds()[0]),
+                                                                        Encoding.GetEncoding("macintosh"));
+                            string dCpyRegEx =
+                                "(?<application>\\S+)\\s(?<version>\\S+)\\rData checksum=\\$(?<checksum>\\S+)$";
                             Regex dCpyEx = new Regex(dCpyRegEx);
                             Match dCpyMatch = dCpyEx.Match(dCpy);
 
@@ -534,70 +529,72 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
             catch(InvalidCastException) { }
-            DicConsole.DebugWriteLine("DC42 plugin", "Image application = {0} version {1}", ImageInfo.imageApplication, ImageInfo.imageApplicationVersion);
+
+            DicConsole.DebugWriteLine("DC42 plugin", "Image application = {0} version {1}", ImageInfo.imageApplication,
+                                      ImageInfo.imageApplicationVersion);
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
             DicConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", ImageInfo.mediaType);
 
-			switch(ImageInfo.mediaType)
-			{
-				case MediaType.AppleSonySS:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.AppleSonyDS:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.DOS_35_DS_DD_9:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 9;
-					break;
-				case MediaType.DOS_35_HD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 18;
-					break;
-				case MediaType.DMF:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 21;
-					break;
-				case MediaType.AppleProfile:
-					switch(ImageInfo.sectors)
-					{
-						case 9728:
-							ImageInfo.cylinders = 152;
-							break;
-						case 19456:
-							ImageInfo.cylinders = 304;
-							break;
-					}
-					ImageInfo.heads = 4;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.AppleWidget:
-					ImageInfo.cylinders = 608;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.AppleHD20:
-					ImageInfo.cylinders = 610;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				default:
-					ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-					ImageInfo.heads = 16;
-					ImageInfo.sectorsPerTrack = 63;
-					break;
-			}
+            switch(ImageInfo.mediaType)
+            {
+                case MediaType.AppleSonySS:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.AppleSonyDS:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.DOS_35_DS_DD_9:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 9;
+                    break;
+                case MediaType.DOS_35_HD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 18;
+                    break;
+                case MediaType.DMF:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 21;
+                    break;
+                case MediaType.AppleProfile:
+                    switch(ImageInfo.sectors)
+                    {
+                        case 9728:
+                            ImageInfo.cylinders = 152;
+                            break;
+                        case 19456:
+                            ImageInfo.cylinders = 304;
+                            break;
+                    }
 
+                    ImageInfo.heads = 4;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.AppleWidget:
+                    ImageInfo.cylinders = 608;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.AppleHD20:
+                    ImageInfo.cylinders = 610;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                default:
+                    ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+                    ImageInfo.heads = 16;
+                    ImageInfo.sectorsPerTrack = 63;
+                    break;
+            }
 
-			return true;
+            return true;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -610,24 +607,24 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
 
             return null;
         }
@@ -652,7 +649,7 @@ namespace DiscImageChef.ImagePlugins
             if(header.tagSize > 0)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Reading tags");
-                Stream tagstream = dc42ImageFilter.GetDataForkStream(); 
+                Stream tagstream = dc42ImageFilter.GetDataForkStream();
                 tagstream.Seek((tagOffset), SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.tagSize);
 
@@ -707,7 +704,8 @@ namespace DiscImageChef.ImagePlugins
 
             if(twiggy)
             {
-                Array.Copy(twiggyCache, (int)sectorAddress * ImageInfo.sectorSize, buffer, 0, length * ImageInfo.sectorSize);
+                Array.Copy(twiggyCache, (int)sectorAddress * ImageInfo.sectorSize, buffer, 0,
+                           length * ImageInfo.sectorSize);
             }
             else
             {
@@ -724,8 +722,7 @@ namespace DiscImageChef.ImagePlugins
             if(tag != SectorTagType.AppleSectorTag)
                 throw new FeatureUnsupportedImageException(string.Format("Tag {0} not supported by image format", tag));
 
-            if(header.tagSize == 0)
-                throw new FeatureNotPresentImageException("Disk image does not have tags");
+            if(header.tagSize == 0) throw new FeatureNotPresentImageException("Disk image does not have tags");
 
             if(sectorAddress > ImageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -735,10 +732,7 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[length * bptag];
 
-            if(twiggy)
-            {
-                Array.Copy(twiggyCacheTags, (int)sectorAddress * bptag, buffer, 0, length * bptag);
-            }
+            if(twiggy) { Array.Copy(twiggyCacheTags, (int)sectorAddress * bptag, buffer, 0, length * bptag); }
             else
             {
                 Stream stream = dc42ImageFilter.GetDataForkStream();
@@ -768,7 +762,8 @@ namespace DiscImageChef.ImagePlugins
 
             for(uint i = 0; i < length; i++)
             {
-                Array.Copy(data, i * (ImageInfo.sectorSize), buffer, i * (ImageInfo.sectorSize + bptag), ImageInfo.sectorSize);
+                Array.Copy(data, i * (ImageInfo.sectorSize), buffer, i * (ImageInfo.sectorSize + bptag),
+                           ImageInfo.sectorSize);
                 Array.Copy(tags, i * (bptag), buffer, i * (ImageInfo.sectorSize + bptag) + ImageInfo.sectorSize, bptag);
             }
 
@@ -816,7 +811,6 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region Unsupported features
-
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -936,16 +930,13 @@ namespace DiscImageChef.ImagePlugins
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-
         #endregion Unsupported features
 
         #region Private methods
-
         private static uint DC42CheckSum(byte[] buffer)
         {
             uint dc42chk = 0;
-            if((buffer.Length & 0x01) == 0x01)
-                return 0xFFFFFFFF;
+            if((buffer.Length & 0x01) == 0x01) return 0xFFFFFFFF;
 
             for(uint i = 0; i < buffer.Length; i += 2)
             {
@@ -953,10 +944,9 @@ namespace DiscImageChef.ImagePlugins
                 dc42chk += buffer[i + 1];
                 dc42chk = (dc42chk >> 1) | (dc42chk << 31);
             }
+
             return dc42chk;
         }
-
         #endregion
     }
 }
-

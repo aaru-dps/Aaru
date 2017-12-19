@@ -40,9 +40,7 @@ namespace DiscImageChef.Filters
         public string Name;
         public Guid UUID;
 
-        protected Filter()
-        {
-        }
+        protected Filter() { }
 
         /// <summary>
         /// Closes all opened streams.
@@ -170,4 +168,3 @@ namespace DiscImageChef.Filters
         public abstract void Open(byte[] buffer);
     }
 }
-

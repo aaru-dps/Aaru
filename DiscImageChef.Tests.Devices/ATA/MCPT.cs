@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             string strDev;
             int item;
 
-        parameters:
+            parameters:
             while(true)
             {
                 System.Console.Clear();
@@ -111,17 +111,18 @@ namespace DiscImageChef.Tests.Devices.ATA
                             System.Console.ReadKey();
                             continue;
                         }
+
                         break;
-                    case 2:
-                        goto start;
+                    case 2: goto start;
                 }
             }
 
-        start:
+            start:
             System.Console.Clear();
-            bool sense = dev.CheckMediaCardType(feature, out AtaErrorRegistersCHS errorRegisters, dev.Timeout, out double duration);
+            bool sense = dev.CheckMediaCardType(feature, out AtaErrorRegistersCHS errorRegisters, dev.Timeout,
+                                                out double duration);
 
-        menu:
+            menu:
             DicConsole.WriteLine("Device: {0}", devPath);
             DicConsole.WriteLine("Sending CHECK MEDIA CARD TYPE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
@@ -149,10 +150,8 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 0:
                     DicConsole.WriteLine("Returning to Media Card Pass Through commands menu...");
                     return;
-                case 1:
-                    goto start;
-                case 2:
-                    goto parameters;
+                case 1: goto start;
+                case 2: goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
@@ -162,4 +161,3 @@ namespace DiscImageChef.Tests.Devices.ATA
         }
     }
 }
-

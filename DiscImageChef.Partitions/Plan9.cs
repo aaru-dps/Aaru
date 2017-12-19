@@ -49,12 +49,12 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions,
+                                            ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
-            if(sectorOffset + 2 >= imagePlugin.GetSectors())
-                return false;
+            if(sectorOffset + 2 >= imagePlugin.GetSectors()) return false;
 
             byte[] sector = imagePlugin.ReadSector(sectorOffset + 1);
             // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
@@ -62,17 +62,13 @@ namespace DiscImageChef.PartPlugins
 
             foreach(string part in really)
             {
-                if(part.Length < 5 || part.Substring(0, 5) != "part ")
-                    break;
+                if(part.Length < 5 || part.Substring(0, 5) != "part ") break;
 
-                string[] tokens = part.Split(new[] { ' ' });
+                string[] tokens = part.Split(new[] {' '});
 
-                if(tokens.Length != 4)
-                    break;
+                if(tokens.Length != 4) break;
 
-                if(!ulong.TryParse(tokens[2], out ulong start) ||
-                   !ulong.TryParse(tokens[3], out ulong end))
-                    break;
+                if(!ulong.TryParse(tokens[2], out ulong start) || !ulong.TryParse(tokens[3], out ulong end)) break;
 
                 Partition _part = new Partition
                 {
@@ -88,7 +84,7 @@ namespace DiscImageChef.PartPlugins
                 partitions.Add(_part);
             }
 
-            return partitions.Count>0;
+            return partitions.Count > 0;
         }
     }
 }

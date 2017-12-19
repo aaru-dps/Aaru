@@ -313,4 +313,3 @@ namespace DiscImageChef.Decoders.SCSI
         SCSI3 = 4
     }
 }
-

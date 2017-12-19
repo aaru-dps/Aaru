@@ -41,23 +41,20 @@ namespace DiscImageChef.Filesystems.AppleMFS
     {
         public override Errno ReadDir(string path, ref List<string> contents)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
             contents = new List<string>();
-            foreach(KeyValuePair<uint, string> kvp in idToFilename)
-                contents.Add(kvp.Value);
+            foreach(KeyValuePair<uint, string> kvp in idToFilename) contents.Add(kvp.Value);
 
             if(debug)
             {
                 contents.Add("$");
                 contents.Add("$Bitmap");
                 contents.Add("$MDB");
-                if(bootBlocks != null)
-                    contents.Add("$Boot");
+                if(bootBlocks != null) contents.Add("$Boot");
             }
 
             contents.Sort();
@@ -78,8 +75,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 entry.flUsrWds = new byte[16];
 
                 entry.flFlags = (MFS_FileFlags)directoryBlocks[offset + 0];
-                if(!entry.flFlags.HasFlag(MFS_FileFlags.Used))
-                    break;
+                if(!entry.flFlags.HasFlag(MFS_FileFlags.Used)) break;
+
                 entry.flTyp = directoryBlocks[offset + 1];
                 Array.Copy(directoryBlocks, offset + 2, entry.flUsrWds, 0, 16);
                 entry.flFlNum = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 18);
@@ -93,14 +90,16 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 entry.flMdDat = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 46);
                 entry.flNam = new byte[directoryBlocks[offset + 50] + 1];
                 Array.Copy(directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
-                lowerFilename = StringHandlers.PascalToString(entry.flNam, CurrentEncoding).ToLowerInvariant().Replace('/', ':');
+                lowerFilename = StringHandlers.PascalToString(entry.flNam, CurrentEncoding).ToLowerInvariant()
+                                              .Replace('/', ':');
 
                 if(entry.flFlags.HasFlag(MFS_FileFlags.Used) && !idToFilename.ContainsKey(entry.flFlNum) &&
                    !idToEntry.ContainsKey(entry.flFlNum) && !filenameToId.ContainsKey(lowerFilename) &&
                    entry.flFlNum > 0)
                 {
                     idToEntry.Add(entry.flFlNum, entry);
-                    idToFilename.Add(entry.flFlNum, StringHandlers.PascalToString(entry.flNam, CurrentEncoding).Replace('/', ':'));
+                    idToFilename.Add(entry.flFlNum,
+                                     StringHandlers.PascalToString(entry.flNam, CurrentEncoding).Replace('/', ':'));
                     filenameToId.Add(lowerFilename, entry.flFlNum);
 
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlags = {0}", entry.flFlags);
@@ -112,16 +111,18 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRStBlk = {0}", entry.flRStBlk);
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRLgLen = {0}", entry.flRLgLen);
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRPyLen = {0}", entry.flRPyLen);
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flCrDat = {0}", DateHandlers.MacToDateTime(entry.flCrDat));
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flMdDat = {0}", DateHandlers.MacToDateTime(entry.flMdDat));
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}", StringHandlers.PascalToString(entry.flNam, CurrentEncoding));
+                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flCrDat = {0}",
+                                              DateHandlers.MacToDateTime(entry.flCrDat));
+                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flMdDat = {0}",
+                                              DateHandlers.MacToDateTime(entry.flMdDat));
+                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}",
+                                              StringHandlers.PascalToString(entry.flNam, CurrentEncoding));
                 }
 
                 offset += (50 + entry.flNam.Length);
 
                 // "Entries are always an integral number of words"
-                if((offset % 2) != 0)
-                    offset++;
+                if((offset % 2) != 0) offset++;
 
                 // TODO: "Entries don't cross logical block boundaries"
             }
@@ -130,4 +131,3 @@ namespace DiscImageChef.Filesystems.AppleMFS
         }
     }
 }
-

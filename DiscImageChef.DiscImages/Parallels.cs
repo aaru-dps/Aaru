@@ -42,11 +42,13 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.DiscImages
 {
-	public class Parallels : ImagePlugin
+    public class Parallels : ImagePlugin
     {
         #region Internal constants
-        readonly byte[] ParallelsMagic = { 0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x74, 0x46, 0x72, 0x65, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65 };
-        readonly byte[] ParallelsExtMagic = { 0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x46, 0x72, 0x65, 0x53, 0x70, 0x61, 0x63, 0x45, 0x78, 0x74 };
+        readonly byte[] ParallelsMagic =
+            {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x74, 0x46, 0x72, 0x65, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65};
+        readonly byte[] ParallelsExtMagic =
+            {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x46, 0x72, 0x65, 0x53, 0x70, 0x61, 0x63, 0x45, 0x78, 0x74};
 
         const uint ParallelsVersion = 2;
 
@@ -66,8 +68,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             /// Magic, <see cref="ParallelsMagic"/> or <see cref="ParallelsExtMagic"/> 
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] magic;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] magic;
             /// <summary>
             /// Version
             /// </summary>
@@ -156,8 +157,7 @@ namespace DiscImageChef.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+            if(stream.Length < 512) return false;
 
             byte[] pHdr_b = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdr_b, 0, Marshal.SizeOf(pHdr));
@@ -175,8 +175,7 @@ namespace DiscImageChef.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+            if(stream.Length < 512) return false;
 
             byte[] pHdr_b = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdr_b, 0, Marshal.SizeOf(pHdr));
@@ -205,14 +204,11 @@ namespace DiscImageChef.DiscImages
             BAT = new uint[pHdr.bat_entries];
             byte[] BAT_b = new byte[pHdr.bat_entries * 4];
             stream.Read(BAT_b, 0, BAT_b.Length);
-            for(int i = 0; i < BAT.Length; i++)
-                BAT[i] = BitConverter.ToUInt32(BAT_b, i * 4);
+            for(int i = 0; i < BAT.Length; i++) BAT[i] = BitConverter.ToUInt32(BAT_b, i * 4);
 
             clusterBytes = pHdr.cluster_size * 512;
-            if(pHdr.data_off > 0)
-                dataOffset = pHdr.data_off * 512;
-            else
-                dataOffset = ((stream.Position / clusterBytes) + (stream.Position % clusterBytes)) * clusterBytes;
+            if(pHdr.data_off > 0) dataOffset = pHdr.data_off * 512;
+            else dataOffset = ((stream.Position / clusterBytes) + (stream.Position % clusterBytes)) * clusterBytes;
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -226,9 +222,9 @@ namespace DiscImageChef.DiscImages
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.mediaType = MediaType.GENERIC_HDD;
             ImageInfo.imageSize = pHdr.sectors * 512;
-			ImageInfo.cylinders = pHdr.cylinders;
-			ImageInfo.heads = pHdr.heads;
-			ImageInfo.sectorsPerTrack = (uint)((ImageInfo.sectors / ImageInfo.cylinders) / ImageInfo.heads);
+            ImageInfo.cylinders = pHdr.cylinders;
+            ImageInfo.heads = pHdr.heads;
+            ImageInfo.sectorsPerTrack = (uint)((ImageInfo.sectors / ImageInfo.cylinders) / ImageInfo.heads);
             imageStream = stream;
 
             return true;
@@ -237,15 +233,14 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                      string.Format("Sector address {0} not found", sectorAddress));
 
-            if(empty)
-                return new byte[512];
+            if(empty) return new byte[512];
 
             byte[] sector;
 
-            if(sectorCache.TryGetValue(sectorAddress, out sector))
-               return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
 
             ulong index = sectorAddress / pHdr.cluster_size;
             ulong secOff = sectorAddress % pHdr.cluster_size;
@@ -253,13 +248,10 @@ namespace DiscImageChef.DiscImages
             uint batOff = BAT[index];
             ulong imageOff;
 
-            if(batOff == 0)
-                return new byte[512];
+            if(batOff == 0) return new byte[512];
 
-            if(extended)
-                imageOff = batOff * clusterBytes;
-            else
-                imageOff = batOff * 512;
+            if(extended) imageOff = batOff * clusterBytes;
+            else imageOff = batOff * 512;
 
             byte[] cluster = new byte[clusterBytes];
             imageStream.Seek((long)imageOff, SeekOrigin.Begin);
@@ -267,24 +259,23 @@ namespace DiscImageChef.DiscImages
             sector = new byte[512];
             Array.Copy(cluster, (int)(secOff * 512), sector, 0, 512);
 
-            if(sectorCache.Count > maxCachedSectors)
-                sectorCache.Clear();
+            if(sectorCache.Count > maxCachedSectors) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 
-			return sector;
+            return sector;
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                      string.Format("Sector address {0} not found", sectorAddress));
 
             if(sectorAddress + length > ImageInfo.sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            if(empty)
-                return new byte[512 * length];
+            if(empty) return new byte[512 * length];
 
             MemoryStream ms = new MemoryStream();
 
@@ -368,7 +359,6 @@ namespace DiscImageChef.DiscImages
         }
 
         #region Unsupported features
-
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -509,16 +499,18 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -527,8 +519,6 @@ namespace DiscImageChef.DiscImages
         {
             return null;
         }
-
         #endregion
     }
 }
-

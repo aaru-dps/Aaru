@@ -82,133 +82,148 @@ namespace DiscImageChef.Commands
                         switch(tag)
                         {
                             case MediaTagType.SCSI_INQUIRY:
+                            {
+                                byte[] inquiry = inputFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
+                                if(inquiry == null)
+                                    DicConsole.WriteLine("Error reading SCSI INQUIRY response from disc image");
+                                else
                                 {
-                                    byte[] inquiry = inputFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
-                                    if(inquiry == null)
-                                        DicConsole.WriteLine("Error reading SCSI INQUIRY response from disc image");
-                                    else
-                                    {
-                                        DicConsole.WriteLine("SCSI INQUIRY command response:");
-                                        DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inquiry));
-                                        DicConsole.WriteLine("================================================================================");
-                                    }
-                                    break;
+                                    DicConsole.WriteLine("SCSI INQUIRY command response:");
+                                    DicConsole
+                                        .WriteLine("================================================================================");
+                                    DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inquiry));
+                                    DicConsole
+                                        .WriteLine("================================================================================");
                                 }
+                                break;
+                            }
                             case MediaTagType.ATA_IDENTIFY:
+                            {
+                                byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
+                                if(identify == null)
+                                    DicConsole.WriteLine("Error reading ATA IDENTIFY DEVICE response from disc image");
+                                else
                                 {
-                                    byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
-                                    if(identify == null)
-                                        DicConsole.WriteLine("Error reading ATA IDENTIFY DEVICE response from disc image");
-                                    else
-                                    {
-                                        DicConsole.WriteLine("ATA IDENTIFY DEVICE command response:");
-                                        DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(identify));
-                                        DicConsole.WriteLine("================================================================================");
-                                    }
-                                    break;
+                                    DicConsole.WriteLine("ATA IDENTIFY DEVICE command response:");
+                                    DicConsole
+                                        .WriteLine("================================================================================");
+                                    DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(identify));
+                                    DicConsole
+                                        .WriteLine("================================================================================");
                                 }
+                                break;
+                            }
                             case MediaTagType.ATAPI_IDENTIFY:
+                            {
+                                byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
+                                if(identify == null)
+                                    DicConsole
+                                        .WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
+                                else
                                 {
-                                    byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
-                                    if(identify == null)
-                                        DicConsole.WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
-                                    else
-                                    {
-                                        DicConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");
-                                        DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(identify));
-                                        DicConsole.WriteLine("================================================================================");
-                                    }
-                                    break;
+                                    DicConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");
+                                    DicConsole
+                                        .WriteLine("================================================================================");
+                                    DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(identify));
+                                    DicConsole
+                                        .WriteLine("================================================================================");
                                 }
+                                break;
+                            }
                             case MediaTagType.CD_ATIP:
+                            {
+                                byte[] atip = inputFormat.ReadDiskTag(MediaTagType.CD_ATIP);
+                                if(atip == null) DicConsole.WriteLine("Error reading CD ATIP from disc image");
+                                else
                                 {
-                                    byte[] atip = inputFormat.ReadDiskTag(MediaTagType.CD_ATIP);
-                                    if(atip == null)
-                                        DicConsole.WriteLine("Error reading CD ATIP from disc image");
-                                    else
-                                    {
-                                        DicConsole.WriteLine("CD ATIP:");
-                                        DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.ATIP.Prettify(atip));
-                                        DicConsole.WriteLine("================================================================================");
-                                    }
-                                    break;
+                                    DicConsole.WriteLine("CD ATIP:");
+                                    DicConsole
+                                        .WriteLine("================================================================================");
+                                    DicConsole.WriteLine(Decoders.CD.ATIP.Prettify(atip));
+                                    DicConsole
+                                        .WriteLine("================================================================================");
                                 }
+                                break;
+                            }
                             case MediaTagType.CD_FullTOC:
+                            {
+                                byte[] fulltoc = inputFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
+                                if(fulltoc == null) DicConsole.WriteLine("Error reading CD full TOC from disc image");
+                                else
                                 {
-                                    byte[] fulltoc = inputFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
-                                    if(fulltoc == null)
-                                        DicConsole.WriteLine("Error reading CD full TOC from disc image");
-                                    else
-                                    {
-                                        DicConsole.WriteLine("CD full TOC:");
-                                        DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.FullTOC.Prettify(fulltoc));
-                                        DicConsole.WriteLine("================================================================================");
-                                    }
-                                    break;
+                                    DicConsole.WriteLine("CD full TOC:");
+                                    DicConsole
+                                        .WriteLine("================================================================================");
+                                    DicConsole.WriteLine(Decoders.CD.FullTOC.Prettify(fulltoc));
+                                    DicConsole
+                                        .WriteLine("================================================================================");
                                 }
+                                break;
+                            }
                             case MediaTagType.CD_PMA:
+                            {
+                                byte[] pma = inputFormat.ReadDiskTag(MediaTagType.CD_PMA);
+                                if(pma == null) DicConsole.WriteLine("Error reading CD PMA from disc image");
+                                else
                                 {
-                                    byte[] pma = inputFormat.ReadDiskTag(MediaTagType.CD_PMA);
-                                    if(pma == null)
-                                        DicConsole.WriteLine("Error reading CD PMA from disc image");
-                                    else
-                                    {
-                                        DicConsole.WriteLine("CD PMA:");
-                                        DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.PMA.Prettify(pma));
-                                        DicConsole.WriteLine("================================================================================");
-                                    }
-                                    break;
+                                    DicConsole.WriteLine("CD PMA:");
+                                    DicConsole
+                                        .WriteLine("================================================================================");
+                                    DicConsole.WriteLine(Decoders.CD.PMA.Prettify(pma));
+                                    DicConsole
+                                        .WriteLine("================================================================================");
                                 }
+                                break;
+                            }
                             case MediaTagType.CD_SessionInfo:
+                            {
+                                byte[] sessioninfo = inputFormat.ReadDiskTag(MediaTagType.CD_SessionInfo);
+                                if(sessioninfo == null)
+                                    DicConsole.WriteLine("Error reading CD session information from disc image");
+                                else
                                 {
-                                    byte[] sessioninfo = inputFormat.ReadDiskTag(MediaTagType.CD_SessionInfo);
-                                    if(sessioninfo == null)
-                                        DicConsole.WriteLine("Error reading CD session information from disc image");
-                                    else
-                                    {
-                                        DicConsole.WriteLine("CD session information:");
-                                        DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.Session.Prettify(sessioninfo));
-                                        DicConsole.WriteLine("================================================================================");
-                                    }
-                                    break;
+                                    DicConsole.WriteLine("CD session information:");
+                                    DicConsole
+                                        .WriteLine("================================================================================");
+                                    DicConsole.WriteLine(Decoders.CD.Session.Prettify(sessioninfo));
+                                    DicConsole
+                                        .WriteLine("================================================================================");
                                 }
+                                break;
+                            }
                             case MediaTagType.CD_TEXT:
+                            {
+                                byte[] cdtext = inputFormat.ReadDiskTag(MediaTagType.CD_TEXT);
+                                if(cdtext == null) DicConsole.WriteLine("Error reading CD-TEXT from disc image");
+                                else
                                 {
-                                    byte[] cdtext = inputFormat.ReadDiskTag(MediaTagType.CD_TEXT);
-                                    if(cdtext == null)
-                                        DicConsole.WriteLine("Error reading CD-TEXT from disc image");
-                                    else
-                                    {
-                                        DicConsole.WriteLine("CD-TEXT:");
-                                        DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.CDTextOnLeadIn.Prettify(cdtext));
-                                        DicConsole.WriteLine("================================================================================");
-                                    }
-                                    break;
+                                    DicConsole.WriteLine("CD-TEXT:");
+                                    DicConsole
+                                        .WriteLine("================================================================================");
+                                    DicConsole.WriteLine(Decoders.CD.CDTextOnLeadIn.Prettify(cdtext));
+                                    DicConsole
+                                        .WriteLine("================================================================================");
                                 }
+                                break;
+                            }
                             case MediaTagType.CD_TOC:
+                            {
+                                byte[] toc = inputFormat.ReadDiskTag(MediaTagType.CD_TOC);
+                                if(toc == null) DicConsole.WriteLine("Error reading CD TOC from disc image");
+                                else
                                 {
-                                    byte[] toc = inputFormat.ReadDiskTag(MediaTagType.CD_TOC);
-                                    if(toc == null)
-                                        DicConsole.WriteLine("Error reading CD TOC from disc image");
-                                    else
-                                    {
-                                        DicConsole.WriteLine("CD TOC:");
-                                        DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.TOC.Prettify(toc));
-                                        DicConsole.WriteLine("================================================================================");
-                                    }
-                                    break;
+                                    DicConsole.WriteLine("CD TOC:");
+                                    DicConsole
+                                        .WriteLine("================================================================================");
+                                    DicConsole.WriteLine(Decoders.CD.TOC.Prettify(toc));
+                                    DicConsole
+                                        .WriteLine("================================================================================");
                                 }
+                                break;
+                            }
                             default:
-                                DicConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.", tag);
+                                DicConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.",
+                                                     tag);
                                 break;
                         }
                     }
@@ -219,8 +234,7 @@ namespace DiscImageChef.Commands
             {
                 ulong length;
 
-                if(options.Length.ToLowerInvariant() == "all")
-                    length = inputFormat.GetSectors() - 1;
+                if(options.Length.ToLowerInvariant() == "all") length = inputFormat.GetSectors() - 1;
                 else
                 {
                     if(!ulong.TryParse(options.Length, out length))
@@ -240,7 +254,8 @@ namespace DiscImageChef.Commands
                         switch(tag)
                         {
                             default:
-                                DicConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.", tag);
+                                DicConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.",
+                                                     tag);
                                 break;
                         }
                     }
@@ -251,4 +266,3 @@ namespace DiscImageChef.Commands
         }
     }
 }
-

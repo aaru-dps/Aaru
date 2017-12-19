@@ -42,17 +42,13 @@ namespace DiscImageChef.Filesystems.AppleDOS
     {
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.ImageInfo.sectors != 455 && imagePlugin.ImageInfo.sectors != 560)
-                return false;
+            if(imagePlugin.ImageInfo.sectors != 455 && imagePlugin.ImageInfo.sectors != 560) return false;
 
-            if(partition.Start > 0 || imagePlugin.ImageInfo.sectorSize != 256)
-                return false;
+            if(partition.Start > 0 || imagePlugin.ImageInfo.sectorSize != 256) return false;
 
             int spt = 0;
-            if(imagePlugin.ImageInfo.sectors == 455)
-                spt = 13;
-            else
-                spt = 16;
+            if(imagePlugin.ImageInfo.sectors == 455) spt = 13;
+            else spt = 16;
 
             byte[] vtoc_b = imagePlugin.ReadSector((ulong)(17 * spt));
             vtoc = new VTOC();
@@ -61,7 +57,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
             vtoc = (VTOC)Marshal.PtrToStructure(vtocPtr, typeof(VTOC));
             Marshal.FreeHGlobal(vtocPtr);
 
-            return vtoc.catalogSector < spt && vtoc.maxTrackSectorPairsPerSector <= 122 && vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector == 256;
+            return vtoc.catalogSector < spt && vtoc.maxTrackSectorPairsPerSector <= 122 &&
+                   vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector == 256;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
@@ -70,10 +67,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
             StringBuilder sb = new StringBuilder();
 
             int spt = 0;
-            if(imagePlugin.ImageInfo.sectors == 455)
-                spt = 13;
-            else
-                spt = 16;
+            if(imagePlugin.ImageInfo.sectors == 455) spt = 13;
+            else spt = 16;
 
             byte[] vtoc_b = imagePlugin.ReadSector((ulong)(17 * spt));
             vtoc = new VTOC();
@@ -84,14 +79,16 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             sb.AppendLine("Apple DOS File System");
             sb.AppendLine();
-            sb.AppendFormat("Catalog starts at sector {0} of track {1}", vtoc.catalogSector, vtoc.catalogTrack).AppendLine();
+            sb.AppendFormat("Catalog starts at sector {0} of track {1}", vtoc.catalogSector, vtoc.catalogTrack)
+              .AppendLine();
             sb.AppendFormat("File system initialized by DOS release {0}", vtoc.dosRelease).AppendLine();
             sb.AppendFormat("Disk volume number {0}", vtoc.volumeNumber).AppendLine();
             sb.AppendFormat("Sectors allocated at most in track {0}", vtoc.lastAllocatedSector).AppendLine();
             sb.AppendFormat("{0} tracks in volume", vtoc.tracks).AppendLine();
             sb.AppendFormat("{0} sectors per track", vtoc.sectorsPerTrack).AppendLine();
             sb.AppendFormat("{0} bytes per sector", vtoc.bytesPerSector).AppendLine();
-            sb.AppendFormat("Track allocation is {0}", vtoc.allocationDirection > 0 ? "forward" : "reverse").AppendLine();
+            sb.AppendFormat("Track allocation is {0}", vtoc.allocationDirection > 0 ? "forward" : "reverse")
+              .AppendLine();
 
             information = sb.ToString();
 

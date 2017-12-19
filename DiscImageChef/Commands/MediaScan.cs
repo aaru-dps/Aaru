@@ -47,8 +47,8 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", options.MHDDLogPath);
             DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", options.IBGLogPath);
 
-            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
-                options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
+            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
+               char.IsLetter(options.DevicePath[0]))
             {
                 options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
             }
@@ -81,11 +81,11 @@ namespace DiscImageChef.Commands
                 case DeviceType.SCSI:
                     results = SCSI.Scan(options.MHDDLogPath, options.IBGLogPath, options.DevicePath, dev);
                     break;
-                default:
-                    throw new NotSupportedException("Unknown device type.");
+                default: throw new NotSupportedException("Unknown device type.");
             }
 
-            DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.totalTime, results.processingTime);
+            DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.totalTime,
+                                 results.processingTime);
             DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.", results.avgSpeed);
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.maxSpeed);
             DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.minSpeed);
@@ -102,17 +102,19 @@ namespace DiscImageChef.Commands
                 foreach(ulong bad in results.unreadableSectors)
                     DicConsole.WriteLine("Sector {0} could not be read", bad);
             }
+
             DicConsole.WriteLine();
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
             if(results.seekTotal != 0 || results.seekMin != double.MaxValue || results.seekMax != double.MinValue)
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
                 DicConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
-                                 results.seekTimes, results.seekMax, results.seekMin, results.seekTotal / 1000);
+                                     results.seekTimes, results.seekMax, results.seekMin, results.seekTotal / 1000);
 
-            Core.Statistics.AddMediaScan((long)results.A, (long)results.B, (long)results.C, (long)results.D, (long)results.E, (long)results.F, (long)results.blocks, (long)results.errored, (long)(results.blocks - results.errored));
+            Core.Statistics.AddMediaScan((long)results.A, (long)results.B, (long)results.C, (long)results.D,
+                                         (long)results.E, (long)results.F, (long)results.blocks, (long)results.errored,
+                                         (long)(results.blocks - results.errored));
             Core.Statistics.AddCommand("media-scan");
         }
     }
 }
-

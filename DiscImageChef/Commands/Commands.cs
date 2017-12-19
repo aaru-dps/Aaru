@@ -32,8 +32,5 @@
 
 namespace DiscImageChef.Commands
 {
-    public class Commands
-    {
-    }
+    public class Commands { }
 }
-

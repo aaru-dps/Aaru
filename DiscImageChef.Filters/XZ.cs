@@ -54,8 +54,7 @@ namespace DiscImageChef.Filters
 
         public override void Close()
         {
-            if(dataStream != null)
-                dataStream.Close();
+            if(dataStream != null) dataStream.Close();
             dataStream = null;
             basePath = null;
             opened = false;
@@ -88,7 +87,9 @@ namespace DiscImageChef.Filters
 
         public override bool Identify(byte[] buffer)
         {
-            return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A && buffer[5] == 0x00 && buffer[buffer.Length - 2] == 0x59 && buffer[buffer.Length - 1] == 0x5A;
+            return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
+                   buffer[4] == 0x5A && buffer[5] == 0x00 && buffer[buffer.Length - 2] == 0x59 &&
+                   buffer[buffer.Length - 1] == 0x5A;
         }
 
         public override bool Identify(Stream stream)
@@ -102,7 +103,8 @@ namespace DiscImageChef.Filters
             stream.Read(footer, 0, 2);
             stream.Seek(0, SeekOrigin.Begin);
 
-            return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+            return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
+                   buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
         }
 
         public override bool Identify(string path)
@@ -120,7 +122,8 @@ namespace DiscImageChef.Filters
                 stream.Read(footer, 0, 2);
                 stream.Seek(0, SeekOrigin.Begin);
 
-                return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+                return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
+                       buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
             }
 
             return false;
@@ -155,19 +158,16 @@ namespace DiscImageChef.Filters
 
         int Decode(byte[] buf, int size_max, ref ulong num)
         {
-            if(size_max == 0)
-                return 0;
+            if(size_max == 0) return 0;
 
-            if(size_max > 9)
-                size_max = 9;
+            if(size_max > 9) size_max = 9;
 
             num = (ulong)(buf[0] & 0x7F);
             int i = 0;
 
             while((buf[i++] & 0x80) == 0x80)
             {
-                if(i >= size_max || buf[i] == 0x00)
-                    return 0;
+                if(i >= size_max || buf[i] == 0x00) return 0;
 
                 num |= (ulong)(buf[i] & 0x7F) << (i * 7);
             }
@@ -240,12 +240,12 @@ namespace DiscImageChef.Filters
 
         public override string GetFilename()
         {
-            if(basePath == null)
-                return null;
+            if(basePath == null) return null;
             if(basePath.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase))
                 return basePath.Substring(0, basePath.Length - 3);
             if(basePath.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase))
                 return basePath.Substring(0, basePath.Length - 5);
+
             return basePath;
         }
 

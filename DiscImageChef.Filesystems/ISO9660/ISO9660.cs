@@ -50,20 +50,16 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             Name = "ISO9660 Filesystem";
             PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            if(encoding == null)
-                CurrentEncoding = Encoding.ASCII;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.ASCII;
+            else CurrentEncoding = encoding;
         }
 
         public ISO9660(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "ISO9660 Filesystem";
             PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            if(encoding == null)
-                CurrentEncoding = Encoding.ASCII;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.ASCII;
+            else CurrentEncoding = encoding;
         }
     }
 }

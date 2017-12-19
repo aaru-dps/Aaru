@@ -56,29 +56,23 @@ namespace DiscImageChef.Filesystems
         {
             Name = "MicroDOS file system";
             PluginUUID = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("koi8-r");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("koi8-r");
+            else CurrentEncoding = encoding;
         }
 
         public MicroDOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "MicroDOS file system";
             PluginUUID = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("koi8-r");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("koi8-r");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((1 + partition.Start) >= partition.End)
-                return false;
+            if((1 + partition.Start) >= partition.End) return false;
 
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             MicroDOSBlock0 block0 = new MicroDOSBlock0();
 
@@ -91,7 +85,8 @@ namespace DiscImageChef.Filesystems
             return block0.label == magic && block0.mklabel == magic2;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
 
@@ -106,7 +101,8 @@ namespace DiscImageChef.Filesystems
 
             sb.AppendLine("MicroDOS filesystem");
             sb.AppendFormat("Volume has {0} blocks ({1} bytes)", block0.blocks, block0.blocks * 512).AppendLine();
-            sb.AppendFormat("Volume has {0} blocks used ({1} bytes)", block0.usedBlocks, block0.usedBlocks * 512).AppendLine();
+            sb.AppendFormat("Volume has {0} blocks used ({1} bytes)", block0.usedBlocks, block0.usedBlocks * 512)
+              .AppendLine();
             sb.AppendFormat("Volume contains {0} files", block0.files).AppendLine();
             sb.AppendFormat("First used block is {0}", block0.firstUsedBlock).AppendLine();
 
@@ -129,22 +125,19 @@ namespace DiscImageChef.Filesystems
         struct MicroDOSBlock0
         {
             /// <summary>BK starts booting here</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] bootCode;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] bootCode;
             /// <summary>Number of files in directory</summary>
             public ushort files;
             /// <summary>Total number of blocks in files of the directory</summary>
             public ushort usedBlocks;
             /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 228)]
-            public byte[] unknown;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 228)] public byte[] unknown;
             /// <summary>Ownership label (label that shows it belongs to Micro DOS format)</summary>
             public ushort label;
             /// <summary>MK-DOS directory format label</summary>
             public ushort mklabel;
             /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
-            public byte[] unknown2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)] public byte[] unknown2;
             /// <summary>Disk size in blocks (absolute value for the system unlike NORD, NORTON etc.) that
             /// doesn't use two fixed values 40 or 80 tracks, but i.e. if you drive works with 76 tracks
             /// this field will contain an appropriate number of blocks</summary>
@@ -152,8 +145,7 @@ namespace DiscImageChef.Filesystems
             /// <summary> Number of the first file's block. Value is changable</summary>
             public ushort firstUsedBlock;
             /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] unknown3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] unknown3;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -164,8 +156,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>Directory number (0 - root)</summary>
             public byte directory;
             /// <summary>File name 14. symbols in ASCII KOI8</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] filename;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)] public byte[] filename;
             /// <summary>Block number</summary>
             public ushort blockNo;
             /// <summary>Length in blocks</summary>

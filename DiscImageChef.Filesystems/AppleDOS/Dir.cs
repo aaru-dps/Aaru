@@ -46,8 +46,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <param name="dest">Link destination.</param>
         public override Errno ReadLink(string path, ref string dest)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             return Errno.NotSupported;
         }
@@ -59,15 +58,13 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <param name="contents">Directory contents.</param>
         public override Errno ReadDir(string path, ref List<string> contents)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
             contents = new List<string>();
-            foreach(string ent in catalogCache.Keys)
-                contents.Add(ent);
+            foreach(string ent in catalogCache.Keys) contents.Add(ent);
 
             if(debug)
             {
@@ -90,16 +87,14 @@ namespace DiscImageChef.Filesystems.AppleDOS
             fileSizeCache = new Dictionary<string, int>();
             lockedFiles = new List<string>();
 
-            if(lba == 0 || lba > device.ImageInfo.sectors)
-                return Errno.InvalidArgument;
+            if(lba == 0 || lba > device.ImageInfo.sectors) return Errno.InvalidArgument;
 
             while(lba != 0)
             {
                 usedSectors++;
                 byte[] catSector_b = device.ReadSector(lba);
                 totalFileEntries += 7;
-                if(debug)
-                    catalogMs.Write(catSector_b, 0, catSector_b.Length);
+                if(debug) catalogMs.Write(catSector_b, 0, catSector_b.Length);
 
                 // Read the catalog sector
                 CatalogSector catSector = new CatalogSector();
@@ -119,13 +114,11 @@ namespace DiscImageChef.Filesystems.AppleDOS
                         ushort ts = (ushort)((entry.extentTrack << 8) | entry.extentSector);
 
                         // Apple DOS has high byte set over ASCII.
-                        for(int i = 0; i < 30; i++)
-                            filename_b[i] = (byte)(entry.filename[i] & 0x7F);
+                        for(int i = 0; i < 30; i++) filename_b[i] = (byte)(entry.filename[i] & 0x7F);
 
                         string filename = StringHandlers.SpacePaddedToString(filename_b, CurrentEncoding);
 
-                        if(!catalogCache.ContainsKey(filename))
-                            catalogCache.Add(filename, ts);
+                        if(!catalogCache.ContainsKey(filename)) catalogCache.Add(filename, ts);
 
                         if(!fileTypeCache.ContainsKey(filename))
                             fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
@@ -140,12 +133,10 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
                 lba = (ulong)((catSector.trackOfNext * sectorsPerTrack) + catSector.sectorOfNext);
 
-                if(lba > device.ImageInfo.sectors)
-                    break;
+                if(lba > device.ImageInfo.sectors) break;
             }
 
-            if(debug)
-                catalogBlocks = catalogMs.ToArray();
+            if(debug) catalogBlocks = catalogMs.ToArray();
 
             return Errno.NoError;
         }

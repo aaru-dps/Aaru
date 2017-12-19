@@ -47,23 +47,17 @@ namespace DiscImageChef.Core.Devices.Dumping
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AlcoholHeader
         {
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
-            public string signature;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] version;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string signature;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] version;
             public AlcoholMediumType type;
             public ushort sessions;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public ushort[] unknown1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ushort[] unknown1;
             public ushort bcaLength;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public uint[] unknown2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] unknown2;
             public uint bcaOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public uint[] unknown3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public uint[] unknown3;
             public uint structuresOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public uint[] unknown4;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] unknown4;
             public uint sessionOffset;
             public uint dpmOffset;
         }
@@ -99,14 +93,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             public byte pframe;
             public uint extraOffset;
             public ushort sectorSize;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
-            public byte[] unknown;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] unknown;
             public uint startLba;
             public ulong startOffset;
             public uint files;
             public uint footerOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] unknown2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] unknown2;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -172,24 +164,23 @@ namespace DiscImageChef.Core.Devices.Dumping
             header = new AlcoholHeader
             {
                 signature = "MEDIA DESCRIPTOR",
-                unknown1 = new ushort[] { 0x0002, 0x0000 },
+                unknown1 = new ushort[] {0x0002, 0x0000},
                 unknown2 = new uint[2],
                 unknown3 = new uint[6],
                 unknown4 = new uint[3],
-                version = new byte[] { 1, 5 }
+                version = new byte[] {1, 5}
             };
             header.version[0] = 1;
             header.version[1] = 5;
             tracks = new List<AlcoholTrack>();
             sessions = new List<AlcoholSession>();
             trackLengths = new Dictionary<byte, uint>();
-            footer = new AlcoholFooter { widechar = 1 };
+            footer = new AlcoholFooter {widechar = 1};
         }
 
         public void Close()
         {
-            if(sessions.Count == 0 || tracks.Count == 0)
-                return;
+            if(sessions.Count == 0 || tracks.Count == 0) return;
 
             // Calculate first offsets
             header.sessions = (ushort)sessions.Count;
@@ -201,7 +192,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             for(int i = 0; i < sessionsArray.Length; i++)
             {
                 sessionsArray[i].allBlocks = (byte)(((sessionsArray[i].lastTrack - sessionsArray[i].firstTrack) + 1) +
-                                                     sessionsArray[i].nonTrackBlocks);
+                                                    sessionsArray[i].nonTrackBlocks);
                 sessionsArray[i].trackOffset = (uint)nextOffset;
                 nextOffset += sessionsArray[i].allBlocks * 80;
             }
@@ -214,10 +205,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(tracksArray[i].point >= 0xA0) continue;
                 if(!trackLengths.TryGetValue(tracksArray[i].point, out uint trkLen)) continue;
 
-                if(tracksArray[i].mode == AlcoholTrackMode.DVD)
-                {
-                    tracksArray[i].extraOffset = trkLen;
-                }
+                if(tracksArray[i].mode == AlcoholTrackMode.DVD) { tracksArray[i].extraOffset = trkLen; }
                 else
                 {
                     AlcoholTrackExtra extra = new AlcoholTrackExtra();
@@ -247,15 +235,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                 nextOffset += 4100;
             }
 
-            for(int i = 0; i < tracksArray.Length; i++)
-                tracksArray[i].footerOffset = (uint)nextOffset;
+            for(int i = 0; i < tracksArray.Length; i++) tracksArray[i].footerOffset = (uint)nextOffset;
 
             footer.filenameOffset = (uint)(nextOffset + 16);
 
             byte[] filename = Encoding.Unicode.GetBytes(outputPrefix + extension);
 
             // Open descriptor file here
-            FileStream descriptorFile = new FileStream(outputPrefix + ".mds", FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+            FileStream descriptorFile =
+                new FileStream(outputPrefix + ".mds", FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 
             byte[] tmp = new byte[88];
             IntPtr hdrPtr = Marshal.AllocHGlobal(88);
@@ -284,7 +272,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Marshal.FreeHGlobal(trkPtr);
             }
 
-            if(header.type == AlcoholMediumType.CD || header.type == AlcoholMediumType.CDR || header.type == AlcoholMediumType.CDRW)
+            if(header.type == AlcoholMediumType.CD || header.type == AlcoholMediumType.CDR ||
+               header.type == AlcoholMediumType.CDRW)
             {
                 foreach(AlcoholTrackExtra extra in extrasArray)
                 {
@@ -429,8 +418,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     case TrackType.CDMode2Form2:
                         trkArray[i].mode = AlcoholTrackMode.Mode2F2;
                         break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+                    default: throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
                 }
 
                 switch(subMode)
@@ -447,8 +435,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     case TrackSubchannelType.Q16:
                     case TrackSubchannelType.Q16Interleaved:
                         throw new FeatureUnsupportedImageException("Specified subchannel type is not supported.");
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(subMode), subMode, null);
+                    default: throw new ArgumentOutOfRangeException(nameof(subMode), subMode, null);
                 }
 
                 tracks = new List<AlcoholTrack>(trkArray);
@@ -472,8 +459,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 break;
             }
 
-            if(trackLengths.ContainsKey(point))
-                trackLengths.Remove(point);
+            if(trackLengths.ContainsKey(point)) trackLengths.Remove(point);
 
             trackLengths.Add(point, (uint)length);
 
@@ -481,18 +467,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             for(int i = 0; i < sess.Length; i++)
             {
-                if(sess[i].firstTrack == point)
-                    sess[i].sessionStart = (int)startLba;
-                if(sess[i].lastTrack == point)
-                    sess[i].sessionEnd = (int)(startLba + length);
+                if(sess[i].firstTrack == point) sess[i].sessionStart = (int)startLba;
+                if(sess[i].lastTrack == point) sess[i].sessionEnd = (int)(startLba + length);
             }
 
             sessions = new List<AlcoholSession>(sess);
-
         }
 
         public void AddTrack(byte adrCtl, byte tno, byte point, byte min, byte sec, byte frame, byte zero, byte pmin,
-            byte psec, byte pframe, byte session)
+                             byte psec, byte pframe, byte session)
         {
             AlcoholTrack trk = new AlcoholTrack
             {
@@ -519,11 +502,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             AlcoholSession[] sess = sessions.ToArray();
 
-            for(int i = 0; i < sess.Length; i++)
-            {
-                if(sess[i].sessionSequence == session)
-                    sess[i].nonTrackBlocks++;
-            }
+            for(int i = 0; i < sess.Length; i++) { if(sess[i].sessionSequence == session) sess[i].nonTrackBlocks++; }
 
             sessions = new List<AlcoholSession>(sess);
         }
@@ -540,8 +519,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 this.pfi = new byte[2048];
                 Array.Copy(pfi, 4, this.pfi, 0, 2048);
             }
-            else
-                this.pfi = pfi;
+            else this.pfi = pfi;
         }
 
         public void AddDMI(byte[] dmi)
@@ -551,8 +529,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 this.dmi = new byte[2048];
                 Array.Copy(dmi, 4, this.dmi, 0, 2048);
             }
-            else
-                this.dmi = dmi;
+            else this.dmi = dmi;
         }
 
         public void SetExtension(string extension)

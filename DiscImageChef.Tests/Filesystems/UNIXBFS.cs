@@ -38,40 +38,27 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class unixbfs
     {
-        readonly string[] testfiles = {
-            "amix_mf2dd.adf.lz","att_unix_svr4v2.1_dsdd.img.lz","att_unix_svr4v2.1_dshd.img.lz","att_unix_svr4v2.1_mf2dd.img.lz",
-            "att_unix_svr4v2.1_mf2hd.img.lz",
+        readonly string[] testfiles =
+        {
+            "amix_mf2dd.adf.lz", "att_unix_svr4v2.1_dsdd.img.lz", "att_unix_svr4v2.1_dshd.img.lz",
+            "att_unix_svr4v2.1_mf2dd.img.lz", "att_unix_svr4v2.1_mf2hd.img.lz",
         };
 
-        readonly MediaType[] mediatypes = {
+        readonly MediaType[] mediatypes =
+        {
             MediaType.CBM_AMIGA_35_DD, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_HD,
         };
 
-        readonly ulong[] sectors = {
-            1760, 720, 2400, 1440,
-            2880,
-        };
+        readonly ulong[] sectors = {1760, 720, 2400, 1440, 2880,};
 
-        readonly uint[] sectorsize = {
-            512, 512, 512, 512,
-            512,
-        };
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512,};
 
-        readonly long[] clusters = {
-            1760, 720, 2400, 1440,
-            2880,
-        };
+        readonly long[] clusters = {1760, 720, 2400, 1440, 2880,};
 
-        readonly int[] clustersize = {
-            512, 512, 512, 512,
-            512,
-        };
+        readonly int[] clustersize = {512, 512, 512, 512, 512,};
 
-        readonly string[] volumename = {
-            "Label",null,null,null,
-            null,
-        };
+        readonly string[] volumename = {"Label", null, null, null, null,};
 
         [Test]
         public void Test()

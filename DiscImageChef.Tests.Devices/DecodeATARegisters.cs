@@ -38,22 +38,14 @@ namespace DiscImageChef.Tests.Devices
         {
             string ret = "";
 
-            if((status & 0x80) == 0x80)
-                ret += "BSY ";
-            if((status & 0x40) == 0x40)
-                ret += "DRDY ";
-            if((status & 0x20) == 0x20)
-                ret += "DWF ";
-            if((status & 0x10) == 0x10)
-                ret += "DSC ";
-            if((status & 0x8) == 0x8)
-                ret += "DRQ ";
-            if((status & 0x4) == 0x4)
-                ret += "CORR ";
-            if((status & 0x2) == 0x2)
-                ret += "IDX ";
-            if((status & 0x1) == 0x1)
-                ret += "ERR ";
+            if((status & 0x80) == 0x80) ret += "BSY ";
+            if((status & 0x40) == 0x40) ret += "DRDY ";
+            if((status & 0x20) == 0x20) ret += "DWF ";
+            if((status & 0x10) == 0x10) ret += "DSC ";
+            if((status & 0x8) == 0x8) ret += "DRQ ";
+            if((status & 0x4) == 0x4) ret += "CORR ";
+            if((status & 0x2) == 0x2) ret += "IDX ";
+            if((status & 0x1) == 0x1) ret += "ERR ";
 
             return ret;
         }
@@ -62,22 +54,14 @@ namespace DiscImageChef.Tests.Devices
         {
             string ret = "";
 
-            if((status & 0x80) == 0x80)
-                ret += "BBK ";
-            if((status & 0x40) == 0x40)
-                ret += "UNC ";
-            if((status & 0x20) == 0x20)
-                ret += "MC ";
-            if((status & 0x10) == 0x10)
-                ret += "IDNF ";
-            if((status & 0x8) == 0x8)
-                ret += "MCR ";
-            if((status & 0x4) == 0x4)
-                ret += "ABRT ";
-            if((status & 0x2) == 0x2)
-                ret += "TK0NF ";
-            if((status & 0x1) == 0x1)
-                ret += "AMNF ";
+            if((status & 0x80) == 0x80) ret += "BBK ";
+            if((status & 0x40) == 0x40) ret += "UNC ";
+            if((status & 0x20) == 0x20) ret += "MC ";
+            if((status & 0x10) == 0x10) ret += "IDNF ";
+            if((status & 0x8) == 0x8) ret += "MCR ";
+            if((status & 0x4) == 0x4) ret += "ABRT ";
+            if((status & 0x2) == 0x2) ret += "TK0NF ";
+            if((status & 0x1) == 0x1) ret += "AMNF ";
 
             return ret;
         }
@@ -104,7 +88,9 @@ namespace DiscImageChef.Tests.Devices
             sb.AppendFormat("Status: {0}", DecodeATAStatus(registers.status)).AppendLine();
             sb.AppendFormat("Error: {0}", DecodeATAStatus(registers.error)).AppendLine();
             sb.AppendFormat("Device: {0}", (registers.deviceHead >> 4) & 0x01).AppendLine();
-            sb.AppendFormat("LBA: {0}", ((registers.deviceHead & 0xF) << 24) + (registers.lbaHigh << 16) + (registers.lbaMid << 8) + registers.lbaLow);
+            sb.AppendFormat("LBA: {0}",
+                            ((registers.deviceHead & 0xF) << 24) + (registers.lbaHigh << 16) + (registers.lbaMid << 8) +
+                            registers.lbaLow);
             sb.AppendFormat("Count: {0}", registers.sectorCount).AppendLine();
             sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.deviceHead & 0x40)).AppendLine();
             sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.deviceHead & 0x80)).AppendLine();
@@ -118,7 +104,10 @@ namespace DiscImageChef.Tests.Devices
             sb.AppendFormat("Status: {0}", DecodeATAStatus(registers.status)).AppendLine();
             sb.AppendFormat("Error: {0}", DecodeATAStatus(registers.error)).AppendLine();
             sb.AppendFormat("Device: {0}", (registers.deviceHead >> 4) & 0x01).AppendLine();
-            sb.AppendFormat("LBA: {0}", ((ulong)(registers.deviceHead & 0xF) * (ulong)0x100000000000) + (registers.lbaHigh * (ulong)0x100000000L) + (ulong)(registers.lbaMid << 16) + registers.lbaLow);
+            sb.AppendFormat("LBA: {0}",
+                            ((ulong)(registers.deviceHead & 0xF) * (ulong)0x100000000000) +
+                            (registers.lbaHigh * (ulong)0x100000000L) + (ulong)(registers.lbaMid << 16) +
+                            registers.lbaLow);
             sb.AppendFormat("Count: {0}", registers.sectorCount).AppendLine();
             sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.deviceHead & 0x40)).AppendLine();
             sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.deviceHead & 0x80)).AppendLine();

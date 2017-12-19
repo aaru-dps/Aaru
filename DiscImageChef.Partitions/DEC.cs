@@ -53,12 +53,10 @@ namespace DiscImageChef.PartPlugins
         {
             partitions = new List<Partition>();
 
-            if(31 + sectorOffset >= imagePlugin.GetSectors())
-                return false;
+            if(31 + sectorOffset >= imagePlugin.GetSectors()) return false;
 
             byte[] sector = imagePlugin.ReadSector(31 + sectorOffset);
-            if(sector.Length < 512)
-                return false;
+            if(sector.Length < 512) return false;
 
             DECLabel table = new DECLabel();
             IntPtr tablePtr = Marshal.AllocHGlobal(512);
@@ -66,8 +64,7 @@ namespace DiscImageChef.PartPlugins
             table = (DECLabel)Marshal.PtrToStructure(tablePtr, typeof(DECLabel));
             Marshal.FreeHGlobal(tablePtr);
 
-            if(table.pt_magic != PT_MAGIC || table.pt_valid != PT_VALID)
-                return false;
+            if(table.pt_magic != PT_MAGIC || table.pt_valid != PT_VALID) return false;
 
             ulong counter = 0;
 
@@ -95,12 +92,10 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DECLabel
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
-            public byte[] padding;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)] public byte[] padding;
             public int pt_magic;
             public int pt_valid;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public DECPartition[] pt_part;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public DECPartition[] pt_part;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

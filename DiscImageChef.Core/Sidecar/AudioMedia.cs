@@ -40,25 +40,23 @@ namespace DiscImageChef.Core
     public static partial class Sidecar
     {
         // TODO: Complete it
-        static void AudioMedia(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi, PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void AudioMedia(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi,
+                               PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
-            sidecar.AudioMedia = new []
+            sidecar.AudioMedia = new[]
             {
-	            new AudioMediaType
-	            {
-	                Checksums = imgChecksums.ToArray(),
-	                Image = new ImageType
-	                {
-	                    format = image.GetImageFormat(),
-	                    offset = 0,
-	                    offsetSpecified = true,
-	                    Value = Path.GetFileName(imagePath)
-	                },
-	                Size = fi.Length,
-	                Sequence = new SequenceType
-	                {
-	                    MediaTitle = image.GetImageName()
-	                }
+                new AudioMediaType
+                {
+                    Checksums = imgChecksums.ToArray(),
+                    Image = new ImageType
+                    {
+                        format = image.GetImageFormat(),
+                        offset = 0,
+                        offsetSpecified = true,
+                        Value = Path.GetFileName(imagePath)
+                    },
+                    Size = fi.Length,
+                    Sequence = new SequenceType {MediaTitle = image.GetImageName()}
                 }
             };
 

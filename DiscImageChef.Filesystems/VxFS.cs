@@ -51,20 +51,16 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Veritas filesystem";
             PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
-            if(encoding == null)
-                CurrentEncoding = Encoding.UTF8;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.UTF8;
+            else CurrentEncoding = encoding;
         }
 
         public VxFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Veritas filesystem";
             PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
-            if(encoding == null)
-                CurrentEncoding = Encoding.UTF8;
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.UTF8;
+            else CurrentEncoding = encoding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -171,8 +167,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>number of free inodes</summary>
             public int vs_ifree;
             /// <summary>number of free extents by size</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public int[] vs_efree;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public int[] vs_efree;
             /// <summary>flags ?!?</summary>
             public int vs_flags;
             /// <summary>filesystem has been changed</summary>
@@ -188,18 +183,15 @@ namespace DiscImageChef.Filesystems
             /// <summary>last time written - usec</summary>
             public uint vs_wutime;
             /// <summary>FS name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] vs_fname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] vs_fname;
             /// <summary>FS pack name</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] vs_fpack;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] vs_fpack;
             /// <summary>log format version</summary>
             public int vs_logversion;
             /// <summary>unused</summary>
             public int __unused5;
             /// <summary>OLT extent and replica</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public int[] vs_oltext;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public int[] vs_oltext;
             /// <summary>OLT extent size</summary>
             public int vs_oltsize;
             /// <summary>size of inode map</summary>
@@ -224,9 +216,8 @@ namespace DiscImageChef.Filesystems
         {
             ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.sectorSize;
 
-            if(partition.Start + vmfsSuperOff >= partition.End)
-                return false;
-            
+            if(partition.Start + vmfsSuperOff >= partition.End) return false;
+
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
@@ -234,7 +225,8 @@ namespace DiscImageChef.Filesystems
             return magic == VxFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.sectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
@@ -250,15 +242,18 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendLine("Veritas file system");
 
             sbInformation.AppendFormat("Volume version {0}", vxSb.vs_version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, CurrentEncoding)).AppendLine();
-            sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", vxSb.vs_bsize, vxSb.vs_size).AppendLine();
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, CurrentEncoding))
+                         .AppendLine();
+            sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", vxSb.vs_bsize, vxSb.vs_size)
+                         .AppendLine();
             sbInformation.AppendFormat("Volume has {0} inodes per block", vxSb.vs_inopb).AppendLine();
             sbInformation.AppendFormat("Volume has {0} free inodes", vxSb.vs_ifree).AppendLine();
             sbInformation.AppendFormat("Volume has {0} free blocks", vxSb.vs_free).AppendLine();
-            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
-            sbInformation.AppendFormat("Volume last modified on {0}", DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).AppendLine();
-            if(vxSb.vs_clean != 0)
-                sbInformation.AppendLine("Volume is dirty");
+            sbInformation.AppendFormat("Volume created on {0}",
+                                       DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
+            sbInformation.AppendFormat("Volume last modified on {0}",
+                                       DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).AppendLine();
+            if(vxSb.vs_clean != 0) sbInformation.AppendLine("Volume is dirty");
 
             information = sbInformation.ToString();
 

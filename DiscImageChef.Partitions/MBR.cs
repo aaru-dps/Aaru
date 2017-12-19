@@ -50,14 +50,14 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin,
+                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             ulong counter = 0;
 
             partitions = new List<CommonTypes.Partition>();
 
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             uint sectorSize = imagePlugin.GetSectorSize();
             // Divider of sector size in MBR between real sector size
@@ -72,19 +72,28 @@ namespace DiscImageChef.PartPlugins
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
 
             GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-            MasterBootRecord mbr = (MasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MasterBootRecord));
-            TimedMasterBootRecord mbr_time = (TimedMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(TimedMasterBootRecord));
-            SerializedMasterBootRecord mbr_serial = (SerializedMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SerializedMasterBootRecord));
-            ModernMasterBootRecord mbr_modern = (ModernMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ModernMasterBootRecord));
-            NecMasterBootRecord mbr_nec = (NecMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(NecMasterBootRecord));
-            DiskManagerMasterBootRecord mbr_ontrack = (DiskManagerMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskManagerMasterBootRecord));
+            MasterBootRecord mbr =
+                (MasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MasterBootRecord));
+            TimedMasterBootRecord mbr_time =
+                (TimedMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                              typeof(TimedMasterBootRecord));
+            SerializedMasterBootRecord mbr_serial =
+                (SerializedMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                   typeof(SerializedMasterBootRecord));
+            ModernMasterBootRecord mbr_modern =
+                (ModernMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                               typeof(ModernMasterBootRecord));
+            NecMasterBootRecord mbr_nec =
+                (NecMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(NecMasterBootRecord));
+            DiskManagerMasterBootRecord mbr_ontrack =
+                (DiskManagerMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                    typeof(DiskManagerMasterBootRecord));
             handle.Free();
 
             DicConsole.DebugWriteLine("MBR plugin", "xmlmedia = {0}", imagePlugin.ImageInfo.xmlMediaType);
             DicConsole.DebugWriteLine("MBR plugin", "mbr.magic = {0:X4}", mbr.magic);
 
-            if(mbr.magic != MBR_Magic)
-                return false; // Not MBR
+            if(mbr.magic != MBR_Magic) return false; // Not MBR
 
             byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
 
@@ -92,26 +101,21 @@ namespace DiscImageChef.PartPlugins
 
             DicConsole.DebugWriteLine("MBR Plugin", "gpt.signature = 0x{0:X16}", signature);
 
-            if(signature == GptMagic)
-                return false;
+            if(signature == GptMagic) return false;
 
             if(signature != GptMagic && imagePlugin.ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 hdrBytes = imagePlugin.ReadSector(sectorOffset);
                 signature = BitConverter.ToUInt64(hdrBytes, 512);
                 DicConsole.DebugWriteLine("MBR Plugin", "gpt.signature @ 0x200 = 0x{0:X16}", signature);
-                if(signature == GptMagic)
-                    return false;
+                if(signature == GptMagic) return false;
             }
 
             MBRPartitionEntry[] entries;
 
-            if(mbr_ontrack.dm_magic == DM_Magic)
-                entries = mbr_ontrack.entries;
-            else if(mbr_nec.nec_magic == NEC_Magic)
-                entries = mbr_nec.entries;
-            else
-                entries = mbr.entries;
+            if(mbr_ontrack.dm_magic == DM_Magic) entries = mbr_ontrack.entries;
+            else if(mbr_nec.nec_magic == NEC_Magic) entries = mbr_nec.entries;
+            else entries = mbr.entries;
 
             foreach(MBRPartitionEntry entry in entries)
             {
@@ -128,30 +132,35 @@ namespace DiscImageChef.PartPlugins
                 bool extended = false;
                 bool minix = false;
 
-                if(entry.status != 0x00 && entry.status != 0x80)
-                    return false; // Maybe a FAT filesystem
+                if(entry.status != 0x00 && entry.status != 0x80) return false; // Maybe a FAT filesystem
+
                 valid &= entry.type != 0x00;
-                if(entry.type == 0x05 || entry.type == 0x0F || entry.type == 0x15 || entry.type == 0x1F || entry.type == 0x85 ||
-                  entry.type == 0x91 || entry.type == 0x9B || entry.type == 0xC5 || entry.type == 0xCF || entry.type == 0xD5)
+                if(entry.type == 0x05 || entry.type == 0x0F || entry.type == 0x15 || entry.type == 0x1F ||
+                   entry.type == 0x85 || entry.type == 0x91 || entry.type == 0x9B || entry.type == 0xC5 ||
+                   entry.type == 0xCF || entry.type == 0xD5)
                 {
                     valid = false;
                     extended = true; // Extended partition
                 }
                 minix |= entry.type == 0x81 || entry.type == 0x80; // MINIX partition
 
-                valid &= entry.lba_start != 0 || entry.lba_sectors != 0 || entry.start_cylinder != 0 || entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder != 0 || entry.end_head != 0 || entry.end_sector != 0;
+                valid &= entry.lba_start != 0 || entry.lba_sectors != 0 || entry.start_cylinder != 0 ||
+                         entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder != 0 ||
+                         entry.end_head != 0 || entry.end_sector != 0;
                 if(entry.lba_start == 0 && entry.lba_sectors == 0 && valid)
                 {
-                    lba_start = Helpers.CHS.ToLBA(start_cylinder, entry.start_head, start_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack);
-                    lba_sectors = Helpers.CHS.ToLBA(end_cylinder, entry.end_head, entry.end_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack) - lba_start;
+                    lba_start = Helpers.CHS.ToLBA(start_cylinder, entry.start_head, start_sector,
+                                                  imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack);
+                    lba_sectors = Helpers.CHS.ToLBA(end_cylinder, entry.end_head, entry.end_sector,
+                                                    imagePlugin.ImageInfo.heads,
+                                                    imagePlugin.ImageInfo.sectorsPerTrack) - lba_start;
                 }
 
                 // For optical media
                 lba_start /= divider;
                 lba_sectors /= divider;
 
-                if(minix && lba_start == sectorOffset)
-                    minix = false;
+                if(minix && lba_start == sectorOffset) minix = false;
 
                 if(lba_start > imagePlugin.GetSectors())
                 {
@@ -181,24 +190,23 @@ namespace DiscImageChef.PartPlugins
 
                 if(valid && minix) // Let's mix the fun
                 {
-                    if(GetMinix(imagePlugin, lba_start, divider, sectorOffset, sectorSize, out List<Partition> mnx_parts))
-                        partitions.AddRange(mnx_parts);
-                    else
-                        minix = false;
+                    if(GetMinix(imagePlugin, lba_start, divider, sectorOffset, sectorSize,
+                                out List<Partition> mnx_parts)) partitions.AddRange(mnx_parts);
+                    else minix = false;
                 }
 
                 if(valid && !minix)
                 {
                     CommonTypes.Partition part = new CommonTypes.Partition();
-                    if((lba_start > 0 || imagePlugin.ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc) && lba_sectors > 0)
+                    if((lba_start > 0 || imagePlugin.ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc) &&
+                       lba_sectors > 0)
                     {
                         part.Start = lba_start + sectorOffset;
                         part.Length = lba_sectors;
                         part.Offset = part.Start * sectorSize;
                         part.Size = part.Length * sectorSize;
                     }
-                    else
-                        valid = false;
+                    else valid = false;
 
                     if(valid)
                     {
@@ -226,13 +234,14 @@ namespace DiscImageChef.PartPlugins
                         sector = imagePlugin.ReadSector(lba_start);
 
                         handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                        ExtendedBootRecord ebr = (ExtendedBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedBootRecord));
+                        ExtendedBootRecord ebr =
+                            (ExtendedBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                       typeof(ExtendedBootRecord));
                         handle.Free();
 
                         DicConsole.DebugWriteLine("MBR plugin", "ebr.magic == MBR_Magic = {0}", ebr.magic == MBR_Magic);
 
-                        if(ebr.magic != MBR_Magic)
-                            break;
+                        if(ebr.magic != MBR_Magic) break;
 
                         ulong next_start = 0;
 
@@ -240,7 +249,8 @@ namespace DiscImageChef.PartPlugins
                         {
                             bool ext_valid = true;
                             start_sector = (byte)(ebr_entry.start_sector & 0x3F);
-                            start_cylinder = (ushort)(((ebr_entry.start_sector & 0xC0) << 2) | ebr_entry.start_cylinder);
+                            start_cylinder =
+                                (ushort)(((ebr_entry.start_sector & 0xC0) << 2) | ebr_entry.start_cylinder);
                             end_sector = (byte)(ebr_entry.end_sector & 0x3F);
                             end_cylinder = (ushort)(((ebr_entry.end_sector & 0xC0) << 2) | ebr_entry.end_cylinder);
                             ulong ext_start = ebr_entry.lba_start;
@@ -261,12 +271,19 @@ namespace DiscImageChef.PartPlugins
                             // Let's start the fun...
                             ext_valid &= ebr_entry.status == 0x00 || ebr_entry.status == 0x80;
                             ext_valid &= ebr_entry.type != 0x00;
-                            ext_valid &= ebr_entry.lba_start != 0 || ebr_entry.lba_sectors != 0 || ebr_entry.start_cylinder != 0 || ebr_entry.start_head != 0 ||
-                                            ebr_entry.start_sector != 0 || ebr_entry.end_cylinder != 0 || ebr_entry.end_head != 0 || ebr_entry.end_sector != 0;
+                            ext_valid &= ebr_entry.lba_start != 0 || ebr_entry.lba_sectors != 0 ||
+                                         ebr_entry.start_cylinder != 0 || ebr_entry.start_head != 0 ||
+                                         ebr_entry.start_sector != 0 || ebr_entry.end_cylinder != 0 ||
+                                         ebr_entry.end_head != 0 || ebr_entry.end_sector != 0;
                             if(ebr_entry.lba_start == 0 && ebr_entry.lba_sectors == 0 && ext_valid)
                             {
-                                ext_start = Helpers.CHS.ToLBA(start_cylinder, ebr_entry.start_head, start_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack);
-                                ext_sectors = Helpers.CHS.ToLBA(end_cylinder, ebr_entry.end_head, ebr_entry.end_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack) - ext_start;
+                                ext_start = Helpers.CHS.ToLBA(start_cylinder, ebr_entry.start_head, start_sector,
+                                                              imagePlugin.ImageInfo.heads,
+                                                              imagePlugin.ImageInfo.sectorsPerTrack);
+                                ext_sectors =
+                                    Helpers.CHS.ToLBA(end_cylinder, ebr_entry.end_head, ebr_entry.end_sector,
+                                                      imagePlugin.ImageInfo.heads,
+                                                      imagePlugin.ImageInfo.sectorsPerTrack) - ext_start;
                             }
                             ext_minix |= (ebr_entry.type == 0x81 || ebr_entry.type == 0x80);
 
@@ -277,8 +294,10 @@ namespace DiscImageChef.PartPlugins
                             DicConsole.DebugWriteLine("MBR plugin", "ext_start {0}", ext_start);
                             DicConsole.DebugWriteLine("MBR plugin", "ext_sectors {0}", ext_sectors);
 
-                            if(ebr_entry.type == 0x05 || ebr_entry.type == 0x0F || ebr_entry.type == 0x15 || ebr_entry.type == 0x1F || ebr_entry.type == 0x85 ||
-                                ebr_entry.type == 0x91 || ebr_entry.type == 0x9B || ebr_entry.type == 0xC5 || ebr_entry.type == 0xCF || ebr_entry.type == 0xD5)
+                            if(ebr_entry.type == 0x05 || ebr_entry.type == 0x0F || ebr_entry.type == 0x15 ||
+                               ebr_entry.type == 0x1F || ebr_entry.type == 0x85 || ebr_entry.type == 0x91 ||
+                               ebr_entry.type == 0x9B || ebr_entry.type == 0xC5 || ebr_entry.type == 0xCF ||
+                               ebr_entry.type == 0xD5)
                             {
                                 ext_valid = false;
                                 next_start = chain_start + ext_start;
@@ -293,10 +312,9 @@ namespace DiscImageChef.PartPlugins
 
                             if(ext_valid && ext_minix) // Let's mix the fun
                             {
-                                if(GetMinix(imagePlugin, lba_start, divider, sectorOffset, sectorSize, out List<Partition> mnx_parts))
-                                    partitions.AddRange(mnx_parts);
-                                else
-                                    ext_minix = false;
+                                if(GetMinix(imagePlugin, lba_start, divider, sectorOffset, sectorSize,
+                                            out List<Partition> mnx_parts)) partitions.AddRange(mnx_parts);
+                                else ext_minix = false;
                             }
 
                             if(ext_valid && !ext_minix)
@@ -309,8 +327,7 @@ namespace DiscImageChef.PartPlugins
                                     part.Offset = part.Start * sectorSize;
                                     part.Size = part.Length * sectorSize;
                                 }
-                                else
-                                    ext_valid = false;
+                                else ext_valid = false;
 
                                 if(ext_valid)
                                 {
@@ -338,20 +355,21 @@ namespace DiscImageChef.PartPlugins
             return partitions.Count != 0;
         }
 
-        static bool GetMinix(ImagePlugin imagePlugin, ulong start, ulong divider, ulong sectorOffset, uint sectorSize, out List<Partition> partitions)
+        static bool GetMinix(ImagePlugin imagePlugin, ulong start, ulong divider, ulong sectorOffset, uint sectorSize,
+                             out List<Partition> partitions)
         {
             partitions = new List<Partition>();
 
             byte[] sector = imagePlugin.ReadSector(start);
 
             GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-            ExtendedBootRecord mnx = (ExtendedBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedBootRecord));
+            ExtendedBootRecord mnx =
+                (ExtendedBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedBootRecord));
             handle.Free();
 
             DicConsole.DebugWriteLine("MBR plugin", "mnx.magic == MBR_Magic = {0}", mnx.magic == MBR_Magic);
 
-            if(mnx.magic != MBR_Magic)
-                return false;
+            if(mnx.magic != MBR_Magic) return false;
 
             bool any_mnx = false;
 
@@ -378,12 +396,16 @@ namespace DiscImageChef.PartPlugins
 
                 mnx_valid &= mnx_entry.status == 0x00 || mnx_entry.status == 0x80;
                 mnx_valid &= mnx_entry.type == 0x81 || mnx_entry.type == 0x80;
-                mnx_valid &= mnx_entry.lba_start != 0 || mnx_entry.lba_sectors != 0 || mnx_entry.start_cylinder != 0 || mnx_entry.start_head != 0 ||
-                                mnx_entry.start_sector != 0 || mnx_entry.end_cylinder != 0 || mnx_entry.end_head != 0 || mnx_entry.end_sector != 0;
+                mnx_valid &= mnx_entry.lba_start != 0 || mnx_entry.lba_sectors != 0 || mnx_entry.start_cylinder != 0 ||
+                             mnx_entry.start_head != 0 || mnx_entry.start_sector != 0 || mnx_entry.end_cylinder != 0 ||
+                             mnx_entry.end_head != 0 || mnx_entry.end_sector != 0;
                 if(mnx_entry.lba_start == 0 && mnx_entry.lba_sectors == 0 && mnx_valid)
                 {
-                    mnx_start = Helpers.CHS.ToLBA(start_cylinder, mnx_entry.start_head, start_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack);
-                    mnx_sectors = Helpers.CHS.ToLBA(end_cylinder, mnx_entry.end_head, mnx_entry.end_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack) - mnx_start;
+                    mnx_start = Helpers.CHS.ToLBA(start_cylinder, mnx_entry.start_head, start_sector,
+                                                  imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack);
+                    mnx_sectors = Helpers.CHS.ToLBA(end_cylinder, mnx_entry.end_head, mnx_entry.end_sector,
+                                                    imagePlugin.ImageInfo.heads,
+                                                    imagePlugin.ImageInfo.sectorsPerTrack) - mnx_start;
                 }
 
                 // For optical media
@@ -403,8 +425,7 @@ namespace DiscImageChef.PartPlugins
                         part.Offset = part.Start * sectorSize;
                         part.Size = part.Length * sectorSize;
                     }
-                    else
-                        mnx_valid = false;
+                    else mnx_valid = false;
 
                     if(mnx_valid)
                     {
@@ -422,13 +443,15 @@ namespace DiscImageChef.PartPlugins
             return any_mnx;
         }
 
-        static readonly string[] MBRTypes = {
+        static readonly string[] MBRTypes =
+        {
             // 0x00
             "Empty", "FAT12", "XENIX root", "XENIX /usr",
             // 0x04
             "FAT16 < 32 MiB", "Extended", "FAT16", "IFS (HPFS/NTFS)",
             // 0x08
-            "AIX boot, OS/2, Commodore DOS", "AIX data, Coherent, QNX", "Coherent swap, OPUS, OS/2 Boot Manager", "FAT32",
+            "AIX boot, OS/2, Commodore DOS", "AIX data, Coherent, QNX", "Coherent swap, OPUS, OS/2 Boot Manager",
+            "FAT32",
             // 0x0C
             "FAT32 (LBA)", "Unknown", "FAT16 (LBA)", "Extended (LBA)",
             // 0x10
@@ -526,11 +549,13 @@ namespace DiscImageChef.PartPlugins
             // 0xC8
             "DR-DOS reserved", "DR-DOS reserved", "DR-DOS reserved", "DR-DOS secured FAT32",
             // 0xCC
-            "DR-DOS secured FAT32 (LBA)", "DR-DOS reserved", "DR-DOS secured FAT16 (LBA)", "DR-DOS secured extended (LBA)",
+            "DR-DOS secured FAT32 (LBA)", "DR-DOS reserved", "DR-DOS secured FAT16 (LBA)",
+            "DR-DOS secured extended (LBA)",
             // 0xD0
             "Multiuser DOS secured FAT12", "Multiuser DOS secured FAT12", "Unknown", "Unknown",
             // 0xD4
-            "Multiuser DOS secured FAT16 < 32 MiB", "Multiuser DOS secured extended", "Multiuser DOS secured FAT16", "Unknown",
+            "Multiuser DOS secured FAT16 < 32 MiB", "Multiuser DOS secured extended", "Multiuser DOS secured FAT16",
+            "Unknown",
             // 0xD8
             "CP/M", "Unknown", "Filesystem-less data", "CP/M, CCP/M, CTOS",
             // 0xDC
@@ -566,11 +591,9 @@ namespace DiscImageChef.PartPlugins
         public struct MasterBootRecord
         {
             /// <summary>Boot code</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
-            public byte[] boot_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)] public byte[] boot_code;
             /// <summary>Partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public MBRPartitionEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public MBRPartitionEntry[] entries;
             /// <summary><see cref="MBR_Magic"/></summary>
             public ushort magic;
         }
@@ -580,11 +603,9 @@ namespace DiscImageChef.PartPlugins
         public struct ExtendedBootRecord
         {
             /// <summary>Boot code, almost always unused</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
-            public byte[] boot_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)] public byte[] boot_code;
             /// <summary>Partitions or pointers</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public MBRPartitionEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public MBRPartitionEntry[] entries;
             /// <summary><see cref="MBR_Magic"/></summary>
             public ushort magic;
         }
@@ -593,8 +614,7 @@ namespace DiscImageChef.PartPlugins
         public struct TimedMasterBootRecord
         {
             /// <summary>Boot code</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
-            public byte[] boot_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)] public byte[] boot_code;
             /// <summary>Set to 0</summary>
             public ushort zero;
             /// <summary>Original physical drive</summary>
@@ -606,11 +626,9 @@ namespace DiscImageChef.PartPlugins
             /// <summary>Disk timestamp, hours</summary>
             public byte hours;
             /// <summary>Boot code, continuation</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 222)]
-            public byte[] boot_code2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 222)] public byte[] boot_code2;
             /// <summary>Partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public MBRPartitionEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public MBRPartitionEntry[] entries;
             /// <summary><see cref="MBR_Magic"/></summary>
             public ushort magic;
         }
@@ -619,15 +637,13 @@ namespace DiscImageChef.PartPlugins
         public struct SerializedMasterBootRecord
         {
             /// <summary>Boot code</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
-            public byte[] boot_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)] public byte[] boot_code;
             /// <summary>Disk serial number</summary>
             public uint serial;
             /// <summary>Set to 0</summary>
             public ushort zero;
             /// <summary>Partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public MBRPartitionEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public MBRPartitionEntry[] entries;
             /// <summary><see cref="MBR_Magic"/></summary>
             public ushort magic;
         }
@@ -636,8 +652,7 @@ namespace DiscImageChef.PartPlugins
         public struct ModernMasterBootRecord
         {
             /// <summary>Boot code</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
-            public byte[] boot_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)] public byte[] boot_code;
             /// <summary>Set to 0</summary>
             public ushort zero;
             /// <summary>Original physical drive</summary>
@@ -649,15 +664,13 @@ namespace DiscImageChef.PartPlugins
             /// <summary>Disk timestamp, hours</summary>
             public byte hours;
             /// <summary>Boot code, continuation</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 216)]
-            public byte[] boot_code2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 216)] public byte[] boot_code2;
             /// <summary>Disk serial number</summary>
             public uint serial;
             /// <summary>Set to 0</summary>
             public ushort zero2;
             /// <summary>Partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public MBRPartitionEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public MBRPartitionEntry[] entries;
             /// <summary><see cref="MBR_Magic"/></summary>
             public ushort magic;
         }
@@ -666,13 +679,11 @@ namespace DiscImageChef.PartPlugins
         public struct NecMasterBootRecord
         {
             /// <summary>Boot code</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 380)]
-            public byte[] boot_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 380)] public byte[] boot_code;
             /// <summary><see cref="NEC_Magic"/></summary>
             public ushort nec_magic;
             /// <summary>Partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public MBRPartitionEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public MBRPartitionEntry[] entries;
             /// <summary><see cref="MBR_Magic"/></summary>
             public ushort magic;
         }
@@ -681,13 +692,11 @@ namespace DiscImageChef.PartPlugins
         public struct DiskManagerMasterBootRecord
         {
             /// <summary>Boot code</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)]
-            public byte[] boot_code;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)] public byte[] boot_code;
             /// <summary><see cref="DM_Magic"/></summary>
             public ushort dm_magic;
             /// <summary>Partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public MBRPartitionEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public MBRPartitionEntry[] entries;
             /// <summary><see cref="MBR_Magic"/></summary>
             public ushort magic;
         }

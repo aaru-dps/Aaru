@@ -49,51 +49,44 @@ namespace DiscImageChef.Commands
             FiltersList filtersList = new FiltersList();
 
             DicConsole.WriteLine("Supported filters:");
-            if(FormatsOptions.Verbose)
-                DicConsole.VerboseWriteLine("GUID\t\t\t\t\tFilter");
+            if(FormatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tFilter");
             foreach(KeyValuePair<string, Filter> kvp in filtersList.filtersList)
             {
-                if(FormatsOptions.Verbose)
-                    DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.UUID, kvp.Value.Name);
-                else
-                    DicConsole.WriteLine(kvp.Value.Name);
+                if(FormatsOptions.Verbose) DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.UUID, kvp.Value.Name);
+                else DicConsole.WriteLine(kvp.Value.Name);
             }
+
             DicConsole.WriteLine();
             DicConsole.WriteLine("Supported disc image formats:");
-            if(FormatsOptions.Verbose)
-                DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
+            if(FormatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
             foreach(KeyValuePair<string, ImagePlugin> kvp in plugins.ImagePluginsList)
             {
                 if(FormatsOptions.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.PluginUUID, kvp.Value.Name);
-                else
-                    DicConsole.WriteLine(kvp.Value.Name);
+                else DicConsole.WriteLine(kvp.Value.Name);
             }
+
             DicConsole.WriteLine();
             DicConsole.WriteLine("Supported filesystems:");
-            if(FormatsOptions.Verbose)
-                DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
+            if(FormatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
             foreach(KeyValuePair<string, Filesystem> kvp in plugins.PluginsList)
             {
                 if(FormatsOptions.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.PluginUUID, kvp.Value.Name);
-                else
-                    DicConsole.WriteLine(kvp.Value.Name);
+                else DicConsole.WriteLine(kvp.Value.Name);
             }
+
             DicConsole.WriteLine();
             DicConsole.WriteLine("Supported partitioning schemes:");
-            if(FormatsOptions.Verbose)
-                DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
+            if(FormatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
             foreach(KeyValuePair<string, PartPlugin> kvp in plugins.PartPluginsList)
             {
                 if(FormatsOptions.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.PluginUUID, kvp.Value.Name);
-                else
-                    DicConsole.WriteLine(kvp.Value.Name);
+                else DicConsole.WriteLine(kvp.Value.Name);
             }
 
             Core.Statistics.AddCommand("formats");
         }
     }
 }
-

@@ -36,9 +36,7 @@ namespace DiscImageChef
 {
     public static class Progress
     {
-        public static void InitProgress()
-        {
-        }
+        public static void InitProgress() { }
 
         public static void EndProgress()
         {
@@ -50,9 +48,7 @@ namespace DiscImageChef
             DicConsole.Write("\r" + text);
         }
 
-        public static void InitProgress2()
-        {
-        }
+        public static void InitProgress2() { }
 
         public static void EndProgress2()
         {
@@ -64,16 +60,15 @@ namespace DiscImageChef
             DicConsole.Write("\r" + text);
         }
 
-        public static void InitTwoProgress()
-        {
-        }
+        public static void InitTwoProgress() { }
 
         public static void EndTwoProgress()
         {
             DicConsole.WriteLine();
         }
 
-        public static void UpdateTwoProgress(string text, long current, long maximum, string text2, long current2, long maximum2)
+        public static void UpdateTwoProgress(string text, long current, long maximum, string text2, long current2,
+                                             long maximum2)
         {
             DicConsole.Write("\r" + text + ": " + text2);
         }

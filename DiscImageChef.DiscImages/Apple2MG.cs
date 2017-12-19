@@ -40,10 +40,9 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class Apple2MG : ImagePlugin
+    public class Apple2MG : ImagePlugin
     {
         #region Internal Structures
-
         // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
         struct A2IMGHeader
         {
@@ -116,11 +115,9 @@ namespace DiscImageChef.ImagePlugins
             /// </summary>
             public uint reserved4;
         }
-
         #endregion
 
         #region Internal Constants
-
         /// <summary>
         /// Magic number, "2IMG"
         /// </summary>
@@ -161,14 +158,11 @@ namespace DiscImageChef.ImagePlugins
         public const uint LockedDisk = 0x80000000;
         public const uint ValidVolumeNumber = 0x00000100;
         public const uint VolumeNumberMask = 0x000000FF;
-
         #endregion
 
         #region Internal variables
-
         A2IMGHeader ImageHeader;
         Filter a2mgImageFilter;
-
         #endregion
 
         public Apple2MG()
@@ -203,38 +197,30 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 65)
-                return false;
+            if(stream.Length < 65) return false;
 
             byte[] header = new byte[64];
             stream.Read(header, 0, 64);
 
             uint magic = BitConverter.ToUInt32(header, 0x00);
-            if(magic != MAGIC)
-                return false;
+            if(magic != MAGIC) return false;
 
             uint dataoff = BitConverter.ToUInt32(header, 0x18);
-            if(dataoff > stream.Length)
-                return false;
+            if(dataoff > stream.Length) return false;
 
             uint datasize = BitConverter.ToUInt32(header, 0x1C);
             // There seems to be incorrect endian in some images on the wild
-            if(datasize == 0x00800C00)
-                datasize = 0x000C8000;
-            if(dataoff + datasize > stream.Length)
-                return false;
+            if(datasize == 0x00800C00) datasize = 0x000C8000;
+            if(dataoff + datasize > stream.Length) return false;
 
             uint commentoff = BitConverter.ToUInt32(header, 0x20);
-            if(commentoff > stream.Length)
-                return false;
+            if(commentoff > stream.Length) return false;
 
             uint commentsize = BitConverter.ToUInt32(header, 0x24);
-            if(commentoff + commentsize > stream.Length)
-                return false;
+            if(commentoff + commentsize > stream.Length) return false;
 
             uint creatoroff = BitConverter.ToUInt32(header, 0x28);
-            if(creatoroff > stream.Length)
-                return false;
+            if(creatoroff > stream.Length) return false;
 
             uint creatorsize = BitConverter.ToUInt32(header, 0x2C);
             return creatoroff + creatorsize <= stream.Length;
@@ -290,21 +276,21 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}", ImageHeader.dataSize);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", ImageHeader.commentOffset);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}", ImageHeader.commentSize);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificOffset = 0x{0:X8}", ImageHeader.creatorSpecificOffset);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificSize = {0}", ImageHeader.creatorSpecificSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
+                                      ImageHeader.creatorSpecificOffset);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificSize = {0}",
+                                      ImageHeader.creatorSpecificSize);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved1 = 0x{0:X8}", ImageHeader.reserved1);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved2 = 0x{0:X8}", ImageHeader.reserved2);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", ImageHeader.reserved3);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", ImageHeader.reserved4);
 
-            if(ImageHeader.dataSize == 0 && ImageHeader.blocks == 0 && ImageHeader.imageFormat != ProDOSSectorOrder)
-                return false;
+            if(ImageHeader.dataSize == 0 && ImageHeader.blocks == 0 &&
+               ImageHeader.imageFormat != ProDOSSectorOrder) return false;
 
-            if(ImageHeader.imageFormat == ProDOSSectorOrder && ImageHeader.blocks == 0)
-                return false;
+            if(ImageHeader.imageFormat == ProDOSSectorOrder && ImageHeader.blocks == 0) return false;
 
-            if(ImageHeader.imageFormat == ProDOSSectorOrder)
-                ImageHeader.dataSize = ImageHeader.blocks * 512;
+            if(ImageHeader.imageFormat == ProDOSSectorOrder) ImageHeader.dataSize = ImageHeader.blocks * 512;
             else if(ImageHeader.blocks == 0 && ImageHeader.dataSize != 0)
                 ImageHeader.blocks = ImageHeader.dataSize / 256;
             else if(ImageHeader.dataSize == 0 && ImageHeader.blocks != 0)
@@ -317,7 +303,6 @@ namespace DiscImageChef.ImagePlugins
 
             switch(ImageHeader.creator)
             {
-
                 case CreatorAsimov:
                     ImageInfo.imageApplication = "ASIMOV2";
                     break;
@@ -340,7 +325,8 @@ namespace DiscImageChef.ImagePlugins
                     ImageInfo.imageApplication = "CiderPress";
                     break;
                 default:
-                    ImageInfo.imageApplication = string.Format("Unknown creator code \"{0}\"", Encoding.ASCII.GetString(creator));
+                    ImageInfo.imageApplication =
+                        string.Format("Unknown creator code \"{0}\"", Encoding.ASCII.GetString(creator));
                     break;
             }
 
@@ -358,7 +344,7 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
             ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
             ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-			ImageInfo.mediaType = GetMediaType();
+            ImageInfo.mediaType = GetMediaType();
 
             a2mgImageFilter = imageFilter;
 
@@ -368,43 +354,43 @@ namespace DiscImageChef.ImagePlugins
             if(!string.IsNullOrEmpty(ImageInfo.imageComments))
                 DicConsole.VerboseWriteLine("2MG comments: {0}", ImageInfo.imageComments);
 
-			switch(ImageInfo.mediaType)
-			{
-				case MediaType.Apple32SS:
-					ImageInfo.cylinders = 35;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 13;
-					break;
-				case MediaType.Apple32DS:
-					ImageInfo.cylinders = 35;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 13;
-					break;
-				case MediaType.Apple33SS:
-					ImageInfo.cylinders = 35;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.Apple33DS:
-					ImageInfo.cylinders = 35;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.AppleSonySS:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 1;
-					// Variable sectors per track, this suffices
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.AppleSonyDS:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					// Variable sectors per track, this suffices
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-			}
+            switch(ImageInfo.mediaType)
+            {
+                case MediaType.Apple32SS:
+                    ImageInfo.cylinders = 35;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 13;
+                    break;
+                case MediaType.Apple32DS:
+                    ImageInfo.cylinders = 35;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 13;
+                    break;
+                case MediaType.Apple33SS:
+                    ImageInfo.cylinders = 35;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.Apple33DS:
+                    ImageInfo.cylinders = 35;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.AppleSonySS:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 1;
+                    // Variable sectors per track, this suffices
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.AppleSonyDS:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    // Variable sectors per track, this suffices
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+            }
 
-			return true;
+            return true;
         }
 
         public override bool ImageHasPartitions()
@@ -476,20 +462,13 @@ namespace DiscImageChef.ImagePlugins
         {
             switch(ImageInfo.sectors)
             {
-                case 455:
-                    return MediaType.Apple32SS;
-                case 910:
-                    return MediaType.Apple32DS;
-                case 560:
-                    return MediaType.Apple33SS;
-                case 1120:
-                    return MediaType.Apple33DS;
-                case 800:
-                    return MediaType.AppleSonySS;
-                case 1600:
-                    return MediaType.AppleSonyDS;
-                default:
-                    return MediaType.Unknown;
+                case 455: return MediaType.Apple32SS;
+                case 910: return MediaType.Apple32DS;
+                case 560: return MediaType.Apple33SS;
+                case 1120: return MediaType.Apple33DS;
+                case 800: return MediaType.AppleSonySS;
+                case 1600: return MediaType.AppleSonyDS;
+                default: return MediaType.Unknown;
             }
         }
 
@@ -518,7 +497,6 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region Unsupported features
-
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -659,16 +637,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -677,7 +657,6 @@ namespace DiscImageChef.ImagePlugins
         {
             return null;
         }
-
         #endregion
     }
 }

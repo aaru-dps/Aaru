@@ -217,11 +217,9 @@ namespace DiscImageChef.Decoders.Xbox
 
         public static SecuritySector? Decode(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length < 2048)
-                return null;
+            if(response.Length < 2048) return null;
 
             SecuritySector ss = new SecuritySector();
 
@@ -257,10 +255,15 @@ namespace DiscImageChef.Decoders.Xbox
                 ss.ChallengeEntries[i] = new ChallengeEntry();
                 ss.ChallengeEntries[i].Level = response[770 + i * 11 + 0];
                 ss.ChallengeEntries[i].ChallengeId = response[770 + i * 11 + 1];
-                ss.ChallengeEntries[i].ChallengeValue = (uint)((response[770 + i * 11 + 2] << 24) + (response[770 + i * 11 + 3] << 16) + (response[770 + i * 11 + 4] << 8) + response[770 + i * 11 + 5]);
+                ss.ChallengeEntries[i].ChallengeValue =
+                    (uint)((response[770 + i * 11 + 2] << 24) + (response[770 + i * 11 + 3] << 16) +
+                           (response[770 + i * 11 + 4] << 8) + response[770 + i * 11 + 5]);
                 ss.ChallengeEntries[i].ResponseModifier = response[770 + i * 11 + 6];
-                ss.ChallengeEntries[i].ResponseValue = (uint)((response[770 + i * 11 + 7] << 24) + (response[770 + i * 11 + 8] << 16) + (response[770 + i * 11 + 9] << 8) + response[770 + i * 11 + 10]);
+                ss.ChallengeEntries[i].ResponseValue =
+                    (uint)((response[770 + i * 11 + 7] << 24) + (response[770 + i * 11 + 8] << 16) +
+                           (response[770 + i * 11 + 9] << 8) + response[770 + i * 11 + 10]);
             }
+
             ss.Unknown6 = response[1023];
             ss.Unknown7 = new byte[48];
             Array.Copy(response, 1052, ss.Unknown7, 0, 48);
@@ -276,25 +279,32 @@ namespace DiscImageChef.Decoders.Xbox
             for(int i = 0; i < 23; i++)
             {
                 ss.Extents[i] = new SecuritySectorExtent();
-                ss.Extents[i].Unknown = (uint)((response[1633 + i * 9 + 0] << 16) + (response[1633 + i * 9 + 1] << 8) + response[1633 + i * 9 + 2]);
-                ss.Extents[i].StartPSN = (uint)((response[1633 + i * 9 + 3] << 16) + (response[1633 + i * 9 + 4] << 8) + response[1633 + i * 9 + 5]);
-                ss.Extents[i].EndPSN = (uint)((response[1633 + i * 9 + 6] << 16) + (response[1633 + i * 9 + 7] << 8) + response[1633 + i * 9 + 8]);
+                ss.Extents[i].Unknown = (uint)((response[1633 + i * 9 + 0] << 16) + (response[1633 + i * 9 + 1] << 8) +
+                                               response[1633 + i * 9 + 2]);
+                ss.Extents[i].StartPSN = (uint)((response[1633 + i * 9 + 3] << 16) + (response[1633 + i * 9 + 4] << 8) +
+                                                response[1633 + i * 9 + 5]);
+                ss.Extents[i].EndPSN = (uint)((response[1633 + i * 9 + 6] << 16) + (response[1633 + i * 9 + 7] << 8) +
+                                              response[1633 + i * 9 + 8]);
             }
+
             ss.ExtentsCopy = new SecuritySectorExtent[23];
             for(int i = 0; i < 23; i++)
             {
                 ss.ExtentsCopy[i] = new SecuritySectorExtent();
-                ss.ExtentsCopy[i].Unknown = (uint)((response[1840 + i * 9 + 0] << 16) + (response[1840 + i * 9 + 1] << 8) + response[1840 + i * 9 + 2]);
-                ss.ExtentsCopy[i].StartPSN = (uint)((response[1840 + i * 9 + 3] << 16) + (response[1840 + i * 9 + 4] << 8) + response[1840 + i * 9 + 5]);
-                ss.ExtentsCopy[i].EndPSN = (uint)((response[1840 + i * 9 + 6] << 16) + (response[1840 + i * 9 + 7] << 8) + response[1840 + i * 9 + 8]);
+                ss.ExtentsCopy[i].Unknown = (uint)((response[1840 + i * 9 + 0] << 16) +
+                                                   (response[1840 + i * 9 + 1] << 8) + response[1840 + i * 9 + 2]);
+                ss.ExtentsCopy[i].StartPSN = (uint)((response[1840 + i * 9 + 3] << 16) +
+                                                    (response[1840 + i * 9 + 4] << 8) + response[1840 + i * 9 + 5]);
+                ss.ExtentsCopy[i].EndPSN = (uint)((response[1840 + i * 9 + 6] << 16) +
+                                                  (response[1840 + i * 9 + 7] << 8) + response[1840 + i * 9 + 8]);
             }
+
             return ss;
         }
 
         public static string Prettify(SecuritySector? ss)
         {
-            if(ss == null)
-                return null;
+            if(ss == null) return null;
 
             SecuritySector decoded = ss.Value;
             StringBuilder sb = new StringBuilder();
@@ -321,10 +331,12 @@ namespace DiscImageChef.Decoders.Xbox
                     sb.AppendFormat(categorySentence, sizeString, "Xbox Game Disc", decoded.PartVersion).AppendLine();
                     break;
                 case DiskCategory.DVDPRDL:
-                    sb.AppendFormat(categorySentence, sizeString, "Xbox 360 Game Disc", decoded.PartVersion).AppendLine();
+                    sb.AppendFormat(categorySentence, sizeString, "Xbox 360 Game Disc", decoded.PartVersion)
+                      .AppendLine();
                     break;
                 default:
-                    sb.AppendFormat(categorySentence, sizeString, "unknown disc type", decoded.PartVersion).AppendLine();
+                    sb.AppendFormat(categorySentence, sizeString, "unknown disc type", decoded.PartVersion)
+                      .AppendLine();
                     break;
             }
 
@@ -349,15 +361,14 @@ namespace DiscImageChef.Decoders.Xbox
                     sb.AppendLine("Disc maximum transfer rate is unspecified.");
                     break;
                 default:
-                    sb.AppendFormat("Disc maximum transfer rate is specified by unknown key {0}", decoded.MaximumRate).AppendLine();
+                    sb.AppendFormat("Disc maximum transfer rate is specified by unknown key {0}", decoded.MaximumRate)
+                      .AppendLine();
                     break;
             }
 
             sb.AppendFormat("Disc has {0} layers", decoded.Layers + 1).AppendLine();
-            if(decoded.TrackPath && decoded.Layers == 1)
-                sb.AppendLine("Layers are in parallel track path");
-            else if(!decoded.TrackPath && decoded.Layers == 1)
-                sb.AppendLine("Layers are in opposite track path");
+            if(decoded.TrackPath && decoded.Layers == 1) sb.AppendLine("Layers are in parallel track path");
+            else if(!decoded.TrackPath && decoded.Layers == 1) sb.AppendLine("Layers are in opposite track path");
 
             switch(decoded.LinearDensity)
             {
@@ -418,11 +429,9 @@ namespace DiscImageChef.Decoders.Xbox
                     if(decoded.Layers == 1 && !decoded.TrackPath)
                         sb.AppendFormat("Layer 0 ends at PSN {0:X}h", decoded.Layer0EndPSN).AppendLine();
                 }
-                else
-                    sb.AppendLine("Disc is empty");
+                else sb.AppendLine("Disc is empty");
             }
-            else
-                sb.AppendLine("Disc is empty");
+            else sb.AppendLine("Disc is empty");
 
             sb.AppendLine("Challenges:");
             foreach(ChallengeEntry entry in decoded.ChallengeEntries)
@@ -435,7 +444,8 @@ namespace DiscImageChef.Decoders.Xbox
             }
 
             for(int i = 0; i < 16; i++)
-                sb.AppendFormat("Extent starts at PSN {0:X6}h and ends at PSN {1:X6}h", decoded.Extents[i].StartPSN, decoded.Extents[i].EndPSN).AppendLine();
+                sb.AppendFormat("Extent starts at PSN {0:X6}h and ends at PSN {1:X6}h", decoded.Extents[i].StartPSN,
+                                decoded.Extents[i].EndPSN).AppendLine();
 
             return sb.ToString();
         }

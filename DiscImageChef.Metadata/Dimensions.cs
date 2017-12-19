@@ -909,10 +909,8 @@ namespace DiscImageChef.Metadata
                     return dmns;
                 #endregion Apple Hard Disks
 
-                default:
-                    return null;
+                default: return null;
             }
         }
     }
 }
-

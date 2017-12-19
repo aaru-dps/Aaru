@@ -69,10 +69,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 return Errno.InOutError;
             }
 
-            if(device.ImageInfo.sectors == 455)
-                sectorsPerTrack = 13;
-            else
-                sectorsPerTrack = 16;
+            if(device.ImageInfo.sectors == 455) sectorsPerTrack = 13;
+            else sectorsPerTrack = 16;
 
             // Read the VTOC
             byte[] vtoc_b = device.ReadSector((ulong)(17 * sectorsPerTrack));

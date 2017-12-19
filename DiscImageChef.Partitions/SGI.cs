@@ -54,39 +54,46 @@ namespace DiscImageChef.PartPlugins
             partitions = new List<Partition>();
 
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
-            if(sector.Length < 512)
-                return false;
+            if(sector.Length < 512) return false;
 
             SGILabel dvh = BigEndianMarshal.ByteArrayToStructureBigEndian<SGILabel>(sector);
             for(int i = 0; i < dvh.volume.Length; i++)
                 dvh.volume[i] = BigEndianMarshal.SwapStructureMembersEndian(dvh.volume[i]);
             for(int i = 0; i < dvh.partitions.Length; i++)
                 dvh.partitions[i] = BigEndianMarshal.SwapStructureMembersEndian(dvh.partitions[i]);
+
             dvh.device_params = BigEndianMarshal.SwapStructureMembersEndian(dvh.device_params);
 
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic, SGI_MAGIC);
+            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic,
+                                      SGI_MAGIC);
 
-            if(dvh.magic != SGI_MAGIC)
-                return false;
+            if(dvh.magic != SGI_MAGIC) return false;
 
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.root_part_num = {0}", dvh.root_part_num);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.swap_part_num = {0}", dvh.swap_part_num);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.boot_file = \"{0}\"", StringHandlers.CToString(dvh.boot_file));
+            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.boot_file = \"{0}\"",
+                                      StringHandlers.CToString(dvh.boot_file));
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_skew = {0}", dvh.device_params.dp_skew);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_gap1 = {0}", dvh.device_params.dp_gap1);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_gap2 = {0}", dvh.device_params.dp_gap2);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_spares_cyl = {0}", dvh.device_params.dp_spares_cyl);
+            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_spares_cyl = {0}",
+                                      dvh.device_params.dp_spares_cyl);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_cyls = {0}", dvh.device_params.dp_cyls);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_shd0 = {0}", dvh.device_params.dp_shd0);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_trks0 = {0}", dvh.device_params.dp_trks0);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_ctq_depth = {0}", dvh.device_params.dp_ctq_depth);
+            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_ctq_depth = {0}",
+                                      dvh.device_params.dp_ctq_depth);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_cylshi = {0}", dvh.device_params.dp_cylshi);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_secs = {0}", dvh.device_params.dp_secs);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_secbytes = {0}", dvh.device_params.dp_secbytes);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_interleave = {0}", dvh.device_params.dp_interleave);
+            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_secbytes = {0}",
+                                      dvh.device_params.dp_secbytes);
+            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_interleave = {0}",
+                                      dvh.device_params.dp_interleave);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_flags = {0}", dvh.device_params.dp_flags);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_datarate = {0}", dvh.device_params.dp_datarate);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_nretries = {0}", dvh.device_params.dp_nretries);
+            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_datarate = {0}",
+                                      dvh.device_params.dp_datarate);
+            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_nretries = {0}",
+                                      dvh.device_params.dp_nretries);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_mspw = {0}", dvh.device_params.dp_mspw);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xgap1 = {0}", dvh.device_params.dp_xgap1);
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xsync = {0}", dvh.device_params.dp_xsync);
@@ -99,23 +106,28 @@ namespace DiscImageChef.PartPlugins
 
             for(int i = 0; i < dvh.partitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].num_blocks = {1}", i, dvh.partitions[i].num_blocks);
-                DicConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].first_block = {1}", i, dvh.partitions[i].first_block);
+                DicConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].num_blocks = {1}", i,
+                                          dvh.partitions[i].num_blocks);
+                DicConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].first_block = {1}", i,
+                                          dvh.partitions[i].first_block);
                 // TODO: Solve big endian marshal with enumerations
                 dvh.partitions[i].type = (SGIType)Swapping.Swap((uint)dvh.partitions[i].type);
                 DicConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].type = {1}", i, dvh.partitions[i].type);
 
                 Partition part = new Partition
                 {
-                    Start = (dvh.partitions[i].first_block * dvh.device_params.dp_secbytes) / imagePlugin.GetSectorSize(),
+                    Start =
+                        (dvh.partitions[i].first_block * dvh.device_params.dp_secbytes) / imagePlugin.GetSectorSize(),
                     Offset = (dvh.partitions[i].first_block * dvh.device_params.dp_secbytes),
-                    Length = (dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes) / imagePlugin.GetSectorSize(),
+                    Length =
+                        (dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes) / imagePlugin.GetSectorSize(),
                     Size = (dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes),
                     Type = TypeToString(dvh.partitions[i].type),
                     Sequence = counter,
                     Scheme = Name
                 };
-                if(part.Size > 0 && dvh.partitions[i].type != SGIType.Header && dvh.partitions[i].type != SGIType.Volume)
+                if(part.Size > 0 && dvh.partitions[i].type != SGIType.Header && dvh.partitions[i].type != SGIType.Volume
+                )
                 {
                     partitions.Add(part);
                     counter++;
@@ -135,16 +147,13 @@ namespace DiscImageChef.PartPlugins
             /// <summary></summary>
             public short swap_part_num;
             /// <summary></summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] boot_file;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] boot_file;
             /// <summary></summary>
             public SGIDeviceParameters device_params;
             /// <summary></summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-            public SGIVolume[] volume;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public SGIVolume[] volume;
             /// <summary></summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public SGIPartition[] partitions;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public SGIPartition[] partitions;
             /// <summary></summary>
             public uint csum;
             /// <summary></summary>
@@ -155,8 +164,7 @@ namespace DiscImageChef.PartPlugins
         struct SGIVolume
         {
             /// <summary></summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] name;
             /// <summary></summary>
             public uint block_num;
             /// <summary></summary>
@@ -188,44 +196,27 @@ namespace DiscImageChef.PartPlugins
         {
             switch(typ)
             {
-                case SGIType.Header:
-                    return "Volume header";
-                case SGIType.TrkRepl:
-                    return "Track replacements";
-                case SGIType.SecRepl:
-                    return "Sector replacements";
-                case SGIType.Swap:
-                    return "Raw data (swap)";
-                case SGIType.Bsd:
-                    return "4.2BSD Fast File System";
-                case SGIType.SystemV:
-                    return "UNIX System V";
-                case SGIType.Volume:
-                    return "Whole device";
-                case SGIType.EFS:
-                    return "EFS";
-                case SGIType.Lvol:
-                    return "Logical volume";
-                case SGIType.Rlvol:
-                    return "Raw logical volume";
-                case SGIType.XFS:
-                    return "XFS";
-                case SGIType.Xlvol:
-                    return "XFS log device";
-                case SGIType.Rxlvol:
-                    return "XLV volume";
-                case SGIType.Xvm:
-                    return "SGI XVM";
-                case SGIType.LinuxSwap:
-                    return "Linux swap";
-                case SGIType.Linux:
-                    return "Linux";
-                case SGIType.LinuxRAID:
-                    return "Linux RAID";
-                default:
-                    return "Unknown";
+                case SGIType.Header: return "Volume header";
+                case SGIType.TrkRepl: return "Track replacements";
+                case SGIType.SecRepl: return "Sector replacements";
+                case SGIType.Swap: return "Raw data (swap)";
+                case SGIType.Bsd: return "4.2BSD Fast File System";
+                case SGIType.SystemV: return "UNIX System V";
+                case SGIType.Volume: return "Whole device";
+                case SGIType.EFS: return "EFS";
+                case SGIType.Lvol: return "Logical volume";
+                case SGIType.Rlvol: return "Raw logical volume";
+                case SGIType.XFS: return "XFS";
+                case SGIType.Xlvol: return "XFS log device";
+                case SGIType.Rxlvol: return "XLV volume";
+                case SGIType.Xvm: return "SGI XVM";
+                case SGIType.LinuxSwap: return "Linux swap";
+                case SGIType.Linux: return "Linux";
+                case SGIType.LinuxRAID: return "Linux RAID";
+                default: return "Unknown";
             }
         }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SGIPartition
         {

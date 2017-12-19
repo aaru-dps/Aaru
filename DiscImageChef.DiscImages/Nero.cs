@@ -40,10 +40,9 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class Nero : ImagePlugin
+    public class Nero : ImagePlugin
     {
         #region Internal structures
-
         struct NeroV1Footer
         {
             /// <summary>
@@ -600,11 +599,9 @@ namespace DiscImageChef.ImagePlugins
             public ulong Index1;
             public uint Sequence;
         }
-
         #endregion
 
         #region Internal consts
-
         // "NERO"
         public const uint NeroV1FooterID = 0x4E45524F;
 
@@ -831,11 +828,9 @@ namespace DiscImageChef.ImagePlugins
             /// </summary>
             NERO_MTYP_DVD_ANY_OLD = NERO_MTYP_DVD_M | NERO_MTYP_DVD_P | NERO_MTYP_DVD_RAM,
         }
-
         #endregion
 
         #region Internal variables
-
         Filter _imageFilter;
         Stream imageStream;
         bool imageNewFormat;
@@ -859,11 +854,9 @@ namespace DiscImageChef.ImagePlugins
         Dictionary<uint, ulong> offsetmap;
         List<Session> imageSessions;
         List<Partition> ImagePartitions;
-
         #endregion
 
         #region Methods
-
         public Nero()
         {
             Name = "Nero Burning ROM image";
@@ -943,25 +936,27 @@ namespace DiscImageChef.ImagePlugins
                 footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
                 DicConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", imageStream.Length);
-                DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8} (\"{1}\")", footerV1.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkID)));
+                DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8} (\"{1}\")", footerV1.ChunkID,
+                                          System.Text.Encoding.ASCII
+                                                .GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkID)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
-                DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8} (\"{1}\")", footerV2.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkID)));
+                DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8} (\"{1}\")", footerV2.ChunkID,
+                                          System.Text.Encoding.ASCII
+                                                .GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkID)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
-				if(footerV1.ChunkID == NeroV1FooterID && footerV1.FirstChunkOffset < (ulong)imageStream.Length)
-					imageNewFormat = false;
-				else if(footerV2.ChunkID == NeroV2FooterID && footerV2.FirstChunkOffset < (ulong)imageStream.Length)
-					imageNewFormat = true;
-				else
-				{
-					DicConsole.DebugWrite("Nero plugin", "Nero version not recognized.");
-					return false;
-				}
-
-                if(imageNewFormat)
-                    imageStream.Seek((long)footerV2.FirstChunkOffset, SeekOrigin.Begin);
+                if(footerV1.ChunkID == NeroV1FooterID && footerV1.FirstChunkOffset < (ulong)imageStream.Length)
+                    imageNewFormat = false;
+                else if(footerV2.ChunkID == NeroV2FooterID && footerV2.FirstChunkOffset < (ulong)imageStream.Length)
+                    imageNewFormat = true;
                 else
-                    imageStream.Seek(footerV1.FirstChunkOffset, SeekOrigin.Begin);
+                {
+                    DicConsole.DebugWrite("Nero plugin", "Nero version not recognized.");
+                    return false;
+                }
+
+                if(imageNewFormat) imageStream.Seek((long)footerV2.FirstChunkOffset, SeekOrigin.Begin);
+                else imageStream.Seek(footerV1.FirstChunkOffset, SeekOrigin.Begin);
 
                 bool parsing = true;
                 ushort currentsession = 1;
@@ -984,487 +979,555 @@ namespace DiscImageChef.ImagePlugins
                     ChunkID = BigEndianBitConverter.ToUInt32(ChunkHeaderBuffer, 0);
                     ChunkLength = BigEndianBitConverter.ToUInt32(ChunkHeaderBuffer, 4);
 
-                    DicConsole.DebugWriteLine("Nero plugin", "ChunkID = 0x{0:X8} (\"{1}\")", ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(ChunkID)));
+                    DicConsole.DebugWriteLine("Nero plugin", "ChunkID = 0x{0:X8} (\"{1}\")", ChunkID,
+                                              System.Text.Encoding.ASCII
+                                                    .GetString(BigEndianBitConverter.GetBytes(ChunkID)));
                     DicConsole.DebugWriteLine("Nero plugin", "ChunkLength = {0}", ChunkLength);
 
                     switch(ChunkID)
                     {
                         case NeroV1CUEID:
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"CUES\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
+
+                            neroCuesheetV1 = new NeroV1Cuesheet();
+                            neroCuesheetV1.ChunkID = ChunkID;
+                            neroCuesheetV1.ChunkSize = ChunkLength;
+                            neroCuesheetV1.Entries = new List<NeroV1CueEntry>();
+
+                            byte[] tmpbuffer = new byte[8];
+                            for(int i = 0; i < neroCuesheetV1.ChunkSize; i += 8)
                             {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"CUES\" chunk, parsing {0} bytes", ChunkLength);
+                                NeroV1CueEntry _entry = new NeroV1CueEntry();
+                                imageStream.Read(tmpbuffer, 0, 8);
+                                _entry.Mode = tmpbuffer[0];
+                                _entry.TrackNumber = tmpbuffer[1];
+                                _entry.IndexNumber = tmpbuffer[2];
+                                _entry.Dummy = BigEndianBitConverter.ToUInt16(tmpbuffer, 3);
+                                _entry.Minute = tmpbuffer[5];
+                                _entry.Second = tmpbuffer[6];
+                                _entry.Frame = tmpbuffer[7];
 
-                                neroCuesheetV1 = new NeroV1Cuesheet();
-                                neroCuesheetV1.ChunkID = ChunkID;
-                                neroCuesheetV1.ChunkSize = ChunkLength;
-                                neroCuesheetV1.Entries = new List<NeroV1CueEntry>();
+                                DicConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", (i / 8) + 1);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1:X2}", (i / 8) + 1,
+                                                          _entry.Mode);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}",
+                                                          (i / 8) + 1, _entry.TrackNumber);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}",
+                                                          (i / 8) + 1, _entry.IndexNumber);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X4}", (i / 8) + 1,
+                                                          _entry.Dummy);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Minute = {1:X2}", (i / 8) + 1,
+                                                          _entry.Minute);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Second = {1:X2}", (i / 8) + 1,
+                                                          _entry.Second);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Frame = {1:X2}", (i / 8) + 1,
+                                                          _entry.Frame);
 
-                                byte[] tmpbuffer = new byte[8];
-                                for(int i = 0; i < neroCuesheetV1.ChunkSize; i += 8)
-                                {
-                                    NeroV1CueEntry _entry = new NeroV1CueEntry();
-                                    imageStream.Read(tmpbuffer, 0, 8);
-                                    _entry.Mode = tmpbuffer[0];
-                                    _entry.TrackNumber = tmpbuffer[1];
-                                    _entry.IndexNumber = tmpbuffer[2];
-                                    _entry.Dummy = BigEndianBitConverter.ToUInt16(tmpbuffer, 3);
-                                    _entry.Minute = tmpbuffer[5];
-                                    _entry.Second = tmpbuffer[6];
-                                    _entry.Frame = tmpbuffer[7];
-
-                                    DicConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", (i / 8) + 1);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1:X2}", (i / 8) + 1, _entry.Mode);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}", (i / 8) + 1, _entry.TrackNumber);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}", (i / 8) + 1, _entry.IndexNumber);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X4}", (i / 8) + 1, _entry.Dummy);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Minute = {1:X2}", (i / 8) + 1, _entry.Minute);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Second = {1:X2}", (i / 8) + 1, _entry.Second);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Frame = {1:X2}", (i / 8) + 1, _entry.Frame);
-
-                                    neroCuesheetV1.Entries.Add(_entry);
-                                }
-
-                                break;
+                                neroCuesheetV1.Entries.Add(_entry);
                             }
+
+                            break;
+                        }
                         case NeroV2CUEID:
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"CUEX\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
+
+                            neroCuesheetV2 = new NeroV2Cuesheet();
+                            neroCuesheetV2.ChunkID = ChunkID;
+                            neroCuesheetV2.ChunkSize = ChunkLength;
+                            neroCuesheetV2.Entries = new List<NeroV2CueEntry>();
+
+                            byte[] tmpbuffer = new byte[8];
+                            for(int i = 0; i < neroCuesheetV2.ChunkSize; i += 8)
                             {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"CUEX\" chunk, parsing {0} bytes", ChunkLength);
+                                NeroV2CueEntry _entry = new NeroV2CueEntry();
+                                imageStream.Read(tmpbuffer, 0, 8);
+                                _entry.Mode = tmpbuffer[0];
+                                _entry.TrackNumber = tmpbuffer[1];
+                                _entry.IndexNumber = tmpbuffer[2];
+                                _entry.Dummy = tmpbuffer[3];
+                                _entry.LBAStart = BigEndianBitConverter.ToInt32(tmpbuffer, 4);
 
-                                neroCuesheetV2 = new NeroV2Cuesheet();
-                                neroCuesheetV2.ChunkID = ChunkID;
-                                neroCuesheetV2.ChunkSize = ChunkLength;
-                                neroCuesheetV2.Entries = new List<NeroV2CueEntry>();
+                                DicConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", (i / 8) + 1);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = 0x{1:X2}", (i / 8) + 1,
+                                                          _entry.Mode);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}",
+                                                          (i / 8) + 1, _entry.TrackNumber);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}",
+                                                          (i / 8) + 1, _entry.IndexNumber);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X2}", (i / 8) + 1,
+                                                          _entry.Dummy);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].LBAStart = {1}", (i / 8) + 1,
+                                                          _entry.LBAStart);
 
-                                byte[] tmpbuffer = new byte[8];
-                                for(int i = 0; i < neroCuesheetV2.ChunkSize; i += 8)
-                                {
-                                    NeroV2CueEntry _entry = new NeroV2CueEntry();
-                                    imageStream.Read(tmpbuffer, 0, 8);
-                                    _entry.Mode = tmpbuffer[0];
-                                    _entry.TrackNumber = tmpbuffer[1];
-                                    _entry.IndexNumber = tmpbuffer[2];
-                                    _entry.Dummy = tmpbuffer[3];
-                                    _entry.LBAStart = BigEndianBitConverter.ToInt32(tmpbuffer, 4);
-
-                                    DicConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", (i / 8) + 1);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = 0x{1:X2}", (i / 8) + 1, _entry.Mode);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}", (i / 8) + 1, _entry.TrackNumber);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}", (i / 8) + 1, _entry.IndexNumber);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X2}", (i / 8) + 1, _entry.Dummy);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].LBAStart = {1}", (i / 8) + 1, _entry.LBAStart);
-
-                                    neroCuesheetV2.Entries.Add(_entry);
-                                }
-
-                                break;
+                                neroCuesheetV2.Entries.Add(_entry);
                             }
+
+                            break;
+                        }
                         case NeroV1DAOID:
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"DAOI\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
+
+                            neroDAOV1 = new NeroV1DAO();
+                            neroDAOV1.ChunkID = ChunkID;
+                            neroDAOV1.ChunkSizeBe = ChunkLength;
+
+                            byte[] tmpbuffer = new byte[22];
+                            imageStream.Read(tmpbuffer, 0, 22);
+                            neroDAOV1.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            neroDAOV1.UPC = new byte[14];
+                            Array.Copy(tmpbuffer, 4, neroDAOV1.UPC, 0, 14);
+                            neroDAOV1.TocType = BigEndianBitConverter.ToUInt16(tmpbuffer, 18);
+                            neroDAOV1.FirstTrack = tmpbuffer[20];
+                            neroDAOV1.LastTrack = tmpbuffer[21];
+                            neroDAOV1.Tracks = new List<NeroV1DAOEntry>();
+
+                            if(!ImageInfo.readableMediaTags.Contains(MediaTagType.CD_MCN))
+                                ImageInfo.readableMediaTags.Add(MediaTagType.CD_MCN);
+
+                            if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.ChunkSizeLe = {0} bytes",
+                                                      neroDAOV1.ChunkSizeLe);
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.UPC = \"{0}\"",
+                                                      StringHandlers.CToString(neroDAOV1.UPC));
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.TocType = 0x{0:X4}", neroDAOV1.TocType);
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.FirstTrack = {0}",
+                                                      neroDAOV1.FirstTrack);
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.LastTrack = {0}", neroDAOV1.LastTrack);
+
+                            UPC = neroDAOV1.UPC;
+
+                            tmpbuffer = new byte[30];
+                            for(int i = 0; i < (neroDAOV1.ChunkSizeBe - 22); i += 30)
                             {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"DAOI\" chunk, parsing {0} bytes", ChunkLength);
+                                NeroV1DAOEntry _entry = new NeroV1DAOEntry();
+                                imageStream.Read(tmpbuffer, 0, 30);
+                                _entry.ISRC = new byte[12];
+                                Array.Copy(tmpbuffer, 4, _entry.ISRC, 0, 12);
+                                _entry.SectorSize = BigEndianBitConverter.ToUInt16(tmpbuffer, 12);
+                                _entry.Mode = BitConverter.ToUInt16(tmpbuffer, 14);
+                                _entry.Unknown = BigEndianBitConverter.ToUInt16(tmpbuffer, 16);
+                                _entry.Index0 = BigEndianBitConverter.ToUInt32(tmpbuffer, 18);
+                                _entry.Index1 = BigEndianBitConverter.ToUInt32(tmpbuffer, 22);
+                                _entry.EndOfTrack = BigEndianBitConverter.ToUInt32(tmpbuffer, 26);
 
-                                neroDAOV1 = new NeroV1DAO();
-                                neroDAOV1.ChunkID = ChunkID;
-                                neroDAOV1.ChunkSizeBe = ChunkLength;
+                                DicConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", (i / 32) + 1,
+                                                          StringHandlers.CToString(_entry.ISRC));
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}",
+                                                          (i / 32) + 1, _entry.SectorSize);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
+                                                          (i / 32) + 1, (DAOMode)_entry.Mode, _entry.Mode);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
+                                                          (i / 32) + 1, _entry.Unknown);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", (i / 32) + 1,
+                                                          _entry.Index0);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", (i / 32) + 1,
+                                                          _entry.Index1);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
+                                                          (i / 32) + 1, _entry.EndOfTrack);
 
-                                byte[] tmpbuffer = new byte[22];
-                                imageStream.Read(tmpbuffer, 0, 22);
-                                neroDAOV1.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
-                                neroDAOV1.UPC = new byte[14];
-                                Array.Copy(tmpbuffer, 4, neroDAOV1.UPC, 0, 14);
-                                neroDAOV1.TocType = BigEndianBitConverter.ToUInt16(tmpbuffer, 18);
-                                neroDAOV1.FirstTrack = tmpbuffer[20];
-                                neroDAOV1.LastTrack = tmpbuffer[21];
-                                neroDAOV1.Tracks = new List<NeroV1DAOEntry>();
+                                neroDAOV1.Tracks.Add(_entry);
 
-                                if(!ImageInfo.readableMediaTags.Contains(MediaTagType.CD_MCN))
-                                    ImageInfo.readableMediaTags.Add(MediaTagType.CD_MCN);
+                                if(_entry.SectorSize > ImageInfo.sectorSize) ImageInfo.sectorSize = _entry.SectorSize;
 
-                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
-                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+                                TrackISRCs.Add(currenttrack, _entry.ISRC);
+                                if(currenttrack == 1) _entry.Index0 = _entry.Index1;
 
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.ChunkSizeLe = {0} bytes", neroDAOV1.ChunkSizeLe);
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.UPC = \"{0}\"", StringHandlers.CToString(neroDAOV1.UPC));
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.TocType = 0x{0:X4}", neroDAOV1.TocType);
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.FirstTrack = {0}", neroDAOV1.FirstTrack);
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV1.LastTrack = {0}", neroDAOV1.LastTrack);
+                                NeroTrack _neroTrack = new NeroTrack();
+                                _neroTrack.EndOfTrack = _entry.EndOfTrack;
+                                _neroTrack.ISRC = _entry.ISRC;
+                                _neroTrack.Length = _entry.EndOfTrack - _entry.Index0;
+                                _neroTrack.Mode = _entry.Mode;
+                                _neroTrack.Offset = _entry.Index0;
+                                _neroTrack.Sectors = _neroTrack.Length / _entry.SectorSize;
+                                _neroTrack.SectorSize = _entry.SectorSize;
+                                _neroTrack.StartLBA = ImageInfo.sectors;
+                                _neroTrack.Index0 = _entry.Index0;
+                                _neroTrack.Index1 = _entry.Index1;
+                                _neroTrack.Sequence = currenttrack;
+                                neroTracks.Add(currenttrack, _neroTrack);
 
-                                UPC = neroDAOV1.UPC;
+                                ImageInfo.sectors += _neroTrack.Sectors;
 
-                                tmpbuffer = new byte[30];
-                                for(int i = 0; i < (neroDAOV1.ChunkSizeBe - 22); i += 30)
-                                {
-                                    NeroV1DAOEntry _entry = new NeroV1DAOEntry();
-                                    imageStream.Read(tmpbuffer, 0, 30);
-                                    _entry.ISRC = new byte[12];
-                                    Array.Copy(tmpbuffer, 4, _entry.ISRC, 0, 12);
-                                    _entry.SectorSize = BigEndianBitConverter.ToUInt16(tmpbuffer, 12);
-                                    _entry.Mode = BitConverter.ToUInt16(tmpbuffer, 14);
-                                    _entry.Unknown = BigEndianBitConverter.ToUInt16(tmpbuffer, 16);
-                                    _entry.Index0 = BigEndianBitConverter.ToUInt32(tmpbuffer, 18);
-                                    _entry.Index1 = BigEndianBitConverter.ToUInt32(tmpbuffer, 22);
-                                    _entry.EndOfTrack = BigEndianBitConverter.ToUInt32(tmpbuffer, 26);
-
-                                    DicConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", (i / 32) + 1, StringHandlers.CToString(_entry.ISRC));
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}", (i / 32) + 1, _entry.SectorSize);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})", (i / 32) + 1, (DAOMode)_entry.Mode, _entry.Mode);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}", (i / 32) + 1, _entry.Unknown);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", (i / 32) + 1, _entry.Index0);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", (i / 32) + 1, _entry.Index1);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}", (i / 32) + 1, _entry.EndOfTrack);
-
-                                    neroDAOV1.Tracks.Add(_entry);
-
-                                    if(_entry.SectorSize > ImageInfo.sectorSize)
-                                        ImageInfo.sectorSize = _entry.SectorSize;
-
-                                    TrackISRCs.Add(currenttrack, _entry.ISRC);
-                                    if(currenttrack == 1)
-                                        _entry.Index0 = _entry.Index1;
-
-                                    NeroTrack _neroTrack = new NeroTrack();
-                                    _neroTrack.EndOfTrack = _entry.EndOfTrack;
-                                    _neroTrack.ISRC = _entry.ISRC;
-                                    _neroTrack.Length = _entry.EndOfTrack - _entry.Index0;
-                                    _neroTrack.Mode = _entry.Mode;
-                                    _neroTrack.Offset = _entry.Index0;
-                                    _neroTrack.Sectors = _neroTrack.Length / _entry.SectorSize;
-                                    _neroTrack.SectorSize = _entry.SectorSize;
-                                    _neroTrack.StartLBA = ImageInfo.sectors;
-                                    _neroTrack.Index0 = _entry.Index0;
-                                    _neroTrack.Index1 = _entry.Index1;
-                                    _neroTrack.Sequence = currenttrack;
-                                    neroTracks.Add(currenttrack, _neroTrack);
-
-                                    ImageInfo.sectors += _neroTrack.Sectors;
-
-                                    currenttrack++;
-                                }
-
-                                break;
+                                currenttrack++;
                             }
+
+                            break;
+                        }
                         case NeroV2DAOID:
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"DAOX\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
+
+                            neroDAOV2 = new NeroV2DAO();
+                            neroDAOV2.ChunkID = ChunkID;
+                            neroDAOV2.ChunkSizeBe = ChunkLength;
+
+                            byte[] tmpbuffer = new byte[22];
+                            imageStream.Read(tmpbuffer, 0, 22);
+                            neroDAOV2.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            neroDAOV2.UPC = new byte[14];
+                            Array.Copy(tmpbuffer, 4, neroDAOV2.UPC, 0, 14);
+                            neroDAOV2.TocType = BigEndianBitConverter.ToUInt16(tmpbuffer, 18);
+                            neroDAOV1.FirstTrack = tmpbuffer[20];
+                            neroDAOV2.LastTrack = tmpbuffer[21];
+                            neroDAOV2.Tracks = new List<NeroV2DAOEntry>();
+
+                            if(!ImageInfo.readableMediaTags.Contains(MediaTagType.CD_MCN))
+                                ImageInfo.readableMediaTags.Add(MediaTagType.CD_MCN);
+
+                            if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+
+                            UPC = neroDAOV2.UPC;
+
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.ChunkSizeLe = {0} bytes",
+                                                      neroDAOV2.ChunkSizeLe);
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.UPC = \"{0}\"",
+                                                      StringHandlers.CToString(neroDAOV2.UPC));
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.TocType = 0x{0:X4}", neroDAOV2.TocType);
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.FirstTrack = {0}",
+                                                      neroDAOV2.FirstTrack);
+                            DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.LastTrack = {0}", neroDAOV2.LastTrack);
+
+                            tmpbuffer = new byte[42];
+                            for(int i = 0; i < (neroDAOV2.ChunkSizeBe - 22); i += 42)
                             {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"DAOX\" chunk, parsing {0} bytes", ChunkLength);
+                                NeroV2DAOEntry _entry = new NeroV2DAOEntry();
+                                imageStream.Read(tmpbuffer, 0, 42);
+                                _entry.ISRC = new byte[12];
+                                Array.Copy(tmpbuffer, 4, _entry.ISRC, 0, 12);
+                                _entry.SectorSize = BigEndianBitConverter.ToUInt16(tmpbuffer, 12);
+                                _entry.Mode = BitConverter.ToUInt16(tmpbuffer, 14);
+                                _entry.Unknown = BigEndianBitConverter.ToUInt16(tmpbuffer, 16);
+                                _entry.Index0 = BigEndianBitConverter.ToUInt64(tmpbuffer, 18);
+                                _entry.Index1 = BigEndianBitConverter.ToUInt64(tmpbuffer, 26);
+                                _entry.EndOfTrack = BigEndianBitConverter.ToUInt64(tmpbuffer, 34);
 
-                                neroDAOV2 = new NeroV2DAO();
-                                neroDAOV2.ChunkID = ChunkID;
-                                neroDAOV2.ChunkSizeBe = ChunkLength;
+                                DicConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", (i / 32) + 1,
+                                                          StringHandlers.CToString(_entry.ISRC));
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}",
+                                                          (i / 32) + 1, _entry.SectorSize);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
+                                                          (i / 32) + 1, (DAOMode)_entry.Mode, _entry.Mode);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = {1:X2}",
+                                                          (i / 32) + 1, _entry.Unknown);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", (i / 32) + 1,
+                                                          _entry.Index0);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", (i / 32) + 1,
+                                                          _entry.Index1);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
+                                                          (i / 32) + 1, _entry.EndOfTrack);
 
-                                byte[] tmpbuffer = new byte[22];
-                                imageStream.Read(tmpbuffer, 0, 22);
-                                neroDAOV2.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
-                                neroDAOV2.UPC = new byte[14];
-                                Array.Copy(tmpbuffer, 4, neroDAOV2.UPC, 0, 14);
-                                neroDAOV2.TocType = BigEndianBitConverter.ToUInt16(tmpbuffer, 18);
-                                neroDAOV1.FirstTrack = tmpbuffer[20];
-                                neroDAOV2.LastTrack = tmpbuffer[21];
-                                neroDAOV2.Tracks = new List<NeroV2DAOEntry>();
+                                neroDAOV2.Tracks.Add(_entry);
 
-                                if(!ImageInfo.readableMediaTags.Contains(MediaTagType.CD_MCN))
-                                    ImageInfo.readableMediaTags.Add(MediaTagType.CD_MCN);
+                                if(_entry.SectorSize > ImageInfo.sectorSize) ImageInfo.sectorSize = _entry.SectorSize;
 
-                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
-                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+                                TrackISRCs.Add(currenttrack, _entry.ISRC);
 
-                                UPC = neroDAOV2.UPC;
+                                if(currenttrack == 1) _entry.Index0 = _entry.Index1;
 
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.ChunkSizeLe = {0} bytes", neroDAOV2.ChunkSizeLe);
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.UPC = \"{0}\"", StringHandlers.CToString(neroDAOV2.UPC));
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.TocType = 0x{0:X4}", neroDAOV2.TocType);
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.FirstTrack = {0}", neroDAOV2.FirstTrack);
-                                DicConsole.DebugWriteLine("Nero plugin", "neroDAOV2.LastTrack = {0}", neroDAOV2.LastTrack);
+                                NeroTrack _neroTrack = new NeroTrack();
+                                _neroTrack.EndOfTrack = _entry.EndOfTrack;
+                                _neroTrack.ISRC = _entry.ISRC;
+                                _neroTrack.Length = _entry.EndOfTrack - _entry.Index0;
+                                _neroTrack.Mode = _entry.Mode;
+                                _neroTrack.Offset = _entry.Index0;
+                                _neroTrack.Sectors = _neroTrack.Length / _entry.SectorSize;
+                                _neroTrack.SectorSize = _entry.SectorSize;
+                                _neroTrack.StartLBA = ImageInfo.sectors;
+                                _neroTrack.Index0 = _entry.Index0;
+                                _neroTrack.Index1 = _entry.Index1;
+                                _neroTrack.Sequence = currenttrack;
+                                neroTracks.Add(currenttrack, _neroTrack);
 
-                                tmpbuffer = new byte[42];
-                                for(int i = 0; i < (neroDAOV2.ChunkSizeBe - 22); i += 42)
-                                {
-                                    NeroV2DAOEntry _entry = new NeroV2DAOEntry();
-                                    imageStream.Read(tmpbuffer, 0, 42);
-                                    _entry.ISRC = new byte[12];
-                                    Array.Copy(tmpbuffer, 4, _entry.ISRC, 0, 12);
-                                    _entry.SectorSize = BigEndianBitConverter.ToUInt16(tmpbuffer, 12);
-                                    _entry.Mode = BitConverter.ToUInt16(tmpbuffer, 14);
-                                    _entry.Unknown = BigEndianBitConverter.ToUInt16(tmpbuffer, 16);
-                                    _entry.Index0 = BigEndianBitConverter.ToUInt64(tmpbuffer, 18);
-                                    _entry.Index1 = BigEndianBitConverter.ToUInt64(tmpbuffer, 26);
-                                    _entry.EndOfTrack = BigEndianBitConverter.ToUInt64(tmpbuffer, 34);
+                                ImageInfo.sectors += _neroTrack.Sectors;
 
-                                    DicConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", (i / 32) + 1, StringHandlers.CToString(_entry.ISRC));
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}", (i / 32) + 1, _entry.SectorSize);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})", (i / 32) + 1, (DAOMode)_entry.Mode, _entry.Mode);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = {1:X2}", (i / 32) + 1, _entry.Unknown);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", (i / 32) + 1, _entry.Index0);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", (i / 32) + 1, _entry.Index1);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}", (i / 32) + 1, _entry.EndOfTrack);
-
-                                    neroDAOV2.Tracks.Add(_entry);
-
-                                    if(_entry.SectorSize > ImageInfo.sectorSize)
-                                        ImageInfo.sectorSize = _entry.SectorSize;
-
-                                    TrackISRCs.Add(currenttrack, _entry.ISRC);
-
-                                    if(currenttrack == 1)
-                                        _entry.Index0 = _entry.Index1;
-
-                                    NeroTrack _neroTrack = new NeroTrack();
-                                    _neroTrack.EndOfTrack = _entry.EndOfTrack;
-                                    _neroTrack.ISRC = _entry.ISRC;
-                                    _neroTrack.Length = _entry.EndOfTrack - _entry.Index0;
-                                    _neroTrack.Mode = _entry.Mode;
-                                    _neroTrack.Offset = _entry.Index0;
-                                    _neroTrack.Sectors = _neroTrack.Length / _entry.SectorSize;
-                                    _neroTrack.SectorSize = _entry.SectorSize;
-                                    _neroTrack.StartLBA = ImageInfo.sectors;
-                                    _neroTrack.Index0 = _entry.Index0;
-                                    _neroTrack.Index1 = _entry.Index1;
-                                    _neroTrack.Sequence = currenttrack;
-                                    neroTracks.Add(currenttrack, _neroTrack);
-
-                                    ImageInfo.sectors += _neroTrack.Sectors;
-
-                                    currenttrack++;
-                                }
-
-                                break;
+                                currenttrack++;
                             }
+
+                            break;
+                        }
                         case NeroCDTextID:
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"CDTX\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
+
+                            neroCDTXT = new NeroCDText();
+                            neroCDTXT.ChunkID = ChunkID;
+                            neroCDTXT.ChunkSize = ChunkLength;
+                            neroCDTXT.Packs = new List<NeroCDTextPack>();
+
+                            byte[] tmpbuffer = new byte[18];
+                            for(int i = 0; i < (neroCDTXT.ChunkSize); i += 18)
                             {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"CDTX\" chunk, parsing {0} bytes", ChunkLength);
+                                NeroCDTextPack _entry = new NeroCDTextPack();
+                                imageStream.Read(tmpbuffer, 0, 18);
 
-                                neroCDTXT = new NeroCDText();
-                                neroCDTXT.ChunkID = ChunkID;
-                                neroCDTXT.ChunkSize = ChunkLength;
-                                neroCDTXT.Packs = new List<NeroCDTextPack>();
+                                _entry.PackType = tmpbuffer[0];
+                                _entry.TrackNumber = tmpbuffer[1];
+                                _entry.PackNumber = tmpbuffer[2];
+                                _entry.BlockNumber = tmpbuffer[3];
+                                _entry.Text = new byte[12];
+                                Array.Copy(tmpbuffer, 4, _entry.Text, 0, 12);
+                                _entry.CRC = BigEndianBitConverter.ToUInt16(tmpbuffer, 16);
 
-                                byte[] tmpbuffer = new byte[18];
-                                for(int i = 0; i < (neroCDTXT.ChunkSize); i += 18)
-                                {
-                                    NeroCDTextPack _entry = new NeroCDTextPack();
-                                    imageStream.Read(tmpbuffer, 0, 18);
+                                DicConsole.DebugWriteLine("Nero plugin", "CD-TEXT entry {0}", (i / 18) + 1);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].PackType = 0x{1:X2}",
+                                                          (i / 18) + 1, _entry.PackType);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = 0x{1:X2}",
+                                                          (i / 18) + 1, _entry.TrackNumber);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].PackNumber = 0x{1:X2}",
+                                                          (i / 18) + 1, _entry.PackNumber);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].BlockNumber = 0x{1:X2}",
+                                                          (i / 18) + 1, _entry.BlockNumber);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Text = \"{1}\"", (i / 18) + 1,
+                                                          StringHandlers.CToString(_entry.Text));
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].CRC = 0x{1:X4}", (i / 18) + 1,
+                                                          _entry.CRC);
 
-                                    _entry.PackType = tmpbuffer[0];
-                                    _entry.TrackNumber = tmpbuffer[1];
-                                    _entry.PackNumber = tmpbuffer[2];
-                                    _entry.BlockNumber = tmpbuffer[3];
-                                    _entry.Text = new byte[12];
-                                    Array.Copy(tmpbuffer, 4, _entry.Text, 0, 12);
-                                    _entry.CRC = BigEndianBitConverter.ToUInt16(tmpbuffer, 16);
-
-                                    DicConsole.DebugWriteLine("Nero plugin", "CD-TEXT entry {0}", (i / 18) + 1);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].PackType = 0x{1:X2}", (i / 18) + 1, _entry.PackType);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = 0x{1:X2}", (i / 18) + 1, _entry.TrackNumber);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].PackNumber = 0x{1:X2}", (i / 18) + 1, _entry.PackNumber);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].BlockNumber = 0x{1:X2}", (i / 18) + 1, _entry.BlockNumber);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Text = \"{1}\"", (i / 18) + 1, StringHandlers.CToString(_entry.Text));
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].CRC = 0x{1:X4}", (i / 18) + 1, _entry.CRC);
-
-                                    neroCDTXT.Packs.Add(_entry);
-                                }
-
-                                break;
+                                neroCDTXT.Packs.Add(_entry);
                             }
+
+                            break;
+                        }
                         case NeroV1TAOID:
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"ETNF\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
+
+                            neroTAOV1 = new NeroV1TAO();
+                            neroTAOV1.ChunkID = ChunkID;
+                            neroTAOV1.ChunkSize = ChunkLength;
+                            neroTAOV1.Tracks = new List<NeroV1TAOEntry>();
+
+                            byte[] tmpbuffer = new byte[20];
+                            for(int i = 0; i < (neroTAOV1.ChunkSize); i += 20)
                             {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"ETNF\" chunk, parsing {0} bytes", ChunkLength);
+                                NeroV1TAOEntry _entry = new NeroV1TAOEntry();
+                                imageStream.Read(tmpbuffer, 0, 20);
 
-                                neroTAOV1 = new NeroV1TAO();
-                                neroTAOV1.ChunkID = ChunkID;
-                                neroTAOV1.ChunkSize = ChunkLength;
-                                neroTAOV1.Tracks = new List<NeroV1TAOEntry>();
+                                _entry.Offset = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                                _entry.Length = BigEndianBitConverter.ToUInt32(tmpbuffer, 4);
+                                _entry.Mode = BigEndianBitConverter.ToUInt32(tmpbuffer, 8);
+                                _entry.StartLBA = BigEndianBitConverter.ToUInt32(tmpbuffer, 12);
+                                _entry.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 16);
 
-                                byte[] tmpbuffer = new byte[20];
-                                for(int i = 0; i < (neroTAOV1.ChunkSize); i += 20)
-                                {
-                                    NeroV1TAOEntry _entry = new NeroV1TAOEntry();
-                                    imageStream.Read(tmpbuffer, 0, 20);
+                                DicConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 20) + 1);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 20) + 1,
+                                                          _entry.Offset);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes",
+                                                          (i / 20) + 1, _entry.Length);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
+                                                          (i / 20) + 1, (DAOMode)_entry.Mode, _entry.Mode);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", (i / 20) + 1,
+                                                          _entry.StartLBA);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
+                                                          (i / 20) + 1, _entry.Unknown);
 
-                                    _entry.Offset = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
-                                    _entry.Length = BigEndianBitConverter.ToUInt32(tmpbuffer, 4);
-                                    _entry.Mode = BigEndianBitConverter.ToUInt32(tmpbuffer, 8);
-                                    _entry.StartLBA = BigEndianBitConverter.ToUInt32(tmpbuffer, 12);
-                                    _entry.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 16);
+                                neroTAOV1.Tracks.Add(_entry);
 
-                                    DicConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 20) + 1);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 20) + 1, _entry.Offset);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes", (i / 20) + 1, _entry.Length);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})", (i / 20) + 1, (DAOMode)_entry.Mode, _entry.Mode);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", (i / 20) + 1, _entry.StartLBA);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}", (i / 20) + 1, _entry.Unknown);
+                                if(NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode) > ImageInfo.sectorSize)
+                                    ImageInfo.sectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
 
-                                    neroTAOV1.Tracks.Add(_entry);
+                                NeroTrack _neroTrack = new NeroTrack();
+                                _neroTrack.EndOfTrack = _entry.Offset + _entry.Length;
+                                _neroTrack.ISRC = new byte[12];
+                                _neroTrack.Length = _entry.Length;
+                                _neroTrack.Mode = _entry.Mode;
+                                _neroTrack.Offset = _entry.Offset;
+                                _neroTrack.Sectors =
+                                    _neroTrack.Length / NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
+                                _neroTrack.SectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
+                                _neroTrack.StartLBA = ImageInfo.sectors;
+                                _neroTrack.Index0 = _entry.Offset;
+                                _neroTrack.Index1 = _entry.Offset;
+                                _neroTrack.Sequence = currenttrack;
+                                neroTracks.Add(currenttrack, _neroTrack);
 
-                                    if(NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode) > ImageInfo.sectorSize)
-                                        ImageInfo.sectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
+                                ImageInfo.sectors += _neroTrack.Sectors;
 
-                                    NeroTrack _neroTrack = new NeroTrack();
-                                    _neroTrack.EndOfTrack = _entry.Offset + _entry.Length;
-                                    _neroTrack.ISRC = new byte[12];
-                                    _neroTrack.Length = _entry.Length;
-                                    _neroTrack.Mode = _entry.Mode;
-                                    _neroTrack.Offset = _entry.Offset;
-                                    _neroTrack.Sectors = _neroTrack.Length / NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
-                                    _neroTrack.SectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
-                                    _neroTrack.StartLBA = ImageInfo.sectors;
-                                    _neroTrack.Index0 = _entry.Offset;
-                                    _neroTrack.Index1 = _entry.Offset;
-                                    _neroTrack.Sequence = currenttrack;
-                                    neroTracks.Add(currenttrack, _neroTrack);
-
-                                    ImageInfo.sectors += _neroTrack.Sectors;
-
-                                    currenttrack++;
-                                }
-
-                                break;
+                                currenttrack++;
                             }
+
+                            break;
+                        }
                         case NeroV2TAOID:
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"ETN2\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
+
+                            neroTAOV2 = new NeroV2TAO();
+                            neroTAOV2.ChunkID = ChunkID;
+                            neroTAOV2.ChunkSize = ChunkLength;
+                            neroTAOV2.Tracks = new List<NeroV2TAOEntry>();
+
+                            byte[] tmpbuffer = new byte[32];
+                            for(int i = 0; i < (neroTAOV2.ChunkSize); i += 32)
                             {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"ETN2\" chunk, parsing {0} bytes", ChunkLength);
+                                NeroV2TAOEntry _entry = new NeroV2TAOEntry();
+                                imageStream.Read(tmpbuffer, 0, 32);
 
-                                neroTAOV2 = new NeroV2TAO();
-                                neroTAOV2.ChunkID = ChunkID;
-                                neroTAOV2.ChunkSize = ChunkLength;
-                                neroTAOV2.Tracks = new List<NeroV2TAOEntry>();
+                                _entry.Offset = BigEndianBitConverter.ToUInt64(tmpbuffer, 0);
+                                _entry.Length = BigEndianBitConverter.ToUInt64(tmpbuffer, 8);
+                                _entry.Mode = BigEndianBitConverter.ToUInt32(tmpbuffer, 16);
+                                _entry.StartLBA = BigEndianBitConverter.ToUInt32(tmpbuffer, 20);
+                                _entry.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 24);
+                                _entry.Sectors = BigEndianBitConverter.ToUInt32(tmpbuffer, 28);
 
-                                byte[] tmpbuffer = new byte[32];
-                                for(int i = 0; i < (neroTAOV2.ChunkSize); i += 32)
-                                {
-                                    NeroV2TAOEntry _entry = new NeroV2TAOEntry();
-                                    imageStream.Read(tmpbuffer, 0, 32);
+                                DicConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 32) + 1);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 32) + 1,
+                                                          _entry.Offset);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes",
+                                                          (i / 32) + 1, _entry.Length);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
+                                                          (i / 32) + 1, (DAOMode)_entry.Mode, _entry.Mode);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", (i / 32) + 1,
+                                                          _entry.StartLBA);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
+                                                          (i / 32) + 1, _entry.Unknown);
+                                DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Sectors = {1}", (i / 32) + 1,
+                                                          _entry.Sectors);
 
-                                    _entry.Offset = BigEndianBitConverter.ToUInt64(tmpbuffer, 0);
-                                    _entry.Length = BigEndianBitConverter.ToUInt64(tmpbuffer, 8);
-                                    _entry.Mode = BigEndianBitConverter.ToUInt32(tmpbuffer, 16);
-                                    _entry.StartLBA = BigEndianBitConverter.ToUInt32(tmpbuffer, 20);
-                                    _entry.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 24);
-                                    _entry.Sectors = BigEndianBitConverter.ToUInt32(tmpbuffer, 28);
+                                neroTAOV2.Tracks.Add(_entry);
 
-                                    DicConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 32) + 1);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 32) + 1, _entry.Offset);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes", (i / 32) + 1, _entry.Length);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})", (i / 32) + 1, (DAOMode)_entry.Mode, _entry.Mode);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", (i / 32) + 1, _entry.StartLBA);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}", (i / 32) + 1, _entry.Unknown);
-                                    DicConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Sectors = {1}", (i / 32) + 1, _entry.Sectors);
+                                if(NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode) > ImageInfo.sectorSize)
+                                    ImageInfo.sectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
 
-                                    neroTAOV2.Tracks.Add(_entry);
+                                NeroTrack _neroTrack = new NeroTrack();
+                                _neroTrack.EndOfTrack = _entry.Offset + _entry.Length;
+                                _neroTrack.ISRC = new byte[12];
+                                _neroTrack.Length = _entry.Length;
+                                _neroTrack.Mode = _entry.Mode;
+                                _neroTrack.Offset = _entry.Offset;
+                                _neroTrack.Sectors =
+                                    _neroTrack.Length / NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
+                                _neroTrack.SectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
+                                _neroTrack.StartLBA = ImageInfo.sectors;
+                                _neroTrack.Index0 = _entry.Offset;
+                                _neroTrack.Index1 = _entry.Offset;
+                                _neroTrack.Sequence = currenttrack;
+                                neroTracks.Add(currenttrack, _neroTrack);
 
-                                    if(NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode) > ImageInfo.sectorSize)
-                                        ImageInfo.sectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
+                                ImageInfo.sectors += _neroTrack.Sectors;
 
-                                    NeroTrack _neroTrack = new NeroTrack();
-                                    _neroTrack.EndOfTrack = _entry.Offset + _entry.Length;
-                                    _neroTrack.ISRC = new byte[12];
-                                    _neroTrack.Length = _entry.Length;
-                                    _neroTrack.Mode = _entry.Mode;
-                                    _neroTrack.Offset = _entry.Offset;
-                                    _neroTrack.Sectors = _neroTrack.Length / NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
-                                    _neroTrack.SectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
-                                    _neroTrack.StartLBA = ImageInfo.sectors;
-                                    _neroTrack.Index0 = _entry.Offset;
-                                    _neroTrack.Index1 = _entry.Offset;
-                                    _neroTrack.Sequence = currenttrack;
-                                    neroTracks.Add(currenttrack, _neroTrack);
-
-                                    ImageInfo.sectors += _neroTrack.Sectors;
-
-                                    currenttrack++;
-                                }
-
-                                break;
+                                currenttrack++;
                             }
+
+                            break;
+                        }
                         case NeroSessionID:
-                            {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"SINF\" chunk, parsing {0} bytes", ChunkLength);
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"SINF\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
 
-                                uint sessionTracks;
-                                byte[] tmpbuffer = new byte[4];
-                                imageStream.Read(tmpbuffer, 0, 4);
-                                sessionTracks = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
-                                neroSessions.Add(currentsession, sessionTracks);
+                            uint sessionTracks;
+                            byte[] tmpbuffer = new byte[4];
+                            imageStream.Read(tmpbuffer, 0, 4);
+                            sessionTracks = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            neroSessions.Add(currentsession, sessionTracks);
 
-                                DicConsole.DebugWriteLine("Nero plugin", "\tSession {0} has {1} tracks", currentsession, sessionTracks);
+                            DicConsole.DebugWriteLine("Nero plugin", "\tSession {0} has {1} tracks", currentsession,
+                                                      sessionTracks);
 
-                                currentsession++;
-                                break;
-                            }
+                            currentsession++;
+                            break;
+                        }
                         case NeroDiskTypeID:
-                            {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"MTYP\" chunk, parsing {0} bytes", ChunkLength);
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"MTYP\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
 
-                                neroMediaTyp = new NeroMediaType();
+                            neroMediaTyp = new NeroMediaType();
 
-                                neroMediaTyp.ChunkID = ChunkID;
-                                neroMediaTyp.ChunkSize = ChunkLength;
+                            neroMediaTyp.ChunkID = ChunkID;
+                            neroMediaTyp.ChunkSize = ChunkLength;
 
-                                byte[] tmpbuffer = new byte[4];
-                                imageStream.Read(tmpbuffer, 0, 4);
-                                neroMediaTyp.Type = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            byte[] tmpbuffer = new byte[4];
+                            imageStream.Read(tmpbuffer, 0, 4);
+                            neroMediaTyp.Type = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
 
-                                DicConsole.DebugWriteLine("Nero plugin", "\tMedia type is {0} ({1})", (NeroMediaTypes)neroMediaTyp.Type, neroMediaTyp.Type);
+                            DicConsole.DebugWriteLine("Nero plugin", "\tMedia type is {0} ({1})",
+                                                      (NeroMediaTypes)neroMediaTyp.Type, neroMediaTyp.Type);
 
-                                ImageInfo.mediaType = NeroMediaTypeToMediaType((NeroMediaTypes)neroMediaTyp.Type);
+                            ImageInfo.mediaType = NeroMediaTypeToMediaType((NeroMediaTypes)neroMediaTyp.Type);
 
-                                break;
-                            }
+                            break;
+                        }
                         case NeroDiscInfoID:
-                            {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"DINF\" chunk, parsing {0} bytes", ChunkLength);
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"DINF\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
 
-                                neroDiscInfo = new NeroDiscInformation();
-                                neroDiscInfo.ChunkID = ChunkID;
-                                neroDiscInfo.ChunkSize = ChunkLength;
-                                byte[] tmpbuffer = new byte[4];
-                                imageStream.Read(tmpbuffer, 0, 4);
-                                neroDiscInfo.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            neroDiscInfo = new NeroDiscInformation();
+                            neroDiscInfo.ChunkID = ChunkID;
+                            neroDiscInfo.ChunkSize = ChunkLength;
+                            byte[] tmpbuffer = new byte[4];
+                            imageStream.Read(tmpbuffer, 0, 4);
+                            neroDiscInfo.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
 
-                                DicConsole.DebugWriteLine("Nero plugin", "\tneroDiscInfo.Unknown = 0x{0:X4} ({0})", neroDiscInfo.Unknown);
+                            DicConsole.DebugWriteLine("Nero plugin", "\tneroDiscInfo.Unknown = 0x{0:X4} ({0})",
+                                                      neroDiscInfo.Unknown);
 
-                                break;
-                            }
+                            break;
+                        }
                         case NeroReloID:
-                            {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"RELO\" chunk, parsing {0} bytes", ChunkLength);
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"RELO\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
 
-                                neroRELO = new NeroRELOChunk();
-                                neroRELO.ChunkID = ChunkID;
-                                neroRELO.ChunkSize = ChunkLength;
-                                byte[] tmpbuffer = new byte[4];
-                                imageStream.Read(tmpbuffer, 0, 4);
-                                neroRELO.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            neroRELO = new NeroRELOChunk();
+                            neroRELO.ChunkID = ChunkID;
+                            neroRELO.ChunkSize = ChunkLength;
+                            byte[] tmpbuffer = new byte[4];
+                            imageStream.Read(tmpbuffer, 0, 4);
+                            neroRELO.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
 
-                                DicConsole.DebugWriteLine("Nero plugin", "\tneroRELO.Unknown = 0x{0:X4} ({0})", neroRELO.Unknown);
+                            DicConsole.DebugWriteLine("Nero plugin", "\tneroRELO.Unknown = 0x{0:X4} ({0})",
+                                                      neroRELO.Unknown);
 
-                                break;
-                            }
+                            break;
+                        }
                         case NeroTOCID:
-                            {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"TOCT\" chunk, parsing {0} bytes", ChunkLength);
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"TOCT\" chunk, parsing {0} bytes",
+                                                      ChunkLength);
 
-                                neroTOC = new NeroTOCChunk();
-                                neroTOC.ChunkID = ChunkID;
-                                neroTOC.ChunkSize = ChunkLength;
-                                byte[] tmpbuffer = new byte[2];
-                                imageStream.Read(tmpbuffer, 0, 2);
-                                neroTOC.Unknown = BigEndianBitConverter.ToUInt16(tmpbuffer, 0);
+                            neroTOC = new NeroTOCChunk();
+                            neroTOC.ChunkID = ChunkID;
+                            neroTOC.ChunkSize = ChunkLength;
+                            byte[] tmpbuffer = new byte[2];
+                            imageStream.Read(tmpbuffer, 0, 2);
+                            neroTOC.Unknown = BigEndianBitConverter.ToUInt16(tmpbuffer, 0);
 
-                                DicConsole.DebugWriteLine("Nero plugin", "\tneroTOC.Unknown = 0x{0:X4} ({0})", neroTOC.Unknown);
+                            DicConsole.DebugWriteLine("Nero plugin", "\tneroTOC.Unknown = 0x{0:X4} ({0})",
+                                                      neroTOC.Unknown);
 
-                                break;
-                            }
+                            break;
+                        }
                         case NeroEndID:
-                            {
-                                DicConsole.DebugWriteLine("Nero plugin", "Found \"END!\" chunk, finishing parse");
-                                parsing = false;
-                                break;
-                            }
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Found \"END!\" chunk, finishing parse");
+                            parsing = false;
+                            break;
+                        }
                         default:
-                            {
-                                DicConsole.DebugWriteLine("Nero plugin", "Unknown chunk ID \"{0}\", skipping...", System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(ChunkID)));
-                                imageStream.Seek(ChunkLength, SeekOrigin.Current);
-                                break;
-                            }
+                        {
+                            DicConsole.DebugWriteLine("Nero plugin", "Unknown chunk ID \"{0}\", skipping...",
+                                                      System.Text.Encoding.ASCII.GetString(BigEndianBitConverter
+                                                                                               .GetBytes(ChunkID)));
+                            imageStream.Seek(ChunkLength, SeekOrigin.Current);
+                            break;
+                        }
                     }
                 }
 
@@ -1501,8 +1564,7 @@ namespace DiscImageChef.ImagePlugins
                     ImageInfo.imageApplicationVersion = "<= 5.0";
                 }
 
-                if(neroSessions.Count == 0)
-                    neroSessions.Add(1, currenttrack);
+                if(neroSessions.Count == 0) neroSessions.Add(1, currenttrack);
 
                 DicConsole.DebugWriteLine("Nero plugin", "Building offset, track and session maps");
 
@@ -1519,12 +1581,13 @@ namespace DiscImageChef.ImagePlugins
                     if(neroTracks.TryGetValue(i, out _neroTrack))
                     {
                         DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsession = {0}", currentsession);
-                        DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessionmaxtrack = {0}", currentsessionmaxtrack);
-                        DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessioncurrenttrack = {0}", currentsessioncurrenttrack);
+                        DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessionmaxtrack = {0}",
+                                                  currentsessionmaxtrack);
+                        DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessioncurrenttrack = {0}",
+                                                  currentsessioncurrenttrack);
 
                         Track _track = new Track();
-                        if(_neroTrack.Sequence == 1)
-                            _neroTrack.Index0 = _neroTrack.Index1;
+                        if(_neroTrack.Sequence == 1) _neroTrack.Index0 = _neroTrack.Index1;
 
                         _track.Indexes = new Dictionary<int, ulong>();
                         if(_neroTrack.Index0 < _neroTrack.Index1)
@@ -1591,12 +1654,16 @@ namespace DiscImageChef.ImagePlugins
 
                         imageTracks.Add(_track);
 
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackDescription = {0}", _track.TrackDescription);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackEndSector = {0}", _track.TrackEndSector);
+                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackDescription = {0}",
+                                                  _track.TrackDescription);
+                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackEndSector = {0}",
+                                                  _track.TrackEndSector);
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackPregap = {0}", _track.TrackPregap);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSequence = {0}", _track.TrackSequence);
+                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSequence = {0}",
+                                                  _track.TrackSequence);
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSession = {0}", _track.TrackSession);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackStartSector = {0}", _track.TrackStartSector);
+                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackStartSector = {0}",
+                                                  _track.TrackStartSector);
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackType = {0}", _track.TrackType);
 
                         if(currentsessioncurrenttrack == 1)
@@ -1627,7 +1694,8 @@ namespace DiscImageChef.ImagePlugins
                         }
 
                         offsetmap.Add(_track.TrackSequence, _track.TrackStartSector);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", _track.TrackSequence, _track.TrackStartSector);
+                        DicConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", _track.TrackSequence,
+                                                  _track.TrackStartSector);
 
                         Partition partition;
 
@@ -1653,7 +1721,8 @@ namespace DiscImageChef.ImagePlugins
                         partition.Length = partition.Size / _neroTrack.SectorSize;
                         partition.Sequence = PartitionSequence;
                         partition.Offset = partitionStartByte;
-                        partition.Start = _neroTrack.StartLBA + ((_neroTrack.Index1 - _neroTrack.Index0) / _neroTrack.SectorSize);
+                        partition.Start = _neroTrack.StartLBA +
+                                          ((_neroTrack.Index1 - _neroTrack.Index0) / _neroTrack.SectorSize);
                         partition.Type = NeroTrackModeToTrackType((DAOMode)_neroTrack.Mode).ToString();
                         ImagePartitions.Add(partition);
                         PartitionSequence++;
@@ -1674,16 +1743,20 @@ namespace DiscImageChef.ImagePlugins
                     for(int i = 0; i < neroTracks.Count; i++)
                     {
                         // First track is audio
-						firstaudio |= i == 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.Audio || (DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.AudioSub);
+                        firstaudio |= i == 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.Audio ||
+                                                 (DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.AudioSub);
 
                         // First track is data
-                        firstdata |= i == 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.Audio && (DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.AudioSub);
+                        firstdata |= i == 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.Audio &&
+                                                (DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.AudioSub);
 
                         // Any non first track is data
-                        data |= i != 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.Audio && (DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.AudioSub);
+                        data |= i != 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.Audio &&
+                                           (DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.AudioSub);
 
                         // Any non first track is audio
-                        audio |= i != 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.Audio || (DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.AudioSub);
+                        audio |= i != 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.Audio ||
+                                            (DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.AudioSub);
 
                         switch((DAOMode)neroTracks.ElementAt(i).Value.Mode)
                         {
@@ -1696,18 +1769,13 @@ namespace DiscImageChef.ImagePlugins
                         }
                     }
 
-                    if(!data && !firstdata)
-                        ImageInfo.mediaType = MediaType.CDDA;
+                    if(!data && !firstdata) ImageInfo.mediaType = MediaType.CDDA;
                     else if(firstaudio && data && imageSessions.Count > 1 && mode2)
                         ImageInfo.mediaType = MediaType.CDPLUS;
-                    else if((firstdata && audio) || mode2)	
-                        ImageInfo.mediaType = MediaType.CDROMXA;
-                    else if(!audio)
-                        ImageInfo.mediaType = MediaType.CDROM;
-                    else
-                        ImageInfo.mediaType = MediaType.CD;
+                    else if((firstdata && audio) || mode2) ImageInfo.mediaType = MediaType.CDROMXA;
+                    else if(!audio) ImageInfo.mediaType = MediaType.CDROM;
+                    else ImageInfo.mediaType = MediaType.CD;
                 }
-
 
                 ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
                 DicConsole.VerboseWriteLine("Nero image contains a disc of type {0}", ImageInfo.mediaType);
@@ -1716,8 +1784,8 @@ namespace DiscImageChef.ImagePlugins
             }
             catch
             {
-				DicConsole.DebugWrite("Nero plugin", "Exception ocurred opening file.");
-				return false;
+                DicConsole.DebugWrite("Nero plugin", "Exception ocurred opening file.");
+                return false;
             }
         }
 
@@ -1746,10 +1814,8 @@ namespace DiscImageChef.ImagePlugins
         {
             switch(tag)
             {
-                case MediaTagType.CD_MCN:
-                    return UPC;
-                case MediaTagType.CD_TEXT:
-                    throw new NotImplementedException("Not yet implemented");
+                case MediaTagType.CD_MCN: return UPC;
+                case MediaTagType.CD_TEXT: throw new NotImplementedException("Not yet implemented");
                 default:
                     throw new FeaturedNotSupportedByDiscImageException("Requested disk tag not supported by image");
             }
@@ -1792,7 +1858,8 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                  string.Format("Sector address {0} not found", sectorAddress));
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
@@ -1812,7 +1879,8 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                  string.Format("Sector address {0} not found", sectorAddress));
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
@@ -1823,7 +1891,10 @@ namespace DiscImageChef.ImagePlugins
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > _track.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks", length, _track.Sectors));
+                throw new ArgumentOutOfRangeException(nameof(length),
+                                                      string
+                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
+                                                                  length, _track.Sectors));
 
             uint sector_offset;
             uint sector_size;
@@ -1833,73 +1904,73 @@ namespace DiscImageChef.ImagePlugins
             {
                 case DAOMode.Data:
                 case DAOMode.DataM2F1:
-                    {
-                        sector_offset = 0;
-                        sector_size = 2048;
-                        sector_skip = 0;
-                        break;
-                    }
+                {
+                    sector_offset = 0;
+                    sector_size = 2048;
+                    sector_skip = 0;
+                    break;
+                }
                 case DAOMode.DataM2F2:
-                    {
-                        sector_offset = 8;
-                        sector_size = 2324;
-                        sector_skip = 4;
-                        break;
-                    }
+                {
+                    sector_offset = 8;
+                    sector_size = 2324;
+                    sector_skip = 4;
+                    break;
+                }
                 case DAOMode.Audio:
-                    {
-                        sector_offset = 0;
-                        sector_size = 2352;
-                        sector_skip = 0;
-                        break;
-                    }
+                {
+                    sector_offset = 0;
+                    sector_size = 2352;
+                    sector_skip = 0;
+                    break;
+                }
                 case DAOMode.DataRaw:
-                    {
-                        sector_offset = 16;
-                        sector_size = 2048;
-                        sector_skip = 288;
-                        break;
-                    }
+                {
+                    sector_offset = 16;
+                    sector_size = 2048;
+                    sector_skip = 288;
+                    break;
+                }
                 case DAOMode.DataM2Raw:
-                    {
-                        sector_offset = 16;
-                        sector_size = 2336;
-                        sector_skip = 0;
-                        break;
-                    }
+                {
+                    sector_offset = 16;
+                    sector_size = 2336;
+                    sector_skip = 0;
+                    break;
+                }
                 // TODO: Supposing Nero suffixes the subchannel to the channel
                 case DAOMode.DataRawSub:
-                    {
-                        sector_offset = 16;
-                        sector_size = 2048;
-                        sector_skip = 288 + 96;
-                        break;
-                    }
+                {
+                    sector_offset = 16;
+                    sector_size = 2048;
+                    sector_skip = 288 + 96;
+                    break;
+                }
                 case DAOMode.DataM2RawSub:
-                    {
-                        sector_offset = 16;
-                        sector_size = 2336;
-                        sector_skip = 96;
-                        break;
-                    }
+                {
+                    sector_offset = 16;
+                    sector_size = 2336;
+                    sector_skip = 96;
+                    break;
+                }
                 case DAOMode.AudioSub:
-                    {
-                        sector_offset = 0;
-                        sector_size = 2352;
-                        sector_skip = 96;
-                        break;
-                    }
-                default:
-                    throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                {
+                    sector_offset = 0;
+                    sector_size = 2352;
+                    sector_skip = 96;
+                    break;
+                }
+                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
             byte[] buffer = new byte[sector_size * length];
 
             imageStream = _imageFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
-            br.BaseStream.Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-            if(sector_offset == 0 && sector_skip == 0)
-                buffer = br.ReadBytes((int)(sector_size * length));
+            br.BaseStream
+              .Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)),
+                    SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0) buffer = br.ReadBytes((int)(sector_size * length));
             else
             {
                 for(int i = 0; i < length; i++)
@@ -1923,7 +1994,10 @@ namespace DiscImageChef.ImagePlugins
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > _track.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks", length, _track.Sectors));
+                throw new ArgumentOutOfRangeException(nameof(length),
+                                                      string
+                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
+                                                                  length, _track.Sectors));
 
             uint sector_offset;
             uint sector_size;
@@ -1938,201 +2012,196 @@ namespace DiscImageChef.ImagePlugins
                 case SectorTagType.CDSectorHeader:
                 case SectorTagType.CDSectorSubchannel:
                 case SectorTagType.CDSectorSubHeader:
-                case SectorTagType.CDSectorSync:
-                    break;
+                case SectorTagType.CDSectorSync: break;
                 case SectorTagType.CDTrackFlags:
-                    {
-                        byte[] flags = new byte[1];
-                        flags[0] = 0x00;
+                {
+                    byte[] flags = new byte[1];
+                    flags[0] = 0x00;
 
-                        if((DAOMode)_track.Mode != DAOMode.Audio && (DAOMode)_track.Mode != DAOMode.AudioSub)
-                            flags[0] += 0x40;
+                    if((DAOMode)_track.Mode != DAOMode.Audio && (DAOMode)_track.Mode != DAOMode.AudioSub)
+                        flags[0] += 0x40;
 
-                        return flags;
-                    }
-                case SectorTagType.CDTrackISRC:
-                    return _track.ISRC;
+                    return flags;
+                }
+                case SectorTagType.CDTrackISRC: return _track.ISRC;
                 case SectorTagType.CDTrackText:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
-                default:
-                    throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
             switch((DAOMode)_track.Mode)
             {
                 case DAOMode.Data:
-                case DAOMode.DataM2F1:
-                    throw new ArgumentException("No tags in image for requested track", nameof(tag));
+                case DAOMode.DataM2F1: throw new ArgumentException("No tags in image for requested track", nameof(tag));
                 case DAOMode.DataM2F2:
+                {
+                    switch(tag)
                     {
-                        switch(tag)
+                        case SectorTagType.CDSectorSync:
+                        case SectorTagType.CDSectorHeader:
+                        case SectorTagType.CDSectorSubchannel:
+                        case SectorTagType.CDSectorECC:
+                        case SectorTagType.CDSectorECC_P:
+                        case SectorTagType.CDSectorECC_Q:
+                            throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                        case SectorTagType.CDSectorSubHeader:
                         {
-                            case SectorTagType.CDSectorSync:
-                            case SectorTagType.CDSectorHeader:
-                            case SectorTagType.CDSectorSubchannel:
-                            case SectorTagType.CDSectorECC:
-                            case SectorTagType.CDSectorECC_P:
-                            case SectorTagType.CDSectorECC_Q:
-                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                            case SectorTagType.CDSectorSubHeader:
-                                {
-                                    sector_offset = 0;
-                                    sector_size = 8;
-                                    sector_skip = 2328;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorEDC:
-                                {
-                                    sector_offset = 2332;
-                                    sector_size = 4;
-                                    sector_skip = 0;
-                                    break;
-                                }
-                            default:
-                                throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                            sector_offset = 0;
+                            sector_size = 8;
+                            sector_skip = 2328;
+                            break;
                         }
-                        break;
+                        case SectorTagType.CDSectorEDC:
+                        {
+                            sector_offset = 2332;
+                            sector_size = 4;
+                            sector_skip = 0;
+                            break;
+                        }
+                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
-                case DAOMode.Audio:
-                    throw new ArgumentException("There are no tags on audio tracks", nameof(tag));
+
+                    break;
+                }
+                case DAOMode.Audio: throw new ArgumentException("There are no tags on audio tracks", nameof(tag));
                 case DAOMode.DataRaw:
+                {
+                    switch(tag)
                     {
-                        switch(tag)
+                        case SectorTagType.CDSectorSync:
                         {
-                            case SectorTagType.CDSectorSync:
-                                {
-                                    sector_offset = 0;
-                                    sector_size = 12;
-                                    sector_skip = 2340;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorHeader:
-                                {
-                                    sector_offset = 12;
-                                    sector_size = 4;
-                                    sector_skip = 2336;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorSubchannel:
-                            case SectorTagType.CDSectorSubHeader:
-                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                            case SectorTagType.CDSectorECC:
-                                {
-                                    sector_offset = 2076;
-                                    sector_size = 276;
-                                    sector_skip = 0;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorECC_P:
-                                {
-                                    sector_offset = 2076;
-                                    sector_size = 172;
-                                    sector_skip = 104;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorECC_Q:
-                                {
-                                    sector_offset = 2248;
-                                    sector_size = 104;
-                                    sector_skip = 0;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorEDC:
-                                {
-                                    sector_offset = 2064;
-                                    sector_size = 4;
-                                    sector_skip = 284;
-                                    break;
-                                }
-                            default:
-                                throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                            sector_offset = 0;
+                            sector_size = 12;
+                            sector_skip = 2340;
+                            break;
                         }
-                        break;
+                        case SectorTagType.CDSectorHeader:
+                        {
+                            sector_offset = 12;
+                            sector_size = 4;
+                            sector_skip = 2336;
+                            break;
+                        }
+                        case SectorTagType.CDSectorSubchannel:
+                        case SectorTagType.CDSectorSubHeader:
+                            throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                        case SectorTagType.CDSectorECC:
+                        {
+                            sector_offset = 2076;
+                            sector_size = 276;
+                            sector_skip = 0;
+                            break;
+                        }
+                        case SectorTagType.CDSectorECC_P:
+                        {
+                            sector_offset = 2076;
+                            sector_size = 172;
+                            sector_skip = 104;
+                            break;
+                        }
+                        case SectorTagType.CDSectorECC_Q:
+                        {
+                            sector_offset = 2248;
+                            sector_size = 104;
+                            sector_skip = 0;
+                            break;
+                        }
+                        case SectorTagType.CDSectorEDC:
+                        {
+                            sector_offset = 2064;
+                            sector_size = 4;
+                            sector_skip = 284;
+                            break;
+                        }
+                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
+
+                    break;
+                }
                 // TODO
                 case DAOMode.DataM2RawSub:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 case DAOMode.DataRawSub:
+                {
+                    switch(tag)
                     {
-                        switch(tag)
+                        case SectorTagType.CDSectorSync:
                         {
-                            case SectorTagType.CDSectorSync:
-                                {
-                                    sector_offset = 0;
-                                    sector_size = 12;
-                                    sector_skip = 2340 + 96;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorHeader:
-                                {
-                                    sector_offset = 12;
-                                    sector_size = 4;
-                                    sector_skip = 2336 + 96;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorSubchannel:
-                                {
-                                    sector_offset = 2352;
-                                    sector_size = 96;
-                                    sector_skip = 0;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorSubHeader:
-                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                            case SectorTagType.CDSectorECC:
-                                {
-                                    sector_offset = 2076;
-                                    sector_size = 276;
-                                    sector_skip = 0 + 96;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorECC_P:
-                                {
-                                    sector_offset = 2076;
-                                    sector_size = 172;
-                                    sector_skip = 104 + 96;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorECC_Q:
-                                {
-                                    sector_offset = 2248;
-                                    sector_size = 104;
-                                    sector_skip = 0 + 96;
-                                    break;
-                                }
-                            case SectorTagType.CDSectorEDC:
-                                {
-                                    sector_offset = 2064;
-                                    sector_size = 4;
-                                    sector_skip = 284 + 96;
-                                    break;
-                                }
-                            default:
-                                throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                            sector_offset = 0;
+                            sector_size = 12;
+                            sector_skip = 2340 + 96;
+                            break;
                         }
-                        break;
-                    }
-                case DAOMode.AudioSub:
-                    {
-                        if(tag != SectorTagType.CDSectorSubchannel)
+                        case SectorTagType.CDSectorHeader:
+                        {
+                            sector_offset = 12;
+                            sector_size = 4;
+                            sector_skip = 2336 + 96;
+                            break;
+                        }
+                        case SectorTagType.CDSectorSubchannel:
+                        {
+                            sector_offset = 2352;
+                            sector_size = 96;
+                            sector_skip = 0;
+                            break;
+                        }
+                        case SectorTagType.CDSectorSubHeader:
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-
-                        sector_offset = 2352;
-                        sector_size = 96;
-                        sector_skip = 0;
-                        break;
+                        case SectorTagType.CDSectorECC:
+                        {
+                            sector_offset = 2076;
+                            sector_size = 276;
+                            sector_skip = 0 + 96;
+                            break;
+                        }
+                        case SectorTagType.CDSectorECC_P:
+                        {
+                            sector_offset = 2076;
+                            sector_size = 172;
+                            sector_skip = 104 + 96;
+                            break;
+                        }
+                        case SectorTagType.CDSectorECC_Q:
+                        {
+                            sector_offset = 2248;
+                            sector_size = 104;
+                            sector_skip = 0 + 96;
+                            break;
+                        }
+                        case SectorTagType.CDSectorEDC:
+                        {
+                            sector_offset = 2064;
+                            sector_size = 4;
+                            sector_skip = 284 + 96;
+                            break;
+                        }
+                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
-                default:
-                    throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+
+                    break;
+                }
+                case DAOMode.AudioSub:
+                {
+                    if(tag != SectorTagType.CDSectorSubchannel)
+                        throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+
+                    sector_offset = 2352;
+                    sector_size = 96;
+                    sector_skip = 0;
+                    break;
+                }
+                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
             byte[] buffer = new byte[sector_size * length];
 
             imageStream = _imageFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
-            br.BaseStream.Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-            if(sector_offset == 0 && sector_skip == 0)
-                buffer = br.ReadBytes((int)(sector_size * length));
+            br.BaseStream
+              .Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)),
+                    SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0) buffer = br.ReadBytes((int)(sector_size * length));
             else
             {
                 for(int i = 0; i < length; i++)
@@ -2175,7 +2244,8 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                  string.Format("Sector address {0} not found", sectorAddress));
         }
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
@@ -2186,7 +2256,10 @@ namespace DiscImageChef.ImagePlugins
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > _track.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks", length, _track.Sectors));
+                throw new ArgumentOutOfRangeException(nameof(length),
+                                                      string
+                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
+                                                                  length, _track.Sectors));
 
             uint sector_offset;
             uint sector_size;
@@ -2196,39 +2269,38 @@ namespace DiscImageChef.ImagePlugins
             {
                 case DAOMode.Data:
                 case DAOMode.DataM2F1:
-                    {
-                        sector_offset = 0;
-                        sector_size = 2048;
-                        sector_skip = 0;
-                        break;
-                    }
+                {
+                    sector_offset = 0;
+                    sector_size = 2048;
+                    sector_skip = 0;
+                    break;
+                }
                 case DAOMode.DataM2F2:
-                    {
-                        sector_offset = 0;
-                        sector_size = 2336;
-                        sector_skip = 0;
-                        break;
-                    }
+                {
+                    sector_offset = 0;
+                    sector_size = 2336;
+                    sector_skip = 0;
+                    break;
+                }
                 case DAOMode.DataRaw:
                 case DAOMode.DataM2Raw:
                 case DAOMode.Audio:
-                    {
-                        sector_offset = 0;
-                        sector_size = 2352;
-                        sector_skip = 0;
-                        break;
-                    }
+                {
+                    sector_offset = 0;
+                    sector_size = 2352;
+                    sector_skip = 0;
+                    break;
+                }
                 case DAOMode.DataRawSub:
                 case DAOMode.DataM2RawSub:
                 case DAOMode.AudioSub:
-                    {
-                        sector_offset = 0;
-                        sector_size = 2448;
-                        sector_skip = 0;
-                        break;
-                    }
-                default:
-                    throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                {
+                    sector_offset = 0;
+                    sector_size = 2448;
+                    sector_skip = 0;
+                    break;
+                }
+                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
             byte[] buffer = new byte[sector_size * length];
@@ -2236,10 +2308,11 @@ namespace DiscImageChef.ImagePlugins
             imageStream = _imageFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
 
-            br.BaseStream.Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            br.BaseStream
+              .Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)),
+                    SeekOrigin.Begin);
 
-            if(sector_offset == 0 && sector_skip == 0)
-                buffer = br.ReadBytes((int)(sector_size * length));
+            if(sector_offset == 0 && sector_skip == 0) buffer = br.ReadBytes((int)(sector_size * length));
             else
             {
                 for(int i = 0; i < length; i++)
@@ -2314,9 +2387,7 @@ namespace DiscImageChef.ImagePlugins
         public override List<Track> GetSessionTracks(ushort session)
         {
             List<Track> sessionTracks = new List<Track>();
-            foreach(Track _track in imageTracks)
-                if(_track.TrackSession == session)
-                    sessionTracks.Add(_track);
+            foreach(Track _track in imageTracks) if(_track.TrackSession == session) sessionTracks.Add(_track);
 
             return sessionTracks;
         }
@@ -2338,7 +2409,8 @@ namespace DiscImageChef.ImagePlugins
             return Checksums.CDChecksums.CheckCDSector(buffer);
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
             int bps = (int)(buffer.Length / length);
@@ -2362,14 +2434,14 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            if(UnknownLBAs.Count > 0)
-                return null;
-            if(FailingLBAs.Count > 0)
-                return false;
+            if(UnknownLBAs.Count > 0) return null;
+            if(FailingLBAs.Count > 0) return false;
+
             return true;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
             int bps = (int)(buffer.Length / length);
@@ -2393,10 +2465,9 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            if(UnknownLBAs.Count > 0)
-                return null;
-            if(FailingLBAs.Count > 0)
-                return false;
+            if(UnknownLBAs.Count > 0) return null;
+            if(FailingLBAs.Count > 0) return false;
+
             return true;
         }
 
@@ -2404,64 +2475,43 @@ namespace DiscImageChef.ImagePlugins
         {
             return null;
         }
-
         #endregion
 
         #region Private methods
-
         static MediaType NeroMediaTypeToMediaType(NeroMediaTypes type)
         {
             switch(type)
             {
-                case NeroMediaTypes.NERO_MTYP_DDCD:
-                    return MediaType.DDCD;
+                case NeroMediaTypes.NERO_MTYP_DDCD: return MediaType.DDCD;
                 case NeroMediaTypes.NERO_MTYP_DVD_M:
-                case NeroMediaTypes.NERO_MTYP_DVD_M_R:
-                    return MediaType.DVDR;
+                case NeroMediaTypes.NERO_MTYP_DVD_M_R: return MediaType.DVDR;
                 case NeroMediaTypes.NERO_MTYP_DVD_P:
-                case NeroMediaTypes.NERO_MTYP_DVD_P_R:
-                    return MediaType.DVDPR;
-                case NeroMediaTypes.NERO_MTYP_DVD_RAM:
-                    return MediaType.DVDRAM;
+                case NeroMediaTypes.NERO_MTYP_DVD_P_R: return MediaType.DVDPR;
+                case NeroMediaTypes.NERO_MTYP_DVD_RAM: return MediaType.DVDRAM;
                 case NeroMediaTypes.NERO_MTYP_ML:
                 case NeroMediaTypes.NERO_MTYP_MRW:
-                case NeroMediaTypes.NERO_MTYP_CDRW:
-                    return MediaType.CDRW;
-                case NeroMediaTypes.NERO_MTYP_CDR:
-                    return MediaType.CDR;
+                case NeroMediaTypes.NERO_MTYP_CDRW: return MediaType.CDRW;
+                case NeroMediaTypes.NERO_MTYP_CDR: return MediaType.CDR;
                 case NeroMediaTypes.NERO_MTYP_DVD_ROM:
                 case NeroMediaTypes.NERO_MTYP_DVD_ANY:
                 case NeroMediaTypes.NERO_MTYP_DVD_ANY_R9:
-                case NeroMediaTypes.NERO_MTYP_DVD_ANY_OLD:
-                    return MediaType.DVDROM;
-                case NeroMediaTypes.NERO_MTYP_CDROM:
-                    return MediaType.CDROM;
-                case NeroMediaTypes.NERO_MTYP_DVD_M_RW:
-                    return MediaType.DVDRW;
-                case NeroMediaTypes.NERO_MTYP_DVD_P_RW:
-                    return MediaType.DVDPRW;
-                case NeroMediaTypes.NERO_MTYP_DVD_P_R9:
-                    return MediaType.DVDPRDL;
-                case NeroMediaTypes.NERO_MTYP_DVD_M_R9:
-                    return MediaType.DVDRDL;
+                case NeroMediaTypes.NERO_MTYP_DVD_ANY_OLD: return MediaType.DVDROM;
+                case NeroMediaTypes.NERO_MTYP_CDROM: return MediaType.CDROM;
+                case NeroMediaTypes.NERO_MTYP_DVD_M_RW: return MediaType.DVDRW;
+                case NeroMediaTypes.NERO_MTYP_DVD_P_RW: return MediaType.DVDPRW;
+                case NeroMediaTypes.NERO_MTYP_DVD_P_R9: return MediaType.DVDPRDL;
+                case NeroMediaTypes.NERO_MTYP_DVD_M_R9: return MediaType.DVDRDL;
                 case NeroMediaTypes.NERO_MTYP_BD:
                 case NeroMediaTypes.NERO_MTYP_BD_ANY:
-                case NeroMediaTypes.NERO_MTYP_BD_ROM:
-                    return MediaType.BDROM;
-                case NeroMediaTypes.NERO_MTYP_BD_R:
-                    return MediaType.BDR;
-                case NeroMediaTypes.NERO_MTYP_BD_RE:
-                    return MediaType.BDRE;
+                case NeroMediaTypes.NERO_MTYP_BD_ROM: return MediaType.BDROM;
+                case NeroMediaTypes.NERO_MTYP_BD_R: return MediaType.BDR;
+                case NeroMediaTypes.NERO_MTYP_BD_RE: return MediaType.BDRE;
                 case NeroMediaTypes.NERO_MTYP_HD_DVD:
                 case NeroMediaTypes.NERO_MTYP_HD_DVD_ANY:
-                case NeroMediaTypes.NERO_MTYP_HD_DVD_ROM:
-                    return MediaType.HDDVDROM;
-                case NeroMediaTypes.NERO_MTYP_HD_DVD_R:
-                    return MediaType.HDDVDR;
-                case NeroMediaTypes.NERO_MTYP_HD_DVD_RW:
-                    return MediaType.HDDVDRW;
-                default:
-                    return MediaType.CD;
+                case NeroMediaTypes.NERO_MTYP_HD_DVD_ROM: return MediaType.HDDVDROM;
+                case NeroMediaTypes.NERO_MTYP_HD_DVD_R: return MediaType.HDDVDR;
+                case NeroMediaTypes.NERO_MTYP_HD_DVD_RW: return MediaType.HDDVDRW;
+                default: return MediaType.CD;
             }
         }
 
@@ -2471,20 +2521,14 @@ namespace DiscImageChef.ImagePlugins
             {
                 case DAOMode.Data:
                 case DAOMode.DataRaw:
-                case DAOMode.DataRawSub:
-                    return TrackType.CDMode1;
-                case DAOMode.DataM2F1:
-                    return TrackType.CDMode2Form1;
-                case DAOMode.DataM2F2:
-                    return TrackType.CDMode2Form2;
+                case DAOMode.DataRawSub: return TrackType.CDMode1;
+                case DAOMode.DataM2F1: return TrackType.CDMode2Form1;
+                case DAOMode.DataM2F2: return TrackType.CDMode2Form2;
                 case DAOMode.DataM2RawSub:
-                case DAOMode.DataM2Raw:
-                    return TrackType.CDMode2Formless;
+                case DAOMode.DataM2Raw: return TrackType.CDMode2Formless;
                 case DAOMode.Audio:
-                case DAOMode.AudioSub:
-                    return TrackType.Audio;
-                default:
-                    return TrackType.Data;
+                case DAOMode.AudioSub: return TrackType.Audio;
+                default: return TrackType.Data;
             }
         }
 
@@ -2493,27 +2537,20 @@ namespace DiscImageChef.ImagePlugins
             switch(mode)
             {
                 case DAOMode.Data:
-                case DAOMode.DataM2F1:
-                    return 2048;
-                case DAOMode.DataM2F2:
-                    return 2336;
+                case DAOMode.DataM2F1: return 2048;
+                case DAOMode.DataM2F2: return 2336;
                 case DAOMode.DataRaw:
                 case DAOMode.DataM2Raw:
-                case DAOMode.Audio:
-                    return 2352;
+                case DAOMode.Audio: return 2352;
                 case DAOMode.DataM2RawSub:
                 case DAOMode.DataRawSub:
-                case DAOMode.AudioSub:
-                    return 2448;
-                default:
-                    return 2352;
+                case DAOMode.AudioSub: return 2448;
+                default: return 2352;
             }
         }
-
         #endregion
 
         #region Unsupported features
-
         public override int GetMediaSequence()
         {
             return ImageInfo.mediaSequence;
@@ -2573,7 +2610,6 @@ namespace DiscImageChef.ImagePlugins
         {
             return ImageInfo.mediaSerialNumber;
         }
-
         #endregion
     }
 }

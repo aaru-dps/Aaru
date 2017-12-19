@@ -106,10 +106,8 @@ namespace DiscImageChef.Filesystems.LisaFS
                         mddf.unknown1 = sector[0x2D];
                         Array.Copy(sector, 0x2E, pString, 0, 33);
                         // Prevent garbage
-                        if(pString[0] <= 32)
-                            mddf.password = StringHandlers.PascalToString(pString, CurrentEncoding);
-                        else
-                            mddf.password = "";
+                        if(pString[0] <= 32) mddf.password = StringHandlers.PascalToString(pString, CurrentEncoding);
+                        else mddf.password = "";
                         mddf.unknown2 = sector[0x4F];
                         mddf.machine_id = BigEndianBitConverter.ToUInt32(sector, 0x50);
                         mddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
@@ -181,13 +179,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                         mddf.vol_left_mounted = sector[0x138];
 
                         // Check that the MDDF is correct
-                        if(mddf.mddf_block != i - volumePrefix ||
-                            mddf.vol_size > device.GetSectors() ||
-                            mddf.vol_size - 1 != mddf.volsize_minus_one ||
-                            mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one - volumePrefix ||
-                            mddf.datasize > mddf.blocksize ||
-                            mddf.blocksize < device.GetSectorSize() ||
-                            mddf.datasize != device.GetSectorSize())
+                        if(mddf.mddf_block != i - volumePrefix || mddf.vol_size > device.GetSectors() ||
+                           mddf.vol_size - 1 != mddf.volsize_minus_one ||
+                           mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one - volumePrefix ||
+                           mddf.datasize > mddf.blocksize || mddf.blocksize < device.GetSectorSize() ||
+                           mddf.datasize != device.GetSectorSize())
                         {
                             DicConsole.DebugWriteLine("LisaFS plugin", "Incorrect MDDF found");
                             return Errno.InvalidArgument;
@@ -222,10 +218,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         mounted = true;
                         this.debug = debug;
 
-                        if(debug)
-                        {
-                            printedExtents = new List<short>();
-                        }
+                        if(debug) { printedExtents = new List<short>(); }
 
                         // Read the S-Records file
                         error = ReadSRecords();
@@ -243,7 +236,8 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                         if(error != Errno.NoError)
                         {
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Cannot read Catalog File, error {0}", error.ToString());
+                            DicConsole.DebugWriteLine("LisaFS plugin", "Cannot read Catalog File, error {0}",
+                                                      error.ToString());
                             mounted = false;
                             return error;
                         }
@@ -357,8 +351,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <param name="stat">Information about the mounted volume.</param>
         public override Errno StatFs(ref FileSystemInfo stat)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             stat = new FileSystemInfo();
             stat.Blocks = mddf.vol_size;
@@ -386,4 +379,3 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
     }
 }
-

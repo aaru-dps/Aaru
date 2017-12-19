@@ -41,8 +41,7 @@ namespace DiscImageChef.Filesystems.CPM
     {
         public override Errno ReadDir(string path, ref List<string> contents)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
@@ -64,8 +63,7 @@ namespace DiscImageChef.Filesystems.CPM
         {
             try
             {
-                if(directory == null)
-                    return false;
+                if(directory == null) return false;
 
                 int fileCount = 0;
 
@@ -81,31 +79,26 @@ namespace DiscImageChef.Filesystems.CPM
                     {
                         for(int f = 0; f < 8; f++)
                         {
-                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
-                                return false;
+                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
                         }
 
                         for(int e = 0; e < 3; e++)
                         {
-                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
-                                return false;
+                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
                         }
 
-                        if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename))
-                            fileCount++;
+                        if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename)) fileCount++;
                     }
                     else if(entry.statusUser == 0x20)
                     {
                         for(int f = 0; f < 8; f++)
                         {
-                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
-                                return false;
+                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
                         }
 
                         for(int e = 0; e < 3; e++)
                         {
-                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
-                                return false;
+                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
                         }
 
                         label = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
@@ -116,21 +109,14 @@ namespace DiscImageChef.Filesystems.CPM
                     }
                     else if(entry.statusUser == 0x21)
                     {
-                        if(directory[off + 1] == 0x00)
-                        {
-                            thirdPartyTimestamps = true;
-                        }
+                        if(directory[off + 1] == 0x00) { thirdPartyTimestamps = true; }
                         else standardTimestamps |= (directory[off + 21] == 0x00 && directory[off + 31] == 0x00);
                     }
                 }
 
                 return fileCount > 0;
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
         }
     }
 }
-

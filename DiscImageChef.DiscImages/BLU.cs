@@ -39,7 +39,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class BLU : ImagePlugin
+    public class BLU : ImagePlugin
     {
         #region Internal Structures
         struct BLUHeader
@@ -52,18 +52,16 @@ namespace DiscImageChef.ImagePlugins
         #endregion Internal Structures
 
         #region Internal Constants
-        const string profileName   = "PROFILE      ";
+        const string profileName = "PROFILE      ";
         const string profile10Name = "PROFILE 10   ";
-        const string widgetName    = "WIDGET-10    ";
-        const string priamName     = "PRIAMDTATOWER";
+        const string widgetName = "WIDGET-10    ";
+        const string priamName = "PRIAMDTATOWER";
         #endregion Internal Constants
 
         #region Internal variables
-
         BLUHeader ImageHeader;
         Filter bluImageFilter;
         int bptag;
-
         #endregion Internal variables
 
         #region Public methods
@@ -99,8 +97,7 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 0x200)
-                return false;
+            if(stream.Length < 0x200) return false;
 
             byte[] header = new byte[0x17];
             stream.Read(header, 0, 0x17);
@@ -114,14 +111,9 @@ namespace DiscImageChef.ImagePlugins
             tmpHdr.deviceBlocks = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
             tmpHdr.bytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-            for(int i = 0; i < 0xD; i++)
-            {
-                if(tmpHdr.deviceName[i] < 0x20)
-                    return false;
-            }
+            for(int i = 0; i < 0xD; i++) { if(tmpHdr.deviceName[i] < 0x20) return false; }
 
-            if((tmpHdr.bytesPerBlock & 0xFE00) != 0x200)
-                return false;
+            if((tmpHdr.bytesPerBlock & 0xFE00) != 0x200) return false;
 
             return true;
         }
@@ -142,24 +134,19 @@ namespace DiscImageChef.ImagePlugins
             ImageHeader.deviceBlocks = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
             ImageHeader.bytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceName = \"{0}\"", StringHandlers.CToString(ImageHeader.deviceName));
+            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceName = \"{0}\"",
+                                      StringHandlers.CToString(ImageHeader.deviceName));
             DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceType = {0}", ImageHeader.deviceType);
             DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}", ImageHeader.deviceBlocks);
             DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", ImageHeader.bytesPerBlock);
 
-            for(int i = 0; i < 0xD; i++)
-            {
-                if(ImageHeader.deviceName[i] < 0x20)
-                    return false;
-            }
+            for(int i = 0; i < 0xD; i++) { if(ImageHeader.deviceName[i] < 0x20) return false; }
 
-            if((ImageHeader.bytesPerBlock & 0xFE00) != 0x200)
-                return false;
+            if((ImageHeader.bytesPerBlock & 0xFE00) != 0x200) return false;
 
             stream.Seek(0, SeekOrigin.Begin);
             header = new byte[ImageHeader.bytesPerBlock];
             stream.Read(header, 0, ImageHeader.bytesPerBlock);
-
 
             ImageInfo.sectorSize = 0x200;
 
@@ -172,47 +159,39 @@ namespace DiscImageChef.ImagePlugins
             switch(StringHandlers.CToString(ImageHeader.deviceName))
             {
                 case profileName:
-                    if(ImageInfo.sectors == 0x2600)
-                        ImageInfo.mediaType = MediaType.AppleProfile;
-                    else
-                        ImageInfo.mediaType = MediaType.GENERIC_HDD;
-					ImageInfo.cylinders = 152;
-					ImageInfo.heads = 4;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
+                    if(ImageInfo.sectors == 0x2600) ImageInfo.mediaType = MediaType.AppleProfile;
+                    else ImageInfo.mediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.cylinders = 152;
+                    ImageInfo.heads = 4;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
                 case profile10Name:
-                    if(ImageInfo.sectors == 0x4C00)
-                        ImageInfo.mediaType = MediaType.AppleProfile;
-                    else
-                        ImageInfo.mediaType = MediaType.GENERIC_HDD;
-					ImageInfo.cylinders = 304;
-					ImageInfo.heads = 4;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
+                    if(ImageInfo.sectors == 0x4C00) ImageInfo.mediaType = MediaType.AppleProfile;
+                    else ImageInfo.mediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.cylinders = 304;
+                    ImageInfo.heads = 4;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
                 case widgetName:
-                    if(ImageInfo.sectors == 0x4C00)
-                        ImageInfo.mediaType = MediaType.AppleWidget;
-                    else
-                        ImageInfo.mediaType = MediaType.GENERIC_HDD;
-					ImageInfo.cylinders = 304;
-					ImageInfo.heads = 4;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
+                    if(ImageInfo.sectors == 0x4C00) ImageInfo.mediaType = MediaType.AppleWidget;
+                    else ImageInfo.mediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.cylinders = 304;
+                    ImageInfo.heads = 4;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
                 case priamName:
-                    if(ImageInfo.sectors == 0x022C7C)
-                        ImageInfo.mediaType = MediaType.PriamDataTower;
-                    else
-                        ImageInfo.mediaType = MediaType.GENERIC_HDD;
-					// This values are invented...
-					ImageInfo.cylinders = 419;
-					ImageInfo.heads = 4;
-					ImageInfo.sectorsPerTrack = 85;
-					break;
+                    if(ImageInfo.sectors == 0x022C7C) ImageInfo.mediaType = MediaType.PriamDataTower;
+                    else ImageInfo.mediaType = MediaType.GENERIC_HDD;
+                    // This values are invented...
+                    ImageInfo.cylinders = 419;
+                    ImageInfo.heads = 4;
+                    ImageInfo.sectorsPerTrack = 85;
+                    break;
                 default:
                     ImageInfo.mediaType = MediaType.GENERIC_HDD;
-					ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-					ImageInfo.heads = 16;
-					ImageInfo.sectorsPerTrack = 63;
+                    ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+                    ImageInfo.heads = 16;
+                    ImageInfo.sectorsPerTrack = 63;
                     break;
             }
 
@@ -226,8 +205,7 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 
-            if(bptag > 0)
-                ImageInfo.readableSectorTags.Add(SectorTagType.AppleSectorTag);
+            if(bptag > 0) ImageInfo.readableSectorTags.Add(SectorTagType.AppleSectorTag);
 
             DicConsole.VerboseWriteLine("BLU image contains a disk of type {0}", ImageInfo.mediaType);
 
@@ -245,24 +223,24 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
 
             return null;
         }
@@ -336,8 +314,7 @@ namespace DiscImageChef.ImagePlugins
             if(tag != SectorTagType.AppleSectorTag)
                 throw new FeatureUnsupportedImageException(string.Format("Tag {0} not supported by image format", tag));
 
-            if(bptag == 0)
-                throw new FeatureNotPresentImageException("Disk image does not have tags");
+            if(bptag == 0) throw new FeatureNotPresentImageException("Disk image does not have tags");
 
             if(sectorAddress > ImageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -428,7 +405,6 @@ namespace DiscImageChef.ImagePlugins
         #endregion Public methods
 
         #region Unsupported features
-
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -548,8 +524,6 @@ namespace DiscImageChef.ImagePlugins
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-
         #endregion Unsupported features
-
     }
 }

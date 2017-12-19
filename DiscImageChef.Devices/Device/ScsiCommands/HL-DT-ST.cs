@@ -46,7 +46,8 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="lba">Start block address.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool HlDtStReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength, uint timeout, out double duration)
+        public bool HlDtStReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
+                                     uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
@@ -65,7 +66,8 @@ namespace DiscImageChef.Devices
             cdb[10] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[11] = (byte)(buffer.Length & 0xFF);
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "HL-DT-ST READ DVD (RAW) took {0} ms.", duration);
@@ -74,4 +76,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

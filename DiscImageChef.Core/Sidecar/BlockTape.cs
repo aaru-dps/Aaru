@@ -43,36 +43,26 @@ namespace DiscImageChef.Core
             CICMMetadataType sidecar = new CICMMetadataType
             {
                 BlockMedia = new[]
-	            {
-	                new BlockMediaType
-	                {
-	                    Image = new ImageType
-	                    {
-	                        format = "Directory",
-	                        offsetSpecified = false,
-	                        Value = folderName
-	                    },
-	                    Sequence = new SequenceType
-	                    {
-	                        MediaTitle = folderName,
-	                        MediaSequence = 1,
-	                        TotalMedia = 1
-	                    },
-	                    PhysicalBlockSize = (int)blockSize,
-	                    LogicalBlockSize = (int)blockSize,
-	                    TapeInformation = new []
-	                    {
-	                        new TapePartitionType
-	                        {
-	                            Image = new ImageType
-	                            {
-	                                format = "Directory",
-	                                offsetSpecified = false,
-	                                Value = folderName
-	                            }
-	                        }
-	                    }
-	                }
+                {
+                    new BlockMediaType
+                    {
+                        Image = new ImageType {format = "Directory", offsetSpecified = false, Value = folderName},
+                        Sequence = new SequenceType {MediaTitle = folderName, MediaSequence = 1, TotalMedia = 1},
+                        PhysicalBlockSize = (int)blockSize,
+                        LogicalBlockSize = (int)blockSize,
+                        TapeInformation = new[]
+                        {
+                            new TapePartitionType
+                            {
+                                Image = new ImageType
+                                {
+                                    format = "Directory",
+                                    offsetSpecified = false,
+                                    Value = folderName
+                                }
+                            }
+                        }
+                    }
                 }
             };
 
@@ -112,14 +102,16 @@ namespace DiscImageChef.Core
                     {
                         sector = new byte[sectorsToRead * blockSize];
                         fs.Read(sector, 0, sector.Length);
-                        UpdateProgress2(string.Format("Hashing block {0} of {1} on file {2} of {3}", doneSectors, sectors, i + 1, files.Count), doneSectors, sectors);
+                        UpdateProgress2(string.Format("Hashing block {0} of {1} on file {2} of {3}", doneSectors, sectors, i + 1, files.Count),
+                                        doneSectors, sectors);
                         doneSectors += sectorsToRead;
                     }
                     else
                     {
                         sector = new byte[(uint)(sectors - doneSectors) * blockSize];
                         fs.Read(sector, 0, sector.Length);
-                        UpdateProgress2(string.Format("Hashing block {0} of {1} on file {2} of {3}", doneSectors, sectors, i + 1, files.Count), doneSectors, sectors);
+                        UpdateProgress2(string.Format("Hashing block {0} of {1} on file {2} of {3}", doneSectors, sectors, i + 1, files.Count),
+                                        doneSectors, sectors);
                         doneSectors += (sectors - doneSectors);
                     }
 
@@ -150,32 +142,19 @@ namespace DiscImageChef.Core
             {
                 sidecar.BlockMedia[0].DiskType = "Quarter-inch cartridge";
 
-                if(totalSize <= 20 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-11";
-                else if(totalSize <= 40 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-40";
-                else if(totalSize <= 60 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-24";
-                else if(totalSize <= 80 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-80";
-                else if(totalSize <= 120 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-120";
-                else if(totalSize <= 150 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-150";
-                else if(totalSize <= 320 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-320";
-                else if(totalSize <= 340 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-3010";
-                else if(totalSize <= 525 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-525";
-                else if(totalSize <= 670 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-3020";
-                else if(totalSize <= 1200 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-3080";
-                else if(totalSize <= 1350 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-1350";
-                else if(totalSize <= (long)4000 * 1048576)
-                    sidecar.BlockMedia[0].DiskSubType = "QIC-3095";
+                if(totalSize <= 20 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-11";
+                else if(totalSize <= 40 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-40";
+                else if(totalSize <= 60 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-24";
+                else if(totalSize <= 80 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-80";
+                else if(totalSize <= 120 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-120";
+                else if(totalSize <= 150 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-150";
+                else if(totalSize <= 320 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-320";
+                else if(totalSize <= 340 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3010";
+                else if(totalSize <= 525 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-525";
+                else if(totalSize <= 670 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3020";
+                else if(totalSize <= 1200 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3080";
+                else if(totalSize <= 1350 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-1350";
+                else if(totalSize <= (long)4000 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3095";
                 else
                 {
                     sidecar.BlockMedia[0].DiskType = "Unknown tape";

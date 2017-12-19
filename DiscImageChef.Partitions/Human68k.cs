@@ -59,8 +59,7 @@ namespace DiscImageChef.PartPlugins
 
             DicConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.GetSectorSize());
 
-            if(sectorOffset + 4 >= imagePlugin.GetSectors())
-                return false;
+            if(sectorOffset + 4 >= imagePlugin.GetSectors()) return false;
 
             switch(imagePlugin.GetSectorSize())
             {
@@ -76,16 +75,14 @@ namespace DiscImageChef.PartPlugins
                     sector = imagePlugin.ReadSector(2 + sectorOffset);
                     sectsPerUnit = 1;
                     break;
-                default:
-                    return false;
+                default: return false;
             }
 
             X68kTable table = BigEndianMarshal.ByteArrayToStructureBigEndian<X68kTable>(sector);
 
             DicConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
 
-            if(table.magic != X68kMagic)
-                return false;
+            if(table.magic != X68kMagic) return false;
 
             for(int i = 0; i < table.entries.Length; i++)
                 table.entries[i] = BigEndianMarshal.SwapStructureMembersEndian(table.entries[i]);
@@ -98,10 +95,12 @@ namespace DiscImageChef.PartPlugins
 
             foreach(X68kEntry entry in table.entries)
             {
-                DicConsole.DebugWriteLine("Human68k plugin", "entry.name = {0}", StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
+                DicConsole.DebugWriteLine("Human68k plugin", "entry.name = {0}",
+                                          StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
                 DicConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
                 DicConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}", entry.length);
-                DicConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit, imagePlugin.GetSectorSize());
+                DicConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
+                                          imagePlugin.GetSectorSize());
 
                 Partition part = new Partition
                 {
@@ -130,15 +129,13 @@ namespace DiscImageChef.PartPlugins
             public uint size;
             public uint size2;
             public uint unknown;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public X68kEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public X68kEntry[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct X68kEntry
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] name;
             public uint stateStart;
             public uint length;
         }

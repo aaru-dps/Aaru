@@ -43,7 +43,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout, out double duration)
+        public bool ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout,
+                                                   out double duration)
         {
             buffer = new byte[3];
             byte[] cdb = new byte[6];
@@ -56,7 +57,8 @@ namespace DiscImageChef.Devices
             cdb[3] = (byte)(lba & 0xFF);
             cdb[4] = 3;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. REQUEST BLOCK ADDRESS took {0} ms.", duration);
@@ -84,7 +86,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Logical Block Address, starting from 1.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, bool immediate, uint lba, uint timeout, out double duration)
+        public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, bool immediate, uint lba, uint timeout,
+                                         out double duration)
         {
             byte[] buffer = new byte[0];
             byte[] cdb = new byte[6];
@@ -95,10 +98,10 @@ namespace DiscImageChef.Devices
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
             cdb[2] = (byte)((lba & 0xFF00) >> 8);
             cdb[3] = (byte)(lba & 0xFF);
-            if(immediate)
-                cdb[1] += 0x01;
+            if(immediate) cdb[1] += 0x01;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+                                        out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. SEEK BLOCK took {0} ms.", duration);
@@ -107,4 +110,3 @@ namespace DiscImageChef.Devices
         }
     }
 }
-

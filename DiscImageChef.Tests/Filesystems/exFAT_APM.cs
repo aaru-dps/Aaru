@@ -40,33 +40,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class exFAT_APM
     {
-        readonly string[] testfiles = {
-            "macosx_10.11.vdi.lz",
-        };
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            262144,
-        };
+        readonly ulong[] sectors = {262144,};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            32710,
-        };
+        readonly long[] clusters = {32710,};
 
-        readonly int[] clustersize = {
-            4096,
-        };
+        readonly int[] clustersize = {4096,};
 
-        readonly string[] volumename = {
-            null,
-        };
+        readonly string[] volumename = {null,};
 
-        readonly string[] volumeserial = {
-            "595AC82C",
-        };
+        readonly string[] volumeserial = {"595AC82C",};
 
         [Test]
         public void Test()
@@ -91,6 +77,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

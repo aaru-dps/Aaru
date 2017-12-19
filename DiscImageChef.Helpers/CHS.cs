@@ -36,7 +36,9 @@ namespace DiscImageChef.Helpers
     {
         public static uint ToLBA(uint cyl, uint head, uint sector, uint maxHead, uint maxSector)
         {
-            return maxHead == 0 || maxSector == 0 ? (cyl * 16 + head) * 63 + sector - 1 : (cyl * maxHead + head) * maxSector + sector - 1;
+            return maxHead == 0 || maxSector == 0
+                       ? (cyl * 16 + head) * 63 + sector - 1
+                       : (cyl * maxHead + head) * maxSector + sector - 1;
         }
     }
 }

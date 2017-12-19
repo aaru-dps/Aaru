@@ -37,10 +37,10 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	/// <summary>
-	/// Abstract class to implement disk image reading plugins.
-	/// </summary>
-	public abstract class ImagePlugin
+    /// <summary>
+    /// Abstract class to implement disk image reading plugins.
+    /// </summary>
+    public abstract class ImagePlugin
     {
         /// <summary>Plugin name.</summary>
         public string Name;
@@ -49,9 +49,7 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>Image information</summary>
         public ImageInfo ImageInfo;
 
-        protected ImagePlugin()
-        {
-        }
+        protected ImagePlugin() { }
 
         // Basic image handling functions
 
@@ -366,7 +364,6 @@ namespace DiscImageChef.ImagePlugins
         /// <returns>The sessions.</returns>
         public abstract List<Session> GetSessions();
 
-
         /// <summary>
         /// Verifies a sector.
         /// </summary>
@@ -390,7 +387,8 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="length">How many sectors to read.</param>
         /// <param name="FailingLBAs">List of incorrect sectors</param>
         /// <param name="UnknownLBAs">List of uncheckable sectors</param>
-        public abstract bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs);
+        public abstract bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs);
 
         /// <summary>
         /// Verifies several sectors, relative to track.
@@ -401,14 +399,14 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="track">Track.</param>
         /// <param name="FailingLBAs">List of incorrect sectors</param>
         /// <param name="UnknownLBAs">List of uncheckable sectors</param>
-        public abstract bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs);
+        public abstract bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs);
 
         /// <summary>
         /// Verifies media image internal checksum.
         /// </summary>
         /// <returns>True if correct, false if incorrect, null if there is no internal checksum available</returns>
         public abstract bool? VerifyMediaImage();
-
 
         // CD flags bitmask
 
@@ -682,20 +680,20 @@ namespace DiscImageChef.ImagePlugins
         SD_CSD,
         /// <summary>SecureDigital SCR</summary>
         SD_SCR,
-		/// <summary>SecureDigital OCR</summary>
-		SD_OCR,
-		/// <summary>MultiMediaCard CID</summary>
-		MMC_CID,
-		/// <summary>MultiMediaCard CSD</summary>
-		MMC_CSD,
-		/// <summary>MultiMediaCard OCR</summary>
-		MMC_OCR,
-		/// <summary>MultiMediaCard Extended CSD</summary>
-		MMC_ExtendedCSD,
-		/// <summary>Xbox Security Sector</summary>
-		Xbox_SecuritySector,
-		/// <summary>On floppy disks, data in last cylinder usually in a different format that contains duplication or manufacturing information</summary>
-		Floppy_LeadOut,
+        /// <summary>SecureDigital OCR</summary>
+        SD_OCR,
+        /// <summary>MultiMediaCard CID</summary>
+        MMC_CID,
+        /// <summary>MultiMediaCard CSD</summary>
+        MMC_CSD,
+        /// <summary>MultiMediaCard OCR</summary>
+        MMC_OCR,
+        /// <summary>MultiMediaCard Extended CSD</summary>
+        MMC_ExtendedCSD,
+        /// <summary>Xbox Security Sector</summary>
+        Xbox_SecuritySector,
+        /// <summary>On floppy disks, data in last cylinder usually in a different format that contains duplication or manufacturing information</summary>
+        Floppy_LeadOut,
     };
 
     /// <summary>
@@ -732,17 +730,14 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
-        public FeatureSupportedButNotImplementedImageException(string message, Exception inner) : base(message, inner)
-        {
-        }
+        public FeatureSupportedButNotImplementedImageException(string message, Exception inner) :
+            base(message, inner) { }
 
         /// <summary>
         /// Feature is supported by image but not implemented yet.
         /// </summary>
         /// <param name="message">Message.</param>
-        public FeatureSupportedButNotImplementedImageException(string message) : base(message)
-        {
-        }
+        public FeatureSupportedButNotImplementedImageException(string message) : base(message) { }
 
         /// <summary>
         /// Feature is supported by image but not implemented yet.
@@ -752,8 +747,7 @@ namespace DiscImageChef.ImagePlugins
         protected FeatureSupportedButNotImplementedImageException(System.Runtime.Serialization.SerializationInfo info,
                                                                   System.Runtime.Serialization.StreamingContext context)
         {
-            if(info == null)
-                throw new ArgumentNullException(nameof(info));
+            if(info == null) throw new ArgumentNullException(nameof(info));
         }
     }
 
@@ -768,17 +762,13 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
-        public FeatureUnsupportedImageException(string message, Exception inner) : base(message, inner)
-        {
-        }
+        public FeatureUnsupportedImageException(string message, Exception inner) : base(message, inner) { }
 
         /// <summary>
         /// Feature is not supported by image.
         /// </summary>
         /// <param name="message">Message.</param>
-        public FeatureUnsupportedImageException(string message) : base(message)
-        {
-        }
+        public FeatureUnsupportedImageException(string message) : base(message) { }
 
         /// <summary>
         /// Feature is not supported by image.
@@ -788,8 +778,7 @@ namespace DiscImageChef.ImagePlugins
         protected FeatureUnsupportedImageException(System.Runtime.Serialization.SerializationInfo info,
                                                    System.Runtime.Serialization.StreamingContext context)
         {
-            if(info == null)
-                throw new ArgumentNullException(nameof(info));
+            if(info == null) throw new ArgumentNullException(nameof(info));
         }
     }
 
@@ -804,17 +793,13 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
-        public FeatureNotPresentImageException(string message, Exception inner) : base(message, inner)
-        {
-        }
+        public FeatureNotPresentImageException(string message, Exception inner) : base(message, inner) { }
 
         /// <summary>
         /// Feature is supported by image but not present on it.
         /// </summary>
         /// <param name="message">Message.</param>
-        public FeatureNotPresentImageException(string message) : base(message)
-        {
-        }
+        public FeatureNotPresentImageException(string message) : base(message) { }
 
         /// <summary>
         /// Feature is supported by image but not present on it.
@@ -824,8 +809,7 @@ namespace DiscImageChef.ImagePlugins
         protected FeatureNotPresentImageException(System.Runtime.Serialization.SerializationInfo info,
                                                   System.Runtime.Serialization.StreamingContext context)
         {
-            if(info == null)
-                throw new ArgumentNullException(nameof(info));
+            if(info == null) throw new ArgumentNullException(nameof(info));
         }
     }
 
@@ -840,17 +824,13 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
-        public FeaturedNotSupportedByDiscImageException(string message, Exception inner) : base(message, inner)
-        {
-        }
+        public FeaturedNotSupportedByDiscImageException(string message, Exception inner) : base(message, inner) { }
 
         /// <summary>
         /// Feature is supported by image but not by the disc it represents.
         /// </summary>
         /// <param name="message">Message.</param>
-        public FeaturedNotSupportedByDiscImageException(string message) : base(message)
-        {
-        }
+        public FeaturedNotSupportedByDiscImageException(string message) : base(message) { }
 
         /// <summary>
         /// Feature is supported by image but not by the disc it represents.
@@ -860,8 +840,7 @@ namespace DiscImageChef.ImagePlugins
         protected FeaturedNotSupportedByDiscImageException(System.Runtime.Serialization.SerializationInfo info,
                                                            System.Runtime.Serialization.StreamingContext context)
         {
-            if(info == null)
-                throw new ArgumentNullException(nameof(info));
+            if(info == null) throw new ArgumentNullException(nameof(info));
         }
     }
 
@@ -876,17 +855,13 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
-        public ImageNotSupportedException(string message, Exception inner) : base(message, inner)
-        {
-        }
+        public ImageNotSupportedException(string message, Exception inner) : base(message, inner) { }
 
         /// <summary>
         /// Corrupt, incorrect or unhandled feature found on image
         /// </summary>
         /// <param name="message">Message.</param>
-        public ImageNotSupportedException(string message) : base(message)
-        {
-        }
+        public ImageNotSupportedException(string message) : base(message) { }
 
         /// <summary>
         /// Corrupt, incorrect or unhandled feature found on image
@@ -896,8 +871,7 @@ namespace DiscImageChef.ImagePlugins
         protected ImageNotSupportedException(System.Runtime.Serialization.SerializationInfo info,
                                              System.Runtime.Serialization.StreamingContext context)
         {
-            if(info == null)
-                throw new ArgumentNullException(nameof(info));
+            if(info == null) throw new ArgumentNullException(nameof(info));
         }
     }
 }

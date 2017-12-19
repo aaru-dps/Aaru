@@ -44,1740 +44,1665 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	// Created following notes from Dave Dunfield
-	// http://www.classiccmp.org/dunfield/img54306/td0notes.txt
-	public class TeleDisk : ImagePlugin
-	{
-		#region Internal Structures
-
-		struct TD0Header
-		{
-			/// <summary>"TD" or "td" depending on compression</summary>
-			public ushort signature;
-			/// <summary>Sequence, but TeleDisk seems to complaing if != 0</summary>
-			public byte sequence;
-			/// <summary>Random, same byte for all disks in the same set</summary>
-			public byte diskSet;
-			/// <summary>TeleDisk version, major in high nibble, minor in low nibble</summary>
-			public byte version;
-			/// <summary>Data rate</summary>
-			public byte dataRate;
-			/// <summary>BIOS drive type</summary>
-			public byte driveType;
-			/// <summary>Stepping used</summary>
-			public byte stepping;
-			/// <summary>If set means image only allocates sectors marked in-use by FAT12</summary>
-			public byte dosAllocation;
-			/// <summary>Sides of disk</summary>
-			public byte sides;
-			/// <summary>CRC of all the previous</summary>
-			public ushort crc;
-		}
-
-		struct TDCommentBlockHeader
-		{
-			/// <summary>CRC of comment block after crc field</summary>
-			public ushort crc;
-			/// <summary>Length of comment</summary>
-			public ushort length;
-			public byte year;
-			public byte month;
-			public byte day;
-			public byte hour;
-			public byte minute;
-			public byte second;
-		}
-
-		struct TDTrackHeader
-		{
-			/// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
-			public byte sectors;
-			/// <summary>Cylinder the head was on</summary>
-			public byte cylinder;
-			/// <summary>Head/side used</summary>
-			public byte head;
-			/// <summary>Lower byte of CRC of previous fields</summary>
-			public byte crc;
-		}
-
-		struct TDSectorHeader
-		{
-			/// <summary>Cylinder as stored on sector address mark</summary>
-			public byte cylinder;
-			/// <summary>Head as stored on sector address mark</summary>
-			public byte head;
-			/// <summary>Sector number as stored on sector address mark</summary>
-			public byte sectorNumber;
-			/// <summary>Sector size</summary>
-			public byte sectorSize;
-			/// <summary>Sector flags</summary>
-			public byte flags;
-			/// <summary>Lower byte of TeleDisk CRC of sector header, data header and data block</summary>
-			public byte crc;
-		}
-
-		struct TDDataHeader
-		{
-			/// <summary>Size of all data (encoded) + next field (1)</summary>
-			public ushort dataSize;
-			/// <summary>Encoding used for data block</summary>
-			public byte dataEncoding;
-		}
-
-		#endregion
-
-		#region Internal Constants
-
-		// "TD" as little endian uint.
-		const ushort tdMagic = 0x4454;
-		// "td" as little endian uint. Means whole file is compressed (aka Advanced Compression)
-		const ushort tdAdvCompMagic = 0x6474;
-
-		// DataRates
-		const byte DataRate250kbps = 0x00;
-		const byte DataRate300kbps = 0x01;
-		const byte DataRate500kbps = 0x02;
-
-		// TeleDisk drive types
-		const byte DriveType525HD_DDDisk = 0x00;
-		const byte DriveType525HD = 0x01;
-		const byte DriveType525DD = 0x02;
-		const byte DriveType35DD = 0x03;
-		const byte DriveType35HD = 0x04;
-		const byte DriveType8inch = 0x05;
-		const byte DriveType35ED = 0x06;
-
-		// Stepping
-		const byte SteppingSingle = 0x00;
-		const byte SteppingDouble = 0x01;
-		const byte SteppingEvenOnly = 0x02;
-		// If this bit is set, there is a comment block
-		const byte CommentBlockPresent = 0x80;
-
-		// CRC polynomial
-		const ushort TeleDiskCRCPoly = 0xA097;
-
-		// Sector sizes table
-		const byte SectorSize128 = 0x00;
-		const byte SectorSize256 = 0x01;
-		const byte SectorSize512 = 0x02;
-		const byte SectorSize1K = 0x03;
-		const byte SectorSize2K = 0x04;
-		const byte SectorSize4K = 0x05;
-		const byte SectorSize8K = 0x06;
-
-		// Flags
-		// Address mark repeats inside same track
-		const byte FlagsSectorDuplicate = 0x01;
-		// Sector gave CRC error on reading
-		const byte FlagsSectorCRCError = 0x02;
-		// Address mark indicates deleted sector
-		const byte FlagsSectorDeleted = 0x04;
-		// Sector skipped as FAT said it's unused
-		const byte FlagsSectorSkipped = 0x10;
-		// There was an address mark, but no data following
-		const byte FlagsSectorDataless = 0x20;
-		// There was data without address mark
-		const byte FlagsSectorNoID = 0x40;
-
-		// Data block encodings
-		// Data is copied as is
-		const byte dataBlockCopy = 0x00;
-		// Data is encoded as a pair of len.value uint16s
-		const byte dataBlockPattern = 0x01;
-		// Data is encoded as RLE
-		const byte dataBlockRLE = 0x02;
-
-		#endregion
-
-		#region Internal variables
-
-		TD0Header header;
-		TDCommentBlockHeader commentHeader;
-		byte[] commentBlock;
-		// LBA, data
-		uint totalDiskSize;
-		bool ADiskCRCHasFailed;
-		List<ulong> SectorsWhereCRCHasFailed;
-		// Cylinder by head, sector data matrix
-		byte[][][][] sectorsData;
-		Stream inStream;
-		byte[] leadOut;
-
-		#endregion
-
-		public TeleDisk()
-		{
-			Name = "Sydex TeleDisk";
-			PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-			ImageInfo = new ImageInfo();
-			ImageInfo.readableSectorTags = new List<SectorTagType>();
-			ImageInfo.readableMediaTags = new List<MediaTagType>();
-			ImageInfo.imageHasPartitions = false;
-			ImageInfo.imageHasSessions = false;
-			ImageInfo.imageApplication = "Sydex TeleDisk";
-			ImageInfo.imageComments = null;
-			ImageInfo.imageCreator = null;
-			ImageInfo.mediaManufacturer = null;
-			ImageInfo.mediaModel = null;
-			ImageInfo.mediaSerialNumber = null;
-			ImageInfo.mediaBarcode = null;
-			ImageInfo.mediaPartNumber = null;
-			ImageInfo.mediaSequence = 0;
-			ImageInfo.lastMediaSequence = 0;
-			ImageInfo.driveManufacturer = null;
-			ImageInfo.driveModel = null;
-			ImageInfo.driveSerialNumber = null;
-			ImageInfo.driveFirmwareRevision = null;
-			ADiskCRCHasFailed = false;
-			SectorsWhereCRCHasFailed = new List<ulong>();
-		}
-
-		public override bool IdentifyImage(Filter imageFilter)
-		{
-			header = new TD0Header();
-			byte[] headerBytes = new byte[12];
-			Stream stream = imageFilter.GetDataForkStream();
-			stream.Seek(0, SeekOrigin.Begin);
-
-			stream.Read(headerBytes, 0, 12);
-
-			header.signature = BitConverter.ToUInt16(headerBytes, 0);
-
-			if(header.signature != tdMagic && header.signature != tdAdvCompMagic)
-				return false;
-
-			header.sequence = headerBytes[2];
-			header.diskSet = headerBytes[3];
-			header.version = headerBytes[4];
-			header.dataRate = headerBytes[5];
-			header.driveType = headerBytes[6];
-			header.stepping = headerBytes[7];
-			header.dosAllocation = headerBytes[8];
-			header.sides = headerBytes[9];
-			header.crc = BitConverter.ToUInt16(headerBytes, 10);
-
-			byte[] headerBytesForCRC = new byte[10];
-			Array.Copy(headerBytes, headerBytesForCRC, 10);
-			ushort calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
-
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}", header.signature);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}", header.sequence);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}", header.diskSet);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}", header.version);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}", header.dataRate);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}", header.driveType);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}", header.stepping);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", header.dosAllocation);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", header.sides);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", header.crc);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
-
-			// We need more checks as the magic is too simply.
-			// This may deny legal images
-
-			// That would be much of a coincidence
-			if(header.crc == calculatedHeaderCRC)
-				return true;
-
-			if(header.sequence != 0x00)
-				return false;
-
-			if(header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps && header.dataRate != DataRate500kbps)
-				return false;
-
-			if(header.driveType != DriveType35DD && header.driveType != DriveType35ED && header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
-				header.driveType != DriveType525HD && header.driveType != DriveType525HD_DDDisk && header.driveType != DriveType8inch)
-				return false;
-
-			return true;
-		}
-
-		public override bool OpenImage(Filter imageFilter)
-		{
-			header = new TD0Header();
-			byte[] headerBytes = new byte[12];
-			inStream = imageFilter.GetDataForkStream();
-			MemoryStream stream = new MemoryStream();
-			inStream.Seek(0, SeekOrigin.Begin);
-
-			inStream.Read(headerBytes, 0, 12);
-			stream.Write(headerBytes, 0, 12);
-
-			header.signature = BitConverter.ToUInt16(headerBytes, 0);
-
-			if(header.signature != tdMagic && header.signature != tdAdvCompMagic)
-				return false;
-
-			header.sequence = headerBytes[2];
-			header.diskSet = headerBytes[3];
-			header.version = headerBytes[4];
-			header.dataRate = headerBytes[5];
-			header.driveType = headerBytes[6];
-			header.stepping = headerBytes[7];
-			header.dosAllocation = headerBytes[8];
-			header.sides = headerBytes[9];
-			header.crc = BitConverter.ToUInt16(headerBytes, 10);
-
-			ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-			ImageInfo.imageVersion = string.Format("{0}.{1}", (header.version & 0xF0) >> 4, header.version & 0x0F);
-			ImageInfo.imageApplication = ImageInfo.imageVersion;
-
-			byte[] headerBytesForCRC = new byte[10];
-			Array.Copy(headerBytes, headerBytesForCRC, 10);
-			ushort calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
-
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}", header.signature);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}", header.sequence);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}", header.diskSet);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}", header.version);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}", header.dataRate);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}", header.driveType);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}", header.stepping);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", header.dosAllocation);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", header.sides);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", header.crc);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
-
-			// We need more checks as the magic is too simply.
-			// This may deny legal images
-
-			// That would be much of a coincidence
-			if(header.crc != calculatedHeaderCRC)
-			{
-				ADiskCRCHasFailed = true;
-				DicConsole.DebugWriteLine("TeleDisk plugin", "Calculated CRC does not coincide with stored one.");
-			}
-
-			if(header.sequence != 0x00)
-				return false;
-
-			if(header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps && header.dataRate != DataRate500kbps)
-				return false;
-
-			if(header.driveType != DriveType35DD && header.driveType != DriveType35ED && header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
-				header.driveType != DriveType525HD && header.driveType != DriveType525HD_DDDisk && header.driveType != DriveType8inch)
-				return false;
-
-			if(header.signature == tdAdvCompMagic)
-			{
-				int rd;
-				byte[] obuf = new byte[BUFSZ];
-				inStream.Seek(12, SeekOrigin.Begin);
-				stream.Seek(12, SeekOrigin.Begin);
-				init_Decode();
-				do
-				{
-					if((rd = Decode(out obuf, BUFSZ)) > 0)
-						stream.Write(obuf, 0, rd);
-				} while(rd == BUFSZ);
-			}
-			else
-			{
-				// Not using Stream.CopyTo() because it's failing with LZIP
-				byte[] copybuf = new byte[inStream.Length];
-				inStream.Seek(0, SeekOrigin.Begin);
-				inStream.Read(copybuf, 0, copybuf.Length);
-				stream.Seek(0, SeekOrigin.Begin);
-				stream.Write(copybuf, 0, copybuf.Length);
-				copybuf = null;
-			}
-
-			stream.Seek(12, SeekOrigin.Begin);
-
-			ImageInfo.imageCreationTime = DateTime.MinValue;
-
-			if((header.stepping & CommentBlockPresent) == CommentBlockPresent)
-			{
-				commentHeader = new TDCommentBlockHeader();
-
-				byte[] commentHeaderBytes = new byte[10];
-				byte[] commentBlockForCRC;
-
-				stream.Read(commentHeaderBytes, 0, 10);
-				commentHeader.crc = BitConverter.ToUInt16(commentHeaderBytes, 0);
-				commentHeader.length = BitConverter.ToUInt16(commentHeaderBytes, 2);
-				commentHeader.year = commentHeaderBytes[4];
-				commentHeader.month = commentHeaderBytes[5];
-				commentHeader.day = commentHeaderBytes[6];
-				commentHeader.hour = commentHeaderBytes[7];
-				commentHeader.minute = commentHeaderBytes[8];
-				commentHeader.second = commentHeaderBytes[9];
-
-				commentBlock = new byte[commentHeader.length];
-				stream.Read(commentBlock, 0, commentHeader.length);
-
-				commentBlockForCRC = new byte[commentHeader.length + 8];
-				Array.Copy(commentHeaderBytes, 2, commentBlockForCRC, 0, 8);
-				Array.Copy(commentBlock, 0, commentBlockForCRC, 8, commentHeader.length);
-
-				ushort cmtcrc = TeleDiskCRC(0, commentBlockForCRC);
-
-				DicConsole.DebugWriteLine("TeleDisk plugin", "Comment header");
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.crc = 0x{0:X4}", commentHeader.crc);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tCalculated CRC = 0x{0:X4}", cmtcrc);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.length = {0} bytes", commentHeader.length);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.year = {0}", commentHeader.year);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.month = {0}", commentHeader.month);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.day = {0}", commentHeader.day);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.hour = {0}", commentHeader.hour);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.minute = {0}", commentHeader.minute);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.second = {0}", commentHeader.second);
-
-				ADiskCRCHasFailed |= cmtcrc != commentHeader.crc;
-
-				for(int i = 0; i < commentBlock.Length; i++)
-				{
-					// Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
-					if(commentBlock[i] == 0x00)
-						commentBlock[i] = 0x0A;
-				}
-
-				ImageInfo.imageComments = System.Text.Encoding.ASCII.GetString(commentBlock);
-
-				DicConsole.DebugWriteLine("TeleDisk plugin", "Comment");
-				DicConsole.DebugWriteLine("TeleDisk plugin", "{0}", ImageInfo.imageComments);
-
-				ImageInfo.imageCreationTime = new DateTime(commentHeader.year + 1900, commentHeader.month + 1, commentHeader.day,
-					commentHeader.hour, commentHeader.minute, commentHeader.second, DateTimeKind.Unspecified);
-			}
-
-			if(ImageInfo.imageCreationTime == DateTime.MinValue)
-				ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-			ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-
-			DicConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", ImageInfo.imageCreationTime);
-			DicConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", ImageInfo.imageLastModificationTime);
-
-			DicConsole.DebugWriteLine("TeleDisk plugin", "Parsing image");
-
-			totalDiskSize = 0;
-			ImageInfo.imageSize = 0;
-
-			int totalCylinders = -1;
-			int totalHeads = -1;
-			int maxSector = -1;
-			int totalSectors = 0;
-			long currentPos = stream.Position;
-			ImageInfo.sectorSize = uint.MaxValue;
-			ImageInfo.sectorsPerTrack = uint.MaxValue;
-
-			// Count cylinders
-			while(true)
-			{
-				TDTrackHeader TDTrack = new TDTrackHeader();
-
-				TDTrack.sectors = (byte)stream.ReadByte();
-				TDTrack.cylinder = (byte)stream.ReadByte();
-				TDTrack.head = (byte)stream.ReadByte();
-				TDTrack.crc = (byte)stream.ReadByte();
-
-				if(TDTrack.cylinder > totalCylinders)
-					totalCylinders = TDTrack.cylinder;
-				if(TDTrack.head > totalHeads)
-					totalHeads = TDTrack.head;
-
-				if(TDTrack.sectors == 0xFF) // End of disk image
-					break;
-
-				for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
-				{
-					TDSectorHeader TDSector = new TDSectorHeader();
-					TDDataHeader TDData = new TDDataHeader();
-					byte[] dataSizeBytes = new byte[2];
-					byte[] data;
-
-					TDSector.cylinder = (byte)stream.ReadByte();
-					TDSector.head = (byte)stream.ReadByte();
-					TDSector.sectorNumber = (byte)stream.ReadByte();
-					TDSector.sectorSize = (byte)stream.ReadByte();
-					TDSector.flags = (byte)stream.ReadByte();
-					TDSector.crc = (byte)stream.ReadByte();
-
-					if(TDSector.sectorNumber > maxSector)
-						maxSector = TDSector.sectorNumber;
-
-					if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
-					{
-						stream.Read(dataSizeBytes, 0, 2);
-						TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
-						TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
-						TDData.dataEncoding = (byte)stream.ReadByte();
-						data = new byte[TDData.dataSize];
-						stream.Read(data, 0, TDData.dataSize);
-					}
-
-					if(128 << TDSector.sectorSize < ImageInfo.sectorSize)
-						ImageInfo.sectorSize = (uint)(128 << TDSector.sectorSize);
-
-					totalSectors++;
-				}
-			}
-
-			totalCylinders++;
-			totalHeads++;
-
-			if(totalCylinders <= 0 || totalHeads <= 0)
-				throw new ImageNotSupportedException("No cylinders or heads found");
-
-			bool hasLeadOutOnHead0 = false;
-			bool hasLeadOutOnHead1 = false;
-			ImageInfo.cylinders = (ushort)totalCylinders;
-			ImageInfo.heads = (byte)totalHeads;
-
-			// Count sectors per track
-			stream.Seek(currentPos, SeekOrigin.Begin);
-			while(true)
-			{
-				TDTrackHeader TDTrack = new TDTrackHeader();
-
-				TDTrack.sectors = (byte)stream.ReadByte();
-				TDTrack.cylinder = (byte)stream.ReadByte();
-				TDTrack.head = (byte)stream.ReadByte();
-				TDTrack.crc = (byte)stream.ReadByte();
-
-				if(TDTrack.sectors == 0xFF) // End of disk image
-					break;
-
-				if(TDTrack.sectors < ImageInfo.sectorsPerTrack)
-				{
-					if(TDTrack.cylinder + 1 == totalCylinders)
-					{
-						hasLeadOutOnHead0 |= TDTrack.head == 0;
-						hasLeadOutOnHead1 |= TDTrack.head == 1;
-						if(ImageInfo.cylinders == totalCylinders)
-							ImageInfo.cylinders--;
-					}
-					else
-						ImageInfo.sectorsPerTrack = TDTrack.sectors;
-				}
-				for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
-				{
-					TDSectorHeader TDSector = new TDSectorHeader();
-					TDDataHeader TDData = new TDDataHeader();
-					byte[] dataSizeBytes = new byte[2];
-					byte[] data;
-
-					TDSector.cylinder = (byte)stream.ReadByte();
-					TDSector.head = (byte)stream.ReadByte();
-					TDSector.sectorNumber = (byte)stream.ReadByte();
-					TDSector.sectorSize = (byte)stream.ReadByte();
-					TDSector.flags = (byte)stream.ReadByte();
-					TDSector.crc = (byte)stream.ReadByte();
-
-					if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
-					{
-						stream.Read(dataSizeBytes, 0, 2);
-						TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
-						TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
-						TDData.dataEncoding = (byte)stream.ReadByte();
-						data = new byte[TDData.dataSize];
-						stream.Read(data, 0, TDData.dataSize);
-					}
-				}
-			}
-
-			sectorsData = new byte[totalCylinders][][][];
-			// Total sectors per track
-			uint[][] spts = new uint[totalCylinders][];
-
-			DicConsole.DebugWriteLine("TeleDisk plugin", "Found {0} cylinders and {1} heads with a maximum sector number of {2}", totalCylinders, totalHeads, maxSector);
-
-			// Create heads
-			for(int i = 0; i < totalCylinders; i++)
-			{
-				sectorsData[i] = new byte[totalHeads][][];
-				spts[i] = new uint[totalHeads];
-
-				for(int j = 0; j < totalHeads; j++)
-					sectorsData[i][j] = new byte[maxSector + 1][];
-			}
-
-			// Decode the image
-			stream.Seek(currentPos, SeekOrigin.Begin);
-			while(true)
-			{
-				TDTrackHeader TDTrack = new TDTrackHeader();
-				byte[] TDTrackForCRC = new byte[3];
-				byte TDTrackCalculatedCRC;
-
-				TDTrack.sectors = (byte)stream.ReadByte();
-				TDTrack.cylinder = (byte)stream.ReadByte();
-				TDTrack.head = (byte)stream.ReadByte();
-				TDTrack.crc = (byte)stream.ReadByte();
-
-				TDTrackForCRC[0] = TDTrack.sectors;
-				TDTrackForCRC[1] = TDTrack.cylinder;
-				TDTrackForCRC[2] = TDTrack.head;
-
-				TDTrackCalculatedCRC = (byte)(TeleDiskCRC(0, TDTrackForCRC) & 0xFF);
-
-				DicConsole.DebugWriteLine("TeleDisk plugin", "Track follows");
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack cylinder: {0}\t", TDTrack.cylinder);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack head: {0}\t", TDTrack.head);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tSectors in track: {0}\t", TDTrack.sectors);
-				DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack header CRC: 0x{0:X2} (calculated 0x{1:X2})\t", TDTrack.crc, TDTrackCalculatedCRC);
-
-				ADiskCRCHasFailed |= TDTrackCalculatedCRC != TDTrack.crc;
-
-				if(TDTrack.sectors == 0xFF) // End of disk image
-				{
-					DicConsole.DebugWriteLine("TeleDisk plugin", "End of disk image arrived");
-					DicConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes", totalSectors, totalDiskSize);
-
-					break;
-				}
-
-				for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
-				{
-					TDSectorHeader TDSector = new TDSectorHeader();
-					TDDataHeader TDData = new TDDataHeader();
-					byte[] dataSizeBytes = new byte[2];
-					byte[] data;
-					byte[] decodedData;
-
-					TDSector.cylinder = (byte)stream.ReadByte();
-					TDSector.head = (byte)stream.ReadByte();
-					TDSector.sectorNumber = (byte)stream.ReadByte();
-					TDSector.sectorSize = (byte)stream.ReadByte();
-					TDSector.flags = (byte)stream.ReadByte();
-					TDSector.crc = (byte)stream.ReadByte();
-
-					DicConsole.DebugWriteLine("TeleDisk plugin", "\tSector follows");
-					DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}", TDSector.cylinder);
-					DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark head: {0}", TDSector.head);
-					DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark sector number: {0}", TDSector.sectorNumber);
-					DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector size: {0}", TDSector.sectorSize);
-					DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector flags: 0x{0:X2}", TDSector.flags);
-					DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}", TDSector.crc);
-
-					uint LBA = (uint)((TDSector.cylinder * header.sides * ImageInfo.sectorsPerTrack) + (TDSector.head * ImageInfo.sectorsPerTrack) + (TDSector.sectorNumber - 1));
-					if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
-					{
-						stream.Read(dataSizeBytes, 0, 2);
-						TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
-						TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
-						ImageInfo.imageSize += TDData.dataSize;
-						TDData.dataEncoding = (byte)stream.ReadByte();
-						data = new byte[TDData.dataSize];
-						stream.Read(data, 0, TDData.dataSize);
-						DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}", TDData.dataSize);
-						DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}", TDData.dataEncoding);
-
-						decodedData = DecodeTeleDiskData(TDSector.sectorSize, TDData.dataEncoding, data);
-
-						byte TDSectorCalculatedCRC = (byte)(TeleDiskCRC(0, decodedData) & 0xFF);
-
-						if(TDSectorCalculatedCRC != TDSector.crc)
-						{
-							DicConsole.DebugWriteLine("TeleDisk plugin", "Sector {0}:{3}:{4} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}", TDTrack.cylinder, TDSectorCalculatedCRC, TDSector.crc, TDTrack.cylinder, TDSector.sectorNumber);
-							if((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
-								SectorsWhereCRCHasFailed.Add(LBA);
-						}
-					}
-					else
-						decodedData = new byte[128 << TDSector.sectorSize];
-
-					DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", LBA);
-
-					if((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
-					{
-						if(sectorsData[TDTrack.cylinder][TDTrack.head][TDSector.sectorNumber] != null)
-						{
-							if((TDSector.flags & FlagsSectorDuplicate) == FlagsSectorDuplicate)
-							{
-								DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
-									TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
-							}
-							else
-							{
-								DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
-									TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
-							}
-						}
-						else
-						{
-							sectorsData[TDTrack.cylinder][TDTrack.head][TDSector.sectorNumber] = decodedData;
-							totalDiskSize += (uint)decodedData.Length;
-						}
-					}
-				}
-			}
-
-			MemoryStream leadOutMs = new MemoryStream();
-			if(hasLeadOutOnHead0)
-			{
-				for(int i = 0; i < sectorsData[totalCylinders - 1][0].Length; i++)
-				{
-					if(sectorsData[totalCylinders - 1][0][i] != null)
-						leadOutMs.Write(sectorsData[totalCylinders - 1][0][i], 0, sectorsData[totalCylinders - 1][0][i].Length);
-				}
-			}
-			if(hasLeadOutOnHead1)
-			{
-				for(int i = 0; i < sectorsData[totalCylinders - 1][1].Length; i++)
-				{
-					if(sectorsData[totalCylinders - 1][1][i] != null)
-						leadOutMs.Write(sectorsData[totalCylinders - 1][1][i], 0, sectorsData[totalCylinders - 1][1][i].Length);
-				}
-			}
-			if(leadOutMs.Length != 0)
-			{
-				leadOut = leadOutMs.ToArray();
-				ImageInfo.readableMediaTags.Add(MediaTagType.Floppy_LeadOut);
-			}
-
-			ImageInfo.sectors = ImageInfo.cylinders * ImageInfo.heads * ImageInfo.sectorsPerTrack;
-			ImageInfo.mediaType = DecodeTeleDiskDiskType();
-
-			ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-
-			DicConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", ImageInfo.mediaType);
-			if(!string.IsNullOrEmpty(ImageInfo.imageComments))
-				DicConsole.VerboseWriteLine("TeleDisk comments: {0}", ImageInfo.imageComments);
-
-			inStream.Dispose();
-			stream.Dispose();
-
-			/*
-			FileStream debugFs = new FileStream("debug.img", FileMode.CreateNew, FileAccess.Write);
-			for(ulong i = 0; i < ImageInfo.sectors; i++)
-				debugFs.Write(ReadSector(i), 0, (int)ImageInfo.sectorSize);
-			debugFs.Dispose();
-			*/
-
-			return true;
-		}
-
-		public override bool ImageHasPartitions()
-		{
-			return ImageInfo.imageHasPartitions;
-		}
-
-		public override ulong GetImageSize()
-		{
-			return ImageInfo.imageSize;
-		}
-
-		public override ulong GetSectors()
-		{
-			return ImageInfo.sectors;
-		}
-
-		public override uint GetSectorSize()
-		{
-			return ImageInfo.sectorSize;
-		}
-
-		public override byte[] ReadSector(ulong sectorAddress)
-		{
-			(ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
-
-			if(cylinder >= sectorsData.Length)
-				throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
-
-			if(head >= sectorsData[cylinder].Length)
-				throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
-
-			if(sector > sectorsData[cylinder][head].Length)
-				throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
-
-			return sectorsData[cylinder][head][sector];
-		}
-
-		public override byte[] ReadSectors(ulong sectorAddress, uint length)
-		{
-			if(sectorAddress > ImageInfo.sectors - 1)
-				throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
-
-			if(sectorAddress + length > ImageInfo.sectors)
-				throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
-
-			MemoryStream buffer = new MemoryStream();
-			for(uint i = 0; i < length; i++)
-			{
-				byte[] sector = ReadSector(sectorAddress + i);
-				if(sector == null)
-					sector = new byte[ImageInfo.sectorSize];
-				buffer.Write(sector, 0, sector.Length);
-			}
-
-			return buffer.ToArray();
-		}
-
-		(ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
-		{
-			ushort cylinder = (ushort)(lba / (ImageInfo.heads * ImageInfo.sectorsPerTrack));
-			byte head = (byte)((lba / ImageInfo.sectorsPerTrack) % ImageInfo.heads);
-			byte sector = (byte)((lba % ImageInfo.sectorsPerTrack) + 1);
-
-			return (cylinder, head, sector);
-		}
-
-		public override byte[] ReadSectorLong(ulong sectorAddress)
-		{
-			return ReadSectors(sectorAddress, 1);
-		}
-
-		public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
-		{
-			return ReadSectors(sectorAddress, length);
-		}
-
-		public override string GetImageFormat()
-		{
-			return "Sydex TeleDisk";
-		}
-
-		public override string GetImageVersion()
-		{
-			return ImageInfo.imageVersion;
-		}
-
-		public override string GetImageApplication()
-		{
-			return ImageInfo.imageApplication;
-		}
-
-		public override string GetImageApplicationVersion()
-		{
-			return ImageInfo.imageApplicationVersion;
-		}
-
-		public override DateTime GetImageCreationTime()
-		{
-			return ImageInfo.imageCreationTime;
-		}
-
-		public override DateTime GetImageLastModificationTime()
-		{
-			return ImageInfo.imageLastModificationTime;
-		}
-
-		public override string GetImageName()
-		{
-			return ImageInfo.imageName;
-		}
-
-		public override MediaType GetMediaType()
-		{
-			return ImageInfo.mediaType;
-		}
-
-		public override bool? VerifySector(ulong sectorAddress)
-		{
-			return !SectorsWhereCRCHasFailed.Contains(sectorAddress);
-		}
-
-		public override bool? VerifySector(ulong sectorAddress, uint track)
-		{
-			return null;
-		}
-
-		public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
-		{
-			FailingLBAs = new List<ulong>();
-			UnknownLBAs = new List<ulong>();
-
-			for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-				if(SectorsWhereCRCHasFailed.Contains(sectorAddress))
-					FailingLBAs.Add(sectorAddress);
-
-			return FailingLBAs.Count <= 0;
-		}
-
-		public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
-		{
-			FailingLBAs = new List<ulong>();
-			UnknownLBAs = new List<ulong>();
-
-			for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-				UnknownLBAs.Add(i);
-
-			return null;
-		}
-
-		public override bool? VerifyMediaImage()
-		{
-			return ADiskCRCHasFailed;
-		}
-
-		#region Private methods
-
-		static ushort TeleDiskCRC(ushort crc, byte[] buffer)
-		{
-			int counter = 0;
-
-			while(counter < buffer.Length)
-			{
-				crc ^= (ushort)((buffer[counter] & 0xFF) << 8);
-
-				for(int i = 0; i < 8; i++)
-				{
-					if((crc & 0x8000) > 0)
-						crc = (ushort)((crc << 1) ^ TeleDiskCRCPoly);
-					else
-						crc = (ushort)(crc << 1);
-				}
-
-				counter++;
-			}
-
-			return crc;
-		}
-
-		static byte[] DecodeTeleDiskData(byte sectorSize, byte encodingType, byte[] encodedData)
-		{
-			byte[] decodedData;
-			switch(sectorSize)
-			{
-				case SectorSize128:
-					decodedData = new byte[128];
-					break;
-				case SectorSize256:
-					decodedData = new byte[256];
-					break;
-				case SectorSize512:
-					decodedData = new byte[512];
-					break;
-				case SectorSize1K:
-					decodedData = new byte[1024];
-					break;
-				case SectorSize2K:
-					decodedData = new byte[2048];
-					break;
-				case SectorSize4K:
-					decodedData = new byte[4096];
-					break;
-				case SectorSize8K:
-					decodedData = new byte[8192];
-					break;
-				default:
-					throw new ImageNotSupportedException(string.Format("Sector size {0} is incorrect.", sectorSize));
-			}
-
-			switch(encodingType)
-			{
-				case dataBlockCopy:
-					Array.Copy(encodedData, decodedData, decodedData.Length);
-					break;
-				case dataBlockPattern:
-					{
-						int ins = 0;
-						int outs = 0;
-						while(ins < encodedData.Length)
-						{
-							ushort repeatNumber;
-							byte[] repeatValue = new byte[2];
-
-							repeatNumber = BitConverter.ToUInt16(encodedData, ins);
-							Array.Copy(encodedData, ins + 2, repeatValue, 0, 2);
-							byte[] decodedPiece = new byte[repeatNumber * 2];
-							ArrayHelpers.ArrayFill(decodedPiece, repeatValue);
-							Array.Copy(decodedPiece, 0, decodedData, outs, decodedPiece.Length);
-							ins += 4;
-							outs += decodedPiece.Length;
-						}
-
-						DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Input data size: {0} bytes", encodedData.Length);
-						DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed input: {0} bytes", ins);
-						DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Output data size: {0} bytes", decodedData.Length);
-						DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed Output: {0} bytes", outs);
-						break;
-					}
-				case dataBlockRLE:
-					{
-						int ins = 0;
-						int outs = 0;
-						while(ins < encodedData.Length)
-						{
-							byte Run;
-							byte Length;
-							byte Encoding;
-							byte[] Piece;
-
-							Encoding = encodedData[ins];
-							if(Encoding == 0x00)
-							{
-								Length = encodedData[ins + 1];
-								Array.Copy(encodedData, ins + 2, decodedData, outs, Length);
-								ins += (2 + Length);
-								outs += Length;
-							}
-							else
-							{
-								Length = (byte)(Encoding * 2);
-								Run = encodedData[ins + 1];
-								byte[] Part = new byte[Length];
-								Array.Copy(encodedData, ins + 2, Part, 0, Length);
-								Piece = new byte[Length * Run];
-								ArrayHelpers.ArrayFill(Piece, Part);
-								Array.Copy(Piece, 0, decodedData, outs, Piece.Length);
-								ins += (2 + Length);
-								outs += Piece.Length;
-							}
-						}
-
-						DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Input data size: {0} bytes", encodedData.Length);
-						DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed input: {0} bytes", ins);
-						DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Output data size: {0} bytes", decodedData.Length);
-						DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed Output: {0} bytes", outs);
-
-						break;
-					}
-				default:
-					throw new ImageNotSupportedException(string.Format("Data encoding {0} is incorrect.", encodingType));
-			}
-
-			return decodedData;
-		}
-
-		MediaType DecodeTeleDiskDiskType()
-		{
-			switch(header.driveType)
-			{
-				case DriveType525DD:
-				case DriveType525HD_DDDisk:
-				case DriveType525HD:
-					{
-						switch(totalDiskSize)
-						{
-							case 163840:
-								{
-									// Acorn disk uses 256 bytes/sector
-									if(ImageInfo.sectorSize == 256)
-										return MediaType.ACORN_525_SS_DD_40;
-									// DOS disks use 512 bytes/sector
-									return MediaType.DOS_525_SS_DD_8;
-								}
-							case 184320:
-								{
-									// Atari disk uses 256 bytes/sector
-									if(ImageInfo.sectorSize == 256)
-										return MediaType.ATARI_525_DD;
-									// DOS disks use 512 bytes/sector
-									return MediaType.DOS_525_SS_DD_9;
-								}
-							case 327680:
-								{
-									// Acorn disk uses 256 bytes/sector
-									if(ImageInfo.sectorSize == 256)
-										return MediaType.ACORN_525_SS_DD_80;
-									// DOS disks use 512 bytes/sector
-									return MediaType.DOS_525_DS_DD_8;
-								}
-							case 368640:
-								return MediaType.DOS_525_DS_DD_9;
-							case 1228800:
-								return MediaType.DOS_525_HD;
-							case 102400:
-								return MediaType.ACORN_525_SS_SD_40;
-							case 204800:
-								return MediaType.ACORN_525_SS_SD_80;
-							case 655360:
-								return MediaType.ACORN_525_DS_DD;
-							case 92160:
-								return MediaType.ATARI_525_SD;
-							case 133120:
-								return MediaType.ATARI_525_ED;
-							case 1310720:
-								return MediaType.NEC_525_HD;
-							case 1261568:
-								return MediaType.SHARP_525;
-							case 839680:
-								return MediaType.FDFORMAT_525_DD;
-							case 1304320:
-								return MediaType.ECMA_99_8;
-							case 1223424:
-								return MediaType.ECMA_99_15;
-							case 1061632:
-								return MediaType.ECMA_99_26;
-							case 80384:
-								return MediaType.ECMA_66;
-							case 325632:
-								return MediaType.ECMA_70;
-							case 653312:
-								return MediaType.ECMA_78;
-							case 737280:
-								return MediaType.ECMA_78_2;
-							default:
-								{
-									DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 5,25\" disk with {0} bytes", totalDiskSize);
-									return MediaType.Unknown;
-								}
-						}
-					}
-				case DriveType35DD:
-				case DriveType35ED:
-				case DriveType35HD:
-					{
-						switch(totalDiskSize)
-						{
-							case 322560:
-								return MediaType.Apricot_35;
-							case 327680:
-								return MediaType.DOS_35_SS_DD_8;
-							case 368640:
-								return MediaType.DOS_35_SS_DD_9;
-							case 655360:
-								return MediaType.DOS_35_DS_DD_8;
-							case 737280:
-								return MediaType.DOS_35_DS_DD_9;
-							case 1474560:
-								return MediaType.DOS_35_HD;
-							case 2949120:
-								return MediaType.DOS_35_ED;
-							case 1720320:
-								return MediaType.DMF;
-							case 1763328:
-								return MediaType.DMF_82;
-							case 1884160: // Irreal size, seen as BIOS with TSR, 23 sectors/track
-							case 1860608: // Real data size, sum of all sectors
-								return MediaType.XDF_35;
-							case 819200:
-								return MediaType.CBM_35_DD;
-							case 901120:
-								return MediaType.CBM_AMIGA_35_DD;
-							case 1802240:
-								return MediaType.CBM_AMIGA_35_HD;
-							case 1310720:
-								return MediaType.NEC_35_HD_8;
-							case 1228800:
-								return MediaType.NEC_35_HD_15;
-							case 1261568:
-								return MediaType.SHARP_35;
-							default:
-								{
-									DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 3,5\" disk with {0} bytes", totalDiskSize);
-									return MediaType.Unknown;
-								}
-						}
-					}
-				case DriveType8inch:
-					{
-						switch(totalDiskSize)
-						{
-							case 81664:
-								return MediaType.IBM23FD;
-							case 242944:
-								return MediaType.IBM33FD_128;
-							case 287488:
-								return MediaType.IBM33FD_256;
-							case 306432:
-								return MediaType.IBM33FD_512;
-							case 499200:
-								return MediaType.IBM43FD_128;
-							case 574976:
-								return MediaType.IBM43FD_256;
-							case 995072:
-								return MediaType.IBM53FD_256;
-							case 1146624:
-								return MediaType.IBM53FD_512;
-							case 1222400:
-								return MediaType.IBM53FD_1024;
-							case 256256:
-								// Same size, with same disk geometry, for DEC RX01, NEC and ECMA, return ECMA
-								return MediaType.ECMA_54;
-							case 512512:
-								{
-									// DEC disk uses 256 bytes/sector
-									if(ImageInfo.sectorSize == 256)
-										return MediaType.RX02;
-									// ECMA disks use 128 bytes/sector
-									return MediaType.ECMA_59;
-								}
-							case 1261568:
-								return MediaType.NEC_8_DD;
-							case 1255168:
-								return MediaType.ECMA_69_8;
-							case 1177344:
-								return MediaType.ECMA_69_15;
-							case 1021696:
-								return MediaType.ECMA_69_26;
-							default:
-								{
-									DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 8\" disk with {0} bytes", totalDiskSize);
-									return MediaType.Unknown;
-								}
-						}
-					}
-				default:
-					{
-						DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes", totalDiskSize, header.driveType);
-						return MediaType.Unknown;
-					}
-
-			}
-		}
-
-		public override byte[] ReadDiskTag(MediaTagType tag)
-		{
-			if(tag == MediaTagType.Floppy_LeadOut)
-			{
-				if(leadOut != null)
-					return leadOut;
-				throw new FeatureNotPresentImageException("Lead-out not present in disk image");
-			}
-			else
-				throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		#endregion
-
-		#region Unsupported features
-
-		public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override string GetImageCreator()
-		{
-			return ImageInfo.imageCreator;
-		}
-
-		public override string GetImageComments()
-		{
-			return ImageInfo.imageComments;
-		}
-
-		public override string GetMediaManufacturer()
-		{
-			return ImageInfo.mediaManufacturer;
-		}
-
-		public override string GetMediaModel()
-		{
-			return ImageInfo.mediaModel;
-		}
-
-		public override string GetMediaSerialNumber()
-		{
-			return ImageInfo.mediaSerialNumber;
-		}
-
-		public override string GetMediaBarcode()
-		{
-			return ImageInfo.mediaBarcode;
-		}
-
-		public override string GetMediaPartNumber()
-		{
-			return ImageInfo.mediaPartNumber;
-		}
-
-		public override int GetMediaSequence()
-		{
-			return ImageInfo.mediaSequence;
-		}
-
-		public override int GetLastDiskSequence()
-		{
-			return ImageInfo.lastMediaSequence;
-		}
-
-		public override string GetDriveManufacturer()
-		{
-			return ImageInfo.driveManufacturer;
-		}
-
-		public override string GetDriveModel()
-		{
-			return ImageInfo.driveModel;
-		}
-
-		public override string GetDriveSerialNumber()
-		{
-			return ImageInfo.driveSerialNumber;
-		}
-
-		public override List<Partition> GetPartitions()
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override List<Track> GetTracks()
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override List<Track> GetSessionTracks(Session session)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override List<Track> GetSessionTracks(ushort session)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override List<Session> GetSessions()
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override byte[] ReadSector(ulong sectorAddress, uint track)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
-		{
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
-		}
-
-		#endregion Unsupported features
-
-		#region LZH decompression from MAME
-		/* This region is under following license:
-		 * Copyright © 2017 Miodrag Milanovic
-		 * Adapted to C#, Copyright © 2017 Natalia Portillo
-		 * 
-		 * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-		 * 
-		 * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-		 * 
-		 * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation
-		 * and/or other materials provided with the distribution.
-		 * 
-		 * 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software
-		 * without specific prior written permission.
-		 * 
-		 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-		 * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-		 * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-		 * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-		 * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-		 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-		 */
-
-		/*
-		 * Based on Japanese version 29-NOV-1988
-		 * LZSS coded by Haruhiko OKUMURA
-		 * Adaptive Huffman Coding coded by Haruyasu YOSHIZAKI
-		 * Edited and translated to English by Kenji RIKITAKE
-		 */
-
-		const int BUFSZ = 512;
-
-		/* LZSS Parameters */
-
-		const int N = 4096;    /* Size of string buffer */
-		const int F = 60;    /* Size of look-ahead buffer */
-		const int THRESHOLD = 2;
-		const int NIL = N;    /* End of tree's node  */
-
-		/* Huffman coding parameters */
-
-		const int N_CHAR = (256 - THRESHOLD + F);
-		/* character code (= 0..N_CHAR-1) */
-		const int T = (N_CHAR * 2 - 1);    /* Size of table */
-		const int R = (T - 1);            /* root position */
-		const int MAX_FREQ = 0x8000;
-		/* update when cumulative frequency */
-		/* reaches to this value */
-
-		struct tdlzhuf
-		{
-			public ushort r,
-							bufcnt, bufndx, bufpos,  // string buffer
-													 // the following to allow block reads from input in next_word()
-							ibufcnt, ibufndx; // input buffer counters
-			public byte[] inbuf;    // input buffer
-		};
-
-		tdlzhuf tdctl;
-		byte[] text_buf = new byte[N + F - 1];
-		ushort[] freq = new ushort[T + 1];    /* cumulative freq table */
-
-		/*
-		 * pointing parent nodes.
-		 * area [T..(T + N_CHAR - 1)] are pointers for leaves
-		 */
-		short[] prnt = new short[T + N_CHAR];
-
-		/* pointing children nodes (son[], son[] + 1)*/
-		short[] son = new short[T];
-
-		ushort getbuf;
-		byte getlen;
-
-		long data_read(out byte[] buf, long size)
-		{
-			if(size > inStream.Length - inStream.Position)
-				size = inStream.Length - inStream.Position;
-
-			buf = new byte[size];
-			inStream.Read(buf, 0, (int)size);
-			return size;
-		}
-
-		/*
-		 * Tables for encoding/decoding upper 6 bits of
-		 * sliding dictionary pointer
-		 */
-
-		/* decoder table */
-		readonly byte[] d_code = {
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-			0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-			0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-			0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-			0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-			0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-			0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-			0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-			0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-			0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-			0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-			0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09,
-			0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
-			0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B,
-			0x0C, 0x0C, 0x0C, 0x0C, 0x0D, 0x0D, 0x0D, 0x0D,
-			0x0E, 0x0E, 0x0E, 0x0E, 0x0F, 0x0F, 0x0F, 0x0F,
-			0x10, 0x10, 0x10, 0x10, 0x11, 0x11, 0x11, 0x11,
-			0x12, 0x12, 0x12, 0x12, 0x13, 0x13, 0x13, 0x13,
-			0x14, 0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15,
-			0x16, 0x16, 0x16, 0x16, 0x17, 0x17, 0x17, 0x17,
-			0x18, 0x18, 0x19, 0x19, 0x1A, 0x1A, 0x1B, 0x1B,
-			0x1C, 0x1C, 0x1D, 0x1D, 0x1E, 0x1E, 0x1F, 0x1F,
-			0x20, 0x20, 0x21, 0x21, 0x22, 0x22, 0x23, 0x23,
-			0x24, 0x24, 0x25, 0x25, 0x26, 0x26, 0x27, 0x27,
-			0x28, 0x28, 0x29, 0x29, 0x2A, 0x2A, 0x2B, 0x2B,
-			0x2C, 0x2C, 0x2D, 0x2D, 0x2E, 0x2E, 0x2F, 0x2F,
-			0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
-			0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
-		};
-
-		readonly byte[] d_len = {
-			0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-			0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-			0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-			0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-			0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-			0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-			0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-			0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-			0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-			0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-			0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-			0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-			0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-			0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-			0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-			0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-			0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-			0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-			0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-			0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-			0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-			0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-			0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-			0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-			0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-			0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-			0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-			0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-			0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-			0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-			0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-			0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-		};
-
-		int next_word()
-		{
-			if(tdctl.ibufndx >= tdctl.ibufcnt)
-			{
-				tdctl.ibufndx = 0;
-				tdctl.ibufcnt = (ushort)data_read(out tdctl.inbuf, BUFSZ);
-				if(tdctl.ibufcnt <= 0)
-					return (-1);
-			}
-			while(getlen <= 8)
-			{ // typically reads a word at a time
-				getbuf |= (ushort)(tdctl.inbuf[tdctl.ibufndx++] << (8 - getlen));
-				getlen += 8;
-			}
-			return (0);
-		}
-
-		int GetBit()    /* get one bit */
-		{
-			short i;
-			if(next_word() < 0)
-				return (-1);
-			i = (short)getbuf;
-			getbuf <<= 1;
-			getlen--;
-			if(i < 0)
-				return (1);
-			else
-				return (0);
-		}
-
-		int GetByte()    /* get a byte */
-		{
-			ushort i;
-			if(next_word() != 0)
-				return (-1);
-			i = getbuf;
-			getbuf <<= 8;
-			getlen -= 8;
-			i = (ushort)(i >> 8);
-			return ((int)i);
-		}
-
-		/* initialize freq tree */
-
-		void StartHuff()
-		{
-			int i, j;
-
-			for(i = 0; i < N_CHAR; i++)
-			{
-				freq[i] = 1;
-				son[i] = (short)(i + T);
-				prnt[i + T] = (short)i;
-			}
-			i = 0; j = N_CHAR;
-			while(j <= R)
-			{
-				freq[j] = (ushort)(freq[i] + freq[i + 1]);
-				son[j] = (short)i;
-				prnt[i] = prnt[i + 1] = (short)j;
-				i += 2; j++;
-			}
-			freq[T] = 0xffff;
-			prnt[R] = 0;
-		}
-
-		/* reconstruct freq tree */
-
-		void reconst()
-		{
-			short i, j, k;
-			ushort f, l;
-
-			/* halven cumulative freq for leaf nodes */
-			j = 0;
-			for(i = 0; i < T; i++)
-			{
-				if(son[i] >= T)
-				{
-					freq[j] = (ushort)((freq[i] + 1) / 2);
-					son[j] = son[i];
-					j++;
-				}
-			}
-			/* make a tree : first, connect children nodes */
-			for(i = 0, j = N_CHAR; j < T; i += 2, j++)
-			{
-				k = (short)(i + 1);
-				f = freq[j] = (ushort)(freq[i] + freq[k]);
-				for(k = (short)(j - 1); f < freq[k]; k--) { };
-				k++;
-				l = (ushort)((j - k) * 2);
-
-
-				Array.ConstrainedCopy(freq, k, freq, k + 1, l);
-				freq[k] = f;
-				Array.ConstrainedCopy(son, k, son, k + 1, l);
-				son[k] = i;
-			}
-			/* connect parent nodes */
-			for(i = 0; i < T; i++)
-			{
-				if((k = son[i]) >= T)
-				{
-					prnt[k] = i;
-				}
-				else
-				{
-					prnt[k] = prnt[k + 1] = i;
-				}
-			}
-		}
-
-		/* update freq tree */
-
-		void update(int c)
-		{
-			int i, j, k, l;
-
-			if(freq[R] == MAX_FREQ)
-			{
-				reconst();
-			}
-			c = prnt[c + T];
-			do
-			{
-				k = ++freq[c];
-
-				/* swap nodes to keep the tree freq-ordered */
-				if(k > freq[l = c + 1])
-				{
-					while(k > freq[++l]) { };
-					l--;
-					freq[c] = freq[l];
-					freq[l] = (ushort)k;
-
-					i = son[c];
-					prnt[i] = (short)l;
-					if(i < T) prnt[i + 1] = (short)l;
-
-					j = son[l];
-					son[l] = (short)i;
-
-					prnt[j] = (short)c;
-					if(j < T) prnt[j + 1] = (short)c;
-					son[c] = (short)j;
-
-					c = l;
-				}
-			} while((c = prnt[c]) != 0);    /* do it until reaching the root */
-		}
-
-		short DecodeChar()
-		{
-			int ret;
-			ushort c;
-
-			c = (ushort)son[R];
-
-			/*
-			 * start searching tree from the root to leaves.
-			 * choose node #(son[]) if input bit == 0
-			 * else choose #(son[]+1) (input bit == 1)
-			 */
-			while(c < T)
-			{
-				if((ret = GetBit()) < 0)
-					return (-1);
-				c += (ushort)ret;
-				c = (ushort)son[c];
-			}
-			c -= T;
-			update(c);
-			return (short)c;
-		}
-
-		short DecodePosition()
-		{
-			short bit;
-			ushort i, j, c;
-
-			/* decode upper 6 bits from given table */
-			if((bit = (short)GetByte()) < 0)
-				return (-1);
-			i = (ushort)bit;
-			c = (ushort)(d_code[i] << 6);
-			j = d_len[i];
-
-			/* input lower 6 bits directly */
-			j -= 2;
-			while(j-- > 0)
-			{
-				if((bit = (short)GetBit()) < 0)
-					return (-1);
-				i = (ushort)((i << 1) + bit);
-			}
-			return (short)(c | (i & 0x3f));
-		}
-
-		/* DeCompression
-
-		split out initialization code to init_Decode()
-
-		*/
-
-		void init_Decode()
-		{
-			int i;
-			getbuf = 0;
-			getlen = 0;
-			tdctl = new tdlzhuf();
-			tdctl.ibufcnt = tdctl.ibufndx = 0; // input buffer is empty
-			tdctl.bufcnt = 0;
-			StartHuff();
-			for(i = 0; i < N - F; i++)
-				text_buf[i] = 0x20;
-			tdctl.r = N - F;
-		}
-
-		int Decode(out byte[] buf, int len)  /* Decoding/Uncompressing */
-		{
-			short c, pos;
-			buf = new byte[len];
-			int count;  // was an unsigned long, seems unnecessary
-			for(count = 0; count < len;)
-			{
-				if(tdctl.bufcnt == 0)
-				{
-					if((c = DecodeChar()) < 0)
-						return (count); // fatal error
-					if(c < 256)
-					{
-						buf[count] = (byte)c;
-						text_buf[tdctl.r++] = (byte)c;
-						tdctl.r &= (N - 1);
-						count++;
-					}
-					else
-					{
-						if((pos = DecodePosition()) < 0)
-							return (count); // fatal error
-						tdctl.bufpos = (ushort)((tdctl.r - pos - 1) & (N - 1));
-						tdctl.bufcnt = (ushort)(c - 255 + THRESHOLD);
-						tdctl.bufndx = 0;
-					}
-				}
-				else
-				{ // still chars from last string
-					while(tdctl.bufndx < tdctl.bufcnt && count < len)
-					{
-						c = text_buf[(tdctl.bufpos + tdctl.bufndx) & (N - 1)];
-						buf[count] = (byte)c;
-						tdctl.bufndx++;
-						text_buf[tdctl.r++] = (byte)c;
-						tdctl.r &= (N - 1);
-						count++;
-					}
-					// reset bufcnt after copy string from text_buf[]
-					if(tdctl.bufndx >= tdctl.bufcnt)
-						tdctl.bufndx = tdctl.bufcnt = 0;
-				}
-			}
-			return (count); // count == len, success
-		}
-		#endregion LZH decompression from MAME
-	}
+    // Created following notes from Dave Dunfield
+    // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
+    public class TeleDisk : ImagePlugin
+    {
+        #region Internal Structures
+        struct TD0Header
+        {
+            /// <summary>"TD" or "td" depending on compression</summary>
+            public ushort signature;
+            /// <summary>Sequence, but TeleDisk seems to complaing if != 0</summary>
+            public byte sequence;
+            /// <summary>Random, same byte for all disks in the same set</summary>
+            public byte diskSet;
+            /// <summary>TeleDisk version, major in high nibble, minor in low nibble</summary>
+            public byte version;
+            /// <summary>Data rate</summary>
+            public byte dataRate;
+            /// <summary>BIOS drive type</summary>
+            public byte driveType;
+            /// <summary>Stepping used</summary>
+            public byte stepping;
+            /// <summary>If set means image only allocates sectors marked in-use by FAT12</summary>
+            public byte dosAllocation;
+            /// <summary>Sides of disk</summary>
+            public byte sides;
+            /// <summary>CRC of all the previous</summary>
+            public ushort crc;
+        }
+
+        struct TDCommentBlockHeader
+        {
+            /// <summary>CRC of comment block after crc field</summary>
+            public ushort crc;
+            /// <summary>Length of comment</summary>
+            public ushort length;
+            public byte year;
+            public byte month;
+            public byte day;
+            public byte hour;
+            public byte minute;
+            public byte second;
+        }
+
+        struct TDTrackHeader
+        {
+            /// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
+            public byte sectors;
+            /// <summary>Cylinder the head was on</summary>
+            public byte cylinder;
+            /// <summary>Head/side used</summary>
+            public byte head;
+            /// <summary>Lower byte of CRC of previous fields</summary>
+            public byte crc;
+        }
+
+        struct TDSectorHeader
+        {
+            /// <summary>Cylinder as stored on sector address mark</summary>
+            public byte cylinder;
+            /// <summary>Head as stored on sector address mark</summary>
+            public byte head;
+            /// <summary>Sector number as stored on sector address mark</summary>
+            public byte sectorNumber;
+            /// <summary>Sector size</summary>
+            public byte sectorSize;
+            /// <summary>Sector flags</summary>
+            public byte flags;
+            /// <summary>Lower byte of TeleDisk CRC of sector header, data header and data block</summary>
+            public byte crc;
+        }
+
+        struct TDDataHeader
+        {
+            /// <summary>Size of all data (encoded) + next field (1)</summary>
+            public ushort dataSize;
+            /// <summary>Encoding used for data block</summary>
+            public byte dataEncoding;
+        }
+        #endregion
+
+        #region Internal Constants
+        // "TD" as little endian uint.
+        const ushort tdMagic = 0x4454;
+        // "td" as little endian uint. Means whole file is compressed (aka Advanced Compression)
+        const ushort tdAdvCompMagic = 0x6474;
+
+        // DataRates
+        const byte DataRate250kbps = 0x00;
+        const byte DataRate300kbps = 0x01;
+        const byte DataRate500kbps = 0x02;
+
+        // TeleDisk drive types
+        const byte DriveType525HD_DDDisk = 0x00;
+        const byte DriveType525HD = 0x01;
+        const byte DriveType525DD = 0x02;
+        const byte DriveType35DD = 0x03;
+        const byte DriveType35HD = 0x04;
+        const byte DriveType8inch = 0x05;
+        const byte DriveType35ED = 0x06;
+
+        // Stepping
+        const byte SteppingSingle = 0x00;
+        const byte SteppingDouble = 0x01;
+        const byte SteppingEvenOnly = 0x02;
+        // If this bit is set, there is a comment block
+        const byte CommentBlockPresent = 0x80;
+
+        // CRC polynomial
+        const ushort TeleDiskCRCPoly = 0xA097;
+
+        // Sector sizes table
+        const byte SectorSize128 = 0x00;
+        const byte SectorSize256 = 0x01;
+        const byte SectorSize512 = 0x02;
+        const byte SectorSize1K = 0x03;
+        const byte SectorSize2K = 0x04;
+        const byte SectorSize4K = 0x05;
+        const byte SectorSize8K = 0x06;
+
+        // Flags
+        // Address mark repeats inside same track
+        const byte FlagsSectorDuplicate = 0x01;
+        // Sector gave CRC error on reading
+        const byte FlagsSectorCRCError = 0x02;
+        // Address mark indicates deleted sector
+        const byte FlagsSectorDeleted = 0x04;
+        // Sector skipped as FAT said it's unused
+        const byte FlagsSectorSkipped = 0x10;
+        // There was an address mark, but no data following
+        const byte FlagsSectorDataless = 0x20;
+        // There was data without address mark
+        const byte FlagsSectorNoID = 0x40;
+
+        // Data block encodings
+        // Data is copied as is
+        const byte dataBlockCopy = 0x00;
+        // Data is encoded as a pair of len.value uint16s
+        const byte dataBlockPattern = 0x01;
+        // Data is encoded as RLE
+        const byte dataBlockRLE = 0x02;
+        #endregion
+
+        #region Internal variables
+        TD0Header header;
+        TDCommentBlockHeader commentHeader;
+        byte[] commentBlock;
+        // LBA, data
+        uint totalDiskSize;
+        bool ADiskCRCHasFailed;
+        List<ulong> SectorsWhereCRCHasFailed;
+        // Cylinder by head, sector data matrix
+        byte[][][][] sectorsData;
+        Stream inStream;
+        byte[] leadOut;
+        #endregion
+
+        public TeleDisk()
+        {
+            Name = "Sydex TeleDisk";
+            PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+            ImageInfo = new ImageInfo();
+            ImageInfo.readableSectorTags = new List<SectorTagType>();
+            ImageInfo.readableMediaTags = new List<MediaTagType>();
+            ImageInfo.imageHasPartitions = false;
+            ImageInfo.imageHasSessions = false;
+            ImageInfo.imageApplication = "Sydex TeleDisk";
+            ImageInfo.imageComments = null;
+            ImageInfo.imageCreator = null;
+            ImageInfo.mediaManufacturer = null;
+            ImageInfo.mediaModel = null;
+            ImageInfo.mediaSerialNumber = null;
+            ImageInfo.mediaBarcode = null;
+            ImageInfo.mediaPartNumber = null;
+            ImageInfo.mediaSequence = 0;
+            ImageInfo.lastMediaSequence = 0;
+            ImageInfo.driveManufacturer = null;
+            ImageInfo.driveModel = null;
+            ImageInfo.driveSerialNumber = null;
+            ImageInfo.driveFirmwareRevision = null;
+            ADiskCRCHasFailed = false;
+            SectorsWhereCRCHasFailed = new List<ulong>();
+        }
+
+        public override bool IdentifyImage(Filter imageFilter)
+        {
+            header = new TD0Header();
+            byte[] headerBytes = new byte[12];
+            Stream stream = imageFilter.GetDataForkStream();
+            stream.Seek(0, SeekOrigin.Begin);
+
+            stream.Read(headerBytes, 0, 12);
+
+            header.signature = BitConverter.ToUInt16(headerBytes, 0);
+
+            if(header.signature != tdMagic && header.signature != tdAdvCompMagic) return false;
+
+            header.sequence = headerBytes[2];
+            header.diskSet = headerBytes[3];
+            header.version = headerBytes[4];
+            header.dataRate = headerBytes[5];
+            header.driveType = headerBytes[6];
+            header.stepping = headerBytes[7];
+            header.dosAllocation = headerBytes[8];
+            header.sides = headerBytes[9];
+            header.crc = BitConverter.ToUInt16(headerBytes, 10);
+
+            byte[] headerBytesForCRC = new byte[10];
+            Array.Copy(headerBytes, headerBytesForCRC, 10);
+            ushort calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
+
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}", header.signature);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}", header.sequence);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}", header.diskSet);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}", header.version);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}", header.dataRate);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}", header.driveType);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}", header.stepping);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", header.dosAllocation);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", header.sides);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", header.crc);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
+
+            // We need more checks as the magic is too simply.
+            // This may deny legal images
+
+            // That would be much of a coincidence
+            if(header.crc == calculatedHeaderCRC) return true;
+
+            if(header.sequence != 0x00) return false;
+
+            if(header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps &&
+               header.dataRate != DataRate500kbps) return false;
+
+            if(header.driveType != DriveType35DD && header.driveType != DriveType35ED &&
+               header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
+               header.driveType != DriveType525HD && header.driveType != DriveType525HD_DDDisk &&
+               header.driveType != DriveType8inch) return false;
+
+            return true;
+        }
+
+        public override bool OpenImage(Filter imageFilter)
+        {
+            header = new TD0Header();
+            byte[] headerBytes = new byte[12];
+            inStream = imageFilter.GetDataForkStream();
+            MemoryStream stream = new MemoryStream();
+            inStream.Seek(0, SeekOrigin.Begin);
+
+            inStream.Read(headerBytes, 0, 12);
+            stream.Write(headerBytes, 0, 12);
+
+            header.signature = BitConverter.ToUInt16(headerBytes, 0);
+
+            if(header.signature != tdMagic && header.signature != tdAdvCompMagic) return false;
+
+            header.sequence = headerBytes[2];
+            header.diskSet = headerBytes[3];
+            header.version = headerBytes[4];
+            header.dataRate = headerBytes[5];
+            header.driveType = headerBytes[6];
+            header.stepping = headerBytes[7];
+            header.dosAllocation = headerBytes[8];
+            header.sides = headerBytes[9];
+            header.crc = BitConverter.ToUInt16(headerBytes, 10);
+
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.imageVersion = string.Format("{0}.{1}", (header.version & 0xF0) >> 4, header.version & 0x0F);
+            ImageInfo.imageApplication = ImageInfo.imageVersion;
+
+            byte[] headerBytesForCRC = new byte[10];
+            Array.Copy(headerBytes, headerBytesForCRC, 10);
+            ushort calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
+
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}", header.signature);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}", header.sequence);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}", header.diskSet);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}", header.version);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}", header.dataRate);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}", header.driveType);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}", header.stepping);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", header.dosAllocation);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", header.sides);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", header.crc);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
+
+            // We need more checks as the magic is too simply.
+            // This may deny legal images
+
+            // That would be much of a coincidence
+            if(header.crc != calculatedHeaderCRC)
+            {
+                ADiskCRCHasFailed = true;
+                DicConsole.DebugWriteLine("TeleDisk plugin", "Calculated CRC does not coincide with stored one.");
+            }
+
+            if(header.sequence != 0x00) return false;
+
+            if(header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps &&
+               header.dataRate != DataRate500kbps) return false;
+
+            if(header.driveType != DriveType35DD && header.driveType != DriveType35ED &&
+               header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
+               header.driveType != DriveType525HD && header.driveType != DriveType525HD_DDDisk &&
+               header.driveType != DriveType8inch) return false;
+
+            if(header.signature == tdAdvCompMagic)
+            {
+                int rd;
+                byte[] obuf = new byte[BUFSZ];
+                inStream.Seek(12, SeekOrigin.Begin);
+                stream.Seek(12, SeekOrigin.Begin);
+                init_Decode();
+                do { if((rd = Decode(out obuf, BUFSZ)) > 0) stream.Write(obuf, 0, rd); }
+                while(rd == BUFSZ);
+            }
+            else
+            {
+                // Not using Stream.CopyTo() because it's failing with LZIP
+                byte[] copybuf = new byte[inStream.Length];
+                inStream.Seek(0, SeekOrigin.Begin);
+                inStream.Read(copybuf, 0, copybuf.Length);
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Write(copybuf, 0, copybuf.Length);
+                copybuf = null;
+            }
+
+            stream.Seek(12, SeekOrigin.Begin);
+
+            ImageInfo.imageCreationTime = DateTime.MinValue;
+
+            if((header.stepping & CommentBlockPresent) == CommentBlockPresent)
+            {
+                commentHeader = new TDCommentBlockHeader();
+
+                byte[] commentHeaderBytes = new byte[10];
+                byte[] commentBlockForCRC;
+
+                stream.Read(commentHeaderBytes, 0, 10);
+                commentHeader.crc = BitConverter.ToUInt16(commentHeaderBytes, 0);
+                commentHeader.length = BitConverter.ToUInt16(commentHeaderBytes, 2);
+                commentHeader.year = commentHeaderBytes[4];
+                commentHeader.month = commentHeaderBytes[5];
+                commentHeader.day = commentHeaderBytes[6];
+                commentHeader.hour = commentHeaderBytes[7];
+                commentHeader.minute = commentHeaderBytes[8];
+                commentHeader.second = commentHeaderBytes[9];
+
+                commentBlock = new byte[commentHeader.length];
+                stream.Read(commentBlock, 0, commentHeader.length);
+
+                commentBlockForCRC = new byte[commentHeader.length + 8];
+                Array.Copy(commentHeaderBytes, 2, commentBlockForCRC, 0, 8);
+                Array.Copy(commentBlock, 0, commentBlockForCRC, 8, commentHeader.length);
+
+                ushort cmtcrc = TeleDiskCRC(0, commentBlockForCRC);
+
+                DicConsole.DebugWriteLine("TeleDisk plugin", "Comment header");
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.crc = 0x{0:X4}", commentHeader.crc);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tCalculated CRC = 0x{0:X4}", cmtcrc);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.length = {0} bytes",
+                                          commentHeader.length);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.year = {0}", commentHeader.year);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.month = {0}", commentHeader.month);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.day = {0}", commentHeader.day);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.hour = {0}", commentHeader.hour);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.minute = {0}", commentHeader.minute);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.second = {0}", commentHeader.second);
+
+                ADiskCRCHasFailed |= cmtcrc != commentHeader.crc;
+
+                for(int i = 0; i < commentBlock.Length; i++)
+                {
+                    // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
+                    if(commentBlock[i] == 0x00) commentBlock[i] = 0x0A;
+                }
+
+                ImageInfo.imageComments = System.Text.Encoding.ASCII.GetString(commentBlock);
+
+                DicConsole.DebugWriteLine("TeleDisk plugin", "Comment");
+                DicConsole.DebugWriteLine("TeleDisk plugin", "{0}", ImageInfo.imageComments);
+
+                ImageInfo.imageCreationTime = new DateTime(commentHeader.year + 1900, commentHeader.month + 1,
+                                                           commentHeader.day, commentHeader.hour, commentHeader.minute,
+                                                           commentHeader.second, DateTimeKind.Unspecified);
+            }
+
+            if(ImageInfo.imageCreationTime == DateTime.MinValue)
+                ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", ImageInfo.imageCreationTime);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", ImageInfo.imageLastModificationTime);
+
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Parsing image");
+
+            totalDiskSize = 0;
+            ImageInfo.imageSize = 0;
+
+            int totalCylinders = -1;
+            int totalHeads = -1;
+            int maxSector = -1;
+            int totalSectors = 0;
+            long currentPos = stream.Position;
+            ImageInfo.sectorSize = uint.MaxValue;
+            ImageInfo.sectorsPerTrack = uint.MaxValue;
+
+            // Count cylinders
+            while(true)
+            {
+                TDTrackHeader TDTrack = new TDTrackHeader();
+
+                TDTrack.sectors = (byte)stream.ReadByte();
+                TDTrack.cylinder = (byte)stream.ReadByte();
+                TDTrack.head = (byte)stream.ReadByte();
+                TDTrack.crc = (byte)stream.ReadByte();
+
+                if(TDTrack.cylinder > totalCylinders) totalCylinders = TDTrack.cylinder;
+                if(TDTrack.head > totalHeads) totalHeads = TDTrack.head;
+
+                if(TDTrack.sectors == 0xFF) // End of disk image
+                    break;
+
+                for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
+                {
+                    TDSectorHeader TDSector = new TDSectorHeader();
+                    TDDataHeader TDData = new TDDataHeader();
+                    byte[] dataSizeBytes = new byte[2];
+                    byte[] data;
+
+                    TDSector.cylinder = (byte)stream.ReadByte();
+                    TDSector.head = (byte)stream.ReadByte();
+                    TDSector.sectorNumber = (byte)stream.ReadByte();
+                    TDSector.sectorSize = (byte)stream.ReadByte();
+                    TDSector.flags = (byte)stream.ReadByte();
+                    TDSector.crc = (byte)stream.ReadByte();
+
+                    if(TDSector.sectorNumber > maxSector) maxSector = TDSector.sectorNumber;
+
+                    if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless &&
+                       (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
+                    {
+                        stream.Read(dataSizeBytes, 0, 2);
+                        TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
+                        TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
+                        TDData.dataEncoding = (byte)stream.ReadByte();
+                        data = new byte[TDData.dataSize];
+                        stream.Read(data, 0, TDData.dataSize);
+                    }
+
+                    if(128 << TDSector.sectorSize < ImageInfo.sectorSize)
+                        ImageInfo.sectorSize = (uint)(128 << TDSector.sectorSize);
+
+                    totalSectors++;
+                }
+            }
+
+            totalCylinders++;
+            totalHeads++;
+
+            if(totalCylinders <= 0 || totalHeads <= 0)
+                throw new ImageNotSupportedException("No cylinders or heads found");
+
+            bool hasLeadOutOnHead0 = false;
+            bool hasLeadOutOnHead1 = false;
+            ImageInfo.cylinders = (ushort)totalCylinders;
+            ImageInfo.heads = (byte)totalHeads;
+
+            // Count sectors per track
+            stream.Seek(currentPos, SeekOrigin.Begin);
+            while(true)
+            {
+                TDTrackHeader TDTrack = new TDTrackHeader();
+
+                TDTrack.sectors = (byte)stream.ReadByte();
+                TDTrack.cylinder = (byte)stream.ReadByte();
+                TDTrack.head = (byte)stream.ReadByte();
+                TDTrack.crc = (byte)stream.ReadByte();
+
+                if(TDTrack.sectors == 0xFF) // End of disk image
+                    break;
+
+                if(TDTrack.sectors < ImageInfo.sectorsPerTrack)
+                {
+                    if(TDTrack.cylinder + 1 == totalCylinders)
+                    {
+                        hasLeadOutOnHead0 |= TDTrack.head == 0;
+                        hasLeadOutOnHead1 |= TDTrack.head == 1;
+                        if(ImageInfo.cylinders == totalCylinders) ImageInfo.cylinders--;
+                    }
+                    else ImageInfo.sectorsPerTrack = TDTrack.sectors;
+                }
+                for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
+                {
+                    TDSectorHeader TDSector = new TDSectorHeader();
+                    TDDataHeader TDData = new TDDataHeader();
+                    byte[] dataSizeBytes = new byte[2];
+                    byte[] data;
+
+                    TDSector.cylinder = (byte)stream.ReadByte();
+                    TDSector.head = (byte)stream.ReadByte();
+                    TDSector.sectorNumber = (byte)stream.ReadByte();
+                    TDSector.sectorSize = (byte)stream.ReadByte();
+                    TDSector.flags = (byte)stream.ReadByte();
+                    TDSector.crc = (byte)stream.ReadByte();
+
+                    if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless &&
+                       (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
+                    {
+                        stream.Read(dataSizeBytes, 0, 2);
+                        TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
+                        TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
+                        TDData.dataEncoding = (byte)stream.ReadByte();
+                        data = new byte[TDData.dataSize];
+                        stream.Read(data, 0, TDData.dataSize);
+                    }
+                }
+            }
+
+            sectorsData = new byte[totalCylinders][][][];
+            // Total sectors per track
+            uint[][] spts = new uint[totalCylinders][];
+
+            DicConsole.DebugWriteLine("TeleDisk plugin",
+                                      "Found {0} cylinders and {1} heads with a maximum sector number of {2}",
+                                      totalCylinders, totalHeads, maxSector);
+
+            // Create heads
+            for(int i = 0; i < totalCylinders; i++)
+            {
+                sectorsData[i] = new byte[totalHeads][][];
+                spts[i] = new uint[totalHeads];
+
+                for(int j = 0; j < totalHeads; j++) sectorsData[i][j] = new byte[maxSector + 1][];
+            }
+
+            // Decode the image
+            stream.Seek(currentPos, SeekOrigin.Begin);
+            while(true)
+            {
+                TDTrackHeader TDTrack = new TDTrackHeader();
+                byte[] TDTrackForCRC = new byte[3];
+                byte TDTrackCalculatedCRC;
+
+                TDTrack.sectors = (byte)stream.ReadByte();
+                TDTrack.cylinder = (byte)stream.ReadByte();
+                TDTrack.head = (byte)stream.ReadByte();
+                TDTrack.crc = (byte)stream.ReadByte();
+
+                TDTrackForCRC[0] = TDTrack.sectors;
+                TDTrackForCRC[1] = TDTrack.cylinder;
+                TDTrackForCRC[2] = TDTrack.head;
+
+                TDTrackCalculatedCRC = (byte)(TeleDiskCRC(0, TDTrackForCRC) & 0xFF);
+
+                DicConsole.DebugWriteLine("TeleDisk plugin", "Track follows");
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack cylinder: {0}\t", TDTrack.cylinder);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack head: {0}\t", TDTrack.head);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tSectors in track: {0}\t", TDTrack.sectors);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack header CRC: 0x{0:X2} (calculated 0x{1:X2})\t",
+                                          TDTrack.crc, TDTrackCalculatedCRC);
+
+                ADiskCRCHasFailed |= TDTrackCalculatedCRC != TDTrack.crc;
+
+                if(TDTrack.sectors == 0xFF) // End of disk image
+                {
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "End of disk image arrived");
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes",
+                                              totalSectors, totalDiskSize);
+
+                    break;
+                }
+
+                for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
+                {
+                    TDSectorHeader TDSector = new TDSectorHeader();
+                    TDDataHeader TDData = new TDDataHeader();
+                    byte[] dataSizeBytes = new byte[2];
+                    byte[] data;
+                    byte[] decodedData;
+
+                    TDSector.cylinder = (byte)stream.ReadByte();
+                    TDSector.head = (byte)stream.ReadByte();
+                    TDSector.sectorNumber = (byte)stream.ReadByte();
+                    TDSector.sectorSize = (byte)stream.ReadByte();
+                    TDSector.flags = (byte)stream.ReadByte();
+                    TDSector.crc = (byte)stream.ReadByte();
+
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\tSector follows");
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}", TDSector.cylinder);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark head: {0}", TDSector.head);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark sector number: {0}",
+                                              TDSector.sectorNumber);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector size: {0}", TDSector.sectorSize);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector flags: 0x{0:X2}", TDSector.flags);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}",
+                                              TDSector.crc);
+
+                    uint LBA = (uint)((TDSector.cylinder * header.sides * ImageInfo.sectorsPerTrack) +
+                                      (TDSector.head * ImageInfo.sectorsPerTrack) + (TDSector.sectorNumber - 1));
+                    if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless &&
+                       (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
+                    {
+                        stream.Read(dataSizeBytes, 0, 2);
+                        TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
+                        TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
+                        ImageInfo.imageSize += TDData.dataSize;
+                        TDData.dataEncoding = (byte)stream.ReadByte();
+                        data = new byte[TDData.dataSize];
+                        stream.Read(data, 0, TDData.dataSize);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}", TDData.dataSize);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}",
+                                                  TDData.dataEncoding);
+
+                        decodedData = DecodeTeleDiskData(TDSector.sectorSize, TDData.dataEncoding, data);
+
+                        byte TDSectorCalculatedCRC = (byte)(TeleDiskCRC(0, decodedData) & 0xFF);
+
+                        if(TDSectorCalculatedCRC != TDSector.crc)
+                        {
+                            DicConsole.DebugWriteLine("TeleDisk plugin",
+                                                      "Sector {0}:{3}:{4} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}",
+                                                      TDTrack.cylinder, TDSectorCalculatedCRC, TDSector.crc,
+                                                      TDTrack.cylinder, TDSector.sectorNumber);
+                            if((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID) SectorsWhereCRCHasFailed.Add(LBA);
+                        }
+                    }
+                    else decodedData = new byte[128 << TDSector.sectorSize];
+
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", LBA);
+
+                    if((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
+                    {
+                        if(sectorsData[TDTrack.cylinder][TDTrack.head][TDSector.sectorNumber] != null)
+                        {
+                            if((TDSector.flags & FlagsSectorDuplicate) == FlagsSectorDuplicate)
+                            {
+                                DicConsole.DebugWriteLine("TeleDisk plugin",
+                                                          "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
+                                                          TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
+                            }
+                            else
+                            {
+                                DicConsole.DebugWriteLine("TeleDisk plugin",
+                                                          "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
+                                                          TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
+                            }
+                        }
+                        else
+                        {
+                            sectorsData[TDTrack.cylinder][TDTrack.head][TDSector.sectorNumber] = decodedData;
+                            totalDiskSize += (uint)decodedData.Length;
+                        }
+                    }
+                }
+            }
+
+            MemoryStream leadOutMs = new MemoryStream();
+            if(hasLeadOutOnHead0)
+            {
+                for(int i = 0; i < sectorsData[totalCylinders - 1][0].Length; i++)
+                {
+                    if(sectorsData[totalCylinders - 1][0][i] != null)
+                        leadOutMs.Write(sectorsData[totalCylinders - 1][0][i], 0,
+                                        sectorsData[totalCylinders - 1][0][i].Length);
+                }
+            }
+            if(hasLeadOutOnHead1)
+            {
+                for(int i = 0; i < sectorsData[totalCylinders - 1][1].Length; i++)
+                {
+                    if(sectorsData[totalCylinders - 1][1][i] != null)
+                        leadOutMs.Write(sectorsData[totalCylinders - 1][1][i], 0,
+                                        sectorsData[totalCylinders - 1][1][i].Length);
+                }
+            }
+
+            if(leadOutMs.Length != 0)
+            {
+                leadOut = leadOutMs.ToArray();
+                ImageInfo.readableMediaTags.Add(MediaTagType.Floppy_LeadOut);
+            }
+
+            ImageInfo.sectors = ImageInfo.cylinders * ImageInfo.heads * ImageInfo.sectorsPerTrack;
+            ImageInfo.mediaType = DecodeTeleDiskDiskType();
+
+            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+
+            DicConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", ImageInfo.mediaType);
+            if(!string.IsNullOrEmpty(ImageInfo.imageComments))
+                DicConsole.VerboseWriteLine("TeleDisk comments: {0}", ImageInfo.imageComments);
+
+            inStream.Dispose();
+            stream.Dispose();
+
+            /*
+            FileStream debugFs = new FileStream("debug.img", FileMode.CreateNew, FileAccess.Write);
+            for(ulong i = 0; i < ImageInfo.sectors; i++)
+                debugFs.Write(ReadSector(i), 0, (int)ImageInfo.sectorSize);
+            debugFs.Dispose();
+            */
+
+            return true;
+        }
+
+        public override bool ImageHasPartitions()
+        {
+            return ImageInfo.imageHasPartitions;
+        }
+
+        public override ulong GetImageSize()
+        {
+            return ImageInfo.imageSize;
+        }
+
+        public override ulong GetSectors()
+        {
+            return ImageInfo.sectors;
+        }
+
+        public override uint GetSectorSize()
+        {
+            return ImageInfo.sectorSize;
+        }
+
+        public override byte[] ReadSector(ulong sectorAddress)
+        {
+            (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
+
+            if(cylinder >= sectorsData.Length)
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+
+            if(head >= sectorsData[cylinder].Length)
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+
+            if(sector > sectorsData[cylinder][head].Length)
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+
+            return sectorsData[cylinder][head][sector];
+        }
+
+        public override byte[] ReadSectors(ulong sectorAddress, uint length)
+        {
+            if(sectorAddress > ImageInfo.sectors - 1)
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+
+            if(sectorAddress + length > ImageInfo.sectors)
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+
+            MemoryStream buffer = new MemoryStream();
+            for(uint i = 0; i < length; i++)
+            {
+                byte[] sector = ReadSector(sectorAddress + i);
+                if(sector == null) sector = new byte[ImageInfo.sectorSize];
+                buffer.Write(sector, 0, sector.Length);
+            }
+
+            return buffer.ToArray();
+        }
+
+        (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
+        {
+            ushort cylinder = (ushort)(lba / (ImageInfo.heads * ImageInfo.sectorsPerTrack));
+            byte head = (byte)((lba / ImageInfo.sectorsPerTrack) % ImageInfo.heads);
+            byte sector = (byte)((lba % ImageInfo.sectorsPerTrack) + 1);
+
+            return (cylinder, head, sector);
+        }
+
+        public override byte[] ReadSectorLong(ulong sectorAddress)
+        {
+            return ReadSectors(sectorAddress, 1);
+        }
+
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        {
+            return ReadSectors(sectorAddress, length);
+        }
+
+        public override string GetImageFormat()
+        {
+            return "Sydex TeleDisk";
+        }
+
+        public override string GetImageVersion()
+        {
+            return ImageInfo.imageVersion;
+        }
+
+        public override string GetImageApplication()
+        {
+            return ImageInfo.imageApplication;
+        }
+
+        public override string GetImageApplicationVersion()
+        {
+            return ImageInfo.imageApplicationVersion;
+        }
+
+        public override DateTime GetImageCreationTime()
+        {
+            return ImageInfo.imageCreationTime;
+        }
+
+        public override DateTime GetImageLastModificationTime()
+        {
+            return ImageInfo.imageLastModificationTime;
+        }
+
+        public override string GetImageName()
+        {
+            return ImageInfo.imageName;
+        }
+
+        public override MediaType GetMediaType()
+        {
+            return ImageInfo.mediaType;
+        }
+
+        public override bool? VerifySector(ulong sectorAddress)
+        {
+            return !SectorsWhereCRCHasFailed.Contains(sectorAddress);
+        }
+
+        public override bool? VerifySector(ulong sectorAddress, uint track)
+        {
+            return null;
+        }
+
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
+        {
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
+
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
+                if(SectorsWhereCRCHasFailed.Contains(sectorAddress)) FailingLBAs.Add(sectorAddress);
+
+            return FailingLBAs.Count <= 0;
+        }
+
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
+        {
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
+
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
+
+            return null;
+        }
+
+        public override bool? VerifyMediaImage()
+        {
+            return ADiskCRCHasFailed;
+        }
+
+        #region Private methods
+        static ushort TeleDiskCRC(ushort crc, byte[] buffer)
+        {
+            int counter = 0;
+
+            while(counter < buffer.Length)
+            {
+                crc ^= (ushort)((buffer[counter] & 0xFF) << 8);
+
+                for(int i = 0; i < 8; i++)
+                {
+                    if((crc & 0x8000) > 0) crc = (ushort)((crc << 1) ^ TeleDiskCRCPoly);
+                    else crc = (ushort)(crc << 1);
+                }
+
+                counter++;
+            }
+
+            return crc;
+        }
+
+        static byte[] DecodeTeleDiskData(byte sectorSize, byte encodingType, byte[] encodedData)
+        {
+            byte[] decodedData;
+            switch(sectorSize)
+            {
+                case SectorSize128:
+                    decodedData = new byte[128];
+                    break;
+                case SectorSize256:
+                    decodedData = new byte[256];
+                    break;
+                case SectorSize512:
+                    decodedData = new byte[512];
+                    break;
+                case SectorSize1K:
+                    decodedData = new byte[1024];
+                    break;
+                case SectorSize2K:
+                    decodedData = new byte[2048];
+                    break;
+                case SectorSize4K:
+                    decodedData = new byte[4096];
+                    break;
+                case SectorSize8K:
+                    decodedData = new byte[8192];
+                    break;
+                default:
+                    throw new ImageNotSupportedException(string.Format("Sector size {0} is incorrect.", sectorSize));
+            }
+
+            switch(encodingType)
+            {
+                case dataBlockCopy:
+                    Array.Copy(encodedData, decodedData, decodedData.Length);
+                    break;
+                case dataBlockPattern:
+                {
+                    int ins = 0;
+                    int outs = 0;
+                    while(ins < encodedData.Length)
+                    {
+                        ushort repeatNumber;
+                        byte[] repeatValue = new byte[2];
+
+                        repeatNumber = BitConverter.ToUInt16(encodedData, ins);
+                        Array.Copy(encodedData, ins + 2, repeatValue, 0, 2);
+                        byte[] decodedPiece = new byte[repeatNumber * 2];
+                        ArrayHelpers.ArrayFill(decodedPiece, repeatValue);
+                        Array.Copy(decodedPiece, 0, decodedData, outs, decodedPiece.Length);
+                        ins += 4;
+                        outs += decodedPiece.Length;
+                    }
+
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Input data size: {0} bytes",
+                                              encodedData.Length);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed input: {0} bytes",
+                                              ins);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Output data size: {0} bytes",
+                                              decodedData.Length);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed Output: {0} bytes",
+                                              outs);
+                    break;
+                }
+                case dataBlockRLE:
+                {
+                    int ins = 0;
+                    int outs = 0;
+                    while(ins < encodedData.Length)
+                    {
+                        byte Run;
+                        byte Length;
+                        byte Encoding;
+                        byte[] Piece;
+
+                        Encoding = encodedData[ins];
+                        if(Encoding == 0x00)
+                        {
+                            Length = encodedData[ins + 1];
+                            Array.Copy(encodedData, ins + 2, decodedData, outs, Length);
+                            ins += (2 + Length);
+                            outs += Length;
+                        }
+                        else
+                        {
+                            Length = (byte)(Encoding * 2);
+                            Run = encodedData[ins + 1];
+                            byte[] Part = new byte[Length];
+                            Array.Copy(encodedData, ins + 2, Part, 0, Length);
+                            Piece = new byte[Length * Run];
+                            ArrayHelpers.ArrayFill(Piece, Part);
+                            Array.Copy(Piece, 0, decodedData, outs, Piece.Length);
+                            ins += (2 + Length);
+                            outs += Piece.Length;
+                        }
+                    }
+
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Input data size: {0} bytes",
+                                              encodedData.Length);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed input: {0} bytes", ins);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Output data size: {0} bytes",
+                                              decodedData.Length);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed Output: {0} bytes", outs);
+
+                    break;
+                }
+                default:
+                    throw new ImageNotSupportedException(string.Format("Data encoding {0} is incorrect.",
+                                                                       encodingType));
+            }
+
+            return decodedData;
+        }
+
+        MediaType DecodeTeleDiskDiskType()
+        {
+            switch(header.driveType)
+            {
+                case DriveType525DD:
+                case DriveType525HD_DDDisk:
+                case DriveType525HD:
+                {
+                    switch(totalDiskSize)
+                    {
+                        case 163840:
+                        {
+                            // Acorn disk uses 256 bytes/sector
+                            if(ImageInfo.sectorSize == 256) return MediaType.ACORN_525_SS_DD_40;
+                            // DOS disks use 512 bytes/sector
+                            return MediaType.DOS_525_SS_DD_8;
+                        }
+                        case 184320:
+                        {
+                            // Atari disk uses 256 bytes/sector
+                            if(ImageInfo.sectorSize == 256) return MediaType.ATARI_525_DD;
+                            // DOS disks use 512 bytes/sector
+                            return MediaType.DOS_525_SS_DD_9;
+                        }
+                        case 327680:
+                        {
+                            // Acorn disk uses 256 bytes/sector
+                            if(ImageInfo.sectorSize == 256) return MediaType.ACORN_525_SS_DD_80;
+                            // DOS disks use 512 bytes/sector
+                            return MediaType.DOS_525_DS_DD_8;
+                        }
+                        case 368640: return MediaType.DOS_525_DS_DD_9;
+                        case 1228800: return MediaType.DOS_525_HD;
+                        case 102400: return MediaType.ACORN_525_SS_SD_40;
+                        case 204800: return MediaType.ACORN_525_SS_SD_80;
+                        case 655360: return MediaType.ACORN_525_DS_DD;
+                        case 92160: return MediaType.ATARI_525_SD;
+                        case 133120: return MediaType.ATARI_525_ED;
+                        case 1310720: return MediaType.NEC_525_HD;
+                        case 1261568: return MediaType.SHARP_525;
+                        case 839680: return MediaType.FDFORMAT_525_DD;
+                        case 1304320: return MediaType.ECMA_99_8;
+                        case 1223424: return MediaType.ECMA_99_15;
+                        case 1061632: return MediaType.ECMA_99_26;
+                        case 80384: return MediaType.ECMA_66;
+                        case 325632: return MediaType.ECMA_70;
+                        case 653312: return MediaType.ECMA_78;
+                        case 737280: return MediaType.ECMA_78_2;
+                        default:
+                        {
+                            DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 5,25\" disk with {0} bytes",
+                                                      totalDiskSize);
+                            return MediaType.Unknown;
+                        }
+                    }
+                }
+                case DriveType35DD:
+                case DriveType35ED:
+                case DriveType35HD:
+                {
+                    switch(totalDiskSize)
+                    {
+                        case 322560: return MediaType.Apricot_35;
+                        case 327680: return MediaType.DOS_35_SS_DD_8;
+                        case 368640: return MediaType.DOS_35_SS_DD_9;
+                        case 655360: return MediaType.DOS_35_DS_DD_8;
+                        case 737280: return MediaType.DOS_35_DS_DD_9;
+                        case 1474560: return MediaType.DOS_35_HD;
+                        case 2949120: return MediaType.DOS_35_ED;
+                        case 1720320: return MediaType.DMF;
+                        case 1763328: return MediaType.DMF_82;
+                        case 1884160: // Irreal size, seen as BIOS with TSR, 23 sectors/track
+                        case 1860608: // Real data size, sum of all sectors
+                            return MediaType.XDF_35;
+                        case 819200: return MediaType.CBM_35_DD;
+                        case 901120: return MediaType.CBM_AMIGA_35_DD;
+                        case 1802240: return MediaType.CBM_AMIGA_35_HD;
+                        case 1310720: return MediaType.NEC_35_HD_8;
+                        case 1228800: return MediaType.NEC_35_HD_15;
+                        case 1261568: return MediaType.SHARP_35;
+                        default:
+                        {
+                            DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 3,5\" disk with {0} bytes",
+                                                      totalDiskSize);
+                            return MediaType.Unknown;
+                        }
+                    }
+                }
+                case DriveType8inch:
+                {
+                    switch(totalDiskSize)
+                    {
+                        case 81664: return MediaType.IBM23FD;
+                        case 242944: return MediaType.IBM33FD_128;
+                        case 287488: return MediaType.IBM33FD_256;
+                        case 306432: return MediaType.IBM33FD_512;
+                        case 499200: return MediaType.IBM43FD_128;
+                        case 574976: return MediaType.IBM43FD_256;
+                        case 995072: return MediaType.IBM53FD_256;
+                        case 1146624: return MediaType.IBM53FD_512;
+                        case 1222400: return MediaType.IBM53FD_1024;
+                        case 256256:
+                            // Same size, with same disk geometry, for DEC RX01, NEC and ECMA, return ECMA
+                            return MediaType.ECMA_54;
+                        case 512512:
+                        {
+                            // DEC disk uses 256 bytes/sector
+                            if(ImageInfo.sectorSize == 256) return MediaType.RX02;
+                            // ECMA disks use 128 bytes/sector
+                            return MediaType.ECMA_59;
+                        }
+                        case 1261568: return MediaType.NEC_8_DD;
+                        case 1255168: return MediaType.ECMA_69_8;
+                        case 1177344: return MediaType.ECMA_69_15;
+                        case 1021696: return MediaType.ECMA_69_26;
+                        default:
+                        {
+                            DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 8\" disk with {0} bytes",
+                                                      totalDiskSize);
+                            return MediaType.Unknown;
+                        }
+                    }
+                }
+                default:
+                {
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes", totalDiskSize,
+                                              header.driveType);
+                    return MediaType.Unknown;
+                }
+            }
+        }
+
+        public override byte[] ReadDiskTag(MediaTagType tag)
+        {
+            if(tag == MediaTagType.Floppy_LeadOut)
+            {
+                if(leadOut != null) return leadOut;
+
+                throw new FeatureNotPresentImageException("Lead-out not present in disk image");
+            }
+            else throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+        #endregion
+
+        #region Unsupported features
+        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override string GetImageCreator()
+        {
+            return ImageInfo.imageCreator;
+        }
+
+        public override string GetImageComments()
+        {
+            return ImageInfo.imageComments;
+        }
+
+        public override string GetMediaManufacturer()
+        {
+            return ImageInfo.mediaManufacturer;
+        }
+
+        public override string GetMediaModel()
+        {
+            return ImageInfo.mediaModel;
+        }
+
+        public override string GetMediaSerialNumber()
+        {
+            return ImageInfo.mediaSerialNumber;
+        }
+
+        public override string GetMediaBarcode()
+        {
+            return ImageInfo.mediaBarcode;
+        }
+
+        public override string GetMediaPartNumber()
+        {
+            return ImageInfo.mediaPartNumber;
+        }
+
+        public override int GetMediaSequence()
+        {
+            return ImageInfo.mediaSequence;
+        }
+
+        public override int GetLastDiskSequence()
+        {
+            return ImageInfo.lastMediaSequence;
+        }
+
+        public override string GetDriveManufacturer()
+        {
+            return ImageInfo.driveManufacturer;
+        }
+
+        public override string GetDriveModel()
+        {
+            return ImageInfo.driveModel;
+        }
+
+        public override string GetDriveSerialNumber()
+        {
+            return ImageInfo.driveSerialNumber;
+        }
+
+        public override List<Partition> GetPartitions()
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override List<Track> GetTracks()
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override List<Track> GetSessionTracks(Session session)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override List<Track> GetSessionTracks(ushort session)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override List<Session> GetSessions()
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSector(ulong sectorAddress, uint track)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        {
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+        #endregion Unsupported features
+
+        #region LZH decompression from MAME
+        /* This region is under following license:
+         * Copyright © 2017 Miodrag Milanovic
+         * Adapted to C#, Copyright © 2017 Natalia Portillo
+         * 
+         * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+         * 
+         * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+         * 
+         * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation
+         * and/or other materials provided with the distribution.
+         * 
+         * 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software
+         * without specific prior written permission.
+         * 
+         * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+         * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+         * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+         * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+         * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+         * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+         */
+
+        /*
+         * Based on Japanese version 29-NOV-1988
+         * LZSS coded by Haruhiko OKUMURA
+         * Adaptive Huffman Coding coded by Haruyasu YOSHIZAKI
+         * Edited and translated to English by Kenji RIKITAKE
+         */
+
+        const int BUFSZ = 512;
+
+        /* LZSS Parameters */
+
+        const int N = 4096; /* Size of string buffer */
+        const int F = 60; /* Size of look-ahead buffer */
+        const int THRESHOLD = 2;
+        const int NIL = N; /* End of tree's node  */
+
+        /* Huffman coding parameters */
+
+        const int N_CHAR = (256 - THRESHOLD + F);
+        /* character code (= 0..N_CHAR-1) */
+        const int T = (N_CHAR * 2 - 1); /* Size of table */
+        const int R = (T - 1); /* root position */
+        const int MAX_FREQ = 0x8000;
+        /* update when cumulative frequency */
+        /* reaches to this value */
+
+        struct tdlzhuf
+        {
+            public ushort r,
+                          bufcnt,
+                          bufndx,
+                          bufpos, // string buffer
+                          // the following to allow block reads from input in next_word()
+                          ibufcnt,
+                          ibufndx; // input buffer counters
+            public byte[] inbuf; // input buffer
+        };
+
+        tdlzhuf tdctl;
+        byte[] text_buf = new byte[N + F - 1];
+        ushort[] freq = new ushort[T + 1]; /* cumulative freq table */
+
+        /*
+         * pointing parent nodes.
+         * area [T..(T + N_CHAR - 1)] are pointers for leaves
+         */
+        short[] prnt = new short[T + N_CHAR];
+
+        /* pointing children nodes (son[], son[] + 1)*/
+        short[] son = new short[T];
+
+        ushort getbuf;
+        byte getlen;
+
+        long data_read(out byte[] buf, long size)
+        {
+            if(size > inStream.Length - inStream.Position) size = inStream.Length - inStream.Position;
+
+            buf = new byte[size];
+            inStream.Read(buf, 0, (int)size);
+            return size;
+        }
+
+        /*
+         * Tables for encoding/decoding upper 6 bits of
+         * sliding dictionary pointer
+         */
+
+        /* decoder table */
+        readonly byte[] d_code =
+        {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
+            0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
+            0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
+            0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05,
+            0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07,
+            0x07, 0x07, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09,
+            0x09, 0x09, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B,
+            0x0C, 0x0C, 0x0C, 0x0C, 0x0D, 0x0D, 0x0D, 0x0D, 0x0E, 0x0E, 0x0E, 0x0E, 0x0F, 0x0F, 0x0F, 0x0F, 0x10, 0x10,
+            0x10, 0x10, 0x11, 0x11, 0x11, 0x11, 0x12, 0x12, 0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 0x14, 0x14, 0x14,
+            0x15, 0x15, 0x15, 0x15, 0x16, 0x16, 0x16, 0x16, 0x17, 0x17, 0x17, 0x17, 0x18, 0x18, 0x19, 0x19, 0x1A, 0x1A,
+            0x1B, 0x1B, 0x1C, 0x1C, 0x1D, 0x1D, 0x1E, 0x1E, 0x1F, 0x1F, 0x20, 0x20, 0x21, 0x21, 0x22, 0x22, 0x23, 0x23,
+            0x24, 0x24, 0x25, 0x25, 0x26, 0x26, 0x27, 0x27, 0x28, 0x28, 0x29, 0x29, 0x2A, 0x2A, 0x2B, 0x2B, 0x2C, 0x2C,
+            0x2D, 0x2D, 0x2E, 0x2E, 0x2F, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B,
+            0x3C, 0x3D, 0x3E, 0x3F,
+        };
+
+        readonly byte[] d_len =
+        {
+            0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
+            0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04,
+            0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
+            0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
+            0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
+            0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
+            0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
+            0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
+            0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+            0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+            0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+            0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+            0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+            0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+            0x08, 0x08, 0x08, 0x08,
+        };
+
+        int next_word()
+        {
+            if(tdctl.ibufndx >= tdctl.ibufcnt)
+            {
+                tdctl.ibufndx = 0;
+                tdctl.ibufcnt = (ushort)data_read(out tdctl.inbuf, BUFSZ);
+                if(tdctl.ibufcnt <= 0) return (-1);
+            }
+
+            while(getlen <= 8)
+            {
+                // typically reads a word at a time
+                getbuf |= (ushort)(tdctl.inbuf[tdctl.ibufndx++] << (8 - getlen));
+                getlen += 8;
+            }
+
+            return (0);
+        }
+
+        int GetBit() /* get one bit */
+        {
+            short i;
+            if(next_word() < 0) return (-1);
+
+            i = (short)getbuf;
+            getbuf <<= 1;
+            getlen--;
+            if(i < 0) return (1);
+            else return (0);
+        }
+
+        int GetByte() /* get a byte */
+        {
+            ushort i;
+            if(next_word() != 0) return (-1);
+
+            i = getbuf;
+            getbuf <<= 8;
+            getlen -= 8;
+            i = (ushort)(i >> 8);
+            return ((int)i);
+        }
+
+        /* initialize freq tree */
+
+        void StartHuff()
+        {
+            int i, j;
+
+            for(i = 0; i < N_CHAR; i++)
+            {
+                freq[i] = 1;
+                son[i] = (short)(i + T);
+                prnt[i + T] = (short)i;
+            }
+
+            i = 0;
+            j = N_CHAR;
+            while(j <= R)
+            {
+                freq[j] = (ushort)(freq[i] + freq[i + 1]);
+                son[j] = (short)i;
+                prnt[i] = prnt[i + 1] = (short)j;
+                i += 2;
+                j++;
+            }
+
+            freq[T] = 0xffff;
+            prnt[R] = 0;
+        }
+
+        /* reconstruct freq tree */
+
+        void reconst()
+        {
+            short i, j, k;
+            ushort f, l;
+
+            /* halven cumulative freq for leaf nodes */
+            j = 0;
+            for(i = 0; i < T; i++)
+            {
+                if(son[i] >= T)
+                {
+                    freq[j] = (ushort)((freq[i] + 1) / 2);
+                    son[j] = son[i];
+                    j++;
+                }
+            }
+            /* make a tree : first, connect children nodes */
+            for(i = 0, j = N_CHAR; j < T; i += 2, j++)
+            {
+                k = (short)(i + 1);
+                f = freq[j] = (ushort)(freq[i] + freq[k]);
+                for(k = (short)(j - 1); f < freq[k]; k--) { }
+
+                ;
+                k++;
+                l = (ushort)((j - k) * 2);
+
+                Array.ConstrainedCopy(freq, k, freq, k + 1, l);
+                freq[k] = f;
+                Array.ConstrainedCopy(son, k, son, k + 1, l);
+                son[k] = i;
+            }
+            /* connect parent nodes */
+            for(i = 0; i < T; i++)
+            {
+                if((k = son[i]) >= T) { prnt[k] = i; }
+                else { prnt[k] = prnt[k + 1] = i; }
+            }
+        }
+
+        /* update freq tree */
+
+        void update(int c)
+        {
+            int i, j, k, l;
+
+            if(freq[R] == MAX_FREQ) { reconst(); }
+            c = prnt[c + T];
+            do
+            {
+                k = ++freq[c];
+
+                /* swap nodes to keep the tree freq-ordered */
+                if(k > freq[l = c + 1])
+                {
+                    while(k > freq[++l]) { }
+
+                    ;
+                    l--;
+                    freq[c] = freq[l];
+                    freq[l] = (ushort)k;
+
+                    i = son[c];
+                    prnt[i] = (short)l;
+                    if(i < T) prnt[i + 1] = (short)l;
+
+                    j = son[l];
+                    son[l] = (short)i;
+
+                    prnt[j] = (short)c;
+                    if(j < T) prnt[j + 1] = (short)c;
+                    son[c] = (short)j;
+
+                    c = l;
+                }
+            }
+            while((c = prnt[c]) != 0); /* do it until reaching the root */
+        }
+
+        short DecodeChar()
+        {
+            int ret;
+            ushort c;
+
+            c = (ushort)son[R];
+
+            /*
+             * start searching tree from the root to leaves.
+             * choose node #(son[]) if input bit == 0
+             * else choose #(son[]+1) (input bit == 1)
+             */
+            while(c < T)
+            {
+                if((ret = GetBit()) < 0) return (-1);
+
+                c += (ushort)ret;
+                c = (ushort)son[c];
+            }
+
+            c -= T;
+            update(c);
+            return (short)c;
+        }
+
+        short DecodePosition()
+        {
+            short bit;
+            ushort i, j, c;
+
+            /* decode upper 6 bits from given table */
+            if((bit = (short)GetByte()) < 0) return (-1);
+
+            i = (ushort)bit;
+            c = (ushort)(d_code[i] << 6);
+            j = d_len[i];
+
+            /* input lower 6 bits directly */
+            j -= 2;
+            while(j-- > 0)
+            {
+                if((bit = (short)GetBit()) < 0) return (-1);
+
+                i = (ushort)((i << 1) + bit);
+            }
+
+            return (short)(c | (i & 0x3f));
+        }
+
+        /* DeCompression
+
+        split out initialization code to init_Decode()
+
+        */
+
+        void init_Decode()
+        {
+            int i;
+            getbuf = 0;
+            getlen = 0;
+            tdctl = new tdlzhuf();
+            tdctl.ibufcnt = tdctl.ibufndx = 0; // input buffer is empty
+            tdctl.bufcnt = 0;
+            StartHuff();
+            for(i = 0; i < N - F; i++) text_buf[i] = 0x20;
+
+            tdctl.r = N - F;
+        }
+
+        int Decode(out byte[] buf, int len) /* Decoding/Uncompressing */
+        {
+            short c, pos;
+            buf = new byte[len];
+            int count; // was an unsigned long, seems unnecessary
+            for(count = 0; count < len;)
+            {
+                if(tdctl.bufcnt == 0)
+                {
+                    if((c = DecodeChar()) < 0) return (count); // fatal error
+
+                    if(c < 256)
+                    {
+                        buf[count] = (byte)c;
+                        text_buf[tdctl.r++] = (byte)c;
+                        tdctl.r &= (N - 1);
+                        count++;
+                    }
+                    else
+                    {
+                        if((pos = DecodePosition()) < 0) return (count); // fatal error
+
+                        tdctl.bufpos = (ushort)((tdctl.r - pos - 1) & (N - 1));
+                        tdctl.bufcnt = (ushort)(c - 255 + THRESHOLD);
+                        tdctl.bufndx = 0;
+                    }
+                }
+                else
+                {
+                    // still chars from last string
+                    while(tdctl.bufndx < tdctl.bufcnt && count < len)
+                    {
+                        c = text_buf[(tdctl.bufpos + tdctl.bufndx) & (N - 1)];
+                        buf[count] = (byte)c;
+                        tdctl.bufndx++;
+                        text_buf[tdctl.r++] = (byte)c;
+                        tdctl.r &= (N - 1);
+                        count++;
+                    }
+                    // reset bufcnt after copy string from text_buf[]
+                    if(tdctl.bufndx >= tdctl.bufcnt) tdctl.bufndx = tdctl.bufcnt = 0;
+                }
+            }
+
+            return (count); // count == len, success
+        }
+        #endregion LZH decompression from MAME
+    }
 }

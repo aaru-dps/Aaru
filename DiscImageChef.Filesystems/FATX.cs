@@ -74,8 +74,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             FATX_Superblock fatxSb = new FATX_Superblock();
             byte[] sector = imagePlugin.ReadSector(partition.Start);
@@ -85,11 +84,11 @@ namespace DiscImageChef.Filesystems
             return fatxSb.magic == FATX_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512)
-                return;
+            if(imagePlugin.GetSectorSize() < 512) return;
 
             FATX_Superblock fatxSb = new FATX_Superblock();
 
@@ -97,14 +96,14 @@ namespace DiscImageChef.Filesystems
 
             fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
 
-            if(fatxSb.magic != FATX_Magic)
-                return;
+            if(fatxSb.magic != FATX_Magic) return;
 
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("FATX filesystem");
             sb.AppendFormat("Filesystem id {0}", fatxSb.id).AppendLine();
-            sb.AppendFormat("{0} sectors ({1} bytes) per cluster", fatxSb.sectorsPerCluster, fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.sectorSize).AppendLine();
+            sb.AppendFormat("{0} sectors ({1} bytes) per cluster", fatxSb.sectorsPerCluster,
+                            fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.sectorSize).AppendLine();
             sb.AppendFormat("Root directory starts on cluster {0}", fatxSb.rootDirectoryCluster).AppendLine();
 
             information = sb.ToString();
@@ -112,7 +111,8 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "FATX filesystem";
             xmlFSType.ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.sectorSize);
-            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize / (ulong)xmlFSType.ClusterSize);
+            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize /
+                                        (ulong)xmlFSType.ClusterSize);
         }
 
         public override Errno Mount()

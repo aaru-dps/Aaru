@@ -153,12 +153,10 @@ namespace DiscImageChef.Filesystems.CPM
                 case MediaType.RP06:
                 case MediaType.RP06_18:
                 case MediaType.GENERIC_HDD:
-                case MediaType.FlashDrive:
-                    break;
-                default:
-                    return false;
+                case MediaType.FlashDrive: break;
+                default: return false;
             }
-            
+
             // This will try to identify a CP/M filesystem
             // However as it contains no identification marks whatsoever it's more something of trial-and-error
             // As anything can happen, better try{}catch{} than sorry ;)
@@ -186,8 +184,7 @@ namespace DiscImageChef.Filesystems.CPM
                     sig3 = BitConverter.ToUInt32(sector, 0x7C);
 
                     // PCW16 extended boot record
-                    if(sig1 == 0x4D2F5043 && sig2 == 0x004B5344 && sig3 == sig1)
-                        amsSbOffset = 0x80;
+                    if(sig1 == 0x4D2F5043 && sig2 == 0x004B5344 && sig3 == sig1) amsSbOffset = 0x80;
 
                     // Read the superblock
                     AmstradSuperBlock amsSb = new AmstradSuperBlock();
@@ -207,8 +204,7 @@ namespace DiscImageChef.Filesystems.CPM
                         sectorSize = (ulong)(128 << amsSb.psh);
 
                         // Compare device limits from superblock to real limits
-                        if(sectorSize == imagePlugin.GetSectorSize() &&
-                           sectorCount == imagePlugin.GetSectors())
+                        if(sectorSize == imagePlugin.GetSectorSize() && sectorCount == imagePlugin.GetSectors())
                         {
                             cpmFound = true;
                             firstDirectorySector = (ulong)((amsSb.off * amsSb.spt));
@@ -218,8 +214,8 @@ namespace DiscImageChef.Filesystems.CPM
                             dpb.al0 = sectorCount == 1440 ? (byte)0xF0 : (byte)0xC0;
                             dpb.spt = amsSb.spt;
                             dpb.bsh = amsSb.bsh;
-                            for(int i = 0; i < dpb.bsh; i++)
-                                dpb.blm += (byte)Math.Pow(2, i);
+                            for(int i = 0; i < dpb.bsh; i++) dpb.blm += (byte)Math.Pow(2, i);
+
                             if(sectorCount >= 1440)
                             {
                                 dpb.cks = 0x40;
@@ -234,11 +230,12 @@ namespace DiscImageChef.Filesystems.CPM
                             dpb.exm = sectorCount == 2880 ? (byte)1 : (byte)0;
                             dpb.off = amsSb.off;
                             dpb.psh = amsSb.psh;
-                            for(int i = 0; i < dpb.psh; i++)
-                                dpb.phm += (byte)Math.Pow(2, i);
+                            for(int i = 0; i < dpb.psh; i++) dpb.phm += (byte)Math.Pow(2, i);
+
                             dpb.spt = (ushort)(amsSb.spt * (sectorSize / 128));
                             uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / sectorSize);
-                            directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength);
+                            directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start,
+                                                                directoryLength);
 
                             // Build a CP/M disk definition
                             workingDefinition = new CpmDefinition();
@@ -262,26 +259,20 @@ namespace DiscImageChef.Filesystems.CPM
                             workingDefinition.side1 = new Side();
                             workingDefinition.side1.sideId = 0;
                             workingDefinition.side1.sectorIds = new int[amsSb.spt];
-                            for(int si = 0; si < amsSb.spt; si++)
-                                workingDefinition.side1.sectorIds[si] = si + 1;
+                            for(int si = 0; si < amsSb.spt; si++) workingDefinition.side1.sectorIds[si] = si + 1;
 
                             if(amsSb.format == 2)
                             {
-                                if((amsSb.sidedness & 0x02) == 1)
-                                    workingDefinition.order = "SIDES";
-                                else if((amsSb.sidedness & 0x02) == 2)
-                                    workingDefinition.order = "CYLINDERS";
-                                else
-                                    workingDefinition.order = null;
+                                if((amsSb.sidedness & 0x02) == 1) workingDefinition.order = "SIDES";
+                                else if((amsSb.sidedness & 0x02) == 2) workingDefinition.order = "CYLINDERS";
+                                else workingDefinition.order = null;
 
                                 workingDefinition.side2 = new Side();
                                 workingDefinition.side2.sideId = 1;
                                 workingDefinition.side2.sectorIds = new int[amsSb.spt];
-                                for(int si = 0; si < amsSb.spt; si++)
-                                    workingDefinition.side2.sectorIds[si] = si + 1;
+                                for(int si = 0; si < amsSb.spt; si++) workingDefinition.side2.sectorIds[si] = si + 1;
                             }
-                            else
-                                workingDefinition.order = null;
+                            else workingDefinition.order = null;
 
                             workingDefinition.skew = 2;
                             workingDefinition.sofs = 0;
@@ -299,8 +290,7 @@ namespace DiscImageChef.Filesystems.CPM
                     ushort sum = 0;
 
                     // Sum of all 16-bit words that make this sector must be 0
-                    for(int i = 0; i < sector.Length; i += 2)
-                        sum += BitConverter.ToUInt16(sector, i);
+                    for(int i = 0; i < sector.Length; i += 2) sum += BitConverter.ToUInt16(sector, i);
 
                     // It may happen that there is a corrupted superblock
                     // Better to ignore corrupted than to false positive the rest
@@ -316,11 +306,11 @@ namespace DiscImageChef.Filesystems.CPM
                         // Calculate volume size
                         sectorSize = (ulong)(hddSb.recordsPerSector * 128);
                         ulong sectorsInPartition = (ulong)(hddSb.cylinders * hddSb.heads * hddSb.sectorsPerTrack);
-                        ulong startingSector = (ulong)((hddSb.firstCylinder * hddSb.heads + hddSb.heads) * hddSb.sectorsPerTrack);
+                        ulong startingSector =
+                            (ulong)((hddSb.firstCylinder * hddSb.heads + hddSb.heads) * hddSb.sectorsPerTrack);
 
                         // If volume size corresponds with working partition (this variant will be inside MBR partitioning)
-                        if(sectorSize == imagePlugin.GetSectorSize() &&
-                           startingSector == partition.Start &&
+                        if(sectorSize == imagePlugin.GetSectorSize() && startingSector == partition.Start &&
                            sectorsInPartition + partition.Start <= partition.End)
                         {
                             cpmFound = true;
@@ -341,7 +331,8 @@ namespace DiscImageChef.Filesystems.CPM
                             dpb.psh = 0; // Needed?
                             dpb.spt = hddSb.spt;
                             uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / sectorSize);
-                            directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength);
+                            directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start,
+                                                                directoryLength);
                             DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
 
                             // Build a CP/M disk definition
@@ -367,12 +358,13 @@ namespace DiscImageChef.Filesystems.CPM
                             workingDefinition.side1.sectorIds = new int[hddSb.sectorsPerTrack];
                             for(int si = 0; si < hddSb.sectorsPerTrack; si++)
                                 workingDefinition.side1.sectorIds[si] = si + 1;
+
                             workingDefinition.order = "SIDES";
                             workingDefinition.side2 = new Side();
                             workingDefinition.side2.sideId = 1;
                             workingDefinition.side2.sectorIds = new int[hddSb.sectorsPerTrack];
-                            for(int si = 0; si < hddSb.spt; si++)
-                                workingDefinition.side2.sectorIds[si] = si + 1;
+                            for(int si = 0; si < hddSb.spt; si++) workingDefinition.side2.sectorIds[si] = si + 1;
+
                             workingDefinition.skew = 0;
                             workingDefinition.sofs = 0;
                         }
@@ -389,13 +381,10 @@ namespace DiscImageChef.Filesystems.CPM
                     // Check for alternate location of format ID
                     if(sector.Last() == 0x00 || sector.Last() == 0xFF)
                     {
-                        if(sector[0x40] == 0x94 || sector[0x40] == 0x26)
-                            formatByte = sector[0x40];
-                        else
-                            formatByte = sector.Last();
+                        if(sector[0x40] == 0x94 || sector[0x40] == 0x26) formatByte = sector[0x40];
+                        else formatByte = sector.Last();
                     }
-                    else
-                        formatByte = sector.Last();
+                    else formatByte = sector.Last();
 
                     uint firstDirectorySector86 = 0;
 
@@ -445,11 +434,12 @@ namespace DiscImageChef.Filesystems.CPM
                                 workingDefinition.side1 = new Side();
                                 workingDefinition.side1.sideId = 0;
                                 workingDefinition.side1.sectorIds = new int[8];
-                                for(int si = 0; si < 8; si++)
-                                    workingDefinition.side1.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 8; si++) workingDefinition.side1.sectorIds[si] = si + 1;
+
                                 workingDefinition.skew = 0;
                                 workingDefinition.sofs = 0;
                             }
+
                             break;
                         case FormatByte.k320:
                             if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 640)
@@ -490,17 +480,18 @@ namespace DiscImageChef.Filesystems.CPM
                                 workingDefinition.side1 = new Side();
                                 workingDefinition.side1.sideId = 0;
                                 workingDefinition.side1.sectorIds = new int[8];
-                                for(int si = 0; si < 8; si++)
-                                    workingDefinition.side1.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 8; si++) workingDefinition.side1.sectorIds[si] = si + 1;
+
                                 workingDefinition.order = "SIDES";
                                 workingDefinition.side2 = new Side();
                                 workingDefinition.side2.sideId = 1;
                                 workingDefinition.side2.sectorIds = new int[8];
-                                for(int si = 0; si < 8; si++)
-                                    workingDefinition.side2.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 8; si++) workingDefinition.side2.sectorIds[si] = si + 1;
+
                                 workingDefinition.skew = 0;
                                 workingDefinition.sofs = 0;
                             }
+
                             break;
                         case FormatByte.k360:
                         case FormatByte.k360Alt:
@@ -543,17 +534,18 @@ namespace DiscImageChef.Filesystems.CPM
                                 workingDefinition.side1 = new Side();
                                 workingDefinition.side1.sideId = 0;
                                 workingDefinition.side1.sectorIds = new int[9];
-                                for(int si = 0; si < 9; si++)
-                                    workingDefinition.side1.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 9; si++) workingDefinition.side1.sectorIds[si] = si + 1;
+
                                 workingDefinition.order = "SIDES";
                                 workingDefinition.side2 = new Side();
                                 workingDefinition.side2.sideId = 1;
                                 workingDefinition.side2.sectorIds = new int[9];
-                                for(int si = 0; si < 9; si++)
-                                    workingDefinition.side2.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 9; si++) workingDefinition.side2.sectorIds[si] = si + 1;
+
                                 workingDefinition.skew = 0;
                                 workingDefinition.sofs = 0;
                             }
+
                             break;
                         case FormatByte.k720:
                         case FormatByte.k720Alt:
@@ -595,17 +587,18 @@ namespace DiscImageChef.Filesystems.CPM
                                 workingDefinition.side1 = new Side();
                                 workingDefinition.side1.sideId = 0;
                                 workingDefinition.side1.sectorIds = new int[9];
-                                for(int si = 0; si < 9; si++)
-                                    workingDefinition.side1.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 9; si++) workingDefinition.side1.sectorIds[si] = si + 1;
+
                                 workingDefinition.order = "SIDES";
                                 workingDefinition.side2 = new Side();
                                 workingDefinition.side2.sideId = 1;
                                 workingDefinition.side2.sectorIds = new int[9];
-                                for(int si = 0; si < 9; si++)
-                                    workingDefinition.side2.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 9; si++) workingDefinition.side2.sectorIds[si] = si + 1;
+
                                 workingDefinition.skew = 0;
                                 workingDefinition.sofs = 0;
                             }
+
                             break;
                         case FormatByte.f720:
                             if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 1440)
@@ -646,17 +639,18 @@ namespace DiscImageChef.Filesystems.CPM
                                 workingDefinition.side1 = new Side();
                                 workingDefinition.side1.sideId = 0;
                                 workingDefinition.side1.sectorIds = new int[9];
-                                for(int si = 0; si < 9; si++)
-                                    workingDefinition.side1.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 9; si++) workingDefinition.side1.sectorIds[si] = si + 1;
+
                                 workingDefinition.order = "CYLINDERS";
                                 workingDefinition.side2 = new Side();
                                 workingDefinition.side2.sideId = 1;
                                 workingDefinition.side2.sectorIds = new int[9];
-                                for(int si = 0; si < 9; si++)
-                                    workingDefinition.side2.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 9; si++) workingDefinition.side2.sectorIds[si] = si + 1;
+
                                 workingDefinition.skew = 0;
                                 workingDefinition.sofs = 0;
                             }
+
                             break;
                         case FormatByte.f1200:
                             if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 2400)
@@ -697,17 +691,18 @@ namespace DiscImageChef.Filesystems.CPM
                                 workingDefinition.side1 = new Side();
                                 workingDefinition.side1.sideId = 0;
                                 workingDefinition.side1.sectorIds = new int[15];
-                                for(int si = 0; si < 15; si++)
-                                    workingDefinition.side1.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 15; si++) workingDefinition.side1.sectorIds[si] = si + 1;
+
                                 workingDefinition.order = "CYLINDERS";
                                 workingDefinition.side2 = new Side();
                                 workingDefinition.side2.sideId = 1;
                                 workingDefinition.side2.sectorIds = new int[15];
-                                for(int si = 0; si < 15; si++)
-                                    workingDefinition.side2.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 15; si++) workingDefinition.side2.sectorIds[si] = si + 1;
+
                                 workingDefinition.skew = 0;
                                 workingDefinition.sofs = 0;
                             }
+
                             break;
                         case FormatByte.f1440:
                             if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 2880)
@@ -748,17 +743,18 @@ namespace DiscImageChef.Filesystems.CPM
                                 workingDefinition.side1 = new Side();
                                 workingDefinition.side1.sideId = 0;
                                 workingDefinition.side1.sectorIds = new int[18];
-                                for(int si = 0; si < 18; si++)
-                                    workingDefinition.side1.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 18; si++) workingDefinition.side1.sectorIds[si] = si + 1;
+
                                 workingDefinition.order = "CYLINDERS";
                                 workingDefinition.side2 = new Side();
                                 workingDefinition.side2.sideId = 1;
                                 workingDefinition.side2.sectorIds = new int[18];
-                                for(int si = 0; si < 18; si++)
-                                    workingDefinition.side2.sectorIds[si] = si + 1;
+                                for(int si = 0; si < 18; si++) workingDefinition.side2.sectorIds[si] = si + 1;
+
                                 workingDefinition.skew = 0;
                                 workingDefinition.sofs = 0;
                             }
+
                             break;
                     }
 
@@ -787,7 +783,8 @@ namespace DiscImageChef.Filesystems.CPM
                 {
                     // Load all definitions
                     DicConsole.DebugWriteLine("CP/M Plugin", "Trying to load definitions.");
-                    if(LoadDefinitions() && definitions != null && definitions.definitions != null && definitions.definitions.Count > 0)
+                    if(LoadDefinitions() && definitions != null && definitions.definitions != null &&
+                       definitions.definitions.Count > 0)
                     {
                         DicConsole.DebugWriteLine("CP/M Plugin", "Trying all known definitions.");
                         foreach(CpmDefinition def in definitions.definitions)
@@ -799,10 +796,8 @@ namespace DiscImageChef.Filesystems.CPM
                             {
                                 DicConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
                                 ulong offset;
-                                if(def.sofs != 0)
-                                    offset = (ulong)def.sofs;
-                                else
-                                    offset = (ulong)(def.ofs * def.sectorsPerTrack);
+                                if(def.sofs != 0) offset = (ulong)def.sofs;
+                                else offset = (ulong)(def.ofs * def.sectorsPerTrack);
 
                                 int dirLen = ((def.drm + 1) * 32) / def.bytesPerSector;
 
@@ -815,39 +810,51 @@ namespace DiscImageChef.Filesystems.CPM
                                 else
                                 {
                                     // Head changes after every track
-                                    if(string.Compare(def.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
+                                    if(string.Compare(def.order, "SIDES",
+                                                      StringComparison.InvariantCultureIgnoreCase) == 0)
                                     {
                                         sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
                                         for(int m = 0; m < def.side1.sectorIds.Length; m++)
                                             sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
                                         // Skip first track (first side)
                                         for(int m = 0; m < def.side2.sectorIds.Length; m++)
-                                            sectorMask[m + def.side1.sectorIds.Length] = (def.side2.sectorIds[m] - def.side2.sectorIds[0]) + def.side1.sectorIds.Length;
+                                            sectorMask[m + def.side1.sectorIds.Length] =
+                                                (def.side2.sectorIds[m] - def.side2.sectorIds[0]) +
+                                                def.side1.sectorIds.Length;
                                     }
                                     // Head changes after whole side
-                                    else if(string.Compare(def.order, "CYLINDERS", StringComparison.InvariantCultureIgnoreCase) == 0)
+                                    else if(string.Compare(def.order, "CYLINDERS",
+                                                           StringComparison.InvariantCultureIgnoreCase) == 0)
                                     {
                                         for(int m = 0; m < def.side1.sectorIds.Length; m++)
                                             sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
                                         // Skip first track (first side) and first track (second side)
                                         for(int m = 0; m < def.side1.sectorIds.Length; m++)
-                                            sectorMask[m + def.side1.sectorIds.Length] = (def.side1.sectorIds[m] - def.side1.sectorIds[0]) + def.side1.sectorIds.Length + def.side2.sectorIds.Length;
+                                            sectorMask[m + def.side1.sectorIds.Length] =
+                                                (def.side1.sectorIds[m] - def.side1.sectorIds[0]) +
+                                                def.side1.sectorIds.Length + def.side2.sectorIds.Length;
                                     }
                                     // TODO: Implement COLUMBIA ordering
-                                    else if(string.Compare(def.order, "COLUMBIA", StringComparison.InvariantCultureIgnoreCase) == 0)
+                                    else if(string.Compare(def.order, "COLUMBIA",
+                                                           StringComparison.InvariantCultureIgnoreCase) == 0)
                                     {
-                                        DicConsole.DebugWriteLine("CP/M Plugin", "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
+                                        DicConsole.DebugWriteLine("CP/M Plugin",
+                                                                  "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
                                         continue;
                                     }
                                     // TODO: Implement EAGLE ordering
-                                    else if(string.Compare(def.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) == 0)
+                                    else if(string.Compare(def.order, "EAGLE",
+                                                           StringComparison.InvariantCultureIgnoreCase) == 0)
                                     {
-                                        DicConsole.DebugWriteLine("CP/M Plugin", "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
+                                        DicConsole.DebugWriteLine("CP/M Plugin",
+                                                                  "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
                                         continue;
                                     }
                                     else
                                     {
-                                        DicConsole.DebugWriteLine("CP/M Plugin", "Unknown order type \"{0}\", not proceeding with this definition.", def.order);
+                                        DicConsole.DebugWriteLine("CP/M Plugin",
+                                                                  "Unknown order type \"{0}\", not proceeding with this definition.",
+                                                                  def.order);
                                         continue;
                                     }
                                 }
@@ -856,13 +863,18 @@ namespace DiscImageChef.Filesystems.CPM
                                 MemoryStream ms = new MemoryStream();
                                 for(int p = 0; p < dirLen; p++)
                                 {
-                                    byte[] dirSector = imagePlugin.ReadSector((ulong)((int)offset + (int)partition.Start + (p / sectorMask.Length) * sectorMask.Length + sectorMask[p % sectorMask.Length]));
+                                    byte[] dirSector =
+                                        imagePlugin.ReadSector((ulong)((int)offset + (int)partition.Start +
+                                                                       (p / sectorMask.Length) * sectorMask.Length +
+                                                                       sectorMask[p % sectorMask.Length]));
                                     ms.Write(dirSector, 0, dirSector.Length);
                                 }
+
                                 directory = ms.ToArray();
 
                                 if(def.evenOdd)
-                                    DicConsole.DebugWriteLine("CP/M Plugin", "Definition contains EVEN-ODD field, with unknown meaning, detection may be wrong.");
+                                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                                              "Definition contains EVEN-ODD field, with unknown meaning, detection may be wrong.");
 
                                 // Complement of the directory bytes if needed
                                 if(def.complement)
@@ -874,7 +886,9 @@ namespace DiscImageChef.Filesystems.CPM
                                 // Check the directory
                                 if(CheckDir(directory))
                                 {
-                                    DicConsole.DebugWriteLine("CP/M Plugin", "Definition \"{0}\" has a correct directory", def.comment);
+                                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                                              "Definition \"{0}\" has a correct directory",
+                                                              def.comment);
 
                                     // Build a Disc Parameter Block
                                     workingDefinition = def;
@@ -927,6 +941,7 @@ namespace DiscImageChef.Filesystems.CPM
                                             dpb.phm = 255;
                                             break;
                                     }
+
                                     dpb.spt = (ushort)((def.sectorsPerTrack * def.bytesPerSector) / 128);
                                     cpmFound = true;
                                     workingDefinition = def;
@@ -962,8 +977,7 @@ namespace DiscImageChef.Filesystems.CPM
         {
             information = "";
             // As the identification is so complex, just call Identify() and relay on its findings
-            if(!Identify(imagePlugin, partition) || !cpmFound || workingDefinition == null || dpb == null)
-                return;
+            if(!Identify(imagePlugin, partition) || !cpmFound || workingDefinition == null || dpb == null) return;
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("CP/M filesystem");
@@ -971,12 +985,15 @@ namespace DiscImageChef.Filesystems.CPM
                 sb.AppendFormat("Identified as {0}", workingDefinition.comment).AppendLine();
             sb.AppendFormat("Volume block is {0} bytes", 128 << dpb.bsh).AppendLine();
             if(dpb.dsm > 0)
-                sb.AppendFormat("Volume contains {0} blocks ({1} bytes)", dpb.dsm, (dpb.dsm) * (128 << dpb.bsh)).AppendLine();
+                sb.AppendFormat("Volume contains {0} blocks ({1} bytes)", dpb.dsm, (dpb.dsm) * (128 << dpb.bsh))
+                  .AppendLine();
             sb.AppendFormat("Volume contains {0} directory entries", dpb.drm + 1).AppendLine();
             if(workingDefinition.sofs > 0)
                 sb.AppendFormat("Volume reserves {0} sectors for system", workingDefinition.sofs).AppendLine();
             else
-                sb.AppendFormat("Volume reserves {1} tracks ({0} sectors) for system", workingDefinition.ofs * workingDefinition.sectorsPerTrack, workingDefinition.ofs).AppendLine();
+                sb.AppendFormat("Volume reserves {1} tracks ({0} sectors) for system",
+                                workingDefinition.ofs * workingDefinition.sectorsPerTrack, workingDefinition.ofs)
+                  .AppendLine();
 
             int interleaveSide1;
             int interleaveSide2 = 1;
@@ -987,7 +1004,7 @@ namespace DiscImageChef.Filesystems.CPM
                 if(interleaveSide1 > 1)
                     sb.AppendFormat("Side 0 uses {0}:1 software interleaving", interleaveSide1).AppendLine();
             }
-            
+
             if(workingDefinition.sides == 2)
             {
                 if(workingDefinition.side2.sectorIds.Length >= 2)
@@ -1014,18 +1031,19 @@ namespace DiscImageChef.Filesystems.CPM
                 sb.AppendFormat("Device uses {0}:1 hardware interleaving", workingDefinition.skew).AppendLine();
 
             if(workingDefinition.sofs > 0)
-                sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H SOFS {7}", dpb.bsh, dpb.blm, dpb.exm, dpb.dsm, dpb.drm, dpb.al0, dpb.al1, workingDefinition.sofs).AppendLine();
+                sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H SOFS {7}", dpb.bsh,
+                                dpb.blm, dpb.exm, dpb.dsm, dpb.drm, dpb.al0, dpb.al1, workingDefinition.sofs)
+                  .AppendLine();
             else
-                sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H OFS {7}", dpb.bsh, dpb.blm, dpb.exm, dpb.dsm, dpb.drm, dpb.al0, dpb.al1, workingDefinition.ofs).AppendLine();
+                sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H OFS {7}", dpb.bsh,
+                                dpb.blm, dpb.exm, dpb.dsm, dpb.drm, dpb.al0, dpb.al1, workingDefinition.ofs)
+                  .AppendLine();
 
-            if(label != null)
-                sb.AppendFormat("Volume label {0}", label).AppendLine();
+            if(label != null) sb.AppendFormat("Volume label {0}", label).AppendLine();
 
-            if(standardTimestamps)
-                sb.AppendLine("Volume uses standard CP/M timestamps");
+            if(standardTimestamps) sb.AppendLine("Volume uses standard CP/M timestamps");
 
-            if(thirdPartyTimestamps)
-                sb.AppendLine("Volume uses third party timestamps");
+            if(thirdPartyTimestamps) sb.AppendLine("Volume uses third party timestamps");
 
             if(labelCreationDate != null)
                 sb.AppendFormat("Volume created on {0}", DateHandlers.CPMToDateTime(labelCreationDate)).AppendLine();
@@ -1035,10 +1053,8 @@ namespace DiscImageChef.Filesystems.CPM
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Bootable |= (workingDefinition.sofs > 0 || workingDefinition.ofs > 0);
             xmlFSType.ClusterSize = 128 << dpb.bsh;
-            if(dpb.dsm > 0)
-                xmlFSType.Clusters = dpb.dsm;
-            else
-                xmlFSType.Clusters = (long)(partition.End - partition.Start);
+            if(dpb.dsm > 0) xmlFSType.Clusters = dpb.dsm;
+            else xmlFSType.Clusters = (long)(partition.End - partition.Start);
             if(labelCreationDate != null)
             {
                 xmlFSType.CreationDate = DateHandlers.CPMToDateTime(labelCreationDate);
@@ -1056,4 +1072,3 @@ namespace DiscImageChef.Filesystems.CPM
         }
     }
 }
-

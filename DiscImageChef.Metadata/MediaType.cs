@@ -1827,4 +1827,3 @@ namespace DiscImageChef.Metadata
         }
     }
 }
-

@@ -73,7 +73,8 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters, out double duration);
+            bool sense = dev.AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters,
+                                           out double duration);
 
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
@@ -109,8 +110,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("IDENTIFY PACKET DEVICE response:");
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -120,8 +120,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("IDENTIFY PACKET DEVICE decoded response:");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
+                    if(buffer != null) DicConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -137,16 +136,13 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
-                    goto start;
+                case 4: goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
                     goto menu;
             }
-
         }
     }
 }
-

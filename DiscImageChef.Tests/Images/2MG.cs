@@ -38,29 +38,26 @@ namespace DiscImageChef.Tests.Images
     [TestFixture]
     public class Apple2MG
     {
-        readonly string[] testfiles = {
-            "blank140.2mg.lz", "dos32.2mg.lz", "dos33-do.2mg.lz", "dos33-nib.2mg.lz",
-            "dos33-po.2mg.lz", "prodos1440.2mg.lz",
+        readonly string[] testfiles =
+        {
+            "blank140.2mg.lz", "dos32.2mg.lz", "dos33-do.2mg.lz", "dos33-nib.2mg.lz", "dos33-po.2mg.lz",
+            "prodos1440.2mg.lz",
         };
 
-        readonly ulong[] sectors = {
-            560, 415, 560, 560,
-            560, 2880,
+        readonly ulong[] sectors = {560, 415, 560, 560, 560, 2880,};
+
+        readonly uint[] sectorsize = {256, 256, 256, 256, 256, 512};
+
+        readonly MediaType[] mediatypes =
+        {
+            MediaType.Apple33SS, MediaType.Apple32SS, MediaType.Apple33SS, MediaType.Apple33SS, MediaType.Apple33SS,
+            MediaType.DOS_35_HD,
         };
 
-        readonly uint[] sectorsize = {
-            256, 256, 256, 256,
-            256, 512
-        };
-
-        readonly MediaType[] mediatypes = {
-            MediaType.Apple33SS, MediaType.Apple32SS, MediaType.Apple33SS, MediaType.Apple33SS,
-            MediaType.Apple33SS, MediaType.DOS_35_HD,
-        };
-
-        readonly string[] md5s = {
-            "7db5d585270ab858043d50e60068d45f", "c62ee4dac8835f9acc999e7531d3b5f8", "86bc7879bb477917aab3976057a6a7b2", "32b8f8163238d4f3ea2a3db95ad1a812",
-            "a5acba4cbaddd9c53ea0e8210f4aba55", "eb9b60c78b30d2b6541ed0781944b6da",
+        readonly string[] md5s =
+        {
+            "7db5d585270ab858043d50e60068d45f", "c62ee4dac8835f9acc999e7531d3b5f8", "86bc7879bb477917aab3976057a6a7b2",
+            "32b8f8163238d4f3ea2a3db95ad1a812", "a5acba4cbaddd9c53ea0e8210f4aba55", "eb9b60c78b30d2b6541ed0781944b6da",
         };
 
         [Test]

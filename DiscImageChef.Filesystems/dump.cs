@@ -150,35 +150,31 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct s_spcl
         {
-            public int c_type;         /* record type (see below) */
-            public int c_date;         /* date of this dump */
-            public int c_ddate;        /* date of previous dump */
-            public int c_volume;       /* dump volume number */
-            public int c_tapea;        /* logical block of this record */
-            public uint c_inumber;      /* number of inode */
-            public int c_magic;        /* magic number (see above) */
-            public int c_checksum;     /* record checksum */
-            public dinode c_dinode;   /* ownership and mode of inode */
-            public int c_count;        /* number of valid c_addr entries */
+            public int c_type; /* record type (see below) */
+            public int c_date; /* date of this dump */
+            public int c_ddate; /* date of previous dump */
+            public int c_volume; /* dump volume number */
+            public int c_tapea; /* logical block of this record */
+            public uint c_inumber; /* number of inode */
+            public int c_magic; /* magic number (see above) */
+            public int c_checksum; /* record checksum */
+            public dinode c_dinode; /* ownership and mode of inode */
+            public int c_count; /* number of valid c_addr entries */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = TP_NINDIR)]
-            public byte[] c_addr;  /* 1 => data; 0 => hole in inode */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LBLSIZE)]
-            public byte[] c_label;   /* dump label */
-            public int c_level;        /* level of this dump */
+            public byte[] c_addr; /* 1 => data; 0 => hole in inode */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = LBLSIZE)] public byte[] c_label; /* dump label */
+            public int c_level; /* level of this dump */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NAMELEN)]
             public byte[] c_filesys; /* name of dumpped file system */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NAMELEN)]
-            public byte[] c_dev;     /* name of dumpped device */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NAMELEN)]
-            public byte[] c_host;    /* name of dumpped host */
-            public int c_flags;        /* additional information */
-            public int c_firstrec;     /* first record on volume */
-            public long c_ndate;         /* date of this dump */
-            public long c_nddate;        /* date of previous dump */
-            public long c_ntapea;        /* logical block of this record */
-            public long c_nfirstrec;     /* first record on volume */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public int[] c_spare;        /* reserved for future uses */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NAMELEN)] public byte[] c_dev; /* name of dumpped device */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NAMELEN)] public byte[] c_host; /* name of dumpped host */
+            public int c_flags; /* additional information */
+            public int c_firstrec; /* first record on volume */
+            public long c_ndate; /* date of this dump */
+            public long c_nddate; /* date of previous dump */
+            public long c_ntapea; /* logical block of this record */
+            public long c_nfirstrec; /* first record on volume */
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public int[] c_spare; /* reserved for future uses */
         }
 
         const int NDADDR = 12;
@@ -187,27 +183,27 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct dinode
         {
-            public ushort di_mode;    /*   0: IFMT, permissions; see below. */
-            public short di_nlink;   /*   2: File link count. */
-            public int inumber;  /*   4: Lfs: inode number. */
-            public ulong di_size;    /*   8: File byte count. */
-            public int di_atime;   /*  16: Last access time. */
-            public int di_atimensec;   /*  20: Last access time. */
-            public int di_mtime;   /*  24: Last modified time. */
-            public int di_mtimensec;   /*  28: Last modified time. */
-            public int di_ctime;   /*  32: Last inode change time. */
-            public int di_ctimensec;   /*  36: Last inode change time. */
+            public ushort di_mode; /*   0: IFMT, permissions; see below. */
+            public short di_nlink; /*   2: File link count. */
+            public int inumber; /*   4: Lfs: inode number. */
+            public ulong di_size; /*   8: File byte count. */
+            public int di_atime; /*  16: Last access time. */
+            public int di_atimensec; /*  20: Last access time. */
+            public int di_mtime; /*  24: Last modified time. */
+            public int di_mtimensec; /*  28: Last modified time. */
+            public int di_ctime; /*  32: Last inode change time. */
+            public int di_ctimensec; /*  36: Last inode change time. */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDADDR)]
-            public ufs_daddr_t[] di_db;  /*  40: Direct disk blocks. */
+            public ufs_daddr_t[] di_db; /*  40: Direct disk blocks. */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NIADDR)]
-            public ufs_daddr_t[] di_ib;  /*  88: Indirect disk blocks. */
-            public uint di_flags;   /* 100: Status flags (chflags). */
-            public uint di_blocks;  /* 104: Blocks actually held. */
-            public int di_gen;     /* 108: Generation number. */
-            public uint di_uid;     /* 112: File owner. */
-            public uint di_gid;     /* 116: File group. */
+            public ufs_daddr_t[] di_ib; /*  88: Indirect disk blocks. */
+            public uint di_flags; /* 100: Status flags (chflags). */
+            public uint di_blocks; /* 104: Blocks actually held. */
+            public int di_gen; /* 108: Generation number. */
+            public uint di_uid; /* 112: File owner. */
+            public uint di_gid; /* 116: File group. */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public int[] di_spare;    /* 120: Reserved; currently unused */
+            public int[] di_spare; /* 120: Reserved; currently unused */
         }
 
         public dump()
@@ -221,42 +217,34 @@ namespace DiscImageChef.Filesystems
         {
             Name = "dump(8) Plugin";
             PluginUUID = new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public dump(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "dump(8) Plugin";
             PluginUUID = new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
+            else CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < 512)
-                return false;
+            if(imagePlugin.GetSectorSize() < 512) return false;
 
             // It should be start of a tape or floppy or file
-            if(partition.Start != 0)
-                return false;
+            if(partition.Start != 0) return false;
 
             spcl16 oldHdr = new spcl16();
             spcl_aix aixHdr = new spcl_aix();
             s_spcl newHdr = new s_spcl();
 
             uint sbSize = (uint)((Marshal.SizeOf(newHdr)) / imagePlugin.GetSectorSize());
-            if((Marshal.SizeOf(newHdr)) % imagePlugin.GetSectorSize() != 0)
-                sbSize++;
+            if((Marshal.SizeOf(newHdr)) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf(newHdr))
-                return false;
+            if(sector.Length < Marshal.SizeOf(newHdr)) return false;
 
             IntPtr oldPtr = Marshal.AllocHGlobal(Marshal.SizeOf(oldHdr));
             Marshal.Copy(sector, 0, oldPtr, Marshal.SizeOf(oldHdr));
@@ -278,31 +266,27 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("dump(8) plugin", "new magic = 0x{0:X8}", newHdr.c_magic);
 
             return oldHdr.c_magic == OFS_MAGIC || aixHdr.c_magic == XIX_MAGIC || aixHdr.c_magic == XIX_CIGAM ||
-               newHdr.c_magic == OFS_MAGIC || newHdr.c_magic == NFS_MAGIC ||
-               newHdr.c_magic == OFS_CIGAM || newHdr.c_magic == NFS_CIGAM ||
-               newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM;
+                   newHdr.c_magic == OFS_MAGIC || newHdr.c_magic == NFS_MAGIC || newHdr.c_magic == OFS_CIGAM ||
+                   newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < 512)
-                return;
+            if(imagePlugin.GetSectorSize() < 512) return;
 
-            if(partition.Start != 0)
-                return;
+            if(partition.Start != 0) return;
 
             spcl16 oldHdr = new spcl16();
             spcl_aix aixHdr = new spcl_aix();
             s_spcl newHdr = new s_spcl();
 
             uint sbSize = (uint)((Marshal.SizeOf(newHdr)) / imagePlugin.GetSectorSize());
-            if((Marshal.SizeOf(newHdr)) % imagePlugin.GetSectorSize() != 0)
-                sbSize++;
+            if((Marshal.SizeOf(newHdr)) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf(newHdr))
-                return;
+            if(sector.Length < Marshal.SizeOf(newHdr)) return;
 
             IntPtr oldPtr = Marshal.AllocHGlobal(Marshal.SizeOf(oldHdr));
             Marshal.Copy(sector, 0, oldPtr, Marshal.SizeOf(oldHdr));
@@ -323,14 +307,12 @@ namespace DiscImageChef.Filesystems
             bool useAix = false;
             bool useNew = false;
 
-            if(newHdr.c_magic == OFS_MAGIC || newHdr.c_magic == NFS_MAGIC ||
-               newHdr.c_magic == OFS_CIGAM || newHdr.c_magic == NFS_CIGAM ||
-               newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM)
+            if(newHdr.c_magic == OFS_MAGIC || newHdr.c_magic == NFS_MAGIC || newHdr.c_magic == OFS_CIGAM ||
+               newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM)
             {
                 useNew = true;
 
-                if(newHdr.c_magic == OFS_CIGAM || newHdr.c_magic == NFS_CIGAM ||
-                   newHdr.c_magic == UFS2_CIGAM)
+                if(newHdr.c_magic == OFS_CIGAM || newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_CIGAM)
                     newHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<s_spcl>(sector);
             }
             else if(aixHdr.c_magic == XIX_MAGIC || aixHdr.c_magic == XIX_CIGAM)
@@ -356,11 +338,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            xmlFSType = new Schemas.FileSystemType
-            {
-                ClusterSize = 1024,
-                Clusters = (long)(partition.Size / 1024)
-            };
+            xmlFSType = new Schemas.FileSystemType {ClusterSize = 1024, Clusters = (long)(partition.Size / 1024)};
 
             if(useOld)
             {
@@ -436,14 +414,11 @@ namespace DiscImageChef.Filesystems
                 }
 
                 string str = StringHandlers.CToString(newHdr.c_filesys);
-                if(!string.IsNullOrEmpty(str))
-                    sb.AppendFormat("Dumped filesystem name: {0}", str).AppendLine();
+                if(!string.IsNullOrEmpty(str)) sb.AppendFormat("Dumped filesystem name: {0}", str).AppendLine();
                 str = StringHandlers.CToString(newHdr.c_dev);
-                if(!string.IsNullOrEmpty(str))
-                    sb.AppendFormat("Dumped device: {0}", str).AppendLine();
+                if(!string.IsNullOrEmpty(str)) sb.AppendFormat("Dumped device: {0}", str).AppendLine();
                 str = StringHandlers.CToString(newHdr.c_host);
-                if(!string.IsNullOrEmpty(str))
-                    sb.AppendFormat("Dump hostname: {0}", str).AppendLine();
+                if(!string.IsNullOrEmpty(str)) sb.AppendFormat("Dump hostname: {0}", str).AppendLine();
             }
 
             information = sb.ToString();

@@ -40,7 +40,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class DiscFerret : ImagePlugin
+    public class DiscFerret : ImagePlugin
     {
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -125,7 +125,7 @@ namespace DiscImageChef.ImagePlugins
             ushort lastCylinder = 0, lastHead = 0;
             bool endOfTrack = false;
             long offset = 0;
-            
+
             while(stream.Position < stream.Length)
             {
                 long thisOffset = stream.Position;
@@ -136,13 +136,13 @@ namespace DiscImageChef.ImagePlugins
                 blockHeader = BigEndianMarshal.ByteArrayToStructureBigEndian<DfiBlockHeader>(blk);
 
                 DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
-                    blockHeader.cylinder);
+                                          blockHeader.cylinder);
                 DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.head = {1}", thisOffset, blockHeader.head);
                 DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset,
-                    blockHeader.sector);
+                                          blockHeader.sector);
                 DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset,
-                    blockHeader.length);
-                
+                                          blockHeader.length);
+
                 if(stream.Position + blockHeader.length > stream.Length)
                 {
                     DicConsole.DebugWriteLine("DiscFerret plugin", "Invalid track block found at {0}", thisOffset);
@@ -150,7 +150,7 @@ namespace DiscImageChef.ImagePlugins
                 }
 
                 stream.Position += blockHeader.length;
-                
+
                 if(blockHeader.cylinder > 0 && blockHeader.cylinder > lastCylinder)
                 {
                     lastCylinder = blockHeader.cylinder;
@@ -169,20 +169,16 @@ namespace DiscImageChef.ImagePlugins
                     t++;
                 }
 
-                if(blockHeader.cylinder > ImageInfo.cylinders)
-                    ImageInfo.cylinders = blockHeader.cylinder;
-                if(blockHeader.head> ImageInfo.heads)
-                    ImageInfo.heads= blockHeader.head;
+                if(blockHeader.cylinder > ImageInfo.cylinders) ImageInfo.cylinders = blockHeader.cylinder;
+                if(blockHeader.head > ImageInfo.heads) ImageInfo.heads = blockHeader.head;
             }
 
             ImageInfo.heads++;
             ImageInfo.cylinders++;
 
             ImageInfo.imageApplication = "DiscFerret";
-            if(magic == DfiMagic2)
-                ImageInfo.imageApplicationVersion = "2.0";
-            else
-                ImageInfo.imageApplicationVersion = "1.0";
+            if(magic == DfiMagic2) ImageInfo.imageApplicationVersion = "2.0";
+            else ImageInfo.imageApplicationVersion = "1.0";
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -352,7 +348,8 @@ namespace DiscImageChef.ImagePlugins
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -368,6 +365,7 @@ namespace DiscImageChef.ImagePlugins
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -413,7 +411,8 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

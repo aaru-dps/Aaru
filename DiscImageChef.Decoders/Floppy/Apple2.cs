@@ -86,41 +86,35 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Always 0xD5, 0xAA, 0x96
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] prologue;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] prologue;
             /// <summary>
             /// Volume number encoded as:
             /// volume[0] = (decodedVolume >> 1) | 0xAA
             /// volume[1] = decodedVolume | 0xAA
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] volume;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] volume;
             /// <summary>
             /// Track number encoded as:
             /// track[0] = (decodedTrack >> 1) | 0xAA
             /// track[1] = decodedTrack | 0xAA
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] track;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] track;
             /// <summary>
             /// Sector number encoded as:
             /// sector[0] = (decodedSector >> 1) | 0xAA
             /// sector[1] = decodedSector | 0xAA
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] sector;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] sector;
             /// <summary>
             /// decodedChecksum = decodedVolume ^ decodedTrack ^ decodedSector
             /// checksum[0] = (decodedChecksum >> 1) | 0xAA
             /// checksum[1] = decodedChecksum | 0xAA
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] checksum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] checksum;
             /// <summary>
             /// Always 0xDE, 0xAA, 0xEB
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] epilogue;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] epilogue;
         }
 
         /// <summary>
@@ -131,8 +125,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Always 0xD5, 0xAA, 0xAD
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] prologue;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] prologue;
             /// <summary>
             /// Encoded data bytes.
             /// 410 bytes for 5to3 (aka DOS 3.2) format
@@ -143,8 +136,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Always 0xDE, 0xAA, 0xEB
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] epilogue;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] epilogue;
         }
 
         static readonly byte[] ReadTable5and3 =
@@ -225,8 +217,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <param name="data">5and3 encoded data.</param>
         public static byte[] Decode5and3(byte[] data)
         {
-            if(data == null || data.Length != 410)
-                return null;
+            if(data == null || data.Length != 410) return null;
 
             byte[] buffer = new byte[data.Length];
             byte carry = 0;
@@ -250,6 +241,7 @@ namespace DiscImageChef.Decoders.Floppy
                 output[253 - 5 * i] = (byte)(((buffer[i + 51 * 6 + 1] << 3) | b4) & 0xFF);
                 output[254 - 5 * i] = (byte)(((buffer[i + 51 * 7 + 1] << 3) | b5) & 0xFF);
             }
+
             output[255] = (byte)(((buffer[409] << 3) | (buffer[0] & 0x7)) & 0xFF);
 
             return output;
@@ -261,8 +253,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <param name="data">6and2 encoded data.</param>
         public static byte[] Decode6and2(byte[] data)
         {
-            if(data == null || data.Length != 342)
-                return null;
+            if(data == null || data.Length != 342) return null;
 
             byte[] buffer = new byte[data.Length];
             byte carry = 0;
@@ -299,15 +290,12 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static byte[] DecodeSector(RawSector sector)
         {
-            if(sector.addressField.prologue[0] == 0xD5 &&
-               sector.addressField.prologue[1] == 0xAA)
+            if(sector.addressField.prologue[0] == 0xD5 && sector.addressField.prologue[1] == 0xAA)
             {
                 // Pre DOS 3.3
-                if(sector.addressField.prologue[2] == 0xB5)
-                    return Decode5and3(sector.dataField.data);
+                if(sector.addressField.prologue[2] == 0xB5) return Decode5and3(sector.dataField.data);
                 // DOS 3.3
-                if(sector.addressField.prologue[2] == 0x96)
-                    return Decode6and2(sector.dataField.data);
+                if(sector.addressField.prologue[2] == 0x96) return Decode6and2(sector.dataField.data);
                 // Unknown
                 return null;
             }
@@ -327,8 +315,7 @@ namespace DiscImageChef.Decoders.Floppy
             endOffset = offset;
 
             // Not an Apple ][ GCR sector
-            if(data == null || data.Length < 363)
-                return null;
+            if(data == null || data.Length < 363) return null;
 
             RawSector sector;
             int position = offset;
@@ -346,8 +333,7 @@ namespace DiscImageChef.Decoders.Floppy
                         DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Prologue found at {0}", position);
 
                         // Epilogue not in correct position
-                        if(data[position + 11] != 0xDE || data[position + 12] != 0xAA)
-                            return null;
+                        if(data[position + 11] != 0xDE || data[position + 12] != 0xAA) return null;
 
                         sector = new RawSector();
                         sector.addressField = new RawAddressField();
@@ -372,11 +358,21 @@ namespace DiscImageChef.Decoders.Floppy
                         sector.addressField.epilogue[1] = data[position + 12];
                         sector.addressField.epilogue[2] = data[position + 13];
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Volume {0}", (((sector.addressField.volume[0] & 0x55) << 1) | (sector.addressField.volume[1] & 0x55)) & 0xFF);
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Track {0}", (((sector.addressField.track[0] & 0x55) << 1) | (sector.addressField.track[1] & 0x55)) & 0xFF);
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Sector {0}", (((sector.addressField.sector[0] & 0x55) << 1) | (sector.addressField.sector[1] & 0x55)) & 0xFF);
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Checksum {0}", (((sector.addressField.checksum[0] & 0x55) << 1) | (sector.addressField.checksum[1] & 0x55)) & 0xFF);
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Epilogue {0:X2}{1:X2}{2:X2}", sector.addressField.epilogue[0], sector.addressField.epilogue[1], sector.addressField.epilogue[2]);
+                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Volume {0}",
+                                                  (((sector.addressField.volume[0] & 0x55) << 1) |
+                                                   (sector.addressField.volume[1] & 0x55)) & 0xFF);
+                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Track {0}",
+                                                  (((sector.addressField.track[0] & 0x55) << 1) |
+                                                   (sector.addressField.track[1] & 0x55)) & 0xFF);
+                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Sector {0}",
+                                                  (((sector.addressField.sector[0] & 0x55) << 1) |
+                                                   (sector.addressField.sector[1] & 0x55)) & 0xFF);
+                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Checksum {0}",
+                                                  (((sector.addressField.checksum[0] & 0x55) << 1) |
+                                                   (sector.addressField.checksum[1] & 0x55)) & 0xFF);
+                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Epilogue {0:X2}{1:X2}{2:X2}",
+                                                  sector.addressField.epilogue[0], sector.addressField.epilogue[1],
+                                                  sector.addressField.epilogue[2]);
 
                         position += 14;
                         syncCount = 0;
@@ -392,17 +388,16 @@ namespace DiscImageChef.Decoders.Floppy
                         }
 
                         // Lost sync
-                        if(!onSync)
-                            return null;
+                        if(!onSync) return null;
 
                         // Prologue not found
-                        if(data[position] != 0xD5 || data[position + 1] != 0xAA)
-                            return null;
+                        if(data[position] != 0xD5 || data[position + 1] != 0xAA) return null;
 
                         sector.innerGap = gaps.ToArray();
                         sector.dataField = new RawDataField();
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Inner gap has {0} bytes", sector.innerGap.Length);
+                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Inner gap has {0} bytes",
+                                                  sector.innerGap.Length);
                         DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Prologue found at {0}", position);
                         sector.dataField.prologue = new byte[3];
                         sector.dataField.prologue[0] = data[position];
@@ -418,12 +413,12 @@ namespace DiscImageChef.Decoders.Floppy
                             position++;
 
                             // No space left for epilogue
-                            if(position + 4 > data.Length)
-                                return null;
+                            if(position + 4 > data.Length) return null;
                         }
 
                         sector.dataField.data = gaps.ToArray();
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Data has {0} bytes", sector.dataField.data.Length);
+                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Data has {0} bytes",
+                                                  sector.dataField.data.Length);
                         sector.dataField.checksum = data[position];
                         sector.dataField.epilogue = new byte[3];
                         sector.dataField.epilogue[0] = data[position + 1];
@@ -454,25 +449,19 @@ namespace DiscImageChef.Decoders.Floppy
                         return sector;
                     }
 
-                    if(data[position] == 0xFF)
-                        position++;
+                    if(data[position] == 0xFF) position++;
                     // Found data that is not sync or a prologue
-                    else
-                        return null;
+                    else return null;
                 }
             }
-            catch(IndexOutOfRangeException)
-            {
-                return null;
-            }
+            catch(IndexOutOfRangeException) { return null; }
 
             return null;
         }
 
         public static byte[] MarshalAddressField(RawAddressField addressField)
         {
-            if(addressField == null)
-                return null;
+            if(addressField == null) return null;
 
             MemoryStream raw = new MemoryStream();
             raw.Write(addressField.prologue, 0, addressField.prologue.Length);
@@ -487,8 +476,7 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static byte[] MarshalSector(RawSector sector)
         {
-            if(sector == null)
-                return null;
+            if(sector == null) return null;
 
             MemoryStream raw = new MemoryStream();
             raw.Write(sector.addressField.prologue, 0, sector.addressField.prologue.Length);
@@ -532,18 +520,15 @@ namespace DiscImageChef.Decoders.Floppy
                 onSync = count >= 5;
             }
 
-            if(position >= data.Length)
-                return null;
+            if(position >= data.Length) return null;
 
-            if(!onSync)
-                return null;
+            if(!onSync) return null;
 
             while(position < data.Length)
             {
                 int oldPosition = position;
                 RawSector sector = MarshalSector(data, out position, position);
-                if(sector == null)
-                    break;
+                if(sector == null) break;
 
                 if(firstSector)
                 {
@@ -552,19 +537,21 @@ namespace DiscImageChef.Decoders.Floppy
                     firstSector = false;
                 }
 
-                if(sector.addressField.track[0] != trackNumber[0] ||
-                   sector.addressField.track[1] != trackNumber[1])
+                if(sector.addressField.track[0] != trackNumber[0] || sector.addressField.track[1] != trackNumber[1])
                 {
                     position = oldPosition;
                     break;
                 }
 
-                DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Adding sector {0} of track {1}", (((sector.addressField.sector[0] & 0x55) << 1) | (sector.addressField.sector[1] & 0x55)) & 0xFF, (((sector.addressField.track[0] & 0x55) << 1) | (sector.addressField.track[1] & 0x55)) & 0xFF);
+                DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Adding sector {0} of track {1}",
+                                          (((sector.addressField.sector[0] & 0x55) << 1) |
+                                           (sector.addressField.sector[1] & 0x55)) & 0xFF,
+                                          (((sector.addressField.track[0] & 0x55) << 1) |
+                                           (sector.addressField.track[1] & 0x55)) & 0xFF);
                 sectors.Add(sector);
             }
 
-            if(sectors.Count == 0)
-                return null;
+            if(sectors.Count == 0) return null;
 
             RawTrack track = new RawTrack();
             track.gap = gaps.ToArray();
@@ -575,8 +562,7 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static byte[] MarshalTrack(RawTrack track)
         {
-            if(track == null)
-                return null;
+            if(track == null) return null;
 
             MemoryStream raw = new MemoryStream();
             raw.Write(track.gap, 0, track.gap.Length);
@@ -585,6 +571,7 @@ namespace DiscImageChef.Decoders.Floppy
                 byte[] rawSector = MarshalSector(sector);
                 raw.Write(rawSector, 0, rawSector.Length);
             }
+
             return raw.ToArray();
         }
 
@@ -607,8 +594,7 @@ namespace DiscImageChef.Decoders.Floppy
                 track = MarshalTrack(data, out position, position);
             }
 
-            if(tracks.Count == 0)
-                return null;
+            if(tracks.Count == 0) return null;
 
             endOffset = position;
             return tracks;
@@ -621,8 +607,7 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static byte[] MarshalDisk(RawTrack[] disk)
         {
-            if(disk == null)
-                return null;
+            if(disk == null) return null;
 
             MemoryStream raw = new MemoryStream();
             foreach(RawTrack track in disk)
@@ -630,6 +615,7 @@ namespace DiscImageChef.Decoders.Floppy
                 byte[] rawTrack = MarshalTrack(track);
                 raw.Write(rawTrack, 0, rawTrack.Length);
             }
+
             return raw.ToArray();
         }
 
@@ -642,4 +628,3 @@ namespace DiscImageChef.Decoders.Floppy
         }
     }
 }
-

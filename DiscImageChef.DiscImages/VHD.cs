@@ -41,16 +41,15 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	/// <summary>
-	/// Supports Connectix/Microsoft Virtual PC hard disk image format
-	/// Until Virtual PC 5 there existed no format, and the hard disk image was
-	/// merely a sector by sector (RAW) image with a resource fork giving
-	/// information to Virtual PC itself.
-	/// </summary>
-	public class VHD : ImagePlugin
+    /// <summary>
+    /// Supports Connectix/Microsoft Virtual PC hard disk image format
+    /// Until Virtual PC 5 there existed no format, and the hard disk image was
+    /// merely a sector by sector (RAW) image with a resource fork giving
+    /// information to Virtual PC itself.
+    /// </summary>
+    public class VHD : ImagePlugin
     {
         #region Internal Structures
-
         struct HardDiskFooter
         {
             /// <summary>
@@ -207,14 +206,11 @@ namespace DiscImageChef.ImagePlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct BATSector
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public uint[] blockPointer;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public uint[] blockPointer;
         }
-
         #endregion
 
         #region Internal Constants
-
         /// <summary>
         /// File magic number, "conectix"
         /// </summary>
@@ -346,11 +342,9 @@ namespace DiscImageChef.ImagePlugins
         /// Stores a Mac OS X URI (RFC-2396) absolute path in UTF-8, "MacX"
         /// </summary>
         const uint platformCodeMacintoshURI = 0x4D616358;
-
         #endregion
 
         #region Internal variables
-
         HardDiskFooter thisFooter;
         DynamicDiskHeader thisDynamic;
         DateTime thisDateTime;
@@ -360,7 +354,6 @@ namespace DiscImageChef.ImagePlugins
         uint bitmapSize;
         byte[][] locatorEntriesData;
         ImagePlugin parentImage;
-
         #endregion
 
         public VHD()
@@ -391,7 +384,6 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region public methods
-
         public override bool IdentifyImage(Filter imageFilter)
         {
             Stream imageStream = imageFilter.GetDataForkStream();
@@ -401,10 +393,8 @@ namespace DiscImageChef.ImagePlugins
             byte[] headerCookieBytes = new byte[8];
             byte[] footerCookieBytes = new byte[8];
 
-            if((imageStream.Length % 2) == 0)
-                imageStream.Seek(-512, SeekOrigin.End);
-            else
-                imageStream.Seek(-511, SeekOrigin.End);
+            if((imageStream.Length % 2) == 0) imageStream.Seek(-512, SeekOrigin.End);
+            else imageStream.Seek(-511, SeekOrigin.End);
 
             imageStream.Read(footerCookieBytes, 0, 8);
             imageStream.Seek(0, SeekOrigin.Begin);
@@ -458,8 +448,10 @@ namespace DiscImageChef.ImagePlugins
             uint headerCalculatedChecksum = VHDChecksum(header);
             uint footerCalculatedChecksum = VHDChecksum(footer);
 
-            DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", headerChecksum, headerCalculatedChecksum);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", footerChecksum, footerCalculatedChecksum);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}",
+                                      headerChecksum, headerCalculatedChecksum);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}",
+                                      footerChecksum, footerCalculatedChecksum);
 
             byte[] usableHeader;
             uint usableChecksum;
@@ -475,7 +467,8 @@ namespace DiscImageChef.ImagePlugins
                 usableChecksum = footerChecksum;
             }
             else
-                throw new ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
+                throw new
+                    ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
 
             thisFooter = new HardDiskFooter();
             thisFooter.cookie = BigEndianBitConverter.ToUInt64(usableHeader, 0x00);
@@ -507,120 +500,149 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.features = 0x{0:X8}", thisFooter.features);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.version = 0x{0:X8}", thisFooter.version);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.offset = {0}", thisFooter.offset);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.timestamp = 0x{0:X8} ({1})", thisFooter.timestamp, thisDateTime);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorApplication = 0x{0:X8} (\"{1}\")", thisFooter.creatorApplication,
-                Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorApplication)));
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorVersion = 0x{0:X8}", thisFooter.creatorVersion);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorHostOS = 0x{0:X8} (\"{1}\")", thisFooter.creatorHostOS,
-                Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.timestamp = 0x{0:X8} ({1})", thisFooter.timestamp,
+                                      thisDateTime);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorApplication = 0x{0:X8} (\"{1}\")",
+                                      thisFooter.creatorApplication,
+                                      Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter
+                                                                                                  .creatorApplication)));
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorVersion = 0x{0:X8}",
+                                      thisFooter.creatorVersion);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorHostOS = 0x{0:X8} (\"{1}\")",
+                                      thisFooter.creatorHostOS,
+                                      Encoding.ASCII.GetString(BigEndianBitConverter
+                                                                   .GetBytes(thisFooter.creatorHostOS)));
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.originalSize = {0}", thisFooter.originalSize);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.currentSize = {0}", thisFooter.currentSize);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})", thisFooter.diskGeometry,
-                (thisFooter.diskGeometry & 0xFFFF0000) >> 16, (thisFooter.diskGeometry & 0xFF00) >> 8, (thisFooter.diskGeometry & 0xFF));
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})",
+                                      thisFooter.diskGeometry, (thisFooter.diskGeometry & 0xFFFF0000) >> 16,
+                                      (thisFooter.diskGeometry & 0xFF00) >> 8, (thisFooter.diskGeometry & 0xFF));
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.diskType = 0x{0:X8}", thisFooter.diskType);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.checksum = 0x{0:X8}", thisFooter.checksum);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.uniqueId = {0}", thisFooter.uniqueId);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.savedState = 0x{0:X2}", thisFooter.savedState);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
 
-            if(thisFooter.version == Version1)
-                ImageInfo.imageVersion = "1.0";
+            if(thisFooter.version == Version1) ImageInfo.imageVersion = "1.0";
             else
-                throw new ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
+                throw new
+                    ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.",
+                                                             thisFooter.diskType));
 
             switch(thisFooter.creatorApplication)
             {
                 case CreatorQEMU:
-                    {
-                        ImageInfo.imageApplication = "QEMU";
-                        // QEMU always set same version
-                        ImageInfo.imageApplicationVersion = "Unknown";
+                {
+                    ImageInfo.imageApplication = "QEMU";
+                    // QEMU always set same version
+                    ImageInfo.imageApplicationVersion = "Unknown";
 
-                        break;
-                    }
+                    break;
+                }
                 case CreatorVirtualBox:
+                {
+                    ImageInfo.imageApplicationVersion = string.Format("{0}.{1:D2}",
+                                                                      (thisFooter.creatorVersion & 0xFFFF0000) >> 16,
+                                                                      (thisFooter.creatorVersion & 0x0000FFFF));
+                    switch(thisFooter.creatorHostOS)
                     {
-                        ImageInfo.imageApplicationVersion = string.Format("{0}.{1:D2}", (thisFooter.creatorVersion & 0xFFFF0000) >> 16, (thisFooter.creatorVersion & 0x0000FFFF));
-                        switch(thisFooter.creatorHostOS)
-                        {
-                            case CreatorMacintosh:
-                            case CreatorMacintoshOld:
-                                ImageInfo.imageApplication = "VirtualBox for Mac";
-                                break;
-                            case CreatorWindows:
-                                // VirtualBox uses Windows creator for any other OS
-                                ImageInfo.imageApplication = "VirtualBox";
-                                break;
-                            default:
-                                ImageInfo.imageApplication = string.Format("VirtualBox for unknown OS \"{0}\"", Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
-                                break;
-                        }
-                        break;
+                        case CreatorMacintosh:
+                        case CreatorMacintoshOld:
+                            ImageInfo.imageApplication = "VirtualBox for Mac";
+                            break;
+                        case CreatorWindows:
+                            // VirtualBox uses Windows creator for any other OS
+                            ImageInfo.imageApplication = "VirtualBox";
+                            break;
+                        default:
+                            ImageInfo.imageApplication = string.Format("VirtualBox for unknown OS \"{0}\"",
+                                                                       Encoding.ASCII.GetString(BigEndianBitConverter
+                                                                                                    .GetBytes(thisFooter
+                                                                                                                  .creatorHostOS)));
+                            break;
                     }
+
+                    break;
+                }
                 case CreatorVirtualServer:
+                {
+                    ImageInfo.imageApplication = "Microsoft Virtual Server";
+                    switch(thisFooter.creatorVersion)
                     {
-                        ImageInfo.imageApplication = "Microsoft Virtual Server";
-                        switch(thisFooter.creatorVersion)
-                        {
-                            case VersionVirtualServer2004:
-                                ImageInfo.imageApplicationVersion = "2004";
-                                break;
-                            default:
-                                ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
-                                break;
-                        }
-                        break;
+                        case VersionVirtualServer2004:
+                            ImageInfo.imageApplicationVersion = "2004";
+                            break;
+                        default:
+                            ImageInfo.imageApplicationVersion =
+                                string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                            break;
                     }
+
+                    break;
+                }
                 case CreatorVirtualPC:
+                {
+                    switch(thisFooter.creatorHostOS)
                     {
-                        switch(thisFooter.creatorHostOS)
-                        {
-                            case CreatorMacintosh:
-                            case CreatorMacintoshOld:
-                                switch(thisFooter.creatorVersion)
-                                {
-                                    case VersionVirtualPCMac:
-                                        ImageInfo.imageApplication = "Connectix Virtual PC";
-                                        ImageInfo.imageApplicationVersion = "5, 6 or 7";
-                                        break;
-                                    default:
-                                        ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
-                                        break;
-                                }
-                                break;
-                            case CreatorWindows:
-                                switch(thisFooter.creatorVersion)
-                                {
-                                    case VersionVirtualPCMac:
-                                        ImageInfo.imageApplication = "Connectix Virtual PC";
-                                        ImageInfo.imageApplicationVersion = "5, 6 or 7";
-                                        break;
-                                    case VersionVirtualPC2004:
-                                        ImageInfo.imageApplication = "Microsoft Virtual PC";
-                                        ImageInfo.imageApplicationVersion = "2004";
-                                        break;
-                                    case VersionVirtualPC2007:
-                                        ImageInfo.imageApplication = "Microsoft Virtual PC";
-                                        ImageInfo.imageApplicationVersion = "2007";
-                                        break;
-                                    default:
-                                        ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
-                                        break;
-                                }
-                                break;
-                            default:
-                                ImageInfo.imageApplication = string.Format("Virtual PC for unknown OS \"{0}\"", Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
-                                ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
-                                break;
-                        }
-                        break;
+                        case CreatorMacintosh:
+                        case CreatorMacintoshOld:
+                            switch(thisFooter.creatorVersion)
+                            {
+                                case VersionVirtualPCMac:
+                                    ImageInfo.imageApplication = "Connectix Virtual PC";
+                                    ImageInfo.imageApplicationVersion = "5, 6 or 7";
+                                    break;
+                                default:
+                                    ImageInfo.imageApplicationVersion =
+                                        string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                                    break;
+                            }
+
+                            break;
+                        case CreatorWindows:
+                            switch(thisFooter.creatorVersion)
+                            {
+                                case VersionVirtualPCMac:
+                                    ImageInfo.imageApplication = "Connectix Virtual PC";
+                                    ImageInfo.imageApplicationVersion = "5, 6 or 7";
+                                    break;
+                                case VersionVirtualPC2004:
+                                    ImageInfo.imageApplication = "Microsoft Virtual PC";
+                                    ImageInfo.imageApplicationVersion = "2004";
+                                    break;
+                                case VersionVirtualPC2007:
+                                    ImageInfo.imageApplication = "Microsoft Virtual PC";
+                                    ImageInfo.imageApplicationVersion = "2007";
+                                    break;
+                                default:
+                                    ImageInfo.imageApplicationVersion =
+                                        string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                                    break;
+                            }
+
+                            break;
+                        default:
+                            ImageInfo.imageApplication = string.Format("Virtual PC for unknown OS \"{0}\"",
+                                                                       Encoding.ASCII.GetString(BigEndianBitConverter
+                                                                                                    .GetBytes(thisFooter
+                                                                                                                  .creatorHostOS)));
+                            ImageInfo.imageApplicationVersion =
+                                string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                            break;
                     }
+
+                    break;
+                }
                 default:
-                    {
-                        ImageInfo.imageApplication = string.Format("Unknown application \"{0}\"", Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
-                        ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
-                        break;
-                    }
+                {
+                    ImageInfo.imageApplication = string.Format("Unknown application \"{0}\"",
+                                                               Encoding.ASCII.GetString(BigEndianBitConverter
+                                                                                            .GetBytes(thisFooter
+                                                                                                          .creatorHostOS)));
+                    ImageInfo.imageApplicationVersion =
+                        string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                    break;
+                }
             }
 
             thisFilter = imageFilter;
@@ -632,11 +654,11 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageLastModificationTime = thisDateTime;
             ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
-			ImageInfo.cylinders = (thisFooter.diskGeometry & 0xFFFF0000) >> 16;
-			ImageInfo.heads = (thisFooter.diskGeometry & 0xFF00) >> 8;
-			ImageInfo.sectorsPerTrack = (thisFooter.diskGeometry & 0xFF);
+            ImageInfo.cylinders = (thisFooter.diskGeometry & 0xFFFF0000) >> 16;
+            ImageInfo.heads = (thisFooter.diskGeometry & 0xFF00) >> 8;
+            ImageInfo.sectorsPerTrack = (thisFooter.diskGeometry & 0xFF);
 
-			if(thisFooter.diskType == typeDynamic || thisFooter.diskType == typeDifferencing)
+            if(thisFooter.diskType == typeDynamic || thisFooter.diskType == typeDifferencing)
             {
                 imageStream.Seek((long)thisFooter.offset, SeekOrigin.Begin);
                 byte[] dynamicBytes = new byte[1024];
@@ -651,17 +673,19 @@ namespace DiscImageChef.ImagePlugins
 
                 uint dynamicChecksumCalculated = VHDChecksum(dynamicBytes);
 
-                DicConsole.DebugWriteLine("VirtualPC plugin", "Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}", dynamicChecksum, dynamicChecksumCalculated);
+                DicConsole.DebugWriteLine("VirtualPC plugin",
+                                          "Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}", dynamicChecksum,
+                                          dynamicChecksumCalculated);
 
                 if(dynamicChecksum != dynamicChecksumCalculated)
-                    throw new ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
+                    throw new
+                        ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
 
                 thisDynamic = new DynamicDiskHeader();
                 thisDynamic.locatorEntries = new ParentLocatorEntry[8];
                 thisDynamic.reserved2 = new byte[256];
 
-                for(int i = 0; i < 8; i++)
-                    thisDynamic.locatorEntries[i] = new ParentLocatorEntry();
+                for(int i = 0; i < 8; i++) thisDynamic.locatorEntries[i] = new ParentLocatorEntry();
 
                 thisDynamic.cookie = BigEndianBitConverter.ToUInt64(dynamicBytes, 0x00);
                 thisDynamic.dataOffset = BigEndianBitConverter.ToUInt64(dynamicBytes, 0x08);
@@ -677,11 +701,16 @@ namespace DiscImageChef.ImagePlugins
 
                 for(int i = 0; i < 8; i++)
                 {
-                    thisDynamic.locatorEntries[i].platformCode = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x00 + 24 * i);
-                    thisDynamic.locatorEntries[i].platformDataSpace = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x04 + 24 * i);
-                    thisDynamic.locatorEntries[i].platformDataLength = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x08 + 24 * i);
-                    thisDynamic.locatorEntries[i].reserved = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x0C + 24 * i);
-                    thisDynamic.locatorEntries[i].platformDataOffset = BigEndianBitConverter.ToUInt64(dynamicBytes, 0x240 + 0x10 + 24 * i);
+                    thisDynamic.locatorEntries[i].platformCode =
+                        BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x00 + 24 * i);
+                    thisDynamic.locatorEntries[i].platformDataSpace =
+                        BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x04 + 24 * i);
+                    thisDynamic.locatorEntries[i].platformDataLength =
+                        BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x08 + 24 * i);
+                    thisDynamic.locatorEntries[i].reserved =
+                        BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x0C + 24 * i);
+                    thisDynamic.locatorEntries[i].platformDataOffset =
+                        BigEndianBitConverter.ToUInt64(dynamicBytes, 0x240 + 0x10 + 24 * i);
                 }
 
                 Array.Copy(dynamicBytes, 0x300, thisDynamic.reserved2, 0, 256);
@@ -696,27 +725,44 @@ namespace DiscImageChef.ImagePlugins
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.cookie = 0x{0:X8}", thisDynamic.cookie);
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.dataOffset = {0}", thisDynamic.dataOffset);
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.tableOffset = {0}", thisDynamic.tableOffset);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.headerVersion = 0x{0:X8}", thisDynamic.headerVersion);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.maxTableEntries = {0}", thisDynamic.maxTableEntries);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.headerVersion = 0x{0:X8}",
+                                          thisDynamic.headerVersion);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.maxTableEntries = {0}",
+                                          thisDynamic.maxTableEntries);
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.blockSize = {0}", thisDynamic.blockSize);
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.checksum = 0x{0:X8}", thisDynamic.checksum);
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentID = {0}", thisDynamic.parentID);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentTimestamp = 0x{0:X8} ({1})", thisDynamic.parentTimestamp, parentDateTime);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentTimestamp = 0x{0:X8} ({1})",
+                                          thisDynamic.parentTimestamp, parentDateTime);
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved = 0x{0:X8}", thisDynamic.reserved);
                 for(int i = 0; i < 8; i++)
                 {
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i, thisDynamic.locatorEntries[i].platformCode,
-                        Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisDynamic.locatorEntries[i].platformCode)));
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataSpace = {1}", i, thisDynamic.locatorEntries[i].platformDataSpace);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataLength = {1}", i, thisDynamic.locatorEntries[i].platformDataLength);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i, thisDynamic.locatorEntries[i].reserved);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataOffset = {1}", i, thisDynamic.locatorEntries[i].platformDataOffset);
+                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                              "dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i,
+                                              thisDynamic.locatorEntries[i].platformCode,
+                                              Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisDynamic
+                                                                                                          .locatorEntries
+                                                                                                              [i]
+                                                                                                          .platformCode)));
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataSpace = {1}",
+                                              i, thisDynamic.locatorEntries[i].platformDataSpace);
+                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                              "dynamic.locatorEntries[{0}].platformDataLength = {1}", i,
+                                              thisDynamic.locatorEntries[i].platformDataLength);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i,
+                                              thisDynamic.locatorEntries[i].reserved);
+                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                              "dynamic.locatorEntries[{0}].platformDataOffset = {1}", i,
+                                              thisDynamic.locatorEntries[i].platformDataOffset);
                 }
+
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentName = \"{0}\"", thisDynamic.parentName);
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
 
                 if(thisDynamic.headerVersion != Version1)
-                    throw new ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
+                    throw new
+                        ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.",
+                                                                 thisFooter.diskType));
 
                 DateTime startTime = DateTime.UtcNow;
 
@@ -755,11 +801,13 @@ namespace DiscImageChef.ImagePlugins
                     if(blockAllocationTable.Length >= (i * 512) / 4 + 512 / 4)
                         Array.Copy(batSector.blockPointer, 0, blockAllocationTable, (i * 512) / 4, 512 / 4);
                     else
-                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, (i * 512) / 4, blockAllocationTable.Length - (i * 512) / 4);
+                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, (i * 512) / 4,
+                                   blockAllocationTable.Length - (i * 512) / 4);
                 }
 
                 DateTime endTime = DateTime.UtcNow;
-                DicConsole.DebugWriteLine("VirtualPC plugin", "Filling the BAT took {0} seconds", (endTime - startTime).TotalSeconds);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "Filling the BAT took {0} seconds",
+                                          (endTime - startTime).TotalSeconds);
 
                 // Too noisy
                 /*
@@ -769,12 +817,12 @@ namespace DiscImageChef.ImagePlugins
 
                 // Get the roundest number of sectors needed to store the block bitmap
                 bitmapSize = (uint)Math.Ceiling((
-                    // How many sectors do a block store
-                    ((double)thisDynamic.blockSize / 512)
-                    // 1 bit per sector on the bitmap
-                    / 8
-                    // and aligned to 512 byte boundary
-                    / 512));
+                                                    // How many sectors do a block store
+                                                    ((double)thisDynamic.blockSize / 512)
+                                                    // 1 bit per sector on the bitmap
+                                                    / 8
+                                                    // and aligned to 512 byte boundary
+                                                    / 512));
                 DicConsole.DebugWriteLine("VirtualPC plugin", "Bitmap is {0} sectors", bitmapSize);
             }
 
@@ -784,126 +832,143 @@ namespace DiscImageChef.ImagePlugins
             {
                 case typeFixed:
                 case typeDynamic:
-                    {
-                        // Nothing to do here, really.
-                        return true;
-                    }
+                {
+                    // Nothing to do here, really.
+                    return true;
+                }
                 case typeDifferencing:
+                {
+                    locatorEntriesData = new byte[8][];
+                    for(int i = 0; i < 8; i++)
                     {
-                        locatorEntriesData = new byte[8][];
-                        for(int i = 0; i < 8; i++)
+                        if(thisDynamic.locatorEntries[i].platformCode != 0x00000000)
                         {
-                            if(thisDynamic.locatorEntries[i].platformCode != 0x00000000)
-                            {
-                                locatorEntriesData[i] = new byte[thisDynamic.locatorEntries[i].platformDataLength];
-                                imageStream.Seek((long)thisDynamic.locatorEntries[i].platformDataOffset, SeekOrigin.Begin);
-                                imageStream.Read(locatorEntriesData[i], 0, (int)thisDynamic.locatorEntries[i].platformDataLength);
+                            locatorEntriesData[i] = new byte[thisDynamic.locatorEntries[i].platformDataLength];
+                            imageStream.Seek((long)thisDynamic.locatorEntries[i].platformDataOffset, SeekOrigin.Begin);
+                            imageStream.Read(locatorEntriesData[i], 0,
+                                             (int)thisDynamic.locatorEntries[i].platformDataLength);
 
-                                switch(thisDynamic.locatorEntries[i].platformCode)
-                                {
-                                    case platformCodeWindowsAbsolute:
-                                    case platformCodeWindowsRelative:
-                                        DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.ASCII.GetString(locatorEntriesData[i]));
-                                        break;
-                                    case platformCodeWindowsAbsoluteU:
-                                    case platformCodeWindowsRelativeU:
-                                        DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.BigEndianUnicode.GetString(locatorEntriesData[i]));
-                                        break;
-                                    case platformCodeMacintoshURI:
-                                        DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.UTF8.GetString(locatorEntriesData[i]));
-                                        break;
-                                    default:
-                                        DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] =", i);
-                                        PrintHex.PrintHexArray(locatorEntriesData[i], 64);
-                                        break;
-                                }
-                            }
-                        }
-
-                        int currentLocator = 0;
-                        bool locatorFound = false;
-                        string parentPath = null;
-						FiltersList filters;
-
-                        while(!locatorFound && currentLocator < 8)
-                        {
-                            switch(thisDynamic.locatorEntries[currentLocator].platformCode)
+                            switch(thisDynamic.locatorEntries[i].platformCode)
                             {
                                 case platformCodeWindowsAbsolute:
                                 case platformCodeWindowsRelative:
-                                    parentPath = Encoding.ASCII.GetString(locatorEntriesData[currentLocator]);
+                                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                                              "dynamic.locatorEntries[{0}] = \"{1}\"", i,
+                                                              Encoding.ASCII.GetString(locatorEntriesData[i]));
                                     break;
                                 case platformCodeWindowsAbsoluteU:
                                 case platformCodeWindowsRelativeU:
-                                    parentPath = Encoding.BigEndianUnicode.GetString(locatorEntriesData[currentLocator]);
+                                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                                              "dynamic.locatorEntries[{0}] = \"{1}\"", i,
+                                                              Encoding.BigEndianUnicode
+                                                                      .GetString(locatorEntriesData[i]));
                                     break;
                                 case platformCodeMacintoshURI:
-                                    parentPath = Uri.UnescapeDataString(Encoding.UTF8.GetString(locatorEntriesData[currentLocator]));
-                                    if(parentPath.StartsWith("file://localhost", StringComparison.InvariantCulture))
-                                        parentPath = parentPath.Remove(0, 16);
-                                    else
-                                    {
-                                        DicConsole.DebugWriteLine("VirtualPC plugin", "Unsupported protocol classified found in URI parent path: \"{0}\"", parentPath);
-                                        parentPath = null;
-                                    }
+                                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                                              "dynamic.locatorEntries[{0}] = \"{1}\"", i,
+                                                              Encoding.UTF8.GetString(locatorEntriesData[i]));
+                                    break;
+                                default:
+                                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] =", i);
+                                    PrintHex.PrintHexArray(locatorEntriesData[i], 64);
                                     break;
                             }
-
-                            if(parentPath != null)
-                            {
-                                DicConsole.DebugWriteLine("VirtualPC plugin", "Possible parent path: \"{0}\"", parentPath);
-								Filter parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
-
-                                if(parentFilter != null)
-                                    locatorFound = true;
-
-                                if(!locatorFound)
-                                    parentPath = null;
-                            }
-                            currentLocator++;
                         }
-
-                        if(!locatorFound || parentPath == null)
-                            throw new FileNotFoundException("(VirtualPC plugin): Cannot find parent file for differencing disk image");
-                        else
-                        {
-                            parentImage = new VHD();
-                            Filter parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
-
-                            if(parentFilter == null)
-                                throw new ImageNotSupportedException("(VirtualPC plugin): Cannot find parent image filter");
-                            /*                            PluginBase plugins = new PluginBase();
-                                                        plugins.RegisterAllPlugins();
-                                                        if (!plugins.ImagePluginsList.TryGetValue(Name.ToLower(), out parentImage))
-                                                            throw new SystemException("(VirtualPC plugin): Unable to open myself");*/
-
-                            if(!parentImage.IdentifyImage(parentFilter))
-                                throw new ImageNotSupportedException("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
-
-                            if(!parentImage.OpenImage(parentFilter))
-                                throw new ImageNotSupportedException("(VirtualPC plugin): Cannot open parent disk image");
-
-                            // While specification says that parent and child disk images should contain UUID relationship
-                            // in reality it seems that old differencing disk images stored a parent UUID that, nonetheless
-                            // the parent never stored itself. So the only real way to know that images are related is
-                            // because the parent IS found and SAME SIZE. Ugly...
-                            // More funny even, tested parent images show an empty host OS, and child images a correct one.
-                            if(parentImage.GetSectors() != GetSectors())
-                                throw new ImageNotSupportedException("(VirtualPC plugin): Parent image is of different size");
-                        }
-
-                        return true;
                     }
+
+                    int currentLocator = 0;
+                    bool locatorFound = false;
+                    string parentPath = null;
+                    FiltersList filters;
+
+                    while(!locatorFound && currentLocator < 8)
+                    {
+                        switch(thisDynamic.locatorEntries[currentLocator].platformCode)
+                        {
+                            case platformCodeWindowsAbsolute:
+                            case platformCodeWindowsRelative:
+                                parentPath = Encoding.ASCII.GetString(locatorEntriesData[currentLocator]);
+                                break;
+                            case platformCodeWindowsAbsoluteU:
+                            case platformCodeWindowsRelativeU:
+                                parentPath = Encoding.BigEndianUnicode.GetString(locatorEntriesData[currentLocator]);
+                                break;
+                            case platformCodeMacintoshURI:
+                                parentPath =
+                                    Uri.UnescapeDataString(Encoding.UTF8.GetString(locatorEntriesData[currentLocator]));
+                                if(parentPath.StartsWith("file://localhost", StringComparison.InvariantCulture))
+                                    parentPath = parentPath.Remove(0, 16);
+                                else
+                                {
+                                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                                              "Unsupported protocol classified found in URI parent path: \"{0}\"",
+                                                              parentPath);
+                                    parentPath = null;
+                                }
+                                break;
+                        }
+
+                        if(parentPath != null)
+                        {
+                            DicConsole.DebugWriteLine("VirtualPC plugin", "Possible parent path: \"{0}\"", parentPath);
+                            Filter parentFilter =
+                                new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
+
+                            if(parentFilter != null) locatorFound = true;
+
+                            if(!locatorFound) parentPath = null;
+                        }
+                        currentLocator++;
+                    }
+
+                    if(!locatorFound || parentPath == null)
+                        throw new
+                            FileNotFoundException("(VirtualPC plugin): Cannot find parent file for differencing disk image");
+                    else
+                    {
+                        parentImage = new VHD();
+                        Filter parentFilter =
+                            new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
+
+                        if(parentFilter == null)
+                            throw new ImageNotSupportedException("(VirtualPC plugin): Cannot find parent image filter");
+                        /*                            PluginBase plugins = new PluginBase();
+                                                    plugins.RegisterAllPlugins();
+                                                    if (!plugins.ImagePluginsList.TryGetValue(Name.ToLower(), out parentImage))
+                                                        throw new SystemException("(VirtualPC plugin): Unable to open myself");*/
+
+                        if(!parentImage.IdentifyImage(parentFilter))
+                            throw new
+                                ImageNotSupportedException("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
+
+                        if(!parentImage.OpenImage(parentFilter))
+                            throw new ImageNotSupportedException("(VirtualPC plugin): Cannot open parent disk image");
+
+                        // While specification says that parent and child disk images should contain UUID relationship
+                        // in reality it seems that old differencing disk images stored a parent UUID that, nonetheless
+                        // the parent never stored itself. So the only real way to know that images are related is
+                        // because the parent IS found and SAME SIZE. Ugly...
+                        // More funny even, tested parent images show an empty host OS, and child images a correct one.
+                        if(parentImage.GetSectors() != GetSectors())
+                            throw new
+                                ImageNotSupportedException("(VirtualPC plugin): Parent image is of different size");
+                    }
+
+                    return true;
+                }
                 case typeDeprecated1:
                 case typeDeprecated2:
                 case typeDeprecated3:
-                    {
-                        throw new ImageNotSupportedException("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
-                    }
+                {
+                    throw new
+                        ImageNotSupportedException("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
+                }
                 default:
-                    {
-                        throw new ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
-                    }
+                {
+                    throw new
+                        ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.",
+                                                                 thisFooter.diskType));
+                }
             }
         }
 
@@ -931,14 +996,10 @@ namespace DiscImageChef.ImagePlugins
         {
             switch(thisFooter.diskType)
             {
-                case typeFixed:
-                    return "Virtual PC fixed size disk image";
-                case typeDynamic:
-                    return "Virtual PC dynamic size disk image";
-                case typeDifferencing:
-                    return "Virtual PC differencing disk image";
-                default:
-                    return "Virtual PC disk image";
+                case typeFixed: return "Virtual PC fixed size disk image";
+                case typeDynamic: return "Virtual PC dynamic size disk image";
+                case typeDifferencing: return "Virtual PC differencing disk image";
+                default: return "Virtual PC disk image";
             }
         }
 
@@ -987,67 +1048,66 @@ namespace DiscImageChef.ImagePlugins
             switch(thisFooter.diskType)
             {
                 case typeDifferencing:
+                {
+                    // Block number for BAT searching
+                    uint blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
+                    // Sector number inside of block
+                    uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
+
+                    byte[] bitmap = new byte[bitmapSize * 512];
+
+                    // Offset of block in file
+                    uint blockOffset = blockAllocationTable[blockNumber] * 512;
+
+                    int bitmapByte = (int)Math.Floor((double)sectorInBlock / 8);
+                    int bitmapBit = (int)(sectorInBlock % 8);
+
+                    Stream thisStream = thisFilter.GetDataForkStream();
+
+                    thisStream.Seek(blockOffset, SeekOrigin.Begin);
+                    thisStream.Read(bitmap, 0, (int)bitmapSize * 512);
+
+                    byte mask = (byte)(1 << (7 - bitmapBit));
+                    bool dirty = false || (bitmap[bitmapByte] & mask) == mask;
+
+                    /*
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapSize = {0}", bitmapSize);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "blockNumber = {0}", blockNumber);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "sectorInBlock = {0}", sectorInBlock);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "blockOffset = {0}", blockOffset);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapByte = {0}", bitmapByte);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapBit = {0}", bitmapBit);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "mask = 0x{0:X2}", mask);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "dirty = 0x{0}", dirty);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "bitmap = ");
+                    PrintHex.PrintHexArray(bitmap, 64);
+                    */
+
+                    // Sector has been written, read from child image
+                    if(dirty)
                     {
-                        // Block number for BAT searching
-                        uint blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
-                        // Sector number inside of block
-                        uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
-
-                        byte[] bitmap = new byte[bitmapSize * 512];
-
-                        // Offset of block in file
-                        uint blockOffset = blockAllocationTable[blockNumber] * 512;
-
-                        int bitmapByte = (int)Math.Floor((double)sectorInBlock / 8);
-                        int bitmapBit = (int)(sectorInBlock % 8);
-
-                        Stream thisStream = thisFilter.GetDataForkStream();
-
-                        thisStream.Seek(blockOffset, SeekOrigin.Begin);
-                        thisStream.Read(bitmap, 0, (int)bitmapSize * 512);
-
-                        byte mask = (byte)(1 << (7 - bitmapBit));
-                        bool dirty = false || (bitmap[bitmapByte] & mask) == mask;
-
-                        /*
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapSize = {0}", bitmapSize);
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "blockNumber = {0}", blockNumber);
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "sectorInBlock = {0}", sectorInBlock);
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "blockOffset = {0}", blockOffset);
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapByte = {0}", bitmapByte);
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapBit = {0}", bitmapBit);
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "mask = 0x{0:X2}", mask);
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "dirty = 0x{0}", dirty);
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "bitmap = ");
-                        PrintHex.PrintHexArray(bitmap, 64);
-                        */
-
-                        // Sector has been written, read from child image
-                        if(dirty)
-                        {
-                            /* Too noisy
-                            DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is dirty", sectorAddress);
-                            */
-
-                            byte[] data = new byte[512];
-                            uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
-                            thisStream = thisFilter.GetDataForkStream();
-
-                            thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
-                            thisStream.Read(data, 0, 512);
-
-                            return data;
-                        }
-
                         /* Too noisy
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is clean", sectorAddress);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is dirty", sectorAddress);
                         */
 
-                        // Read sector from parent image
-                        return parentImage.ReadSector(sectorAddress);
+                        byte[] data = new byte[512];
+                        uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
+                        thisStream = thisFilter.GetDataForkStream();
+
+                        thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
+                        thisStream.Read(data, 0, 512);
+
+                        return data;
                     }
-                default:
-                    return ReadSectors(sectorAddress, 1);
+
+                    /* Too noisy
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is clean", sectorAddress);
+                    */
+
+                    // Read sector from parent image
+                    return parentImage.ReadSector(sectorAddress);
+                }
+                default: return ReadSectors(sectorAddress, 1);
             }
         }
 
@@ -1056,116 +1116,114 @@ namespace DiscImageChef.ImagePlugins
             switch(thisFooter.diskType)
             {
                 case typeFixed:
-                    {
-                        Stream thisStream;
+                {
+                    Stream thisStream;
 
-                        byte[] data = new byte[512 * length];
-                        thisStream = thisFilter.GetDataForkStream();
+                    byte[] data = new byte[512 * length];
+                    thisStream = thisFilter.GetDataForkStream();
 
-                        thisStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
-                        thisStream.Read(data, 0, (int)(512 * length));
+                    thisStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
+                    thisStream.Read(data, 0, (int)(512 * length));
 
-                        return data;
-                    }
+                    return data;
+                }
                 // Contrary to Microsoft's specifications that tell us to check the bitmap
                 // and in case of unused sector just return zeros, as blocks are allocated
                 // as a whole, this would waste time and miss cache, so we read any sector
                 // as long as it is in the block.
                 case typeDynamic:
+                {
+                    Stream thisStream;
+
+                    // Block number for BAT searching
+                    uint blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
+                    // Sector number inside of block
+                    uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
+                    // How many sectors before reaching end of block
+                    uint remainingInBlock = (thisDynamic.blockSize / 512) - sectorInBlock;
+
+                    // Data that can be read in this block
+                    byte[] prefix;
+                    // Data that needs to be read from another block
+                    byte[] suffix = null;
+
+                    // How many sectors to read from this block
+                    uint sectorsToReadHere;
+
+                    // Asked to read more sectors than are remaining in block
+                    if(length > remainingInBlock)
                     {
-                        Stream thisStream;
-
-                        // Block number for BAT searching
-                        uint blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
-                        // Sector number inside of block
-                        uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
-                        // How many sectors before reaching end of block
-                        uint remainingInBlock = (thisDynamic.blockSize / 512) - sectorInBlock;
-
-                        // Data that can be read in this block
-                        byte[] prefix;
-                        // Data that needs to be read from another block
-                        byte[] suffix = null;
-
-                        // How many sectors to read from this block
-                        uint sectorsToReadHere;
-
-                        // Asked to read more sectors than are remaining in block
-                        if(length > remainingInBlock)
-                        {
-                            suffix = ReadSectors(sectorAddress + remainingInBlock, length - remainingInBlock);
-                            sectorsToReadHere = remainingInBlock;
-                        }
-                        else
-                            sectorsToReadHere = length;
-
-                        // Offset of sector in file
-                        uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
-                        prefix = new byte[sectorsToReadHere * 512];
-
-                        // 0xFFFFFFFF means unallocated
-                        if(sectorOffset != 0xFFFFFFFF)
-                        {
-                            thisStream = thisFilter.GetDataForkStream();
-                            thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
-                            thisStream.Read(prefix, 0, (int)(512 * sectorsToReadHere));
-                        }
-                        // If it is unallocated, just fill with zeroes
-                        else
-                            Array.Clear(prefix, 0, prefix.Length);
-
-                        // If we needed to read from another block, join all the data
-                        if(suffix != null)
-                        {
-                            byte[] data = new byte[512 * length];
-                            Array.Copy(prefix, 0, data, 0, prefix.Length);
-                            Array.Copy(suffix, 0, data, prefix.Length, suffix.Length);
-                            return data;
-                        }
-
-                        return prefix;
+                        suffix = ReadSectors(sectorAddress + remainingInBlock, length - remainingInBlock);
+                        sectorsToReadHere = remainingInBlock;
                     }
+                    else sectorsToReadHere = length;
+
+                    // Offset of sector in file
+                    uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
+                    prefix = new byte[sectorsToReadHere * 512];
+
+                    // 0xFFFFFFFF means unallocated
+                    if(sectorOffset != 0xFFFFFFFF)
+                    {
+                        thisStream = thisFilter.GetDataForkStream();
+                        thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
+                        thisStream.Read(prefix, 0, (int)(512 * sectorsToReadHere));
+                    }
+                    // If it is unallocated, just fill with zeroes
+                    else Array.Clear(prefix, 0, prefix.Length);
+
+                    // If we needed to read from another block, join all the data
+                    if(suffix != null)
+                    {
+                        byte[] data = new byte[512 * length];
+                        Array.Copy(prefix, 0, data, 0, prefix.Length);
+                        Array.Copy(suffix, 0, data, prefix.Length, suffix.Length);
+                        return data;
+                    }
+
+                    return prefix;
+                }
                 case typeDifferencing:
+                {
+                    // As on differencing images, each independent sector can be read from child or parent
+                    // image, we must read sector one by one
+                    byte[] fullData = new byte[512 * length];
+                    for(ulong i = 0; i < length; i++)
                     {
-                        // As on differencing images, each independent sector can be read from child or parent
-                        // image, we must read sector one by one
-                        byte[] fullData = new byte[512 * length];
-                        for(ulong i = 0; i < length; i++)
-                        {
-                            byte[] oneSector = ReadSector(sectorAddress + i);
-                            Array.Copy(oneSector, 0, fullData, (int)(i * 512), 512);
-                        }
-                        return fullData;
+                        byte[] oneSector = ReadSector(sectorAddress + i);
+                        Array.Copy(oneSector, 0, fullData, (int)(i * 512), 512);
                     }
+
+                    return fullData;
+                }
                 case typeDeprecated1:
                 case typeDeprecated2:
                 case typeDeprecated3:
-                    {
-                        throw new ImageNotSupportedException("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
-                    }
+                {
+                    throw new
+                        ImageNotSupportedException("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
+                }
                 default:
-                    {
-                        throw new ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
-                    }
+                {
+                    throw new
+                        ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.",
+                                                                 thisFooter.diskType));
+                }
             }
         }
-
         #endregion
 
         #region private methods
-
         static uint VHDChecksum(byte[] data)
         {
             uint checksum = 0;
-            foreach(byte b in data)
-                checksum += b;
+            foreach(byte b in data) checksum += b;
+
             return ~checksum;
         }
-
         #endregion
 
         #region Unsupported features
-
         public override string GetImageComments()
         {
             return null;
@@ -1311,16 +1369,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -1329,8 +1389,6 @@ namespace DiscImageChef.ImagePlugins
         {
             return null;
         }
-
         #endregion
     }
 }
-

@@ -56,8 +56,7 @@ namespace DiscImageChef.Decoders.SCSI
         {
             ushort len = (ushort)((response[0] << 8) + response[1]);
 
-            if(len + 2 != response.Length)
-                return null;
+            if(len + 2 != response.Length) return null;
 
             List<Capability> caps = new List<Capability>();
 
@@ -77,4 +76,3 @@ namespace DiscImageChef.Decoders.SCSI
         }
     }
 }
-

@@ -40,8 +40,7 @@ namespace DiscImageChef.Core.Devices.Report
     {
         public static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
         {
-            if(report == null)
-                return;
+            if(report == null) return;
 
             byte[] buffer;
             double duration;
@@ -453,8 +452,7 @@ namespace DiscImageChef.Core.Devices.Report
                     report.ATAPI.WRVSectorCountMode2 = atapiId.WRVSectorCountMode2;
                     report.ATAPI.WRVSectorCountMode2Specified = true;
                 }
-                if(debug)
-                    report.ATAPI.Identify = buffer;
+                if(debug) report.ATAPI.Identify = buffer;
             }
         }
     }

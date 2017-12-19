@@ -39,10 +39,7 @@ namespace DiscImageChef.Devices.Linux
     static class Extern
     {
         [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
-        internal static extern int open(
-            string pathname,
-            [MarshalAs(UnmanagedType.U4)]
-            FileFlags flags);
+        internal static extern int open(string pathname, [MarshalAs(UnmanagedType.U4)] FileFlags flags);
 
         [DllImport("libc")]
         internal static extern int close(int fd);
@@ -66,10 +63,10 @@ namespace DiscImageChef.Devices.Linux
         internal static extern IntPtr udev_new();
 
         [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
-        internal static extern IntPtr udev_device_new_from_subsystem_sysname(IntPtr udev, string subsystem, string sysname);
+        internal static extern IntPtr udev_device_new_from_subsystem_sysname(
+            IntPtr udev, string subsystem, string sysname);
 
         [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
         internal static extern string udev_device_get_property_value(IntPtr udev_device, string key);
     }
 }
-

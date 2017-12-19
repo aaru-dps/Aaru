@@ -39,20 +39,17 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     {
         public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
             return Errno.NotImplemented;
         }
 
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             PascalFileEntry entry;
             Errno error = GetFileEntry(path, out entry);
@@ -68,43 +65,35 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
         public override Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             byte[] file;
             Errno error;
 
-            if(debug &&
-               (string.Compare(path, "$", StringComparison.InvariantCulture) == 0
-                || string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
+            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
             {
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                    file = catalogBlocks;
-                else
-                    file = bootBlocks;
+                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0) file = catalogBlocks;
+                else file = bootBlocks;
             }
             else
             {
                 PascalFileEntry entry;
                 error = GetFileEntry(path, out entry);
 
-                if(error != Errno.NoError)
-                    return error;
+                if(error != Errno.NoError) return error;
 
                 byte[] tmp = device.ReadSectors((ulong)entry.firstBlock, (uint)(entry.lastBlock - entry.firstBlock));
                 file = new byte[(entry.lastBlock - entry.firstBlock - 1) * device.GetSectorSize() + entry.lastBytes];
                 Array.Copy(tmp, 0, file, 0, file.Length);
             }
 
-            if(offset >= file.Length)
-                return Errno.EINVAL;
+            if(offset >= file.Length) return Errno.EINVAL;
 
-            if(size + offset >= file.Length)
-                size = file.Length - offset;
+            if(size + offset >= file.Length) size = file.Length - offset;
 
             buf = new byte[size];
 
@@ -115,15 +104,12 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
         public override Errno Stat(string path, ref FileEntryInfo stat)
         {
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            if(!mounted)
-                return Errno.AccessDenied;
+            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1)
-                return Errno.NotSupported;
+            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
             {
@@ -159,8 +145,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             PascalFileEntry entry;
             Errno error = GetFileEntry(path, out entry);
 
-            if(error != Errno.NoError)
-                return error;
+            if(error != Errno.NoError) return error;
 
             stat = new FileEntryInfo();
             stat.Attributes = new FileAttributes();
@@ -185,7 +170,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             foreach(PascalFileEntry ent in fileEntries)
             {
-                if(string.Compare(path, StringHandlers.PascalToString(ent.filename, CurrentEncoding), StringComparison.InvariantCultureIgnoreCase) == 0)
+                if(string.Compare(path, StringHandlers.PascalToString(ent.filename, CurrentEncoding),
+                                  StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
                     entry = ent;
                     return Errno.NoError;
@@ -196,4 +182,3 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         }
     }
 }
-

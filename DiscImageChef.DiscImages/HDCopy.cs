@@ -73,7 +73,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class HDCopy : ImagePlugin
+    public class HDCopy : ImagePlugin
     {
         #region Internal structures
         /// <summary>
@@ -98,8 +98,7 @@ namespace DiscImageChef.ImagePlugins
             /// 0 means track is not present, 1 means it is present.
             /// The first 2 tracks are always present.
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * 82)]
-            public byte[] trackMap;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * 82)] public byte[] trackMap;
         }
 
         /// <summary>
@@ -132,7 +131,6 @@ namespace DiscImageChef.ImagePlugins
                 mediaType = _mediaType;
             }
         }
-
         #endregion
 
         #region Internal variables
@@ -162,8 +160,7 @@ namespace DiscImageChef.ImagePlugins
         {
             new MediaTypeTableEntry(80, 8, MediaType.DOS_35_DS_DD_8),
             new MediaTypeTableEntry(80, 9, MediaType.DOS_35_DS_DD_9),
-            new MediaTypeTableEntry(80, 18, MediaType.DOS_35_HD),
-            new MediaTypeTableEntry(80, 36, MediaType.DOS_35_ED),
+            new MediaTypeTableEntry(80, 18, MediaType.DOS_35_HD), new MediaTypeTableEntry(80, 36, MediaType.DOS_35_ED),
             new MediaTypeTableEntry(40, 8, MediaType.DOS_525_DS_DD_8),
             new MediaTypeTableEntry(40, 9, MediaType.DOS_525_DS_DD_9),
             new MediaTypeTableEntry(80, 15, MediaType.DOS_525_HD),
@@ -204,8 +201,7 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if (stream.Length < 2 + 2 * 82)
-                return false;
+            if(stream.Length < 2 + 2 * 82) return false;
 
             byte[] header = new byte[2 + 2 * 82];
             stream.Read(header, 0, 2 + 2 * 82);
@@ -219,22 +215,15 @@ namespace DiscImageChef.ImagePlugins
              * We know the image is from a DOS floppy disk, so assume
              * some sane cylinder and sectors-per-track count.
              */
-            if ((fheader.sectorsPerTrack < 8) || (fheader.sectorsPerTrack > 40))
-                return false;
+            if((fheader.sectorsPerTrack < 8) || (fheader.sectorsPerTrack > 40)) return false;
 
-            if ((fheader.lastCylinder < 37) || (fheader.lastCylinder >= 82))
-                return false;
+            if((fheader.lastCylinder < 37) || (fheader.lastCylinder >= 82)) return false;
 
             // Validate the trackmap. First two tracks need to be present
-            if ((fheader.trackMap[0] != 1) || (fheader.trackMap[1] != 1))
-                return false;
+            if((fheader.trackMap[0] != 1) || (fheader.trackMap[1] != 1)) return false;
 
             // all other tracks must be either present (=1) or absent (=0)
-            for (int i = 0; i < 2 * 82; i++)
-            {
-                if (fheader.trackMap[i] > 1)
-                    return false;
-            }
+            for(int i = 0; i < 2 * 82; i++) { if(fheader.trackMap[i] > 1) return false; }
 
             // TODO: validate the tracks
             // For now, having a valid header should be sufficient.
@@ -256,7 +245,9 @@ namespace DiscImageChef.ImagePlugins
             Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
             fheader = (HDCPFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HDCPFileHeader));
             Marshal.FreeHGlobal(hdrPtr);
-            DicConsole.DebugWriteLine("HDCP plugin", "Detected HD-Copy image with {0} tracks and {1} sectors per track.", fheader.lastCylinder + 1, fheader.sectorsPerTrack);
+            DicConsole.DebugWriteLine("HDCP plugin",
+                                      "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
+                                      fheader.lastCylinder + 1, fheader.sectorsPerTrack);
 
             ImageInfo.cylinders = (uint)fheader.lastCylinder + 1;
             ImageInfo.sectorsPerTrack = fheader.sectorsPerTrack;
@@ -276,9 +267,9 @@ namespace DiscImageChef.ImagePlugins
             currentOffset = 2 + 2 * 82;
 
             // build table of track offsets
-            for (int i = 0; i < ImageInfo.cylinders * 2; i++)
+            for(int i = 0; i < ImageInfo.cylinders * 2; i++)
             {
-                if (fheader.trackMap[i] == 0)
+                if(fheader.trackMap[i] == 0)
                 {
                     // track is not present in image
                     trackOffset[i] = -1;
@@ -286,8 +277,7 @@ namespace DiscImageChef.ImagePlugins
                 else
                 {
                     // track is present, read the block header
-                    if (currentOffset + 3 >= stream.Length)
-                        return false;
+                    if(currentOffset + 3 >= stream.Length) return false;
 
                     byte[] blkHeader = new byte[2];
                     short blkLength;
@@ -295,10 +285,10 @@ namespace DiscImageChef.ImagePlugins
                     blkLength = BitConverter.ToInt16(blkHeader, 0);
 
                     // assume block sizes are positive
-                    if (blkLength < 0)
-                        return false;
+                    if(blkLength < 0) return false;
 
-                    DicConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i, currentOffset, blkLength);
+                    DicConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i, currentOffset,
+                                              blkLength);
                     trackOffset[i] = currentOffset;
 
                     currentOffset += 2 + blkLength;
@@ -308,8 +298,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             // ensure that the last track is present completely
-            if (currentOffset > stream.Length)
-                return false;
+            if(currentOffset > stream.Length) return false;
 
             // save some variables for later use
             fileHeader = fheader;
@@ -384,9 +373,9 @@ namespace DiscImageChef.ImagePlugins
 
         public override MediaType GetMediaType()
         {
-            foreach (MediaTypeTableEntry ent in mediaTypes)
+            foreach(MediaTypeTableEntry ent in mediaTypes)
             {
-                if ((ent.tracks == ImageInfo.cylinders) && (ent.sectorsPerTrack == ImageInfo.sectorsPerTrack))
+                if((ent.tracks == ImageInfo.cylinders) && (ent.sectorsPerTrack == ImageInfo.sectorsPerTrack))
                     return ent.mediaType;
             }
 
@@ -404,7 +393,7 @@ namespace DiscImageChef.ImagePlugins
             short compressedLength;
 
             // check that track is present
-            if (trackOffset[tracknum] == -1)
+            if(trackOffset[tracknum] == -1)
                 throw new InvalidDataException("Tried reading a track that is not present in image");
 
             stream.Seek(trackOffset[tracknum], SeekOrigin.Begin);
@@ -420,27 +409,21 @@ namespace DiscImageChef.ImagePlugins
             // decompress the data
             int sIndex = 0; // source buffer position
             int dIndex = 0; // destination buffer position
-            while (sIndex < compressedLength)
+            while(sIndex < compressedLength)
             {
-                if (cBuffer[sIndex] == escapeByte)
+                if(cBuffer[sIndex] == escapeByte)
                 {
                     sIndex++; // skip over escape byte
                     fillByte = cBuffer[sIndex++]; // read fill byte
                     fillCount = cBuffer[sIndex++]; // read fill count
                     // fill destination buffer
-                    for (int i = 0; i < fillCount; i++)
-                    {
-                        trackData[dIndex++] = fillByte;
-                    }
+                    for(int i = 0; i < fillCount; i++) { trackData[dIndex++] = fillByte; }
                 }
-                else
-                {
-                    trackData[dIndex++] = cBuffer[sIndex++];
-                }
+                else { trackData[dIndex++] = cBuffer[sIndex++]; }
             }
 
             // check that the number of bytes decompressed matches a whole track
-            if (dIndex != ImageInfo.sectorSize * ImageInfo.sectorsPerTrack)
+            if(dIndex != ImageInfo.sectorSize * ImageInfo.sectorsPerTrack)
                 throw new InvalidDataException("Track decompression yielded incomplete data");
 
             // store track in cache
@@ -453,14 +436,14 @@ namespace DiscImageChef.ImagePlugins
             int sectorOffset = (int)(sectorAddress % (ImageInfo.sectorsPerTrack * ImageInfo.sectorSize));
             byte[] result;
 
-            if (sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if (trackNum > 2 * ImageInfo.cylinders)
+            if(trackNum > 2 * ImageInfo.cylinders)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
             result = new byte[ImageInfo.sectorSize];
-            if (trackOffset[trackNum] == -1)
+            if(trackOffset[trackNum] == -1)
             {
                 // track is not present. Fill with zeroes.
                 Array.Clear(result, 0, (int)ImageInfo.sectorSize);
@@ -468,8 +451,7 @@ namespace DiscImageChef.ImagePlugins
             else
             {
                 // track is present in file, make sure it has been loaded
-                if (!trackCache.ContainsKey(trackNum))
-                    ReadTrackIntoCache(hdcpImageFilter.GetDataForkStream(), trackNum);
+                if(!trackCache.ContainsKey(trackNum)) ReadTrackIntoCache(hdcpImageFilter.GetDataForkStream(), trackNum);
 
                 Array.Copy(trackCache[trackNum], sectorOffset, result, 0, ImageInfo.sectorSize);
             }
@@ -481,10 +463,10 @@ namespace DiscImageChef.ImagePlugins
         {
             byte[] result = new byte[length * ImageInfo.sectorSize];
 
-            if (sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            for (int i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * ImageInfo.sectorSize);
             }
@@ -493,7 +475,6 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region Unsupported features
-
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -634,16 +615,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
-            for (ulong i = 0; i < ImageInfo.sectors; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -652,7 +635,6 @@ namespace DiscImageChef.ImagePlugins
         {
             return null;
         }
-
         #endregion
     }
 }

@@ -40,29 +40,17 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class MINIXv1_MBR
     {
-        readonly string[] testfiles = {
-            "linux.vdi.lz","minix_3.1.2a.vdi.lz",
-        };
+        readonly string[] testfiles = {"linux.vdi.lz", "minix_3.1.2a.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            262144,102400,
-        };
+        readonly ulong[] sectors = {262144, 102400,};
 
-        readonly uint[] sectorsize = {
-            512,512,
-        };
+        readonly uint[] sectorsize = {512, 512,};
 
-        readonly long[] clusters = {
-            65535,50399,
-        };
+        readonly long[] clusters = {65535, 50399,};
 
-        readonly int[] clustersize = {
-            1024,1024,
-        };
+        readonly int[] clustersize = {1024, 1024,};
 
-        readonly string[] types = {
-            "Minix v1", "Minix 3 v1",
-        };
+        readonly string[] types = {"Minix v1", "Minix 3 v1",};
 
         [Test]
         public void Test()
@@ -87,6 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

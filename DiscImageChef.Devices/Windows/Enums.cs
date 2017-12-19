@@ -343,8 +343,8 @@ namespace DiscImageChef.Devices.Windows
         IOCTL_STORAGE_QUERY_PROPERTY = 0x2D1400,
         IOCTL_IDE_PASS_THROUGH = 0x4D028,
         IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080,
-        IOCTL_SFFDISK_QUERY_DEVICE_PROTOCOL = 0x71E80,     
-        IOCTL_SFFDISK_DEVICE_COMMAND = 0x79E84,  
+        IOCTL_SFFDISK_QUERY_DEVICE_PROTOCOL = 0x71E80,
+        IOCTL_SFFDISK_DEVICE_COMMAND = 0x79E84,
     }
 
     [Flags]
@@ -423,7 +423,7 @@ namespace DiscImageChef.Devices.Windows
         FileBackedVirtual = 0xF,
         NVMe = 0x11,
     }
-    
+
     [Flags]
     enum DeviceGetClassFlags : uint
     {
@@ -448,7 +448,7 @@ namespace DiscImageChef.Devices.Windows
         /// </summary>
         DeviceInterface = 0x10,
     }
-    
+
     public enum SdCommandClass : uint
     {
         Standard,
@@ -492,10 +492,11 @@ namespace DiscImageChef.Devices.Windows
         UnlockChannel,
         DeviceCommand
     };
-    
+
     static class Consts
     {
         public static Guid GUID_SFF_PROTOCOL_SD = new Guid("AD7536A8-D055-4C40-AA4D-96312DDB6B38");
-        public static Guid GUID_DEVINTERFACE_DISK = new Guid(0x53F56307, 0xB6BF, 0x11D0, 0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B);
+        public static Guid GUID_DEVINTERFACE_DISK =
+            new Guid(0x53F56307, 0xB6BF, 0x11D0, 0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B);
     }
 }

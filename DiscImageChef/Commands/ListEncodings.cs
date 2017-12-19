@@ -49,17 +49,16 @@ namespace DiscImageChef.Commands
             List<CommonEncodingInfo> encodings = new List<CommonEncodingInfo>();
 
             foreach(System.Text.EncodingInfo info in System.Text.Encoding.GetEncodings())
-                encodings.Add(new CommonEncodingInfo { Name = info.Name, DisplayName = info.GetEncoding().EncodingName });
+                encodings.Add(new CommonEncodingInfo {Name = info.Name, DisplayName = info.GetEncoding().EncodingName});
             foreach(Claunia.Encoding.EncodingInfo info in Claunia.Encoding.Encoding.GetEncodings())
-                encodings.Add(new CommonEncodingInfo { Name = info.Name, DisplayName = info.DisplayName });
+                encodings.Add(new CommonEncodingInfo {Name = info.Name, DisplayName = info.DisplayName});
 
             DicConsole.WriteLine("{0,-16} {1,-8}", "Name", "Description");
 
             foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
-                    DicConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
+                DicConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
 
             Core.Statistics.AddCommand("list-encodings");
         }
     }
 }
-

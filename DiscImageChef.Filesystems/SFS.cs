@@ -51,20 +51,16 @@ namespace DiscImageChef.Filesystems
         {
             Name = "SmartFileSystem";
             PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else CurrentEncoding = encoding;
         }
 
         public SFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "SmartFileSystem";
             PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
-            if(encoding == null)
-                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else
-                CurrentEncoding = encoding;
+            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else CurrentEncoding = encoding;
         }
 
         [Flags]
@@ -86,23 +82,19 @@ namespace DiscImageChef.Filesystems
             public SFSFlags bits;
             public byte padding1;
             public ushort padding2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public uint[] reserved1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] reserved1;
             public ulong firstbyte;
             public ulong lastbyte;
             public uint totalblocks;
             public uint blocksize;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public uint[] reserved2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public uint[] reserved3;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public uint[] reserved2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public uint[] reserved3;
             public uint bitmapbase;
             public uint adminspacecontainer;
             public uint rootobjectcontainer;
             public uint extentbnoderoot;
             public uint objectnoderoot;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public uint[] reserved4;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public uint[] reserved4;
         }
 
         /// <summary>Identifier for SFS v1</summary>
@@ -112,8 +104,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End)
-                return false;
+            if(partition.Start >= partition.End) return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -124,7 +115,8 @@ namespace DiscImageChef.Filesystems
             return magic == SFS_MAGIC || magic == SFS2_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+                                            out string information)
         {
             byte[] RootBlockSector = imagePlugin.ReadSector(partition.Start);
             RootBlock rootBlock = new RootBlock();
@@ -135,16 +127,24 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendLine("SmartFileSystem");
 
             sbInformation.AppendFormat("Volume version {0}", rootBlock.version).AppendLine();
-            sbInformation.AppendFormat("Volume starts on device byte {0} and ends on byte {1}", rootBlock.firstbyte, rootBlock.lastbyte).AppendLine();
-            sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", rootBlock.totalblocks, rootBlock.blocksize).AppendLine();
-            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8)).AppendLine();
+            sbInformation.AppendFormat("Volume starts on device byte {0} and ends on byte {1}", rootBlock.firstbyte,
+                                       rootBlock.lastbyte).AppendLine();
+            sbInformation
+                .AppendFormat("Volume has {0} blocks of {1} bytes each", rootBlock.totalblocks, rootBlock.blocksize)
+                .AppendLine();
+            sbInformation.AppendFormat("Volume created on {0}",
+                                       DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8))
+                         .AppendLine();
             sbInformation.AppendFormat("Bitmap starts in block {0}", rootBlock.bitmapbase).AppendLine();
-            sbInformation.AppendFormat("Admin space container starts in block {0}", rootBlock.adminspacecontainer).AppendLine();
-            sbInformation.AppendFormat("Root object container starts in block {0}", rootBlock.rootobjectcontainer).AppendLine();
-            sbInformation.AppendFormat("Root node of the extent B-tree resides in block {0}", rootBlock.extentbnoderoot).AppendLine();
-            sbInformation.AppendFormat("Root node of the object B-tree resides in block {0}", rootBlock.objectnoderoot).AppendLine();
-            if(rootBlock.bits.HasFlag(SFSFlags.CaseSensitive))
-                sbInformation.AppendLine("Volume is case sensitive");
+            sbInformation.AppendFormat("Admin space container starts in block {0}", rootBlock.adminspacecontainer)
+                         .AppendLine();
+            sbInformation.AppendFormat("Root object container starts in block {0}", rootBlock.rootobjectcontainer)
+                         .AppendLine();
+            sbInformation.AppendFormat("Root node of the extent B-tree resides in block {0}", rootBlock.extentbnoderoot)
+                         .AppendLine();
+            sbInformation.AppendFormat("Root node of the object B-tree resides in block {0}", rootBlock.objectnoderoot)
+                         .AppendLine();
+            if(rootBlock.bits.HasFlag(SFSFlags.CaseSensitive)) sbInformation.AppendLine("Volume is case sensitive");
             if(rootBlock.bits.HasFlag(SFSFlags.RecyledFolder))
                 sbInformation.AppendLine("Volume moves deleted files to a recycled folder");
             information = sbInformation.ToString();

@@ -39,45 +39,25 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class HFS_CDROM
     {
-        readonly string[] testfiles = {
-            "toast_3.5.7_hfs_from_volume.iso.lz","toast_3.5.7_iso9660_hfs.iso.lz",
-            "toast_4.1.3_hfs_from_volume.iso.lz","toast_4.1.3_iso9660_hfs.iso.lz",
-            "toast_3.5.7_hfs_from_files.iso.lz","toast_4.1.3_hfs_from_files.iso.lz",
+        readonly string[] testfiles =
+        {
+            "toast_3.5.7_hfs_from_volume.iso.lz", "toast_3.5.7_iso9660_hfs.iso.lz",
+            "toast_4.1.3_hfs_from_volume.iso.lz", "toast_4.1.3_iso9660_hfs.iso.lz", "toast_3.5.7_hfs_from_files.iso.lz",
+            "toast_4.1.3_hfs_from_files.iso.lz",
         };
 
-        readonly ulong[] sectors = {
-            942,1880,
-            943,1882,
-            1509,1529,
-        };
+        readonly ulong[] sectors = {942, 1880, 943, 1882, 1509, 1529,};
 
-        readonly uint[] sectorsize = {
-            2048,2048,
-            2048,2048,
-            2048,2048,
-        };
+        readonly uint[] sectorsize = {2048, 2048, 2048, 2048, 2048, 2048,};
 
-        readonly long[] clusters = {
-            3724,931,
-            931,931,
-            249,249,
-        };
+        readonly long[] clusters = {3724, 931, 931, 931, 249, 249,};
 
-        readonly int[] clustersize = {
-            512,2048,
-            2048,2048,
-            12288,12288,
-        };
+        readonly int[] clustersize = {512, 2048, 2048, 2048, 12288, 12288,};
 
-        readonly string[] volumename = {
-            "Disk utils","Disk utils","Disk utils",
-            "Disk utils","Disk utils","Disk utils",
-        };
+        readonly string[] volumename =
+            {"Disk utils", "Disk utils", "Disk utils", "Disk utils", "Disk utils", "Disk utils",};
 
-        readonly string[] volumeserial = {
-            null,null,null,
-            null,null,null,
-        };
+        readonly string[] volumeserial = {null, null, null, null, null, null,};
 
         [Test]
         public void Test()
@@ -102,6 +82,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

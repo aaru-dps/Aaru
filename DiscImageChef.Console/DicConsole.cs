@@ -33,13 +33,19 @@
 namespace DiscImageChef.Console
 {
     public delegate void WriteLineHandler(string format, params object[] arg);
+
     public delegate void ErrorWriteLineHandler(string format, params object[] arg);
+
     public delegate void VerboseWriteLineHandler(string format, params object[] arg);
+
     public delegate void DebugWriteLineHandler(string format, params object[] arg);
 
     public delegate void WriteHandler(string format, params object[] arg);
+
     public delegate void ErrorWriteHandler(string format, params object[] arg);
+
     public delegate void VerboseWriteHandler(string format, params object[] arg);
+
     public delegate void DebugWriteHandler(string format, params object[] arg);
 
     public static class DicConsole
@@ -56,124 +62,102 @@ namespace DiscImageChef.Console
 
         public static void WriteLine(string format, params object[] arg)
         {
-            if(WriteLineEvent != null)
-                WriteLineEvent(format, arg);
+            if(WriteLineEvent != null) WriteLineEvent(format, arg);
         }
 
         public static void ErrorWriteLine(string format, params object[] arg)
         {
-            if(ErrorWriteLineEvent != null)
-                ErrorWriteLineEvent(format, arg);
+            if(ErrorWriteLineEvent != null) ErrorWriteLineEvent(format, arg);
         }
 
         public static void VerboseWriteLine(string format, params object[] arg)
         {
-            if(VerboseWriteLineEvent != null)
-                VerboseWriteLineEvent(format, arg);
+            if(VerboseWriteLineEvent != null) VerboseWriteLineEvent(format, arg);
         }
 
         public static void DebugWriteLine(string module, string format, params object[] arg)
         {
-            if(DebugWriteLineEvent != null)
-                DebugWriteLineEvent("DEBUG (" + module + "): " + format, arg);
+            if(DebugWriteLineEvent != null) DebugWriteLineEvent("DEBUG (" + module + "): " + format, arg);
         }
 
         public static void WriteLine()
         {
-            if(WriteLineEvent != null)
-                WriteLineEvent("", null);
+            if(WriteLineEvent != null) WriteLineEvent("", null);
         }
 
         public static void ErrorWriteLine()
         {
-            if(ErrorWriteLineEvent != null)
-                ErrorWriteLineEvent("", null);
+            if(ErrorWriteLineEvent != null) ErrorWriteLineEvent("", null);
         }
 
         public static void VerboseWriteLine()
         {
-            if(VerboseWriteLineEvent != null)
-                VerboseWriteLineEvent("", null);
+            if(VerboseWriteLineEvent != null) VerboseWriteLineEvent("", null);
         }
 
         public static void DebugWriteLine()
         {
-            if(DebugWriteLineEvent != null)
-                DebugWriteLineEvent("", null);
+            if(DebugWriteLineEvent != null) DebugWriteLineEvent("", null);
         }
 
         public static void Write(string format, params object[] arg)
         {
-            if(WriteEvent != null)
-                WriteEvent(format, arg);
+            if(WriteEvent != null) WriteEvent(format, arg);
         }
 
         public static void ErrorWrite(string format, params object[] arg)
         {
-            if(ErrorWriteEvent != null)
-                ErrorWriteEvent(format, arg);
+            if(ErrorWriteEvent != null) ErrorWriteEvent(format, arg);
         }
 
         public static void VerboseWrite(string format, params object[] arg)
         {
-            if(VerboseWriteEvent != null)
-                VerboseWriteEvent(format, arg);
+            if(VerboseWriteEvent != null) VerboseWriteEvent(format, arg);
         }
 
         public static void DebugWrite(string module, string format, params object[] arg)
         {
-            if(DebugWriteEvent != null)
-                DebugWriteEvent("DEBUG (" + module + "): " + format, arg);
+            if(DebugWriteEvent != null) DebugWriteEvent("DEBUG (" + module + "): " + format, arg);
         }
 
         public static void Write()
         {
-            if(WriteEvent != null)
-                WriteEvent("", null);
+            if(WriteEvent != null) WriteEvent("", null);
         }
 
         public static void ErrorWrite()
         {
-            if(ErrorWriteEvent != null)
-                ErrorWriteEvent("", null);
+            if(ErrorWriteEvent != null) ErrorWriteEvent("", null);
         }
 
         public static void VerboseWrite()
         {
-            if(VerboseWriteEvent != null)
-                VerboseWriteEvent("", null);
+            if(VerboseWriteEvent != null) VerboseWriteEvent("", null);
         }
 
         public static void DebugWrite()
         {
-            if(DebugWriteEvent != null)
-                DebugWriteEvent("", null);
+            if(DebugWriteEvent != null) DebugWriteEvent("", null);
         }
 
         public static void WriteLine(string format)
         {
-            if(WriteLineEvent != null)
-                WriteLineEvent("{0}", format);
+            if(WriteLineEvent != null) WriteLineEvent("{0}", format);
         }
 
         public static void ErrorWriteLine(string format)
         {
-            if(ErrorWriteLineEvent != null)
-                ErrorWriteLineEvent("{0}", format);
+            if(ErrorWriteLineEvent != null) ErrorWriteLineEvent("{0}", format);
         }
 
         public static void VerboseWriteLine(string format)
         {
-            if(VerboseWriteLineEvent != null)
-                VerboseWriteLineEvent("{0}", format);
+            if(VerboseWriteLineEvent != null) VerboseWriteLineEvent("{0}", format);
         }
 
         public static void DebugWriteLine(string module, string format)
         {
-            if(DebugWriteLineEvent != null)
-                DebugWriteLineEvent("{0}", "DEBUG (" + module + "): " + format);
+            if(DebugWriteLineEvent != null) DebugWriteLineEvent("{0}", "DEBUG (" + module + "): " + format);
         }
-
     }
 }
-

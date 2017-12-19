@@ -40,21 +40,22 @@ namespace DiscImageChef.Core
     public static partial class Sidecar
     {
         // TODO: Complete it
-        static void LinearMedia(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi, PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
+        static void LinearMedia(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi,
+                                PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
-            sidecar.LinearMedia = new []
+            sidecar.LinearMedia = new[]
             {
-	            new LinearMediaType
-	            {
-	                Checksums = imgChecksums.ToArray(),
-	                Image = new ImageType
-	                {
-	                    format = image.GetImageFormat(),
-	                    offset = 0,
-	                    offsetSpecified = true,
-	                    Value = Path.GetFileName(imagePath)
-	                },
-	                Size = fi.Length
+                new LinearMediaType
+                {
+                    Checksums = imgChecksums.ToArray(),
+                    Image = new ImageType
+                    {
+                        format = image.GetImageFormat(),
+                        offset = 0,
+                        offsetSpecified = true,
+                        Value = Path.GetFileName(imagePath)
+                    },
+                    Size = fi.Length
                 }
             };
         }

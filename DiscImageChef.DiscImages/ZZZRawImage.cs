@@ -39,14 +39,12 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class ZZZRawImage : ImagePlugin
+    public class ZZZRawImage : ImagePlugin
     {
         #region Internal variables
-
         Filter rawImageFilter;
         bool differentTrackZeroSize;
-		string extension;
-
+        string extension;
         #endregion
 
         public ZZZRawImage()
@@ -82,21 +80,21 @@ namespace DiscImageChef.ImagePlugins
             // Check if file is not multiple of 512
             if((imageFilter.GetDataForkLength() % 512) != 0)
             {
-				extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+                extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
 
-				if(extension == ".hdf" && ImageInfo.imageSize % 256 == 0)
-					return true;
+                if(extension == ".hdf" && ImageInfo.imageSize % 256 == 0) return true;
 
-				// Check known disk sizes with sectors smaller than 512
-				switch(imageFilter.GetDataForkLength())
+                // Check known disk sizes with sectors smaller than 512
+                switch(imageFilter.GetDataForkLength())
                 {
-					#region Commodore
-					case 174848:
-					case 175531:
-					case 197376:
-					case 351062:
-					case 822400:
-					#endregion Commodore
+                    #region Commodore
+                    case 174848:
+                    case 175531:
+                    case 197376:
+                    case 351062:
+                    case 822400:
+                    #endregion Commodore
+
                     case 81664:
                     case 116480:
                     case 242944:
@@ -111,10 +109,8 @@ namespace DiscImageChef.ImagePlugins
                     case 1177344:
                     case 1222400:
                     case 1304320:
-                    case 1255168:
-                        return true;
-                    default:
-                        return false;
+                    case 1255168: return true;
+                    default: return false;
                 }
             }
 
@@ -127,18 +123,16 @@ namespace DiscImageChef.ImagePlugins
             stream.Seek(0, SeekOrigin.Begin);
 
             extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
-			if(extension == ".iso" && (imageFilter.GetDataForkLength() % 2048) == 0)
-				ImageInfo.sectorSize = 2048;
-			else if(extension == ".d81" && imageFilter.GetDataForkLength() == 819200)
-				ImageInfo.sectorSize = 256;
-			else if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
-			        (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 || imageFilter.GetDataForkLength() == 655360))
-				ImageInfo.sectorSize = 256;
-			else if((extension == ".adf" || extension == ".adl") && imageFilter.GetDataForkLength() == 819200)
-				ImageInfo.sectorSize = 1024;
-			else
-			{
-				switch(imageFilter.GetDataForkLength())
+            if(extension == ".iso" && (imageFilter.GetDataForkLength() % 2048) == 0) ImageInfo.sectorSize = 2048;
+            else if(extension == ".d81" && imageFilter.GetDataForkLength() == 819200) ImageInfo.sectorSize = 256;
+            else if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
+                    (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 ||
+                     imageFilter.GetDataForkLength() == 655360)) ImageInfo.sectorSize = 256;
+            else if((extension == ".adf" || extension == ".adl") && imageFilter.GetDataForkLength() == 819200)
+                ImageInfo.sectorSize = 1024;
+            else
+            {
+                switch(imageFilter.GetDataForkLength())
                 {
                     case 242944:
                     case 256256:
@@ -162,16 +156,18 @@ namespace DiscImageChef.ImagePlugins
                     case 80384: // T0S0 = 128bps
                     case 325632: // T0S0 = 128bps, T0S1 = 256bps
                     case 653312: // T0S0 = 128bps, T0S1 = 256bps
-					#region Commodore
-					case 174848:
-					case 175531:
-					case 196608:
-					case 197376:
-					case 349696:
-					case 351062:
-					case 822400:
-					#endregion Commodore
-						ImageInfo.sectorSize = 256;
+
+                    #region Commodore
+                    case 174848:
+                    case 175531:
+                    case 196608:
+                    case 197376:
+                    case 349696:
+                    case 351062:
+                    case 822400:
+                        #endregion Commodore
+
+                        ImageInfo.sectorSize = 256;
                         break;
                     case 81664:
                         ImageInfo.sectorSize = 319;
@@ -185,8 +181,8 @@ namespace DiscImageChef.ImagePlugins
                     case 1304320: // T0S0 = 128bps, T0S1 = 256bps
                     case 1255168: // T0S0 = 128bps, T0S1 = 256bps
                     case 1261568:
-					case 1638400:
-						ImageInfo.sectorSize = 1024;
+                    case 1638400:
+                        ImageInfo.sectorSize = 1024;
                         break;
                     default:
                         ImageInfo.sectorSize = 512;
@@ -275,19 +271,19 @@ namespace DiscImageChef.ImagePlugins
                     ImageInfo.sectorSize = 8192; // Biggest sector size
                     differentTrackZeroSize = true;
                     break;
-				case 175531:
-					ImageInfo.sectors = 683;
-					break;
-				case 197375:
-					ImageInfo.sectors = 768;
-					break;
-				case 351062:
-					ImageInfo.sectors = 1366;
-					break;
-				case 822400:
-					ImageInfo.sectors = 3200;
-					break;
-				default:
+                case 175531:
+                    ImageInfo.sectors = 683;
+                    break;
+                case 197375:
+                    ImageInfo.sectors = 768;
+                    break;
+                case 351062:
+                    ImageInfo.sectors = 1366;
+                    break;
+                case 822400:
+                    ImageInfo.sectors = 3200;
+                    break;
+                default:
                     ImageInfo.sectors = ImageInfo.imageSize / ImageInfo.sectorSize;
                     break;
             }
@@ -317,337 +313,337 @@ namespace DiscImageChef.ImagePlugins
                 {
                     ImageInfo.sectorSize = 256;
                     ImageInfo.sectors = ImageInfo.imageSize / ImageInfo.sectorSize;
-					ImageInfo.mediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.mediaType = MediaType.GENERIC_HDD;
                 }
             }
 
-			if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
-			{
-				ImageInfo.imageHasSessions = true;
-				ImageInfo.imageHasPartitions = true;
-			}
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                ImageInfo.imageHasSessions = true;
+                ImageInfo.imageHasPartitions = true;
+            }
 
             DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", ImageInfo.mediaType);
 
-			switch(ImageInfo.mediaType)
-			{
-				case MediaType.ACORN_35_DS_DD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 5;
-					break;
-				case MediaType.ACORN_35_DS_HD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.ACORN_525_DS_DD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.ACORN_525_SS_DD_40:
-					ImageInfo.cylinders = 40;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.ACORN_525_SS_DD_80:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.ACORN_525_SS_SD_40:
-					ImageInfo.cylinders = 40;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.ACORN_525_SS_SD_80:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.Apple32DS:
-					ImageInfo.cylinders = 35;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 13;
-					break;
-				case MediaType.Apple32SS:
-					ImageInfo.cylinders = 36;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 13;
-					break;
-				case MediaType.Apple33DS:
-					ImageInfo.cylinders = 35;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.Apple33SS:
-					ImageInfo.cylinders = 35;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.AppleSonyDS:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.AppleSonySS:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.ATARI_35_DS_DD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.ATARI_35_DS_DD_11:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 11;
-					break;
-				case MediaType.ATARI_35_SS_DD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.ATARI_35_SS_DD_11:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 11;
-					break;
-				case MediaType.ATARI_525_ED:
-					ImageInfo.cylinders = 40;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 26;
-					break;
-				case MediaType.ATARI_525_SD:
-					ImageInfo.cylinders = 40;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 18;
-					break;
-				case MediaType.CBM_35_DD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.CBM_AMIGA_35_DD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 11;
-					break;
-				case MediaType.CBM_AMIGA_35_HD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 22;
-					break;
-				case MediaType.DMF:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 21;
-					break;
-				case MediaType.DOS_35_DS_DD_9:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 9;
-					break;
-				case MediaType.Apricot_35:
-					ImageInfo.cylinders = 70;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 9;
-					break;
-				case MediaType.DOS_35_ED:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 36;
-					break;
-				case MediaType.DOS_35_HD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 18;
-					break;
-				case MediaType.DOS_35_SS_DD_9:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 9;
-					break;
-				case MediaType.DOS_525_DS_DD_8:
-					ImageInfo.cylinders = 40;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 8;
-					break;
-				case MediaType.DOS_525_DS_DD_9:
-					ImageInfo.cylinders = 40;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 9;
-					break;
-				case MediaType.DOS_525_HD:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 15;
-					break;
-				case MediaType.DOS_525_SS_DD_8:
-					ImageInfo.cylinders = 40;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 8;
-					break;
-				case MediaType.DOS_525_SS_DD_9:
-					ImageInfo.cylinders = 40;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 9;
-					break;
-				case MediaType.ECMA_54:
-					ImageInfo.cylinders = 77;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 26;
-					break;
-				case MediaType.ECMA_59:
-					ImageInfo.cylinders = 77;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 26;
-					break;
-				case MediaType.ECMA_66:
-					ImageInfo.cylinders = 35;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 9;
-					break;
-				case MediaType.ECMA_69_8:
-					ImageInfo.cylinders = 77;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 8;
-					break;
-				case MediaType.ECMA_70:
-					ImageInfo.cylinders = 40;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.ECMA_78:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 16;
-					break;
-				case MediaType.ECMA_99_15:
-					ImageInfo.cylinders = 77;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 15;
-					break;
-				case MediaType.ECMA_99_26:
-					ImageInfo.cylinders = 77;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 26;
-					break;
-				case MediaType.ECMA_99_8:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 8;
-					break;
-				case MediaType.FDFORMAT_35_DD:
-					ImageInfo.cylinders = 82;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 10;
-					break;
-				case MediaType.FDFORMAT_35_HD:
-					ImageInfo.cylinders = 82;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 21;
-					break;
-				case MediaType.FDFORMAT_525_HD:
-					ImageInfo.cylinders = 82;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 17;
-					break;
-				case MediaType.IBM23FD:
-					ImageInfo.cylinders = 32;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 8;
-					break;
-				case MediaType.IBM33FD_128:
-					ImageInfo.cylinders = 73;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 26;
-					break;
-				case MediaType.IBM33FD_256:
-					ImageInfo.cylinders = 74;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 15;
-					break;
-				case MediaType.IBM33FD_512:
-					ImageInfo.cylinders = 74;
-					ImageInfo.heads = 1;
-					ImageInfo.sectorsPerTrack = 8;
-					break;
-				case MediaType.IBM43FD_128:
-					ImageInfo.cylinders = 74;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 26;
-					break;
-				case MediaType.IBM43FD_256:
-					ImageInfo.cylinders = 74;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 15;
-					break;
-				case MediaType.IBM53FD_1024:
-					ImageInfo.cylinders = 74;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 8;
-					break;
-				case MediaType.IBM53FD_256:
-					ImageInfo.cylinders = 74;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 26;
-					break;
-				case MediaType.IBM53FD_512:
-					ImageInfo.cylinders = 74;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 15;
-					break;
-				case MediaType.NEC_35_TD:
-					ImageInfo.cylinders = 240;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 38;
-					break;
-				case MediaType.NEC_525_HD:
-					ImageInfo.cylinders = 77;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 8;
-					break;
-				case MediaType.XDF_35:
-					ImageInfo.cylinders = 80;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 23;
-					break;
-				// Following ones are what the device itself report, not the physical geometry
-				case MediaType.Jaz:
-					ImageInfo.cylinders = 1021;
-					ImageInfo.heads = 64;
-					ImageInfo.sectorsPerTrack = 32;
-					break;
-				case MediaType.PocketZip:
-					ImageInfo.cylinders = 154;
-					ImageInfo.heads = 16;
-					ImageInfo.sectorsPerTrack = 32;
-					break;
-				case MediaType.LS120:
-					ImageInfo.cylinders = 963;
-					ImageInfo.heads = 8;
-					ImageInfo.sectorsPerTrack = 32;
-					break;
-				case MediaType.LS240:
-					ImageInfo.cylinders = 262;
-					ImageInfo.heads = 32;
-					ImageInfo.sectorsPerTrack = 56;
-					break;
-				case MediaType.FD32MB:
-					ImageInfo.cylinders = 1024;
-					ImageInfo.heads = 2;
-					ImageInfo.sectorsPerTrack = 32;
-					break;
-				default:
-					ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-					ImageInfo.heads = 16;
-					ImageInfo.sectorsPerTrack = 63;
-					break;
-			}
+            switch(ImageInfo.mediaType)
+            {
+                case MediaType.ACORN_35_DS_DD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 5;
+                    break;
+                case MediaType.ACORN_35_DS_HD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.ACORN_525_DS_DD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.ACORN_525_SS_DD_40:
+                    ImageInfo.cylinders = 40;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.ACORN_525_SS_DD_80:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.ACORN_525_SS_SD_40:
+                    ImageInfo.cylinders = 40;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.ACORN_525_SS_SD_80:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.Apple32DS:
+                    ImageInfo.cylinders = 35;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 13;
+                    break;
+                case MediaType.Apple32SS:
+                    ImageInfo.cylinders = 36;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 13;
+                    break;
+                case MediaType.Apple33DS:
+                    ImageInfo.cylinders = 35;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.Apple33SS:
+                    ImageInfo.cylinders = 35;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.AppleSonyDS:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.AppleSonySS:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.ATARI_35_DS_DD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.ATARI_35_DS_DD_11:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 11;
+                    break;
+                case MediaType.ATARI_35_SS_DD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.ATARI_35_SS_DD_11:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 11;
+                    break;
+                case MediaType.ATARI_525_ED:
+                    ImageInfo.cylinders = 40;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 26;
+                    break;
+                case MediaType.ATARI_525_SD:
+                    ImageInfo.cylinders = 40;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 18;
+                    break;
+                case MediaType.CBM_35_DD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.CBM_AMIGA_35_DD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 11;
+                    break;
+                case MediaType.CBM_AMIGA_35_HD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 22;
+                    break;
+                case MediaType.DMF:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 21;
+                    break;
+                case MediaType.DOS_35_DS_DD_9:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 9;
+                    break;
+                case MediaType.Apricot_35:
+                    ImageInfo.cylinders = 70;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 9;
+                    break;
+                case MediaType.DOS_35_ED:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 36;
+                    break;
+                case MediaType.DOS_35_HD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 18;
+                    break;
+                case MediaType.DOS_35_SS_DD_9:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 9;
+                    break;
+                case MediaType.DOS_525_DS_DD_8:
+                    ImageInfo.cylinders = 40;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 8;
+                    break;
+                case MediaType.DOS_525_DS_DD_9:
+                    ImageInfo.cylinders = 40;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 9;
+                    break;
+                case MediaType.DOS_525_HD:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 15;
+                    break;
+                case MediaType.DOS_525_SS_DD_8:
+                    ImageInfo.cylinders = 40;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 8;
+                    break;
+                case MediaType.DOS_525_SS_DD_9:
+                    ImageInfo.cylinders = 40;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 9;
+                    break;
+                case MediaType.ECMA_54:
+                    ImageInfo.cylinders = 77;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 26;
+                    break;
+                case MediaType.ECMA_59:
+                    ImageInfo.cylinders = 77;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 26;
+                    break;
+                case MediaType.ECMA_66:
+                    ImageInfo.cylinders = 35;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 9;
+                    break;
+                case MediaType.ECMA_69_8:
+                    ImageInfo.cylinders = 77;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 8;
+                    break;
+                case MediaType.ECMA_70:
+                    ImageInfo.cylinders = 40;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.ECMA_78:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 16;
+                    break;
+                case MediaType.ECMA_99_15:
+                    ImageInfo.cylinders = 77;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 15;
+                    break;
+                case MediaType.ECMA_99_26:
+                    ImageInfo.cylinders = 77;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 26;
+                    break;
+                case MediaType.ECMA_99_8:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 8;
+                    break;
+                case MediaType.FDFORMAT_35_DD:
+                    ImageInfo.cylinders = 82;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 10;
+                    break;
+                case MediaType.FDFORMAT_35_HD:
+                    ImageInfo.cylinders = 82;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 21;
+                    break;
+                case MediaType.FDFORMAT_525_HD:
+                    ImageInfo.cylinders = 82;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 17;
+                    break;
+                case MediaType.IBM23FD:
+                    ImageInfo.cylinders = 32;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 8;
+                    break;
+                case MediaType.IBM33FD_128:
+                    ImageInfo.cylinders = 73;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 26;
+                    break;
+                case MediaType.IBM33FD_256:
+                    ImageInfo.cylinders = 74;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 15;
+                    break;
+                case MediaType.IBM33FD_512:
+                    ImageInfo.cylinders = 74;
+                    ImageInfo.heads = 1;
+                    ImageInfo.sectorsPerTrack = 8;
+                    break;
+                case MediaType.IBM43FD_128:
+                    ImageInfo.cylinders = 74;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 26;
+                    break;
+                case MediaType.IBM43FD_256:
+                    ImageInfo.cylinders = 74;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 15;
+                    break;
+                case MediaType.IBM53FD_1024:
+                    ImageInfo.cylinders = 74;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 8;
+                    break;
+                case MediaType.IBM53FD_256:
+                    ImageInfo.cylinders = 74;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 26;
+                    break;
+                case MediaType.IBM53FD_512:
+                    ImageInfo.cylinders = 74;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 15;
+                    break;
+                case MediaType.NEC_35_TD:
+                    ImageInfo.cylinders = 240;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 38;
+                    break;
+                case MediaType.NEC_525_HD:
+                    ImageInfo.cylinders = 77;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 8;
+                    break;
+                case MediaType.XDF_35:
+                    ImageInfo.cylinders = 80;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 23;
+                    break;
+                // Following ones are what the device itself report, not the physical geometry
+                case MediaType.Jaz:
+                    ImageInfo.cylinders = 1021;
+                    ImageInfo.heads = 64;
+                    ImageInfo.sectorsPerTrack = 32;
+                    break;
+                case MediaType.PocketZip:
+                    ImageInfo.cylinders = 154;
+                    ImageInfo.heads = 16;
+                    ImageInfo.sectorsPerTrack = 32;
+                    break;
+                case MediaType.LS120:
+                    ImageInfo.cylinders = 963;
+                    ImageInfo.heads = 8;
+                    ImageInfo.sectorsPerTrack = 32;
+                    break;
+                case MediaType.LS240:
+                    ImageInfo.cylinders = 262;
+                    ImageInfo.heads = 32;
+                    ImageInfo.sectorsPerTrack = 56;
+                    break;
+                case MediaType.FD32MB:
+                    ImageInfo.cylinders = 1024;
+                    ImageInfo.heads = 2;
+                    ImageInfo.sectorsPerTrack = 32;
+                    break;
+                default:
+                    ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+                    ImageInfo.heads = 16;
+                    ImageInfo.sectorsPerTrack = 63;
+                    break;
+            }
 
             return true;
         }
@@ -679,10 +675,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(differentTrackZeroSize)
-            {
-                throw new NotImplementedException("Not yet implemented");
-            }
+            if(differentTrackZeroSize) { throw new NotImplementedException("Not yet implemented"); }
             else
             {
                 if(sectorAddress > ImageInfo.sectors - 1)
@@ -700,7 +693,6 @@ namespace DiscImageChef.ImagePlugins
                 stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
 
                 return buffer;
-
             }
         }
 
@@ -739,24 +731,24 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
+                                            out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
 
             return null;
         }
@@ -868,8 +860,7 @@ namespace DiscImageChef.ImagePlugins
         {
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if(track != 1)
-                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+                if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
                 return ReadSector(sectorAddress);
             }
@@ -881,8 +872,7 @@ namespace DiscImageChef.ImagePlugins
         {
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if(track != 1)
-                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+                if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
                 return ReadSectors(sectorAddress, length);
             }
@@ -894,8 +884,7 @@ namespace DiscImageChef.ImagePlugins
         {
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if(track != 1)
-                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+                if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
                 return ReadSector(sectorAddress);
             }
@@ -907,8 +896,7 @@ namespace DiscImageChef.ImagePlugins
         {
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if(track != 1)
-                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+                if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
                 return ReadSectors(sectorAddress, length);
             }
@@ -917,192 +905,124 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region Private methods
-
         MediaType CalculateDiskType()
         {
             if(ImageInfo.sectorSize == 2048)
             {
-                if(ImageInfo.sectors <= 360000)
-                    return MediaType.CD;
-                if(ImageInfo.sectors <= 2295104)
-                    return MediaType.DVDPR;
-                if(ImageInfo.sectors <= 2298496)
-                    return MediaType.DVDR;
-                if(ImageInfo.sectors <= 4171712)
-                    return MediaType.DVDRDL;
-                if(ImageInfo.sectors <= 4173824)
-                    return MediaType.DVDPRDL;
-                if(ImageInfo.sectors <= 24438784)
-                    return MediaType.BDR;
-                if(ImageInfo.sectors <= 62500864)
-                    return MediaType.BDRXL;
+                if(ImageInfo.sectors <= 360000) return MediaType.CD;
+                if(ImageInfo.sectors <= 2295104) return MediaType.DVDPR;
+                if(ImageInfo.sectors <= 2298496) return MediaType.DVDR;
+                if(ImageInfo.sectors <= 4171712) return MediaType.DVDRDL;
+                if(ImageInfo.sectors <= 4173824) return MediaType.DVDPRDL;
+                if(ImageInfo.sectors <= 24438784) return MediaType.BDR;
+                if(ImageInfo.sectors <= 62500864) return MediaType.BDRXL;
+
                 return MediaType.Unknown;
             }
             else
             {
                 switch(ImageInfo.imageSize)
                 {
-                    case 80384:
-                        return MediaType.ECMA_66;
-                    case 81664:
-                        return MediaType.IBM23FD;
-                    case 92160:
-                        return MediaType.ATARI_525_SD;
-                    case 102400:
-                        return MediaType.ACORN_525_SS_SD_40;
-                    case 116480:
-                        return MediaType.Apple32SS;
-                    case 133120:
-                        return MediaType.ATARI_525_ED;
-                    case 143360:
-                        return MediaType.Apple33SS;
+                    case 80384: return MediaType.ECMA_66;
+                    case 81664: return MediaType.IBM23FD;
+                    case 92160: return MediaType.ATARI_525_SD;
+                    case 102400: return MediaType.ACORN_525_SS_SD_40;
+                    case 116480: return MediaType.Apple32SS;
+                    case 133120: return MediaType.ATARI_525_ED;
+                    case 143360: return MediaType.Apple33SS;
                     case 163840:
-						if(ImageInfo.sectorSize == 256)
-							return MediaType.ACORN_525_SS_DD_40;
-						return MediaType.DOS_525_SS_DD_8;
-                    case 184320:
-                        return MediaType.DOS_525_SS_DD_9;
-                    case 204800:
-                        return MediaType.ACORN_525_SS_SD_80;
-                    case 232960:
-                        return MediaType.Apple32DS;
-                    case 242944:
-                        return MediaType.IBM33FD_128;
-                    case 256256:
-                        return MediaType.ECMA_54;
-                    case 286720:
-                        return MediaType.Apple33DS;
-                    case 287488:
-                        return MediaType.IBM33FD_256;
-                    case 306432:
-                        return MediaType.IBM33FD_512;
-					case 322560:
-						return MediaType.Apricot_35;
-                    case 325632:
-                        return MediaType.ECMA_70;
+                        if(ImageInfo.sectorSize == 256) return MediaType.ACORN_525_SS_DD_40;
+
+                        return MediaType.DOS_525_SS_DD_8;
+                    case 184320: return MediaType.DOS_525_SS_DD_9;
+                    case 204800: return MediaType.ACORN_525_SS_SD_80;
+                    case 232960: return MediaType.Apple32DS;
+                    case 242944: return MediaType.IBM33FD_128;
+                    case 256256: return MediaType.ECMA_54;
+                    case 286720: return MediaType.Apple33DS;
+                    case 287488: return MediaType.IBM33FD_256;
+                    case 306432: return MediaType.IBM33FD_512;
+                    case 322560: return MediaType.Apricot_35;
+                    case 325632: return MediaType.ECMA_70;
                     case 327680:
-						if(ImageInfo.sectorSize == 256)
-							return MediaType.ACORN_525_SS_DD_80;
-						return MediaType.DOS_525_DS_DD_8;
+                        if(ImageInfo.sectorSize == 256) return MediaType.ACORN_525_SS_DD_80;
+
+                        return MediaType.DOS_525_DS_DD_8;
                     case 368640:
-						if(extension == ".st")
-							return MediaType.DOS_35_SS_DD_9;
+                        if(extension == ".st") return MediaType.DOS_35_SS_DD_9;
+
                         return MediaType.DOS_525_DS_DD_9;
                     case 409600:
-						if(extension == ".st")
-							return MediaType.ATARI_35_SS_DD;
-						return MediaType.AppleSonySS;
-					case 450560:
-						return MediaType.ATARI_35_SS_DD_11;
-					case 495872:
-                        return MediaType.IBM43FD_128;
-                    case 512512:
-                        return MediaType.ECMA_59;
-                    case 653312:
-                        return MediaType.ECMA_78;
-                    case 655360:
-                        return MediaType.ACORN_525_DS_DD;
-                    case 737280:
-                        return MediaType.DOS_35_DS_DD_9;
+                        if(extension == ".st") return MediaType.ATARI_35_SS_DD;
+
+                        return MediaType.AppleSonySS;
+                    case 450560: return MediaType.ATARI_35_SS_DD_11;
+                    case 495872: return MediaType.IBM43FD_128;
+                    case 512512: return MediaType.ECMA_59;
+                    case 653312: return MediaType.ECMA_78;
+                    case 655360: return MediaType.ACORN_525_DS_DD;
+                    case 737280: return MediaType.DOS_35_DS_DD_9;
                     case 819200:
-						if(ImageInfo.sectorSize == 256)
-							return MediaType.CBM_35_DD;
-						if((extension == ".adf" || extension == ".adl") && ImageInfo.sectorSize == 1024)
-							return MediaType.ACORN_35_DS_DD;
-						if(extension == ".st")
-							return MediaType.ATARI_35_DS_DD;
-						return MediaType.AppleSonyDS;
-                    case 839680:
-                        return MediaType.FDFORMAT_35_DD;
+                        if(ImageInfo.sectorSize == 256) return MediaType.CBM_35_DD;
+                        if((extension == ".adf" || extension == ".adl") && ImageInfo.sectorSize == 1024)
+                            return MediaType.ACORN_35_DS_DD;
+                        if(extension == ".st") return MediaType.ATARI_35_DS_DD;
+
+                        return MediaType.AppleSonyDS;
+                    case 839680: return MediaType.FDFORMAT_35_DD;
                     case 901120:
-						if(extension == ".st")
-							return MediaType.ATARI_35_DS_DD_11;
-						return MediaType.CBM_AMIGA_35_DD;
-                    case 988416:
-                        return MediaType.IBM43FD_256;
-                    case 995072:
-                        return MediaType.IBM53FD_256;
-                    case 1021696:
-                        return MediaType.ECMA_99_26;
-                    case 1146624:
-                        return MediaType.IBM53FD_512;
-                    case 1177344:
-                        return MediaType.ECMA_99_15;
-                    case 1222400:
-                        return MediaType.IBM53FD_1024;
-                    case 1228800:
-                        return MediaType.DOS_525_HD;
-                    case 1255168:
-                        return MediaType.ECMA_69_8;
-                    case 1261568:
-						return MediaType.NEC_525_HD;
-					case 1304320:
-                        return MediaType.ECMA_99_8;
-                    case 1427456:
-                        return MediaType.FDFORMAT_525_HD;
-                    case 1474560:
-                        return MediaType.DOS_35_HD;
-					case 1638400:
-						return MediaType.ACORN_35_DS_HD;
-                    case 1720320:
-                        return MediaType.DMF;
-                    case 1763328:
-                        return MediaType.FDFORMAT_35_HD;
-                    case 1802240:
-                        return MediaType.CBM_AMIGA_35_HD;
-                    case 1880064:
-                        return MediaType.XDF_35;
-                    case 1884160:
-                        return MediaType.XDF_35;
-                    case 2949120:
-                        return MediaType.DOS_35_ED;
-					case 9338880:
-						return MediaType.NEC_35_TD;
-					case 33554432:
-						return MediaType.FD32MB;
-					case 40387584:
-						return MediaType.PocketZip;
-					case 126222336:
-						return MediaType.LS120;
-                    case 127923200:
-                        return MediaType.ECMA_154;
-					case 201410560:
-						return MediaType.HiFD;
-                    case 229632000:
-                        return MediaType.ECMA_201;
-					case 240386048:
-						return MediaType.LS240;
-                    case 481520640:
-                        return MediaType.ECMA_183_512;
-                    case 533403648:
-                        return MediaType.ECMA_183;
-                    case 596787200:
-                        return MediaType.ECMA_184_512;
-                    case 654540800:
-                        return MediaType.ECMA_184;
-					case 1070617600:
-						return MediaType.Jaz;
-					#region Commodore
-					case 174848:
-					case 175531:
-						return MediaType.CBM_1540;
-					case 196608:
-					case 197376:
-						return MediaType.CBM_1540_Ext;
-					case 349696:
-					case 351062:
-						return MediaType.CBM_1571;
-					#endregion Commodore
-					default:
-                        return MediaType.GENERIC_HDD;
+                        if(extension == ".st") return MediaType.ATARI_35_DS_DD_11;
+
+                        return MediaType.CBM_AMIGA_35_DD;
+                    case 988416: return MediaType.IBM43FD_256;
+                    case 995072: return MediaType.IBM53FD_256;
+                    case 1021696: return MediaType.ECMA_99_26;
+                    case 1146624: return MediaType.IBM53FD_512;
+                    case 1177344: return MediaType.ECMA_99_15;
+                    case 1222400: return MediaType.IBM53FD_1024;
+                    case 1228800: return MediaType.DOS_525_HD;
+                    case 1255168: return MediaType.ECMA_69_8;
+                    case 1261568: return MediaType.NEC_525_HD;
+                    case 1304320: return MediaType.ECMA_99_8;
+                    case 1427456: return MediaType.FDFORMAT_525_HD;
+                    case 1474560: return MediaType.DOS_35_HD;
+                    case 1638400: return MediaType.ACORN_35_DS_HD;
+                    case 1720320: return MediaType.DMF;
+                    case 1763328: return MediaType.FDFORMAT_35_HD;
+                    case 1802240: return MediaType.CBM_AMIGA_35_HD;
+                    case 1880064: return MediaType.XDF_35;
+                    case 1884160: return MediaType.XDF_35;
+                    case 2949120: return MediaType.DOS_35_ED;
+                    case 9338880: return MediaType.NEC_35_TD;
+                    case 33554432: return MediaType.FD32MB;
+                    case 40387584: return MediaType.PocketZip;
+                    case 126222336: return MediaType.LS120;
+                    case 127923200: return MediaType.ECMA_154;
+                    case 201410560: return MediaType.HiFD;
+                    case 229632000: return MediaType.ECMA_201;
+                    case 240386048: return MediaType.LS240;
+                    case 481520640: return MediaType.ECMA_183_512;
+                    case 533403648: return MediaType.ECMA_183;
+                    case 596787200: return MediaType.ECMA_184_512;
+                    case 654540800: return MediaType.ECMA_184;
+                    case 1070617600: return MediaType.Jaz;
+
+                    #region Commodore
+                    case 174848:
+                    case 175531: return MediaType.CBM_1540;
+                    case 196608:
+                    case 197376: return MediaType.CBM_1540_Ext;
+                    case 349696:
+                    case 351062: return MediaType.CBM_1571;
+                    #endregion Commodore
+
+                    default: return MediaType.GENERIC_HDD;
                 }
             }
         }
-
         #endregion
 
         #region Unsupported features
-
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
@@ -1205,23 +1125,23 @@ namespace DiscImageChef.ImagePlugins
 
         public override List<Partition> GetPartitions()
         {
-			if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
-			{
-				List<Partition> parts = new List<Partition>();
-				Partition part = new Partition
-				{
-					Start = 0,
-					Length = ImageInfo.sectors,
-					Offset = 0,
-					Sequence = 0,
-					Type = "MODE1/2048",
-					Size = ImageInfo.sectors * ImageInfo.sectorSize
-				};
-				parts.Add(part);
-				return parts;
-			}
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                List<Partition> parts = new List<Partition>();
+                Partition part = new Partition
+                {
+                    Start = 0,
+                    Length = ImageInfo.sectors,
+                    Offset = 0,
+                    Sequence = 0,
+                    Type = "MODE1/2048",
+                    Size = ImageInfo.sectors * ImageInfo.sectorSize
+                };
+                parts.Add(part);
+                return parts;
+            }
 
-			throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
@@ -1233,8 +1153,6 @@ namespace DiscImageChef.ImagePlugins
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-
         #endregion Unsupported features
     }
 }
-

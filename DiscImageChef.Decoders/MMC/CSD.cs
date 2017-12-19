@@ -76,11 +76,9 @@ namespace DiscImageChef.Decoders.MMC
     {
         public static CSD DecodeCSD(uint[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 4)
-                return null;
+            if(response.Length != 4) return null;
 
             byte[] data = new byte[16];
             byte[] tmp = new byte[4];
@@ -99,11 +97,9 @@ namespace DiscImageChef.Decoders.MMC
 
         public static CSD DecodeCSD(byte[] response)
         {
-            if(response == null)
-                return null;
+            if(response == null) return null;
 
-            if(response.Length != 16)
-                return null;
+            if(response.Length != 16) return null;
 
             CSD csd = new CSD();
 
@@ -146,8 +142,7 @@ namespace DiscImageChef.Decoders.MMC
 
         public static string PrettifyCSD(CSD csd)
         {
-            if(csd == null)
-                return null;
+            if(csd == null) return null;
 
             double unitFactor = 0;
             double multiplier = 0;
@@ -259,6 +254,7 @@ namespace DiscImageChef.Decoders.MMC
                     multiplier = 8;
                     break;
             }
+
             result = unitFactor * multiplier;
             sb.AppendFormat("\tAsynchronous data access time is {0}{1}", result, unit).AppendLine();
 
@@ -336,32 +332,26 @@ namespace DiscImageChef.Decoders.MMC
                     multiplier = 8;
                     break;
             }
+
             result = unitFactor * multiplier;
             sb.AppendFormat("\tDevice's clock frequency: {0}{1}", result, unit).AppendLine();
 
             unit = "";
             for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1)
             {
-                if((csd.Classes & mask) == mask)
-                    unit += string.Format(" {0}", cl);
+                if((csd.Classes & mask) == mask) unit += string.Format(" {0}", cl);
             }
 
             sb.AppendFormat("\tDevice support command classes {0}", unit).AppendLine();
-            if(csd.ReadBlockLength == 15)
-                sb.AppendLine("\tRead block length size is defined in extended CSD");
-            else
-                sb.AppendFormat("\tRead block length is {0} bytes", Math.Pow(2, csd.ReadBlockLength)).AppendLine();
+            if(csd.ReadBlockLength == 15) sb.AppendLine("\tRead block length size is defined in extended CSD");
+            else sb.AppendFormat("\tRead block length is {0} bytes", Math.Pow(2, csd.ReadBlockLength)).AppendLine();
 
-            if(csd.ReadsPartialBlocks)
-                sb.AppendLine("\tDevice allows reading partial blocks");
+            if(csd.ReadsPartialBlocks) sb.AppendLine("\tDevice allows reading partial blocks");
 
-            if(csd.WriteMisalignment)
-                sb.AppendLine("\tWrite commands can cross physical block boundaries");
-            if(csd.ReadMisalignment)
-                sb.AppendLine("\tRead commands can cross physical block boundaries");
+            if(csd.WriteMisalignment) sb.AppendLine("\tWrite commands can cross physical block boundaries");
+            if(csd.ReadMisalignment) sb.AppendLine("\tRead commands can cross physical block boundaries");
 
-            if(csd.DSRImplemented)
-                sb.AppendLine("\tDevice implements configurable driver stage");
+            if(csd.DSRImplemented) sb.AppendLine("\tDevice implements configurable driver stage");
 
             if(csd.Size == 0xFFF)
                 sb.AppendLine("\tDevice may be bigger than 2GiB and have its real size defined in the extended CSD");
@@ -370,14 +360,10 @@ namespace DiscImageChef.Decoders.MMC
             sb.AppendFormat("\tDevice has {0} blocks", (int)result).AppendLine();
 
             result = (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2) * Math.Pow(2, csd.ReadBlockLength);
-            if(result > 1073741824)
-                sb.AppendFormat("\tDevice has {0} GiB", result/1073741824.0).AppendLine();
-            else if(result > 1048576)
-                sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
-            else if(result > 1024)
-                sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
-            else
-                sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();
+            if(result > 1073741824) sb.AppendFormat("\tDevice has {0} GiB", result / 1073741824.0).AppendLine();
+            else if(result > 1048576) sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
+            else if(result > 1024) sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
+            else sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();
 
             switch(csd.ReadCurrentAtVddMin & 0x07)
             {
@@ -501,10 +487,10 @@ namespace DiscImageChef.Decoders.MMC
             {
                 sb.AppendLine("\tDevice can write protect regions");
                 unitFactor = Convert.ToDouble(csd.WriteProtectGroupSize);
-                sb.AppendFormat("\tDevice can write protect a minimum of {0} blocks at a time", (int)(result + 1)).AppendLine();
+                sb.AppendFormat("\tDevice can write protect a minimum of {0} blocks at a time", (int)(result + 1))
+                  .AppendLine();
             }
-            else
-                sb.AppendLine("\tDevice can't write protect regions");
+            else sb.AppendLine("\tDevice can't write protect regions");
 
             switch(csd.DefaultECC)
             {
@@ -519,27 +505,21 @@ namespace DiscImageChef.Decoders.MMC
                     break;
             }
 
-            sb.AppendFormat("\tWriting is {0} times slower than reading", Math.Pow(2, csd.WriteSpeedFactor)).AppendLine();
+            sb.AppendFormat("\tWriting is {0} times slower than reading", Math.Pow(2, csd.WriteSpeedFactor))
+              .AppendLine();
 
-            if(csd.WriteBlockLength == 15)
-                sb.AppendLine("\tWrite block length size is defined in extended CSD");
-            else
-                sb.AppendFormat("\tWrite block length is {0} bytes", Math.Pow(2, csd.WriteBlockLength)).AppendLine();
+            if(csd.WriteBlockLength == 15) sb.AppendLine("\tWrite block length size is defined in extended CSD");
+            else sb.AppendFormat("\tWrite block length is {0} bytes", Math.Pow(2, csd.WriteBlockLength)).AppendLine();
 
-            if(csd.WritesPartialBlocks)
-                sb.AppendLine("\tDevice allows writing partial blocks");
+            if(csd.WritesPartialBlocks) sb.AppendLine("\tDevice allows writing partial blocks");
 
-            if(csd.ContentProtection)
-                sb.AppendLine("\tDevice supports content protection");
+            if(csd.ContentProtection) sb.AppendLine("\tDevice supports content protection");
 
-            if(!csd.Copy)
-                sb.AppendLine("\tDevice contents are original");
+            if(!csd.Copy) sb.AppendLine("\tDevice contents are original");
 
-            if(csd.PermanentWriteProtect)
-                sb.AppendLine("\tDevice is permanently write protected");
+            if(csd.PermanentWriteProtect) sb.AppendLine("\tDevice is permanently write protected");
 
-            if(csd.TemporaryWriteProtect)
-                sb.AppendLine("\tDevice is temporarily write protected");
+            if(csd.TemporaryWriteProtect) sb.AppendLine("\tDevice is temporarily write protected");
 
             if(!csd.FileFormatGroup)
             {
@@ -560,7 +540,8 @@ namespace DiscImageChef.Decoders.MMC
                 }
             }
             else
-                sb.AppendFormat("\tDevice uses unknown file format code {0} and file format group 1", csd.FileFormat).AppendLine();
+                sb.AppendFormat("\tDevice uses unknown file format code {0} and file format group 1", csd.FileFormat)
+                  .AppendLine();
 
             switch(csd.ECC)
             {

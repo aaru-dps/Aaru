@@ -34,7 +34,8 @@ namespace DiscImageChef
 {
     public static partial class ArrayHelpers
     {
-        public static void CompareBytes(out bool different, out bool sameSize, byte[] compareArray1, byte[] compareArray2)
+        public static void CompareBytes(out bool different, out bool sameSize, byte[] compareArray1,
+                                        byte[] compareArray2)
         {
             different = false;
             sameSize = true;
@@ -50,8 +51,7 @@ namespace DiscImageChef
                 sameSize = false;
                 leastBytes = compareArray2.LongLength;
             }
-            else
-                leastBytes = compareArray1.LongLength;
+            else leastBytes = compareArray1.LongLength;
 
             for(long i = 0; i < leastBytes; i++)
             {

@@ -75,9 +75,9 @@ namespace DiscImageChef
                     counter = 0;
                     subcounter = 0;
                 }
-                else
-                    counter++;
+                else counter++;
             }
+
             sb.AppendLine();
             sb.AppendLine();
 
@@ -85,4 +85,3 @@ namespace DiscImageChef
         }
     }
 }
-

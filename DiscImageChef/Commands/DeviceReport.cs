@@ -46,8 +46,8 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Device-Report command", "--device={0}", options.DevicePath);
 
-            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
-                options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
+            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
+               char.IsLetter(options.DevicePath[0]))
             {
                 options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
             }
@@ -67,12 +67,9 @@ namespace DiscImageChef.Commands
             string xmlFile;
             if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
                 xmlFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".xml";
-            else if(!string.IsNullOrWhiteSpace(dev.Manufacturer))
-                xmlFile = dev.Manufacturer + "_" + dev.Model + ".xml";
-            else if(!string.IsNullOrWhiteSpace(dev.Revision))
-                xmlFile = dev.Model + "_" + dev.Revision + ".xml";
-            else
-                xmlFile = dev.Model + ".xml";
+            else if(!string.IsNullOrWhiteSpace(dev.Manufacturer)) xmlFile = dev.Manufacturer + "_" + dev.Model + ".xml";
+            else if(!string.IsNullOrWhiteSpace(dev.Revision)) xmlFile = dev.Model + "_" + dev.Revision + ".xml";
+            else xmlFile = dev.Model + ".xml";
 
             xmlFile = xmlFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
 
@@ -92,22 +89,18 @@ namespace DiscImageChef.Commands
                 case DeviceType.SCSI:
                     Core.Devices.Report.SCSI.General.Report(dev, ref report, options.Debug, ref removable);
                     break;
-                default:
-                    throw new NotSupportedException("Unknown device type.");
+                default: throw new NotSupportedException("Unknown device type.");
             }
 
             FileStream xmlFs = new FileStream(xmlFile, FileMode.Create);
 
-            System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(Metadata.DeviceReport));
+            System.Xml.Serialization.XmlSerializer xmlSer =
+                new System.Xml.Serialization.XmlSerializer(typeof(Metadata.DeviceReport));
             xmlSer.Serialize(xmlFs, report);
             xmlFs.Close();
             Core.Statistics.AddCommand("device-report");
 
-            if(Settings.Settings.Current.ShareReports)
-            {
-                Remote.SubmitReport(report);
-            }
+            if(Settings.Settings.Current.ShareReports) { Remote.SubmitReport(report); }
         }
     }
 }
-

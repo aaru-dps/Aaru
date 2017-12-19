@@ -59,10 +59,9 @@ namespace DiscImageChef.Checksums
             {
                 ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (ushort)((entry >> 1) ^ crc16Poly);
-                    else
-                        entry = (ushort)(entry >> 1);
+                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ crc16Poly);
+                    else entry = (ushort)(entry >> 1);
+
                 table[i] = entry;
             }
         }
@@ -74,8 +73,7 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            for(int i = 0; i < len; i++)
-                hashInt = (ushort)((hashInt >> 8) ^ table[data[i] ^ (hashInt & 0xFF)]);
+            for(int i = 0; i < len; i++) hashInt = (ushort)((hashInt >> 8) ^ table[data[i] ^ (hashInt & 0xFF)]);
         }
 
         /// <summary>
@@ -143,10 +141,9 @@ namespace DiscImageChef.Checksums
             {
                 ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (ushort)((entry >> 1) ^ crc16Poly);
-                    else
-                        entry = (ushort)(entry >> 1);
+                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ crc16Poly);
+                    else entry = (ushort)(entry >> 1);
+
                 localTable[i] = entry;
             }
 
@@ -158,10 +155,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder crc16Output = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++)
-            {
-                crc16Output.Append(hash[i].ToString("x2"));
-            }
+            for(int i = 0; i < hash.Length; i++) { crc16Output.Append(hash[i].ToString("x2")); }
 
             fileStream.Close();
 
@@ -199,10 +193,9 @@ namespace DiscImageChef.Checksums
             {
                 ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (ushort)((entry >> 1) ^ polynomial);
-                    else
-                        entry = (ushort)(entry >> 1);
+                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ polynomial);
+                    else entry = (ushort)(entry >> 1);
+
                 localTable[i] = entry;
             }
 
@@ -214,10 +207,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder crc16Output = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++)
-            {
-                crc16Output.Append(hash[i].ToString("x2"));
-            }
+            for(int i = 0; i < hash.Length; i++) { crc16Output.Append(hash[i].ToString("x2")); }
 
             return crc16Output.ToString();
         }
@@ -233,4 +223,3 @@ namespace DiscImageChef.Checksums
         }
     }
 }
-

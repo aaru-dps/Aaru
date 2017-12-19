@@ -45,23 +45,22 @@ namespace DiscImageChef.Commands
 
             Devices.DeviceInfo[] devices = Device.ListDevices();
 
-            if(devices == null || devices.Length == 0)
-                DicConsole.WriteLine("No known devices attached.");
+            if(devices == null || devices.Length == 0) DicConsole.WriteLine("No known devices attached.");
             else
             {
                 devices = devices.OrderBy(d => d.path).ToArray();
 
-                DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}",
-                                     "Path", "Vendor", "Model", "Serial", "Bus", "Supported?");
-                DicConsole.WriteLine("{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
-                                     "----------------------", "----------------", "------------------------",
-                                     "------------------------", "----------", "----------");
+                DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
+                                     "Serial", "Bus", "Supported?");
+                DicConsole.WriteLine("{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
+                                     "----------------", "------------------------", "------------------------",
+                                     "----------", "----------");
                 foreach(Devices.DeviceInfo dev in devices)
-                    DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.path, dev.vendor, dev.model, dev.serial, dev.bus, dev.supported);
+                    DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.path, dev.vendor,
+                                         dev.model, dev.serial, dev.bus, dev.supported);
             }
 
             Core.Statistics.AddCommand("list-devices");
         }
     }
 }
-

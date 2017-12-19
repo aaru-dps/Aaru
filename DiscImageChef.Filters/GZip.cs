@@ -54,8 +54,7 @@ namespace DiscImageChef.Filters
 
         public override void Close()
         {
-            if(dataStream != null)
-                dataStream.Close();
+            if(dataStream != null) dataStream.Close();
             dataStream = null;
             basePath = null;
             opened = false;
@@ -225,12 +224,12 @@ namespace DiscImageChef.Filters
 
         public override string GetFilename()
         {
-            if(basePath == null)
-                return null;
+            if(basePath == null) return null;
             if(basePath.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase))
                 return basePath.Substring(0, basePath.Length - 3);
             if(basePath.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase))
                 return basePath.Substring(0, basePath.Length - 5);
+
             return basePath;
         }
 

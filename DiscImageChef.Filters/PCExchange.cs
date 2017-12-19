@@ -52,8 +52,7 @@ namespace DiscImageChef.Filters
             /// Name in Macintosh. If PCExchange version supports FAT's LFN they are the same.
             /// Illegal characters for FAT get substituted with '_' both here and in FAT's LFN entry.
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] macName;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] macName;
             /// <summary>
             /// File type
             /// </summary>
@@ -77,8 +76,7 @@ namespace DiscImageChef.Filters
             /// <summary>
             /// Unknown, all bytes are empty but last, except in volume's label entry
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
-            public byte[] unknown1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)] public byte[] unknown1;
             /// <summary>
             /// File's creation date
             /// </summary>
@@ -100,8 +98,7 @@ namespace DiscImageChef.Filters
             /// Name as in FAT entry (not LFN).
             /// Resource fork file is always using this name, never LFN.
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-            public byte[] dosName;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] dosName;
             /// <summary>
             /// Unknown, flags?
             /// </summary>
@@ -203,18 +200,17 @@ namespace DiscImageChef.Filters
         {
             string parentFolder = Path.GetDirectoryName(path);
 
-            if(!File.Exists(Path.Combine(parentFolder, FinderInfo)))
-                return false;
+            if(!File.Exists(Path.Combine(parentFolder, FinderInfo))) return false;
 
-            if(!Directory.Exists(Path.Combine(parentFolder, Resources)))
-                return false;
+            if(!Directory.Exists(Path.Combine(parentFolder, Resources))) return false;
 
             string baseFilename = Path.GetFileName(path);
 
             bool dataFound = false;
             bool rsrcFound = false;
 
-            FileStream finderDatStream = new FileStream(Path.Combine(parentFolder, FinderInfo), FileMode.Open, FileAccess.Read);
+            FileStream finderDatStream =
+                new FileStream(Path.Combine(parentFolder, FinderInfo), FileMode.Open, FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
@@ -228,16 +224,18 @@ namespace DiscImageChef.Filters
                 byte[] tmpDosExt_b = new byte[3];
                 Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);
                 Array.Copy(datEntry.dosName, 8, tmpDosExt_b, 0, 3);
-                string dosName = (Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." + Encoding.ASCII.GetString(tmpDosExt_b).Trim());
+                string dosName = (Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
+                                  Encoding.ASCII.GetString(tmpDosExt_b).Trim());
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
                 if(baseFilename == macName || baseFilename == dosName || baseFilename == dosNameLow)
                 {
-                    dataFound |= File.Exists(Path.Combine(parentFolder, macName)) || File.Exists(Path.Combine(parentFolder, dosName)) ||
-                       File.Exists(Path.Combine(parentFolder, dosNameLow));
+                    dataFound |= File.Exists(Path.Combine(parentFolder, macName)) ||
+                                 File.Exists(Path.Combine(parentFolder, dosName)) ||
+                                 File.Exists(Path.Combine(parentFolder, dosNameLow));
 
                     rsrcFound |= File.Exists(Path.Combine(parentFolder, Resources, dosName)) ||
-                                     File.Exists(Path.Combine(parentFolder, Resources, dosNameLow));
+                                 File.Exists(Path.Combine(parentFolder, Resources, dosNameLow));
 
                     break;
                 }
@@ -268,7 +266,8 @@ namespace DiscImageChef.Filters
             string parentFolder = Path.GetDirectoryName(path);
             string baseFilename = Path.GetFileName(path);
 
-            FileStream finderDatStream = new FileStream(Path.Combine(parentFolder, FinderInfo), FileMode.Open, FileAccess.Read);
+            FileStream finderDatStream =
+                new FileStream(Path.Combine(parentFolder, FinderInfo), FileMode.Open, FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
@@ -281,26 +280,24 @@ namespace DiscImageChef.Filters
                 byte[] tmpDosExt_b = new byte[3];
                 Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);
                 Array.Copy(datEntry.dosName, 8, tmpDosExt_b, 0, 3);
-                string dosName = (Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." + Encoding.ASCII.GetString(tmpDosExt_b).Trim());
+                string dosName = (Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
+                                  Encoding.ASCII.GetString(tmpDosExt_b).Trim());
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
                 if(baseFilename == macName || baseFilename == dosName || baseFilename == dosNameLow)
                 {
-                    if(File.Exists(Path.Combine(parentFolder, macName)))
-                        dataPath = Path.Combine(parentFolder, macName);
+                    if(File.Exists(Path.Combine(parentFolder, macName))) dataPath = Path.Combine(parentFolder, macName);
                     else if(File.Exists(Path.Combine(parentFolder, dosName)))
                         dataPath = Path.Combine(parentFolder, dosName);
                     else if(File.Exists(Path.Combine(parentFolder, dosNameLow)))
                         dataPath = Path.Combine(parentFolder, dosNameLow);
-                    else
-                        dataPath = null;
+                    else dataPath = null;
 
                     if(File.Exists(Path.Combine(parentFolder, Resources, dosName)))
                         rsrcPath = Path.Combine(parentFolder, Resources, dosName);
                     else if(File.Exists(Path.Combine(parentFolder, Resources, dosNameLow)))
                         rsrcPath = Path.Combine(parentFolder, Resources, dosNameLow);
-                    else
-                        rsrcPath = null;
+                    else rsrcPath = null;
 
                     lastWriteTime = DateHandlers.MacToDateTime(datEntry.modificationDate);
                     creationTime = DateHandlers.MacToDateTime(datEntry.creationDate);

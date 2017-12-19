@@ -40,29 +40,17 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class unixbfs_mbr
     {
-        readonly string[] testfiles = {
-            "linux.vdi.lz",
-        };
+        readonly string[] testfiles = {"linux.vdi.lz",};
 
-        readonly ulong[] sectors = {
-            262144,
-        };
+        readonly ulong[] sectors = {262144,};
 
-        readonly uint[] sectorsize = {
-            512,
-        };
+        readonly uint[] sectorsize = {512,};
 
-        readonly long[] clusters = {
-            260096,
-        };
+        readonly long[] clusters = {260096,};
 
-        readonly int[] clustersize = {
-            512,
-        };
+        readonly int[] clustersize = {512,};
 
-        readonly string[] volumename = {
-            "Label",
-        };
+        readonly string[] volumename = {"Label",};
 
         [Test]
         public void Test()
@@ -87,6 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
+
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);

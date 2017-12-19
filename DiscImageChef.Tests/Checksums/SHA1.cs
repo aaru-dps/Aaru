@@ -35,8 +35,16 @@ namespace DiscImageChef.Tests.Checksums
     [TestFixture]
     public class SHA1
     {
-        static readonly byte[] ExpectedEmpty = { 0x3b, 0x71, 0xf4, 0x3f, 0xf3, 0x0f, 0x4b, 0x15, 0xb5, 0xcd, 0x85, 0xdd, 0x9e, 0x95, 0xeb, 0xc7, 0xe8, 0x4e, 0xb5, 0xa3 };
-        static readonly byte[] ExpectedRandom = { 0x72, 0x0d, 0x3b, 0x71, 0x7d, 0xe0, 0xc7, 0x4c, 0x77, 0xdd, 0x9c, 0xaa, 0x9e, 0xba, 0x50, 0x60, 0xdc, 0xbd, 0x28, 0x8d };
+        static readonly byte[] ExpectedEmpty =
+        {
+            0x3b, 0x71, 0xf4, 0x3f, 0xf3, 0x0f, 0x4b, 0x15, 0xb5, 0xcd, 0x85, 0xdd, 0x9e, 0x95, 0xeb, 0xc7, 0xe8, 0x4e,
+            0xb5, 0xa3
+        };
+        static readonly byte[] ExpectedRandom =
+        {
+            0x72, 0x0d, 0x3b, 0x71, 0x7d, 0xe0, 0xc7, 0x4c, 0x77, 0xdd, 0x9c, 0xaa, 0x9e, 0xba, 0x50, 0x60, 0xdc, 0xbd,
+            0x28, 0x8d
+        };
 
         [Test]
         public void SHA1EmptyFile()
@@ -51,7 +59,8 @@ namespace DiscImageChef.Tests.Checksums
         public void SHA1EmptyData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -65,7 +74,8 @@ namespace DiscImageChef.Tests.Checksums
         public void SHA1EmptyInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -89,7 +99,8 @@ namespace DiscImageChef.Tests.Checksums
         public void SHA1RandomData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -103,7 +114,8 @@ namespace DiscImageChef.Tests.Checksums
         public void SHA1RandomInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                           FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
