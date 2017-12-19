@@ -5,7 +5,7 @@
 // Filename       : Command.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : FeeBSD direct device access.
+// Component      : FreeBSD direct device access.
 //
 // --[ Description ] ----------------------------------------------------------
 //
@@ -28,7 +28,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
 using System;

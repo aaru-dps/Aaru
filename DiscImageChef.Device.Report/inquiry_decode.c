@@ -3,7 +3,6 @@ The Disc Image Chef
 ----------------------------------------------------------------------------
 
 Filename       : inquiry_decode.c
-Version        : 4.0
 Author(s)      : Natalia Portillo
 
 Component      : DiscImageChef.Device.Report
@@ -28,7 +27,7 @@ Contains decoders for SCSI INQUIRY structure.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ----------------------------------------------------------------------------
-Copyright (C) 2011-2018 Claunia.com
+Copyright © 2011-2018 Natalia Portillo
 ****************************************************************************/
 
 #include <stdint.h>

@@ -5,11 +5,11 @@
 // Filename       : Checksum.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Core methods.
+// Component      : Core algorithms.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Methods to checksum data.
+//     Multithreads checksumming and hashing.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,8 +27,9 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
+
 
 using System.Collections.Generic;
 using DiscImageChef.Checksums;

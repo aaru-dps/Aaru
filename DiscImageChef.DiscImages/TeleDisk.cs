@@ -5,7 +5,7 @@
 // Filename       : TeleDisk.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Disc image plugins.
+// Component      : Disk image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // For Advanced Compression support (aka LZH):
 // Copyright © 2017 Miodrag Milanovic
 // Copyright © 1988 Haruhiko OKUMURA

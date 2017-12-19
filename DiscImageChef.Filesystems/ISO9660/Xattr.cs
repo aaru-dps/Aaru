@@ -5,11 +5,11 @@
 // Filename       : Xattr.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : ISO9660 filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Methods to handle ISO9660 extended attributes.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 using System.Collections.Generic;
 

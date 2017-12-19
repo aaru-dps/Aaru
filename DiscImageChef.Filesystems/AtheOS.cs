@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : BFS.cs
+// Filename       : Atheos.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : BeOS filesystem plugin.
+// Component      : Atheos filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Identifies the BeOS filesystem and shows information.
+//     Identifies the Atheos filesystem and shows information.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
 using System;

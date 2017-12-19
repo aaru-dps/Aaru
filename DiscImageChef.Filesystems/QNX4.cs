@@ -5,7 +5,7 @@
 // Filename       : QNX4.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : QNX4 filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
 using System;

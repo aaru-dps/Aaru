@@ -5,11 +5,11 @@
 // Filename       : Statistics.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : XML metadata.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Define XML for statistics.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 using System;
 using System.Collections.Generic;

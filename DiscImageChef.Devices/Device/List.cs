@@ -5,11 +5,11 @@
 // Filename       : List.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Direct device access.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Gets a list of known physical devices.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 using System;
 

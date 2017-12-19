@@ -3,7 +3,6 @@ The Disc Image Chef
 ----------------------------------------------------------------------------
 
 Filename       : scsi_mode.h
-Version        : 4.0
 Author(s)      : Natalia Portillo
 
 Component      : DiscImageChef.Device.Report
@@ -28,7 +27,7 @@ Contains definitions for SCSI MODE PAGEs.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ----------------------------------------------------------------------------
-Copyright (C) 2011-2018 Claunia.com
+Copyright © 2011-2018 Natalia Portillo
 ****************************************************************************/
 
 #ifndef DISCIMAGECHEF_DEVICE_REPORT_SCSI_MODE_H

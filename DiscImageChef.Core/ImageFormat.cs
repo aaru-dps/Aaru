@@ -2,10 +2,10 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : DetectImageFormat.cs
+// Filename       : ImageFormat.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Main program loop.
+// Component      : Core algorithms.
 //
 // --[ Description ] ----------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
 using System;

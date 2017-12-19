@@ -5,11 +5,11 @@
 // Filename       : CPCDSK.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Disk image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Manages CPCEMU disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
 using System;
@@ -43,7 +43,6 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    // Checked using several images and strings inside Apple's DiskImages.framework
     public class CPCDSK : ImagePlugin
     {
         #region Internal constants

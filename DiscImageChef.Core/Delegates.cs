@@ -3,18 +3,13 @@
 // ----------------------------------------------------------------------------
 //
 // Filename       : Delegates.cs
-// Version        : 1.0
-// Author(s)      : Natalia Portillo
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
-//
-// Revision       : $Revision$
-// Last change by : $Author$
-// Date           : $Date$
+// Component      : Core algorithms.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-// Description
+//     Delegates to communicate with user interface.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -32,9 +27,9 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright (C) 2011-2015 Claunia.com
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
-// //$Id$
+
 
 namespace DiscImageChef.Core
 {

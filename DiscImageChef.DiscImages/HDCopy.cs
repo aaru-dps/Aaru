@@ -5,7 +5,7 @@
 // Filename       : HDCopy.cs
 // Author(s)      : Michael Drüing <michael@drueing.de>
 //
-// Component      : Disc image plugins.
+// Component      : Disk image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
@@ -28,6 +28,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2017 Michael Drüing
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
 /* Some information on the file format from Michal Necasek (www.os2museum.com):

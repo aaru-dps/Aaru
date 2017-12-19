@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Plugins.cs
+// Filename       : PluginBase.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Plugins
+// Component      : Core algorithms.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Base methods for plugins.
+//     Class to hold all installed plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
 using System;

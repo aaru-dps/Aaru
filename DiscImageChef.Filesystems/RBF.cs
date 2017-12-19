@@ -5,11 +5,11 @@
 // Filename       : RBF.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Random Block File filesystem plugin
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Identifies the RBF filesystem and shows information.
+//     Identifies the Random Block File filesystem and shows information.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
 using System;

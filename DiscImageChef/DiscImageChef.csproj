@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -83,7 +83,7 @@
       <Properties>
         <Policies>
           <VersionControlPolicy>
-            <CommitMessageStyle Indent="&#x9;" LastFilePostfix=":&#xA;  " LineAlign="0" IncludeDirectoryPaths="True" />
+            <CommitMessageStyle Indent="	" LastFilePostfix=":&#xA;  " LineAlign="0" IncludeDirectoryPaths="True" />
           </VersionControlPolicy>
           <ChangeLogPolicy UpdateMode="ProjectRoot" VcsIntegration="RequireEntry">
             <MessageStyle Header="" Indent="" LastFilePostfix=":&#xA;  " LineAlign="2" IncludeDirectoryPaths="True" />
@@ -256,9 +256,9 @@
       <Link>LICENSE.LGPL</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\LICENSE">
+    <Folder Include="..\LICENSE">
       <Link>LICENSE</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    </Folder>
   </ItemGroup>
 </Project>

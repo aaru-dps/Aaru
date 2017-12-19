@@ -27,9 +27,10 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2017 Natalia Portillo
+// Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Devices
@@ -51,6 +52,9 @@ namespace DiscImageChef.Devices
                         break;
                     case Interop.PlatformID.Linux:
                         Linux.Extern.close((int)fd);
+                        break;
+                    case Interop.PlatformID.FreeBSD:
+                        FreeBSD.Extern.cam_close_device((IntPtr)fd);
                         break;
                 }
             }
