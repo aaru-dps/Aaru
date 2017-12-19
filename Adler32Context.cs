@@ -138,10 +138,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder adlerOutput = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++)
-            {
-                adlerOutput.Append(hash[i].ToString("x2"));
-            }
+            for(int i = 0; i < hash.Length; i++) { adlerOutput.Append(hash[i].ToString("x2")); }
 
             fileStream.Close();
 
@@ -175,10 +172,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder adlerOutput = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++)
-            {
-                adlerOutput.Append(hash[i].ToString("x2"));
-            }
+            for(int i = 0; i < hash.Length; i++) { adlerOutput.Append(hash[i].ToString("x2")); }
 
             return adlerOutput.ToString();
         }
@@ -194,4 +188,3 @@ namespace DiscImageChef.Checksums
         }
     }
 }
-
