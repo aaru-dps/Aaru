@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using System.Text;
 using DiscImageChef.Console;
-using System.Linq;
 
 namespace DiscImageChef.Decoders.SCSI
 {

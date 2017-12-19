@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-
 namespace DiscImageChef.Decoders.SCSI.MMC
 {
 

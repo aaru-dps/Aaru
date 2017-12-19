@@ -29,7 +29,9 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
+
 using System;
+
 namespace DiscImageChef.Decoders
 {
     public static class LisaTag

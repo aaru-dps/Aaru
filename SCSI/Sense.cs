@@ -31,8 +31,8 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
 using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Decoders.SCSI
