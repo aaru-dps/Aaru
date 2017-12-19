@@ -56,7 +56,10 @@ namespace DiscImageChef.CommonTypes
         /// <summary>Information that does not find space in this struct</summary>
         public string Description;
         /// <summary>LBA of last partition sector</summary>
-        public ulong End { get { return Start + Length - 1; }}
+        public ulong End
+        {
+            get { return Start + Length - 1; }
+        }
         /// <summary>Name of partition scheme that contains this partition</summary>
         public string Scheme;
 
@@ -67,10 +70,8 @@ namespace DiscImageChef.CommonTypes
 
         public override bool Equals(Object obj)
         {
-            if(obj == null || !(obj is Partition))
-                return false;
-            else
-                return Equals((Partition)obj);
+            if(obj == null || !(obj is Partition)) return false;
+            else return Equals((Partition)obj);
         }
 
         public override int GetHashCode()
@@ -80,11 +81,9 @@ namespace DiscImageChef.CommonTypes
 
         public int CompareTo(Partition other)
         {
-            if(Start == other.Start && End == other.End)
-                return 0;
+            if(Start == other.Start && End == other.End) return 0;
 
-            if(Start > other.Start || End > other.End)
-                return 1;
+            if(Start > other.Start || End > other.End) return 1;
 
             return -1;
         }
@@ -126,4 +125,3 @@ namespace DiscImageChef.CommonTypes
         }
     }
 }
-
