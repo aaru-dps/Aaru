@@ -50,7 +50,10 @@ namespace Extents
             backend = list.OrderBy(t => t.Item1).ToList();
         }
 
-        public int Count { get { return backend.Count; } }
+        public int Count
+        {
+            get { return backend.Count; }
+        }
 
         public void Add(ushort item)
         {
@@ -61,8 +64,7 @@ namespace Extents
             for(int i = 0; i < backend.Count; i++)
             {
                 // Already contained in an extent
-                if(item >= backend[i].Item1 && item <= backend[i].Item2)
-                    return;
+                if(item >= backend[i].Item1 && item <= backend[i].Item2) return;
 
                 // Expands existing extent start
                 if(item == backend[i].Item1 - 1)
@@ -74,8 +76,7 @@ namespace Extents
                         removeTwo = backend[i - 1];
                         itemToAdd = new Tuple<ushort, ushort>(backend[i - 1].Item1, backend[i].Item2);
                     }
-                    else
-                        itemToAdd = new Tuple<ushort, ushort>(item, backend[i].Item2);
+                    else itemToAdd = new Tuple<ushort, ushort>(item, backend[i].Item2);
 
                     break;
                 }
@@ -90,8 +91,7 @@ namespace Extents
                         removeTwo = backend[i + 1];
                         itemToAdd = new Tuple<ushort, ushort>(backend[i].Item1, backend[i + 1].Item2);
                     }
-                    else
-                        itemToAdd = new Tuple<ushort, ushort>(backend[i].Item1, item);
+                    else itemToAdd = new Tuple<ushort, ushort>(backend[i].Item1, item);
 
                     break;
                 }
@@ -103,8 +103,7 @@ namespace Extents
                 backend.Remove(removeTwo);
                 backend.Add(itemToAdd);
             }
-            else
-                backend.Add(new Tuple<ushort, ushort>(item, item));
+            else backend.Add(new Tuple<ushort, ushort>(item, item));
 
             // Sort
             backend = backend.OrderBy(t => t.Item1).ToList();
@@ -118,21 +117,18 @@ namespace Extents
         public void Add(ushort start, ushort end, bool run)
         {
             ushort realEnd;
-            if(run)
-                realEnd = (ushort)(start + end - 1);
-            else
-                realEnd = end;
+            if(run) realEnd = (ushort)(start + end - 1);
+            else realEnd = end;
 
             // TODO: Optimize this
-            for(ushort t = start; t <= realEnd; t++)
-                Add(t);
+            for(ushort t = start; t <= realEnd; t++) Add(t);
         }
 
         public bool Contains(ushort item)
         {
             foreach(Tuple<ushort, ushort> extent in backend)
-                if(item >= extent.Item1 && item <= extent.Item2)
-                    return true;
+                if(item >= extent.Item1 && item <= extent.Item2) return true;
+
             return false;
         }
 
@@ -183,14 +179,11 @@ namespace Extents
             }
 
             // Item not found
-            if(toRemove == null)
-                return false;
+            if(toRemove == null) return false;
 
             backend.Remove(toRemove);
-            if(toAddOne != null)
-                backend.Add(toAddOne);
-            if(toAddTwo != null)
-                backend.Add(toAddTwo);
+            if(toAddOne != null) backend.Add(toAddOne);
+            if(toAddTwo != null) backend.Add(toAddTwo);
 
             // Sort
             backend = backend.OrderBy(t => t.Item1).ToList();
@@ -214,6 +207,7 @@ namespace Extents
                     return true;
                 }
             }
+
             return false;
         }
     }

@@ -124,8 +124,8 @@ namespace DiscImageChef
                     fi.SetValueDirect(__makeref(str), BitConverter.ToDouble(dbl_r, 0));
                 }
             }
+
             return str;
         }
     }
 }
-

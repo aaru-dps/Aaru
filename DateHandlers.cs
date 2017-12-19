@@ -99,55 +99,58 @@ namespace DiscImageChef
             fourcharvalue[1] = VDDateTime[1];
             fourcharvalue[2] = VDDateTime[2];
             fourcharvalue[3] = VDDateTime[3];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"", StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(fourcharvalue, Encoding.ASCII), out year))
-                year = 0;
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"",
+                                      StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(fourcharvalue, Encoding.ASCII), out year)) year = 0;
             //			year = Convert.ToInt32(StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[4];
             twocharvalue[1] = VDDateTime[5];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out month))
-                month = 0;
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"",
+                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out month)) month = 0;
             //			month = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[6];
             twocharvalue[1] = VDDateTime[7];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out day))
-                day = 0;
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"",
+                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out day)) day = 0;
             //			day = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[8];
             twocharvalue[1] = VDDateTime[9];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out hour))
-                hour = 0;
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"",
+                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out hour)) hour = 0;
             //			hour = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[10];
             twocharvalue[1] = VDDateTime[11];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out minute))
-                minute = 0;
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"",
+                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out minute)) minute = 0;
             //			minute = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[12];
             twocharvalue[1] = VDDateTime[13];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out second))
-                second = 0;
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"",
+                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out second)) second = 0;
             //			second = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[14];
             twocharvalue[1] = VDDateTime[15];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out hundredths))
-                hundredths = 0;
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"",
+                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out hundredths)) hundredths = 0;
             //			hundredths = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);", year, month, day, hour, minute, second, hundredths * 10);
-            DateTime decodedDT = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Unspecified);
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler",
+                                      "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
+                                      year, month, day, hour, minute, second, hundredths * 10);
+            DateTime decodedDT = new DateTime(year, month, day, hour, minute, second, hundredths * 10,
+                                              DateTimeKind.Unspecified);
 
             return decodedDT;
         }
@@ -172,7 +175,9 @@ namespace DiscImageChef
             int day = (dateRecord & 0x01F0) >> 4;
             int month = (dateRecord & 0x000F);
 
-            DicConsole.DebugWriteLine("UCSDPascalToDateTime handler", "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year, month, day);
+            DicConsole.DebugWriteLine("UCSDPascalToDateTime handler",
+                                      "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year,
+                                      month, day);
             return new DateTime(year, month, day);
         }
 
@@ -185,18 +190,15 @@ namespace DiscImageChef
             int minute = (time & 0x7E0) >> 5;
             int second = (time & 0x1F) * 2;
 
-            DicConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}", date, year, month, day);
-            DicConsole.DebugWriteLine("DOSToDateTime handler", "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute, second);
+            DicConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
+                                      date, year, month, day);
+            DicConsole.DebugWriteLine("DOSToDateTime handler",
+                                      "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute,
+                                      second);
 
             DateTime dosdate;
-            try
-            {
-                dosdate = new DateTime(year, month, day, hour, minute, second);
-            }
-            catch(ArgumentOutOfRangeException)
-            {
-                dosdate = new DateTime(1980, 1, 1, 0, 0, 0);
-            }
+            try { dosdate = new DateTime(year, month, day, hour, minute, second); }
+            catch(ArgumentOutOfRangeException) { dosdate = new DateTime(1980, 1, 1, 0, 0, 0); }
 
             return dosdate;
         }
@@ -219,7 +221,9 @@ namespace DiscImageChef
             return AppleDoubleEpoch.AddSeconds(AppleDoubleTimeStamp);
         }
 
-        public static DateTime ECMAToDateTime(ushort typeAndTimeZone, short year, byte month, byte day, byte hour, byte minute, byte second, byte centiseconds, byte hundredsOfMicroseconds, byte microseconds)
+        public static DateTime ECMAToDateTime(ushort typeAndTimeZone, short year, byte month, byte day, byte hour,
+                                              byte minute, byte second, byte centiseconds, byte hundredsOfMicroseconds,
+                                              byte microseconds)
         {
             byte specification = (byte)((typeAndTimeZone & 0xF000) >> 12);
             long ticks = (long)centiseconds * 100000 + (long)hundredsOfMicroseconds * 1000 + (long)microseconds * 10;
@@ -229,20 +233,16 @@ namespace DiscImageChef
             ushort preOffset = (ushort)(typeAndTimeZone & 0xFFF);
             short offset;
 
-            if((preOffset & 0x800) == 0x800)
-            {
-                offset = (short)(preOffset | 0xF000);
-            }
-            else
-                offset = (short)(preOffset & 0x7FF);
+            if((preOffset & 0x800) == 0x800) { offset = (short)(preOffset | 0xF000); }
+            else offset = (short)(preOffset & 0x7FF);
 
             if(offset == -2047)
                 return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified).AddTicks(ticks);
 
-            if(offset < -1440 || offset > 1440)
-                offset = 0;
+            if(offset < -1440 || offset > 1440) offset = 0;
 
-            return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).AddTicks(ticks).DateTime;
+            return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0))
+                .AddTicks(ticks).DateTime;
         }
 
         public static DateTime UNIXHrTimeToDateTime(ulong HRTimeStamp)
@@ -252,27 +252,24 @@ namespace DiscImageChef
 
         public static DateTime OS9ToDateTime(byte[] date)
         {
-            if(date == null || (date.Length != 3 && date.Length != 5))
-                return DateTime.MinValue;
+            if(date == null || (date.Length != 3 && date.Length != 5)) return DateTime.MinValue;
 
             DateTime os9date;
 
             try
             {
-                os9date = date.Length == 5 ? new DateTime(1900 + date[0], date[1], date[2], date[3], date[4], 0) : new DateTime(1900 + date[0], date[1], date[2], 0, 0, 0);
+                os9date = date.Length == 5
+                              ? new DateTime(1900 + date[0], date[1], date[2], date[3], date[4], 0)
+                              : new DateTime(1900 + date[0], date[1], date[2], 0, 0, 0);
             }
-            catch(ArgumentOutOfRangeException)
-            {
-                os9date = new DateTime(1900, 0, 0, 0, 0, 0);
-            }
+            catch(ArgumentOutOfRangeException) { os9date = new DateTime(1900, 0, 0, 0, 0, 0); }
 
             return os9date;
         }
 
         public static DateTime LifToDateTime(byte[] date)
         {
-            if(date == null || date.Length != 6)
-                return new DateTime(1970, 1, 1, 0, 0, 0);
+            if(date == null || date.Length != 6) return new DateTime(1970, 1, 1, 0, 0, 0);
 
             return LifToDateTime(date[0], date[1], date[2], date[3], date[4], date[5]);
         }
@@ -288,18 +285,12 @@ namespace DiscImageChef
                 int ihour = (hour >> 4) * 10 + (hour & 0xF);
                 int isecond = (second >> 4) * 10 + (second & 0xF);
 
-                if(iyear >= 70)
-                    iyear += 1900;
-                else
-                    iyear += 2000;
+                if(iyear >= 70) iyear += 1900;
+                else iyear += 2000;
 
                 return new DateTime(iyear, imonth, iday, ihour, iminute, isecond);
             }
-            catch(ArgumentOutOfRangeException)
-            {
-                return new DateTime(1970, 1, 1, 0, 0, 0);
-            }
+            catch(ArgumentOutOfRangeException) { return new DateTime(1970, 1, 1, 0, 0, 0); }
         }
     }
 }
-
