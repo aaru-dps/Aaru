@@ -38,6 +38,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
@@ -53,7 +54,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     internal static class XGD
     {
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, ref Metadata.Resume resume, ref DumpLog dumpLog)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, ref Metadata.Resume resume, ref DumpLog dumpLog, Encoding encoding)
         {
             MHDDLog mhddLog;
             IBGLog ibgLog;
@@ -803,7 +804,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
 
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
+            plugins.RegisterAllPlugins(encoding);
             ImagePlugin _imageFormat;
             FiltersList filtersList = new FiltersList();
             Filter inputFilter = filtersList.GetFilter(outputPrefix + ".iso");

@@ -38,6 +38,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
@@ -53,7 +54,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     public class SecureDigital
     {
-        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume, ref DumpLog dumpLog)
+        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume, ref DumpLog dumpLog, Encoding encoding)
         {
             bool aborted;
             MHDDLog mhddLog;
@@ -452,7 +453,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
 
             PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
+            plugins.RegisterAllPlugins(encoding);
             ImagePlugin _imageFormat;
 
             FiltersList filtersList = new FiltersList();

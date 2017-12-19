@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
@@ -46,7 +47,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     internal static class MMC
     {
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Metadata.Resume resume, ref DumpLog dumpLog, bool dumpLeadIn)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Metadata.Resume resume, ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)
         {
             byte[] cmdBuf = null;
             byte[] senseBuf = null;
@@ -645,11 +646,11 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(isXbox)
             {
-                XGD.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, ref resume, ref dumpLog);
+                XGD.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, ref resume, ref dumpLog, encoding);
                 return;
             }
 
-            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, true, ref resume, ref dumpLog, alcohol);
+            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, true, ref resume, ref dumpLog, encoding, alcohol);
         }
     }
 }

@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -65,6 +66,26 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}", options.Persistent);
             DicConsole.DebugWriteLine("Dump-Media command", "--separate-subchannel={0}", options.SeparateSubchannel);
             DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}", options.Resume);
+            DicConsole.DebugWriteLine("Dump-Media command", "--lead-in={0}", options.LeadIn);
+            DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}", options.EncodingName);
+
+            Encoding encoding = null;
+
+            if(options.EncodingName != null)
+            {
+                try
+                {
+                    encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
+                    if(options.Verbose)
+                        DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                }
+                catch(ArgumentException)
+                {
+                    DicConsole.ErrorWriteLine("Specified encoding is not supported.");
+                    encoding = null;
+                    return;
+                }
+            }
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
@@ -110,18 +131,18 @@ namespace DiscImageChef.Commands
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    ATA.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog);
+                    ATA.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    SecureDigital.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog);
+                    SecureDigital.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
                     break;
                 case DeviceType.NVMe:
-                    NVMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog);
+                    NVMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel, ref resume, ref dumpLog, options.LeadIn);
+                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel, ref resume, ref dumpLog, options.LeadIn, encoding);
                     break;
                 default:
                     dumpLog.WriteLine("Unknown device type.");

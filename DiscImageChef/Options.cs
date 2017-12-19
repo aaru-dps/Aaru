@@ -280,7 +280,6 @@ namespace DiscImageChef
         public string EncodingName { get; set; }
     }
 
-    // TODO: Add encoding, check options
     [Verb("dump-media", HelpText = "Dumps the media inserted on a device to a media image.")]
     public class DumpMediaOptions : CommonOptions
     {
@@ -320,6 +319,9 @@ namespace DiscImageChef
 
         [Option("lead-in", Default = false, HelpText = "Try to read lead-in. Only applicable to CD/DDCD/GD.")]
         public bool LeadIn { get; set; }
+
+        [Option('e', "encoding", Default = null, HelpText = "Name of character encoding to use.")]
+        public string EncodingName { get; set; }
     }
 
     [Verb("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]
