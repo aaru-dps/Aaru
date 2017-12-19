@@ -33,17 +33,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
-using DiscImageChef.Console;
-using DiscImageChef.CommonTypes;
 using System.Text;
+using System.Text.RegularExpressions;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    // TODO: Doesn't support compositing from several files
-    // TODO: Doesn't support silences that are not in files
-    public class CDRDAO : ImagePlugin
+	// TODO: Doesn't support compositing from several files
+	// TODO: Doesn't support silences that are not in files
+	public class CDRDAO : ImagePlugin
     {
         #region Internal structures
 

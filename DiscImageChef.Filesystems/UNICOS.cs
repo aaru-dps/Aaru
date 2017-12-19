@@ -37,12 +37,12 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 // UNICOS is ILP64 so let's think everything is 64-bit
-using dev_t = System.Int64;
-using daddr_t = System.Int64;
-using time_t = System.Int64;
 using blkno_t = System.Int64;
-using ino_t = System.Int64;
+using daddr_t = System.Int64;
+using dev_t = System.Int64;
 using extent_t = System.Int64;
+using ino_t = System.Int64;
+using time_t = System.Int64;
 
 namespace DiscImageChef.Filesystems
 {

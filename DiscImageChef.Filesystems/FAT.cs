@@ -32,11 +32,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using System.IO;
 
 namespace DiscImageChef.Filesystems
 {

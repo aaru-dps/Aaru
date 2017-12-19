@@ -33,16 +33,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
-using DiscImageChef.ImagePlugins;
 using System.Linq;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.DiscImages
 {
-    public class Parallels : ImagePlugin
+	public class Parallels : ImagePlugin
     {
         #region Internal constants
         readonly byte[] ParallelsMagic = { 0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x74, 0x46, 0x72, 0x65, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65 };

@@ -31,16 +31,16 @@
 // ****************************************************************************/
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using DiscImageChef.Console;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.Filters;
+using System.IO;
 using System.Linq;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class Nero : ImagePlugin
+	public class Nero : ImagePlugin
     {
         #region Internal structures
 

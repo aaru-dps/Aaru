@@ -31,12 +31,11 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Console;
-using System.IO;
-using DiscImageChef.Devices;
-using DiscImageChef.CommonTypes;
 using System.Linq;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.Devices;
 
 namespace DiscImageChef.Commands
 {

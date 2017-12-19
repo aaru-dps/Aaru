@@ -32,8 +32,8 @@
 
 using System;
 using System.Reflection;
-using DiscImageChef.Console;
 using CommandLine;
+using DiscImageChef.Console;
 
 namespace DiscImageChef
 {

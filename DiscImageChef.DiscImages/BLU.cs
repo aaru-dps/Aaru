@@ -33,13 +33,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class BLU : ImagePlugin
+	public class BLU : ImagePlugin
     {
         #region Internal Structures
         struct BLUHeader

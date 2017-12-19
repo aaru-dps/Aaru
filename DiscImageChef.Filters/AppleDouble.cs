@@ -29,11 +29,11 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
+
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filters
 {

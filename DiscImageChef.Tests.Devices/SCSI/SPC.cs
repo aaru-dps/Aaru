@@ -26,9 +26,9 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
-using System;
 
 namespace DiscImageChef.Tests.Devices.SCSI
 {

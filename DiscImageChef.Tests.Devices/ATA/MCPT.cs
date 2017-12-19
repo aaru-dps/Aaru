@@ -27,8 +27,8 @@
 // ****************************************************************************/
 
 using DiscImageChef.Console;
-using DiscImageChef.Devices;
 using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.ATA
 {

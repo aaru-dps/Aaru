@@ -41,7 +41,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class VHDX : ImagePlugin
+	public class VHDX : ImagePlugin
     {
         #region Internal Structures
 

@@ -32,11 +32,10 @@
 // ****************************************************************************/
 
 using System;
-using System.Net.NetworkInformation;
-using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Decoders.ATA;
+using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Devices.Windows
 {

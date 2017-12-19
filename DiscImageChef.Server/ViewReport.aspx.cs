@@ -31,19 +31,14 @@
 // ****************************************************************************/
 
 using System;
-using System.Web;
-using System.Web.UI;
-using System.Text;
-using System.IO;
-using System.Xml.Serialization;
-using DiscImageChef.Metadata;
 using System.Collections.Generic;
-using System.Net;
-using static DiscImageChef.Decoders.ATA.Identify;
+using System.IO;
+using System.Text;
+using System.Web;
+using System.Xml.Serialization;
 using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Metadata;
 using DiscImageChef.Server.App_Start;
-using System.Web.Compilation;
-using System.Web.Configuration;
 
 namespace DiscImageChef.Server
 {

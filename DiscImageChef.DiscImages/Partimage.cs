@@ -33,13 +33,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
-using DiscImageChef.ImagePlugins;
 using System.Linq;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using System.Text;
+using DiscImageChef.ImagePlugins;
 using Extents;
 
 namespace DiscImageChef.DiscImages

@@ -33,9 +33,9 @@
 
 using System;
 using System.Runtime.InteropServices;
+using lun_id_t = System.UInt32;
 using path_id_t = System.UInt32;
 using target_id_t = System.UInt32;
-using lun_id_t = System.UInt32;
 
 namespace DiscImageChef.Devices.FreeBSD
 {

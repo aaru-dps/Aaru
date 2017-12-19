@@ -33,21 +33,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Runtime.InteropServices;
-using DiscImageChef.Console;
+using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    /// <summary>
-    /// Supports Connectix/Microsoft Virtual PC hard disk image format
-    /// Until Virtual PC 5 there existed no format, and the hard disk image was
-    /// merely a sector by sector (RAW) image with a resource fork giving
-    /// information to Virtual PC itself.
-    /// </summary>
-    public class VHD : ImagePlugin
+	/// <summary>
+	/// Supports Connectix/Microsoft Virtual PC hard disk image format
+	/// Until Virtual PC 5 there existed no format, and the hard disk image was
+	/// merely a sector by sector (RAW) image with a resource fork giving
+	/// information to Virtual PC itself.
+	/// </summary>
+	public class VHD : ImagePlugin
     {
         #region Internal Structures
 

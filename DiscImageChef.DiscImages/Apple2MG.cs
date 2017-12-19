@@ -34,13 +34,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class Apple2MG : ImagePlugin
+	public class Apple2MG : ImagePlugin
     {
         #region Internal Structures
 

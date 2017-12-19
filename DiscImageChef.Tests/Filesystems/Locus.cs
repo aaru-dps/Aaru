@@ -32,7 +32,6 @@ using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using NUnit.Framework;
-using System;
 
 namespace DiscImageChef.Tests.Filesystems
 {

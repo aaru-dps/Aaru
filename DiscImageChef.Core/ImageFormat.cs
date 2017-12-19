@@ -31,9 +31,8 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Filters;
 using DiscImageChef.Console;
-using DiscImageChef.Core;
+using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Core

@@ -33,11 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Threading;
 using System.Xml.Serialization;
 using DiscImageChef.Metadata;
-using System.Net;
-using DiscImageChef.Console;
-using System.Threading;
 
 namespace DiscImageChef.Core
 {

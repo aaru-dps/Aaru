@@ -28,11 +28,11 @@
 
 using System.IO;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using NUnit.Framework;
-using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Tests.Filesystems
 {

@@ -37,10 +37,10 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    /// <summary>
-    /// Abstract class to implement disk image reading plugins.
-    /// </summary>
-    public abstract class ImagePlugin
+	/// <summary>
+	/// Abstract class to implement disk image reading plugins.
+	/// </summary>
+	public abstract class ImagePlugin
     {
         /// <summary>Plugin name.</summary>
         public string Name;

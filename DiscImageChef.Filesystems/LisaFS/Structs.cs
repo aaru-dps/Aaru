@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+
 namespace DiscImageChef.Filesystems.LisaFS
 {
     public partial class LisaFS : Filesystem

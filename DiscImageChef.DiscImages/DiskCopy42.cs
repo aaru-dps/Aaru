@@ -42,8 +42,8 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    // Checked using several images and strings inside Apple's DiskImages.framework
-    public class DiskCopy42 : ImagePlugin
+	// Checked using several images and strings inside Apple's DiskImages.framework
+	public class DiskCopy42 : ImagePlugin
     {
         #region Internal Structures
 

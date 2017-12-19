@@ -37,9 +37,9 @@
 // ****************************************************************************/
 
 using System;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Interop
 {

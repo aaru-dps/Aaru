@@ -39,7 +39,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class ZZZRawImage : ImagePlugin
+	public class ZZZRawImage : ImagePlugin
     {
         #region Internal variables
 

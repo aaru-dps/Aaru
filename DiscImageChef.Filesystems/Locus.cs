@@ -36,20 +36,20 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-// Global File System number
-using gfs_t = System.Int32;
-// Disk address
-using daddr_t = System.Int32;
 // Commit count
 using commitcnt_t = System.Int32;
+// Disk address
+using daddr_t = System.Int32;
 // Fstore
 using fstore_t = System.Int32;
-// Timestamp
-using time_t = System.Int32;
+// Global File System number
+using gfs_t = System.Int32;
 // Inode number
 using ino_t = System.Int32;
 // Filesystem pack number
 using pckno_t = System.Int16;
+// Timestamp
+using time_t = System.Int32;
 
 namespace DiscImageChef.Filesystems
 {

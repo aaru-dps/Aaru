@@ -29,16 +29,17 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
+
 using System;
-using System.IO;
 using System.Collections.Generic;
-using DiscImageChef.Console;
-using DiscImageChef.CommonTypes;
+using System.IO;
 using System.Linq;
-using System.Text;
-using DiscImageChef.Filters;
 using System.Runtime.InteropServices;
+using System.Text;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Decoders.Floppy;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {

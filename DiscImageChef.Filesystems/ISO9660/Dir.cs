@@ -29,6 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
+
 using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems.ISO9660

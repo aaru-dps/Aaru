@@ -30,9 +30,9 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Core;
 using System.Collections.Generic;
 using DiscImageChef.Console;
+using DiscImageChef.Core;
 
 namespace DiscImageChef.Commands
 {

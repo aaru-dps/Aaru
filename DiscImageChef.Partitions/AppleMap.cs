@@ -31,10 +31,10 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
-using DiscImageChef.Console;
 using System.Runtime.InteropServices;
+using System.Text;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.PartPlugins
 {

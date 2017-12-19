@@ -27,8 +27,9 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Decoders.ATA;
 using System.Text;
+using DiscImageChef.Decoders.ATA;
+
 namespace DiscImageChef.Tests.Devices
 {
     partial class MainClass

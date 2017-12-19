@@ -32,11 +32,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
 using DiscImageChef.Console;
-using System.Linq;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {

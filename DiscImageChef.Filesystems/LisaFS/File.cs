@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.ImagePlugins;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {

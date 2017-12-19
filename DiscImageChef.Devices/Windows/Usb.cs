@@ -30,12 +30,10 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System; 
-using System.Collections.Generic; 
-using System.Text; 
-using System.Runtime.InteropServices; 
-using System.ComponentModel; 
-using System.Diagnostics;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Text;
 
 // Copyright "Fort Hood TX", public domain, 2007
 namespace DiscImageChef.Devices.Windows

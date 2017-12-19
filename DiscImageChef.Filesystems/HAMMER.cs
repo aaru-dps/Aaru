@@ -35,9 +35,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
-using hammer_tid_t = System.UInt64;
-using hammer_off_t = System.UInt64;
 using hammer_crc_t = System.UInt32;
+using hammer_off_t = System.UInt64;
+using hammer_tid_t = System.UInt64;
 
 namespace DiscImageChef.Filesystems
 {

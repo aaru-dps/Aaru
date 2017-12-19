@@ -31,12 +31,10 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Devices;
-using System.IO;
 using DiscImageChef.Console;
-using System.Text;
-using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Core;
+using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Devices;
 
 namespace DiscImageChef.Commands
 {

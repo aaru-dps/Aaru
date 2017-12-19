@@ -29,6 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
+
 namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660 : Filesystem

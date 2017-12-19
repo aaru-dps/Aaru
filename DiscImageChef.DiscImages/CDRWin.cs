@@ -30,19 +30,19 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-// TODO: Implement track flags
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class CDRWin : ImagePlugin
+	// TODO: Implement track flags
+	public class CDRWin : ImagePlugin
     {
         #region Internal structures
 

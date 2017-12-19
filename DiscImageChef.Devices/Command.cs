@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Interop;
 using Microsoft.Win32.SafeHandles;
-using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices
 {

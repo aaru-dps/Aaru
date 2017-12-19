@@ -32,18 +32,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using DiscImageChef.CommonTypes;
-using System.Linq;
-using System.Text;
-using DiscImageChef.Console;
-using System.Runtime.InteropServices;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class BlindWrite4 : ImagePlugin
+	public class BlindWrite4 : ImagePlugin
     {
         #region Internal Constants
         /// <summary>"BLINDWRITE TOC FILE"</summary>

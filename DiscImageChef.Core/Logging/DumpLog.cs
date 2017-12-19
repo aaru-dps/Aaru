@@ -34,6 +34,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using DiscImageChef.Devices;
+
 namespace DiscImageChef.Core.Logging
 {
     public class DumpLog

@@ -31,10 +31,8 @@
 // ****************************************************************************/
 
 using System;
-using System.Web;
-using System.Web.UI;
-using Velyo.AspNet.Markdown;
 using System.IO;
+using Velyo.AspNet.Markdown;
 
 namespace DiscImageChef.Server
 {

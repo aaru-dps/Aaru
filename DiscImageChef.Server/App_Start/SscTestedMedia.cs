@@ -30,7 +30,6 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using DiscImageChef.Metadata;
 

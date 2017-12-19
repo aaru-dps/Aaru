@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Console;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Decoders.Bluray
 {

@@ -36,7 +36,7 @@ using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public struct ImageInfo
+	public struct ImageInfo
     {
         public bool imageHasPartitions;
         public bool imageHasSessions;

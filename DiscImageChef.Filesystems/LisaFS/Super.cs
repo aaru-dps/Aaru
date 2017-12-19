@@ -33,8 +33,8 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
 using DiscImageChef.Decoders;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {

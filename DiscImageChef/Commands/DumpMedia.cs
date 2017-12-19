@@ -31,23 +31,14 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using DiscImageChef.CommonTypes;
+using System.Xml.Serialization;
 using DiscImageChef.Console;
-using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Dumping;
 using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Devices;
-using DiscImageChef.Filesystems;
-using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
-using Schemas;
 using DiscImageChef.Metadata;
-using System.Xml.Serialization;
 
 namespace DiscImageChef.Commands
 {

@@ -36,12 +36,12 @@ using System.IO;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
 using DiscImageChef.Filters;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.DiscImages
 {
-    public class VDI : ImagePlugin
+	public class VDI : ImagePlugin
     {
         #region Internal constants
         const uint VDIMagic = 0xBEDA107F;

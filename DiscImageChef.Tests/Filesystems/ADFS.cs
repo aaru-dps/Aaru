@@ -26,13 +26,12 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using NUnit.Framework;
 using System.IO;
-using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filesystems;
+using DiscImageChef.Filters;
+using DiscImageChef.ImagePlugins;
+using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {

@@ -33,14 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using System.Security.Cryptography.X509Certificates;
-using System.Runtime.InteropServices;
 
 namespace DiscImageChef.ImagePlugins
 {

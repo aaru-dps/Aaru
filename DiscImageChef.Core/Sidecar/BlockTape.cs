@@ -30,10 +30,9 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-
 using System.Collections.Generic;
-using Schemas;
 using System.IO;
+using Schemas;
 
 namespace DiscImageChef.Core
 {

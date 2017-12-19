@@ -34,14 +34,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using System.Text;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class Alcohol120 : ImagePlugin
+	public class Alcohol120 : ImagePlugin
     {
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

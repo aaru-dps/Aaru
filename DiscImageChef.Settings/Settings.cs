@@ -33,9 +33,9 @@
 using System;
 using System.IO;
 using System.Xml.Serialization;
+using Claunia.PropertyList;
 using DiscImageChef.Interop;
 using Microsoft.Win32;
-using Claunia.PropertyList;
 
 namespace DiscImageChef.Settings
 {

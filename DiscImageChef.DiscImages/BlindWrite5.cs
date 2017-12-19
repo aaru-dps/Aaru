@@ -32,19 +32,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI.MMC;
-using System.Text;
-using System.Globalization;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class BlindWrite5 : ImagePlugin
+	public class BlindWrite5 : ImagePlugin
     {
         #region Internal Constants
         /// <summary>"BWT5 STREAM SIGN"</summary>

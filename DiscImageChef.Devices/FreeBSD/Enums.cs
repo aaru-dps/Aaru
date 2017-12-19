@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+
 namespace DiscImageChef.Devices.FreeBSD
 {
     [Flags]

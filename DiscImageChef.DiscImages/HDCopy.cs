@@ -64,16 +64,16 @@
  */
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using DiscImageChef.Console;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.Filters;
+using System.IO;
 using System.Runtime.InteropServices;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class HDCopy : ImagePlugin
+	public class HDCopy : ImagePlugin
     {
         #region Internal structures
         /// <summary>

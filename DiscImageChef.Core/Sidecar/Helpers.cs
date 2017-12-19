@@ -30,7 +30,6 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 namespace DiscImageChef.Core
 {
     public static partial class Sidecar

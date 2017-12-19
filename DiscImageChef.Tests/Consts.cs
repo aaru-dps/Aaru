@@ -26,8 +26,6 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-
-
 namespace DiscImageChef.Tests
 {
     public static class Consts

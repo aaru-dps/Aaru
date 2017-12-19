@@ -31,10 +31,10 @@
 // ****************************************************************************/
 
 using System;
-using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
+using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Devices
 {

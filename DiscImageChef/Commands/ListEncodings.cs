@@ -31,8 +31,8 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
-using DiscImageChef.Console;
 using System.Linq;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {

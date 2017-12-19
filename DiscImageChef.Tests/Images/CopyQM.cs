@@ -27,11 +27,11 @@
 // ****************************************************************************/
 
 using System.IO;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using NUnit.Framework;
-using DiscImageChef.Checksums;
 
 namespace DiscImageChef.Tests.Images
 {

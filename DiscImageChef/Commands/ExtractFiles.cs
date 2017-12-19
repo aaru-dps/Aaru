@@ -32,15 +32,14 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.Console;
-using DiscImageChef.Filesystems;
-using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
 using System.IO;
-using DiscImageChef.Filters;
-using DiscImageChef.Core;
-using DiscImageChef.CommonTypes;
 using System.Text;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
+using DiscImageChef.Core;
+using DiscImageChef.Filesystems;
+using DiscImageChef.Filters;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Commands
 {

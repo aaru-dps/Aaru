@@ -32,7 +32,6 @@
 
 using System;
 using System.IO;
-using DiscImageChef.Console;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.BZip2;
 

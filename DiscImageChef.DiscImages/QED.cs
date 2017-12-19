@@ -40,7 +40,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class QED : ImagePlugin
+	public class QED : ImagePlugin
     {
         #region Internal constants
         /// <summary>

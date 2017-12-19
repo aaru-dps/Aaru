@@ -26,10 +26,9 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using NUnit.Framework;
-using DiscImageChef.Checksums;
 using System.IO;
+using DiscImageChef.Checksums;
+using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Checksums
 {

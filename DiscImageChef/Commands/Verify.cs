@@ -31,11 +31,11 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.ImagePlugins;
 using System.Collections.Generic;
 using DiscImageChef.Console;
-using DiscImageChef.Filters;
 using DiscImageChef.Core;
+using DiscImageChef.Filters;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Commands
 {

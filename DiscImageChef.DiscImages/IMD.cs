@@ -33,13 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using System.Text;
-using System.Linq;
 
 namespace DiscImageChef.ImagePlugins
 {

@@ -31,17 +31,17 @@
 // ****************************************************************************/
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using DiscImageChef.Console;
-using DiscImageChef.CommonTypes;
+using System.IO;
 using System.Linq;
 using System.Text;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class DIM : ImagePlugin
+	public class DIM : ImagePlugin
     {
         #region Internal enumerations
         enum DiskType : byte

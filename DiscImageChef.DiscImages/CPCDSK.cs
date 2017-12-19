@@ -43,7 +43,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    public class CPCDSK : ImagePlugin
+	public class CPCDSK : ImagePlugin
     {
         #region Internal constants
         /// <summary>

@@ -38,12 +38,12 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
 using DiscImageChef.Filters;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.DiscImages
 {
-    public class VMware : ImagePlugin
+	public class VMware : ImagePlugin
     {
         #region Internal constants
         const uint VMwareExtentMagic = 0x564D444B;

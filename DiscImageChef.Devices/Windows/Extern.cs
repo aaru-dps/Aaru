@@ -31,7 +31,6 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;

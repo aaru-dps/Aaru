@@ -26,7 +26,6 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Tests.Devices

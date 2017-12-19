@@ -36,10 +36,10 @@
 // ****************************************************************************/
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using DiscImageChef.Console;
+using System.IO;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins

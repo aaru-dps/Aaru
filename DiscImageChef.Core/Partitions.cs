@@ -30,14 +30,12 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
-using System.Linq;
-using System.Net;
-using DiscImageChef.Console;
 
 namespace DiscImageChef.Core
 {

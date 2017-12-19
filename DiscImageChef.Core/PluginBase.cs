@@ -33,11 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
+using DiscImageChef.Console;
+using DiscImageChef.Filesystems;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
-using DiscImageChef.Filesystems;
-using DiscImageChef.Console;
-using System.Text;
 
 namespace DiscImageChef.Core
 {

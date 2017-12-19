@@ -35,9 +35,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using path_id_t = System.UInt32;
-using target_id_t = System.UInt32;
-using lun_id_t = System.UInt32;
 using static DiscImageChef.Devices.FreeBSD.Extern;
 
 namespace DiscImageChef.Devices.FreeBSD

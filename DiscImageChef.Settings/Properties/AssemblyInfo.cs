@@ -31,12 +31,11 @@
 // ****************************************************************************/
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle ("DiscImageChef.Settings")]
+[assembly: AssemblyTitle("DiscImageChef.Settings")]
 [assembly: AssemblyDescription("The Disc Image Chef")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Claunia.com")]

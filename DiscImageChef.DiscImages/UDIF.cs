@@ -38,11 +38,11 @@ using Claunia.PropertyList;
 using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
 using DiscImageChef.Filters;
-using SharpCompress.Compressors.BZip2;
+using DiscImageChef.ImagePlugins;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.ADC;
+using SharpCompress.Compressors.BZip2;
 
 namespace DiscImageChef.DiscImages
 {

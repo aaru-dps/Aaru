@@ -39,7 +39,6 @@ using DiscImageChef.Core;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
 
 namespace DiscImageChef.Commands
 {
