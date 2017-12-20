@@ -233,8 +233,8 @@ namespace DiscImageChef.Decoders.Floppy
                 byte b1 = buffer[51 * 3 - i];
                 byte b2 = buffer[51 * 2 - i];
                 byte b3 = buffer[51 - i];
-                byte b4 = (byte)(((b1 & 2) << 1 | (b2 & 2) | (b3 & 2) >> 1) & 0xFF);
-                byte b5 = (byte)(((b1 & 1) << 2 | (b2 & 1) << 1 | (b3 & 1)) & 0xFF);
+                byte b4 = (byte)((((b1 & 2) << 1) | (b2 & 2) | ((b3 & 2) >> 1)) & 0xFF);
+                byte b5 = (byte)((((b1 & 1) << 2) | ((b2 & 1) << 1) | (b3 & 1)) & 0xFF);
                 output[250 - 5 * i] = (byte)(((buffer[i + 51 * 3 + 1] << 3) | ((b1 >> 2) & 0x7)) & 0xFF);
                 output[251 - 5 * i] = (byte)(((buffer[i + 51 * 4 + 1] << 3) | ((b2 >> 2) & 0x7)) & 0xFF);
                 output[252 - 5 * i] = (byte)(((buffer[i + 51 * 5 + 1] << 3) | ((b3 >> 2) & 0x7)) & 0xFF);
@@ -270,18 +270,18 @@ namespace DiscImageChef.Decoders.Floppy
 
                 if(i < 86)
                 {
-                    output[i] |= (byte)((buffer[i] & 1) << 1 & 0xFF);
-                    output[i] |= (byte)((buffer[i] & 2) >> 1 & 0xFF);
+                    output[i] |= (byte)(((buffer[i] & 1) << 1) & 0xFF);
+                    output[i] |= (byte)(((buffer[i] & 2) >> 1) & 0xFF);
                 }
                 else if(i < 86 * 2)
                 {
-                    output[i] |= (byte)((buffer[i - 86] & 4) >> 1 & 0xFF);
-                    output[i] |= (byte)((buffer[i - 86] & 8) >> 3 & 0xFF);
+                    output[i] |= (byte)(((buffer[i - 86] & 4) >> 1) & 0xFF);
+                    output[i] |= (byte)(((buffer[i - 86] & 8) >> 3) & 0xFF);
                 }
                 else
                 {
-                    output[i] |= (byte)((buffer[i - 86 * 2] & 0x10) >> 3 & 0xFF);
-                    output[i] |= (byte)((buffer[i - 86 * 2] & 0x20) >> 5 & 0xFF);
+                    output[i] |= (byte)(((buffer[i - 86 * 2] & 0x10) >> 3) & 0xFF);
+                    output[i] |= (byte)(((buffer[i - 86 * 2] & 0x20) >> 5) & 0xFF);
                 }
             }
 
