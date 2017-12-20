@@ -122,10 +122,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             decoded.FormatLayers = new ushort[(FormatLayersResponse.Length - 6) / 2];
 
-            for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
-            {
-                decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, i * 2 + 6);
-            }
+            for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++) decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, i * 2 + 6);
 
             return decoded;
         }
@@ -141,7 +138,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             sb.AppendFormat("{0} format layers recognized", response.NumberOfLayers);
 
             for(int i = 0; i < response.FormatLayers.Length; i++)
-            {
                 switch(response.FormatLayers[i])
                 {
                     case (ushort)FormatLayerTypeCodes.BDLayer:
@@ -181,7 +177,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                         break;
                     }
                 }
-            }
 
             return sb.ToString();
         }

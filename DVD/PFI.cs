@@ -1079,10 +1079,7 @@ namespace DiscImageChef.Decoders.DVD
             pfi.BCA |= (response[20] & 0x80) == 0x80;
 
             // UMD
-            if(pfi.DiskCategory == DiskCategory.UMD)
-            {
-                pfi.MediaAttribute = (ushort)((response[21] << 8) + response[22]);
-            }
+            if(pfi.DiskCategory == DiskCategory.UMD) pfi.MediaAttribute = (ushort)((response[21] << 8) + response[22]);
 
             // DVD-RAM
             if(pfi.DiskCategory == DiskCategory.DVDRAM)
@@ -1273,10 +1270,7 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+R DL
-            if(pfi.DiskCategory == DiskCategory.DVDPRDL)
-            {
-                pfi.LayerStructure = (DVDLayerStructure)((response[34] & 0xC0) >> 6);
-            }
+            if(pfi.DiskCategory == DiskCategory.DVDPRDL) pfi.LayerStructure = (DVDLayerStructure)((response[34] & 0xC0) >> 6);
 
             // DVD+RW DL
             if(pfi.DiskCategory == DiskCategory.DVDPRWDL)
@@ -1468,13 +1462,11 @@ namespace DiscImageChef.Decoders.DVD
                     break;
                 case DiskCategory.Nintendo:
                     if(decoded.PartVersion == 15)
-                    {
                         if(decoded.DiscSize == DVDSize.Eighty)
                             sb.AppendLine("Disc is a Nintendo Gamecube Optical Disc (GOD)");
                         else if(decoded.DiscSize == DVDSize.OneTwenty)
                             sb.AppendLine("Disc is a Nintendo Wii Optical Disc (WOD)");
                         else goto default;
-                    }
                     else goto default;
                     break;
                 case DiskCategory.HDDVDROM:
@@ -1576,7 +1568,6 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             if(decoded.DataAreaStartPSN > 0)
-            {
                 if(decoded.DataAreaEndPSN > 0)
                 {
                     sb.AppendFormat("Data area starts at PSN {0:X}h", decoded.DataAreaStartPSN).AppendLine();
@@ -1585,7 +1576,6 @@ namespace DiscImageChef.Decoders.DVD
                         sb.AppendFormat("Layer 0 ends at PSN {0:X}h", decoded.Layer0EndPSN).AppendLine();
                 }
                 else sb.AppendLine("Disc is empty");
-            }
             else sb.AppendLine("Disc is empty");
 
             if(decoded.BCA) sb.AppendLine("Disc has a burst cutting area");

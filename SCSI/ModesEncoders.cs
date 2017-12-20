@@ -89,7 +89,7 @@ namespace DiscImageChef.Decoders.SCSI
         public static byte[] EncodeMode6(DecodedMode mode, PeripheralDeviceTypes deviceType)
         {
             int modeSize = 0;
-            if(mode.Pages != null) { foreach(ModePage page in mode.Pages) modeSize += page.PageResponse.Length; }
+            if(mode.Pages != null) foreach(ModePage page in mode.Pages) modeSize += page.PageResponse.Length;
 
             byte[] hdr = EncodeModeHeader6(mode.Header, deviceType);
             modeSize += hdr.Length;
@@ -113,7 +113,7 @@ namespace DiscImageChef.Decoders.SCSI
         public static byte[] EncodeMode10(DecodedMode mode, PeripheralDeviceTypes deviceType)
         {
             int modeSize = 0;
-            if(mode.Pages != null) { foreach(ModePage page in mode.Pages) modeSize += page.PageResponse.Length; }
+            if(mode.Pages != null) foreach(ModePage page in mode.Pages) modeSize += page.PageResponse.Length;
 
             byte[] hdr = EncodeModeHeader10(mode.Header, deviceType);
             modeSize += hdr.Length;
@@ -144,10 +144,8 @@ namespace DiscImageChef.Decoders.SCSI
             byte[] hdr;
 
             if(header.BlockDescriptors != null)
-            {
                 if(longLBA) hdr = new byte[8 + header.BlockDescriptors.Length * 16];
                 else hdr = new byte[8 + header.BlockDescriptors.Length * 8];
-            }
             else hdr = new byte[8];
 
             hdr[2] = (byte)header.MediumType;
@@ -177,9 +175,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(longLBA) hdr[4] += 0x01;
 
             if(header.BlockDescriptors != null)
-            {
                 if(longLBA)
-                {
                     for(int i = 0; i < header.BlockDescriptors.Length; i++)
                     {
                         byte[] temp = BitConverter.GetBytes(header.BlockDescriptors[i].Blocks);
@@ -196,9 +192,7 @@ namespace DiscImageChef.Decoders.SCSI
                         hdr[14 + i * 16 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF00) >> 8);
                         hdr[15 + i * 16 + 8] = (byte)(header.BlockDescriptors[i].BlockLength & 0xFF);
                     }
-                }
                 else
-                {
                     for(int i = 0; i < header.BlockDescriptors.Length; i++)
                     {
                         if(deviceType != PeripheralDeviceTypes.DirectAccess)
@@ -211,8 +205,6 @@ namespace DiscImageChef.Decoders.SCSI
                         hdr[6 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF00) >> 8);
                         hdr[7 + i * 8 + 8] = (byte)(header.BlockDescriptors[i].BlockLength & 0xFF);
                     }
-                }
-            }
 
             return hdr;
         }
