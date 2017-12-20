@@ -67,21 +67,21 @@ namespace DiscImageChef.Checksums
         /* Primitive polynomials - see Lin & Costello, Error Control Coding Appendix A,
          * and  Lee & Messerschmitt, Digital Communication p. 453.
          */
-        int[] Pp;
+        int[] pp;
         /* index->polynomial form conversion table */
-        int[] Alpha_to;
+        int[] alpha_to;
         /* Polynomial->index form conversion table */
-        int[] Index_of;
+        int[] index_of;
         /* Generator polynomial g(x)
          * Degree of g(x) = 2*TT
          * has roots @**B0, @**(B0+1), ... ,@^(B0+2*TT-1)
          */
-        int[] Gg;
-        int MM, KK, NN;
+        int[] gg;
+        int mm, kk, nn;
         /* No legal value in index form represents zero, so
          * we need a special value for this purpose
          */
-        int A0;
+        int a0;
         bool initialized;
         /* Alpha exponent for the first root of the generator polynomial */
         const int B0 = 1;
@@ -89,66 +89,66 @@ namespace DiscImageChef.Checksums
         /// <summary>
         /// Initializes the Reed-Solomon with RS(n,k) with GF(2^m)
         /// </summary>
-        public void InitRS(int n, int k, int m)
+        public void InitRs(int n, int k, int m)
         {
             switch(m)
             {
                 case 2:
-                    Pp = new[] {1, 1, 1};
+                    pp = new[] {1, 1, 1};
                     break;
                 case 3:
-                    Pp = new[] {1, 1, 0, 1};
+                    pp = new[] {1, 1, 0, 1};
                     break;
                 case 4:
-                    Pp = new[] {1, 1, 0, 0, 1};
+                    pp = new[] {1, 1, 0, 0, 1};
                     break;
                 case 5:
-                    Pp = new[] {1, 0, 1, 0, 0, 1};
+                    pp = new[] {1, 0, 1, 0, 0, 1};
                     break;
                 case 6:
-                    Pp = new[] {1, 1, 0, 0, 0, 0, 1};
+                    pp = new[] {1, 1, 0, 0, 0, 0, 1};
                     break;
                 case 7:
-                    Pp = new[] {1, 0, 0, 1, 0, 0, 0, 1};
+                    pp = new[] {1, 0, 0, 1, 0, 0, 0, 1};
                     break;
                 case 8:
-                    Pp = new[] {1, 0, 1, 1, 1, 0, 0, 0, 1};
+                    pp = new[] {1, 0, 1, 1, 1, 0, 0, 0, 1};
                     break;
                 case 9:
-                    Pp = new[] {1, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+                    pp = new[] {1, 0, 0, 0, 1, 0, 0, 0, 0, 1};
                     break;
                 case 10:
-                    Pp = new[] {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};
+                    pp = new[] {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};
                     break;
                 case 11:
-                    Pp = new[] {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+                    pp = new[] {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1};
                     break;
                 case 12:
-                    Pp = new[] {1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1};
+                    pp = new[] {1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1};
                     break;
                 case 13:
-                    Pp = new[] {1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+                    pp = new[] {1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1};
                     break;
                 case 14:
-                    Pp = new[] {1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
+                    pp = new[] {1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
                     break;
                 case 15:
-                    Pp = new[] {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+                    pp = new[] {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
                     break;
                 case 16:
-                    Pp = new[] {1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1};
+                    pp = new[] {1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1};
                     break;
                 default: throw new ArgumentOutOfRangeException(nameof(m), "m must be between 2 and 16 inclusive");
             }
 
-            MM = m;
-            KK = k;
-            NN = n;
-            A0 = n;
-            Alpha_to = new int[n + 1];
-            Index_of = new int[n + 1];
+            mm = m;
+            kk = k;
+            nn = n;
+            a0 = n;
+            alpha_to = new int[n + 1];
+            index_of = new int[n + 1];
 
-            Gg = new int[NN - KK + 1];
+            gg = new int[nn - kk + 1];
 
             generate_gf();
             gen_poly();
@@ -156,35 +156,35 @@ namespace DiscImageChef.Checksums
             initialized = true;
         }
 
-        int modnn(int x)
+        int Modnn(int x)
         {
-            while(x >= NN)
+            while(x >= nn)
             {
-                x -= NN;
-                x = (x >> MM) + (x & NN);
+                x -= nn;
+                x = (x >> mm) + (x & nn);
             }
 
             return x;
         }
 
-        static int min(int a, int b)
+        static int Min(int a, int b)
         {
             return ((a) < (b) ? (a) : (b));
         }
 
-        static void CLEAR(ref int[] a, int n)
+        static void Clear(ref int[] a, int n)
         {
             int ci;
             for(ci = (n) - 1; ci >= 0; ci--) (a)[ci] = 0;
         }
 
-        static void COPY(ref int[] a, ref int[] b, int n)
+        static void Copy(ref int[] a, ref int[] b, int n)
         {
             int ci;
             for(ci = (n) - 1; ci >= 0; ci--) (a)[ci] = (b)[ci];
         }
 
-        static void COPYDOWN(ref int[] a, ref int[] b, int n)
+        static void Copydown(ref int[] a, ref int[] b, int n)
         {
             int ci;
             for(ci = (n) - 1; ci >= 0; ci--) (a)[ci] = (b)[ci];
@@ -225,32 +225,32 @@ namespace DiscImageChef.Checksums
             int i, mask;
 
             mask = 1;
-            Alpha_to[MM] = 0;
-            for(i = 0; i < MM; i++)
+            alpha_to[mm] = 0;
+            for(i = 0; i < mm; i++)
             {
-                Alpha_to[i] = mask;
-                Index_of[Alpha_to[i]] = i;
+                alpha_to[i] = mask;
+                index_of[alpha_to[i]] = i;
                 /* If Pp[i] == 1 then, term @^i occurs in poly-repr of @^MM */
-                if(Pp[i] != 0) Alpha_to[MM] ^= mask; /* Bit-wise EXOR operation */
+                if(pp[i] != 0) alpha_to[mm] ^= mask; /* Bit-wise EXOR operation */
                 mask <<= 1; /* single left-shift */
             }
 
-            Index_of[Alpha_to[MM]] = MM;
+            index_of[alpha_to[mm]] = mm;
             /*
              * Have obtained poly-repr of @^MM. Poly-repr of @^(i+1) is given by
              * poly-repr of @^i shifted left one-bit and accounting for any @^MM
              * term that may occur when poly-repr of @^i is shifted.
              */
             mask >>= 1;
-            for(i = MM + 1; i < NN; i++)
+            for(i = mm + 1; i < nn; i++)
             {
-                if(Alpha_to[i - 1] >= mask) Alpha_to[i] = Alpha_to[MM] ^ ((Alpha_to[i - 1] ^ mask) << 1);
-                else Alpha_to[i] = Alpha_to[i - 1] << 1;
-                Index_of[Alpha_to[i]] = i;
+                if(alpha_to[i - 1] >= mask) alpha_to[i] = alpha_to[mm] ^ ((alpha_to[i - 1] ^ mask) << 1);
+                else alpha_to[i] = alpha_to[i - 1] << 1;
+                index_of[alpha_to[i]] = i;
             }
 
-            Index_of[0] = A0;
-            Alpha_to[NN] = 0;
+            index_of[0] = a0;
+            alpha_to[nn] = 0;
         }
 
         /*
@@ -270,23 +270,23 @@ namespace DiscImageChef.Checksums
         {
             int i, j;
 
-            Gg[0] = Alpha_to[B0];
-            Gg[1] = 1; /* g(x) = (X+@**B0) initially */
-            for(i = 2; i <= NN - KK; i++)
+            gg[0] = alpha_to[B0];
+            gg[1] = 1; /* g(x) = (X+@**B0) initially */
+            for(i = 2; i <= nn - kk; i++)
             {
-                Gg[i] = 1;
+                gg[i] = 1;
                 /*
                  * Below multiply (Gg[0]+Gg[1]*x + ... +Gg[i]x^i) by
                  * (@**(B0+i-1) + x)
                  */
                 for(j = i - 1; j > 0; j--)
-                    if(Gg[j] != 0) Gg[j] = Gg[j - 1] ^ Alpha_to[modnn((Index_of[Gg[j]]) + B0 + i - 1)];
-                    else Gg[j] = Gg[j - 1];
+                    if(gg[j] != 0) gg[j] = gg[j - 1] ^ alpha_to[Modnn((index_of[gg[j]]) + B0 + i - 1)];
+                    else gg[j] = gg[j - 1];
                 /* Gg[0] can never be zero */
-                Gg[0] = Alpha_to[modnn((Index_of[Gg[0]]) + B0 + i - 1)];
+                gg[0] = alpha_to[Modnn((index_of[gg[0]]) + B0 + i - 1)];
             }
             /* convert Gg[] to index form for quicker encoding */
-            for(i = 0; i <= NN - KK; i++) Gg[i] = Index_of[Gg[i]];
+            for(i = 0; i <= nn - kk; i++) gg[i] = index_of[gg[i]];
         }
 
         /*
@@ -309,28 +309,28 @@ namespace DiscImageChef.Checksums
             {
                 int i, j;
                 int feedback;
-                bb = new int[NN - KK];
+                bb = new int[nn - kk];
 
-                CLEAR(ref bb, NN - KK);
-                for(i = KK - 1; i >= 0; i--)
+                Clear(ref bb, nn - kk);
+                for(i = kk - 1; i >= 0; i--)
                 {
-                    if(MM != 8) { if(data[i] > NN) return -1; /* Illegal symbol */ }
+                    if(mm != 8) { if(data[i] > nn) return -1; /* Illegal symbol */ }
 
-                    feedback = Index_of[data[i] ^ bb[NN - KK - 1]];
-                    if(feedback != A0)
+                    feedback = index_of[data[i] ^ bb[nn - kk - 1]];
+                    if(feedback != a0)
                     {
                         /* feedback term is non-zero */
-                        for(j = NN - KK - 1; j > 0; j--)
-                            if(Gg[j] != A0) bb[j] = bb[j - 1] ^ Alpha_to[modnn(Gg[j] + feedback)];
+                        for(j = nn - kk - 1; j > 0; j--)
+                            if(gg[j] != a0) bb[j] = bb[j - 1] ^ alpha_to[Modnn(gg[j] + feedback)];
                             else bb[j] = bb[j - 1];
 
-                        bb[0] = Alpha_to[modnn(Gg[0] + feedback)];
+                        bb[0] = alpha_to[Modnn(gg[0] + feedback)];
                     }
                     else
                     {
                         /* feedback term is zero. encoder becomes a
                                      * single-byte shifter */
-                        for(j = NN - KK - 1; j > 0; j--) bb[j] = bb[j - 1];
+                        for(j = nn - kk - 1; j > 0; j--) bb[j] = bb[j - 1];
 
                         bb[0] = 0;
                     }
@@ -360,52 +360,52 @@ namespace DiscImageChef.Checksums
         /// </summary>
         /// <returns>Returns corrected symbols, -1 if illegal or uncorrectable</returns>
         /// <param name="data">Data symbols.</param>
-        /// <param name="eras_pos">Position of erasures.</param>
-        /// <param name="no_eras">Number of erasures.</param>
-        public int eras_dec_rs(ref int[] data, out int[] eras_pos, int no_eras)
+        /// <param name="erasPos">Position of erasures.</param>
+        /// <param name="noEras">Number of erasures.</param>
+        public int eras_dec_rs(ref int[] data, out int[] erasPos, int noEras)
         {
             if(initialized)
             {
-                eras_pos = new int[NN - KK];
-                int deg_lambda, el, deg_omega;
+                erasPos = new int[nn - kk];
+                int degLambda, el, degOmega;
                 int i, j, r;
-                int u, q, tmp, num1, num2, den, discr_r;
-                int[] recd = new int[NN];
-                int[] lambda = new int[NN - KK + 1]; /* Err+Eras Locator poly */
-                int[] s = new int[NN - KK + 1]; /* syndrome poly */
-                int[] b = new int[NN - KK + 1];
-                int[] t = new int[NN - KK + 1];
-                int[] omega = new int[NN - KK + 1];
-                int[] root = new int[NN - KK];
-                int[] reg = new int[NN - KK + 1];
-                int[] loc = new int[NN - KK];
-                int syn_error, count;
+                int u, q, tmp, num1, num2, den, discrR;
+                int[] recd = new int[nn];
+                int[] lambda = new int[nn - kk + 1]; /* Err+Eras Locator poly */
+                int[] s = new int[nn - kk + 1]; /* syndrome poly */
+                int[] b = new int[nn - kk + 1];
+                int[] t = new int[nn - kk + 1];
+                int[] omega = new int[nn - kk + 1];
+                int[] root = new int[nn - kk];
+                int[] reg = new int[nn - kk + 1];
+                int[] loc = new int[nn - kk];
+                int synError, count;
 
                 /* data[] is in polynomial form, copy and convert to index form */
-                for(i = NN - 1; i >= 0; i--)
+                for(i = nn - 1; i >= 0; i--)
                 {
-                    if(MM != 8) { if(data[i] > NN) return -1; /* Illegal symbol */ }
+                    if(mm != 8) { if(data[i] > nn) return -1; /* Illegal symbol */ }
 
-                    recd[i] = Index_of[data[i]];
+                    recd[i] = index_of[data[i]];
                 }
                 /* first form the syndromes; i.e., evaluate recd(x) at roots of g(x)
              * namely @**(B0+i), i = 0, ... ,(NN-KK-1)
              */
-                syn_error = 0;
-                for(i = 1; i <= NN - KK; i++)
+                synError = 0;
+                for(i = 1; i <= nn - kk; i++)
                 {
                     tmp = 0;
-                    for(j = 0; j < NN; j++)
-                        if(recd[j] != A0) /* recd[j] in index form */
-                            tmp ^= Alpha_to[modnn(recd[j] + (B0 + i - 1) * j)];
+                    for(j = 0; j < nn; j++)
+                        if(recd[j] != a0) /* recd[j] in index form */
+                            tmp ^= alpha_to[Modnn(recd[j] + (B0 + i - 1) * j)];
 
-                    syn_error |= tmp; /* set flag if non-zero syndrome =>
+                    synError |= tmp; /* set flag if non-zero syndrome =>
                      * error */
                     /* store syndrome in index form  */
-                    s[i] = Index_of[tmp];
+                    s[i] = index_of[tmp];
                 }
 
-                if(syn_error == 0)
+                if(synError == 0)
                 {
                     /*
                  * if syndrome is zero, data[] is a codeword and there are no
@@ -414,35 +414,35 @@ namespace DiscImageChef.Checksums
                     return 0;
                 }
 
-                CLEAR(ref lambda, NN - KK);
+                Clear(ref lambda, nn - kk);
                 lambda[0] = 1;
-                if(no_eras > 0)
+                if(noEras > 0)
                 {
                     /* Init lambda to be the erasure locator polynomial */
-                    lambda[1] = Alpha_to[eras_pos[0]];
-                    for(i = 1; i < no_eras; i++)
+                    lambda[1] = alpha_to[erasPos[0]];
+                    for(i = 1; i < noEras; i++)
                     {
-                        u = eras_pos[i];
+                        u = erasPos[i];
                         for(j = i + 1; j > 0; j--)
                         {
-                            tmp = Index_of[lambda[j - 1]];
-                            if(tmp != A0) lambda[j] ^= Alpha_to[modnn(u + tmp)];
+                            tmp = index_of[lambda[j - 1]];
+                            if(tmp != a0) lambda[j] ^= alpha_to[Modnn(u + tmp)];
                         }
                     }
 
 #if DEBUG
                     /* find roots of the erasure location polynomial */
-                    for(i = 1; i <= no_eras; i++) reg[i] = Index_of[lambda[i]];
+                    for(i = 1; i <= noEras; i++) reg[i] = index_of[lambda[i]];
 
                     count = 0;
-                    for(i = 1; i <= NN; i++)
+                    for(i = 1; i <= nn; i++)
                     {
                         q = 1;
-                        for(j = 1; j <= no_eras; j++)
-                            if(reg[j] != A0)
+                        for(j = 1; j <= noEras; j++)
+                            if(reg[j] != a0)
                             {
-                                reg[j] = modnn(reg[j] + j);
-                                q ^= Alpha_to[reg[j]];
+                                reg[j] = Modnn(reg[j] + j);
+                                q ^= alpha_to[reg[j]];
                             }
 
                         if(q == 0)
@@ -451,12 +451,12 @@ namespace DiscImageChef.Checksums
                              * number indices
                              */
                             root[count] = i;
-                            loc[count] = NN - i;
+                            loc[count] = nn - i;
                             count++;
                         }
                     }
 
-                    if(count != no_eras)
+                    if(count != noEras)
                     {
                         DicConsole.DebugWriteLine("Reed Solomon", "\n lambda(x) is WRONG\n");
                         return -1;
@@ -470,95 +470,95 @@ namespace DiscImageChef.Checksums
 #endif
                 }
 
-                for(i = 0; i < NN - KK + 1; i++) b[i] = Index_of[lambda[i]];
+                for(i = 0; i < nn - kk + 1; i++) b[i] = index_of[lambda[i]];
 
                 /*
              * Begin Berlekamp-Massey algorithm to determine error+erasure
              * locator polynomial
              */
-                r = no_eras;
-                el = no_eras;
-                while(++r <= NN - KK)
+                r = noEras;
+                el = noEras;
+                while(++r <= nn - kk)
                 {
                     /* r is the step number */
                     /* Compute discrepancy at the r-th step in poly-form */
-                    discr_r = 0;
+                    discrR = 0;
                     for(i = 0; i < r; i++)
                     {
-                        if((lambda[i] != 0) && (s[r - i] != A0))
+                        if((lambda[i] != 0) && (s[r - i] != a0))
                         {
-                            discr_r ^= Alpha_to[modnn(Index_of[lambda[i]] + s[r - i])];
+                            discrR ^= alpha_to[Modnn(index_of[lambda[i]] + s[r - i])];
                         }
                     }
 
-                    discr_r = Index_of[discr_r]; /* Index form */
-                    if(discr_r == A0)
+                    discrR = index_of[discrR]; /* Index form */
+                    if(discrR == a0)
                     {
                         /* 2 lines below: B(x) <-- x*B(x) */
-                        COPYDOWN(ref b, ref b, NN - KK);
-                        b[0] = A0;
+                        Copydown(ref b, ref b, nn - kk);
+                        b[0] = a0;
                     }
                     else
                     {
                         /* 7 lines below: T(x) <-- lambda(x) - discr_r*x*b(x) */
                         t[0] = lambda[0];
-                        for(i = 0; i < NN - KK; i++)
+                        for(i = 0; i < nn - kk; i++)
                         {
-                            if(b[i] != A0) t[i + 1] = lambda[i + 1] ^ Alpha_to[modnn(discr_r + b[i])];
+                            if(b[i] != a0) t[i + 1] = lambda[i + 1] ^ alpha_to[Modnn(discrR + b[i])];
                             else t[i + 1] = lambda[i + 1];
                         }
 
-                        if(2 * el <= r + no_eras - 1)
+                        if(2 * el <= r + noEras - 1)
                         {
-                            el = r + no_eras - el;
+                            el = r + noEras - el;
                             /*
                          * 2 lines below: B(x) <-- inv(discr_r) *
                          * lambda(x)
                          */
-                            for(i = 0; i <= NN - KK; i++)
-                                b[i] = (lambda[i] == 0) ? A0 : modnn(Index_of[lambda[i]] - discr_r + NN);
+                            for(i = 0; i <= nn - kk; i++)
+                                b[i] = (lambda[i] == 0) ? a0 : Modnn(index_of[lambda[i]] - discrR + nn);
                         }
                         else
                         {
                             /* 2 lines below: B(x) <-- x*B(x) */
-                            COPYDOWN(ref b, ref b, NN - KK);
-                            b[0] = A0;
+                            Copydown(ref b, ref b, nn - kk);
+                            b[0] = a0;
                         }
 
-                        COPY(ref lambda, ref t, NN - KK + 1);
+                        Copy(ref lambda, ref t, nn - kk + 1);
                     }
                 }
 
                 /* Convert lambda to index form and compute deg(lambda(x)) */
-                deg_lambda = 0;
-                for(i = 0; i < NN - KK + 1; i++)
+                degLambda = 0;
+                for(i = 0; i < nn - kk + 1; i++)
                 {
-                    lambda[i] = Index_of[lambda[i]];
-                    if(lambda[i] != A0) deg_lambda = i;
+                    lambda[i] = index_of[lambda[i]];
+                    if(lambda[i] != a0) degLambda = i;
                 }
                 /*
              * Find roots of the error+erasure locator polynomial. By Chien
              * Search
              */
                 int temp = reg[0];
-                COPY(ref reg, ref lambda, NN - KK);
+                Copy(ref reg, ref lambda, nn - kk);
                 reg[0] = temp;
                 count = 0; /* Number of roots of lambda(x) */
-                for(i = 1; i <= NN; i++)
+                for(i = 1; i <= nn; i++)
                 {
                     q = 1;
-                    for(j = deg_lambda; j > 0; j--)
-                        if(reg[j] != A0)
+                    for(j = degLambda; j > 0; j--)
+                        if(reg[j] != a0)
                         {
-                            reg[j] = modnn(reg[j] + j);
-                            q ^= Alpha_to[reg[j]];
+                            reg[j] = Modnn(reg[j] + j);
+                            q ^= alpha_to[reg[j]];
                         }
 
                     if(q == 0)
                     {
                         /* store root (index-form) and error location number */
                         root[count] = i;
-                        loc[count] = NN - i;
+                        loc[count] = nn - i;
                         count++;
                     }
                 }
@@ -570,7 +570,7 @@ namespace DiscImageChef.Checksums
                 DicConsole.DebugWriteLine("Reed Solomon", "\n");
 #endif
 
-                if(deg_lambda != count)
+                if(degLambda != count)
                 {
                     /*
                  * deg(lambda) unequal to number of roots => uncorrectable
@@ -582,21 +582,21 @@ namespace DiscImageChef.Checksums
              * Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
              * x**(NN-KK)). in index form. Also find deg(omega).
              */
-                deg_omega = 0;
-                for(i = 0; i < NN - KK; i++)
+                degOmega = 0;
+                for(i = 0; i < nn - kk; i++)
                 {
                     tmp = 0;
-                    j = (deg_lambda < i) ? deg_lambda : i;
+                    j = (degLambda < i) ? degLambda : i;
                     for(; j >= 0; j--)
                     {
-                        if((s[i + 1 - j] != A0) && (lambda[j] != A0)) tmp ^= Alpha_to[modnn(s[i + 1 - j] + lambda[j])];
+                        if((s[i + 1 - j] != a0) && (lambda[j] != a0)) tmp ^= alpha_to[Modnn(s[i + 1 - j] + lambda[j])];
                     }
 
-                    if(tmp != 0) deg_omega = i;
-                    omega[i] = Index_of[tmp];
+                    if(tmp != 0) degOmega = i;
+                    omega[i] = index_of[tmp];
                 }
 
-                omega[NN - KK] = A0;
+                omega[nn - kk] = a0;
 
                 /*
              * Compute error values in poly-form. num1 = omega(inv(X(l))), num2 =
@@ -605,18 +605,18 @@ namespace DiscImageChef.Checksums
                 for(j = count - 1; j >= 0; j--)
                 {
                     num1 = 0;
-                    for(i = deg_omega; i >= 0; i--)
+                    for(i = degOmega; i >= 0; i--)
                     {
-                        if(omega[i] != A0) num1 ^= Alpha_to[modnn(omega[i] + i * root[j])];
+                        if(omega[i] != a0) num1 ^= alpha_to[Modnn(omega[i] + i * root[j])];
                     }
 
-                    num2 = Alpha_to[modnn(root[j] * (B0 - 1) + NN)];
+                    num2 = alpha_to[Modnn(root[j] * (B0 - 1) + nn)];
                     den = 0;
 
                     /* lambda[i+1] for i even is the formal derivative lambda_pr of lambda[i] */
-                    for(i = min(deg_lambda, NN - KK - 1) & ~1; i >= 0; i -= 2)
+                    for(i = Min(degLambda, nn - kk - 1) & ~1; i >= 0; i -= 2)
                     {
-                        if(lambda[i + 1] != A0) den ^= Alpha_to[modnn(lambda[i + 1] + i * root[j])];
+                        if(lambda[i + 1] != a0) den ^= alpha_to[Modnn(lambda[i + 1] + i * root[j])];
                     }
 
                     if(den == 0)
@@ -627,7 +627,7 @@ namespace DiscImageChef.Checksums
                     /* Apply error to data */
                     if(num1 != 0)
                     {
-                        data[loc[j]] ^= Alpha_to[modnn(Index_of[num1] + Index_of[num2] + NN - Index_of[den])];
+                        data[loc[j]] ^= alpha_to[Modnn(index_of[num1] + index_of[num2] + nn - index_of[den])];
                     }
                 }
 

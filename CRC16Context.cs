@@ -39,10 +39,10 @@ namespace DiscImageChef.Checksums
     /// <summary>
     /// Provides a UNIX similar API to calculate CRC16.
     /// </summary>
-    public class CRC16Context
+    public class Crc16Context
     {
-        const ushort crc16Poly = 0xA001;
-        const ushort crc16Seed = 0x0000;
+        const ushort CRC16_POLY = 0xA001;
+        const ushort CRC16_SEED = 0x0000;
 
         ushort[] table;
         ushort hashInt;
@@ -52,14 +52,14 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public void Init()
         {
-            hashInt = crc16Seed;
+            hashInt = CRC16_SEED;
 
             table = new ushort[256];
             for(int i = 0; i < 256; i++)
             {
                 ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ crc16Poly);
+                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ CRC16_POLY);
                     else entry = (ushort)(entry >> 1);
 
                 table[i] = entry;
@@ -90,7 +90,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            hashInt ^= crc16Seed;
+            hashInt ^= CRC16_SEED;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(hashInt);
         }
@@ -100,7 +100,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            hashInt ^= crc16Seed;
+            hashInt ^= CRC16_SEED;
             StringBuilder crc16Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -134,14 +134,14 @@ namespace DiscImageChef.Checksums
             ushort[] localTable;
             ushort localhashInt;
 
-            localhashInt = crc16Seed;
+            localhashInt = CRC16_SEED;
 
             localTable = new ushort[256];
             for(int i = 0; i < 256; i++)
             {
                 ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ crc16Poly);
+                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ CRC16_POLY);
                     else entry = (ushort)(entry >> 1);
 
                 localTable[i] = entry;
@@ -170,7 +170,7 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            return Data(data, len, out hash, crc16Poly, crc16Seed);
+            return Data(data, len, out hash, CRC16_POLY, CRC16_SEED);
         }
 
         /// <summary>

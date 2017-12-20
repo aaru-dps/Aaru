@@ -39,16 +39,16 @@ namespace DiscImageChef.Checksums
     /// <summary>
     /// Provides a UNIX similar API to .NET MD5.
     /// </summary>
-    public class MD5Context
+    public class Md5Context
     {
-        MD5 _md5Provider;
+        MD5 md5Provider;
 
         /// <summary>
         /// Initializes the MD5 hash provider
         /// </summary>
         public void Init()
         {
-            _md5Provider = MD5.Create();
+            md5Provider = MD5.Create();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            _md5Provider.TransformBlock(data, 0, (int)len, data, 0);
+            md5Provider.TransformBlock(data, 0, (int)len, data, 0);
         }
 
         /// <summary>
@@ -75,8 +75,8 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            _md5Provider.TransformFinalBlock(new byte[0], 0, 0);
-            return _md5Provider.Hash;
+            md5Provider.TransformFinalBlock(new byte[0], 0, 0);
+            return md5Provider.Hash;
         }
 
         /// <summary>
@@ -84,10 +84,10 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            _md5Provider.TransformFinalBlock(new byte[0], 0, 0);
+            md5Provider.TransformFinalBlock(new byte[0], 0, 0);
             StringBuilder md5Output = new StringBuilder();
 
-            for(int i = 0; i < _md5Provider.Hash.Length; i++) { md5Output.Append(_md5Provider.Hash[i].ToString("x2")); }
+            for(int i = 0; i < md5Provider.Hash.Length; i++) { md5Output.Append(md5Provider.Hash[i].ToString("x2")); }
 
             return md5Output.ToString();
         }
@@ -99,7 +99,7 @@ namespace DiscImageChef.Checksums
         public byte[] File(string filename)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            byte[] result = _md5Provider.ComputeHash(fileStream);
+            byte[] result = md5Provider.ComputeHash(fileStream);
             fileStream.Close();
             return result;
         }
@@ -112,7 +112,7 @@ namespace DiscImageChef.Checksums
         public string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            hash = _md5Provider.ComputeHash(fileStream);
+            hash = md5Provider.ComputeHash(fileStream);
             StringBuilder md5Output = new StringBuilder();
 
             for(int i = 0; i < hash.Length; i++) { md5Output.Append(hash[i].ToString("x2")); }
@@ -130,7 +130,7 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public string Data(byte[] data, uint len, out byte[] hash)
         {
-            hash = _md5Provider.ComputeHash(data, 0, (int)len);
+            hash = md5Provider.ComputeHash(data, 0, (int)len);
             StringBuilder md5Output = new StringBuilder();
 
             for(int i = 0; i < hash.Length; i++) { md5Output.Append(hash[i].ToString("x2")); }

@@ -65,14 +65,14 @@ namespace DiscImageChef.Checksums
             0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2B, 0x2F
         };
 
-        struct roll_state
+        struct RollState
         {
-            public byte[] window;
+            public byte[] Window;
             // ROLLING_WINDOW
-            public uint h1;
-            public uint h2;
-            public uint h3;
-            public uint n;
+            public uint H1;
+            public uint H2;
+            public uint H3;
+            public uint N;
         }
 
         /* A blockhash contains a signature state for a specific (implicit) blocksize.
@@ -80,32 +80,32 @@ namespace DiscImageChef.Checksums
          * FNV hashes, where halfh stops to be reset after digest is SPAMSUM_LENGTH/2
          * long. The halfh hash is needed be able to truncate digest for the second
          * output hash to stay compatible with ssdeep output. */
-        struct blockhash_context
+        struct BlockhashContext
         {
-            public uint h;
-            public uint halfh;
-            public byte[] digest;
+            public uint H;
+            public uint Halfh;
+            public byte[] Digest;
             // SPAMSUM_LENGTH
-            public byte halfdigest;
-            public uint dlen;
+            public byte Halfdigest;
+            public uint Dlen;
         }
 
-        struct fuzzy_state
+        struct FuzzyState
         {
-            public uint bhstart;
-            public uint bhend;
-            public blockhash_context[] bh;
+            public uint Bhstart;
+            public uint Bhend;
+            public BlockhashContext[] Bh;
             //NUM_BLOCKHASHES
-            public ulong total_size;
-            public roll_state roll;
+            public ulong TotalSize;
+            public RollState Roll;
         }
 
-        fuzzy_state self;
+        FuzzyState self;
 
         void roll_init()
         {
-            self.roll = new roll_state();
-            self.roll.window = new byte[ROLLING_WINDOW];
+            self.Roll = new RollState();
+            self.Roll.Window = new byte[ROLLING_WINDOW];
         }
 
         /// <summary>
@@ -113,18 +113,18 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public void Init()
         {
-            self = new fuzzy_state();
-            self.bh = new blockhash_context[NUM_BLOCKHASHES];
-            for(int i = 0; i < NUM_BLOCKHASHES; i++) self.bh[i].digest = new byte[SPAMSUM_LENGTH];
+            self = new FuzzyState();
+            self.Bh = new BlockhashContext[NUM_BLOCKHASHES];
+            for(int i = 0; i < NUM_BLOCKHASHES; i++) self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
 
-            self.bhstart = 0;
-            self.bhend = 1;
-            self.bh[0].h = HASH_INIT;
-            self.bh[0].halfh = HASH_INIT;
-            self.bh[0].digest[0] = 0;
-            self.bh[0].halfdigest = 0;
-            self.bh[0].dlen = 0;
-            self.total_size = 0;
+            self.Bhstart = 0;
+            self.Bhend = 1;
+            self.Bh[0].H = HASH_INIT;
+            self.Bh[0].Halfh = HASH_INIT;
+            self.Bh[0].Digest[0] = 0;
+            self.Bh[0].Halfdigest = 0;
+            self.Bh[0].Dlen = 0;
+            self.TotalSize = 0;
             roll_init();
         }
 
@@ -140,25 +140,25 @@ namespace DiscImageChef.Checksums
          */
         void roll_hash(byte c)
         {
-            self.roll.h2 -= self.roll.h1;
-            self.roll.h2 += ROLLING_WINDOW * c;
+            self.Roll.H2 -= self.Roll.H1;
+            self.Roll.H2 += ROLLING_WINDOW * c;
 
-            self.roll.h1 += c;
-            self.roll.h1 -= self.roll.window[self.roll.n % ROLLING_WINDOW];
+            self.Roll.H1 += c;
+            self.Roll.H1 -= self.Roll.Window[self.Roll.N % ROLLING_WINDOW];
 
-            self.roll.window[self.roll.n % ROLLING_WINDOW] = c;
-            self.roll.n++;
+            self.Roll.Window[self.Roll.N % ROLLING_WINDOW] = c;
+            self.Roll.N++;
 
             /* The original spamsum AND'ed this value with 0xFFFFFFFF which
              * in theory should have no effect. This AND has been removed
              * for performance (jk) */
-            self.roll.h3 <<= 5;
-            self.roll.h3 ^= c;
+            self.Roll.H3 <<= 5;
+            self.Roll.H3 ^= c;
         }
 
         uint roll_sum()
         {
-            return self.roll.h1 + self.roll.h2 + self.roll.h3;
+            return self.Roll.H1 + self.Roll.H2 + self.Roll.H3;
         }
 
         /* A simple non-rolling hash, based on the FNV hash. */
@@ -176,35 +176,35 @@ namespace DiscImageChef.Checksums
         {
             uint obh, nbh;
 
-            if(self.bhend >= NUM_BLOCKHASHES) return;
+            if(self.Bhend >= NUM_BLOCKHASHES) return;
 
-            if(self.bhend == 0) // assert
+            if(self.Bhend == 0) // assert
                 throw new Exception("Assertion failed");
 
-            obh = self.bhend - 1;
-            nbh = self.bhend;
-            self.bh[nbh].h = self.bh[obh].h;
-            self.bh[nbh].halfh = self.bh[obh].halfh;
-            self.bh[nbh].digest[0] = 0;
-            self.bh[nbh].halfdigest = 0;
-            self.bh[nbh].dlen = 0;
-            ++self.bhend;
+            obh = self.Bhend - 1;
+            nbh = self.Bhend;
+            self.Bh[nbh].H = self.Bh[obh].H;
+            self.Bh[nbh].Halfh = self.Bh[obh].Halfh;
+            self.Bh[nbh].Digest[0] = 0;
+            self.Bh[nbh].Halfdigest = 0;
+            self.Bh[nbh].Dlen = 0;
+            ++self.Bhend;
         }
 
         void fuzzy_try_reduce_blockhash()
         {
-            if(self.bhstart >= self.bhend) throw new Exception("Assertion failed");
+            if(self.Bhstart >= self.Bhend) throw new Exception("Assertion failed");
 
-            if(self.bhend - self.bhstart < 2)
+            if(self.Bhend - self.Bhstart < 2)
                 /* Need at least two working hashes. */ return;
-            if((ulong)SSDEEP_BS(self.bhstart) * SPAMSUM_LENGTH >= self.total_size)
+            if((ulong)SSDEEP_BS(self.Bhstart) * SPAMSUM_LENGTH >= self.TotalSize)
                 /* Initial blocksize estimate would select this or a smaller
                  * blocksize. */ return;
-            if(self.bh[self.bhstart + 1].dlen < SPAMSUM_LENGTH / 2)
+            if(self.Bh[self.Bhstart + 1].Dlen < SPAMSUM_LENGTH / 2)
                 /* Estimate adjustment would select this blocksize. */ return;
             /* At this point we are clearly no longer interested in the
              * start_blocksize. Get rid of it. */
-            ++self.bhstart;
+            ++self.Bhstart;
         }
 
         void fuzzy_engine_step(byte c)
@@ -217,13 +217,13 @@ namespace DiscImageChef.Checksums
             roll_hash(c);
             h = roll_sum();
 
-            for(i = self.bhstart; i < self.bhend; ++i)
+            for(i = self.Bhstart; i < self.Bhend; ++i)
             {
-                self.bh[i].h = sum_hash(c, self.bh[i].h);
-                self.bh[i].halfh = sum_hash(c, self.bh[i].halfh);
+                self.Bh[i].H = sum_hash(c, self.Bh[i].H);
+                self.Bh[i].Halfh = sum_hash(c, self.Bh[i].Halfh);
             }
 
-            for(i = self.bhstart; i < self.bhend; ++i)
+            for(i = self.Bhstart; i < self.Bhend; ++i)
             {
                 /* With growing blocksize almost no runs fail the next test. */
                 if(h % SSDEEP_BS(i) != SSDEEP_BS(i) - 1)
@@ -233,15 +233,15 @@ namespace DiscImageChef.Checksums
                 /* We have hit a reset point. We now emit hashes which are
                  * based on all characters in the piece of the message between
                  * the last reset point and this one */
-                if(0 == self.bh[i].dlen)
+                if(0 == self.Bh[i].Dlen)
                 {
                     /* Can only happen 30 times. */
                     /* First step for this blocksize. Clone next. */
                     fuzzy_try_fork_blockhash();
                 }
-                self.bh[i].digest[self.bh[i].dlen] = b64[self.bh[i].h % 64];
-                self.bh[i].halfdigest = b64[self.bh[i].halfh % 64];
-                if(self.bh[i].dlen < SPAMSUM_LENGTH - 1)
+                self.Bh[i].Digest[self.Bh[i].Dlen] = b64[self.Bh[i].H % 64];
+                self.Bh[i].Halfdigest = b64[self.Bh[i].Halfh % 64];
+                if(self.Bh[i].Dlen < SPAMSUM_LENGTH - 1)
                 {
                     /* We can have a problem with the tail overflowing. The
                      * easiest way to cope with this is to only reset the
@@ -249,12 +249,12 @@ namespace DiscImageChef.Checksums
                      * our signature. This has the effect of combining the
                      * last few pieces of the message into a single piece
                      * */
-                    self.bh[i].digest[++(self.bh[i].dlen)] = 0;
-                    self.bh[i].h = HASH_INIT;
-                    if(self.bh[i].dlen < SPAMSUM_LENGTH / 2)
+                    self.Bh[i].Digest[++(self.Bh[i].Dlen)] = 0;
+                    self.Bh[i].H = HASH_INIT;
+                    if(self.Bh[i].Dlen < SPAMSUM_LENGTH / 2)
                     {
-                        self.bh[i].halfh = HASH_INIT;
-                        self.bh[i].halfdigest = 0;
+                        self.Bh[i].Halfh = HASH_INIT;
+                        self.Bh[i].Halfdigest = 0;
                     }
                 }
                 else fuzzy_try_reduce_blockhash();
@@ -268,7 +268,7 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            self.total_size += len;
+            self.TotalSize += len;
             for(int i = 0; i < len; i++) fuzzy_engine_step(data[i]);
         }
 
@@ -285,28 +285,28 @@ namespace DiscImageChef.Checksums
         uint fuzzy_digest(out byte[] result)
         {
             StringBuilder sb = new StringBuilder();
-            uint bi = self.bhstart;
+            uint bi = self.Bhstart;
             uint h = roll_sum();
-            int i, result_off;
+            int i, resultOff;
             int remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
             result = new byte[FUZZY_MAX_RESULT];
             /* Verify that our elimination was not overeager. */
-            if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < self.total_size))
+            if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < self.TotalSize))
                 throw new Exception("Assertion failed");
 
-            result_off = 0;
+            resultOff = 0;
 
             /* Initial blocksize guess. */
-            while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < self.total_size)
+            while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < self.TotalSize)
             {
                 ++bi;
                 if(bi >= NUM_BLOCKHASHES) { throw new OverflowException("The input exceeds data types."); }
             }
             /* Adapt blocksize guess to actual digest length. */
-            while(bi >= self.bhend) --bi;
-            while(bi > self.bhstart && self.bh[bi].dlen < SPAMSUM_LENGTH / 2) --bi;
+            while(bi >= self.Bhend) --bi;
+            while(bi > self.Bhstart && self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2) --bi;
 
-            if((bi > 0 && self.bh[bi].dlen < SPAMSUM_LENGTH / 2)) throw new Exception("Assertion failed");
+            if((bi > 0 && self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)) throw new Exception("Assertion failed");
 
             sb.AppendFormat("{0}:", SSDEEP_BS(bi));
             i = Encoding.ASCII.GetBytes(sb.ToString()).Length;
@@ -318,78 +318,78 @@ namespace DiscImageChef.Checksums
 
             Array.Copy(Encoding.ASCII.GetBytes(sb.ToString()), 0, result, 0, i);
 
-            result_off += i;
+            resultOff += i;
 
-            i = (int)self.bh[bi].dlen;
+            i = (int)self.Bh[bi].Dlen;
             if(i > remain) throw new Exception("Assertion failed");
 
-            Array.Copy(self.bh[bi].digest, 0, result, result_off, i);
-            result_off += i;
+            Array.Copy(self.Bh[bi].Digest, 0, result, resultOff, i);
+            resultOff += i;
             remain -= i;
             if(h != 0)
             {
                 if(remain <= 0) throw new Exception("Assertion failed");
 
-                result[result_off] = b64[self.bh[bi].h % 64];
-                if(i < 3 || result[result_off] != result[result_off - 1] ||
-                   result[result_off] != result[result_off - 2] || result[result_off] != result[result_off - 3])
+                result[resultOff] = b64[self.Bh[bi].H % 64];
+                if(i < 3 || result[resultOff] != result[resultOff - 1] ||
+                   result[resultOff] != result[resultOff - 2] || result[resultOff] != result[resultOff - 3])
                 {
-                    ++result_off;
+                    ++resultOff;
                     --remain;
                 }
             }
-            else if(self.bh[bi].digest[i] != 0)
+            else if(self.Bh[bi].Digest[i] != 0)
             {
                 if(remain <= 0) throw new Exception("Assertion failed");
 
-                result[result_off] = self.bh[bi].digest[i];
-                if(i < 3 || result[result_off] != result[result_off - 1] ||
-                   result[result_off] != result[result_off - 2] || result[result_off] != result[result_off - 3])
+                result[resultOff] = self.Bh[bi].Digest[i];
+                if(i < 3 || result[resultOff] != result[resultOff - 1] ||
+                   result[resultOff] != result[resultOff - 2] || result[resultOff] != result[resultOff - 3])
                 {
-                    ++result_off;
+                    ++resultOff;
                     --remain;
                 }
             }
 
             if(remain <= 0) throw new Exception("Assertion failed");
 
-            result[result_off++] = 0x3A; // ':'
+            result[resultOff++] = 0x3A; // ':'
             --remain;
-            if(bi < self.bhend - 1)
+            if(bi < self.Bhend - 1)
             {
                 ++bi;
-                i = (int)self.bh[bi].dlen;
+                i = (int)self.Bh[bi].Dlen;
                 if(i > remain) throw new Exception("Assertion failed");
 
-                Array.Copy(self.bh[bi].digest, 0, result, result_off, i);
-                result_off += i;
+                Array.Copy(self.Bh[bi].Digest, 0, result, resultOff, i);
+                resultOff += i;
                 remain -= i;
 
                 if(h != 0)
                 {
                     if(remain <= 0) throw new Exception("Assertion failed");
 
-                    h = self.bh[bi].halfh;
-                    result[result_off] = b64[h % 64];
-                    if(i < 3 || result[result_off] != result[result_off - 1] ||
-                       result[result_off] != result[result_off - 2] || result[result_off] != result[result_off - 3])
+                    h = self.Bh[bi].Halfh;
+                    result[resultOff] = b64[h % 64];
+                    if(i < 3 || result[resultOff] != result[resultOff - 1] ||
+                       result[resultOff] != result[resultOff - 2] || result[resultOff] != result[resultOff - 3])
                     {
-                        ++result_off;
+                        ++resultOff;
                         --remain;
                     }
                 }
                 else
                 {
-                    i = self.bh[bi].halfdigest;
+                    i = self.Bh[bi].Halfdigest;
                     if(i != 0)
                     {
                         if(remain <= 0) throw new Exception("Assertion failed");
 
-                        result[result_off] = (byte)i;
-                        if(i < 3 || result[result_off] != result[result_off - 1] ||
-                           result[result_off] != result[result_off - 2] || result[result_off] != result[result_off - 3])
+                        result[resultOff] = (byte)i;
+                        if(i < 3 || result[resultOff] != result[resultOff - 1] ||
+                           result[resultOff] != result[resultOff - 2] || result[resultOff] != result[resultOff - 3])
                         {
-                            ++result_off;
+                            ++resultOff;
                             --remain;
                         }
                     }
@@ -397,16 +397,16 @@ namespace DiscImageChef.Checksums
             }
             else if(h != 0)
             {
-                if(self.bh[bi].dlen != 0) throw new Exception("Assertion failed");
+                if(self.Bh[bi].Dlen != 0) throw new Exception("Assertion failed");
                 if(remain <= 0) throw new Exception("Assertion failed");
 
-                result[result_off++] = b64[self.bh[bi].h % 64];
+                result[resultOff++] = b64[self.Bh[bi].H % 64];
                 /* No need to bother with FUZZY_FLAG_ELIMSEQ, because this
                  * digest has length 1. */
                 --remain;
             }
 
-            result[result_off] = 0;
+            result[resultOff] = 0;
             return 0;
         }
 
@@ -482,15 +482,15 @@ namespace DiscImageChef.Checksums
         }
 
         // Converts an ASCII null-terminated string to .NET string
-        private string CToString(byte[] CString)
+        private string CToString(byte[] cString)
         {
             StringBuilder sb = new StringBuilder();
 
-            for(int i = 0; i < CString.Length; i++)
+            for(int i = 0; i < cString.Length; i++)
             {
-                if(CString[i] == 0) break;
+                if(cString[i] == 0) break;
 
-                sb.Append(Encoding.ASCII.GetString(CString, i, 1));
+                sb.Append(Encoding.ASCII.GetString(cString, i, 1));
             }
 
             return sb.ToString();
