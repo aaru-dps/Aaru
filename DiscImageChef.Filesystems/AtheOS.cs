@@ -80,7 +80,7 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.GetSectorSize() < AFS_SUPERBLOCK_SIZE)
                 run = AFS_SUPERBLOCK_SIZE / imagePlugin.GetSectorSize();
 
-            if((sector + partition.Start) >= partition.End) return false;
+            if(sector + partition.Start >= partition.End) return false;
 
             uint magic;
 

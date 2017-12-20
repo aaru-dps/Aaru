@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End) return false;
+            if(2 + partition.Start >= partition.End) return false;
 
             byte signature; /// <summary>0x29
             string fs_type; // "SOL_FS  "

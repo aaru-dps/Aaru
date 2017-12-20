@@ -394,7 +394,7 @@ namespace DiscImageChef.DiscImages
             byte[] headerCookieBytes = new byte[8];
             byte[] footerCookieBytes = new byte[8];
 
-            if((imageStream.Length % 2) == 0) imageStream.Seek(-512, SeekOrigin.End);
+            if(imageStream.Length % 2 == 0) imageStream.Seek(-512, SeekOrigin.End);
             else imageStream.Seek(-511, SeekOrigin.End);
 
             imageStream.Read(footerCookieBytes, 0, 8);
@@ -405,7 +405,7 @@ namespace DiscImageChef.DiscImages
             headerCookie = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
             footerCookie = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);
 
-            return (headerCookie == IMAGE_COOKIE || footerCookie == IMAGE_COOKIE);
+            return headerCookie == IMAGE_COOKIE || footerCookie == IMAGE_COOKIE;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -417,7 +417,7 @@ namespace DiscImageChef.DiscImages
             imageStream.Seek(0, SeekOrigin.Begin);
             imageStream.Read(header, 0, 512);
 
-            if((imageStream.Length % 2) == 0)
+            if(imageStream.Length % 2 == 0)
             {
                 footer = new byte[512];
                 imageStream.Seek(-512, SeekOrigin.End);
@@ -488,7 +488,7 @@ namespace DiscImageChef.DiscImages
             thisFooter.UniqueId = BigEndianBitConverter.ToGuid(usableHeader, 0x44);
             thisFooter.SavedState = usableHeader[0x54];
             thisFooter.Reserved = new byte[usableHeader.Length - 0x55];
-            Array.Copy(usableHeader, 0x55, thisFooter.Reserved, 0, (usableHeader.Length - 0x55));
+            Array.Copy(usableHeader, 0x55, thisFooter.Reserved, 0, usableHeader.Length - 0x55);
 
             thisDateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             thisDateTime = thisDateTime.AddSeconds(thisFooter.Timestamp);
@@ -517,7 +517,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.currentSize = {0}", thisFooter.CurrentSize);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})",
                                       thisFooter.DiskGeometry, (thisFooter.DiskGeometry & 0xFFFF0000) >> 16,
-                                      (thisFooter.DiskGeometry & 0xFF00) >> 8, (thisFooter.DiskGeometry & 0xFF));
+                                      (thisFooter.DiskGeometry & 0xFF00) >> 8, thisFooter.DiskGeometry & 0xFF);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.diskType = 0x{0:X8}", thisFooter.DiskType);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.checksum = 0x{0:X8}", thisFooter.Checksum);
             DicConsole.DebugWriteLine("VirtualPC plugin", "footer.uniqueId = {0}", thisFooter.UniqueId);
@@ -544,7 +544,7 @@ namespace DiscImageChef.DiscImages
                 {
                     ImageInfo.ImageApplicationVersion = string.Format("{0}.{1:D2}",
                                                                       (thisFooter.CreatorVersion & 0xFFFF0000) >> 16,
-                                                                      (thisFooter.CreatorVersion & 0x0000FFFF));
+                                                                      thisFooter.CreatorVersion & 0x0000FFFF);
                     switch(thisFooter.CreatorHostOs)
                     {
                         case CREATOR_MACINTOSH:
@@ -657,7 +657,7 @@ namespace DiscImageChef.DiscImages
 
             ImageInfo.Cylinders = (thisFooter.DiskGeometry & 0xFFFF0000) >> 16;
             ImageInfo.Heads = (thisFooter.DiskGeometry & 0xFF00) >> 8;
-            ImageInfo.SectorsPerTrack = (thisFooter.DiskGeometry & 0xFF);
+            ImageInfo.SectorsPerTrack = thisFooter.DiskGeometry & 0xFF;
 
             if(thisFooter.DiskType == TYPE_DYNAMIC || thisFooter.DiskType == TYPE_DIFFERENCING)
             {
@@ -782,7 +782,7 @@ namespace DiscImageChef.DiscImages
                 */
 
                 // How many sectors uses the BAT
-                uint batSectorCount = (uint)Math.Ceiling(((double)thisDynamic.MaxTableEntries * 4) / 512);
+                uint batSectorCount = (uint)Math.Ceiling((double)thisDynamic.MaxTableEntries * 4 / 512);
 
                 byte[] batSectorBytes = new byte[512];
                 BatSector batSector = new BatSector();
@@ -799,11 +799,11 @@ namespace DiscImageChef.DiscImages
                     handle.Free();
                     // This restores the order of elements
                     Array.Reverse(batSector.blockPointer);
-                    if(blockAllocationTable.Length >= (i * 512) / 4 + 512 / 4)
-                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, (i * 512) / 4, 512 / 4);
+                    if(blockAllocationTable.Length >= i * 512 / 4 + 512 / 4)
+                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, i * 512 / 4, 512 / 4);
                     else
-                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, (i * 512) / 4,
-                                   blockAllocationTable.Length - (i * 512) / 4);
+                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, i * 512 / 4,
+                                   blockAllocationTable.Length - i * 512 / 4);
                 }
 
                 DateTime endTime = DateTime.UtcNow;
@@ -817,13 +817,11 @@ namespace DiscImageChef.DiscImages
                 */
 
                 // Get the roundest number of sectors needed to store the block bitmap
-                bitmapSize = (uint)Math.Ceiling((
-                                                    // How many sectors do a block store
-                                                    ((double)thisDynamic.BlockSize / 512)
-                                                    // 1 bit per sector on the bitmap
-                                                    / 8
-                                                    // and aligned to 512 byte boundary
-                                                    / 512));
+                bitmapSize = (uint)Math.Ceiling((double)thisDynamic.BlockSize / 512
+                                                // 1 bit per sector on the bitmap
+                                                / 8
+                                                // and aligned to 512 byte boundary
+                                                / 512);
                 DicConsole.DebugWriteLine("VirtualPC plugin", "Bitmap is {0} sectors", bitmapSize);
             }
 
@@ -1095,7 +1093,7 @@ namespace DiscImageChef.DiscImages
                         uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
                         thisStream = thisFilter.GetDataForkStream();
 
-                        thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
+                        thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
                         thisStream.Read(data, 0, 512);
 
                         return data;
@@ -1141,7 +1139,7 @@ namespace DiscImageChef.DiscImages
                     // Sector number inside of block
                     uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.BlockSize / 512));
                     // How many sectors before reaching end of block
-                    uint remainingInBlock = (thisDynamic.BlockSize / 512) - sectorInBlock;
+                    uint remainingInBlock = thisDynamic.BlockSize / 512 - sectorInBlock;
 
                     // Data that can be read in this block
                     byte[] prefix;
@@ -1167,7 +1165,7 @@ namespace DiscImageChef.DiscImages
                     if(sectorOffset != 0xFFFFFFFF)
                     {
                         thisStream = thisFilter.GetDataForkStream();
-                        thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
+                        thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
                         thisStream.Read(prefix, 0, (int)(512 * sectorsToReadHere));
                     }
                     // If it is unallocated, just fill with zeroes

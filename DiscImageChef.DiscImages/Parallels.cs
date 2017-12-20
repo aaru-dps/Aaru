@@ -208,7 +208,7 @@ namespace DiscImageChef.DiscImages
 
             clusterBytes = pHdr.cluster_size * 512;
             if(pHdr.data_off > 0) dataOffset = pHdr.data_off * 512;
-            else dataOffset = ((stream.Position / clusterBytes) + (stream.Position % clusterBytes)) * clusterBytes;
+            else dataOffset = (stream.Position / clusterBytes + stream.Position % clusterBytes) * clusterBytes;
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -224,7 +224,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.ImageSize = pHdr.sectors * 512;
             ImageInfo.Cylinders = pHdr.cylinders;
             ImageInfo.Heads = pHdr.heads;
-            ImageInfo.SectorsPerTrack = (uint)((ImageInfo.Sectors / ImageInfo.Cylinders) / ImageInfo.Heads);
+            ImageInfo.SectorsPerTrack = (uint)(ImageInfo.Sectors / ImageInfo.Cylinders / ImageInfo.Heads);
             imageStream = stream;
 
             return true;

@@ -190,7 +190,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Data starts at block {0}", hdr.data).AppendLine();
             sb.AppendFormat("Volume has {0} blocks", hdr.end).AppendLine();
 
-            ulong sbLocation = (hdr.super * (hdr.blockSize / imagePlugin.GetSectorSize())) + partition.Start;
+            ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.GetSectorSize()) + partition.Start;
 
             xmlFSType = new Schemas.FileSystemType
             {

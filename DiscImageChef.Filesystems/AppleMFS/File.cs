@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
 
-            if(fileBlock > (entry.flPyLen / volMDB.drAlBlkSiz)) return Errno.InvalidArgument;
+            if(fileBlock > entry.flPyLen / volMDB.drAlBlkSiz) return Errno.InvalidArgument;
 
             uint nextBlock = entry.flStBlk;
             long relBlock = 0;
@@ -64,7 +64,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             {
                 if(relBlock == fileBlock)
                 {
-                    deviceBlock = ((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + (long)partitionStart;
+                    deviceBlock = (nextBlock - 2) * sectorsPerBlock + volMDB.drAlBlSt + (long)partitionStart;
                     return Errno.NoError;
                 }
 
@@ -174,23 +174,23 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = (directoryBlocks.Length / stat.BlockSize) +
-                                      (directoryBlocks.Length % stat.BlockSize);
+                        stat.Blocks = directoryBlocks.Length / stat.BlockSize +
+                                      directoryBlocks.Length % stat.BlockSize;
                         stat.Length = directoryBlocks.Length;
                     }
                     else if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = (blockMapBytes.Length / stat.BlockSize) + (blockMapBytes.Length % stat.BlockSize);
+                        stat.Blocks = blockMapBytes.Length / stat.BlockSize + blockMapBytes.Length % stat.BlockSize;
                         stat.Length = blockMapBytes.Length;
                     }
                     else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && bootBlocks != null)
                     {
-                        stat.Blocks = (bootBlocks.Length / stat.BlockSize) + (bootBlocks.Length % stat.BlockSize);
+                        stat.Blocks = bootBlocks.Length / stat.BlockSize + bootBlocks.Length % stat.BlockSize;
                         stat.Length = bootBlocks.Length;
                     }
                     else if(string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = (mdbBlocks.Length / stat.BlockSize) + (mdbBlocks.Length % stat.BlockSize);
+                        stat.Blocks = mdbBlocks.Length / stat.BlockSize + mdbBlocks.Length % stat.BlockSize;
                         stat.Length = mdbBlocks.Length;
                     }
                     else return Errno.InvalidArgument;

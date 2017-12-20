@@ -402,22 +402,22 @@ namespace DiscImageChef.DiscImages
                 twiggy = true;
 
                 Stream datastream = imageFilter.GetDataForkStream();
-                datastream.Seek((dataOffset), SeekOrigin.Begin);
+                datastream.Seek(dataOffset, SeekOrigin.Begin);
                 datastream.Read(data, 0, (int)header.DataSize);
 
                 Stream tagstream = imageFilter.GetDataForkStream();
-                tagstream.Seek((tagOffset), SeekOrigin.Begin);
+                tagstream.Seek(tagOffset, SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.TagSize);
 
-                ushort mfsMagic = BigEndianBitConverter.ToUInt16(data, (int)((data.Length / 2) + 0x400));
-                ushort mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, (int)((data.Length / 2) + 0x412));
+                ushort mfsMagic = BigEndianBitConverter.ToUInt16(data, (int)(data.Length / 2 + 0x400));
+                ushort mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, (int)(data.Length / 2 + 0x412));
 
                 // Detect a Macintosh Twiggy
                 if(mfsMagic == 0xD2D7 && mfsAllBlocks == 422)
                 {
                     DicConsole.DebugWriteLine("DC42 plugin", "Macintosh Twiggy detected, reversing disk sides");
-                    Array.Copy(data, (header.DataSize / 2), twiggyCache, 0, header.DataSize / 2);
-                    Array.Copy(tags, (header.TagSize / 2), twiggyCacheTags, 0, header.TagSize / 2);
+                    Array.Copy(data, header.DataSize / 2, twiggyCache, 0, header.DataSize / 2);
+                    Array.Copy(tags, header.TagSize / 2, twiggyCacheTags, 0, header.TagSize / 2);
                     Array.Copy(data, 0, twiggyCache, header.DataSize / 2, header.DataSize / 2);
                     Array.Copy(tags, 0, twiggyCacheTags, header.TagSize / 2, header.TagSize / 2);
                 }
@@ -588,7 +588,7 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.SectorsPerTrack = 16;
                     break;
                 default:
-                    ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+                    ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
                     ImageInfo.Heads = 16;
                     ImageInfo.SectorsPerTrack = 63;
                     break;
@@ -638,7 +638,7 @@ namespace DiscImageChef.DiscImages
 
             DicConsole.DebugWriteLine("DC42 plugin", "Reading data");
             Stream datastream = dc42ImageFilter.GetDataForkStream();
-            datastream.Seek((dataOffset), SeekOrigin.Begin);
+            datastream.Seek(dataOffset, SeekOrigin.Begin);
             datastream.Read(data, 0, (int)header.DataSize);
 
             DicConsole.DebugWriteLine("DC42 plugin", "Calculating data checksum");
@@ -650,7 +650,7 @@ namespace DiscImageChef.DiscImages
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Reading tags");
                 Stream tagstream = dc42ImageFilter.GetDataForkStream();
-                tagstream.Seek((tagOffset), SeekOrigin.Begin);
+                tagstream.Seek(tagOffset, SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.TagSize);
 
                 DicConsole.DebugWriteLine("DC42 plugin", "Calculating tag checksum");
@@ -762,9 +762,9 @@ namespace DiscImageChef.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                Array.Copy(data, i * (ImageInfo.SectorSize), buffer, i * (ImageInfo.SectorSize + bptag),
+                Array.Copy(data, i * ImageInfo.SectorSize, buffer, i * (ImageInfo.SectorSize + bptag),
                            ImageInfo.SectorSize);
-                Array.Copy(tags, i * (bptag), buffer, i * (ImageInfo.SectorSize + bptag) + ImageInfo.SectorSize, bptag);
+                Array.Copy(tags, i * bptag, buffer, i * (ImageInfo.SectorSize + bptag) + ImageInfo.SectorSize, bptag);
             }
 
             return buffer;

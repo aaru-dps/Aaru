@@ -336,7 +336,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.ImageSize = qHdr.size;
             ImageInfo.ImageVersion = string.Format("{0}", qHdr.version);
 
-            ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+            ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
             ImageInfo.Heads = 16;
             ImageInfo.SectorsPerTrack = 63;
 
@@ -402,8 +402,8 @@ namespace DiscImageChef.DiscImages
 
                         compSizeMask = (ulong)(1 << (int)(qHdr.cluster_bits - 8)) - 1;
                         byte countbits = (byte)(qHdr.cluster_bits - 8);
-                        compSizeMask <<= (62 - countbits);
-                        offMask = (~compSizeMask) & QCOW_FLAGS_MASK;
+                        compSizeMask <<= 62 - countbits;
+                        offMask = ~compSizeMask & QCOW_FLAGS_MASK;
 
                         ulong realOff = offset & offMask;
                         ulong compSize = (((offset & compSizeMask) >> (62 - countbits)) + 1) * 512;

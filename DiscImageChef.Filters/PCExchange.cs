@@ -224,8 +224,8 @@ namespace DiscImageChef.Filters
                 byte[] tmpDosExt_b = new byte[3];
                 Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);
                 Array.Copy(datEntry.dosName, 8, tmpDosExt_b, 0, 3);
-                string dosName = (Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
-                                  Encoding.ASCII.GetString(tmpDosExt_b).Trim());
+                string dosName = Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
+                                 Encoding.ASCII.GetString(tmpDosExt_b).Trim();
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
                 if(baseFilename == macName || baseFilename == dosName || baseFilename == dosNameLow)
@@ -280,8 +280,8 @@ namespace DiscImageChef.Filters
                 byte[] tmpDosExt_b = new byte[3];
                 Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);
                 Array.Copy(datEntry.dosName, 8, tmpDosExt_b, 0, 3);
-                string dosName = (Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
-                                  Encoding.ASCII.GetString(tmpDosExt_b).Trim());
+                string dosName = Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
+                                 Encoding.ASCII.GetString(tmpDosExt_b).Trim();
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
                 if(baseFilename == macName || baseFilename == dosName || baseFilename == dosNameLow)

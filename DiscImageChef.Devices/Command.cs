@@ -174,12 +174,10 @@ namespace DiscImageChef.Devices
             {
                 case Interop.PlatformID.Win32NT:
                 {
-                    if(( // Windows XP <= SP1
-                           Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
-                           (Environment.OSVersion.ServicePack == "Service Pack 1" ||
-                            Environment.OSVersion.ServicePack == "")) || ( // Windows 2000
-                                                                             Environment.OSVersion.Version.Major == 5 &&
-                                                                             Environment.OSVersion.Version.Minor == 0))
+                    if(Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
+                       (Environment.OSVersion.ServicePack == "Service Pack 1" ||
+                        Environment.OSVersion.ServicePack == "") || Environment.OSVersion.Version.Major == 5 &&
+                       Environment.OSVersion.Version.Minor == 0)
                         return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
@@ -224,12 +222,10 @@ namespace DiscImageChef.Devices
             {
                 case Interop.PlatformID.Win32NT:
                 {
-                    if(( // Windows XP <= SP1
-                           Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
-                           (Environment.OSVersion.ServicePack == "Service Pack 1" ||
-                            Environment.OSVersion.ServicePack == "")) || ( // Windows 2000
-                                                                             Environment.OSVersion.Version.Major == 5 &&
-                                                                             Environment.OSVersion.Version.Minor == 0))
+                    if(Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
+                       (Environment.OSVersion.ServicePack == "Service Pack 1" ||
+                        Environment.OSVersion.ServicePack == "") || Environment.OSVersion.Version.Major == 5 &&
+                       Environment.OSVersion.Version.Minor == 0)
                         return Windows.Command.SendIdeCommand((SafeFileHandle)fd, registers, out errorRegisters,
                                                               protocol, ref buffer, timeout, out duration, out sense);
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)

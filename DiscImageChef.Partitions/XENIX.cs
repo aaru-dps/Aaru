@@ -80,12 +80,12 @@ namespace DiscImageChef.Partitions
                     Partition part = new Partition
                     {
                         Start =
-                            ((ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.GetSectorSize()) +
+                            (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.GetSectorSize() +
                             sectorOffset,
                         Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.GetSectorSize(),
                         Offset =
                             (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
-                            (imagePlugin.GetSectorSize() * sectorOffset),
+                            imagePlugin.GetSectorSize() * sectorOffset,
                         Size = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
                         Sequence = (ulong)i,
                         Type = "XENIX",

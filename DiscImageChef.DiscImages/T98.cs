@@ -90,7 +90,7 @@ namespace DiscImageChef.DiscImages
 
             // This format is expanding, so length can be smaller
             // Just grow it, I won't risk false positives...
-            return stream.Length == (cylinders * 8 * 33 * 256) + 256;
+            return stream.Length == cylinders * 8 * 33 * 256 + 256;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -113,7 +113,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
             ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
             ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.Sectors = (ulong)((stream.Length / 256) - 1);
+            ImageInfo.Sectors = (ulong)(stream.Length / 256 - 1);
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.SectorSize = 256;
             ImageInfo.Cylinders = (uint)cylinders;

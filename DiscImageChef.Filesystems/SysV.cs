@@ -83,7 +83,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End) return false;
+            if(2 + partition.Start >= partition.End) return false;
 
             uint magic;
             string s_fname, s_fpack;
@@ -117,7 +117,7 @@ namespace DiscImageChef.Filesystems
                 sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
             else sb_size_in_sectors = 1; // If not a single sector can store it
 
-            if(partition.End <= (partition.Start + 4 * (ulong)sb_size_in_sectors + sb_size_in_sectors)
+            if(partition.End <= partition.Start + 4 * (ulong)sb_size_in_sectors + sb_size_in_sectors
             ) // Device must be bigger than SB location + SB size + offset
                 return false;
 
@@ -157,8 +157,8 @@ namespace DiscImageChef.Filesystems
                 Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
                 s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
-                if((s_fname == COH_FNAME && s_fpack == COH_FPACK) || (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
-                   (s_fname == COH_XXXXS && s_fpack == COH_XXXXN)) return true;
+                if(s_fname == COH_FNAME && s_fpack == COH_FPACK || s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
+                   s_fname == COH_XXXXS && s_fpack == COH_XXXXN) return true;
 
                 // Now try to identify 7th edition
                 s_fsize = BitConverter.ToUInt32(sb_sector, 0x002); // 7th edition's s_fsize
@@ -181,8 +181,8 @@ namespace DiscImageChef.Filesystems
                     {
                         if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
                         {
-                            if((s_fsize * 1024) == ((partition.End - partition.Start) * imagePlugin.GetSectorSize()) ||
-                               (s_fsize * 512) == ((partition.End - partition.Start) * imagePlugin.GetSectorSize()))
+                            if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.GetSectorSize() ||
+                               s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize())
                                 return true;
                         }
                     }
@@ -303,8 +303,8 @@ namespace DiscImageChef.Filesystems
                 Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
                 s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
-                if((s_fname == COH_FNAME && s_fpack == COH_FPACK) || (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
-                   (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
+                if(s_fname == COH_FNAME && s_fpack == COH_FPACK || s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
+                   s_fname == COH_XXXXS && s_fpack == COH_XXXXN)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Coherent is in PDP endianness, use helper for that
                     coherent = true;
@@ -333,8 +333,8 @@ namespace DiscImageChef.Filesystems
                     {
                         if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
                         {
-                            if((s_fsize * 1024) == ((partition.End - partition.Start) * imagePlugin.GetSectorSize()) ||
-                               (s_fsize * 512) == ((partition.End - partition.Start) * imagePlugin.GetSectorSize()))
+                            if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.GetSectorSize() ||
+                               s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize())
                             {
                                 sys7th = true;
                                 BigEndianBitConverter.IsLittleEndian = true;
@@ -591,7 +591,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Volume name: {0}", sysv_sb.s_fname).AppendLine();
                 xmlFSType.VolumeName = sysv_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", sysv_sb.s_fpack).AppendLine();
-                if(sysv_sb.s_state == (0x7C269D38 - sysv_sb.s_time)) sb.AppendLine("Volume is clean");
+                if(sysv_sb.s_state == 0x7C269D38 - sysv_sb.s_time) sb.AppendLine("Volume is clean");
                 else
                 {
                     sb.AppendLine("Volume is dirty");

@@ -71,7 +71,7 @@ namespace DiscImageChef.Filesystems
             ulong sbSector = sbPos / imagePlugin.GetSectorSize();
             uint sbOff = sbPos % imagePlugin.GetSectorSize();
 
-            if((sbSector + partition.Start) >= partition.End) return false;
+            if(sbSector + partition.Start >= partition.End) return false;
 
             int sb_size_in_bytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
             uint sb_size_in_sectors = (uint)(sb_size_in_bytes / imagePlugin.GetSectorSize());

@@ -55,7 +55,7 @@ namespace DiscImageChef.Checksums
         const uint HASH_INIT = 0x28021967;
         const uint NUM_BLOCKHASHES = 31;
         const uint SPAMSUM_LENGTH = 64;
-        const uint FUZZY_MAX_RESULT = (2 * SPAMSUM_LENGTH + 20);
+        const uint FUZZY_MAX_RESULT = 2 * SPAMSUM_LENGTH + 20;
         //"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         readonly byte[] b64 =
         {
@@ -169,7 +169,7 @@ namespace DiscImageChef.Checksums
 
         static uint SSDEEP_BS(uint index)
         {
-            return (MIN_BLOCKSIZE << (int)index);
+            return MIN_BLOCKSIZE << (int)index;
         }
 
         void fuzzy_try_fork_blockhash()
@@ -249,7 +249,7 @@ namespace DiscImageChef.Checksums
                      * our signature. This has the effect of combining the
                      * last few pieces of the message into a single piece
                      * */
-                    self.Bh[i].Digest[++(self.Bh[i].Dlen)] = 0;
+                    self.Bh[i].Digest[++self.Bh[i].Dlen] = 0;
                     self.Bh[i].H = HASH_INIT;
                     if(self.Bh[i].Dlen < SPAMSUM_LENGTH / 2)
                     {
@@ -306,7 +306,7 @@ namespace DiscImageChef.Checksums
             while(bi >= self.Bhend) --bi;
             while(bi > self.Bhstart && self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2) --bi;
 
-            if((bi > 0 && self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)) throw new Exception("Assertion failed");
+            if(bi > 0 && self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2) throw new Exception("Assertion failed");
 
             sb.AppendFormat("{0}:", SSDEEP_BS(bi));
             i = Encoding.ASCII.GetBytes(sb.ToString()).Length;

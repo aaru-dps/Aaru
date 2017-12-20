@@ -189,7 +189,7 @@ namespace DiscImageChef.DiscImages
                     break;
                 default:
                     ImageInfo.MediaType = MediaType.GENERIC_HDD;
-                    ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+                    ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
                     ImageInfo.Heads = 16;
                     ImageInfo.SectorsPerTrack = 63;
                     break;

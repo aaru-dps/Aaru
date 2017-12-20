@@ -80,7 +80,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End) return false;
+            if(2 + partition.Start >= partition.End) return false;
 
             byte[] mdb_sector;
             ushort drSigWord;
@@ -282,8 +282,7 @@ namespace DiscImageChef.Filesystems
                 xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
                 xmlFSType.BackupDateSpecified = true;
             }
-            xmlFSType.Bootable = BB.signature == HFSBB_MAGIC ||
-                                 (MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0);
+            xmlFSType.Bootable = BB.signature == HFSBB_MAGIC || MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0;
             xmlFSType.Clusters = MDB.drNmAlBlks;
             xmlFSType.ClusterSize = (int)MDB.drAlBlkSiz;
             if(MDB.drCrDate > 0)

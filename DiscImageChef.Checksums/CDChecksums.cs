@@ -109,7 +109,7 @@ namespace DiscImageChef.Checksums
                 }
 
                 eccA = eccBTable[eccFTable[eccA] ^ eccB];
-                if(ecc[major] != (eccA) || ecc[major + majorCount] != (eccA ^ eccB)) { return false; }
+                if(ecc[major] != eccA || ecc[major + majorCount] != (eccA ^ eccB)) { return false; }
             }
 
             return true;

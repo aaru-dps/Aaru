@@ -80,8 +80,8 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("BSD plugin",
                                               "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",
                                               location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
-                    if((dl.d_magic == DISKMAGIC && dl.d_magic2 == DISKMAGIC) ||
-                       (dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM))
+                    if(dl.d_magic == DISKMAGIC && dl.d_magic2 == DISKMAGIC ||
+                       dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM)
                     {
                         found = true;
                         break;
@@ -143,10 +143,10 @@ namespace DiscImageChef.Partitions
                                           dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
                 Partition part = new Partition
                 {
-                    Start = ((dl.d_partitions[i].p_offset * dl.d_secsize) / imagePlugin.GetSectorSize()),
-                    Offset = (dl.d_partitions[i].p_offset * dl.d_secsize),
-                    Length = (dl.d_partitions[i].p_size * dl.d_secsize) / imagePlugin.GetSectorSize(),
-                    Size = (dl.d_partitions[i].p_size * dl.d_secsize),
+                    Start = dl.d_partitions[i].p_offset * dl.d_secsize / imagePlugin.GetSectorSize(),
+                    Offset = dl.d_partitions[i].p_offset * dl.d_secsize,
+                    Length = dl.d_partitions[i].p_size * dl.d_secsize / imagePlugin.GetSectorSize(),
+                    Size = dl.d_partitions[i].p_size * dl.d_secsize,
                     Type = fsTypeToString(dl.d_partitions[i].p_fstype),
                     Sequence = counter,
                     Scheme = Name
@@ -159,7 +159,7 @@ namespace DiscImageChef.Partitions
                     if(addSectorOffset)
                     {
                         part.Start += sectorOffset;
-                        part.Offset += (sectorOffset * imagePlugin.GetSectorSize());
+                        part.Offset += sectorOffset * imagePlugin.GetSectorSize();
                     }
                     DicConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
                     DicConsole.DebugWriteLine("BSD plugin", "Adding it...");

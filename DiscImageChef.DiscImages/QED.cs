@@ -242,7 +242,7 @@ namespace DiscImageChef.DiscImages
                 throw new NotImplementedException("Differencing images not yet supported");
 
             clusterSectors = qHdr.cluster_size / 512;
-            tableSize = (qHdr.cluster_size * qHdr.table_size) / 8;
+            tableSize = qHdr.cluster_size * qHdr.table_size / 8;
 
             DicConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", clusterSectors);
             DicConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}", tableSize);
@@ -280,7 +280,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("QED plugin", "qHdr.l2Mask = {0:X}", l2Mask);
             DicConsole.DebugWriteLine("QED plugin", "qHdr.sectorMask = {0:X}", sectorMask);
 
-            maxL2TableCache = MAX_CACHE_SIZE / (tableSize);
+            maxL2TableCache = MAX_CACHE_SIZE / tableSize;
             maxClusterCache = MAX_CACHE_SIZE / qHdr.cluster_size;
 
             imageStream = stream;
@@ -298,7 +298,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.MediaType = MediaType.GENERIC_HDD;
             ImageInfo.ImageSize = qHdr.image_size;
 
-            ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+            ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
             ImageInfo.Heads = 16;
             ImageInfo.SectorsPerTrack = 63;
 
@@ -468,9 +468,9 @@ namespace DiscImageChef.DiscImages
 
         bool IsPowerOfTwo(uint x)
         {
-            while(((x & 1) == 0) && x > 1) x >>= 1;
+            while((x & 1) == 0 && x > 1) x >>= 1;
 
-            return (x == 1);
+            return x == 1;
         }
 
         static int Ctz32(uint val)

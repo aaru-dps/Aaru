@@ -70,11 +70,11 @@ namespace DiscImageChef.Filesystems.AppleMFS
             volMDB.drVN = StringHandlers.PascalToString(variable_size, CurrentEncoding);
 
             directoryBlocks = device.ReadSectors(volMDB.drDirSt + partitionStart, volMDB.drBlLen);
-            int bytesInBlockMap = ((volMDB.drNmAlBlks * 12) / 8) + ((volMDB.drNmAlBlks * 12) % 8);
+            int bytesInBlockMap = volMDB.drNmAlBlks * 12 / 8 + volMDB.drNmAlBlks * 12 % 8;
             int bytesBeforeBlockMap = 64;
             int bytesInWholeMDB = bytesInBlockMap + bytesBeforeBlockMap;
-            int sectorsInWholeMDB = (bytesInWholeMDB / (int)device.ImageInfo.SectorSize) +
-                                    (bytesInWholeMDB % (int)device.ImageInfo.SectorSize);
+            int sectorsInWholeMDB = bytesInWholeMDB / (int)device.ImageInfo.SectorSize +
+                                    bytesInWholeMDB % (int)device.ImageInfo.SectorSize;
             byte[] wholeMDB = device.ReadSectors(partitionStart + 2, (uint)sectorsInWholeMDB);
             blockMapBytes = new byte[bytesInBlockMap];
             Array.Copy(wholeMDB, bytesBeforeBlockMap, blockMapBytes, 0, blockMapBytes.Length);
@@ -100,7 +100,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 if(i + 5 < blockMap.Length) blockMap[i + 4] = (tmp2 & 0xFFF0) >> 4;
                 if(i + 6 < blockMap.Length) blockMap[i + 5] = ((tmp2 & 0xF) << 8) + ((tmp3 & 0xFF000000) >> 24);
                 if(i + 7 < blockMap.Length) blockMap[i + 6] = (tmp3 & 0xFFF000) >> 12;
-                if(i + 8 < blockMap.Length) blockMap[i + 7] = (tmp3 & 0xFFF);
+                if(i + 8 < blockMap.Length) blockMap[i + 7] = tmp3 & 0xFFF;
 
                 offset += 12;
             }

@@ -166,7 +166,7 @@ namespace DiscImageChef.Decoders.CD
                 return null;
             }
 
-            for(int i = 0; i < ((decoded.DataLength - 2) / 11); i++)
+            for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
             {
                 decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + i * 11 + 4];
                 decoded.TrackDescriptors[i].ADR = (byte)((CDFullTOCResponse[1 + i * 11 + 4] & 0xF0) >> 4);
@@ -202,7 +202,7 @@ namespace DiscImageChef.Decoders.CD
             foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
             {
                 if((descriptor.CONTROL & 0x08) == 0x08 ||
-                   (descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6) ||
+                   descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6 ||
                    descriptor.TNO != 0)
                 {
                     sb.AppendLine("Unknown TOC entry format, printing values as-is");

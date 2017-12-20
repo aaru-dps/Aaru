@@ -631,7 +631,7 @@ namespace DiscImageChef.Devices
                 }
             }
 
-            if((scsiSense && (usb || firewire)) || manufacturer == "ATA")
+            if(scsiSense && (usb || firewire) || manufacturer == "ATA")
             {
                 bool ataSense = AtaIdentify(out ataBuf, out errorRegisters);
                 if(!ataSense)

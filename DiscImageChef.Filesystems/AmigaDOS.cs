@@ -252,10 +252,10 @@ namespace DiscImageChef.Filesystems
 
             ulong[] root_ptrs =
             {
-                b_root_ptr + partition.Start, ((partition.End - partition.Start) + 1) / 2 + partition.Start - 2,
-                ((partition.End - partition.Start) + 1) / 2 + partition.Start - 1,
-                ((partition.End - partition.Start) + 1) / 2 + partition.Start,
-                ((partition.End - partition.Start) + 1) / 2 + partition.Start + 4
+                b_root_ptr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
+                (partition.End - partition.Start + 1) / 2 + partition.Start - 1,
+                (partition.End - partition.Start + 1) / 2 + partition.Start,
+                (partition.End - partition.Start + 1) / 2 + partition.Start + 4
             };
 
             RootBlock rblk = new RootBlock();
@@ -333,10 +333,10 @@ namespace DiscImageChef.Filesystems
 
             ulong[] root_ptrs =
             {
-                b_root_ptr + partition.Start, ((partition.End - partition.Start) + 1) / 2 + partition.Start - 2,
-                ((partition.End - partition.Start) + 1) / 2 + partition.Start - 1,
-                ((partition.End - partition.Start) + 1) / 2 + partition.Start,
-                ((partition.End - partition.Start) + 1) / 2 + partition.Start + 4
+                b_root_ptr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
+                (partition.End - partition.Start + 1) / 2 + partition.Start - 1,
+                (partition.End - partition.Start + 1) / 2 + partition.Start,
+                (partition.End - partition.Start + 1) / 2 + partition.Start + 4
             };
 
             RootBlock rootBlk = new RootBlock();
@@ -458,7 +458,7 @@ namespace DiscImageChef.Filesystems
             if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
                 sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
 
-            long blocks = (long)((((partition.End - partition.Start) + 1) * imagePlugin.ImageInfo.SectorSize) /
+            long blocks = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
                                  blockSize);
 
             sbInformation.AppendFormat("Volume block size is {0} bytes", blockSize).AppendLine();

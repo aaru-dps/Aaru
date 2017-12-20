@@ -72,7 +72,7 @@ namespace DiscImageChef.Filesystems
             ulong sbSector = sbPos / imagePlugin.GetSectorSize();
             uint sbOff = sbPos % imagePlugin.GetSectorSize();
 
-            if((sbSector + partition.Start) >= partition.End) return false;
+            if(sbSector + partition.Start >= partition.End) return false;
 
             byte[] sb_sector = imagePlugin.ReadSector(sbSector + partition.Start);
             byte[] sb = new byte[512];
@@ -95,7 +95,7 @@ namespace DiscImageChef.Filesystems
             ulong sbSector = sbPos / imagePlugin.GetSectorSize();
             uint sbOff = sbPos % imagePlugin.GetSectorSize();
 
-            if((sbSector + partition.Start) >= partition.End) return;
+            if(sbSector + partition.Start >= partition.End) return;
 
             byte[] sblock = imagePlugin.ReadSector(sbSector + partition.Start);
             byte[] sb_sector = new byte[512];

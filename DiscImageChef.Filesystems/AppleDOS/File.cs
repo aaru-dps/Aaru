@@ -173,7 +173,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(!catalogCache.TryGetValue(filename, out ts)) return Errno.NoSuchFile;
 
-            ulong lba = (ulong)((((ts & 0xFF00) >> 8) * sectorsPerTrack) + (ts & 0xFF));
+            ulong lba = (ulong)(((ts & 0xFF00) >> 8) * sectorsPerTrack + (ts & 0xFF));
             MemoryStream fileMs = new MemoryStream();
             MemoryStream tsListMs = new MemoryStream();
             ushort expectedBlock = 0;
@@ -204,7 +204,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                     track2UsedByFiles |= entry.track == 2;
                     usedSectors++;
 
-                    ulong blockLba = (ulong)((entry.track * sectorsPerTrack) + entry.sector);
+                    ulong blockLba = (ulong)(entry.track * sectorsPerTrack + entry.sector);
                     if(blockLba == 0) break;
 
                     byte[] fileBlock = device.ReadSector(blockLba);
@@ -212,7 +212,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                     expectedBlock++;
                 }
 
-                lba = (ulong)((tsSector.nextListTrack * sectorsPerTrack) + tsSector.nextListSector);
+                lba = (ulong)(tsSector.nextListTrack * sectorsPerTrack + tsSector.nextListSector);
             }
 
             if(fileCache.ContainsKey(filename)) fileCache.Remove(filename);

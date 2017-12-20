@@ -248,15 +248,15 @@ namespace DiscImageChef.DiscImages
 
             if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
 
-            ulong index = (sectorAddress * vHdr.sectorSize) / vHdr.blockSize;
-            ulong secOff = (sectorAddress * vHdr.sectorSize) % vHdr.blockSize;
+            ulong index = sectorAddress * vHdr.sectorSize / vHdr.blockSize;
+            ulong secOff = sectorAddress * vHdr.sectorSize % vHdr.blockSize;
 
             uint ibmOff = ibm[index];
             ulong imageOff;
 
             if(ibmOff == VDI_EMPTY) return new byte[vHdr.sectorSize];
 
-            imageOff = vHdr.offsetData + (ibmOff * vHdr.blockSize);
+            imageOff = vHdr.offsetData + ibmOff * vHdr.blockSize;
 
             byte[] cluster = new byte[vHdr.blockSize];
             imageStream.Seek((long)imageOff, SeekOrigin.Begin);

@@ -642,8 +642,8 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}",
                                               teleDiskSector.Crc);
 
-                    uint lba = (uint)((teleDiskSector.Cylinder * header.Sides * ImageInfo.SectorsPerTrack) +
-                                      (teleDiskSector.Head * ImageInfo.SectorsPerTrack) + (teleDiskSector.SectorNumber - 1));
+                    uint lba = (uint)(teleDiskSector.Cylinder * header.Sides * ImageInfo.SectorsPerTrack +
+                                      teleDiskSector.Head * ImageInfo.SectorsPerTrack + (teleDiskSector.SectorNumber - 1));
                     if((teleDiskSector.Flags & FLAGS_SECTOR_DATALESS) != FLAGS_SECTOR_DATALESS &&
                        (teleDiskSector.Flags & FLAGS_SECTOR_SKIPPED) != FLAGS_SECTOR_SKIPPED)
                     {
@@ -807,8 +807,8 @@ namespace DiscImageChef.DiscImages
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
             ushort cylinder = (ushort)(lba / (ImageInfo.Heads * ImageInfo.SectorsPerTrack));
-            byte head = (byte)((lba / ImageInfo.SectorsPerTrack) % ImageInfo.Heads);
-            byte sector = (byte)((lba % ImageInfo.SectorsPerTrack) + 1);
+            byte head = (byte)(lba / ImageInfo.SectorsPerTrack % ImageInfo.Heads);
+            byte sector = (byte)(lba % ImageInfo.SectorsPerTrack + 1);
 
             return (cylinder, head, sector);
         }
@@ -1001,7 +1001,7 @@ namespace DiscImageChef.DiscImages
                         {
                             length = encodedData[ins + 1];
                             Array.Copy(encodedData, ins + 2, decodedData, outs, length);
-                            ins += (2 + length);
+                            ins += 2 + length;
                             outs += length;
                         }
                         else
@@ -1013,7 +1013,7 @@ namespace DiscImageChef.DiscImages
                             piece = new byte[length * run];
                             ArrayHelpers.ArrayFill(piece, part);
                             Array.Copy(piece, 0, decodedData, outs, piece.Length);
-                            ins += (2 + length);
+                            ins += 2 + length;
                             outs += piece.Length;
                         }
                     }
@@ -1347,10 +1347,10 @@ namespace DiscImageChef.DiscImages
 
         /* Huffman coding parameters */
 
-        const int N_CHAR = (256 - THRESHOLD + F);
+        const int N_CHAR = 256 - THRESHOLD + F;
         /* character code (= 0..N_CHAR-1) */
-        const int T = (N_CHAR * 2 - 1); /* Size of table */
-        const int R = (T - 1); /* root position */
+        const int T = N_CHAR * 2 - 1; /* Size of table */
+        const int R = T - 1; /* root position */
         const int MAX_FREQ = 0x8000;
         /* update when cumulative frequency */
         /* reaches to this value */
@@ -1442,7 +1442,7 @@ namespace DiscImageChef.DiscImages
             {
                 tdctl.Ibufndx = 0;
                 tdctl.Ibufcnt = (ushort)data_read(out tdctl.Inbuf, BUFSZ);
-                if(tdctl.Ibufcnt <= 0) return (-1);
+                if(tdctl.Ibufcnt <= 0) return -1;
             }
 
             while(getlen <= 8)
@@ -1452,31 +1452,31 @@ namespace DiscImageChef.DiscImages
                 getlen += 8;
             }
 
-            return (0);
+            return 0;
         }
 
         int GetBit() /* get one bit */
         {
             short i;
-            if(next_word() < 0) return (-1);
+            if(next_word() < 0) return -1;
 
             i = (short)getbuf;
             getbuf <<= 1;
             getlen--;
-            if(i < 0) return (1);
-            else return (0);
+            if(i < 0) return 1;
+            else return 0;
         }
 
         int GetByte() /* get a byte */
         {
             ushort i;
-            if(next_word() != 0) return (-1);
+            if(next_word() != 0) return -1;
 
             i = getbuf;
             getbuf <<= 8;
             getlen -= 8;
             i = (ushort)(i >> 8);
-            return ((int)i);
+            return (int)i;
         }
 
         /* initialize freq tree */
@@ -1602,7 +1602,7 @@ namespace DiscImageChef.DiscImages
              */
             while(c < T)
             {
-                if((ret = GetBit()) < 0) return (-1);
+                if((ret = GetBit()) < 0) return -1;
 
                 c += (ushort)ret;
                 c = (ushort)son[c];
@@ -1619,7 +1619,7 @@ namespace DiscImageChef.DiscImages
             ushort i, j, c;
 
             /* decode upper 6 bits from given table */
-            if((bit = (short)GetByte()) < 0) return (-1);
+            if((bit = (short)GetByte()) < 0) return -1;
 
             i = (ushort)bit;
             c = (ushort)(d_code[i] << 6);
@@ -1629,7 +1629,7 @@ namespace DiscImageChef.DiscImages
             j -= 2;
             while(j-- > 0)
             {
-                if((bit = (short)GetBit()) < 0) return (-1);
+                if((bit = (short)GetBit()) < 0) return -1;
 
                 i = (ushort)((i << 1) + bit);
             }
@@ -1666,18 +1666,18 @@ namespace DiscImageChef.DiscImages
             {
                 if(tdctl.Bufcnt == 0)
                 {
-                    if((c = DecodeChar()) < 0) return (count); // fatal error
+                    if((c = DecodeChar()) < 0) return count; // fatal error
 
                     if(c < 256)
                     {
                         buf[count] = (byte)c;
                         text_buf[tdctl.R++] = (byte)c;
-                        tdctl.R &= (N - 1);
+                        tdctl.R &= N - 1;
                         count++;
                     }
                     else
                     {
-                        if((pos = DecodePosition()) < 0) return (count); // fatal error
+                        if((pos = DecodePosition()) < 0) return count; // fatal error
 
                         tdctl.Bufpos = (ushort)((tdctl.R - pos - 1) & (N - 1));
                         tdctl.Bufcnt = (ushort)(c - 255 + THRESHOLD);
@@ -1693,7 +1693,7 @@ namespace DiscImageChef.DiscImages
                         buf[count] = (byte)c;
                         tdctl.Bufndx++;
                         text_buf[tdctl.R++] = (byte)c;
-                        tdctl.R &= (N - 1);
+                        tdctl.R &= N - 1;
                         count++;
                     }
                     // reset bufcnt after copy string from text_buf[]
@@ -1701,7 +1701,7 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
-            return (count); // count == len, success
+            return count; // count == len, success
         }
         #endregion LZH decompression from MAME
     }

@@ -81,7 +81,7 @@ namespace DiscImageChef.DiscImages
         const int TAG_SECTOR_SIZE = 12;
         const int DATA_SIZE = SECTORS_PER_BLOCK * SECTOR_SIZE;
         const int TAG_SIZE = SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
-        const int BUFFER_SIZE = (SECTORS_PER_BLOCK * SECTOR_SIZE) + (SECTORS_PER_BLOCK * TAG_SECTOR_SIZE);
+        const int BUFFER_SIZE = SECTORS_PER_BLOCK * SECTOR_SIZE + SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
         #endregion
 
         #region Internal Structures
@@ -142,7 +142,7 @@ namespace DiscImageChef.DiscImages
 
             if(header.srcCmp > COMPRESS_NONE) return false;
 
-            int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
+            int expectedMaxSize = 84 + header.srcSize * 2 * 524;
 
             switch(header.srcType)
             {
@@ -195,7 +195,7 @@ namespace DiscImageChef.DiscImages
 
             if(header.srcCmp > COMPRESS_NONE) return false;
 
-            int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
+            int expectedMaxSize = 84 + header.srcSize * 2 * 524;
 
             switch(header.srcType)
             {
@@ -488,9 +488,9 @@ namespace DiscImageChef.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                Array.Copy(data, i * (ImageInfo.SectorSize), buffer, i * (ImageInfo.SectorSize + TAG_SECTOR_SIZE),
+                Array.Copy(data, i * ImageInfo.SectorSize, buffer, i * (ImageInfo.SectorSize + TAG_SECTOR_SIZE),
                            ImageInfo.SectorSize);
-                Array.Copy(tags, i * (TAG_SECTOR_SIZE), buffer,
+                Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
                            i * (ImageInfo.SectorSize + TAG_SECTOR_SIZE) + ImageInfo.SectorSize, TAG_SECTOR_SIZE);
             }
 

@@ -207,7 +207,7 @@ namespace DiscImageChef.DiscImages
 
             ushort magic = BitConverter.ToUInt16(hdr, 0);
 
-            if(magic != COPYQM_MAGIC || hdr[0x02] != COPYQM_MARK || (133 + hdr[0x6F]) >= stream.Length) return false;
+            if(magic != COPYQM_MAGIC || hdr[0x02] != COPYQM_MARK || 133 + hdr[0x6F] >= stream.Length) return false;
 
             return true;
         }
@@ -277,7 +277,7 @@ namespace DiscImageChef.DiscImages
                     byte[] repeatedArray = new byte[runLength * -1];
                     ArrayHelpers.ArrayFill(repeatedArray, repeatedByte);
 
-                    for(int i = 0; i < (runLength * -1); i++)
+                    for(int i = 0; i < runLength * -1; i++)
                     {
                         decodedImage.WriteByte(repeatedByte);
                         calculatedDataCrc = copyQmCrcTable[(repeatedByte ^ calculatedDataCrc) & 0x3F] ^
@@ -297,9 +297,9 @@ namespace DiscImageChef.DiscImages
             }
 
             // In case there is omitted data
-            long sectors = (header.sectorsPerTrack) * header.heads * header.totalCylinders;
+            long sectors = header.sectorsPerTrack * header.heads * header.totalCylinders;
 
-            long fillingLen = (sectors * header.sectorSize) - decodedImage.Length;
+            long fillingLen = sectors * header.sectorSize - decodedImage.Length;
 
             if(fillingLen > 0)
             {
@@ -320,7 +320,7 @@ namespace DiscImageChef.DiscImages
             headerChecksumOk = ((-1 * sum) & 0xFF) == header.headerChecksum;
 
             DicConsole.DebugWriteLine("CopyQM plugin", "Calculated header checksum = 0x{0:X2}, {1}",
-                                      ((-1 * sum) & 0xFF), headerChecksumOk);
+                                      (-1 * sum) & 0xFF, headerChecksumOk);
             DicConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", calculatedDataCrc,
                                       calculatedDataCrc == header.crc);
 
@@ -456,7 +456,7 @@ namespace DiscImageChef.DiscImages
 
         public override bool? VerifyMediaImage()
         {
-            return (calculatedDataCrc == header.crc) && headerChecksumOk;
+            return calculatedDataCrc == header.crc && headerChecksumOk;
         }
 
         public override bool ImageHasPartitions()

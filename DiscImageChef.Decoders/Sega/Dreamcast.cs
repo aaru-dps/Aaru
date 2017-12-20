@@ -231,7 +231,7 @@ namespace DiscImageChef.Decoders.Sega
             if((iPeripherals & 0x08000000) == 0x08000000) IPBinInformation.AppendLine("Game supports Mouse.");
 
             if((iPeripherals & 0xEE) != 0)
-                IPBinInformation.AppendFormat("Game supports unknown peripherals mask {0:X2}", (iPeripherals & 0xEE));
+                IPBinInformation.AppendFormat("Game supports unknown peripherals mask {0:X2}", iPeripherals & 0xEE);
 
             return IPBinInformation.ToString();
         }

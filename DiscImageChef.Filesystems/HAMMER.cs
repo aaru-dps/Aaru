@@ -77,7 +77,7 @@ namespace DiscImageChef.Filesystems
 
             if(HAMMER_VOLHDR_SIZE % imagePlugin.GetSectorSize() > 0) run++;
 
-            if((run + partition.Start) >= partition.End) return false;
+            if(run + partition.Start >= partition.End) return false;
 
             ulong magic;
 

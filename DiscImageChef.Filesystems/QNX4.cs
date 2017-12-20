@@ -261,7 +261,7 @@ namespace DiscImageChef.Filesystems
                 ModificationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_mtime),
                 ModificationDateSpecified = true
             };
-            xmlFSType.Bootable |= (qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0);
+            xmlFSType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
         }
 
         public override Errno Mount()

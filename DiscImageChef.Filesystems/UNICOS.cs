@@ -161,8 +161,8 @@ namespace DiscImageChef.Filesystems
 
             UNICOS_Superblock unicosSb = new UNICOS_Superblock();
 
-            uint sbSize = (uint)((Marshal.SizeOf(unicosSb)) / imagePlugin.GetSectorSize());
-            if((Marshal.SizeOf(unicosSb)) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.GetSectorSize());
+            if(Marshal.SizeOf(unicosSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(unicosSb)) return false;
@@ -183,8 +183,8 @@ namespace DiscImageChef.Filesystems
 
             UNICOS_Superblock unicosSb = new UNICOS_Superblock();
 
-            uint sbSize = (uint)((Marshal.SizeOf(unicosSb)) / imagePlugin.GetSectorSize());
-            if((Marshal.SizeOf(unicosSb)) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.GetSectorSize());
+            if(Marshal.SizeOf(unicosSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(unicosSb)) return;

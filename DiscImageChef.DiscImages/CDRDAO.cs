@@ -650,7 +650,7 @@ namespace DiscImageChef.DiscImages
                                            ulong.Parse(startString[2]);
                         }
 
-                        currenttrack.Trackfile.Offset += (startSectors * currenttrack.Bps);
+                        currenttrack.Trackfile.Offset += startSectors * currenttrack.Bps;
 
                         if(matchAudioFile.Groups["length"].Value != "")
                         {
@@ -870,7 +870,7 @@ namespace DiscImageChef.DiscImages
                     partition.Name = discimage.Tracks[i].Title;
                     partition.Start = discimage.Tracks[i].StartSector;
                     partition.Size = (discimage.Tracks[i].Sectors - index0Len) * discimage.Tracks[i].Bps;
-                    partition.Length = (discimage.Tracks[i].Sectors - index0Len);
+                    partition.Length = discimage.Tracks[i].Sectors - index0Len;
                     partition.Sequence = partitionSequence;
                     partition.Offset = byteOffset;
                     partition.Type = discimage.Tracks[i].Tracktype;
@@ -1078,8 +1078,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(cdrdaoTrack.Sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < cdrdaoTrack.Sectors)
-                                return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < cdrdaoTrack.Sectors)
+                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -1099,8 +1099,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(cdrdaoTrack.Sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < cdrdaoTrack.Sectors)
-                                return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
+                            if(sectorAddress - kvp.Value < cdrdaoTrack.Sectors)
+                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                         }
                     }
                 }
@@ -1412,8 +1412,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(cdrdaoTrack.Sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < cdrdaoTrack.Sectors)
-                                return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < cdrdaoTrack.Sectors)
+                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }

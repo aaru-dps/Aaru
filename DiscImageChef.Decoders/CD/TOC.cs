@@ -130,7 +130,7 @@ namespace DiscImageChef.Decoders.CD
                 return null;
             }
 
-            for(int i = 0; i < ((decoded.DataLength - 2) / 8); i++)
+            for(int i = 0; i < (decoded.DataLength - 2) / 8; i++)
             {
                 decoded.TrackDescriptors[i].Reserved1 = CDTOCResponse[0 + i * 8 + 4];
                 decoded.TrackDescriptors[i].ADR = (byte)((CDTOCResponse[1 + i * 8 + 4] & 0xF0) >> 4);

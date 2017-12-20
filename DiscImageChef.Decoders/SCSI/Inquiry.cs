@@ -80,7 +80,7 @@ namespace DiscImageChef.Decoders.SCSI
             }
             if(SCSIInquiryResponse.Length >= 2)
             {
-                decoded.RMB = Convert.ToBoolean((SCSIInquiryResponse[1] & 0x80));
+                decoded.RMB = Convert.ToBoolean(SCSIInquiryResponse[1] & 0x80);
                 decoded.DeviceTypeModifier = (byte)(SCSIInquiryResponse[1] & 0x7F);
             }
             if(SCSIInquiryResponse.Length >= 3)
@@ -91,43 +91,43 @@ namespace DiscImageChef.Decoders.SCSI
             }
             if(SCSIInquiryResponse.Length >= 4)
             {
-                decoded.AERC = Convert.ToBoolean((SCSIInquiryResponse[3] & 0x80));
-                decoded.TrmTsk = Convert.ToBoolean((SCSIInquiryResponse[3] & 0x40));
-                decoded.NormACA = Convert.ToBoolean((SCSIInquiryResponse[3] & 0x20));
-                decoded.HiSup = Convert.ToBoolean((SCSIInquiryResponse[3] & 0x10));
+                decoded.AERC = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x80);
+                decoded.TrmTsk = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x40);
+                decoded.NormACA = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x20);
+                decoded.HiSup = Convert.ToBoolean(SCSIInquiryResponse[3] & 0x10);
                 decoded.ResponseDataFormat = (byte)(SCSIInquiryResponse[3] & 0x07);
             }
             if(SCSIInquiryResponse.Length >= 5) decoded.AdditionalLength = SCSIInquiryResponse[4];
             if(SCSIInquiryResponse.Length >= 6)
             {
-                decoded.SCCS = Convert.ToBoolean((SCSIInquiryResponse[5] & 0x80));
-                decoded.ACC = Convert.ToBoolean((SCSIInquiryResponse[5] & 0x40));
+                decoded.SCCS = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x80);
+                decoded.ACC = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x40);
                 decoded.TPGS = (byte)((SCSIInquiryResponse[5] & 0x30) >> 4);
-                decoded.ThreePC = Convert.ToBoolean((SCSIInquiryResponse[5] & 0x08));
+                decoded.ThreePC = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x08);
                 decoded.Reserved2 = (byte)((SCSIInquiryResponse[5] & 0x06) >> 1);
-                decoded.Protect = Convert.ToBoolean((SCSIInquiryResponse[5] & 0x01));
+                decoded.Protect = Convert.ToBoolean(SCSIInquiryResponse[5] & 0x01);
             }
             if(SCSIInquiryResponse.Length >= 7)
             {
-                decoded.BQue = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x80));
-                decoded.EncServ = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x40));
-                decoded.VS1 = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x20));
-                decoded.MultiP = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x10));
-                decoded.MChngr = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x08));
-                decoded.ACKREQQ = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x04));
-                decoded.Addr32 = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x02));
-                decoded.Addr16 = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x01));
+                decoded.BQue = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x80);
+                decoded.EncServ = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x40);
+                decoded.VS1 = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x20);
+                decoded.MultiP = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x10);
+                decoded.MChngr = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x08);
+                decoded.ACKREQQ = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x04);
+                decoded.Addr32 = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x02);
+                decoded.Addr16 = Convert.ToBoolean(SCSIInquiryResponse[6] & 0x01);
             }
             if(SCSIInquiryResponse.Length >= 8)
             {
-                decoded.RelAddr = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x80));
-                decoded.WBus32 = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x40));
-                decoded.WBus16 = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x20));
-                decoded.Sync = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x10));
-                decoded.Linked = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x08));
-                decoded.TranDis = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x04));
-                decoded.CmdQue = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x02));
-                decoded.SftRe = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x01));
+                decoded.RelAddr = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x80);
+                decoded.WBus32 = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x40);
+                decoded.WBus16 = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x20);
+                decoded.Sync = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x10);
+                decoded.Linked = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x08);
+                decoded.TranDis = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x04);
+                decoded.CmdQue = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x02);
+                decoded.SftRe = Convert.ToBoolean(SCSIInquiryResponse[7] & 0x01);
             }
             if(SCSIInquiryResponse.Length >= 16)
             {
@@ -211,8 +211,8 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 decoded.Reserved3 = (byte)((SCSIInquiryResponse[56] & 0xF0) >> 4);
                 decoded.Clocking = (byte)((SCSIInquiryResponse[56] & 0x0C) >> 2);
-                decoded.QAS = Convert.ToBoolean((SCSIInquiryResponse[56] & 0x02));
-                decoded.IUS = Convert.ToBoolean((SCSIInquiryResponse[56] & 0x01));
+                decoded.QAS = Convert.ToBoolean(SCSIInquiryResponse[56] & 0x02);
+                decoded.IUS = Convert.ToBoolean(SCSIInquiryResponse[56] & 0x01);
             }
             if(SCSIInquiryResponse.Length >= 58) decoded.Reserved4 = SCSIInquiryResponse[57];
             if(SCSIInquiryResponse.Length >= 60)
@@ -225,7 +225,7 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.VersionDescriptors = new ushort[descriptorsNo];
                 for(int i = 0; i < descriptorsNo; i++)
                 {
-                    decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + (i * 2));
+                    decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + i * 2);
                 }
             }
 

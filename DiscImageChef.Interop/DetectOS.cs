@@ -83,7 +83,7 @@ namespace DiscImageChef.Interop
         {
             if((int)Environment.OSVersion.Platform < 4 || (int)Environment.OSVersion.Platform == 5)
             {
-                return (PlatformID)((int)Environment.OSVersion.Platform);
+                return (PlatformID)(int)Environment.OSVersion.Platform;
             }
 
             utsname unixname;
@@ -210,7 +210,7 @@ namespace DiscImageChef.Interop
                                          Environment.OSVersion.Version.Minor);
                 case PlatformID.Win32NT:
                     // From Windows 8.1 the reported version is simply falsified...
-                    if((Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Major >= 2) ||
+                    if(Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Major >= 2 ||
                        Environment.OSVersion.Version.Major > 6)
                         return FileVersionInfo
                             .GetVersionInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),

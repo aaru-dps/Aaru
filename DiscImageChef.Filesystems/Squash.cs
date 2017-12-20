@@ -179,7 +179,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "Squash file system";
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time);
             xmlFSType.CreationDateSpecified = true;
-            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize) /
+            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
                                         sqSb.block_size);
             xmlFSType.ClusterSize = (int)sqSb.block_size;
             xmlFSType.Files = sqSb.inodes;

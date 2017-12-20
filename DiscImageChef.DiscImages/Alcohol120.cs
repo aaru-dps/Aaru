@@ -562,7 +562,7 @@ namespace DiscImageChef.DiscImages
 
                 if(!data && !firstdata) ImageInfo.MediaType = MediaType.CDDA;
                 else if(firstaudio && data && sessions.Count > 1 && mode2) ImageInfo.MediaType = MediaType.CDPLUS;
-                else if((firstdata && audio) || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
+                else if(firstdata && audio || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
                 else if(!audio) ImageInfo.MediaType = MediaType.CDROM;
                 else ImageInfo.MediaType = MediaType.CD;
             }
@@ -839,8 +839,8 @@ namespace DiscImageChef.DiscImages
 
                         if(track.point == kvp.Key && alcTrackExtras.TryGetValue(track.point, out extra))
                         {
-                            if((sectorAddress - kvp.Value) < extra.sectors)
-                                return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < extra.sectors)
+                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -861,8 +861,8 @@ namespace DiscImageChef.DiscImages
 
                         if(track.point == kvp.Key && alcTrackExtras.TryGetValue(track.point, out extra))
                         {
-                            if((sectorAddress - kvp.Value) < extra.sectors)
-                                return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
+                            if(sectorAddress - kvp.Value < extra.sectors)
+                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                         }
                     }
                 }
@@ -1002,7 +1002,7 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdSectorSubchannel:
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
-                case SectorTagType.CdTrackFlags: return new byte[] {((byte)(_track.adrCtl & 0x0F))};
+                case SectorTagType.CdTrackFlags: return new byte[] {(byte)(_track.adrCtl & 0x0F)};
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
@@ -1323,8 +1323,8 @@ namespace DiscImageChef.DiscImages
 
                         if(track.point == kvp.Key && alcTrackExtras.TryGetValue(track.point, out extra))
                         {
-                            if((sectorAddress - kvp.Value) < extra.sectors)
-                                return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < extra.sectors)
+                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }

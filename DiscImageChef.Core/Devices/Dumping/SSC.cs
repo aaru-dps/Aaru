@@ -101,7 +101,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
 
                 // And yet, did not rewind!
-                if(fxSense.HasValue && ((fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04) ||
+                if(fxSense.HasValue && (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 ||
                                         fxSense.Value.ASC != 0x00))
                 {
                     DicConsole.WriteLine();
@@ -126,7 +126,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 // Anyway, <=SCSI-1 tapes do not support partitions
                 fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
 
-                if(fxSense.HasValue && ((fxSense.Value.ASC == 0x20 && fxSense.Value.ASCQ != 0x00) ||
+                if(fxSense.HasValue && (fxSense.Value.ASC == 0x20 && fxSense.Value.ASCQ != 0x00 ||
                                         fxSense.Value.ASC != 0x20 && fxSense.Value.SenseKey !=
                                         Decoders.SCSI.SenseKeys.IllegalRequest))
                 {
@@ -171,7 +171,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                           (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
 
                     // And yet, did not rewind!
-                    if(fxSense.HasValue && ((fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04) ||
+                    if(fxSense.HasValue && (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 ||
                                             fxSense.Value.ASC != 0x00))
                     {
                         DicConsole.WriteLine();
@@ -616,7 +616,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 totalChkDuration += chkDuration;
 
                 if(currentBlock % 10 == 0)
-                    currentSpeed = ((double)blockSize / (double)1048576) / (duration / (double)1000);
+                    currentSpeed = (double)blockSize / (double)1048576 / (duration / (double)1000);
                 currentBlock++;
                 currentSize += blockSize;
                 currentFileSize += blockSize;
@@ -628,18 +628,18 @@ namespace DiscImageChef.Core.Devices.Dumping
             end = DateTime.UtcNow;
             mhddLog.Close();
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
+                         (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), devicePath);
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                              (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
+                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
             dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                              (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
+                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
             DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming).",
                                  (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000);
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
             DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",
-                                 (((double)blockSize * (double)(blocks + 1)) / 1048576) / (totalDuration / 1000));
+                                 (double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
             DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
@@ -656,7 +656,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Value = outputPrefix + ".bin"
             };
             sidecar.BlockMedia[0].LogicalBlocks = (long)blocks;
-            sidecar.BlockMedia[0].Size = (long)(currentSize);
+            sidecar.BlockMedia[0].Size = (long)currentSize;
             sidecar.BlockMedia[0].DumpHardwareArray = new DumpHardwareType[1];
             sidecar.BlockMedia[0].DumpHardwareArray[0] = new DumpHardwareType {Extents = new ExtentType[1]};
             sidecar.BlockMedia[0].DumpHardwareArray[0].Extents[0] = new ExtentType {Start = 0, End = blocks - 1};

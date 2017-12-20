@@ -240,8 +240,8 @@ namespace DiscImageChef.Filesystems
             spcl_aix aixHdr = new spcl_aix();
             s_spcl newHdr = new s_spcl();
 
-            uint sbSize = (uint)((Marshal.SizeOf(newHdr)) / imagePlugin.GetSectorSize());
-            if((Marshal.SizeOf(newHdr)) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.GetSectorSize());
+            if(Marshal.SizeOf(newHdr) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(newHdr)) return false;
@@ -282,8 +282,8 @@ namespace DiscImageChef.Filesystems
             spcl_aix aixHdr = new spcl_aix();
             s_spcl newHdr = new s_spcl();
 
-            uint sbSize = (uint)((Marshal.SizeOf(newHdr)) / imagePlugin.GetSectorSize());
-            if((Marshal.SizeOf(newHdr)) % imagePlugin.GetSectorSize() != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.GetSectorSize());
+            if(Marshal.SizeOf(newHdr) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(newHdr)) return;

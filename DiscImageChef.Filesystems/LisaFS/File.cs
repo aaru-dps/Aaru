@@ -348,7 +348,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             tags &= debug;
 
-            if(fileId < 4 || (fileId == 4 && (mddf.fsversion != LisaFSv2 && mddf.fsversion != LisaFSv1)))
+            if(fileId < 4 || fileId == 4 && mddf.fsversion != LisaFSv2 && mddf.fsversion != LisaFSv1)
                 return Errno.InvalidArgument;
 
             if(!tags && fileCache.TryGetValue(fileId, out buf)) return Errno.NoError;
@@ -371,10 +371,10 @@ namespace DiscImageChef.Filesystems.LisaFS
                 byte[] sector;
 
                 if(!tags)
-                    sector = device.ReadSectors(((ulong)file.extents[i].start + mddf.mddf_block + volumePrefix),
+                    sector = device.ReadSectors((ulong)file.extents[i].start + mddf.mddf_block + volumePrefix,
                                                 (uint)file.extents[i].length);
                 else
-                    sector = device.ReadSectorsTag(((ulong)file.extents[i].start + mddf.mddf_block + volumePrefix),
+                    sector = device.ReadSectorsTag((ulong)file.extents[i].start + mddf.mddf_block + volumePrefix,
                                                    (uint)file.extents[i].length, SectorTagType.AppleSectorTag);
 
                 Array.Copy(sector, 0, temp, offset, sector.Length);

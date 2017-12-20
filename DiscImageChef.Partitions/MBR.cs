@@ -285,7 +285,7 @@ namespace DiscImageChef.Partitions
                                                       imagePlugin.ImageInfo.Heads,
                                                       imagePlugin.ImageInfo.SectorsPerTrack) - ext_start;
                             }
-                            ext_minix |= (ebr_entry.type == 0x81 || ebr_entry.type == 0x80);
+                            ext_minix |= ebr_entry.type == 0x81 || ebr_entry.type == 0x80;
 
                             // For optical media
                             ext_start /= divider;
@@ -345,7 +345,7 @@ namespace DiscImageChef.Partitions
 
                         DicConsole.DebugWriteLine("MBR plugin", "next_start {0}", next_start);
                         processing_extended &= next_start != 0;
-                        processing_extended &= (next_start <= imagePlugin.GetSectors());
+                        processing_extended &= next_start <= imagePlugin.GetSectors();
                         lba_start = next_start;
                     }
                 }

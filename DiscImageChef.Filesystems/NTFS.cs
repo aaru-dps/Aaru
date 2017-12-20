@@ -65,7 +65,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End) return false;
+            if(2 + partition.Start >= partition.End) return false;
 
             byte[] eigth_bytes = new byte[8];
             byte fats_no;

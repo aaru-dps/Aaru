@@ -57,7 +57,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(!mounted) return Errno.AccessDenied;
 
-            if(fileId < 4 || (fileId == 4 && (mddf.fsversion != LisaFSv2 && mddf.fsversion != LisaFSv1)))
+            if(fileId < 4 || fileId == 4 && mddf.fsversion != LisaFSv2 && mddf.fsversion != LisaFSv1)
                 return Errno.InvalidArgument;
 
             if(extentCache.TryGetValue(fileId, out file)) return Errno.NoError;
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // Checks that the sector tag indicates its the Extents File we are searching for
             DecodeTag(device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag), out extTag);
 
-            if(extTag.fileID == ((short)(-1 * fileId)))
+            if(extTag.fileID == (short)(-1 * fileId))
             {
                 byte[] sector;
 

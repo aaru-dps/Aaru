@@ -82,13 +82,13 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
             {
-                header.WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
-                header.DPOFUA = ((modeResponse[2] & 0x10) == 0x10);
+                header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
+                header.DPOFUA = (modeResponse[2] & 0x10) == 0x10;
             }
 
             if(deviceType == PeripheralDeviceTypes.SequentialAccess)
             {
-                header.WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
+                header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
                 header.Speed = (byte)(modeResponse[2] & 0x0F);
                 header.BufferedMode = (byte)((modeResponse[2] & 0x70) >> 4);
             }
@@ -98,9 +98,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(deviceType == PeripheralDeviceTypes.OpticalDevice)
             {
-                header.WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
-                header.EBC = ((modeResponse[2] & 0x01) == 0x01);
-                header.DPOFUA = ((modeResponse[2] & 0x10) == 0x10);
+                header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
+                header.EBC = (modeResponse[2] & 0x01) == 0x01;
+                header.DPOFUA = (modeResponse[2] & 0x10) == 0x10;
             }
 
             return header;
@@ -2002,13 +2002,13 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
             {
-                header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
-                header.DPOFUA = ((modeResponse[3] & 0x10) == 0x10);
+                header.WriteProtected = (modeResponse[3] & 0x80) == 0x80;
+                header.DPOFUA = (modeResponse[3] & 0x10) == 0x10;
             }
 
             if(deviceType == PeripheralDeviceTypes.SequentialAccess)
             {
-                header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
+                header.WriteProtected = (modeResponse[3] & 0x80) == 0x80;
                 header.Speed = (byte)(modeResponse[3] & 0x0F);
                 header.BufferedMode = (byte)((modeResponse[3] & 0x70) >> 4);
             }
@@ -2018,9 +2018,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(deviceType == PeripheralDeviceTypes.OpticalDevice)
             {
-                header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
-                header.EBC = ((modeResponse[3] & 0x01) == 0x01);
-                header.DPOFUA = ((modeResponse[3] & 0x10) == 0x10);
+                header.WriteProtected = (modeResponse[3] & 0x80) == 0x80;
+                header.EBC = (modeResponse[3] & 0x01) == 0x01;
+                header.DPOFUA = (modeResponse[3] & 0x10) == 0x10;
             }
 
             return header;
@@ -3511,7 +3511,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.WritePrecompCylinder = (uint)((pageResponse[6] << 16) + (pageResponse[7] << 8) + pageResponse[8]);
             decoded.WriteReduceCylinder = (uint)((pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
             decoded.DriveStepRate = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
-            decoded.LandingCylinder = ((pageResponse[14] << 16) + (pageResponse[15] << 8) + pageResponse[16]);
+            decoded.LandingCylinder = (pageResponse[14] << 16) + (pageResponse[15] << 8) + pageResponse[16];
             decoded.RPL = (byte)(pageResponse[17] & 0x03);
             decoded.RotationalOffset = pageResponse[18];
 
@@ -5382,7 +5382,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-            if((page.Standby && page.StandbyTimer > 0) || (page.Standby_Y && page.StandbyTimer_Y > 0))
+            if(page.Standby && page.StandbyTimer > 0 || page.Standby_Y && page.StandbyTimer_Y > 0)
             {
                 if(page.Standby && page.StandbyTimer > 0)
                     sb.AppendFormat("\tStandby timer Z is set to {0} ms", page.StandbyTimer * 100).AppendLine();
@@ -5391,8 +5391,8 @@ namespace DiscImageChef.Decoders.SCSI
             }
             else sb.AppendLine("\tDrive will not enter standy mode");
 
-            if((page.Idle && page.IdleTimer > 0) || (page.Idle_B && page.IdleTimer_B > 0) ||
-               (page.Idle_C && page.IdleTimer_C > 0))
+            if(page.Idle && page.IdleTimer > 0 || page.Idle_B && page.IdleTimer_B > 0 ||
+               page.Idle_C && page.IdleTimer_C > 0)
             {
                 if(page.Idle && page.IdleTimer > 0)
                     sb.AppendFormat("\tIdle timer A is set to {0} ms", page.IdleTimer * 100).AppendLine();
@@ -5468,7 +5468,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(pageResponse[1] != 0x01) return null;
 
-            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length) return null;
+            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 32) return null;
 
@@ -5556,7 +5556,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(pageResponse[1] != 0x01) return null;
 
-            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length) return null;
+            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 16) return null;
 
@@ -5762,7 +5762,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(pageResponse[1] != 0x01) return null;
 
-            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length) return null;
+            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 16) return null;
 
@@ -6327,7 +6327,7 @@ namespace DiscImageChef.Decoders.SCSI
                         if(offset + 3 >= modeResponse.Length) break;
 
                         pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
-                        if((pg.PageResponse.Length + offset) > modeResponse.Length) return decoded;
+                        if(pg.PageResponse.Length + offset > modeResponse.Length) return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
@@ -6339,7 +6339,7 @@ namespace DiscImageChef.Decoders.SCSI
                         if(offset + 1 >= modeResponse.Length) break;
 
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
-                        if((pg.PageResponse.Length + offset) > modeResponse.Length) return decoded;
+                        if(pg.PageResponse.Length + offset > modeResponse.Length) return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
@@ -6370,7 +6370,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(longlba) offset = 8 + blkDrLength * 16;
             else offset = 8 + blkDrLength * 8;
-            int length = (modeResponse[0] << 8);
+            int length = modeResponse[0] << 8;
             length += modeResponse[1];
             length += 2;
 
@@ -6398,7 +6398,7 @@ namespace DiscImageChef.Decoders.SCSI
                     {
                         pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
 
-                        if((pg.PageResponse.Length + offset) > modeResponse.Length) return decoded;
+                        if(pg.PageResponse.Length + offset > modeResponse.Length) return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
@@ -6409,7 +6409,7 @@ namespace DiscImageChef.Decoders.SCSI
                     {
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
 
-                        if((pg.PageResponse.Length + offset) > modeResponse.Length) return decoded;
+                        if(pg.PageResponse.Length + offset > modeResponse.Length) return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
@@ -7019,7 +7019,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.BaudRate = pageResponse[2];
             decoded.CmdFwd = (byte)((pageResponse[3] & 0x18) >> 3);
             decoded.StopBits |= (pageResponse[3] & 0x04) == 0x04;
-            decoded.CmdFwd = (byte)((pageResponse[3] & 0x03));
+            decoded.CmdFwd = (byte)(pageResponse[3] & 0x03);
             decoded.PortATransportType = pageResponse[4];
             decoded.PortAPresentSelectionID = pageResponse[7];
             decoded.NextSelectionID = pageResponse[12];
@@ -7314,7 +7314,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.FirmwareUpdateBehaviour = pageResponse[7];
             decoded.UOE_C = (byte)((pageResponse[8] & 0x30) >> 4);
             decoded.UOE_F = (byte)((pageResponse[8] & 0x0C) >> 2);
-            decoded.UOE_F = ((byte)(pageResponse[8] & 0x03));
+            decoded.UOE_F = (byte)(pageResponse[8] & 0x03);
 
             return decoded;
         }

@@ -72,11 +72,11 @@ namespace DiscImageChef.Partitions
 
                 Partition _part = new Partition
                 {
-                    Length = (end - start) + 1,
+                    Length = end - start + 1,
                     Offset = (start + sectorOffset) * imagePlugin.GetSectorSize(),
                     Scheme = Name,
                     Sequence = (ulong)partitions.Count,
-                    Size = ((end - start) + 1) * imagePlugin.GetSectorSize(),
+                    Size = (end - start + 1) * imagePlugin.GetSectorSize(),
                     Start = start + sectorOffset,
                     Type = tokens[1]
                 };

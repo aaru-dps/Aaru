@@ -375,8 +375,8 @@ namespace DiscImageChef.DiscImages
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
             ushort cylinder = (ushort)(lba / (ImageInfo.Heads * ImageInfo.SectorsPerTrack));
-            byte head = (byte)((lba / ImageInfo.SectorsPerTrack) % ImageInfo.Heads);
-            byte sector = (byte)((lba % ImageInfo.SectorsPerTrack) + 1);
+            byte head = (byte)(lba / ImageInfo.SectorsPerTrack % ImageInfo.Heads);
+            byte sector = (byte)(lba % ImageInfo.SectorsPerTrack + 1);
 
             return (cylinder, head, sector);
         }

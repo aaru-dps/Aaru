@@ -216,10 +216,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
                 dumpLog.WriteLine("Device reports {0} bytes per physical block.", physicalsectorsize);
 
-                bool removable = false || (!dev.IsCompactFlash &&
-                                           ataId.GeneralConfiguration.HasFlag(Decoders.ATA.Identify
-                                                                                      .GeneralConfigurationBit
-                                                                                      .Removable));
+                bool removable = false || !dev.IsCompactFlash &&
+                                 ataId.GeneralConfiguration.HasFlag(Decoders.ATA.Identify
+                                                                            .GeneralConfigurationBit
+                                                                            .Removable);
                 DumpHardwareType currentTry = null;
                 ExtentsULong extents = null;
                 ResumeSupport.Process(ataReader.IsLba, removable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
@@ -248,7 +248,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             break;
                         }
 
-                        if((blocks - i) < blocksToRead) blocksToRead = (byte)(blocks - i);
+                        if(blocks - i < blocksToRead) blocksToRead = (byte)(blocks - i);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                         if(currentSpeed > maxSpeed && currentSpeed != 0) maxSpeed = currentSpeed;
@@ -279,7 +279,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
 
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                        currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (duration / (double)1000);
+                        currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (duration / (double)1000);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                         GC.Collect();
                         resume.NextBlock = i + blocksToRead;
@@ -290,12 +290,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     mhddLog.Close();
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000),
+                                 (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
                                  devicePath);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                     dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
                     dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                                      (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
+                                      (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
                     #region Error handling
                     if(resume.BadBlocks.Count > 0 && !aborted)
@@ -401,7 +401,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 }
 
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                                currentSpeed = ((double)blockSize / (double)1048576) / (duration / (double)1000);
+                                currentSpeed = (double)blockSize / (double)1048576 / (duration / (double)1000);
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                                 GC.Collect();
 
@@ -415,12 +415,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     mhddLog.Close();
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000),
+                                 (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
                                  devicePath);
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
                     dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                                      (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
+                                      (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
                 }
 
                 dataChk = new Checksum();
@@ -436,7 +436,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    if((blocks - i) < blocksToRead) blocksToRead = (byte)(blocks - i);
+                    if(blocks - i < blocksToRead) blocksToRead = (byte)(blocks - i);
 
                     DicConsole.Write("\rChecksumming sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
 
@@ -449,7 +449,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                     totalChkDuration += chkDuration;
 
-                    currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (chkDuration / (double)1000);
+                    currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (chkDuration / (double)1000);
                 }
 
                 DicConsole.WriteLine();
@@ -457,7 +457,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 end = DateTime.UtcNow;
                 dumpLog.WriteLine("Checksum finished in {0} seconds.", (end - start).TotalSeconds);
                 dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                                  (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
+                                  (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
                 PluginBase plugins = new PluginBase();
                 plugins.RegisterAllPlugins(encoding);
@@ -606,7 +606,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming).",
                                      (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000);
                 DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",
-                                     (((double)blockSize * (double)(blocks + 1)) / 1048576) / (totalDuration / 1000));
+                                     (double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
                 DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
                 DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
                 DicConsole.WriteLine("{0} sectors could not be read.", resume.BadBlocks.Count);

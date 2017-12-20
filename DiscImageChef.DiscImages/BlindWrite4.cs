@@ -868,7 +868,7 @@ namespace DiscImageChef.DiscImages
 
             if(!data && !firstdata) ImageInfo.MediaType = MediaType.CDDA;
             else if(firstaudio && data && sessions.Count > 1 && mode2) ImageInfo.MediaType = MediaType.CDPLUS;
-            else if((firstdata && audio) || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
+            else if(firstdata && audio || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
             else if(!audio) ImageInfo.MediaType = MediaType.CDROM;
             else ImageInfo.MediaType = MediaType.CD;
 
@@ -949,8 +949,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(track.TrackSequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < (track.TrackEndSector - track.TrackStartSector + 1))
-                                return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1)
+                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -969,8 +969,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(track.TrackSequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < (track.TrackEndSector - track.TrackStartSector + 1))
-                                return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
+                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1)
+                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                         }
                     }
                 }
@@ -997,13 +997,13 @@ namespace DiscImageChef.DiscImages
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > (_track.TrackEndSector - _track.TrackStartSector + 1))
+            if(length + sectorAddress > _track.TrackEndSector - _track.TrackStartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
                                                                   length + sectorAddress,
-                                                                  (_track.TrackEndSector - _track.TrackStartSector +
-                                                                   1)));
+                                                                  _track.TrackEndSector - _track.TrackStartSector +
+                                                                  1));
 
             uint sectorOffset;
             uint sectorSize;
@@ -1083,13 +1083,13 @@ namespace DiscImageChef.DiscImages
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > (_track.TrackEndSector - _track.TrackStartSector + 1))
+            if(length + sectorAddress > _track.TrackEndSector - _track.TrackStartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
                                                                   length + sectorAddress,
-                                                                  (_track.TrackEndSector - _track.TrackStartSector +
-                                                                   1)));
+                                                                  _track.TrackEndSector - _track.TrackStartSector +
+                                                                  1));
 
             uint sectorOffset;
             uint sectorSize;
@@ -1257,8 +1257,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(track.TrackSequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < (track.TrackEndSector - track.TrackStartSector + 1))
-                                return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1)
+                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -1285,13 +1285,13 @@ namespace DiscImageChef.DiscImages
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > (_track.TrackEndSector - _track.TrackStartSector + 1))
+            if(length + sectorAddress > _track.TrackEndSector - _track.TrackStartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
                                                                   length + sectorAddress,
-                                                                  (_track.TrackEndSector - _track.TrackStartSector +
-                                                                   1)));
+                                                                  _track.TrackEndSector - _track.TrackStartSector +
+                                                                  1));
 
             uint sectorOffset;
             uint sectorSize;

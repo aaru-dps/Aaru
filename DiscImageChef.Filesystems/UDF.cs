@@ -280,7 +280,7 @@ namespace DiscImageChef.Filesystems
 
                 if(anchor.tag.tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer &&
                    anchor.tag.tagLocation == position &&
-                   (anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start) < partition.End)
+                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start < partition.End)
                 {
                     anchorFound = true;
                     break;
@@ -347,7 +347,7 @@ namespace DiscImageChef.Filesystems
 
                 if(anchor.tag.tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer &&
                    anchor.tag.tagLocation == position &&
-                   (anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start) < partition.End) break;
+                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start < partition.End) break;
             }
 
             ulong count = 0;
@@ -457,7 +457,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ApplicationIdentifier = CurrentEncoding
                 .GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] {'\u0000'});
             xmlFSType.ClusterSize = (int)lvd.logicalBlockSize;
-            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize) /
+            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
                                         (ulong)xmlFSType.ClusterSize);
             xmlFSType.ModificationDate = ECMAToDateTime(lvid.recordingDateTime);
             xmlFSType.ModificationDateSpecified = true;

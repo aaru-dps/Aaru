@@ -68,7 +68,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if((12 + partition.Start) >= partition.End) return false;
+            if(12 + partition.Start >= partition.End) return false;
 
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
             if(vbrSector.Length < 512) return false;
@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Cluster heap starts at sector {0}, contains {1} clusters and is {2}% used",
                             vbr.clusterHeapOffset, vbr.clusterHeapLength, vbr.heapUsage).AppendLine();
             sb.AppendFormat("Root directory starts at cluster {0}", vbr.rootDirectoryCluster).AppendLine();
-            sb.AppendFormat("Filesystem revision is {0}.{1:D2}", (vbr.revision & 0xFF00) >> 8, (vbr.revision & 0xFF))
+            sb.AppendFormat("Filesystem revision is {0}.{1:D2}", (vbr.revision & 0xFF00) >> 8, vbr.revision & 0xFF)
               .AppendLine();
             sb.AppendFormat("Volume serial number: {0:X8}", vbr.volumeSerial).AppendLine();
             sb.AppendFormat("BIOS drive is {0:X2}h", vbr.drive).AppendLine();

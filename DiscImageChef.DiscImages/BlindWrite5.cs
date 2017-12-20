@@ -738,8 +738,8 @@ namespace DiscImageChef.DiscImages
                 long sectorSize = dataFile.Length / dataFile.Sectors;
                 if(sectorSize > 2352)
                 {
-                    if((sectorSize - 2352) == 16) chars.Subchannel = TrackSubchannelType.Q16Interleaved;
-                    else if((sectorSize - 2352) == 96) chars.Subchannel = TrackSubchannelType.PackedInterleaved;
+                    if(sectorSize - 2352 == 16) chars.Subchannel = TrackSubchannelType.Q16Interleaved;
+                    else if(sectorSize - 2352 == 96) chars.Subchannel = TrackSubchannelType.PackedInterleaved;
                     else
                     {
                         DicConsole.ErrorWriteLine("BlindWrite5 found unknown subchannel size: {0}", sectorSize - 2352);
@@ -868,13 +868,13 @@ namespace DiscImageChef.DiscImages
                         foreach(DataFileCharacteristics chars in filePaths)
                         {
                             if(trk.startLba >= chars.StartLba &&
-                               (trk.startLba + trk.sectors) <= (chars.StartLba + chars.Sectors))
+                               trk.startLba + trk.sectors <= chars.StartLba + chars.Sectors)
                             {
                                 track.TrackFilter = chars.FileFilter;
                                 track.TrackFile = chars.FileFilter.GetFilename();
                                 if(trk.startLba >= 0)
                                     track.TrackFileOffset = (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize);
-                                else track.TrackFileOffset = (ulong)((trk.startLba * -1) * chars.SectorSize);
+                                else track.TrackFileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
                                 track.TrackFileType = "BINARY";
                                 if(chars.Subchannel != TrackSubchannelType.None)
                                 {
@@ -903,7 +903,7 @@ namespace DiscImageChef.DiscImages
                         partition.Description = track.TrackDescription;
                         partition.Size = (track.TrackEndSector - track.TrackStartSector) *
                                          (ulong)track.TrackRawBytesPerSector;
-                        partition.Length = (track.TrackEndSector - track.TrackStartSector);
+                        partition.Length = track.TrackEndSector - track.TrackStartSector;
                         partition.Sequence = track.TrackSequence;
                         partition.Offset = offsetBytes;
                         partition.Start = track.TrackStartSector;
@@ -1065,7 +1065,7 @@ namespace DiscImageChef.DiscImages
 
                 if(!data && !firstdata) ImageInfo.MediaType = MediaType.CDDA;
                 else if(firstaudio && data && sessions.Count > 1 && mode2) ImageInfo.MediaType = MediaType.CDPLUS;
-                else if((firstdata && audio) || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
+                else if(firstdata && audio || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
                 else if(!audio) ImageInfo.MediaType = MediaType.CDROM;
                 else ImageInfo.MediaType = MediaType.CD;
             }
@@ -1265,8 +1265,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(track.TrackSequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < (track.TrackEndSector - track.TrackStartSector))
-                                return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector)
+                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -1285,8 +1285,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(track.TrackSequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < (track.TrackEndSector - track.TrackStartSector))
-                                return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
+                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector)
+                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                         }
                     }
                 }
@@ -1315,7 +1315,7 @@ namespace DiscImageChef.DiscImages
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > (_track.TrackEndSector))
+            if(length + sectorAddress > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
@@ -1323,7 +1323,7 @@ namespace DiscImageChef.DiscImages
 
             foreach(DataFileCharacteristics _chars in filePaths)
             {
-                if((long)sectorAddress >= _chars.StartLba && length < ((ulong)_chars.Sectors - sectorAddress))
+                if((long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)
                 {
                     chars = _chars;
                     break;
@@ -1442,7 +1442,7 @@ namespace DiscImageChef.DiscImages
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > (_track.TrackEndSector))
+            if(length + sectorAddress > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
@@ -1450,7 +1450,7 @@ namespace DiscImageChef.DiscImages
 
             foreach(DataFileCharacteristics _chars in filePaths)
             {
-                if((long)sectorAddress >= _chars.StartLba && length < ((ulong)_chars.Sectors - sectorAddress))
+                if((long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)
                 {
                     chars = _chars;
                     break;
@@ -1735,8 +1735,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(track.TrackSequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < (track.TrackEndSector - track.TrackStartSector))
-                                return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector)
+                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -1765,7 +1765,7 @@ namespace DiscImageChef.DiscImages
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > (_track.TrackEndSector))
+            if(length + sectorAddress > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
@@ -1773,7 +1773,7 @@ namespace DiscImageChef.DiscImages
 
             foreach(DataFileCharacteristics _chars in filePaths)
             {
-                if((long)sectorAddress >= _chars.StartLba && length < ((ulong)_chars.Sectors - sectorAddress))
+                if((long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)
                 {
                     chars = _chars;
                     break;

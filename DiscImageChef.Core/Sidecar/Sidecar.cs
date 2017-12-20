@@ -57,7 +57,7 @@ namespace DiscImageChef.Core
             byte[] data;
             long position = 0;
             InitProgress();
-            while(position < (fi.Length - 1048576))
+            while(position < fi.Length - 1048576)
             {
                 data = new byte[1048576];
                 fs.Read(data, 0, 1048576);

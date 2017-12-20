@@ -84,7 +84,7 @@ namespace DiscImageChef.Core.Devices
                 return true;
             }
 
-            if(read6 && !read10 && !read12 && !read16 && blocks > (0x001FFFFF + 1))
+            if(read6 && !read10 && !read12 && !read16 && blocks > 0x001FFFFF + 1)
             {
                 errorMessage =
                     string.Format("Device only supports SCSI READ (6) but has more than {0} blocks ({1} blocks total)",
@@ -93,7 +93,7 @@ namespace DiscImageChef.Core.Devices
             }
 
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-            if(!read16 && blocks > ((long)0xFFFFFFFF + (long)1))
+            if(!read16 && blocks > (long)0xFFFFFFFF + (long)1)
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
             {
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
@@ -406,8 +406,8 @@ namespace DiscImageChef.Core.Devices
             sense = dev.ReadCapacity(out cmdBuf, out senseBuf, timeout, out duration);
             if(!sense)
             {
-                blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3]));
-                blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + (cmdBuf[7]));
+                blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
+                blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
             }
 
             if(sense || blocks == 0xFFFFFFFF)
@@ -433,7 +433,7 @@ namespace DiscImageChef.Core.Devices
                     Array.Copy(cmdBuf, 0, temp, 0, 8);
                     Array.Reverse(temp);
                     blocks = BitConverter.ToUInt64(temp, 0);
-                    blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + (cmdBuf[7]));
+                    blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                 }
             }
 

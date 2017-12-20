@@ -211,7 +211,7 @@ namespace DiscImageChef.DiscImages
             if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads !=
                tmpFooter.bpb.sectors) return false;
 
-            if((tmpFooter.bpb.sectors * tmpFooter.bpb.bps) + Marshal.SizeOf(tmpFooter) != stream.Length)
+            if(tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf(tmpFooter) != stream.Length)
                 return false;
 
             return true;
@@ -242,7 +242,7 @@ namespace DiscImageChef.DiscImages
 
             if(footer.bpb.sptrack * footer.bpb.cylinders * footer.bpb.heads != footer.bpb.sectors) return false;
 
-            if((footer.bpb.sectors * footer.bpb.bps) + Marshal.SizeOf(footer) != stream.Length) return false;
+            if(footer.bpb.sectors * footer.bpb.bps + Marshal.SizeOf(footer) != stream.Length) return false;
 
             ImageInfo.Cylinders = footer.bpb.cylinders;
             ImageInfo.Heads = footer.bpb.heads;

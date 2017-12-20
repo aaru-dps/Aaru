@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems.CPM
                     // Skip first track (first side)
                     for(int m = 0; m < workingDefinition.side2.sectorIds.Length; m++)
                         sectorMask[m + workingDefinition.side1.sectorIds.Length] =
-                            (workingDefinition.side2.sectorIds[m] - workingDefinition.side2.sectorIds[0]) +
+                            workingDefinition.side2.sectorIds[m] - workingDefinition.side2.sectorIds[0] +
                             workingDefinition.side1.sectorIds.Length;
                 }
                 // Head changes after whole side
@@ -85,7 +85,7 @@ namespace DiscImageChef.Filesystems.CPM
                     // Skip first track (first side) and first track (second side)
                     for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
                         sectorMask[m + workingDefinition.side1.sectorIds.Length] =
-                            (workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0]) +
+                            workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0] +
                             workingDefinition.side1.sectorIds.Length + workingDefinition.side2.sectorIds.Length;
 
                     // TODO: Implement CYLINDERS ordering
@@ -128,7 +128,7 @@ namespace DiscImageChef.Filesystems.CPM
                 for(int p = 0; p <= (int)(partition.End - partition.Start); p++)
                 {
                     byte[] readSector =
-                        device.ReadSector((ulong)((int)partition.Start + (p / sectorMask.Length) * sectorMask.Length +
+                        device.ReadSector((ulong)((int)partition.Start + p / sectorMask.Length * sectorMask.Length +
                                                   sectorMask[p % sectorMask.Length]));
                     if(workingDefinition.complement)
                     {
@@ -156,7 +156,7 @@ namespace DiscImageChef.Filesystems.CPM
                 // May it happen? Just in case, CP/M blocks are smaller than physical sectors
                 if(sector.Length > blockSize)
                 {
-                    for(int i = 0; i < (sector.Length / blockSize); i++)
+                    for(int i = 0; i < sector.Length / blockSize; i++)
                     {
                         byte[] tmp = new byte[blockSize];
                         Array.Copy(sector, blockSize * i, tmp, 0, blockSize);
@@ -183,7 +183,7 @@ namespace DiscImageChef.Filesystems.CPM
             DicConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
 
             int dirOff;
-            int dirSectors = ((dpb.drm + 1) * 32) / workingDefinition.bytesPerSector;
+            int dirSectors = (dpb.drm + 1) * 32 / workingDefinition.bytesPerSector;
             if(workingDefinition.sofs > 0) dirOff = workingDefinition.sofs;
             else dirOff = workingDefinition.ofs * workingDefinition.sectorsPerTrack;
 
@@ -235,7 +235,7 @@ namespace DiscImageChef.Filesystems.CPM
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
                         bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
                         //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
-                        int user = (entry.statusUser & 0x0F);
+                        int user = entry.statusUser & 0x0F;
 
                         bool validEntry = true;
 
@@ -259,7 +259,7 @@ namespace DiscImageChef.Filesystems.CPM
                         if(user > 0) filename = string.Format("{0:X1}:{1}", user, filename);
                         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
-                        int entryNo = ((32 * entry.extentCounter) + entry.extentCounterHigh) / (dpb.exm + 1);
+                        int entryNo = (32 * entry.extentCounter + entry.extentCounterHigh) / (dpb.exm + 1);
                         List<ushort> blocks;
                         Dictionary<int, List<ushort>> extentBlocks;
                         FileEntryInfo fInfo;
@@ -332,7 +332,7 @@ namespace DiscImageChef.Filesystems.CPM
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
                         bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
                         //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
-                        int user = (entry.statusUser & 0x0F);
+                        int user = entry.statusUser & 0x0F;
 
                         bool validEntry = true;
 
@@ -356,7 +356,7 @@ namespace DiscImageChef.Filesystems.CPM
                         if(user > 0) filename = string.Format("{0:X1}:{1}", user, filename);
                         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
-                        int entryNo = ((32 * entry.extentCounterHigh) + entry.extentCounter) / (dpb.exm + 1);
+                        int entryNo = (32 * entry.extentCounterHigh + entry.extentCounter) / (dpb.exm + 1);
                         List<ushort> blocks;
                         Dictionary<int, List<ushort>> extentBlocks;
                         FileEntryInfo fInfo;
@@ -427,7 +427,7 @@ namespace DiscImageChef.Filesystems.CPM
                     entry = (PasswordEntry)Marshal.PtrToStructure(dirPtr, typeof(PasswordEntry));
                     Marshal.FreeHGlobal(dirPtr);
 
-                    int user = (entry.userNumber & 0x0F);
+                    int user = entry.userNumber & 0x0F;
 
                     for(int i = 0; i < 8; i++) entry.filename[i] &= 0x7F;
                     for(int i = 0; i < 3; i++) entry.extension[i] &= 0x7F;

@@ -778,7 +778,7 @@ namespace DiscImageChef.Devices.Windows
                             UsbDeviceSpeed speed = (UsbDeviceSpeed)nodeConnection.Speed;
                             port.PortSpeed = speed.ToString();
                             port.PortIsDeviceConnected =
-                                (nodeConnection.ConnectionStatus == (int)UsbConnectionStatus.DeviceConnected);
+                                nodeConnection.ConnectionStatus == (int)UsbConnectionStatus.DeviceConnected;
                             port.PortIsHub = Convert.ToBoolean(nodeConnection.DeviceIsHub);
                             port.PortDeviceDescriptor = nodeConnection.DeviceDescriptor;
 
@@ -964,7 +964,7 @@ namespace DiscImageChef.Devices.Windows
                     // build a request for configuration descriptor 
                     UsbDescriptorRequest dcrRequest = new UsbDescriptorRequest();
                     dcrRequest.ConnectionIndex = PortPortNumber;
-                    dcrRequest.SetupPacket.wValue = (short)((USB_CONFIGURATION_DESCRIPTOR_TYPE << 8));
+                    dcrRequest.SetupPacket.wValue = (short)(USB_CONFIGURATION_DESCRIPTOR_TYPE << 8);
                     dcrRequest.SetupPacket.wLength = (short)(nBytes - Marshal.SizeOf(dcrRequest));
                     dcrRequest.SetupPacket.wIndex = 0;
                     // Geez, I wish C# had a Marshal.MemSet() method 

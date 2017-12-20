@@ -224,7 +224,7 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Media card is write protected");
 
                         ushort specificData =
-                            (ushort)((errorRegisters.cylinderHigh * 0x100) + errorRegisters.cylinderLow);
+                            (ushort)(errorRegisters.cylinderHigh * 0x100 + errorRegisters.cylinderLow);
                         if(specificData != 0) DicConsole.WriteLine("Card specific data: 0x{0:X4}", specificData);
                     }
 
@@ -1319,18 +1319,18 @@ namespace DiscImageChef.Commands
                                 DicConsole.WriteLine("Drive has loaded a total of {0} discs", discs);
                                 DicConsole
                                     .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs",
-                                               cdReadTime / 3600, (cdReadTime / 60) % 60, cdReadTime % 60);
+                                               cdReadTime / 3600, cdReadTime / 60 % 60, cdReadTime % 60);
                                 DicConsole
                                     .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
-                                               cdWriteTime / 3600, (cdWriteTime / 60) % 60, cdWriteTime % 60);
+                                               cdWriteTime / 3600, cdWriteTime / 60 % 60, cdWriteTime % 60);
                                 if(plxtDvd)
                                 {
                                     DicConsole
                                         .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
-                                                   dvdReadTime / 3600, (dvdReadTime / 60) % 60, dvdReadTime % 60);
+                                                   dvdReadTime / 3600, dvdReadTime / 60 % 60, dvdReadTime % 60);
                                     DicConsole
                                         .WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs",
-                                                   dvdWriteTime / 3600, (dvdWriteTime / 60) % 60, dvdWriteTime % 60);
+                                                   dvdWriteTime / 3600, dvdWriteTime / 60 % 60, dvdWriteTime % 60);
                                 }
                             }
 

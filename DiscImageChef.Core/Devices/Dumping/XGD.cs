@@ -134,7 +134,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + (readBuffer[3]));
+            totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
             dumpLog.WriteLine("Reading Physical Format Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out duration);
@@ -198,7 +198,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            gameSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + (readBuffer[3])) +
+            gameSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) +
                        1;
             DicConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors", gameSize);
 
@@ -222,7 +222,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + (readBuffer[3]));
+            totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
             dumpLog.WriteLine("Reading Physical Format Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out duration);
@@ -389,7 +389,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    if((extentStart - i) < blocksToRead) blocksToRead = (uint)(extentStart - i);
+                    if(extentStart - i < blocksToRead) blocksToRead = (uint)(extentStart - i);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                     if(currentSpeed > maxSpeed && currentSpeed != 0) maxSpeed = currentSpeed;
@@ -435,7 +435,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                    currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
+                    currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (cmdDuration / (double)1000);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
                     blocksToRead = saveBlocksToRead;
                     currentSector = i + 1;
@@ -452,7 +452,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    if((extentEnd - i) < blocksToRead) blocksToRead = (uint)(extentEnd - i) + 1;
+                    if(extentEnd - i < blocksToRead) blocksToRead = (uint)(extentEnd - i) + 1;
 
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
@@ -468,7 +468,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // Middle Zone D
             dumpLog.WriteLine("Writing Middle Zone D (empty).");
-            for(ulong middle = currentSector - blocks - 1; middle < (middleZone - 1); middle += blocksToRead)
+            for(ulong middle = currentSector - blocks - 1; middle < middleZone - 1; middle += blocksToRead)
             {
                 if(aborted)
                 {
@@ -477,7 +477,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     break;
                 }
 
-                if(((middleZone - 1) - middle) < blocksToRead) blocksToRead = (uint)((middleZone - 1) - middle);
+                if(middleZone - 1 - middle < blocksToRead) blocksToRead = (uint)(middleZone - 1 - middle);
 
                 DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", middle + currentSector, totalSize,
                                  currentSpeed);
@@ -511,7 +511,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // Video Layer 1
             dumpLog.WriteLine("Reading Video Layer 1.");
-            for(ulong l1 = currentSector - blocks - middleZone + l0Video; l1 < (l0Video + l1Video); l1 += blocksToRead)
+            for(ulong l1 = currentSector - blocks - middleZone + l0Video; l1 < l0Video + l1Video; l1 += blocksToRead)
             {
                 if(aborted)
                 {
@@ -520,7 +520,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     break;
                 }
 
-                if(((l0Video + l1Video) - l1) < blocksToRead) blocksToRead = (uint)((l0Video + l1Video) - l1);
+                if(l0Video + l1Video - l1 < blocksToRead) blocksToRead = (uint)(l0Video + l1Video - l1);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > maxSpeed && currentSpeed != 0) maxSpeed = currentSpeed;
@@ -566,7 +566,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
+                currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (cmdDuration / (double)1000);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
                 currentSector += blocksToRead;
                 resume.NextBlock = currentSector;
@@ -593,11 +593,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             mhddLog.Close();
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
+                         (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), devicePath);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                              (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
+                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
             #region Error handling
             if(resume.BadBlocks.Count > 0 && !aborted)
@@ -778,7 +778,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     break;
                 }
 
-                if((blocks - i) < blocksToRead) blocksToRead = (uint)(blocks - i);
+                if(blocks - i < blocksToRead) blocksToRead = (uint)(blocks - i);
 
                 DicConsole.Write("\rChecksumming sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
 
@@ -792,7 +792,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 totalChkDuration += chkDuration;
 
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (chkDuration / (double)1000);
+                currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (chkDuration / (double)1000);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
             }
 
@@ -801,7 +801,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             end = DateTime.UtcNow;
             dumpLog.WriteLine("Checksum finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                              (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
+                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins(encoding);

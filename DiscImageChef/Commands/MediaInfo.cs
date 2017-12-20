@@ -237,8 +237,8 @@ namespace DiscImageChef.Commands
                 {
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readcapacity.bin", "SCSI READ CAPACITY",
                                      cmdBuf);
-                    blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3]));
-                    blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + (cmdBuf[7]));
+                    blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
+                    blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                 }
 
                 if(sense || blocks == 0xFFFFFFFF)
@@ -264,7 +264,7 @@ namespace DiscImageChef.Commands
                         Array.Copy(cmdBuf, 0, temp, 0, 8);
                         Array.Reverse(temp);
                         blocks = BitConverter.ToUInt64(temp, 0);
-                        blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + (cmdBuf[7]));
+                        blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                     }
                 }
 
@@ -1234,7 +1234,7 @@ namespace DiscImageChef.Commands
             }
 
             #region Xbox
-            if((dskType == MediaType.XGD || dskType == MediaType.XGD2 || dskType == MediaType.XGD3))
+            if(dskType == MediaType.XGD || dskType == MediaType.XGD2 || dskType == MediaType.XGD3)
             {
                 // We need to get INQUIRY to know if it is a Kreon drive
                 byte[] inqBuffer;
@@ -1275,7 +1275,7 @@ namespace DiscImageChef.Commands
                             return;
                         }
 
-                        totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3]));
+                        totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                       MmcDiscStructureFormat.PhysicalInformation, 0, 0, out duration);
                         if(sense)
@@ -1306,7 +1306,7 @@ namespace DiscImageChef.Commands
                             return;
                         }
 
-                        gameSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3])) + 1;
+                        gameSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) + 1;
                         DicConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors",
                                                   gameSize);
 
@@ -1326,7 +1326,7 @@ namespace DiscImageChef.Commands
                             return;
                         }
 
-                        totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3]));
+                        totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                       MmcDiscStructureFormat.PhysicalInformation, 0, 0, out duration);
                         if(sense)

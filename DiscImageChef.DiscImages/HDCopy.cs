@@ -215,12 +215,12 @@ namespace DiscImageChef.DiscImages
              * We know the image is from a DOS floppy disk, so assume
              * some sane cylinder and sectors-per-track count.
              */
-            if((fheader.sectorsPerTrack < 8) || (fheader.sectorsPerTrack > 40)) return false;
+            if(fheader.sectorsPerTrack < 8 || fheader.sectorsPerTrack > 40) return false;
 
-            if((fheader.lastCylinder < 37) || (fheader.lastCylinder >= 82)) return false;
+            if(fheader.lastCylinder < 37 || fheader.lastCylinder >= 82) return false;
 
             // Validate the trackmap. First two tracks need to be present
-            if((fheader.trackMap[0] != 1) || (fheader.trackMap[1] != 1)) return false;
+            if(fheader.trackMap[0] != 1 || fheader.trackMap[1] != 1) return false;
 
             // all other tracks must be either present (=1) or absent (=0)
             for(int i = 0; i < 2 * 82; i++) { if(fheader.trackMap[i] > 1) return false; }
@@ -375,7 +375,7 @@ namespace DiscImageChef.DiscImages
         {
             foreach(MediaTypeTableEntry ent in mediaTypes)
             {
-                if((ent.Tracks == ImageInfo.Cylinders) && (ent.SectorsPerTrack == ImageInfo.SectorsPerTrack))
+                if(ent.Tracks == ImageInfo.Cylinders && ent.SectorsPerTrack == ImageInfo.SectorsPerTrack)
                     return ent.MediaType;
             }
 

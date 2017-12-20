@@ -308,8 +308,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         sense = dev.ScsiInquiry(out byte[] inqBuf, out senseBuf);
 
                         if(sense || !Decoders.SCSI.Inquiry.Decode(inqBuf).HasValue ||
-                           (Decoders.SCSI.Inquiry.Decode(inqBuf).HasValue &&
-                            !Decoders.SCSI.Inquiry.Decode(inqBuf).Value.KreonPresent))
+                           Decoders.SCSI.Inquiry.Decode(inqBuf).HasValue &&
+                           !Decoders.SCSI.Inquiry.Decode(inqBuf).Value.KreonPresent)
                         {
                             dumpLog.WriteLine("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
                             throw new

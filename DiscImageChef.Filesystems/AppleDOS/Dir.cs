@@ -80,7 +80,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         Errno ReadCatalog()
         {
             MemoryStream catalogMs = new MemoryStream();
-            ulong lba = (ulong)((vtoc.catalogTrack * sectorsPerTrack) + vtoc.catalogSector);
+            ulong lba = (ulong)(vtoc.catalogTrack * sectorsPerTrack + vtoc.catalogSector);
             totalFileEntries = 0;
             catalogCache = new Dictionary<string, ushort>();
             fileTypeCache = new Dictionary<string, byte>();
@@ -131,7 +131,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                     }
                 }
 
-                lba = (ulong)((catSector.trackOfNext * sectorsPerTrack) + catSector.sectorOfNext);
+                lba = (ulong)(catSector.trackOfNext * sectorsPerTrack + catSector.sectorOfNext);
 
                 if(lba > device.ImageInfo.Sectors) break;
             }

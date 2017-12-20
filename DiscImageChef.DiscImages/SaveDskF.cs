@@ -207,7 +207,7 @@ namespace DiscImageChef.DiscImages
             while(b >= 0);
 
             // In case there is omitted data
-            sectors = (header.sectorsPerTrack) * header.heads * header.cylinders;
+            sectors = header.sectorsPerTrack * header.heads * header.cylinders;
 
             DicConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", calculatedChk,
                                       calculatedChk == header.checksum);

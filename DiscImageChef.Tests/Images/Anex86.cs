@@ -89,7 +89,7 @@ namespace DiscImageChef.Tests.Images
                 {
                     byte[] sector;
 
-                    if((image.ImageInfo.Sectors - doneSectors) >= sectorsToRead)
+                    if(image.ImageInfo.Sectors - doneSectors >= sectorsToRead)
                     {
                         sector = image.ReadSectors(doneSectors, sectorsToRead);
                         doneSectors += sectorsToRead;
@@ -97,7 +97,7 @@ namespace DiscImageChef.Tests.Images
                     else
                     {
                         sector = image.ReadSectors(doneSectors, (uint)(image.ImageInfo.Sectors - doneSectors));
-                        doneSectors += (image.ImageInfo.Sectors - doneSectors);
+                        doneSectors += image.ImageInfo.Sectors - doneSectors;
                     }
 
                     ctx.Update(sector);

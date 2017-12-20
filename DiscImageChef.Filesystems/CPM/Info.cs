@@ -194,9 +194,9 @@ namespace DiscImageChef.Filesystems.CPM
                     Marshal.FreeHGlobal(amsPtr);
 
                     // Check that format byte and sidedness indicate the same number of sizes
-                    if((amsSb.format == 0 && (amsSb.sidedness & 0x02) == 0) ||
-                       (amsSb.format == 2 && (amsSb.sidedness & 0x02) == 1) ||
-                       (amsSb.format == 2 && (amsSb.sidedness & 0x02) == 2))
+                    if(amsSb.format == 0 && (amsSb.sidedness & 0x02) == 0 ||
+                       amsSb.format == 2 && (amsSb.sidedness & 0x02) == 1 ||
+                       amsSb.format == 2 && (amsSb.sidedness & 0x02) == 2)
                     {
                         // Calculate device limits
                         sides = (ulong)(amsSb.format == 0 ? 1 : 2);
@@ -207,7 +207,7 @@ namespace DiscImageChef.Filesystems.CPM
                         if(sectorSize == imagePlugin.GetSectorSize() && sectorCount == imagePlugin.GetSectors())
                         {
                             cpmFound = true;
-                            firstDirectorySector = (ulong)((amsSb.off * amsSb.spt));
+                            firstDirectorySector = (ulong)(amsSb.off * amsSb.spt);
 
                             // Build a DiscParameterBlock
                             dpb = new DiscParameterBlock();
@@ -233,7 +233,7 @@ namespace DiscImageChef.Filesystems.CPM
                             for(int i = 0; i < dpb.psh; i++) dpb.phm += (byte)Math.Pow(2, i);
 
                             dpb.spt = (ushort)(amsSb.spt * (sectorSize / 128));
-                            uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / sectorSize);
+                            uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / sectorSize);
                             directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start,
                                                                 directoryLength);
 
@@ -314,7 +314,7 @@ namespace DiscImageChef.Filesystems.CPM
                            sectorsInPartition + partition.Start <= partition.End)
                         {
                             cpmFound = true;
-                            firstDirectorySector = (ulong)((hddSb.off * hddSb.sectorsPerTrack));
+                            firstDirectorySector = (ulong)(hddSb.off * hddSb.sectorsPerTrack);
 
                             // Build a DiscParameterBlock
                             dpb = new DiscParameterBlock();
@@ -330,7 +330,7 @@ namespace DiscImageChef.Filesystems.CPM
                             dpb.phm = 0; // Needed?
                             dpb.psh = 0; // Needed?
                             dpb.spt = hddSb.spt;
-                            uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / sectorSize);
+                            uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / sectorSize);
                             directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start,
                                                                 directoryLength);
                             DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
@@ -760,7 +760,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                     if(cpmFound)
                     {
-                        uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / imagePlugin.GetSectorSize());
+                        uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / imagePlugin.GetSectorSize());
                         directory = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength);
                         DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
                     }
@@ -799,7 +799,7 @@ namespace DiscImageChef.Filesystems.CPM
                                 if(def.sofs != 0) offset = (ulong)def.sofs;
                                 else offset = (ulong)(def.ofs * def.sectorsPerTrack);
 
-                                int dirLen = ((def.drm + 1) * 32) / def.bytesPerSector;
+                                int dirLen = (def.drm + 1) * 32 / def.bytesPerSector;
 
                                 if(def.sides == 1)
                                 {
@@ -819,7 +819,7 @@ namespace DiscImageChef.Filesystems.CPM
                                         // Skip first track (first side)
                                         for(int m = 0; m < def.side2.sectorIds.Length; m++)
                                             sectorMask[m + def.side1.sectorIds.Length] =
-                                                (def.side2.sectorIds[m] - def.side2.sectorIds[0]) +
+                                                def.side2.sectorIds[m] - def.side2.sectorIds[0] +
                                                 def.side1.sectorIds.Length;
                                     }
                                     // Head changes after whole side
@@ -831,7 +831,7 @@ namespace DiscImageChef.Filesystems.CPM
                                         // Skip first track (first side) and first track (second side)
                                         for(int m = 0; m < def.side1.sectorIds.Length; m++)
                                             sectorMask[m + def.side1.sectorIds.Length] =
-                                                (def.side1.sectorIds[m] - def.side1.sectorIds[0]) +
+                                                def.side1.sectorIds[m] - def.side1.sectorIds[0] +
                                                 def.side1.sectorIds.Length + def.side2.sectorIds.Length;
                                     }
                                     // TODO: Implement COLUMBIA ordering
@@ -865,7 +865,7 @@ namespace DiscImageChef.Filesystems.CPM
                                 {
                                     byte[] dirSector =
                                         imagePlugin.ReadSector((ulong)((int)offset + (int)partition.Start +
-                                                                       (p / sectorMask.Length) * sectorMask.Length +
+                                                                       p / sectorMask.Length * sectorMask.Length +
                                                                        sectorMask[p % sectorMask.Length]));
                                     ms.Write(dirSector, 0, dirSector.Length);
                                 }
@@ -942,7 +942,7 @@ namespace DiscImageChef.Filesystems.CPM
                                             break;
                                     }
 
-                                    dpb.spt = (ushort)((def.sectorsPerTrack * def.bytesPerSector) / 128);
+                                    dpb.spt = (ushort)(def.sectorsPerTrack * def.bytesPerSector / 128);
                                     cpmFound = true;
                                     workingDefinition = def;
 
@@ -985,7 +985,7 @@ namespace DiscImageChef.Filesystems.CPM
                 sb.AppendFormat("Identified as {0}", workingDefinition.comment).AppendLine();
             sb.AppendFormat("Volume block is {0} bytes", 128 << dpb.bsh).AppendLine();
             if(dpb.dsm > 0)
-                sb.AppendFormat("Volume contains {0} blocks ({1} bytes)", dpb.dsm, (dpb.dsm) * (128 << dpb.bsh))
+                sb.AppendFormat("Volume contains {0} blocks ({1} bytes)", dpb.dsm, dpb.dsm * (128 << dpb.bsh))
                   .AppendLine();
             sb.AppendFormat("Volume contains {0} directory entries", dpb.drm + 1).AppendLine();
             if(workingDefinition.sofs > 0)
@@ -1051,7 +1051,7 @@ namespace DiscImageChef.Filesystems.CPM
                 sb.AppendFormat("Volume updated on {0}", DateHandlers.CPMToDateTime(labelUpdateDate)).AppendLine();
 
             xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.Bootable |= (workingDefinition.sofs > 0 || workingDefinition.ofs > 0);
+            xmlFSType.Bootable |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
             xmlFSType.ClusterSize = 128 << dpb.bsh;
             if(dpb.dsm > 0) xmlFSType.Clusters = dpb.dsm;
             else xmlFSType.Clusters = (long)(partition.End - partition.Start);

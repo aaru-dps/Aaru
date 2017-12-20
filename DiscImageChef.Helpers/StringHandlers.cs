@@ -65,7 +65,7 @@ namespace DiscImageChef
                 {
                     if(twoBytes)
                     {
-                        if((i + 1) < CString.Length && CString[i + 1] == 0)
+                        if(i + 1 < CString.Length && CString[i + 1] == 0)
                         {
                             len++;
                             break;

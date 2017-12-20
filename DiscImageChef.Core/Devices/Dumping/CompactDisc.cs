@@ -466,7 +466,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                    currentSpeed = ((double)blockSize / (double)1048576) / (cmdDuration / (double)1000);
+                    currentSpeed = (double)blockSize / (double)1048576 / (cmdDuration / (double)1000);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
                 }
 
@@ -562,7 +562,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 alcohol.SetTrackSizes((byte)(t + 1), sectorSize, tracks[t].StartSector, dumpFile.Position,
-                                      (tracks[t].EndSector - tracks[t].StartSector + 1));
+                                      tracks[t].EndSector - tracks[t].StartSector + 1);
 
                 bool checkedDataFormat = false;
 
@@ -577,7 +577,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     double cmdDuration = 0;
 
-                    if(((ulong)tracks[t].EndSector + 1 - i) < blocksToRead)
+                    if((ulong)tracks[t].EndSector + 1 - i < blocksToRead)
                         blocksToRead = (uint)((ulong)tracks[t].EndSector + 1 - i);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
@@ -664,7 +664,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                    currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
+                    currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (cmdDuration / (double)1000);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
                     resume.NextBlock = i + blocksToRead;
                 }
@@ -708,11 +708,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             mhddLog.Close();
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
+                         (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), devicePath);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                              (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000));
+                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
             #region Compact Disc Error handling
             if(resume.BadBlocks.Count > 0 && !aborted)
@@ -746,7 +746,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         totalDuration += cmdDuration;
                     }
 
-                    if((!sense && !dev.Error) || runningPersistent)
+                    if(!sense && !dev.Error || runningPersistent)
                     {
                         if(!sense && !dev.Error)
                         {
@@ -862,7 +862,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    if(((ulong)tracks[t].EndSector + 1 - i) < blocksToRead)
+                    if((ulong)tracks[t].EndSector + 1 - i < blocksToRead)
                         blocksToRead = (uint)((ulong)tracks[t].EndSector + 1 - i);
 
                     DicConsole.Write("\rChecksumming sector {0} of {1} at track {3} ({2:F3} MiB/sec.)", i, blocks,
@@ -896,7 +896,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     totalChkDuration += chkDuration;
 
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                    currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (chkDuration / (double)1000);
+                    currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (chkDuration / (double)1000);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
                 }
 
@@ -910,7 +910,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             end = DateTime.UtcNow;
             dumpLog.WriteLine("Checksum finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                              (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalChkDuration / 1000));
+                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
             // TODO: Correct this
             sidecar.OpticalDisc[0].Checksums = dataChk.End().ToArray();

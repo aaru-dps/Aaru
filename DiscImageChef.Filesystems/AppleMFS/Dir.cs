@@ -119,10 +119,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
                                               StringHandlers.PascalToString(entry.flNam, CurrentEncoding));
                 }
 
-                offset += (50 + entry.flNam.Length);
+                offset += 50 + entry.flNam.Length;
 
                 // "Entries are always an integral number of words"
-                if((offset % 2) != 0) offset++;
+                if(offset % 2 != 0) offset++;
 
                 // TODO: "Entries don't cross logical block boundaries"
             }

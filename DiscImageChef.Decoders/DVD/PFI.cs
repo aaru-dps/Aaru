@@ -1182,8 +1182,8 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD-R and DVD-RW
-            if((pfi.DiskCategory == DiskCategory.DVDR && pfi.PartVersion < 6) ||
-               (pfi.DiskCategory == DiskCategory.DVDRW && pfi.PartVersion < 3))
+            if(pfi.DiskCategory == DiskCategory.DVDR && pfi.PartVersion < 6 ||
+               pfi.DiskCategory == DiskCategory.DVDRW && pfi.PartVersion < 3)
             {
                 pfi.CurrentBorderOutSector =
                     (uint)((response[36] << 24) + (response[37] << 16) + (response[38] << 8) + response[39]);
@@ -1302,8 +1302,8 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD-R DL and DVD-RW DL
-            if((pfi.DiskCategory == DiskCategory.DVDR && pfi.PartVersion == 6) ||
-               (pfi.DiskCategory == DiskCategory.DVDRW && pfi.PartVersion == 3))
+            if(pfi.DiskCategory == DiskCategory.DVDR && pfi.PartVersion == 6 ||
+               pfi.DiskCategory == DiskCategory.DVDRW && pfi.PartVersion == 3)
             {
                 pfi.MaxRecordingSpeed = (DVDRecordingSpeed)response[21];
                 pfi.MinRecordingSpeed = (DVDRecordingSpeed)response[22];
@@ -1616,8 +1616,8 @@ namespace DiscImageChef.Decoders.DVD
                 }
             }
 
-            if((decoded.DiskCategory == DiskCategory.DVDR && decoded.PartVersion < 6) ||
-               (decoded.DiskCategory == DiskCategory.DVDRW && decoded.PartVersion < 3))
+            if(decoded.DiskCategory == DiskCategory.DVDR && decoded.PartVersion < 6 ||
+               decoded.DiskCategory == DiskCategory.DVDRW && decoded.PartVersion < 3)
             {
                 sb.AppendFormat("Current Border-Out first sector is PSN {0:X}h", decoded.CurrentBorderOutSector)
                   .AppendLine();
@@ -1634,8 +1634,8 @@ namespace DiscImageChef.Decoders.DVD
                 sb.AppendFormat("Disc product revision is {0}", decoded.ProductRevision).AppendLine();
             }
 
-            if((decoded.DiskCategory == DiskCategory.DVDR && decoded.PartVersion >= 6) ||
-               (decoded.DiskCategory == DiskCategory.DVDRW && decoded.PartVersion >= 3))
+            if(decoded.DiskCategory == DiskCategory.DVDR && decoded.PartVersion >= 6 ||
+               decoded.DiskCategory == DiskCategory.DVDRW && decoded.PartVersion >= 3)
             {
                 sb.AppendFormat("Current RMD in extra Border zone starts at PSN {0:X}h",
                                 decoded.CurrentRMDExtraBorderPSN).AppendLine();

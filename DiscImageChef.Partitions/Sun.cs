@@ -61,7 +61,7 @@ namespace DiscImageChef.Partitions
         const int LEN_DKL_PAD = DK_LABEL_SIZE - (LEN_DKL_ASCII + NDKMAP * 8 + 14 * 2);
         /// <summary>Size of padding in Solaris disk label with 8 partitions</summary>
         const int LEN_DKL_PAD8 = DK_LABEL_SIZE - (LEN_DKL_ASCII + 136 + // sizeof(dk_vtoc8)
-                                                  (NDKMAP * 8) + 14 * 2 + 2 * 2);
+                                                  NDKMAP * 8 + 14 * 2 + 2 * 2);
         const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456 + // sizeof(dk_vtoc16)
                                                    4 * 4 + 12 * 2 + 2 * 2);
 
@@ -197,12 +197,12 @@ namespace DiscImageChef.Partitions
                         CommonTypes.Partition part = new CommonTypes.Partition
                         {
                             Size = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                            Length = (ulong)((dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE) / imagePlugin.GetSectorSize()),
+                            Length = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.GetSectorSize()),
                             Sequence = (ulong)i,
                             Offset =
                                 ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
-                            Start = (((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                                     DK_LABEL_SIZE) / imagePlugin.GetSectorSize(),
+                            Start = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
+                                    DK_LABEL_SIZE / imagePlugin.GetSectorSize(),
                             Type = "SunOS partition",
                             Scheme = Name
                         };
@@ -265,13 +265,13 @@ namespace DiscImageChef.Partitions
                         {
                             Description = SunFlagsToString(dkl8.dkl_vtoc.v_part[i].p_flag),
                             Size = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                            Length = (ulong)((dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE) / imagePlugin.GetSectorSize()),
+                            Length = (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.GetSectorSize()),
                             Sequence = (ulong)i,
                             Offset =
                                 ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
                             Start =
-                                (((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                                 DK_LABEL_SIZE) / imagePlugin.GetSectorSize(),
+                                ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
+                                DK_LABEL_SIZE / imagePlugin.GetSectorSize(),
                             Type = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
                             Scheme = Name
                         };
@@ -336,13 +336,13 @@ namespace DiscImageChef.Partitions
                             Description = SunFlagsToString(dkl16.dkl_vtoc.v_part[i].p_flag),
                             Size = (ulong)dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz,
                             Length =
-                                (ulong)((dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz) /
+                                (ulong)(dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz /
                                         imagePlugin.GetSectorSize()),
                             Sequence = (ulong)i,
                             Offset =
                                 ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz,
                             Start =
-                                (((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz) /
+                                ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz /
                                 imagePlugin.GetSectorSize(),
                             Type = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag),
                             Scheme = Name

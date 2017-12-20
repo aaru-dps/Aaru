@@ -67,11 +67,11 @@ namespace DiscImageChef.Filesystems
         {
             if(partition.Start != 0) return false;
 
-            if((imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) < 0x50000) return false;
+            if(imagePlugin.GetSectors() * imagePlugin.GetSectorSize() < 0x50000) return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] header = imagePlugin.ReadSectors(0, (0x50000 / imagePlugin.GetSectorSize()));
+            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.GetSectorSize());
 
             uint magicGC = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
@@ -91,7 +91,7 @@ namespace DiscImageChef.Filesystems
             NintendoFields fields = new NintendoFields();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] header = imagePlugin.ReadSectors(0, (0x50000 / imagePlugin.GetSectorSize()));
+            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.GetSectorSize());
 
             bool wii = false;
 
@@ -140,7 +140,7 @@ namespace DiscImageChef.Filesystems
 
                 for(int i = 0; i < fields.firstPartitions.Length; i++)
                 {
-                    if((offset1 + i * 8 + 8) < 0x50000)
+                    if(offset1 + i * 8 + 8 < 0x50000)
                     {
                         fields.firstPartitions[i].offset =
                             BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 0)) << 2;
@@ -151,7 +151,7 @@ namespace DiscImageChef.Filesystems
 
                 for(int i = 0; i < fields.secondPartitions.Length; i++)
                 {
-                    if((offset1 + i * 8 + 8) < 0x50000)
+                    if(offset1 + i * 8 + 8 < 0x50000)
                     {
                         fields.firstPartitions[i].offset =
                             BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 0)) << 2;
@@ -162,7 +162,7 @@ namespace DiscImageChef.Filesystems
 
                 for(int i = 0; i < fields.thirdPartitions.Length; i++)
                 {
-                    if((offset1 + i * 8 + 8) < 0x50000)
+                    if(offset1 + i * 8 + 8 < 0x50000)
                     {
                         fields.firstPartitions[i].offset =
                             BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 0)) << 2;
@@ -173,7 +173,7 @@ namespace DiscImageChef.Filesystems
 
                 for(int i = 0; i < fields.fourthPartitions.Length; i++)
                 {
-                    if((offset1 + i * 8 + 8) < 0x50000)
+                    if(offset1 + i * 8 + 8 < 0x50000)
                     {
                         fields.firstPartitions[i].offset =
                             BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 0)) << 2;
@@ -317,7 +317,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
             xmlFSType.Bootable = true;
-            xmlFSType.Clusters = (long)((imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) / 2048);
+            xmlFSType.Clusters = (long)(imagePlugin.GetSectors() * imagePlugin.GetSectorSize() / 2048);
             xmlFSType.ClusterSize = 2048;
             if(wii) xmlFSType.Type = "Nintendo Wii filesystem";
             else xmlFSType.Type = "Nintendo Gamecube filesystem";

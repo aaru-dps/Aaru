@@ -114,7 +114,7 @@ namespace DiscImageChef.Commands
                     List<Track> inputTracks = inputFormat.GetTracks();
                     foreach(Track currentTrack in inputTracks)
                     {
-                        if((currentTrack.TrackStartSector - previousTrackEnd) != 0 && options.WholeDisc)
+                        if(currentTrack.TrackStartSector - previousTrackEnd != 0 && options.WholeDisc)
                         {
                             for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
                             {
@@ -141,7 +141,7 @@ namespace DiscImageChef.Commands
                         {
                             byte[] sector;
 
-                            if((sectors - doneSectors) >= SECTORS_TO_READ)
+                            if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
                                 sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ,
                                                                  currentTrack.TrackSequence);
@@ -155,7 +155,7 @@ namespace DiscImageChef.Commands
                                                                  currentTrack.TrackSequence);
                                 DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
                                                  currentTrack.TrackSequence, doneSectors + (sectors - doneSectors));
-                                doneSectors += (sectors - doneSectors);
+                                doneSectors += sectors - doneSectors;
                             }
 
                             if(options.WholeDisc) mediaChecksum.Update(sector);
@@ -175,7 +175,7 @@ namespace DiscImageChef.Commands
                         previousTrackEnd = currentTrack.TrackEndSector;
                     }
 
-                    if((inputFormat.GetSectors() - previousTrackEnd) != 0 && options.WholeDisc)
+                    if(inputFormat.GetSectors() - previousTrackEnd != 0 && options.WholeDisc)
                     {
                         for(ulong i = previousTrackEnd + 1; i < inputFormat.GetSectors(); i++)
                         {
@@ -210,7 +210,7 @@ namespace DiscImageChef.Commands
                 {
                     byte[] sector;
 
-                    if((sectors - doneSectors) >= SECTORS_TO_READ)
+                    if(sectors - doneSectors >= SECTORS_TO_READ)
                     {
                         sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
                         DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors, doneSectors + SECTORS_TO_READ);
@@ -221,7 +221,7 @@ namespace DiscImageChef.Commands
                         sector = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
                         DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors,
                                          doneSectors + (sectors - doneSectors));
-                        doneSectors += (sectors - doneSectors);
+                        doneSectors += sectors - doneSectors;
                     }
 
                     mediaChecksum.Update(sector);

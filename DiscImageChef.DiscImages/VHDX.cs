@@ -649,20 +649,20 @@ namespace DiscImageChef.DiscImages
                 hasParent = true;
             }
 
-            chunkRatio = (long)((Math.Pow(2, 23) * logicalSectorSize) / vFileParms.blockSize);
+            chunkRatio = (long)(Math.Pow(2, 23) * logicalSectorSize / vFileParms.blockSize);
             dataBlocks = virtualDiskSize / vFileParms.blockSize;
-            if((virtualDiskSize % vFileParms.blockSize) > 0) dataBlocks++;
+            if(virtualDiskSize % vFileParms.blockSize > 0) dataBlocks++;
 
             long batEntries;
             if(hasParent)
             {
                 long sectorBitmapBlocks = (long)dataBlocks / chunkRatio;
-                if((dataBlocks % (ulong)chunkRatio) > 0) sectorBitmapBlocks++;
+                if(dataBlocks % (ulong)chunkRatio > 0) sectorBitmapBlocks++;
                 sectorBitmapPointers = new ulong[sectorBitmapBlocks];
 
                 batEntries = sectorBitmapBlocks * (chunkRatio - 1);
             }
-            else batEntries = (long)(dataBlocks + ((dataBlocks - 1) / (ulong)chunkRatio));
+            else batEntries = (long)(dataBlocks + (dataBlocks - 1) / (ulong)chunkRatio);
 
             DicConsole.DebugWriteLine("VHDX plugin", "Reading BAT");
 
@@ -739,7 +739,7 @@ namespace DiscImageChef.DiscImages
 
             // TODO: Separate image application from version, need several samples.
 
-            ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+            ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
             ImageInfo.Heads = 16;
             ImageInfo.SectorsPerTrack = 63;
 
@@ -754,7 +754,7 @@ namespace DiscImageChef.DiscImages
 
             if(index > sectorBitmap.LongLength) return false;
 
-            return ((sectorBitmap[index] & val) == val);
+            return (sectorBitmap[index] & val) == val;
         }
 
         public override bool ImageHasPartitions()
@@ -832,8 +832,8 @@ namespace DiscImageChef.DiscImages
 
             if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
 
-            ulong index = (sectorAddress * logicalSectorSize) / vFileParms.blockSize;
-            ulong secOff = (sectorAddress * logicalSectorSize) % vFileParms.blockSize;
+            ulong index = sectorAddress * logicalSectorSize / vFileParms.blockSize;
+            ulong secOff = sectorAddress * logicalSectorSize % vFileParms.blockSize;
 
             ulong blkPtr = blockAllocationTable[index];
             ulong blkFlags = blkPtr & BAT_FLAGS_MASK;
@@ -859,7 +859,7 @@ namespace DiscImageChef.DiscImages
             if(!blockCache.TryGetValue(blkPtr & BAT_FILE_OFFSET_MASK, out block))
             {
                 block = new byte[vFileParms.blockSize];
-                imageStream.Seek((long)((blkPtr & BAT_FILE_OFFSET_MASK)), SeekOrigin.Begin);
+                imageStream.Seek((long)(blkPtr & BAT_FILE_OFFSET_MASK), SeekOrigin.Begin);
                 imageStream.Read(block, 0, block.Length);
 
                 if(blockCache.Count >= maxBlockCache) blockCache.Clear();

@@ -173,7 +173,7 @@ namespace DiscImageChef
         {
             int year = ((dateRecord & 0xFE00) >> 9) + 1900;
             int day = (dateRecord & 0x01F0) >> 4;
-            int month = (dateRecord & 0x000F);
+            int month = dateRecord & 0x000F;
 
             DicConsole.DebugWriteLine("UCSDPascalToDateTime handler",
                                       "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year,
@@ -252,7 +252,7 @@ namespace DiscImageChef
 
         public static DateTime OS9ToDateTime(byte[] date)
         {
-            if(date == null || (date.Length != 3 && date.Length != 5)) return DateTime.MinValue;
+            if(date == null || date.Length != 3 && date.Length != 5) return DateTime.MinValue;
 
             DateTime os9date;
 
@@ -278,7 +278,7 @@ namespace DiscImageChef
         {
             try
             {
-                int iyear = ((year >> 4) * 10 + (year & 0xF));
+                int iyear = (year >> 4) * 10 + (year & 0xF);
                 int imonth = (month >> 4) * 10 + (month & 0xF);
                 int iday = (day >> 4) * 10 + (day & 0xF);
                 int iminute = (minute >> 4) * 10 + (minute & 0xF);

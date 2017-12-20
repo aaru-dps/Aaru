@@ -325,19 +325,19 @@ namespace DiscImageChef.DiscImages
                     bChnk.sector += (uint)ImageInfo.Sectors;
 
                     // TODO: Handle compressed chunks
-                    if((bChnk.type == CHUNK_TYPE_KENCODE))
+                    if(bChnk.type == CHUNK_TYPE_KENCODE)
                         throw new ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                    if((bChnk.type == CHUNK_TYPE_RLE))
+                    if(bChnk.type == CHUNK_TYPE_RLE)
                         throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
-                    if((bChnk.type == CHUNK_TYPE_LZH))
+                    if(bChnk.type == CHUNK_TYPE_LZH)
                         throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
-                    if((bChnk.type == CHUNK_TYPE_STUFFIT))
+                    if(bChnk.type == CHUNK_TYPE_STUFFIT)
                         throw new ImageNotSupportedException("Chunks compressed with StuffIt! are not yet supported.");
 
                     // TODO: Handle compressed chunks
-                    if((bChnk.type > CHUNK_TYPE_COPY && bChnk.type < CHUNK_TYPE_KENCODE) ||
-                       (bChnk.type > CHUNK_TYPE_ADC && bChnk.type < CHUNK_TYPE_STUFFIT) ||
-                       (bChnk.type > CHUNK_TYPE_STUFFIT && bChnk.type < CHUNK_TYPE_END) ||
+                    if(bChnk.type > CHUNK_TYPE_COPY && bChnk.type < CHUNK_TYPE_KENCODE ||
+                       bChnk.type > CHUNK_TYPE_ADC && bChnk.type < CHUNK_TYPE_STUFFIT ||
+                       bChnk.type > CHUNK_TYPE_STUFFIT && bChnk.type < CHUNK_TYPE_END ||
                        bChnk.type == 1)
                         throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
                                                                            bChnk.type));
@@ -458,7 +458,7 @@ namespace DiscImageChef.DiscImages
                     break;
                 default:
                     ImageInfo.MediaType = MediaType.GENERIC_HDD;
-                    ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+                    ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
                     ImageInfo.Heads = 16;
                     ImageInfo.SectorsPerTrack = 63;
                     break;

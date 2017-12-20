@@ -268,7 +268,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             if(!sense && !dev.Error && !decMode.HasValue)
                 decMode = Decoders.SCSI.Modes.DecodeMode6(mode6Buffer, devType);
 
-            report.SCSI.SupportsModeSense6 |= (!sense && !dev.Error);
+            report.SCSI.SupportsModeSense6 |= !sense && !dev.Error;
 
             Decoders.SCSI.Modes.ModePage_2A? cdromMode = null;
 
@@ -408,9 +408,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     mediaTest.SupportsReadCapacity = true;
                                     mediaTest.Blocks =
                                         (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) +
-                                                (buffer[3])) + 1;
+                                                buffer[3]) + 1;
                                     mediaTest.BlockSize =
-                                        (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + (buffer[7]));
+                                        (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
                                     mediaTest.BlocksSpecified = true;
                                     mediaTest.BlockSizeSpecified = true;
                                 }
@@ -426,7 +426,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     mediaTest.Blocks = BitConverter.ToUInt64(temp, 0) + 1;
                                     mediaTest.BlockSize =
                                         (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) +
-                                               (buffer[11]));
+                                               buffer[11]);
                                     mediaTest.BlocksSpecified = true;
                                     mediaTest.BlockSizeSpecified = true;
                                 }
@@ -685,9 +685,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     {
                         report.SCSI.ReadCapabilities.SupportsReadCapacity = true;
                         report.SCSI.ReadCapabilities.Blocks =
-                            (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3])) + 1;
+                            (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) + 1;
                         report.SCSI.ReadCapabilities.BlockSize =
-                            (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + (buffer[7]));
+                            (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
                         report.SCSI.ReadCapabilities.BlocksSpecified = true;
                         report.SCSI.ReadCapabilities.BlockSizeSpecified = true;
                     }
@@ -702,7 +702,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         Array.Reverse(temp);
                         report.SCSI.ReadCapabilities.Blocks = BitConverter.ToUInt64(temp, 0) + 1;
                         report.SCSI.ReadCapabilities.BlockSize =
-                            (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + (buffer[11]));
+                            (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]);
                         report.SCSI.ReadCapabilities.BlocksSpecified = true;
                         report.SCSI.ReadCapabilities.BlockSizeSpecified = true;
                     }

@@ -164,7 +164,7 @@ namespace DiscImageChef.Devices.Linux
             int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout,
                                         AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            if(senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)) return error;
+            if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
 
             errorRegisters.error = senseBuffer[11];
 
@@ -226,7 +226,7 @@ namespace DiscImageChef.Devices.Linux
             int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout,
                                         AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            if(senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)) return error;
+            if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
 
             errorRegisters.error = senseBuffer[11];
 
@@ -294,7 +294,7 @@ namespace DiscImageChef.Devices.Linux
             int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout,
                                         AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            if(senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)) return error;
+            if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
 
             errorRegisters.error = senseBuffer[11];
 

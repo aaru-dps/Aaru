@@ -703,7 +703,7 @@ namespace DiscImageChef.DiscImages
             }
             else if(!matchedCyls || !matchedHds || !matchedSpt)
             {
-                ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+                ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
                 ImageInfo.Heads = 16;
                 ImageInfo.SectorsPerTrack = 63;
             }
@@ -766,7 +766,7 @@ namespace DiscImageChef.DiscImages
             }
 
             ulong index = sectorAddress / grainSize;
-            ulong secOff = (sectorAddress % grainSize) * SECTOR_SIZE;
+            ulong secOff = sectorAddress % grainSize * SECTOR_SIZE;
 
             uint grainOff = gTable[index];
 
@@ -788,7 +788,7 @@ namespace DiscImageChef.DiscImages
             {
                 grain = new byte[SECTOR_SIZE * grainSize];
                 dataStream = currentExtent.Filter.GetDataForkStream();
-                dataStream.Seek((long)(((grainOff - extentStartSector) * SECTOR_SIZE)), SeekOrigin.Begin);
+                dataStream.Seek((long)((grainOff - extentStartSector) * SECTOR_SIZE), SeekOrigin.Begin);
                 dataStream.Read(grain, 0, grain.Length);
 
                 if(grainCache.Count >= maxCachedGrains) grainCache.Clear();

@@ -97,7 +97,7 @@ namespace DiscImageChef.Filesystems
                 offset = 0x400;
             }
 
-            if((sector + partition.Start) >= partition.End) return false;
+            if(sector + partition.Start >= partition.End) return false;
 
             ushort magic;
             byte[] minix_sb_sector = imagePlugin.ReadSector(sector + partition.Start);
@@ -164,7 +164,7 @@ namespace DiscImageChef.Filesystems
                magic == MINIX_MAGIC || magic == MINIX_CIGAM)
             {
                 filenamesize = 60;
-                littleEndian = (magic != MINIX3_CIGAM || magic == MINIX2_CIGAM || magic == MINIX_CIGAM);
+                littleEndian = magic != MINIX3_CIGAM || magic == MINIX2_CIGAM || magic == MINIX_CIGAM;
 
                 if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
                 {

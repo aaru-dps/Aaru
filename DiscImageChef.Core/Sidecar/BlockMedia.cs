@@ -254,7 +254,7 @@ namespace DiscImageChef.Core
                 {
                     byte[] sector;
 
-                    if((sectors - doneSectors) >= sectorsToRead)
+                    if(sectors - doneSectors >= sectorsToRead)
                     {
                         sector = image.ReadSectors(doneSectors, sectorsToRead);
                         UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)sectors);
@@ -264,7 +264,7 @@ namespace DiscImageChef.Core
                     {
                         sector = image.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
                         UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)sectors);
-                        doneSectors += (sectors - doneSectors);
+                        doneSectors += sectors - doneSectors;
                     }
 
                     contentChkWorker.Update(sector);
@@ -306,7 +306,7 @@ namespace DiscImageChef.Core
                     sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType
                     {
                         Description = partitions[i].Description,
-                        EndSector = (int)(partitions[i].End),
+                        EndSector = (int)partitions[i].End,
                         Name = partitions[i].Name,
                         Sequence = (int)partitions[i].Sequence,
                         StartSector = (int)partitions[i].Start,
@@ -545,8 +545,8 @@ namespace DiscImageChef.Core
                     try { scpImage.OpenImage(scpFilter); }
                     catch(NotImplementedException) { }
 
-                    if((image.ImageInfo.Heads == 2 && scpImage.Header.heads == 0) ||
-                       (image.ImageInfo.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2)))
+                    if(image.ImageInfo.Heads == 2 && scpImage.Header.heads == 0 ||
+                       image.ImageInfo.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2))
                     {
                         if(scpImage.Header.end + 1 >= image.ImageInfo.Cylinders)
                         {
@@ -577,8 +577,8 @@ namespace DiscImageChef.Core
                                 if(scpImage.Tracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
                                 {
                                     byte[] trackContents =
-                                        new byte[(scpTrack.Entries.Last().dataOffset +
-                                                  scpTrack.Entries.Last().trackLength) - scpImage.Header.offsets[t] +
+                                        new byte[scpTrack.Entries.Last().dataOffset +
+                                                 scpTrack.Entries.Last().trackLength - scpImage.Header.offsets[t] +
                                                  1];
                                     scpStream.Position = scpImage.Header.offsets[t];
                                     scpStream.Read(trackContents, 0, trackContents.Length);

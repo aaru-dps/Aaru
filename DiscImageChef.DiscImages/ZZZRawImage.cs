@@ -78,7 +78,7 @@ namespace DiscImageChef.DiscImages
         public override bool IdentifyImage(Filter imageFilter)
         {
             // Check if file is not multiple of 512
-            if((imageFilter.GetDataForkLength() % 512) != 0)
+            if(imageFilter.GetDataForkLength() % 512 != 0)
             {
                 extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
 
@@ -123,7 +123,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
 
             extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
-            if(extension == ".iso" && (imageFilter.GetDataForkLength() % 2048) == 0) ImageInfo.SectorSize = 2048;
+            if(extension == ".iso" && imageFilter.GetDataForkLength() % 2048 == 0) ImageInfo.SectorSize = 2048;
             else if(extension == ".d81" && imageFilter.GetDataForkLength() == 819200) ImageInfo.SectorSize = 256;
             else if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
                     (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 ||
@@ -639,7 +639,7 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.SectorsPerTrack = 32;
                     break;
                 default:
-                    ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+                    ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
                     ImageInfo.Heads = 16;
                     ImageInfo.SectorsPerTrack = 63;
                     break;

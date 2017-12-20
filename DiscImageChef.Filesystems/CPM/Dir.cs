@@ -110,7 +110,7 @@ namespace DiscImageChef.Filesystems.CPM
                     else if(entry.statusUser == 0x21)
                     {
                         if(directory[off + 1] == 0x00) { thirdPartyTimestamps = true; }
-                        else standardTimestamps |= (directory[off + 21] == 0x00 && directory[off + 31] == 0x00);
+                        else standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
                     }
                 }
 

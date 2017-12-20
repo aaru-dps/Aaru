@@ -257,23 +257,23 @@ namespace DiscImageChef.DiscImages
                                                                          .Trim(new[] {'"'})));
                         currentTrack.Trackfile = currentTrack.Trackfilter.GetFilename();
 
-                        if((currentTrack.StartSector - currentStart) > 0)
+                        if(currentTrack.StartSector - currentStart > 0)
                         {
                             if(currentTrack.StartSector == 45000)
                             {
                                 highDensity = true;
                                 offsetmap.Add(0, currentStart);
-                                densitySeparationSectors = (currentTrack.StartSector - currentStart);
+                                densitySeparationSectors = currentTrack.StartSector - currentStart;
                                 currentStart = currentTrack.StartSector;
                             }
                             else
                             {
-                                currentTrack.Pregap = (currentTrack.StartSector - currentStart);
-                                currentTrack.StartSector -= (currentTrack.StartSector - currentStart);
+                                currentTrack.Pregap = currentTrack.StartSector - currentStart;
+                                currentTrack.StartSector -= currentTrack.StartSector - currentStart;
                             }
                         }
 
-                        if(((currentTrack.Trackfilter.GetDataForkLength() - currentTrack.Offset) % currentTrack.Bps) !=
+                        if((currentTrack.Trackfilter.GetDataForkLength() - currentTrack.Offset) % currentTrack.Bps !=
                            0) throw new ImageNotSupportedException("Track size not a multiple of sector size");
 
                         currentTrack.Sectors =
@@ -309,7 +309,7 @@ namespace DiscImageChef.DiscImages
                                 if(_sessions[s].StartSector > trk.StartSector)
                                     _sessions[s].StartSector = trk.StartSector;
 
-                                if(_sessions[s].EndSector < (trk.Sectors + trk.StartSector - 1))
+                                if(_sessions[s].EndSector < trk.Sectors + trk.StartSector - 1)
                                     _sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
                             }
                         }
@@ -330,7 +330,7 @@ namespace DiscImageChef.DiscImages
                                 if(_sessions[s].StartSector > trk.StartSector)
                                     _sessions[s].StartSector = trk.StartSector;
 
-                                if(_sessions[s].EndSector < (trk.Sectors + trk.StartSector - 1))
+                                if(_sessions[s].EndSector < trk.Sectors + trk.StartSector - 1)
                                     _sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
                             }
                         }
@@ -506,8 +506,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(gdiTrack.Sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < gdiTrack.Sectors)
-                                return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < gdiTrack.Sectors)
+                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -515,8 +515,8 @@ namespace DiscImageChef.DiscImages
 
             ulong transitionStart;
             offsetmap.TryGetValue(0, out transitionStart);
-            if(sectorAddress >= transitionStart && sectorAddress < (densitySeparationSectors + transitionStart))
-                return ReadSectors((sectorAddress - transitionStart), length, 0);
+            if(sectorAddress >= transitionStart && sectorAddress < densitySeparationSectors + transitionStart)
+                return ReadSectors(sectorAddress - transitionStart, length, 0);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -531,8 +531,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(gdiTrack.Sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < gdiTrack.Sectors)
-                                return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
+                            if(sectorAddress - kvp.Value < gdiTrack.Sectors)
+                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                         }
                     }
                 }
@@ -540,8 +540,8 @@ namespace DiscImageChef.DiscImages
 
             ulong transitionStart;
             offsetmap.TryGetValue(0, out transitionStart);
-            if(sectorAddress >= transitionStart && sectorAddress < (densitySeparationSectors + transitionStart))
-                return ReadSectorsTag((sectorAddress - transitionStart), length, 0, tag);
+            if(sectorAddress >= transitionStart && sectorAddress < densitySeparationSectors + transitionStart)
+                return ReadSectorsTag(sectorAddress - transitionStart, length, 0, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -550,7 +550,7 @@ namespace DiscImageChef.DiscImages
         {
             if(track == 0)
             {
-                if((sectorAddress + length) > densitySeparationSectors)
+                if(sectorAddress + length > densitySeparationSectors)
                     throw new ArgumentOutOfRangeException(nameof(length),
                                                           "Requested more sectors than present in track, won't cross tracks");
 
@@ -573,7 +573,7 @@ namespace DiscImageChef.DiscImages
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((sectorAddress + length) > _track.Sectors)
+            if(sectorAddress + length > _track.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       "Requested more sectors than present in track, won't cross tracks");
 
@@ -658,7 +658,7 @@ namespace DiscImageChef.DiscImages
         {
             if(track == 0)
             {
-                if((sectorAddress + length) > densitySeparationSectors)
+                if(sectorAddress + length > densitySeparationSectors)
                     throw new ArgumentOutOfRangeException(nameof(length),
                                                           "Requested more sectors than present in track, won't cross tracks");
 
@@ -838,8 +838,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(gdiTrack.Sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < gdiTrack.Sectors)
-                                return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < gdiTrack.Sectors)
+                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -852,7 +852,7 @@ namespace DiscImageChef.DiscImages
         {
             if(track == 0)
             {
-                if((sectorAddress + length) > densitySeparationSectors)
+                if(sectorAddress + length > densitySeparationSectors)
                     throw new ArgumentOutOfRangeException(nameof(length),
                                                           "Requested more sectors than present in track, won't cross tracks");
 
@@ -875,7 +875,7 @@ namespace DiscImageChef.DiscImages
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((sectorAddress + length) > _track.Sectors)
+            if(sectorAddress + length > _track.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       "Requested more sectors than present in track, won't cross tracks");
 

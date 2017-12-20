@@ -78,7 +78,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End) return false;
+            if(2 + partition.Start >= partition.End) return false;
 
             uint magic;
             uint magic_be;
@@ -166,7 +166,7 @@ namespace DiscImageChef.Filesystems
 
             if(besb.magic1 != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN || besb.magic2 != BEFS_MAGIC2 ||
                besb.magic3 != BEFS_MAGIC3 || besb.root_dir_len != 1 || besb.indices_len != 1 ||
-               (1 << (int)besb.block_shift) != besb.block_size)
+               1 << (int)besb.block_shift != besb.block_size)
             {
                 sb.AppendLine("Superblock seems corrupt, following information may be incorrect");
                 sb.AppendFormat("Magic 1: 0x{0:X8} (Should be 0x42465331)", besb.magic1).AppendLine();

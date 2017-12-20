@@ -221,8 +221,8 @@ namespace DiscImageChef.Filesystems
             {
                 Locus_Superblock LocusSb = new Locus_Superblock();
 
-                uint sbSize = (uint)((Marshal.SizeOf(LocusSb)) / imagePlugin.GetSectorSize());
-                if((Marshal.SizeOf(LocusSb)) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.GetSectorSize());
+                if(Marshal.SizeOf(LocusSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
                 if(partition.Start + location + sbSize >= imagePlugin.GetSectors()) break;
 
@@ -254,8 +254,8 @@ namespace DiscImageChef.Filesystems
 
             for(ulong location = 0; location <= 8; location++)
             {
-                uint sbSize = (uint)((Marshal.SizeOf(LocusSb)) / imagePlugin.GetSectorSize());
-                if((Marshal.SizeOf(LocusSb)) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf(LocusSb) / imagePlugin.GetSectorSize());
+                if(Marshal.SizeOf(LocusSb) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
                 sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(LocusSb)) return;

@@ -351,7 +351,7 @@ namespace DiscImageChef.Core
                     {
                         byte[] sector;
 
-                        if((sectors - doneSectors) >= sectorsToRead)
+                        if(sectors - doneSectors >= sectorsToRead)
                         {
                             sector = image.ReadSectorsLong(doneSectors, sectorsToRead,
                                                            (uint)xmlTrk.Sequence.TrackNumber);
@@ -365,7 +365,7 @@ namespace DiscImageChef.Core
                                                            (uint)xmlTrk.Sequence.TrackNumber);
                             UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
-                            doneSectors += (sectors - doneSectors);
+                            doneSectors += sectors - doneSectors;
                         }
 
                         trkChkWorker.Update(sector);
@@ -419,7 +419,7 @@ namespace DiscImageChef.Core
                     {
                         byte[] sector;
 
-                        if((sectors - doneSectors) >= sectorsToRead)
+                        if(sectors - doneSectors >= sectorsToRead)
                         {
                             sector = image.ReadSectorsTag(doneSectors, sectorsToRead, (uint)xmlTrk.Sequence.TrackNumber,
                                                           SectorTagType.CdSectorSubchannel);
@@ -434,7 +434,7 @@ namespace DiscImageChef.Core
                                                           SectorTagType.CdSectorSubchannel);
                             UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
-                            doneSectors += (sectors - doneSectors);
+                            doneSectors += sectors - doneSectors;
                         }
 
                         subChkWorker.Update(sector);
@@ -465,7 +465,7 @@ namespace DiscImageChef.Core
                         xmlTrk.FileSystemInformation[i] = new PartitionType
                         {
                             Description = partitions[i].Description,
-                            EndSector = (int)(partitions[i].End),
+                            EndSector = (int)partitions[i].End,
                             Name = partitions[i].Name,
                             Sequence = (int)partitions[i].Sequence,
                             StartSector = (int)partitions[i].Start,
@@ -514,7 +514,7 @@ namespace DiscImageChef.Core
                     Partition xmlPart = new Partition
                     {
                         Start = (ulong)xmlTrk.StartSector,
-                        Length = (ulong)((xmlTrk.EndSector - xmlTrk.StartSector) + 1),
+                        Length = (ulong)(xmlTrk.EndSector - xmlTrk.StartSector + 1),
                         Type = xmlTrk.TrackType1.ToString(),
                         Size = (ulong)xmlTrk.Size,
                         Sequence = (ulong)xmlTrk.Sequence.TrackNumber

@@ -152,8 +152,8 @@ namespace DiscImageChef.Filesystems
             if(APMFromHDDOnCD) total_blocks /= 4;
 
             DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", total_blocks, partition.End,
-                                      partition.Start, total_blocks <= (partition.End - partition.Start + 1));
-            return total_blocks <= (partition.End - partition.Start + 1);
+                                      partition.Start, total_blocks <= partition.End - partition.Start + 1);
+            return total_blocks <= partition.End - partition.Start + 1;
         }
 
         public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
@@ -305,7 +305,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Files = rootDirectoryKeyBlock.header.file_count;
             xmlFSType.FilesSpecified = true;
             xmlFSType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
-            xmlFSType.ClusterSize = (int)(((partition.End - partition.Start) + 1) * imagePlugin.ImageInfo.SectorSize /
+            xmlFSType.ClusterSize = (int)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
                                           (ulong)xmlFSType.Clusters);
             xmlFSType.Type = "ProDOS";
 

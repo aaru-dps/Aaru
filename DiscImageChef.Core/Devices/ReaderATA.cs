@@ -86,8 +86,7 @@ namespace DiscImageChef.Core.Devices
                 blocks = (ulong)(cylinders * heads * sectors);
             }
 
-            if((ataId.CurrentCylinders == 0 || ataId.CurrentHeads == 0 || ataId.CurrentSectorsPerTrack == 0) &&
-               (ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0))
+            if((ataId.CurrentCylinders == 0 || ataId.CurrentHeads == 0 || ataId.CurrentSectorsPerTrack == 0) && ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0)
             {
                 cylinders = ataId.Cylinders;
                 heads = (byte)ataId.Heads;
@@ -127,32 +126,32 @@ namespace DiscImageChef.Core.Devices
             double duration;
 
             sense = dev.Read(out cmdBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);
-            ataRead = (!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
+            ataRead = !sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0;
             sense = dev.Read(out cmdBuf, out errorChs, true, 0, 0, 1, 1, timeout, out duration);
-            ataReadRetry = (!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
+            ataReadRetry = !sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0;
             sense = dev.ReadDma(out cmdBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);
-            ataReadDma = (!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
+            ataReadDma = !sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0;
             sense = dev.ReadDma(out cmdBuf, out errorChs, true, 0, 0, 1, 1, timeout, out duration);
-            ataReadDmaRetry = (!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
+            ataReadDmaRetry = !sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0;
 
             sense = dev.Read(out cmdBuf, out errorLba, false, 0, 1, timeout, out duration);
-            ataReadLba = (!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
+            ataReadLba = !sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0;
             sense = dev.Read(out cmdBuf, out errorLba, true, 0, 1, timeout, out duration);
-            ataReadRetryLba = (!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
+            ataReadRetryLba = !sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0;
             sense = dev.ReadDma(out cmdBuf, out errorLba, false, 0, 1, timeout, out duration);
-            ataReadDmaLba = (!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
+            ataReadDmaLba = !sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0;
             sense = dev.ReadDma(out cmdBuf, out errorLba, true, 0, 1, timeout, out duration);
-            ataReadDmaRetryLba = (!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
+            ataReadDmaRetryLba = !sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0;
 
             sense = dev.Read(out cmdBuf, out errorLba48, 0, 1, timeout, out duration);
-            ataReadLba48 = (!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
+            ataReadLba48 = !sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0;
             sense = dev.ReadDma(out cmdBuf, out errorLba48, 0, 1, timeout, out duration);
-            ataReadDmaLba48 = (!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
+            ataReadDmaLba48 = !sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0;
 
             sense = dev.Seek(out errorChs, 0, 0, 1, timeout, out duration);
-            ataSeek = (!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0);
+            ataSeek = !sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0;
             sense = dev.Seek(out errorLba, 0, timeout, out duration);
-            ataSeekLba = (!sense && (errorLba.status & 0x27) == 0 && errorChs.error == 0);
+            ataSeekLba = !sense && (errorLba.status & 0x27) == 0 && errorChs.error == 0;
 
             if(lbaMode)
             {

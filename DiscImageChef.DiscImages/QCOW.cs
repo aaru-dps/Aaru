@@ -289,7 +289,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.MediaType = MediaType.GENERIC_HDD;
             ImageInfo.ImageSize = qHdr.size;
 
-            ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+            ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
             ImageInfo.Heads = 16;
             ImageInfo.SectorsPerTrack = 63;
 
@@ -355,7 +355,7 @@ namespace DiscImageChef.DiscImages
 
                         compSizeMask = (ulong)(1 << qHdr.cluster_bits) - 1;
                         compSizeMask <<= 63 - qHdr.cluster_bits;
-                        offMask = (~compSizeMask) ^ QCOW_COMPRESSED;
+                        offMask = ~compSizeMask ^ QCOW_COMPRESSED;
 
                         ulong realOff = offset & offMask;
                         ulong compSize = (offset & compSizeMask) >> (63 - qHdr.cluster_bits);

@@ -79,7 +79,7 @@ namespace DiscImageChef.Partitions
             Marshal.FreeHGlobal(bbPtr);
 
             int checksum = 0;
-            for(int i = 0; i < 0x1FF; i++) checksum = ((checksum & 0xFF) + (checksum >> 8) + sector[i]);
+            for(int i = 0; i < 0x1FF; i++) checksum = (checksum & 0xFF) + (checksum >> 8) + sector[i];
 
             int heads = bootBlock.discRecord.heads + ((bootBlock.discRecord.lowsector >> 6) & 1);
             int secCyl = bootBlock.discRecord.spt * heads;

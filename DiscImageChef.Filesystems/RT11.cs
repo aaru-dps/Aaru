@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            if((1 + partition.Start) >= partition.End) return false;
+            if(1 + partition.Start >= partition.End) return false;
 
             if(imagePlugin.GetSectorSize() < 512) return false;
 

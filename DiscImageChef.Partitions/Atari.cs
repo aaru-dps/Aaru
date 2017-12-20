@@ -109,7 +109,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Atari partition plugin", "table.icdEntries[{0}].flag = 0x{1:X2}", i,
                                           (table.icdEntries[i].type & 0xFF000000) >> 24);
                 DicConsole.DebugWriteLine("Atari partition plugin", "table.icdEntries[{0}].type = 0x{1:X6}", i,
-                                          (table.icdEntries[i].type & 0x00FFFFFF));
+                                          table.icdEntries[i].type & 0x00FFFFFF);
                 DicConsole.DebugWriteLine("Atari partition plugin", "table.icdEntries[{0}].start = {1}", i,
                                           table.icdEntries[i].start);
                 DicConsole.DebugWriteLine("Atari partition plugin", "table.icdEntries[{0}].length = {1}", i,
@@ -123,7 +123,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Atari partition plugin", "table.entries[{0}].flag = 0x{1:X2}", i,
                                           (table.entries[i].type & 0xFF000000) >> 24);
                 DicConsole.DebugWriteLine("Atari partition plugin", "table.entries[{0}].type = 0x{1:X6}", i,
-                                          (table.entries[i].type & 0x00FFFFFF));
+                                          table.entries[i].type & 0x00FFFFFF);
                 DicConsole.DebugWriteLine("Atari partition plugin", "table.entries[{0}].start = {1}", i,
                                           table.entries[i].start);
                 DicConsole.DebugWriteLine("Atari partition plugin", "table.entries[{0}].length = {1}", i,
@@ -148,7 +148,7 @@ namespace DiscImageChef.Partitions
 
                     if(table.entries[i].start <= imagePlugin.GetSectors())
                     {
-                        if((table.entries[i].start + table.entries[i].length) > imagePlugin.GetSectors())
+                        if(table.entries[i].start + table.entries[i].length > imagePlugin.GetSectors())
                             DicConsole.DebugWriteLine("Atari partition plugin",
                                                       "WARNING: End of partition goes beyond device size");
 
@@ -242,7 +242,7 @@ namespace DiscImageChef.Partitions
                             validTable = true;
                             if(extendedTable.entries[j].start <= imagePlugin.GetSectors())
                             {
-                                if((extendedTable.entries[j].start + extendedTable.entries[j].length) >
+                                if(extendedTable.entries[j].start + extendedTable.entries[j].length >
                                    imagePlugin.GetSectors())
                                     DicConsole.DebugWriteLine("Atari partition plugin",
                                                               "WARNING: End of partition goes beyond device size");
@@ -324,7 +324,7 @@ namespace DiscImageChef.Partitions
                     {
                         if(table.icdEntries[i].start <= imagePlugin.GetSectors())
                         {
-                            if((table.icdEntries[i].start + table.icdEntries[i].length) > imagePlugin.GetSectors())
+                            if(table.icdEntries[i].start + table.icdEntries[i].length > imagePlugin.GetSectors())
                                 DicConsole.DebugWriteLine("Atari partition plugin",
                                                           "WARNING: End of partition goes beyond device size");
 

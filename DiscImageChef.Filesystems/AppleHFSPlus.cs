@@ -77,7 +77,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End) return false;
+            if(2 + partition.Start >= partition.End) return false;
 
             ushort drSigWord;
             ushort xdrStABNt;
@@ -109,7 +109,7 @@ namespace DiscImageChef.Filesystems
                     drAlBlSt = BigEndianBitConverter
                         .ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
 
-                    hfsp_offset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.GetSectorSize());
+                    hfsp_offset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
                 }
                 else { hfsp_offset = 0; }
             }
@@ -160,7 +160,7 @@ namespace DiscImageChef.Filesystems
                     drAlBlSt = BigEndianBitConverter
                         .ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
 
-                    hfsp_offset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.GetSectorSize());
+                    hfsp_offset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
                     wrapped = true;
                 }
                 else
@@ -251,7 +251,7 @@ namespace DiscImageChef.Filesystems
                         xmlFSType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
                         xmlFSType.BackupDateSpecified = true;
                     }
-                    xmlFSType.Bootable |= (HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0);
+                    xmlFSType.Bootable |= HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0;
                     xmlFSType.Clusters = HPVH.totalBlocks;
                     xmlFSType.ClusterSize = (int)HPVH.blockSize;
                     if(HPVH.createDate > 0)

@@ -465,18 +465,18 @@ namespace DiscImageChef.DiscImages
                         if(bChnk.type == CHUNK_TYPE_COMMNT) continue;
 
                         // TODO: Handle compressed chunks
-                        if((bChnk.type == CHUNK_TYPE_KENCODE))
+                        if(bChnk.type == CHUNK_TYPE_KENCODE)
                             throw new
                                 ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                        if((bChnk.type == CHUNK_TYPE_RLE))
+                        if(bChnk.type == CHUNK_TYPE_RLE)
                             throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
-                        if((bChnk.type == CHUNK_TYPE_LZH))
+                        if(bChnk.type == CHUNK_TYPE_LZH)
                             throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
-                        if((bChnk.type == CHUNK_TYPE_LZFSE))
+                        if(bChnk.type == CHUNK_TYPE_LZFSE)
                             throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
 
-                        if((bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT) ||
-                           (bChnk.type > CHUNK_TYPE_LZFSE && bChnk.type < CHUNK_TYPE_END))
+                        if(bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT ||
+                           bChnk.type > CHUNK_TYPE_LZFSE && bChnk.type < CHUNK_TYPE_END)
                             throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
                                                                                bChnk.type));
 
@@ -499,7 +499,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
             ImageInfo.ImageVersion = string.Format("{0}", footer.version);
 
-            ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+            ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
             ImageInfo.Heads = 16;
             ImageInfo.SectorsPerTrack = 63;
 

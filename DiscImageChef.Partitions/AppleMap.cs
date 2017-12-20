@@ -117,14 +117,14 @@ namespace DiscImageChef.Partitions
                         CommonTypes.Partition part = new CommonTypes.Partition()
                         {
                             Size = (ulong)(ddm.sbMap[i].ddSize * 512),
-                            Length = (ulong)((ddm.sbMap[i].ddSize * 512) / sector_size),
+                            Length = (ulong)(ddm.sbMap[i].ddSize * 512 / sector_size),
                             Sequence = sequence,
                             Offset = ddm.sbMap[i].ddBlock * sector_size,
                             Start = ddm.sbMap[i].ddBlock + sectorOffset,
                             Type = "Apple_Driver"
                         };
 
-                        if((ddm.sbMap[i].ddSize * 512) % sector_size > 0) part.Length++;
+                        if(ddm.sbMap[i].ddSize * 512 % sector_size > 0) part.Length++;
 
                         partitions.Add(part);
 
@@ -163,10 +163,10 @@ namespace DiscImageChef.Partitions
                     CommonTypes.Partition part = new CommonTypes.Partition
                     {
                         Size = old_entry.pdStart * ddm.sbBlockSize,
-                        Length = (old_entry.pdStart * ddm.sbBlockSize) / sector_size,
+                        Length = old_entry.pdStart * ddm.sbBlockSize / sector_size,
                         Sequence = sequence,
                         Offset = old_entry.pdSize * ddm.sbBlockSize,
-                        Start = (old_entry.pdSize * ddm.sbBlockSize) / sector_size,
+                        Start = old_entry.pdSize * ddm.sbBlockSize / sector_size,
                         Scheme = Name
                     };
 
@@ -200,7 +200,7 @@ namespace DiscImageChef.Partitions
                     entry_size = 512;
                     entry_count = entry.entries;
                     skip_ddm = 512;
-                    sectors_to_read = (((entry_count + 1) * 512) / sector_size) + 1;
+                    sectors_to_read = (entry_count + 1) * 512 / sector_size + 1;
                 }
                 else
                 {
@@ -291,8 +291,8 @@ namespace DiscImageChef.Partitions
                             Name = StringHandlers.CToString(entry.name),
                             Offset = entry.start * entry_size,
                             Size = entry.sectors * entry_size,
-                            Start = ((entry.start * entry_size) / sector_size) + sectorOffset,
-                            Length = (entry.sectors * entry_size) / sector_size,
+                            Start = entry.start * entry_size / sector_size + sectorOffset,
+                            Length = entry.sectors * entry_size / sector_size,
                             Scheme = Name
                         };
                         sb.AppendLine("Partition flags:");
@@ -306,7 +306,7 @@ namespace DiscImageChef.Partitions
                         if(flags.HasFlag(AppleMapFlags.Bootable))
                         {
                             sb.AppendFormat("First boot sector: {0}",
-                                            (entry.first_boot_block * entry_size) / sector_size).AppendLine();
+                                            entry.first_boot_block * entry_size / sector_size).AppendLine();
                             sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();
                             sb.AppendFormat("Boot load address: 0x{0:X8}", entry.load_address).AppendLine();
                             sb.AppendFormat("Boot entry point: 0x{0:X8}", entry.entry_point).AppendLine();

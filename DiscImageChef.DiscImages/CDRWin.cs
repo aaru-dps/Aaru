@@ -619,7 +619,7 @@ namespace DiscImageChef.DiscImages
                             // Check if file exists
                             if(currentfile.Datafilter == null)
                             {
-                                if(datafile[0] == '/' || (datafile[0] == '/' && datafile[1] == '.')
+                                if(datafile[0] == '/' || datafile[0] == '/' && datafile[1] == '.'
                                 ) // UNIX absolute path
                                 {
                                     Regex unixpath = new Regex("^(.+)/([^/]+)$");
@@ -648,9 +648,9 @@ namespace DiscImageChef.DiscImages
                                             FeatureUnsupportedImageException(string.Format("File \"{0}\" not found.",
                                                                                            matchFile.Groups[1].Value));
                                 }
-                                else if((datafile[1] == ':' && datafile[2] == '\\') ||
-                                        (datafile[0] == '\\' && datafile[1] == '\\') ||
-                                        ((datafile[0] == '.' && datafile[1] == '\\'))) // Windows absolute path
+                                else if(datafile[1] == ':' && datafile[2] == '\\' ||
+                                        datafile[0] == '\\' && datafile[1] == '\\' ||
+                                        datafile[0] == '.' && datafile[1] == '\\') // Windows absolute path
                                 {
                                     Regex winpath =
                                         new
@@ -747,13 +747,13 @@ namespace DiscImageChef.DiscImages
                                 int index = int.Parse(matchIndex.Groups[1].Value);
                                 ulong offset = CdrWinMsftoLba(matchIndex.Groups[2].Value);
 
-                                if((index != 0 && index != 1) && currenttrack.Indexes.Count == 0)
+                                if(index != 0 && index != 1 && currenttrack.Indexes.Count == 0)
                                     throw new
                                         FeatureUnsupportedImageException(string
                                                                              .Format("Found INDEX {0} before INDEX 00 or INDEX 01",
                                                                                      index));
 
-                                if((index == 0 || (index == 1 && !currenttrack.Indexes.ContainsKey(0))))
+                                if(index == 0 || index == 1 && !currenttrack.Indexes.ContainsKey(0))
                                 {
                                     if((int)(currenttrack.Sequence - 2) >= 0 && offset > 1)
                                     {
@@ -773,7 +773,7 @@ namespace DiscImageChef.DiscImages
                                     }
                                 }
 
-                                if((index == 0 || (index == 1 && !currenttrack.Indexes.ContainsKey(0))) &&
+                                if((index == 0 || index == 1 && !currenttrack.Indexes.ContainsKey(0)) &&
                                    currenttrack.Sequence == 1)
                                 {
                                     DicConsole.DebugWriteLine("CDRWin plugin",
@@ -972,7 +972,7 @@ namespace DiscImageChef.DiscImages
                     else if(cdi) discimage.Disktype = MediaType.CDI;
                     else if(firstaudio && data && discimage.Sessions.Count > 1 && mode2)
                         discimage.Disktype = MediaType.CDPLUS;
-                    else if((firstdata && audio) || mode2) discimage.Disktype = MediaType.CDROMXA;
+                    else if(firstdata && audio || mode2) discimage.Disktype = MediaType.CDROMXA;
                     else if(!audio) discimage.Disktype = MediaType.CDROM;
                     else discimage.Disktype = MediaType.CD;
                 }
@@ -1180,7 +1180,7 @@ namespace DiscImageChef.DiscImages
                     partition.Name = discimage.Tracks[i].Title;
                     partition.Start = sectorOffset;
                     partition.Size = (discimage.Tracks[i].Sectors - index0Len) * discimage.Tracks[i].Bps;
-                    partition.Length = (discimage.Tracks[i].Sectors - index0Len);
+                    partition.Length = discimage.Tracks[i].Sectors - index0Len;
                     partition.Sequence = partitionSequence;
                     partition.Offset = byteOffset;
                     partition.Type = discimage.Tracks[i].Tracktype;
@@ -1401,8 +1401,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(cdrwinTrack.Sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < cdrwinTrack.Sectors)
-                                return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < cdrwinTrack.Sectors)
+                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -1421,8 +1421,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(cdrwinTrack.Sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < cdrwinTrack.Sectors)
-                                return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
+                            if(sectorAddress - kvp.Value < cdrwinTrack.Sectors)
+                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                         }
                     }
                 }
@@ -1752,8 +1752,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(cdrwinTrack.Sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < cdrwinTrack.Sectors)
-                                return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < cdrwinTrack.Sectors)
+                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -2100,7 +2100,7 @@ namespace DiscImageChef.DiscImages
             second = ulong.Parse(msfElements[1]);
             frame = ulong.Parse(msfElements[2]);
 
-            sectors = (minute * 60 * 75) + (second * 75) + frame;
+            sectors = minute * 60 * 75 + second * 75 + frame;
 
             return sectors;
         }

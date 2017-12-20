@@ -161,7 +161,7 @@ namespace DiscImageChef.DiscImages
                     // Deleted record, just skip it
                     case RecordType.Deleted:
                         DicConsole.DebugWriteLine("Apridisk plugin", "Found deleted record at {0}", stream.Position);
-                        stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
+                        stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
                         break;
                     case RecordType.Comment:
                         DicConsole.DebugWriteLine("Apridisk plugin", "Found comment record at {0}", stream.Position);
@@ -198,7 +198,7 @@ namespace DiscImageChef.DiscImages
                         if(record.head > totalHeads) totalHeads = record.head;
                         if(record.sector > maxSector) maxSector = record.sector;
 
-                        stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
+                        stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
                         break;
                     default:
                         throw new
@@ -255,7 +255,7 @@ namespace DiscImageChef.DiscImages
                     case RecordType.Deleted:
                     case RecordType.Comment:
                     case RecordType.Creator:
-                        stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
+                        stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
                         headersizes += record.headerSize + record.dataSize;
                         break;
                     case RecordType.Sector:
@@ -454,8 +454,8 @@ namespace DiscImageChef.DiscImages
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
             ushort cylinder = (ushort)(lba / (ImageInfo.Heads * ImageInfo.SectorsPerTrack));
-            byte head = (byte)((lba / ImageInfo.SectorsPerTrack) % ImageInfo.Heads);
-            byte sector = (byte)((lba % ImageInfo.SectorsPerTrack) + 1);
+            byte head = (byte)(lba / ImageInfo.SectorsPerTrack % ImageInfo.Heads);
+            byte sector = (byte)(lba % ImageInfo.SectorsPerTrack + 1);
 
             return (cylinder, head, sector);
         }

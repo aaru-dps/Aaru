@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End) return false;
+            if(2 + partition.Start >= partition.End) return false;
 
             uint magic;
             uint sb_size_in_sectors;
@@ -88,7 +88,7 @@ namespace DiscImageChef.Filesystems
 
             foreach(ulong loc in locations)
             {
-                if(partition.End > (partition.Start + loc + sb_size_in_sectors))
+                if(partition.End > partition.Start + loc + sb_size_in_sectors)
                 {
                     ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
                     magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
@@ -133,7 +133,7 @@ namespace DiscImageChef.Filesystems
 
             foreach(ulong loc in locations)
             {
-                if(partition.End > (partition.Start + loc + sb_size_in_sectors))
+                if(partition.End > partition.Start + loc + sb_size_in_sectors)
                 {
                     ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
                     magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
@@ -204,10 +204,10 @@ namespace DiscImageChef.Filesystems
             Marshal.FreeHGlobal(sbPtr);
 
             UFSSuperBlock bs_sfu = BigEndianMarshal.ByteArrayToStructureBigEndian<UFSSuperBlock>(ufs_sb_sectors);
-            if((bs_sfu.fs_magic == UFS_MAGIC && ufs_sb.fs_magic == UFS_CIGAM) ||
-               (bs_sfu.fs_magic == UFS_MAGIC_BW && ufs_sb.fs_magic == UFS_CIGAM_BW) ||
-               (bs_sfu.fs_magic == UFS2_MAGIC && ufs_sb.fs_magic == UFS2_CIGAM) ||
-               (bs_sfu.fs_magic == UFS_BAD_MAGIC && ufs_sb.fs_magic == UFS_BAD_CIGAM))
+            if(bs_sfu.fs_magic == UFS_MAGIC && ufs_sb.fs_magic == UFS_CIGAM ||
+               bs_sfu.fs_magic == UFS_MAGIC_BW && ufs_sb.fs_magic == UFS_CIGAM_BW ||
+               bs_sfu.fs_magic == UFS2_MAGIC && ufs_sb.fs_magic == UFS2_CIGAM ||
+               bs_sfu.fs_magic == UFS_BAD_MAGIC && ufs_sb.fs_magic == UFS_BAD_CIGAM)
             {
                 ufs_sb = bs_sfu;
                 ufs_sb.fs_old_cstotal.cs_nbfree = Swapping.Swap(ufs_sb.fs_old_cstotal.cs_nbfree);

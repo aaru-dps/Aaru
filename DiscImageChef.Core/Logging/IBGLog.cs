@@ -211,7 +211,7 @@ namespace DiscImageChef.Core.Logging
 
                     ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", ibgIntSpeed / ibgSnaps / ibgDivider, ibgIntSector,
                                        ibgSampleRate).AppendLine();
-                    if((ibgIntSpeed / ibgSnaps / ibgDivider) > ibgMaxSpeed) ibgMaxSpeed = ibgIntSpeed / ibgDivider;
+                    if(ibgIntSpeed / ibgSnaps / ibgDivider > ibgMaxSpeed) ibgMaxSpeed = ibgIntSpeed / ibgDivider;
 
                     ibgDatePoint = DateTime.Now;
                     ibgIntSpeed = 0;

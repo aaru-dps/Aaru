@@ -191,7 +191,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             AlcoholSession[] sessionsArray = sessions.ToArray();
             for(int i = 0; i < sessionsArray.Length; i++)
             {
-                sessionsArray[i].allBlocks = (byte)(((sessionsArray[i].lastTrack - sessionsArray[i].firstTrack) + 1) +
+                sessionsArray[i].allBlocks = (byte)(sessionsArray[i].lastTrack - sessionsArray[i].firstTrack + 1 +
                                                     sessionsArray[i].nonTrackBlocks);
                 sessionsArray[i].trackOffset = (uint)nextOffset;
                 nextOffset += sessionsArray[i].allBlocks * 80;

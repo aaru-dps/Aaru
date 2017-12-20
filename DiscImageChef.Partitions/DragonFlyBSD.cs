@@ -73,16 +73,16 @@ namespace DiscImageChef.Partitions
             {
                 Partition part = new Partition
                 {
-                    Start = (entry.p_boffset / imagePlugin.GetSectorSize()) + sectorOffset,
-                    Offset = entry.p_boffset + (sectorOffset * imagePlugin.GetSectorSize()),
+                    Start = entry.p_boffset / imagePlugin.GetSectorSize() + sectorOffset,
+                    Offset = entry.p_boffset + sectorOffset * imagePlugin.GetSectorSize(),
                     Size = entry.p_bsize,
-                    Length = (entry.p_bsize / imagePlugin.GetSectorSize()),
+                    Length = entry.p_bsize / imagePlugin.GetSectorSize(),
                     Name = entry.p_stor_uuid.ToString(),
                     Sequence = counter,
                     Scheme = Name
                 };
 
-                if((entry.p_bsize % imagePlugin.GetSectorSize()) > 0) part.Length++;
+                if(entry.p_bsize % imagePlugin.GetSectorSize() > 0) part.Length++;
 
                 if((BSD.fsType)entry.p_fstype == BSD.fsType.Other) part.Type = entry.p_type_uuid.ToString();
                 else part.Type = BSD.fsTypeToString((BSD.fsType)entry.p_fstype);

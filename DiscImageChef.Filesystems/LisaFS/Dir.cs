@@ -227,7 +227,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 int offset = 0;
 
                 // Traverse all entries
-                while((offset + 64) <= buf.Length)
+                while(offset + 64 <= buf.Length)
                 {
                     // Catalog block header
                     if(buf[offset + 0x24] == 0x08) offset += 78;

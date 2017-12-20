@@ -141,7 +141,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "Reiser 4 filesystem";
             xmlFSType.ClusterSize = reiserSb.blocksize;
             xmlFSType.Clusters =
-                (long)(((partition.End - partition.Start) * imagePlugin.GetSectorSize()) / reiserSb.blocksize);
+                (long)((partition.End - partition.Start) * imagePlugin.GetSectorSize() / reiserSb.blocksize);
             xmlFSType.VolumeName = StringHandlers.CToString(reiserSb.label, CurrentEncoding);
             xmlFSType.VolumeSerial = reiserSb.uuid.ToString();
         }

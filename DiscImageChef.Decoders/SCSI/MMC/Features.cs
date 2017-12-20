@@ -2170,7 +2170,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0000) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0000 decoded = new Feature_0000();
 
@@ -2204,7 +2204,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0001) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0001 decoded = new Feature_0001();
 
@@ -2233,7 +2233,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0002) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0002 decoded = new Feature_0002();
 
@@ -2258,7 +2258,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0003) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0003 decoded = new Feature_0003();
 
@@ -2293,7 +2293,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0004) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0004 decoded = new Feature_0004();
 
@@ -2324,7 +2324,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0010) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0010 decoded = new Feature_0010();
 
@@ -2353,7 +2353,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x001D) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_001D decoded = new Feature_001D();
 
@@ -2374,7 +2374,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x001E) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_001E decoded = new Feature_001E();
 
@@ -2403,7 +2403,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x001F) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_001F decoded = new Feature_001F();
 
@@ -2433,7 +2433,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0020) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0020 decoded = new Feature_0020();
 
@@ -2463,7 +2463,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0021) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0021 decoded = new Feature_0021();
 
@@ -2476,7 +2476,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.DataTypeSupported = (ushort)((feature[4] << 8) + feature[5]);
                 decoded.BUF |= (feature[6] & 0x01) == 0x01;
                 decoded.LinkSizes = new byte[feature[7]];
-                if(feature.Length > (feature[7] + 8)) Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
+                if(feature.Length > feature[7] + 8) Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
             }
 
             if(decoded.Version >= 3)
@@ -2498,7 +2498,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0022) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0022 decoded = new Feature_0022();
 
@@ -2519,7 +2519,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0023) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0023 decoded = new Feature_0023();
 
@@ -2551,7 +2551,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0024) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0024 decoded = new Feature_0024();
 
@@ -2574,7 +2574,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0025) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0025 decoded = new Feature_0025();
 
@@ -2603,7 +2603,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0026) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0026 decoded = new Feature_0026();
 
@@ -2624,7 +2624,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0027) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0027 decoded = new Feature_0027();
 
@@ -2645,7 +2645,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0028) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0028 decoded = new Feature_0028();
 
@@ -2674,7 +2674,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0029) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0029 decoded = new Feature_0029();
 
@@ -2702,7 +2702,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x002A) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_002A decoded = new Feature_002A();
 
@@ -2731,7 +2731,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x002B) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_002B decoded = new Feature_002B();
 
@@ -2754,7 +2754,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x002C) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_002C decoded = new Feature_002C();
 
@@ -2783,7 +2783,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x002D) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_002D decoded = new Feature_002D();
 
@@ -2819,7 +2819,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x002E) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_002E decoded = new Feature_002E();
 
@@ -2853,7 +2853,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x002F) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_002F decoded = new Feature_002F();
 
@@ -2884,7 +2884,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0030) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0030 decoded = new Feature_0030();
 
@@ -2905,7 +2905,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0031) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0031 decoded = new Feature_0031();
 
@@ -2928,7 +2928,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0032) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0032 decoded = new Feature_0032();
 
@@ -2955,7 +2955,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0033) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0033 decoded = new Feature_0033();
 
@@ -2963,7 +2963,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(feature[7] > 0 && feature.Length > (feature[7] + 8))
+            if(feature[7] > 0 && feature.Length > feature[7] + 8)
             {
                 decoded.LinkSizes = new byte[feature[7]];
                 Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
@@ -2982,7 +2982,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0035) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0035 decoded = new Feature_0035();
 
@@ -3003,7 +3003,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0037) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0037 decoded = new Feature_0037();
 
@@ -3026,7 +3026,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0038) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0038 decoded = new Feature_0038();
 
@@ -3047,7 +3047,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x003A) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_003A decoded = new Feature_003A();
 
@@ -3075,7 +3075,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x003B) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_003B decoded = new Feature_003B();
 
@@ -3098,7 +3098,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0040) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0040 decoded = new Feature_0040();
 
@@ -3135,7 +3135,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0041) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0041 decoded = new Feature_0041();
 
@@ -3170,7 +3170,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0042) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0042 decoded = new Feature_0042();
 
@@ -3191,7 +3191,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0050) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0050 decoded = new Feature_0050();
 
@@ -3218,7 +3218,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0051) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0051 decoded = new Feature_0051();
 
@@ -3245,7 +3245,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0080) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0080 decoded = new Feature_0080();
 
@@ -3268,7 +3268,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0100) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0100 decoded = new Feature_0100();
 
@@ -3289,7 +3289,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0101) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0101 decoded = new Feature_0101();
 
@@ -3312,7 +3312,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0102) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0102 decoded = new Feature_0102();
 
@@ -3340,7 +3340,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0103) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0103 decoded = new Feature_0103();
 
@@ -3369,7 +3369,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0104) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0104 decoded = new Feature_0104();
 
@@ -3392,7 +3392,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0105) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0105 decoded = new Feature_0105();
 
@@ -3419,7 +3419,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0106) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0106 decoded = new Feature_0106();
 
@@ -3442,7 +3442,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0107) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0107 decoded = new Feature_0107();
 
@@ -3478,7 +3478,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0108) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0108 decoded = new Feature_0108();
 
@@ -3506,7 +3506,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0109) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0109 decoded = new Feature_0109();
 
@@ -3527,7 +3527,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x010A) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_010A decoded = new Feature_010A();
 
@@ -3556,7 +3556,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x010B) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_010B decoded = new Feature_010B();
 
@@ -3579,7 +3579,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x010C) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_010C decoded = new Feature_010C();
 
@@ -3611,7 +3611,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x010D) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_010D decoded = new Feature_010D();
 
@@ -3648,7 +3648,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x010E) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_010E decoded = new Feature_010E();
 
@@ -3671,7 +3671,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0110) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0110 decoded = new Feature_0110();
 
@@ -3692,7 +3692,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0113) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0113 decoded = new Feature_0113();
 
@@ -3713,7 +3713,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(number != 0x0142) return null;
 
-            if((feature[3] + 4) != feature.Length) return null;
+            if(feature[3] + 4 != feature.Length) return null;
 
             Feature_0142 decoded = new Feature_0142();
 
@@ -5275,14 +5275,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             uint offset = 8;
             List<FeatureDescriptor> descLst = new List<FeatureDescriptor>();
 
-            while((offset + 4) < response.Length)
+            while(offset + 4 < response.Length)
             {
                 FeatureDescriptor desc = new FeatureDescriptor();
                 desc.Code = (ushort)((response[offset + 0] << 8) + response[offset + 1]);
                 desc.Data = new byte[response[offset + 3] + 4];
                 if(desc.Data.Length + offset > response.Length) desc.Data = new byte[response.Length - offset];
                 Array.Copy(response, offset, desc.Data, 0, desc.Data.Length);
-                offset += (uint)(desc.Data.Length);
+                offset += (uint)desc.Data.Length;
 
                 descLst.Add(desc);
             }

@@ -801,9 +801,9 @@ namespace DiscImageChef.DiscImages
 
                     Partition partition = new Partition();
                     partition.Description = track.TrackDescription;
-                    partition.Size = ((track.TrackEndSector - track.TrackStartSector) + 1) *
+                    partition.Size = (track.TrackEndSector - track.TrackStartSector + 1) *
                                      (ulong)track.TrackRawBytesPerSector;
-                    partition.Length = (track.TrackEndSector - track.TrackStartSector) + 1;
+                    partition.Length = track.TrackEndSector - track.TrackStartSector + 1;
                     ImageInfo.Sectors += partition.Length;
                     partition.Sequence = track.TrackSequence;
                     partition.Offset = track.TrackFileOffset;
@@ -848,7 +848,7 @@ namespace DiscImageChef.DiscImages
 
                 if(!data && !firstdata) ImageInfo.MediaType = MediaType.CDDA;
                 else if(firstaudio && data && sessions.Count > 1 && mode2) ImageInfo.MediaType = MediaType.CDPLUS;
-                else if((firstdata && audio) || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
+                else if(firstdata && audio || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
                 else if(!audio) ImageInfo.MediaType = MediaType.CDROM;
                 else ImageInfo.MediaType = MediaType.CD;
 
@@ -871,7 +871,7 @@ namespace DiscImageChef.DiscImages
 
         static ulong GetLba(int hour, int minute, int second, int frame)
         {
-            return (ulong)((hour * 60 * 60 * 75) + (minute * 60 * 75) + (second * 75) + frame - 150);
+            return (ulong)(hour * 60 * 60 * 75 + minute * 60 * 75 + second * 75 + frame - 150);
         }
 
         public override bool ImageHasPartitions()
@@ -944,7 +944,7 @@ namespace DiscImageChef.DiscImages
                         if(_track.TrackSequence == kvp.Key)
                         {
                             if(sectorAddress <= _track.TrackEndSector)
-                                return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
+                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -965,7 +965,7 @@ namespace DiscImageChef.DiscImages
                         if(_track.TrackSequence == kvp.Key)
                         {
                             if(sectorAddress <= _track.TrackEndSector)
-                                return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
+                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                         }
                     }
                 }
@@ -993,7 +993,7 @@ namespace DiscImageChef.DiscImages
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((length + sectorAddress) - 1 > _track.TrackEndSector)
+            if(length + sectorAddress - 1 > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0} {2}) than present in track ({1}), won't cross tracks",
@@ -1082,7 +1082,7 @@ namespace DiscImageChef.DiscImages
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((length + sectorAddress) - 1 > (_track.TrackEndSector))
+            if(length + sectorAddress - 1 > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
@@ -1333,8 +1333,8 @@ namespace DiscImageChef.DiscImages
                     {
                         if(track.TrackSequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < ((track.TrackEndSector - track.TrackStartSector) + 1))
-                                return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
+                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1)
+                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                         }
                     }
                 }
@@ -1362,7 +1362,7 @@ namespace DiscImageChef.DiscImages
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((length + sectorAddress) - 1 > (_track.TrackEndSector))
+            if(length + sectorAddress - 1 > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",

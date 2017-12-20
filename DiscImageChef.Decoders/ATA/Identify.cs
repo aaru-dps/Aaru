@@ -2417,7 +2417,7 @@ namespace DiscImageChef.Decoders.ATA
                 sb.AppendFormat("Physical sector size: {0} bytes", physicalsectorsize).AppendLine();
                 sb.AppendFormat("Logical sector size: {0} bytes", logicalsectorsize).AppendLine();
 
-                if((logicalsectorsize != physicalsectorsize) && (ATAID.LogicalAlignment & 0x8000) == 0x0000 &&
+                if(logicalsectorsize != physicalsectorsize && (ATAID.LogicalAlignment & 0x8000) == 0x0000 &&
                    (ATAID.LogicalAlignment & 0x4000) == 0x4000)
                 {
                     sb.AppendFormat("Logical sector starts at offset {0} from physical sector",
@@ -2462,40 +2462,40 @@ namespace DiscImageChef.Decoders.ATA
                     if(ATAID.CurrentSectors > 0)
                         sb.AppendFormat("Device size in CHS mode: {0} bytes, {1} Mb, {2} MiB",
                                         (ulong)ATAID.CurrentSectors * logicalsectorsize,
-                                        ((ulong)ATAID.CurrentSectors * logicalsectorsize) / 1000 / 1000,
-                                        ((ulong)ATAID.CurrentSectors * 512) / 1024 / 1024).AppendLine();
+                                        (ulong)ATAID.CurrentSectors * logicalsectorsize / 1000 / 1000,
+                                        (ulong)ATAID.CurrentSectors * 512 / 1024 / 1024).AppendLine();
                     else
                     {
                         ulong currentSectors = (ulong)(ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack);
                         sb.AppendFormat("Device size in CHS mode: {0} bytes, {1} Mb, {2} MiB",
                                         currentSectors * logicalsectorsize,
-                                        (currentSectors * logicalsectorsize) / 1000 / 1000,
-                                        (currentSectors * 512) / 1024 / 1024).AppendLine();
+                                        currentSectors * logicalsectorsize / 1000 / 1000,
+                                        currentSectors * 512 / 1024 / 1024).AppendLine();
                     }
                 }
 
                 if(ATAID.Capabilities.HasFlag(CapabilitiesBit.LBASupport))
                 {
-                    if((((ulong)ATAID.LBASectors * logicalsectorsize) / 1024 / 1024) > 1000000)
+                    if((ulong)ATAID.LBASectors * logicalsectorsize / 1024 / 1024 > 1000000)
                     {
                         sb.AppendFormat("Device size in 28-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
                                         (ulong)ATAID.LBASectors * logicalsectorsize,
-                                        ((ulong)ATAID.LBASectors * logicalsectorsize) / 1000 / 1000 / 1000 / 1000,
-                                        ((ulong)ATAID.LBASectors * 512) / 1024 / 1024 / 1024 / 1024).AppendLine();
+                                        (ulong)ATAID.LBASectors * logicalsectorsize / 1000 / 1000 / 1000 / 1000,
+                                        (ulong)ATAID.LBASectors * 512 / 1024 / 1024 / 1024 / 1024).AppendLine();
                     }
-                    else if((((ulong)ATAID.LBASectors * logicalsectorsize) / 1024 / 1024) > 1000)
+                    else if((ulong)ATAID.LBASectors * logicalsectorsize / 1024 / 1024 > 1000)
                     {
                         sb.AppendFormat("Device size in 28-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
                                         (ulong)ATAID.LBASectors * logicalsectorsize,
-                                        ((ulong)ATAID.LBASectors * logicalsectorsize) / 1000 / 1000 / 1000,
-                                        ((ulong)ATAID.LBASectors * 512) / 1024 / 1024 / 1024).AppendLine();
+                                        (ulong)ATAID.LBASectors * logicalsectorsize / 1000 / 1000 / 1000,
+                                        (ulong)ATAID.LBASectors * 512 / 1024 / 1024 / 1024).AppendLine();
                     }
                     else
                     {
                         sb.AppendFormat("Device size in 28-bit LBA mode: {0} bytes, {1} Mb, {2} MiB",
                                         (ulong)ATAID.LBASectors * logicalsectorsize,
-                                        ((ulong)ATAID.LBASectors * logicalsectorsize) / 1000 / 1000,
-                                        ((ulong)ATAID.LBASectors * 512) / 1024 / 1024).AppendLine();
+                                        (ulong)ATAID.LBASectors * logicalsectorsize / 1000 / 1000,
+                                        (ulong)ATAID.LBASectors * 512 / 1024 / 1024).AppendLine();
                     }
                 }
 
@@ -2503,53 +2503,53 @@ namespace DiscImageChef.Decoders.ATA
                 {
                     if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ExtSectors))
                     {
-                        if(((ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024) > 1000000)
+                        if(ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024 > 1000000)
                         {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
                                             ATAID.ExtendedUserSectors * logicalsectorsize,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1000 / 1000 / 1000 / 1000,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024 / 1024 / 1024)
+                                            ATAID.ExtendedUserSectors * logicalsectorsize / 1000 / 1000 / 1000 / 1000,
+                                            ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024 / 1024 / 1024)
                               .AppendLine();
                         }
-                        else if(((ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024) > 1000)
+                        else if(ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024 > 1000)
                         {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
                                             ATAID.ExtendedUserSectors * logicalsectorsize,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1000 / 1000 / 1000,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024 / 1024)
+                                            ATAID.ExtendedUserSectors * logicalsectorsize / 1000 / 1000 / 1000,
+                                            ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024 / 1024)
                               .AppendLine();
                         }
                         else
                         {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Mb, {2} MiB",
                                             ATAID.ExtendedUserSectors * logicalsectorsize,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1000 / 1000,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024).AppendLine();
+                                            ATAID.ExtendedUserSectors * logicalsectorsize / 1000 / 1000,
+                                            ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024).AppendLine();
                         }
                     }
                     else
                     {
-                        if(((ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024) > 1000000)
+                        if(ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024 > 1000000)
                         {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
                                             ATAID.LBA48Sectors * logicalsectorsize,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1000 / 1000 / 1000 / 1000,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024 / 1024 / 1024)
+                                            ATAID.LBA48Sectors * logicalsectorsize / 1000 / 1000 / 1000 / 1000,
+                                            ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024 / 1024 / 1024)
                               .AppendLine();
                         }
-                        else if(((ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024) > 1000)
+                        else if(ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024 > 1000)
                         {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
                                             ATAID.LBA48Sectors * logicalsectorsize,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1000 / 1000 / 1000,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024 / 1024).AppendLine();
+                                            ATAID.LBA48Sectors * logicalsectorsize / 1000 / 1000 / 1000,
+                                            ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024 / 1024).AppendLine();
                         }
                         else
                         {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Mb, {2} MiB",
                                             ATAID.LBA48Sectors * logicalsectorsize,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1000 / 1000,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024).AppendLine();
+                                            ATAID.LBA48Sectors * logicalsectorsize / 1000 / 1000,
+                                            ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024).AppendLine();
                         }
                     }
                 }
@@ -2594,18 +2594,18 @@ namespace DiscImageChef.Decoders.ATA
                 {
                     case 1:
                         sb.AppendFormat("{0} KiB of single ported single sector buffer",
-                                        (ATAID.BufferSize * 512) / 1024).AppendLine();
+                                        ATAID.BufferSize * 512 / 1024).AppendLine();
                         break;
                     case 2:
-                        sb.AppendFormat("{0} KiB of dual ported multi sector buffer", (ATAID.BufferSize * 512) / 1024)
+                        sb.AppendFormat("{0} KiB of dual ported multi sector buffer", ATAID.BufferSize * 512 / 1024)
                           .AppendLine();
                         break;
                     case 3:
                         sb.AppendFormat("{0} KiB of dual ported multi sector buffer with read caching",
-                                        (ATAID.BufferSize * 512) / 1024).AppendLine();
+                                        ATAID.BufferSize * 512 / 1024).AppendLine();
                         break;
                     default:
-                        sb.AppendFormat("{0} KiB of unknown type {1} buffer", (ATAID.BufferSize * 512) / 1024,
+                        sb.AppendFormat("{0} KiB of unknown type {1} buffer", ATAID.BufferSize * 512 / 1024,
                                         ATAID.BufferType).AppendLine();
                         break;
                 }
@@ -2846,8 +2846,8 @@ namespace DiscImageChef.Decoders.ATA
                                                  ATAID.ServiceBusyClear);
             }
 
-            if(((ATAID.TransportMajorVersion & 0xF000) >> 12) == 0x1 ||
-               ((ATAID.TransportMajorVersion & 0xF000) >> 12) == 0xE)
+            if((ATAID.TransportMajorVersion & 0xF000) >> 12 == 0x1 ||
+               (ATAID.TransportMajorVersion & 0xF000) >> 12 == 0xE)
             {
                 if(!ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear))
                 {
@@ -2974,7 +2974,7 @@ namespace DiscImageChef.Decoders.ATA
                         sb.AppendLine().Append("CompactFlash power mode 1 is disabled");
 
                     sb.AppendLine().AppendFormat("CompactFlash device uses a maximum of {0} mA",
-                                                 (ATAID.CFAPowerMode & 0x0FFF));
+                                                 ATAID.CFAPowerMode & 0x0FFF);
                 }
             }
 
@@ -3346,8 +3346,8 @@ namespace DiscImageChef.Decoders.ATA
                     sb.AppendLine().Append("Trusted Computing feature set is supported");
             }
 
-            if(((ATAID.TransportMajorVersion & 0xF000) >> 12) == 0x1 ||
-               ((ATAID.TransportMajorVersion & 0xF000) >> 12) == 0xE)
+            if((ATAID.TransportMajorVersion & 0xF000) >> 12 == 0x1 ||
+               (ATAID.TransportMajorVersion & 0xF000) >> 12 == 0xE)
             {
                 if(!ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear))
                 {

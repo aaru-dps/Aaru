@@ -75,7 +75,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End) return false;
+            if(2 + partition.Start >= partition.End) return false;
 
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -247,7 +247,7 @@ namespace DiscImageChef.Filesystems
             {
                 Type = "FILES-11",
                 ClusterSize = homeblock.cluster * 512,
-                Clusters = (long)(partition.Size) / (homeblock.cluster * 512),
+                Clusters = (long)partition.Size / (homeblock.cluster * 512),
                 VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding),
                 VolumeSerial = string.Format("{0:X8}", homeblock.serialnum)
             };

@@ -49,7 +49,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(imagePlugin.GetSectorSize() < 2048) return false;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
-            if(partition.End <= (16 + partition.Start)) return false;
+            if(partition.End <= 16 + partition.Start) return false;
 
             // Read to Volume Descriptor
             byte[] vd_sector = imagePlugin.ReadSector(16 + partition.Start);
@@ -389,7 +389,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 ziso |= nextSignature == ziso_Magic;
                                 Amiga |= nextSignature == Amiga_Magic;
                                 AAIP |= nextSignature == AAIP_Magic ||
-                                        (nextSignature == AAIP_OldMagic && sa[sa_off + 3] == 1 && sa[sa_off + 2] >= 9);
+                                        nextSignature == AAIP_OldMagic && sa[sa_off + 3] == 1 && sa[sa_off + 2] >= 9;
 
                                 sa_off += sa[sa_off + 2];
 
@@ -446,7 +446,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     ziso |= nextSignature == ziso_Magic;
                     Amiga |= nextSignature == Amiga_Magic;
                     AAIP |= nextSignature == AAIP_Magic ||
-                            (nextSignature == AAIP_OldMagic && ca_data[ca_off + 3] == 1 && ca_data[ca_off + 2] >= 9);
+                            nextSignature == AAIP_OldMagic && ca_data[ca_off + 3] == 1 && ca_data[ca_off + 2] >= 9;
 
                     ca_off += ca_data[ca_off + 2];
                 }

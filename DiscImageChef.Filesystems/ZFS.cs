@@ -359,7 +359,7 @@ namespace DiscImageChef.Filesystems
                 offset += 4;
                 nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
                 offset += 4;
-                if(nameLength % 4 > 0) nameLength += 4 - (nameLength % 4);
+                if(nameLength % 4 > 0) nameLength += 4 - nameLength % 4;
                 nameBytes = new byte[nameLength];
                 Array.Copy(nvlist, offset, nameBytes, 0, nameLength);
                 item.name = StringHandlers.CToString(nameBytes);
@@ -395,7 +395,7 @@ namespace DiscImageChef.Filesystems
                         else
                         {
                             uint temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
-                            item.value = (temp > 0);
+                            item.value = temp > 0;
                             offset += 4;
                         }
 

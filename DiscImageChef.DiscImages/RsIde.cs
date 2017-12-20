@@ -154,7 +154,7 @@ namespace DiscImageChef.DiscImages
 
             if(ImageInfo.Cylinders == 0 || ImageInfo.Heads == 0 || ImageInfo.SectorsPerTrack == 0)
             {
-                ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+                ImageInfo.Cylinders = (uint)(ImageInfo.Sectors / 16 / 63);
                 ImageInfo.Heads = 16;
                 ImageInfo.SectorsPerTrack = 63;
             }

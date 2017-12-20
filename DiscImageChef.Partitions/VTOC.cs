@@ -337,7 +337,7 @@ namespace DiscImageChef.Partitions
                 {
                     Partition part = new Partition
                     {
-                        Start = ((ulong)(parts[i].p_start * bps) / imagePlugin.GetSectorSize()),
+                        Start = (ulong)(parts[i].p_start * bps) / imagePlugin.GetSectorSize(),
                         Length = (ulong)(parts[i].p_size * bps) / imagePlugin.GetSectorSize(),
                         Offset = (ulong)(parts[i].p_start * bps),
                         Size = (ulong)(parts[i].p_size * bps),

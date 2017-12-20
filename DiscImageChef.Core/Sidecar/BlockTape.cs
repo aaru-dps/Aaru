@@ -98,7 +98,7 @@ namespace DiscImageChef.Core
                 {
                     byte[] sector;
 
-                    if((sectors - doneSectors) >= sectorsToRead)
+                    if(sectors - doneSectors >= sectorsToRead)
                     {
                         sector = new byte[sectorsToRead * blockSize];
                         fs.Read(sector, 0, sector.Length);
@@ -112,14 +112,14 @@ namespace DiscImageChef.Core
                         fs.Read(sector, 0, sector.Length);
                         UpdateProgress2(string.Format("Hashing block {0} of {1} on file {2} of {3}", doneSectors, sectors, i + 1, files.Count),
                                         doneSectors, sectors);
-                        doneSectors += (sectors - doneSectors);
+                        doneSectors += sectors - doneSectors;
                     }
 
                     fileWorker.Update(sector);
                     tapeWorker.Update(sector);
                 }
 
-                tapeFile.EndBlock = (tapeFile.StartBlock + sectors) - 1;
+                tapeFile.EndBlock = tapeFile.StartBlock + sectors - 1;
                 currentBlock += sectors;
                 totalSize += fs.Length;
                 tapeFile.Checksums = fileWorker.End().ToArray();
