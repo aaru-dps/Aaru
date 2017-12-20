@@ -166,10 +166,10 @@ namespace DiscImageChef.Devices.Windows
         public byte DeviceTypeModifier;
         [MarshalAs(UnmanagedType.U1)] public bool RemovableMedia;
         [MarshalAs(UnmanagedType.U1)] public bool CommandQueueing;
-        public uint VendorIdOffset;
-        public uint ProductIdOffset;
-        public uint ProductRevisionOffset;
-        public uint SerialNumberOffset;
+        public int VendorIdOffset;
+        public int ProductIdOffset;
+        public int ProductRevisionOffset;
+        public int SerialNumberOffset;
         public StorageBusType BusType;
         public uint RawPropertiesLength;
         public byte[] RawDeviceProperties;

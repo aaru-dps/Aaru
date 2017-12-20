@@ -154,10 +154,10 @@ namespace DiscImageChef.Devices
                     descriptor.DeviceTypeModifier = descriptorB[9];
                     descriptor.RemovableMedia = descriptorB[10] > 0;
                     descriptor.CommandQueueing = descriptorB[11] > 0;
-                    descriptor.VendorIdOffset = BitConverter.ToUInt32(descriptorB, 12);
-                    descriptor.ProductIdOffset = BitConverter.ToUInt32(descriptorB, 16);
-                    descriptor.ProductRevisionOffset = BitConverter.ToUInt32(descriptorB, 20);
-                    descriptor.SerialNumberOffset = BitConverter.ToUInt32(descriptorB, 24);
+                    descriptor.VendorIdOffset = BitConverter.ToInt32(descriptorB, 12);
+                    descriptor.ProductIdOffset = BitConverter.ToInt32(descriptorB, 16);
+                    descriptor.ProductRevisionOffset = BitConverter.ToInt32(descriptorB, 20);
+                    descriptor.SerialNumberOffset = BitConverter.ToInt32(descriptorB, 24);
                     descriptor.BusType = (Windows.StorageBusType)BitConverter.ToUInt32(descriptorB, 28);
                     descriptor.RawPropertiesLength = BitConverter.ToUInt32(descriptorB, 32);
                     descriptor.RawDeviceProperties = new byte[descriptor.RawPropertiesLength];
