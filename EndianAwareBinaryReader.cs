@@ -122,21 +122,19 @@ namespace DiscImageChef
             if(numBytes == 1)
             {
                 num2 = BaseStream.ReadByte();
-                if(num2 == -1) { throw new EndOfStreamException("Attempted to read past the end of the stream."); }
+                if(num2 == -1) throw new EndOfStreamException("Attempted to read past the end of the stream.");
 
                 buffer[0] = (byte)num2;
             }
             else
-            {
                 do
                 {
                     num2 = BaseStream.Read(buffer, offset, numBytes - offset);
-                    if(num2 == 0) { throw new EndOfStreamException("Attempted to read past the end of the stream."); }
+                    if(num2 == 0) throw new EndOfStreamException("Attempted to read past the end of the stream.");
 
                     offset += num2;
                 }
                 while(offset < numBytes);
-            }
         }
     }
 }

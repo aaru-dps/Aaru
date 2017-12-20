@@ -233,7 +233,7 @@ namespace DiscImageChef
             ushort preOffset = (ushort)(typeAndTimeZone & 0xFFF);
             short offset;
 
-            if((preOffset & 0x800) == 0x800) { offset = (short)(preOffset | 0xF000); }
+            if((preOffset & 0x800) == 0x800) offset = (short)(preOffset | 0xF000);
             else offset = (short)(preOffset & 0x7FF);
 
             if(offset == -2047)
