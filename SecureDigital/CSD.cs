@@ -121,7 +121,7 @@ namespace DiscImageChef.Decoders.SecureDigital
             else csd.Size = (uint)(((response[7] & 0x3F) << 16) + (response[8] << 8) + response[9]);
             csd.EraseBlockEnable = (response[10] & 0x40) == 0x40;
             csd.EraseSectorSize = (byte)(((response[10] & 0x3F) << 1) + ((response[11] & 0x80) >> 7));
-            csd.WriteProtectGroupSize = ((byte)(response[11] & 0x7F));
+            csd.WriteProtectGroupSize = (byte)(response[11] & 0x7F);
             csd.WriteProtectGroupEnable = (response[12] & 0x80) == 0x80;
             csd.WriteSpeedFactor = (byte)((response[12] & 0x1C) >> 2);
             csd.WriteBlockLength = (byte)(((response[12] & 0x03) << 2) + ((response[13] & 0xC0) >> 6));

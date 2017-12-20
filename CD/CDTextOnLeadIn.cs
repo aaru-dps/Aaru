@@ -208,7 +208,7 @@ namespace DiscImageChef.Decoders.CD
                 return null;
             }
 
-            for(int i = 0; i < ((decoded.DataLength - 2) / 18); i++)
+            for(int i = 0; i < (decoded.DataLength - 2) / 18; i++)
             {
                 decoded.DataPacks[i].HeaderID1 = CDTextResponse[0 + i * 18 + 4];
                 decoded.DataPacks[i].HeaderID2 = CDTextResponse[1 + i * 18 + 4];

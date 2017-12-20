@@ -153,7 +153,7 @@ namespace DiscImageChef.Decoders.CD
                 return null;
             }
 
-            for(int i = 0; i < ((decoded.DataLength - 2) / 11); i++)
+            for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
             {
                 decoded.PMADescriptors[i].Reserved = CDPMAResponse[0 + i * 11 + 4];
                 decoded.PMADescriptors[i].ADR = (byte)((CDPMAResponse[1 + i * 11 + 4] & 0xF0) >> 4);

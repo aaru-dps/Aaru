@@ -270,18 +270,18 @@ namespace DiscImageChef.Decoders.Floppy
 
                 if(i < 86)
                 {
-                    output[i] |= (byte)((((buffer[i] & 1) << 1)) & 0xFF);
-                    output[i] |= (byte)((((buffer[i] & 2) >> 1)) & 0xFF);
+                    output[i] |= (byte)((buffer[i] & 1) << 1 & 0xFF);
+                    output[i] |= (byte)((buffer[i] & 2) >> 1 & 0xFF);
                 }
                 else if(i < 86 * 2)
                 {
-                    output[i] |= (byte)((((buffer[i - 86] & 4) >> 1)) & 0xFF);
-                    output[i] |= (byte)((((buffer[i - 86] & 8) >> 3)) & 0xFF);
+                    output[i] |= (byte)((buffer[i - 86] & 4) >> 1 & 0xFF);
+                    output[i] |= (byte)((buffer[i - 86] & 8) >> 3 & 0xFF);
                 }
                 else
                 {
-                    output[i] |= (byte)((((buffer[i - 86 * 2] & 0x10) >> 3)) & 0xFF);
-                    output[i] |= (byte)((((buffer[i - 86 * 2] & 0x20) >> 5)) & 0xFF);
+                    output[i] |= (byte)((buffer[i - 86 * 2] & 0x10) >> 3 & 0xFF);
+                    output[i] |= (byte)((buffer[i - 86 * 2] & 0x20) >> 5 & 0xFF);
                 }
             }
 

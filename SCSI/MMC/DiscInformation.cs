@@ -282,7 +282,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             StandardDiscInformation decoded = new StandardDiscInformation();
             decoded.DataLength = (ushort)((response[0] << 8) + response[1]);
 
-            if((decoded.DataLength + 2) != response.Length) return null;
+            if(decoded.DataLength + 2 != response.Length) return null;
 
             decoded.DataType = (byte)((response[2] & 0xE0) >> 5);
             decoded.Erasable |= (response[2] & 0x10) == 0x10;
@@ -316,7 +316,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.DiscApplicationCode = response[32];
             decoded.OPCTablesNumber = response[33];
 
-            if(decoded.OPCTablesNumber > 0 && response.Length == (decoded.OPCTablesNumber * 8) + 34)
+            if(decoded.OPCTablesNumber > 0 && response.Length == decoded.OPCTablesNumber * 8 + 34)
             {
                 decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
                 for(int i = 0; i < decoded.OPCTablesNumber; i++)
@@ -412,11 +412,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             sb.AppendFormat("Last session Lead-In address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
                             decoded.LastSessionLeadInStartLBA, (decoded.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
                             (decoded.LastSessionLeadInStartLBA & 0xFF00) >> 8,
-                            (decoded.LastSessionLeadInStartLBA & 0xFF)).AppendLine();
+                            decoded.LastSessionLeadInStartLBA & 0xFF).AppendLine();
             sb.AppendFormat("Last possible Lead-Out address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
                             decoded.LastPossibleLeadOutStartLBA, (decoded.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
                             (decoded.LastPossibleLeadOutStartLBA & 0xFF00) >> 8,
-                            (decoded.LastPossibleLeadOutStartLBA & 0xFF)).AppendLine();
+                            decoded.LastPossibleLeadOutStartLBA & 0xFF).AppendLine();
 
             if(decoded.URU) sb.AppendLine("Disc is defined for unrestricted use");
             else sb.AppendLine("Disc is defined for restricted use");
@@ -447,7 +447,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             TrackResourcesInformation decoded = new TrackResourcesInformation();
             decoded.DataLength = (ushort)((response[0] << 8) + response[1]);
 
-            if((decoded.DataLength + 2) != response.Length) return null;
+            if(decoded.DataLength + 2 != response.Length) return null;
 
             decoded.DataType = (byte)((response[2] & 0xE0) >> 5);
             decoded.MaxTracks = (ushort)((response[4] << 8) + response[5]);
@@ -486,7 +486,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             POWResourcesInformation decoded = new POWResourcesInformation();
             decoded.DataLength = (ushort)((response[0] << 8) + response[1]);
 
-            if((decoded.DataLength + 2) != response.Length) return null;
+            if(decoded.DataLength + 2 != response.Length) return null;
 
             decoded.DataType = (byte)((response[2] & 0xE0) >> 5);
             decoded.RemainingPOWReplacements =
