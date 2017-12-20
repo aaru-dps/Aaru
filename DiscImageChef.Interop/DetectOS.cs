@@ -81,10 +81,7 @@ namespace DiscImageChef.Interop
 
         public static PlatformID GetRealPlatformID()
         {
-            if((int)Environment.OSVersion.Platform < 4 || (int)Environment.OSVersion.Platform == 5)
-            {
-                return (PlatformID)(int)Environment.OSVersion.Platform;
-            }
+            if((int)Environment.OSVersion.Platform < 4 || (int)Environment.OSVersion.Platform == 5) return (PlatformID)(int)Environment.OSVersion.Platform;
 
             utsname unixname;
             int error = uname(out unixname);

@@ -145,12 +145,12 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                         if(!error)
                         {
-                            if(duration >= 500) { results.F += blocksToRead; }
-                            else if(duration >= 150) { results.E += blocksToRead; }
-                            else if(duration >= 50) { results.D += blocksToRead; }
-                            else if(duration >= 10) { results.C += blocksToRead; }
-                            else if(duration >= 3) { results.B += blocksToRead; }
-                            else { results.A += blocksToRead; }
+                            if(duration >= 500) results.F += blocksToRead;
+                            else if(duration >= 150) results.E += blocksToRead;
+                            else if(duration >= 50) results.D += blocksToRead;
+                            else if(duration >= 10) results.C += blocksToRead;
+                            else if(duration >= 3) results.B += blocksToRead;
+                            else results.A += blocksToRead;
 
                             mhddLog.Write(i, duration);
                             ibgLog.Write(i, currentSpeed * 1024);
@@ -182,7 +182,6 @@ namespace DiscImageChef.Core.Devices.Scanning
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
 
                     if(ataReader.CanSeekLba)
-                    {
                         for(int i = 0; i < SEEK_TIMES; i++)
                         {
                             if(aborted) break;
@@ -201,7 +200,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                             results.SeekTotal += seekCur;
                             GC.Collect();
                         }
-                    }
                 }
                 else
                 {
@@ -233,12 +231,12 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                                 if(!error)
                                 {
-                                    if(duration >= 500) { results.F += blocksToRead; }
-                                    else if(duration >= 150) { results.E += blocksToRead; }
-                                    else if(duration >= 50) { results.D += blocksToRead; }
-                                    else if(duration >= 10) { results.C += blocksToRead; }
-                                    else if(duration >= 3) { results.B += blocksToRead; }
-                                    else { results.A += blocksToRead; }
+                                    if(duration >= 500) results.F += blocksToRead;
+                                    else if(duration >= 150) results.E += blocksToRead;
+                                    else if(duration >= 50) results.D += blocksToRead;
+                                    else if(duration >= 10) results.C += blocksToRead;
+                                    else if(duration >= 3) results.B += blocksToRead;
+                                    else results.A += blocksToRead;
 
                                     mhddLog.Write(currentBlock, duration);
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
@@ -273,7 +271,6 @@ namespace DiscImageChef.Core.Devices.Scanning
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
 
                     if(ataReader.CanSeek)
-                    {
                         for(int i = 0; i < SEEK_TIMES; i++)
                         {
                             if(aborted) break;
@@ -295,7 +292,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                             results.SeekTotal += seekCur;
                             GC.Collect();
                         }
-                    }
                 }
 
                 DicConsole.WriteLine();

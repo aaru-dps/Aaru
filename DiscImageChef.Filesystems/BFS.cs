@@ -124,18 +124,14 @@ namespace DiscImageChef.Filesystems
 
             besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
             if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // Magic is at offset
-            {
                 littleEndian = besb.magic1 == BEFS_CIGAM1;
-            }
             else
             {
                 sb_sector = imagePlugin.ReadSector(1 + partition.Start);
                 besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
 
                 if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
-                {
                     littleEndian = besb.magic1 == BEFS_CIGAM1;
-                }
                 else if(sb_sector.Length >= 0x400)
                 {
                     byte[] temp = imagePlugin.ReadSector(0 + partition.Start);
@@ -181,10 +177,8 @@ namespace DiscImageChef.Filesystems
             }
 
             if(besb.flags == BEFS_CLEAN)
-            {
                 if(besb.log_start == besb.log_end) sb.AppendLine("Filesystem is clean");
                 else sb.AppendLine("Filesystem is dirty");
-            }
             else if(besb.flags == BEFS_DIRTY) sb.AppendLine("Filesystem is dirty");
             else sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
 

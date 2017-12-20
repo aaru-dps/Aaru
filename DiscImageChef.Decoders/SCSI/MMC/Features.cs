@@ -3728,10 +3728,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.ME |= (feature[4] & 0x01) == 0x01;
                 decoded.Profiles = new ushort[feature[5]];
                 if(feature[5] * 2 + 6 == feature.Length)
-                {
                     for(int i = 0; i < feature[5]; i++)
                         decoded.Profiles[i] = (ushort)((feature[0 + 6 + 2 * i] << 8) + feature[1 + 6 + 2 * i]);
-                }
             }
 
             return decoded;
@@ -3746,7 +3744,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             sb.AppendLine("MMC Supported Profiles:");
             if(ftr.Profiles != null)
-            {
                 foreach(Profile prof in ftr.Profiles)
                 {
                     switch(prof.Number)
@@ -3876,7 +3873,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                     if(prof.Current) sb.AppendLine(" (current)");
                     else sb.AppendLine();
                 }
-            }
 
             return sb.ToString();
         }
@@ -4454,10 +4450,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             sb.AppendLine("MMC Layer Jump Recording:");
 
             if(ftr.LinkSizes != null)
-            {
                 foreach(byte link in ftr.LinkSizes)
                     sb.AppendFormat("\tCurrent media has a {0} bytes link available", link).AppendLine();
-            }
 
             return sb.ToString();
         }
@@ -4797,10 +4791,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             Feature_010A ftr = feature.Value;
             StringBuilder sb = new StringBuilder();
 
-            if(ftr.DCBs != null)
-            {
-                foreach(uint DCB in ftr.DCBs) sb.AppendFormat("Drive supports DCB {0:X8}h", DCB).AppendLine();
-            }
+            if(ftr.DCBs != null) foreach(uint DCB in ftr.DCBs) sb.AppendFormat("Drive supports DCB {0:X8}h", DCB).AppendLine();
 
             return sb.ToString();
         }
@@ -4956,10 +4947,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if(ftr.ME) sb.AppendLine("\tDrive will only record on the OSSC Disc Format");
 
             if(ftr.Profiles != null)
-            {
                 for(int i = 0; i < ftr.Profiles.Length; i++)
                     sb.AppendFormat("\tProfile {0}: {1}", i, ftr.Profiles[i]).AppendLine();
-            }
 
             return sb.ToString();
         }

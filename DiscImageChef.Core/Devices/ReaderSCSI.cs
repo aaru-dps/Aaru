@@ -350,12 +350,16 @@ namespace DiscImageChef.Core.Devices
                 else
                 {
                     if(dev.Manufacturer == "HL-DT-ST")
+                    {
                         hldtstReadRaw =
                             !dev.HlDtStReadRawDvd(out readBuffer, out senseBuf, 0, 1, timeout, out duration);
+                    }
 
                     if(dev.Manufacturer == "PLEXTOR")
+                    {
                         plextorReadRaw =
                             !dev.PlextorReadRawDvd(out readBuffer, out senseBuf, 0, 1, timeout, out duration);
+                    }
 
                     if(hldtstReadRaw || plextorReadRaw)
                     {
@@ -500,39 +504,59 @@ namespace DiscImageChef.Core.Devices
             if(readRaw)
             {
                 if(readLong16)
+                {
                     sense = dev.ReadLong16(out buffer, out senseBuf, false, block, longBlockSize, timeout,
                                            out duration);
+                }
                 else if(readLong10)
+                {
                     sense = dev.ReadLong10(out buffer, out senseBuf, false, false, (uint)block, (ushort)longBlockSize,
                                            timeout, out duration);
+                }
                 else if(syqReadLong10)
+                {
                     sense = dev.SyQuestReadLong10(out buffer, out senseBuf, (uint)block, longBlockSize, timeout,
                                                   out duration);
+                }
                 else if(syqReadLong6)
+                {
                     sense = dev.SyQuestReadLong6(out buffer, out senseBuf, (uint)block, longBlockSize, timeout,
                                                  out duration);
+                }
                 else if(hldtstReadRaw)
+                {
                     sense = dev.HlDtStReadRawDvd(out buffer, out senseBuf, (uint)block, longBlockSize, timeout,
                                                  out duration);
+                }
                 else if(plextorReadRaw)
+                {
                     sense = dev.PlextorReadRawDvd(out buffer, out senseBuf, (uint)block, longBlockSize, timeout,
                                                   out duration);
+                }
                 else return true;
             }
             else
             {
                 if(read16)
+                {
                     sense = dev.Read16(out buffer, out senseBuf, 0, false, true, false, block, blockSize, 0, count,
                                        false, timeout, out duration);
+                }
                 else if(read12)
+                {
                     sense = dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block, blockSize,
                                        0, count, false, timeout, out duration);
+                }
                 else if(read10)
+                {
                     sense = dev.Read10(out buffer, out senseBuf, 0, false, true, false, false, (uint)block, blockSize,
                                        0, (ushort)count, timeout, out duration);
+                }
                 else if(read6)
+                {
                     sense = dev.Read6(out buffer, out senseBuf, (uint)block, blockSize, (byte)count, timeout,
                                       out duration);
+                }
                 else return true;
             }
 

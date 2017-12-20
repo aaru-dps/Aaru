@@ -130,10 +130,7 @@ namespace DiscImageChef.Filesystems.CPM
                     byte[] readSector =
                         device.ReadSector((ulong)((int)partition.Start + p / sectorMask.Length * sectorMask.Length +
                                                   sectorMask[p % sectorMask.Length]));
-                    if(workingDefinition.complement)
-                    {
-                        for(int b = 0; b < readSector.Length; b++) readSector[b] = (byte)(~readSector[b] & 0xFF);
-                    }
+                    if(workingDefinition.complement) for(int b = 0; b < readSector.Length; b++) readSector[b] = (byte)(~readSector[b] & 0xFF);
 
                     deinterleavedSectors.Add((ulong)p, readSector);
                 }
@@ -155,14 +152,12 @@ namespace DiscImageChef.Filesystems.CPM
 
                 // May it happen? Just in case, CP/M blocks are smaller than physical sectors
                 if(sector.Length > blockSize)
-                {
                     for(int i = 0; i < sector.Length / blockSize; i++)
                     {
                         byte[] tmp = new byte[blockSize];
                         Array.Copy(sector, blockSize * i, tmp, 0, blockSize);
                         allocationBlocks.Add(blockNo++, tmp);
                     }
-                }
                 // CP/M blocks are larger than physical sectors
                 else if(sector.Length < blockSize)
                 {
@@ -218,11 +213,8 @@ namespace DiscImageChef.Filesystems.CPM
 
             // For each directory entry
             for(int dOff = 0; dOff < directory.Length; dOff += 32)
-            {
-                // Describes a file (does not support PDOS entries with user >= 16, because they're identical to password entries
+            // Describes a file (does not support PDOS entries with user >= 16, because they're identical to password entries
                 if((directory[dOff] & 0x7F) < 0x10)
-                {
-                    // If there are more than 256 allocation blocks, the allocation block becomes a 16-bit value
                     if(allocationBlocks.Count > 256)
                     {
                         DirectoryEntry16 entry = new DirectoryEntry16();
@@ -290,10 +282,7 @@ namespace DiscImageChef.Filesystems.CPM
                         // because that's where the directory resides.
                         // There is also a field telling how many bytes are used in the last block, but its meaning is non-standard so
                         // we must ignore it.
-                        foreach(ushort blk in entry.allocations)
-                        {
-                            if(!blocks.Contains(blk) && blk != 0) blocks.Add(blk);
-                        }
+                        foreach(ushort blk in entry.allocations) if(!blocks.Contains(blk) && blk != 0) blocks.Add(blk);
 
                         // Save the file
                         fInfo.UID = (ulong)user;
@@ -387,10 +376,7 @@ namespace DiscImageChef.Filesystems.CPM
                         // because that's where the directory resides.
                         // There is also a field telling how many bytes are used in the last block, but its meaning is non-standard so
                         // we must ignore it.
-                        foreach(ushort blk in entry.allocations)
-                        {
-                            if(!blocks.Contains(blk) && blk != 0) blocks.Add(blk);
-                        }
+                        foreach(ushort blk in entry.allocations) if(!blocks.Contains(blk) && blk != 0) blocks.Add(blk);
 
                         // Save the file
                         fInfo.UID = (ulong)user;
@@ -417,7 +403,6 @@ namespace DiscImageChef.Filesystems.CPM
 
                         dirCnt++;
                     }
-                }
                 // A password entry (or a file entry in PDOS, but this does not handle that case)
                 else if((directory[dOff] & 0x7F) >= 0x10 && (directory[dOff] & 0x7F) < 0x20)
                 {
@@ -499,8 +484,6 @@ namespace DiscImageChef.Filesystems.CPM
                 }
                 // Timestamp entry
                 else if((directory[dOff] & 0x7F) == 0x21)
-                {
-                    // These places must be zero on CP/M 3 timestamp
                     if(directory[dOff + 10] == 0x00 && directory[dOff + 20] == 0x00 && directory[dOff + 30] == 0x00 &&
                        directory[dOff + 31] == 0x00)
                     {
@@ -622,8 +605,6 @@ namespace DiscImageChef.Filesystems.CPM
                         file3 = null;
                         dirCnt = 0;
                     }
-                }
-            }
 
             // Cache all files. As CP/M maximum volume size is 8 Mib
             // this should not be a problem
@@ -641,13 +622,11 @@ namespace DiscImageChef.Filesystems.CPM
 
                 Dictionary<int, List<ushort>> extents;
                 if(fileExtents.TryGetValue(filename, out extents))
-                {
                     for(int ex = 0; ex < extents.Count; ex++)
                     {
                         List<ushort> alBlks;
 
                         if(extents.TryGetValue(ex, out alBlks))
-                        {
                             foreach(ushort alBlk in alBlks)
                             {
                                 byte[] blk = new byte[blockSize];
@@ -655,9 +634,7 @@ namespace DiscImageChef.Filesystems.CPM
                                 fileMs.Write(blk, 0, blk.Length);
                                 fInfo.Blocks++;
                             }
-                        }
                     }
-                }
 
                 // If you insist to call CP/M "extent based"
                 fInfo.Attributes |= FileAttributes.Extents;
@@ -673,7 +650,6 @@ namespace DiscImageChef.Filesystems.CPM
             decodedPasswordCache = new Dictionary<string, byte[]>();
             // For each stored password, store a decoded version of it
             if(passwordCache.Count > 0)
-            {
                 foreach(KeyValuePair<string, byte[]> kvp in passwordCache)
                 {
                     byte[] tmp = new byte[8];
@@ -682,7 +658,6 @@ namespace DiscImageChef.Filesystems.CPM
 
                     decodedPasswordCache.Add(kvp.Key, tmp);
                 }
-            }
 
             // Generate statfs.
             cpmStat.Blocks = dpb.dsm + 1;

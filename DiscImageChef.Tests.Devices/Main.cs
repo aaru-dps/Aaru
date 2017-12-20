@@ -67,9 +67,11 @@ namespace DiscImageChef.Tests.Devices
                                      "----------------", "------------------------", "------------------------",
                                      "----------", "----------", "--------");
                 for(int i = 0; i < devices.Length; i++)
+                {
                     DicConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].Path,
                                          devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
                                          devices[i].Supported, i + 1);
+                }
 
                 DicConsole.Write("Please choose which drive to test (0 to exit): ");
                 strDev = System.Console.ReadLine();

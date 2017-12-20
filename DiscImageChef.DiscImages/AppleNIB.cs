@@ -123,10 +123,7 @@ namespace DiscImageChef.DiscImages
 
             int spt = 0;
             bool allTracksEqual = true;
-            for(int i = 1; i < tracks.Count; i++)
-            {
-                allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
-            }
+            for(int i = 1; i < tracks.Count; i++) allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
 
             if(allTracksEqual) spt = tracks[0].sectors.Length;
 
@@ -185,9 +182,7 @@ namespace DiscImageChef.DiscImages
             }
 
             for(int i = 0; i < tracks.Count; i++)
-            {
                 foreach(Apple2.RawSector sector in tracks[i].sectors)
-                {
                     if(skewed && spt != 0)
                     {
                         ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
@@ -203,8 +198,6 @@ namespace DiscImageChef.DiscImages
                         rawSectors.Add(ImageInfo.Sectors, sector);
                         ImageInfo.Sectors++;
                     }
-                }
-            }
 
             DicConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", ImageInfo.Sectors);
 

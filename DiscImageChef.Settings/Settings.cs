@@ -180,16 +180,10 @@ namespace DiscImageChef.Settings
                         {
                             NSObject obj;
 
-                            if(parsedPreferences.TryGetValue("SaveReportsGlobally", out obj))
-                            {
-                                Current.SaveReportsGlobally = ((NSNumber)obj).ToBool();
-                            }
+                            if(parsedPreferences.TryGetValue("SaveReportsGlobally", out obj)) Current.SaveReportsGlobally = ((NSNumber)obj).ToBool();
                             else Current.SaveReportsGlobally = false;
 
-                            if(parsedPreferences.TryGetValue("ShareReports", out obj))
-                            {
-                                Current.ShareReports = ((NSNumber)obj).ToBool();
-                            }
+                            if(parsedPreferences.TryGetValue("ShareReports", out obj)) Current.ShareReports = ((NSNumber)obj).ToBool();
                             else Current.ShareReports = false;
 
                             NSDictionary stats;
@@ -202,70 +196,37 @@ namespace DiscImageChef.Settings
                                     NSObject obj2;
                                     Current.Stats = new StatsSettings();
 
-                                    if(stats.TryGetValue("ShareStats", out obj2))
-                                    {
-                                        Current.Stats.ShareStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("ShareStats", out obj2)) Current.Stats.ShareStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.ShareStats = false;
 
-                                    if(stats.TryGetValue("BenchmarkStats", out obj2))
-                                    {
-                                        Current.Stats.BenchmarkStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("BenchmarkStats", out obj2)) Current.Stats.BenchmarkStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.BenchmarkStats = false;
 
-                                    if(stats.TryGetValue("CommandStats", out obj2))
-                                    {
-                                        Current.Stats.CommandStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("CommandStats", out obj2)) Current.Stats.CommandStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.CommandStats = false;
 
-                                    if(stats.TryGetValue("DeviceStats", out obj2))
-                                    {
-                                        Current.Stats.DeviceStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("DeviceStats", out obj2)) Current.Stats.DeviceStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.DeviceStats = false;
 
-                                    if(stats.TryGetValue("FilesystemStats", out obj2))
-                                    {
-                                        Current.Stats.FilesystemStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("FilesystemStats", out obj2)) Current.Stats.FilesystemStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.FilesystemStats = false;
 
-                                    if(stats.TryGetValue("FilterStats", out obj2))
-                                    {
-                                        Current.Stats.FilterStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("FilterStats", out obj2)) Current.Stats.FilterStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.FilterStats = false;
 
-                                    if(stats.TryGetValue("MediaImageStats", out obj2))
-                                    {
-                                        Current.Stats.MediaImageStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("MediaImageStats", out obj2)) Current.Stats.MediaImageStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.MediaImageStats = false;
 
-                                    if(stats.TryGetValue("MediaScanStats", out obj2))
-                                    {
-                                        Current.Stats.MediaScanStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("MediaScanStats", out obj2)) Current.Stats.MediaScanStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.MediaScanStats = false;
 
-                                    if(stats.TryGetValue("PartitionStats", out obj2))
-                                    {
-                                        Current.Stats.PartitionStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("PartitionStats", out obj2)) Current.Stats.PartitionStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.PartitionStats = false;
 
-                                    if(stats.TryGetValue("MediaStats", out obj2))
-                                    {
-                                        Current.Stats.MediaStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("MediaStats", out obj2)) Current.Stats.MediaStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.MediaStats = false;
 
-                                    if(stats.TryGetValue("VerifyStats", out obj2))
-                                    {
-                                        Current.Stats.VerifyStats = ((NSNumber)obj2).ToBool();
-                                    }
+                                    if(stats.TryGetValue("VerifyStats", out obj2)) Current.Stats.VerifyStats = ((NSNumber)obj2).ToBool();
                                     else Current.Stats.VerifyStats = false;
                                 }
                             }

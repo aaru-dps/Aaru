@@ -47,20 +47,15 @@ namespace DiscImageChef.Filters
             filtersList = new SortedDictionary<string, Filter>();
 
             foreach(Type type in assembly.GetTypes())
-            {
                 try
                 {
                     if(type.IsSubclassOf(typeof(Filter)))
                     {
                         Filter filter = (Filter)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                        if(!filtersList.ContainsKey(filter.Name.ToLower()))
-                        {
-                            filtersList.Add(filter.Name.ToLower(), filter);
-                        }
+                        if(!filtersList.ContainsKey(filter.Name.ToLower())) filtersList.Add(filter.Name.ToLower(), filter);
                     }
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-            }
         }
 
         public Filter GetFilter(string path)
@@ -68,7 +63,6 @@ namespace DiscImageChef.Filters
             Filter noFilter = null;
 
             foreach(Filter filter in filtersList.Values)
-            {
                 if(filter.UUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 {
                     if(filter.Identify(path))
@@ -81,7 +75,6 @@ namespace DiscImageChef.Filters
                     }
                 }
                 else noFilter = filter;
-            }
 
             if(noFilter.Identify(path))
             {

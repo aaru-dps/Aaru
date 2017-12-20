@@ -99,8 +99,10 @@ namespace DiscImageChef.Commands
                 else
                 {
                     if(options.Verbose)
+                    {
                         DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                     imageFormat.PluginUuid);
+                    }
                     else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
                 }
 

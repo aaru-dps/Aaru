@@ -223,7 +223,7 @@ namespace DiscImageChef.DiscImages
             if(fheader.trackMap[0] != 1 || fheader.trackMap[1] != 1) return false;
 
             // all other tracks must be either present (=1) or absent (=0)
-            for(int i = 0; i < 2 * 82; i++) { if(fheader.trackMap[i] > 1) return false; }
+            for(int i = 0; i < 2 * 82; i++) if(fheader.trackMap[i] > 1) return false;
 
             // TODO: validate the tracks
             // For now, having a valid header should be sufficient.
@@ -268,12 +268,7 @@ namespace DiscImageChef.DiscImages
 
             // build table of track offsets
             for(int i = 0; i < ImageInfo.Cylinders * 2; i++)
-            {
-                if(fheader.trackMap[i] == 0)
-                {
-                    // track is not present in image
-                    trackOffset[i] = -1;
-                }
+                if(fheader.trackMap[i] == 0) trackOffset[i] = -1;
                 else
                 {
                     // track is present, read the block header
@@ -295,7 +290,6 @@ namespace DiscImageChef.DiscImages
                     // skip the block data
                     stream.Seek(blkLength, SeekOrigin.Current);
                 }
-            }
 
             // ensure that the last track is present completely
             if(currentOffset > stream.Length) return false;
@@ -374,10 +368,8 @@ namespace DiscImageChef.DiscImages
         public override MediaType GetMediaType()
         {
             foreach(MediaTypeTableEntry ent in mediaTypes)
-            {
                 if(ent.Tracks == ImageInfo.Cylinders && ent.SectorsPerTrack == ImageInfo.SectorsPerTrack)
                     return ent.MediaType;
-            }
 
             return MediaType.Unknown;
         }
@@ -410,17 +402,15 @@ namespace DiscImageChef.DiscImages
             int sIndex = 0; // source buffer position
             int dIndex = 0; // destination buffer position
             while(sIndex < compressedLength)
-            {
                 if(cBuffer[sIndex] == escapeByte)
                 {
                     sIndex++; // skip over escape byte
                     fillByte = cBuffer[sIndex++]; // read fill byte
                     fillCount = cBuffer[sIndex++]; // read fill count
                     // fill destination buffer
-                    for(int i = 0; i < fillCount; i++) { trackData[dIndex++] = fillByte; }
+                    for(int i = 0; i < fillCount; i++) trackData[dIndex++] = fillByte;
                 }
-                else { trackData[dIndex++] = cBuffer[sIndex++]; }
-            }
+                else trackData[dIndex++] = cBuffer[sIndex++];
 
             // check that the number of bytes decompressed matches a whole track
             if(dIndex != ImageInfo.SectorSize * ImageInfo.SectorsPerTrack)
@@ -443,11 +433,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
             result = new byte[ImageInfo.SectorSize];
-            if(trackOffset[trackNum] == -1)
-            {
-                // track is not present. Fill with zeroes.
-                Array.Clear(result, 0, (int)ImageInfo.SectorSize);
-            }
+            if(trackOffset[trackNum] == -1) Array.Clear(result, 0, (int)ImageInfo.SectorSize);
             else
             {
                 // track is present in file, make sure it has been loaded
@@ -466,10 +452,7 @@ namespace DiscImageChef.DiscImages
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            for(int i = 0; i < length; i++)
-            {
-                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * ImageInfo.SectorSize);
-            }
+            for(int i = 0; i < length; i++) ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * ImageInfo.SectorSize);
 
             return result;
         }

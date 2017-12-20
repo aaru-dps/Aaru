@@ -612,17 +612,11 @@ namespace DiscImageChef.DiscImages
                                               ulong.Parse(lengthString[1]) * 75 + ulong.Parse(lengthString[2]);
                     }
                     else if(matchZeroData.Success)
-                    {
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found ZERO \"{1}\" at line {0}", line,
                                                   matchZeroData.Groups["length"].Value);
-                        // Seems can be ignored as the data is still in the image
-                    }
                     else if(matchZeroAudio.Success)
-                    {
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found SILENCE \"{1}\" at line {0}", line,
                                                   matchZeroAudio.Groups["length"].Value);
-                        // Seems can be ignored as the data is still in the image
-                    }
                     else if(matchAudioFile.Success)
                     {
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found AUDIOFILE \"{1}\" at line {0}", line,
@@ -941,10 +935,8 @@ namespace DiscImageChef.DiscImages
                 foreach(CdrdaoTrack track in discimage.Tracks)
                 {
                     if(track.Subchannel)
-                    {
                         if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                             ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
-                    }
 
                     switch(track.Tracktype)
                     {
@@ -1039,7 +1031,7 @@ namespace DiscImageChef.DiscImages
             {
                 case MediaTagType.CD_MCN:
                 {
-                    if(discimage.Mcn != null) { return Encoding.ASCII.GetBytes(discimage.Mcn); }
+                    if(discimage.Mcn != null) return Encoding.ASCII.GetBytes(discimage.Mcn);
 
                     throw new FeatureNotPresentImageException("Image does not contain MCN information.");
                 }
@@ -1071,19 +1063,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-            {
                 if(sectorAddress >= kvp.Value)
-                {
                     foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks)
-                    {
                         if(cdrdaoTrack.Sequence == kvp.Key)
-                        {
                             if(sectorAddress - kvp.Value < cdrdaoTrack.Sectors)
                                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
-                        }
-                    }
-                }
-            }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                   string.Format("Sector address {0} not found", sectorAddress));
@@ -1092,19 +1076,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-            {
                 if(sectorAddress >= kvp.Value)
-                {
                     foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks)
-                    {
                         if(cdrdaoTrack.Sequence == kvp.Key)
-                        {
                             if(sectorAddress - kvp.Value < cdrdaoTrack.Sectors)
                                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
-                        }
-                    }
-                }
-            }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                   string.Format("Sector address {0} not found", sectorAddress));
@@ -1117,13 +1093,11 @@ namespace DiscImageChef.DiscImages
             _track.Sequence = 0;
 
             foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks)
-            {
                 if(cdrdaoTrack.Sequence == track)
                 {
                     _track = cdrdaoTrack;
                     break;
                 }
-            }
 
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1196,7 +1170,6 @@ namespace DiscImageChef.DiscImages
                     SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
-            {
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector;
@@ -1205,7 +1178,6 @@ namespace DiscImageChef.DiscImages
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
-            }
 
             return buffer;
         }
@@ -1217,13 +1189,11 @@ namespace DiscImageChef.DiscImages
             _track.Sequence = 0;
 
             foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks)
-            {
                 if(cdrdaoTrack.Sequence == track)
                 {
                     _track = cdrdaoTrack;
                     break;
                 }
-            }
 
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1378,7 +1348,6 @@ namespace DiscImageChef.DiscImages
                     SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
-            {
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector;
@@ -1387,7 +1356,6 @@ namespace DiscImageChef.DiscImages
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
-            }
 
             return buffer;
         }
@@ -1405,19 +1373,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-            {
                 if(sectorAddress >= kvp.Value)
-                {
                     foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks)
-                    {
                         if(cdrdaoTrack.Sequence == kvp.Key)
-                        {
                             if(sectorAddress - kvp.Value < cdrdaoTrack.Sectors)
                                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
-                        }
-                    }
-                }
-            }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1429,13 +1389,11 @@ namespace DiscImageChef.DiscImages
             _track.Sequence = 0;
 
             foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks)
-            {
                 if(cdrdaoTrack.Sequence == track)
                 {
                     _track = cdrdaoTrack;
                     break;
                 }
-            }
 
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1498,7 +1456,6 @@ namespace DiscImageChef.DiscImages
 
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
-            {
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector;
@@ -1508,7 +1465,6 @@ namespace DiscImageChef.DiscImages
 
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
-            }
 
             return buffer;
         }

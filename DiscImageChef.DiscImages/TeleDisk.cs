@@ -357,7 +357,7 @@ namespace DiscImageChef.DiscImages
                 inStream.Seek(12, SeekOrigin.Begin);
                 stream.Seek(12, SeekOrigin.Begin);
                 init_Decode();
-                do { if((rd = Decode(out obuf, BUFSZ)) > 0) stream.Write(obuf, 0, rd); }
+                do if((rd = Decode(out obuf, BUFSZ)) > 0) stream.Write(obuf, 0, rd);
                 while(rd == BUFSZ);
             }
             else
@@ -416,10 +416,8 @@ namespace DiscImageChef.DiscImages
                 aDiskCrcHasFailed |= cmtcrc != commentHeader.Crc;
 
                 for(int i = 0; i < commentBlock.Length; i++)
-                {
-                    // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
+                // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
                     if(commentBlock[i] == 0x00) commentBlock[i] = 0x0A;
-                }
 
                 ImageInfo.ImageComments = System.Text.Encoding.ASCII.GetString(commentBlock);
 
@@ -527,7 +525,6 @@ namespace DiscImageChef.DiscImages
                     break;
 
                 if(teleDiskTrack.Sectors < ImageInfo.SectorsPerTrack)
-                {
                     if(teleDiskTrack.Cylinder + 1 == totalCylinders)
                     {
                         hasLeadOutOnHead0 |= teleDiskTrack.Head == 0;
@@ -535,7 +532,6 @@ namespace DiscImageChef.DiscImages
                         if(ImageInfo.Cylinders == totalCylinders) ImageInfo.Cylinders--;
                     }
                     else ImageInfo.SectorsPerTrack = teleDiskTrack.Sectors;
-                }
                 for(byte processedSectors = 0; processedSectors < teleDiskTrack.Sectors; processedSectors++)
                 {
                     TeleDiskSectorHeader teleDiskSector = new TeleDiskSectorHeader();
@@ -676,50 +672,34 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", lba);
 
                     if((teleDiskSector.Flags & FLAGS_SECTOR_NO_ID) != FLAGS_SECTOR_NO_ID)
-                    {
                         if(sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] != null)
-                        {
                             if((teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) == FLAGS_SECTOR_DUPLICATE)
-                            {
                                 DicConsole.DebugWriteLine("TeleDisk plugin",
                                                           "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
                                                           teleDiskSector.SectorNumber, teleDiskSector.Cylinder, teleDiskSector.Head);
-                            }
                             else
-                            {
                                 DicConsole.DebugWriteLine("TeleDisk plugin",
                                                           "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
                                                           teleDiskSector.SectorNumber, teleDiskSector.Cylinder, teleDiskSector.Head);
-                            }
-                        }
                         else
                         {
                             sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] = decodedData;
                             totalDiskSize += (uint)decodedData.Length;
                         }
-                    }
                 }
             }
 
             MemoryStream leadOutMs = new MemoryStream();
             if(hasLeadOutOnHead0)
-            {
                 for(int i = 0; i < sectorsData[totalCylinders - 1][0].Length; i++)
-                {
                     if(sectorsData[totalCylinders - 1][0][i] != null)
                         leadOutMs.Write(sectorsData[totalCylinders - 1][0][i], 0,
                                         sectorsData[totalCylinders - 1][0][i].Length);
-                }
-            }
             if(hasLeadOutOnHead1)
-            {
                 for(int i = 0; i < sectorsData[totalCylinders - 1][1].Length; i++)
-                {
                     if(sectorsData[totalCylinders - 1][1][i] != null)
                         leadOutMs.Write(sectorsData[totalCylinders - 1][1][i], 0,
                                         sectorsData[totalCylinders - 1][1][i].Length);
-                }
-            }
 
             if(leadOutMs.Length != 0)
             {
@@ -911,10 +891,8 @@ namespace DiscImageChef.DiscImages
                 crc ^= (ushort)((buffer[counter] & 0xFF) << 8);
 
                 for(int i = 0; i < 8; i++)
-                {
                     if((crc & 0x8000) > 0) crc = (ushort)((crc << 1) ^ TELE_DISK_CRC_POLY);
                     else crc = (ushort)(crc << 1);
-                }
 
                 counter++;
             }
@@ -1517,14 +1495,12 @@ namespace DiscImageChef.DiscImages
             /* halven cumulative freq for leaf nodes */
             j = 0;
             for(i = 0; i < T; i++)
-            {
                 if(son[i] >= T)
                 {
                     freq[j] = (ushort)((freq[i] + 1) / 2);
                     son[j] = son[i];
                     j++;
                 }
-            }
             /* make a tree : first, connect children nodes */
             for(i = 0, j = N_CHAR; j < T; i += 2, j++)
             {
@@ -1543,10 +1519,8 @@ namespace DiscImageChef.DiscImages
             }
             /* connect parent nodes */
             for(i = 0; i < T; i++)
-            {
-                if((k = son[i]) >= T) { prnt[k] = i; }
-                else { prnt[k] = prnt[k + 1] = i; }
-            }
+                if((k = son[i]) >= T) prnt[k] = i;
+                else prnt[k] = prnt[k + 1] = i;
         }
 
         /* update freq tree */
@@ -1555,7 +1529,7 @@ namespace DiscImageChef.DiscImages
         {
             int i, j, k, l;
 
-            if(freq[R] == MAX_FREQ) { Reconst(); }
+            if(freq[R] == MAX_FREQ) Reconst();
             c = prnt[c + T];
             do
             {
@@ -1663,7 +1637,6 @@ namespace DiscImageChef.DiscImages
             buf = new byte[len];
             int count; // was an unsigned long, seems unnecessary
             for(count = 0; count < len;)
-            {
                 if(tdctl.Bufcnt == 0)
                 {
                     if((c = DecodeChar()) < 0) return count; // fatal error
@@ -1699,7 +1672,6 @@ namespace DiscImageChef.DiscImages
                     // reset bufcnt after copy string from text_buf[]
                     if(tdctl.Bufndx >= tdctl.Bufcnt) tdctl.Bufndx = tdctl.Bufcnt = 0;
                 }
-            }
 
             return count; // count == len, success
         }

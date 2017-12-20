@@ -1554,10 +1554,8 @@ namespace DiscImageChef.DiscImages
                     offsetmap.Add(_track.TrackStartSector, _track.TrackSequence);
 
                     if(_track.TrackSubchannelType != TrackSubchannelType.None)
-                    {
                         if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                             ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
-                    }
 
                     switch(_track.TrackType)
                     {
@@ -1633,10 +1631,7 @@ namespace DiscImageChef.DiscImages
         Track GetTrack(ulong sector)
         {
             Track track = new Track();
-            foreach(KeyValuePair<ulong, uint> kvp in offsetmap)
-            {
-                if(sector >= kvp.Key) tracks.TryGetValue(kvp.Value, out track);
-            }
+            foreach(KeyValuePair<ulong, uint> kvp in offsetmap) if(sector >= kvp.Key) tracks.TryGetValue(kvp.Value, out track);
 
             return track;
         }
@@ -1664,7 +1659,7 @@ namespace DiscImageChef.DiscImages
                         imageStream.Seek((long)offset, SeekOrigin.Begin);
                         imageStream.Read(compHunk, 0, compHunk.Length);
 
-                        if(length == sectorsPerHunk * ImageInfo.SectorSize) { hunk = compHunk; }
+                        if(length == sectorsPerHunk * ImageInfo.SectorSize) hunk = compHunk;
                         else if((ChdCompression)hdrCompression > ChdCompression.Zlib)
                             throw new ImageNotSupportedException(string.Format("Unsupported compression {0}",
                                                                                (ChdCompression)hdrCompression));
@@ -1996,13 +1991,11 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = new byte[sector_size];
 
             if(track.TrackType == TrackType.Audio && swapAudio)
-            {
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
                     buffer[i] = sector[i + 1];
                 }
-            }
             else Array.Copy(sector, sector_offset, buffer, 0, sector_size);
 
             return buffer;
@@ -2045,7 +2038,6 @@ namespace DiscImageChef.DiscImages
             uint sector_size;
 
             if(tag == SectorTagType.CdSectorSubchannel)
-            {
                 if(track.TrackSubchannelType == TrackSubchannelType.None)
                     throw new FeatureNotPresentImageException("Requested sector does not contain subchannel");
                 else if(track.TrackSubchannelType == TrackSubchannelType.RawInterleaved)
@@ -2057,16 +2049,13 @@ namespace DiscImageChef.DiscImages
                     throw new
                         FeatureSupportedButNotImplementedImageException(string.Format("Unsupported subchannel type {0}",
                                                                                       track.TrackSubchannelType));
-            }
             else
-            {
                 switch(track.TrackType)
                 {
                     case TrackType.CdMode1:
                     case TrackType.CdMode2Form1:
                     {
                         if(track.TrackRawBytesPerSector == 2352)
-                        {
                             switch(tag)
                             {
                                 case SectorTagType.CdSectorSync:
@@ -2110,7 +2099,6 @@ namespace DiscImageChef.DiscImages
                                 }
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
-                        }
                         else throw new FeatureNotPresentImageException("Requested sector does not contain tags");
 
                         break;
@@ -2118,7 +2106,6 @@ namespace DiscImageChef.DiscImages
                     case TrackType.CdMode2Form2:
                     {
                         if(track.TrackRawBytesPerSector == 2352)
-                        {
                             switch(tag)
                             {
                                 case SectorTagType.CdSectorSync:
@@ -2147,9 +2134,7 @@ namespace DiscImageChef.DiscImages
                                 }
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
-                        }
                         else
-                        {
                             switch(tag)
                             {
                                 case SectorTagType.CdSectorSync:
@@ -2174,14 +2159,12 @@ namespace DiscImageChef.DiscImages
                                 }
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
-                        }
 
                         break;
                     }
                     case TrackType.CdMode2Formless:
                     {
                         if(track.TrackRawBytesPerSector == 2352)
-                        {
                             switch(tag)
                             {
                                 case SectorTagType.CdSectorSync:
@@ -2205,7 +2188,6 @@ namespace DiscImageChef.DiscImages
                                 }
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
-                        }
                         else throw new FeatureNotPresentImageException("Requested sector does not contain tags");
 
                         break;
@@ -2214,28 +2196,23 @@ namespace DiscImageChef.DiscImages
                         throw new FeatureNotPresentImageException("Requested sector does not contain tags");
                     default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
                 }
-            }
 
             byte[] buffer = new byte[sector_size];
 
             if(track.TrackType == TrackType.Audio && swapAudio)
-            {
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
                     buffer[i] = sector[i + 1];
                 }
-            }
             else Array.Copy(sector, sector_offset, buffer, 0, sector_size);
 
             if(track.TrackType == TrackType.Audio && swapAudio)
-            {
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
                     buffer[i] = sector[i + 1];
                 }
-            }
             else Array.Copy(sector, sector_offset, buffer, 0, sector_size);
 
             return buffer;
@@ -2319,13 +2296,11 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = new byte[track.TrackRawBytesPerSector];
 
             if(track.TrackType == TrackType.Audio && swapAudio)
-            {
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
                     buffer[i] = sector[i + 1];
                 }
-            }
             else Array.Copy(sector, 0, buffer, 0, track.TrackRawBytesPerSector);
 
             return buffer;
@@ -2496,7 +2471,7 @@ namespace DiscImageChef.DiscImages
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             List<Track> trks = new List<Track>();
-            foreach(Track track in tracks.Values) { if(track.TrackSession == session) trks.Add(track); }
+            foreach(Track track in tracks.Values) if(track.TrackSession == session) trks.Add(track);
 
             return trks;
         }

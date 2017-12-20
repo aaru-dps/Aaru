@@ -184,7 +184,7 @@ namespace DiscImageChef.DiscImages
                     stream.Read(bpsbytes, 0, bpsbytes.Length);
                     for(int i = 0; i < spt; i++) bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
                 }
-                else { for(int i = 0; i < spt; i++) bps[i] = (ushort)(128 << n); }
+                else for(int i = 0; i < spt; i++) bps[i] = (ushort)(128 << n);
 
                 if(spt > ImageInfo.SectorsPerTrack) ImageInfo.SectorsPerTrack = spt;
 

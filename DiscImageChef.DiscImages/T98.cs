@@ -82,7 +82,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr_b = new byte[256];
             stream.Read(hdr_b, 0, hdr_b.Length);
 
-            for(int i = 4; i < 256; i++) { if(hdr_b[i] != 0) return false; }
+            for(int i = 4; i < 256; i++) if(hdr_b[i] != 0) return false;
 
             int cylinders = BitConverter.ToInt32(hdr_b, 0);
 
@@ -103,7 +103,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr_b = new byte[256];
             stream.Read(hdr_b, 0, hdr_b.Length);
 
-            for(int i = 4; i < 256; i++) { if(hdr_b[i] != 0) return false; }
+            for(int i = 4; i < 256; i++) if(hdr_b[i] != 0) return false;
 
             int cylinders = BitConverter.ToInt32(hdr_b, 0);
 

@@ -223,10 +223,7 @@ namespace DiscImageChef.Decoders.SCSI
                 else descriptorsNo = (SCSIInquiryResponse.Length - 58) / 2;
 
                 decoded.VersionDescriptors = new ushort[descriptorsNo];
-                for(int i = 0; i < descriptorsNo; i++)
-                {
-                    decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + i * 2);
-                }
+                for(int i = 0; i < descriptorsNo; i++) decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + i * 2);
             }
 
             if(SCSIInquiryResponse.Length >= 75 && SCSIInquiryResponse.Length < 96)
@@ -500,9 +497,7 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(response.VersionDescriptors != null)
-            {
                 foreach(ushort VersionDescriptor in response.VersionDescriptors)
-                {
                     switch(VersionDescriptor)
                     {
                         case 0xFFFF:
@@ -1917,8 +1912,6 @@ namespace DiscImageChef.Decoders.SCSI
                               .AppendLine();
                             break;
                     }
-                }
-            }
 
             #region Quantum vendor prettifying
             if(response.QuantumPresent &&
@@ -2027,10 +2020,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             #region Kreon vendor prettifying
             if(response.KreonPresent)
-            {
                 sb.AppendFormat("Drive is flashed with Kreon firmware {0}.",
                                 StringHandlers.CToString(response.KreonVersion)).AppendLine();
-            }
             #endregion Kreon vendor prettifying
 
 #if DEBUG
@@ -2051,7 +2042,6 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(response.VendorSpecific != null)
-            {
                 if(response.KreonPresent)
                 {
                     byte[] vendor = new byte[7];
@@ -2068,7 +2058,6 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific, 60));
                     sb.AppendLine("============================================================");
                 }
-            }
 
             if(response.VendorSpecific2 != null)
             {

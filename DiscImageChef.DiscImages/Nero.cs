@@ -900,14 +900,8 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8}", footerV2.ChunkId);
             DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
-            if(footerV2.ChunkId == NeroV2FooterId && footerV2.FirstChunkOffset < (ulong)imageStream.Length)
-            {
-                return true;
-            }
-            if(footerV1.ChunkId == NeroV1FooterId && footerV1.FirstChunkOffset < (ulong)imageStream.Length)
-            {
-                return true;
-            }
+            if(footerV2.ChunkId == NeroV2FooterId && footerV2.FirstChunkOffset < (ulong)imageStream.Length) return true;
+            if(footerV1.ChunkId == NeroV1FooterId && footerV1.FirstChunkOffset < (ulong)imageStream.Length) return true;
 
             return false;
         }
@@ -1842,19 +1836,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-            {
                 if(sectorAddress >= kvp.Value)
-                {
                     foreach(Track _track in imageTracks)
-                    {
                         if(_track.TrackSequence == kvp.Key)
-                        {
                             if(sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector)
                                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
-                        }
-                    }
-                }
-            }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                   string.Format("Sector address {0} not found", sectorAddress));
@@ -1863,19 +1849,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-            {
                 if(sectorAddress >= kvp.Value)
-                {
                     foreach(Track _track in imageTracks)
-                    {
                         if(_track.TrackSequence == kvp.Key)
-                        {
                             if(sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector)
                                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
-                        }
-                    }
-                }
-            }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                   string.Format("Sector address {0} not found", sectorAddress));
@@ -1970,7 +1948,6 @@ namespace DiscImageChef.DiscImages
                     SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
-            {
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector;
@@ -1979,7 +1956,6 @@ namespace DiscImageChef.DiscImages
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
-            }
 
             return buffer;
         }
@@ -2201,7 +2177,6 @@ namespace DiscImageChef.DiscImages
                     SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
-            {
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector;
@@ -2210,7 +2185,6 @@ namespace DiscImageChef.DiscImages
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
-            }
 
             return buffer;
         }
@@ -2228,19 +2202,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-            {
                 if(sectorAddress >= kvp.Value)
-                {
                     foreach(Track _track in imageTracks)
-                    {
                         if(_track.TrackSequence == kvp.Key)
-                        {
                             if(sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector)
                                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
-                        }
-                    }
-                }
-            }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                   string.Format("Sector address {0} not found", sectorAddress));
@@ -2312,7 +2278,6 @@ namespace DiscImageChef.DiscImages
 
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
-            {
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector;
@@ -2322,7 +2287,6 @@ namespace DiscImageChef.DiscImages
 
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
-            }
 
             return buffer;
         }

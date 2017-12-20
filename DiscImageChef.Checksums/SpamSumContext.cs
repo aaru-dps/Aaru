@@ -233,12 +233,7 @@ namespace DiscImageChef.Checksums
                 /* We have hit a reset point. We now emit hashes which are
                  * based on all characters in the piece of the message between
                  * the last reset point and this one */
-                if(0 == self.Bh[i].Dlen)
-                {
-                    /* Can only happen 30 times. */
-                    /* First step for this blocksize. Clone next. */
-                    fuzzy_try_fork_blockhash();
-                }
+                if(0 == self.Bh[i].Dlen) fuzzy_try_fork_blockhash();
                 self.Bh[i].Digest[self.Bh[i].Dlen] = b64[self.Bh[i].H % 64];
                 self.Bh[i].Halfdigest = b64[self.Bh[i].Halfh % 64];
                 if(self.Bh[i].Dlen < SPAMSUM_LENGTH - 1)
@@ -300,7 +295,7 @@ namespace DiscImageChef.Checksums
             while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < self.TotalSize)
             {
                 ++bi;
-                if(bi >= NUM_BLOCKHASHES) { throw new OverflowException("The input exceeds data types."); }
+                if(bi >= NUM_BLOCKHASHES) throw new OverflowException("The input exceeds data types.");
             }
             /* Adapt blocksize guess to actual digest length. */
             while(bi >= self.Bhend) --bi;

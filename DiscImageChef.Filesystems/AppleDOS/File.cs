@@ -57,10 +57,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
-            {
-                attributes |= FileAttributes.System;
-            }
+                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) attributes |= FileAttributes.System;
 
             return Errno.NoError;
         }

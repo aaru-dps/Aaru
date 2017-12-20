@@ -53,15 +53,9 @@ namespace DiscImageChef.Filesystems.CPM
 
             if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return Errno.NoSuchFile;
 
-            if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0)
-            {
-                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return Errno.NoError;
-            }
+            if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0) if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return Errno.NoError;
 
-            if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) == 0)
-            {
-                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return Errno.NoError;
-            }
+            if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) == 0) if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return Errno.NoError;
 
             return Errno.NoSuchExtendedAttribute;
         }

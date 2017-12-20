@@ -71,7 +71,6 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             byte[] tmp;
             if(debug)
-            {
                 switch(fileId)
                 {
                     case FILEID_BOOT_SIGNED:
@@ -86,7 +85,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                         error = ReadFile(fileId, out tmp);
                         break;
                 }
-            }
             else error = ReadFile(fileId, out tmp);
 
             if(error != Errno.NoError) return error;
@@ -170,17 +168,13 @@ namespace DiscImageChef.Filesystems.LisaFS
             buf = null;
             if(!mounted || !debug) return Errno.AccessDenied;
 
-            if(fileId > 4 || fileId <= 0)
-            {
-                if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED) return Errno.InvalidArgument;
-            }
+            if(fileId > 4 || fileId <= 0) if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED) return Errno.InvalidArgument;
 
             if(systemFileCache.TryGetValue(fileId, out buf) && !tags) return Errno.NoError;
 
             int count = 0;
 
             if(fileId == FILEID_SRECORD)
-            {
                 if(!tags)
                 {
                     buf = device.ReadSectors(mddf.mddf_block + volumePrefix + mddf.srec_ptr, mddf.srec_len);
@@ -193,7 +187,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                                                 SectorTagType.AppleSectorTag);
                     return Errno.NoError;
                 }
-            }
 
             LisaTag.PriamTag sysTag;
 
@@ -244,7 +237,6 @@ namespace DiscImageChef.Filesystems.LisaFS
             ExtentFile file;
 
             if(fileId <= 4)
-            {
                 if(!debug || fileId == 0) return Errno.NoSuchFile;
                 else
                 {
@@ -298,23 +290,14 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     return Errno.NoError;
                 }
-            }
 
             stat = new FileEntryInfo();
             stat.Attributes = new FileAttributes();
             error = GetAttributes(fileId, ref stat.Attributes);
-            if(error != Errno.NoError)
-            {
-                //DicConsole.ErrorWriteLine("Error {0} reading attributes for file {1}", error, fileId);
-                return error;
-            }
+            if(error != Errno.NoError) return error;
 
             error = ReadExtentsFile(fileId, out file);
-            if(error != Errno.NoError)
-            {
-                //DicConsole.ErrorWriteLine("Error {0} reading extents for file {1}", error, fileId);
-                return error;
-            }
+            if(error != Errno.NoError) return error;
 
             stat.CreationTime = DateHandlers.LisaToDateTime(file.dtc);
             stat.AccessTime = DateHandlers.LisaToDateTime(file.dta);
@@ -384,10 +367,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!tags)
             {
                 int realSize;
-                if(fileSizeCache.TryGetValue(fileId, out realSize))
-                {
-                    if(realSize > temp.Length) DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
-                }
+                if(fileSizeCache.TryGetValue(fileId, out realSize)) if(realSize > temp.Length) DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
                 buf = temp;
 
                 fileCache.Add(fileId, buf);

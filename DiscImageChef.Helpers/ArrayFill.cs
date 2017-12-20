@@ -39,12 +39,9 @@ namespace DiscImageChef
 
         public static void ArrayFill<T>(T[] destinationArray, T[] value)
         {
-            if(destinationArray == null) { throw new ArgumentNullException(nameof(destinationArray)); }
+            if(destinationArray == null) throw new ArgumentNullException(nameof(destinationArray));
 
-            if(value.Length > destinationArray.Length)
-            {
-                throw new ArgumentException("Length of value array must not be more than length of destination");
-            }
+            if(value.Length > destinationArray.Length) throw new ArgumentException("Length of value array must not be more than length of destination");
 
             // set the initial array value
             Array.Copy(value, destinationArray, value.Length);
@@ -52,10 +49,7 @@ namespace DiscImageChef
             int arrayToFillHalfLength = destinationArray.Length / 2;
             int copyLength;
 
-            for(copyLength = value.Length; copyLength < arrayToFillHalfLength; copyLength <<= 1)
-            {
-                Array.Copy(destinationArray, 0, destinationArray, copyLength, copyLength);
-            }
+            for(copyLength = value.Length; copyLength < arrayToFillHalfLength; copyLength <<= 1) Array.Copy(destinationArray, 0, destinationArray, copyLength, copyLength);
 
             Array.Copy(destinationArray, 0, destinationArray, copyLength, destinationArray.Length - copyLength);
         }

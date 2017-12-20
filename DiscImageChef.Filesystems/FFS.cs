@@ -87,7 +87,6 @@ namespace DiscImageChef.Filesystems
             };
 
             foreach(ulong loc in locations)
-            {
                 if(partition.End > partition.Start + loc + sb_size_in_sectors)
                 {
                     ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
@@ -97,7 +96,6 @@ namespace DiscImageChef.Filesystems
                        magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC ||
                        magic == UFS_BAD_CIGAM) return true;
                 }
-            }
 
             return false;
         }
@@ -132,7 +130,6 @@ namespace DiscImageChef.Filesystems
             };
 
             foreach(ulong loc in locations)
-            {
                 if(partition.End > partition.Start + loc + sb_size_in_sectors)
                 {
                     ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
@@ -147,7 +144,6 @@ namespace DiscImageChef.Filesystems
 
                     magic = 0;
                 }
-            }
 
             if(magic == 0)
             {
@@ -264,7 +260,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("FFS plugin", "fs_flags: 0x{0:X2}", ufs_sb.fs_flags);
             DicConsole.DebugWriteLine("FFS plugin", "fs_magic: 0x{0:X8}", ufs_sb.fs_magic);
 
-            if(ufs_sb.fs_magic == UFS2_MAGIC) { fs_type_ufs2 = true; }
+            if(ufs_sb.fs_magic == UFS2_MAGIC) fs_type_ufs2 = true;
             else
             {
                 const uint
@@ -372,12 +368,7 @@ namespace DiscImageChef.Filesystems
                              .AppendLine();
             sbInformation.AppendFormat("Hardware sector interleave: {0}", ufs_sb.fs_old_interleave).AppendLine();
             sbInformation.AppendFormat("Sector 0 skew: {0}/track", ufs_sb.fs_old_trackskew).AppendLine();
-            if(!fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0)
-            {
-                sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2).AppendLine();
-                // TODO: Check this, it's getting the same on several volumes.
-                //xmlFSType.VolumeSerial = string.Format("{0:X8}{1:x8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2);
-            }
+            if(!fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0) sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2).AppendLine();
             else if(fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0)
             {
                 sbInformation.AppendFormat("{0} µsec for head switch", ufs_sb.fs_id_1).AppendLine();
@@ -446,11 +437,9 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("{0} inodes pending of being freed", ufs_sb.fs_pendinginodes).AppendLine();
             }
             if(fs_type_sun)
-            {
                 sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_old_npsect))
                              .AppendLine();
-            }
-            else if(fs_type_sun86) { sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_state).AppendLine(); }
+            else if(fs_type_sun86) sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_state).AppendLine();
             else if(fs_type_44bsd)
             {
                 sbInformation.AppendFormat("{0} blocks on cluster summary array", ufs_sb.fs_contigsumsize).AppendLine();

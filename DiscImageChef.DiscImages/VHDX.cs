@@ -674,7 +674,6 @@ namespace DiscImageChef.DiscImages
 
             ulong skipSize = 0;
             for(ulong i = 0; i < dataBlocks; i++)
-            {
                 if(readChunks == chunkRatio)
                 {
                     if(hasParent)
@@ -688,7 +687,6 @@ namespace DiscImageChef.DiscImages
                     blockAllocationTable[i] = BitConverter.ToUInt64(batB, (int)(i * 8 + skipSize));
                     readChunks++;
                 }
-            }
 
             if(hasParent)
             {
@@ -696,11 +694,7 @@ namespace DiscImageChef.DiscImages
 
                 MemoryStream sectorBmpMs = new MemoryStream();
                 foreach(ulong pt in sectorBitmapPointers)
-                {
-                    if((pt & BAT_FLAGS_MASK) == SECTOR_BITMAP_NOT_PRESENT)
-                    {
-                        sectorBmpMs.Write(new byte[1048576], 0, 1048576);
-                    }
+                    if((pt & BAT_FLAGS_MASK) == SECTOR_BITMAP_NOT_PRESENT) sectorBmpMs.Write(new byte[1048576], 0, 1048576);
                     else if((pt & BAT_FLAGS_MASK) == SECTOR_BITMAP_PRESENT)
                     {
                         stream.Seek((long)((pt & BAT_FILE_OFFSET_MASK) * 1048576), SeekOrigin.Begin);
@@ -713,7 +707,6 @@ namespace DiscImageChef.DiscImages
                             ImageNotSupportedException(string
                                                            .Format("Unsupported sector bitmap block flags (0x{0:X16}) found, not proceeding.",
                                                                    pt & BAT_FLAGS_MASK));
-                }
 
                 sectorBitmap = sectorBmpMs.ToArray();
                 sectorBmpMs.Close();

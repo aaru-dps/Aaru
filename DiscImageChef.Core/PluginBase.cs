@@ -98,8 +98,10 @@ namespace DiscImageChef.Core
                     {
                         Filesystem plugin;
                         if(encoding != null)
+                        {
                             plugin = (Filesystem)type.GetConstructor(new Type[] {encoding.GetType()})
                                                      .Invoke(new object[] {encoding});
+                        }
                         else plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterPlugin(plugin);
                     }
@@ -110,23 +112,17 @@ namespace DiscImageChef.Core
 
         void RegisterImagePlugin(ImagePlugin plugin)
         {
-            if(!ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
-            {
-                ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
-            }
+            if(!ImagePluginsList.ContainsKey(plugin.Name.ToLower())) ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
         }
 
         void RegisterPlugin(Filesystem plugin)
         {
-            if(!PluginsList.ContainsKey(plugin.Name.ToLower())) { PluginsList.Add(plugin.Name.ToLower(), plugin); }
+            if(!PluginsList.ContainsKey(plugin.Name.ToLower())) PluginsList.Add(plugin.Name.ToLower(), plugin);
         }
 
         void RegisterPartPlugin(PartitionPlugin partplugin)
         {
-            if(!PartPluginsList.ContainsKey(partplugin.Name.ToLower()))
-            {
-                PartPluginsList.Add(partplugin.Name.ToLower(), partplugin);
-            }
+            if(!PartPluginsList.ContainsKey(partplugin.Name.ToLower())) PartPluginsList.Add(partplugin.Name.ToLower(), partplugin);
         }
     }
 }

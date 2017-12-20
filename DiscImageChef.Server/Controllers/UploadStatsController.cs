@@ -85,7 +85,6 @@ namespace DiscImageChef.Server.Controllers
                 oldStats = (Stats)xs.Deserialize(fs);
 
                 if(newStats.Commands != null)
-                {
                     if(oldStats.Commands == null) oldStats.Commands = newStats.Commands;
                     else
                     {
@@ -109,20 +108,16 @@ namespace DiscImageChef.Server.Controllers
                         oldStats.Commands.ListDevices += newStats.Commands.ListDevices;
                         oldStats.Commands.ListEncodings += newStats.Commands.ListEncodings;
                     }
-                }
 
                 if(newStats.OperatingSystems != null)
-                {
                     if(oldStats.OperatingSystems == null) oldStats.OperatingSystems = newStats.OperatingSystems;
                     else
-                    {
                         foreach(OsStats newNvs in newStats.OperatingSystems)
                         {
                             OsStats removeNvs = null;
                             OsStats addNvs = null;
 
                             foreach(OsStats oldNvs in oldStats.OperatingSystems)
-                            {
                                 if(oldNvs.name == newNvs.name && oldNvs.version == newNvs.version)
                                 {
                                     addNvs = new OsStats
@@ -134,7 +129,6 @@ namespace DiscImageChef.Server.Controllers
                                     removeNvs = oldNvs;
                                     break;
                                 }
-                            }
 
                             if(removeNvs != null && addNvs != null)
                             {
@@ -143,8 +137,6 @@ namespace DiscImageChef.Server.Controllers
                             }
                             else oldStats.OperatingSystems.Add(newNvs);
                         }
-                    }
-                }
                 else
                 {
                     if(oldStats.OperatingSystems == null)
@@ -156,7 +148,6 @@ namespace DiscImageChef.Server.Controllers
                         OsStats addNvs = null;
 
                         foreach(OsStats oldNvs in oldStats.OperatingSystems)
-                        {
                             if(oldNvs.name == "Linux")
                             {
                                 addNvs = new OsStats
@@ -168,7 +159,6 @@ namespace DiscImageChef.Server.Controllers
                                 removeNvs = oldNvs;
                                 break;
                             }
-                        }
 
                         if(removeNvs != null && addNvs != null)
                         {
@@ -180,17 +170,14 @@ namespace DiscImageChef.Server.Controllers
                 }
 
                 if(newStats.Versions != null)
-                {
                     if(oldStats.Versions == null) oldStats.Versions = newStats.Versions;
                     else
-                    {
                         foreach(NameValueStats newNvs in newStats.Versions)
                         {
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
                             foreach(NameValueStats oldNvs in oldStats.Versions)
-                            {
                                 if(oldNvs.name == newNvs.name)
                                 {
                                     addNvs = new NameValueStats
@@ -201,7 +188,6 @@ namespace DiscImageChef.Server.Controllers
                                     removeNvs = oldNvs;
                                     break;
                                 }
-                            }
 
                             if(removeNvs != null && addNvs != null)
                             {
@@ -210,8 +196,6 @@ namespace DiscImageChef.Server.Controllers
                             }
                             else oldStats.Versions.Add(newNvs);
                         }
-                    }
-                }
                 else
                 {
                     if(oldStats.Versions == null)
@@ -226,14 +210,12 @@ namespace DiscImageChef.Server.Controllers
                         NameValueStats addNvs = null;
 
                         foreach(NameValueStats oldNvs in oldStats.Versions)
-                        {
                             if(oldNvs.name == "previous")
                             {
                                 addNvs = new NameValueStats {name = oldNvs.name, Value = oldNvs.Value + 1};
                                 removeNvs = oldNvs;
                                 break;
                             }
-                        }
 
                         if(removeNvs != null && addNvs != null)
                         {
@@ -245,17 +227,14 @@ namespace DiscImageChef.Server.Controllers
                 }
 
                 if(newStats.Filesystems != null)
-                {
                     if(oldStats.Filesystems == null) oldStats.Filesystems = newStats.Filesystems;
                     else
-                    {
                         foreach(NameValueStats newNvs in newStats.Filesystems)
                         {
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
                             foreach(NameValueStats oldNvs in oldStats.Filesystems)
-                            {
                                 if(oldNvs.name == newNvs.name)
                                 {
                                     addNvs = new NameValueStats
@@ -266,7 +245,6 @@ namespace DiscImageChef.Server.Controllers
                                     removeNvs = oldNvs;
                                     break;
                                 }
-                            }
 
                             if(removeNvs != null && addNvs != null)
                             {
@@ -275,21 +253,16 @@ namespace DiscImageChef.Server.Controllers
                             }
                             else oldStats.Filesystems.Add(newNvs);
                         }
-                    }
-                }
 
                 if(newStats.Partitions != null)
-                {
                     if(oldStats.Partitions == null) oldStats.Partitions = newStats.Partitions;
                     else
-                    {
                         foreach(NameValueStats newNvs in newStats.Partitions)
                         {
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
                             foreach(NameValueStats oldNvs in oldStats.Partitions)
-                            {
                                 if(oldNvs.name == newNvs.name)
                                 {
                                     addNvs = new NameValueStats
@@ -300,7 +273,6 @@ namespace DiscImageChef.Server.Controllers
                                     removeNvs = oldNvs;
                                     break;
                                 }
-                            }
 
                             if(removeNvs != null && addNvs != null)
                             {
@@ -309,21 +281,16 @@ namespace DiscImageChef.Server.Controllers
                             }
                             else oldStats.Partitions.Add(newNvs);
                         }
-                    }
-                }
 
                 if(newStats.MediaImages != null)
-                {
                     if(oldStats.MediaImages == null) oldStats.MediaImages = newStats.MediaImages;
                     else
-                    {
                         foreach(NameValueStats newNvs in newStats.MediaImages)
                         {
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
                             foreach(NameValueStats oldNvs in oldStats.MediaImages)
-                            {
                                 if(oldNvs.name == newNvs.name)
                                 {
                                     addNvs = new NameValueStats
@@ -334,7 +301,6 @@ namespace DiscImageChef.Server.Controllers
                                     removeNvs = oldNvs;
                                     break;
                                 }
-                            }
 
                             if(removeNvs != null && addNvs != null)
                             {
@@ -343,21 +309,16 @@ namespace DiscImageChef.Server.Controllers
                             }
                             else oldStats.MediaImages.Add(newNvs);
                         }
-                    }
-                }
 
                 if(newStats.Filters != null)
-                {
                     if(oldStats.Filters == null) oldStats.Filters = newStats.Filters;
                     else
-                    {
                         foreach(NameValueStats newNvs in newStats.Filters)
                         {
                             NameValueStats removeNvs = null;
                             NameValueStats addNvs = null;
 
                             foreach(NameValueStats oldNvs in oldStats.Filters)
-                            {
                                 if(oldNvs.name == newNvs.name)
                                 {
                                     addNvs = new NameValueStats
@@ -368,7 +329,6 @@ namespace DiscImageChef.Server.Controllers
                                     removeNvs = oldNvs;
                                     break;
                                 }
-                            }
 
                             if(removeNvs != null && addNvs != null)
                             {
@@ -377,45 +337,34 @@ namespace DiscImageChef.Server.Controllers
                             }
                             else oldStats.Filters.Add(newNvs);
                         }
-                    }
-                }
 
                 if(newStats.Devices != null)
-                {
                     if(oldStats.Devices == null) oldStats.Devices = newStats.Devices;
                     else
-                    {
                         foreach(DeviceStats newDev in newStats.Devices)
                         {
                             bool found = false;
 
                             foreach(DeviceStats oldDev in oldStats.Devices)
-                            {
                                 if(oldDev.Manufacturer == newDev.Manufacturer && oldDev.Model == newDev.Model &&
                                    oldDev.Revision == newDev.Revision && oldDev.Bus == newDev.Bus)
                                 {
                                     found = true;
                                     break;
                                 }
-                            }
 
                             if(!found) oldStats.Devices.Add(newDev);
                         }
-                    }
-                }
 
                 if(newStats.Medias != null)
-                {
                     if(oldStats.Medias == null) oldStats.Medias = newStats.Medias;
                     else
-                    {
                         foreach(MediaStats newMstat in newStats.Medias)
                         {
                             MediaStats removeMstat = null;
                             MediaStats addMstat = null;
 
                             foreach(MediaStats oldMstat in oldStats.Medias)
-                            {
                                 if(oldMstat.real == newMstat.real && oldMstat.type == newMstat.type)
                                 {
                                     addMstat = new MediaStats
@@ -427,7 +376,6 @@ namespace DiscImageChef.Server.Controllers
                                     removeMstat = oldMstat;
                                     break;
                                 }
-                            }
 
                             if(removeMstat != null && addMstat != null)
                             {
@@ -436,11 +384,8 @@ namespace DiscImageChef.Server.Controllers
                             }
                             else oldStats.Medias.Add(newMstat);
                         }
-                    }
-                }
 
                 if(newStats.MediaScan != null)
-                {
                     if(oldStats.MediaScan == null) oldStats.MediaScan = newStats.MediaScan;
                     else
                     {
@@ -464,10 +409,8 @@ namespace DiscImageChef.Server.Controllers
                             oldStats.MediaScan.Times.MoreThan500ms = newStats.MediaScan.Times.MoreThan500ms;
                         }
                     }
-                }
 
                 if(newStats.Verify != null)
-                {
                     if(oldStats.Verify == null) oldStats.Verify = newStats.Verify;
                     else
                     {
@@ -488,7 +431,6 @@ namespace DiscImageChef.Server.Controllers
                             oldStats.Verify.MediaImages.Failed = newStats.Verify.MediaImages.Failed;
                         }
                     }
-                }
 
                 if(oldStats.Devices != null)
                     oldStats.Devices = oldStats.Devices.OrderBy(device => device.Manufacturer)
@@ -499,10 +441,7 @@ namespace DiscImageChef.Server.Controllers
                 string filename = string.Format("BackupStats_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow,
                                                 rng.Next());
                 while(File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Statistics",
-                                               filename)))
-                {
-                    filename = string.Format("BackupStats_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
-                }
+                                               filename))) filename = string.Format("BackupStats_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
 
                 FileStream backup =
                     new
@@ -544,7 +483,7 @@ namespace DiscImageChef.Server.Controllers
                 }
                 catch(IOException)
                 {
-                    if(fs != null) { fs.Dispose(); }
+                    if(fs != null) fs.Dispose();
                     System.Threading.Thread.Sleep(50);
                 }
             }

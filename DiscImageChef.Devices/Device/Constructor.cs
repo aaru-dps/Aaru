@@ -377,7 +377,6 @@ namespace DiscImageChef.Devices
                         string resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
                         resolvedLink = "/sys" + resolvedLink.Substring(2);
                         if(!string.IsNullOrEmpty(resolvedLink))
-                        {
                             while(resolvedLink.Contains("usb"))
                             {
                                 resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
@@ -435,7 +434,6 @@ namespace DiscImageChef.Devices
                                     break;
                                 }
                             }
-                        }
                     }
                 }
             }
@@ -482,7 +480,6 @@ namespace DiscImageChef.Devices
                         string resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
                         resolvedLink = "/sys" + resolvedLink.Substring(2);
                         if(!string.IsNullOrEmpty(resolvedLink))
-                        {
                             while(resolvedLink.Contains("firewire"))
                             {
                                 resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
@@ -530,7 +527,6 @@ namespace DiscImageChef.Devices
                                     break;
                                 }
                             }
-                        }
                     }
                 }
             }
@@ -551,7 +547,6 @@ namespace DiscImageChef.Devices
                         string resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
                         resolvedLink = "/sys" + resolvedLink.Substring(2);
                         if(!string.IsNullOrEmpty(resolvedLink))
-                        {
                             while(resolvedLink.Contains("/sys/devices"))
                             {
                                 resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
@@ -586,7 +581,6 @@ namespace DiscImageChef.Devices
                                     }
                                 }
                             }
-                        }
                     }
                 }
             }
@@ -656,11 +650,9 @@ namespace DiscImageChef.Devices
                         scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
 
                         if((ushort)ataid.Value.GeneralConfiguration != 0x848A)
-                        {
                             removable |=
                                 (ataid.Value.GeneralConfiguration & Identify.GeneralConfigurationBit.Removable) ==
                                 Identify.GeneralConfigurationBit.Removable;
-                        }
                         else compactFlash = true;
                     }
                 }
@@ -679,7 +671,7 @@ namespace DiscImageChef.Devices
                 if(string.IsNullOrEmpty(manufacturer)) manufacturer = usbManufacturerString;
                 if(string.IsNullOrEmpty(model)) model = usbProductString;
                 if(string.IsNullOrEmpty(serial)) serial = usbSerialString;
-                else { foreach(char c in serial) { if(char.IsControl(c)) serial = usbSerialString; } }
+                else foreach(char c in serial) if(char.IsControl(c)) serial = usbSerialString;
             }
 
             if(firewire)
@@ -687,10 +679,7 @@ namespace DiscImageChef.Devices
                 if(string.IsNullOrEmpty(manufacturer)) manufacturer = firewireVendorName;
                 if(string.IsNullOrEmpty(model)) model = firewireModelName;
                 if(string.IsNullOrEmpty(serial)) serial = string.Format("{0:X16}", firewireGuid);
-                else
-                {
-                    foreach(char c in serial) { if(char.IsControl(c)) serial = string.Format("{0:X16}", firewireGuid); }
-                }
+                else foreach(char c in serial) if(char.IsControl(c)) serial = string.Format("{0:X16}", firewireGuid);
             }
         }
 

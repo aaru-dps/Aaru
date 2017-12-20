@@ -77,8 +77,10 @@ namespace DiscImageChef.Commands
             else
             {
                 if(options.Verbose)
+                {
                     DicConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
                                                 input1Format.PluginUuid);
+                }
                 else DicConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
             }
 
@@ -90,8 +92,10 @@ namespace DiscImageChef.Commands
             else
             {
                 if(options.Verbose)
+                {
                     DicConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
                                                 input2Format.PluginUuid);
+                }
                 else DicConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
             }
 

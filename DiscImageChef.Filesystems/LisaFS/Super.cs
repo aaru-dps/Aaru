@@ -218,7 +218,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         mounted = true;
                         this.debug = debug;
 
-                        if(debug) { printedExtents = new List<short>(); }
+                        if(debug) printedExtents = new List<short>();
 
                         // Read the S-Records file
                         error = ReadSRecords();

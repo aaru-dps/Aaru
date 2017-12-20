@@ -97,10 +97,8 @@ namespace DiscImageChef.Devices
             if(readLong) cdb[5] += 0x40;
 
             if(!inhibitDma && !readLong)
-            {
                 if(transferLength == 0) buffer = new byte[256 * blockSize];
                 else buffer = new byte[transferLength * blockSize];
-            }
             else if(readLong)
             {
                 buffer = new byte[blockSize];
@@ -182,7 +180,7 @@ namespace DiscImageChef.Devices
             if(inhibitDma) cdb[9] += 0x80;
             if(readLong) cdb[9] += 0x40;
 
-            if(!inhibitDma && !readLong) { buffer = new byte[transferLength * blockSize]; }
+            if(!inhibitDma && !readLong) buffer = new byte[transferLength * blockSize];
             else if(readLong)
             {
                 buffer = new byte[blockSize];

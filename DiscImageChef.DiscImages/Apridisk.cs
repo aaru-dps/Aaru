@@ -286,10 +286,7 @@ namespace DiscImageChef.DiscImages
             uint spt = uint.MaxValue;
             for(ushort cyl = 0; cyl < ImageInfo.Cylinders; cyl++)
             {
-                for(ushort head = 0; head < ImageInfo.Heads; head++)
-                {
-                    if(spts[cyl][head] < spt) spt = spts[cyl][head];
-                }
+                for(ushort head = 0; head < ImageInfo.Heads; head++) if(spts[cyl][head] < spt) spt = spts[cyl][head];
             }
 
             ImageInfo.SectorsPerTrack = spt;

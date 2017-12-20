@@ -546,7 +546,6 @@ namespace DiscImageChef.DiscImages
             FiltersList filtersList = new FiltersList();
 
             if(!string.IsNullOrEmpty(header.DataFile))
-            {
                 while(true)
                 {
                     dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.DataFile));
@@ -587,7 +586,6 @@ namespace DiscImageChef.DiscImages
 
                     throw new ArgumentException(string.Format("Data file {0} not found", header.DataFile));
                 }
-            }
             else throw new ArgumentException("Unable to find data file");
 
             if(!string.IsNullOrEmpty(header.SubchannelFile))
@@ -644,7 +642,6 @@ namespace DiscImageChef.DiscImages
             ushort maxSession = 0;
             ulong currentPos = 0;
             foreach(Bw4TrackDescriptor bwTrack in bwTracks)
-            {
                 if(bwTrack.point < 0xA0)
                 {
                     Track track = new Track();
@@ -652,7 +649,6 @@ namespace DiscImageChef.DiscImages
                     track.TrackEndSector = bwTrack.lastSector;
 
                     if(!string.IsNullOrEmpty(bwTrack.filename))
-                    {
                         do
                         {
                             track.TrackFilter =
@@ -699,7 +695,6 @@ namespace DiscImageChef.DiscImages
                             track.TrackFilter = dataFilter;
                         }
                         while(true);
-                    }
                     else track.TrackFilter = dataFilter;
 
                     track.TrackFile = dataFilter.GetFilename();
@@ -803,7 +798,6 @@ namespace DiscImageChef.DiscImages
                        !ImageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
                         ImageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
                 }
-            }
 
             sessions = new List<Session>();
             for(ushort i = 1; i <= maxSession; i++)
@@ -814,7 +808,6 @@ namespace DiscImageChef.DiscImages
                 session.StartSector = uint.MaxValue;
 
                 foreach(Track track in tracks)
-                {
                     if(track.TrackSession == i)
                     {
                         if(track.TrackSequence < session.StartTrack) session.StartTrack = track.TrackSequence;
@@ -822,7 +815,6 @@ namespace DiscImageChef.DiscImages
                         if(track.TrackStartSector < session.StartSector) session.StartSector = track.TrackStartSector;
                         if(track.TrackEndSector > session.EndSector) session.EndSector = track.TrackEndSector;
                     }
-                }
 
                 sessions.Add(session);
             }
@@ -907,10 +899,7 @@ namespace DiscImageChef.DiscImages
             {
                 case MediaTagType.CD_MCN:
                 {
-                    if(ImageInfo.MediaSerialNumber != null)
-                    {
-                        return Encoding.ASCII.GetBytes(ImageInfo.MediaSerialNumber);
-                    }
+                    if(ImageInfo.MediaSerialNumber != null) return Encoding.ASCII.GetBytes(ImageInfo.MediaSerialNumber);
 
                     throw new FeatureNotPresentImageException("Image does not contain MCN information.");
                 }
@@ -942,19 +931,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-            {
                 if(sectorAddress >= kvp.Value)
-                {
                     foreach(Track track in tracks)
-                    {
                         if(track.TrackSequence == kvp.Key)
-                        {
                             if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1)
                                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
-                        }
-                    }
-                }
-            }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -962,19 +943,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-            {
                 if(sectorAddress >= kvp.Value)
-                {
                     foreach(Track track in tracks)
-                    {
                         if(track.TrackSequence == kvp.Key)
-                        {
                             if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1)
                                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
-                        }
-                    }
-                }
-            }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -986,13 +959,11 @@ namespace DiscImageChef.DiscImages
             _track.TrackSequence = 0;
 
             foreach(Track bwTrack in tracks)
-            {
                 if(bwTrack.TrackSequence == track)
                 {
                     _track = bwTrack;
                     break;
                 }
-            }
 
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1051,7 +1022,6 @@ namespace DiscImageChef.DiscImages
                     SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
-            {
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector;
@@ -1060,7 +1030,6 @@ namespace DiscImageChef.DiscImages
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
-            }
 
             return buffer;
         }
@@ -1072,13 +1041,11 @@ namespace DiscImageChef.DiscImages
             _track.TrackSequence = 0;
 
             foreach(Track bwTrack in tracks)
-            {
                 if(bwTrack.TrackSequence == track)
                 {
                     _track = bwTrack;
                     break;
                 }
-            }
 
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1223,7 +1190,6 @@ namespace DiscImageChef.DiscImages
                     SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
-            {
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector;
@@ -1232,7 +1198,6 @@ namespace DiscImageChef.DiscImages
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
-            }
 
             return buffer;
         }
@@ -1250,19 +1215,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-            {
                 if(sectorAddress >= kvp.Value)
-                {
                     foreach(Track track in tracks)
-                    {
                         if(track.TrackSequence == kvp.Key)
-                        {
                             if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1)
                                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
-                        }
-                    }
-                }
-            }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1274,13 +1231,11 @@ namespace DiscImageChef.DiscImages
             _track.TrackSequence = 0;
 
             foreach(Track bwTrack in tracks)
-            {
                 if(bwTrack.TrackSequence == track)
                 {
                     _track = bwTrack;
                     break;
                 }
-            }
 
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1356,7 +1311,7 @@ namespace DiscImageChef.DiscImages
 
         public override List<Track> GetSessionTracks(Session session)
         {
-            if(sessions.Contains(session)) { return GetSessionTracks(session.SessionSequence); }
+            if(sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
@@ -1364,7 +1319,7 @@ namespace DiscImageChef.DiscImages
         public override List<Track> GetSessionTracks(ushort session)
         {
             List<Track> tracks = new List<Track>();
-            foreach(Track _track in this.tracks) { if(_track.TrackSession == session) tracks.Add(_track); }
+            foreach(Track _track in this.tracks) if(_track.TrackSession == session) tracks.Add(_track);
 
             return tracks;
         }

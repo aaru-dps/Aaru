@@ -102,8 +102,10 @@ namespace DiscImageChef.Commands
                     else
                     {
                         if(options.Verbose)
+                        {
                             DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                         imageFormat.PluginUuid);
+                        }
                         else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
                     }
 
@@ -162,10 +164,7 @@ namespace DiscImageChef.Commands
                 string[] contents = Directory.GetFiles(options.InputFile, "*", SearchOption.TopDirectoryOnly);
                 List<string> files = new List<string>();
 
-                foreach(string file in contents)
-                {
-                    if(new FileInfo(file).Length % options.BlockSize == 0) files.Add(file);
-                }
+                foreach(string file in contents) if(new FileInfo(file).Length % options.BlockSize == 0) files.Add(file);
 
                 files.Sort(StringComparer.CurrentCultureIgnoreCase);
 

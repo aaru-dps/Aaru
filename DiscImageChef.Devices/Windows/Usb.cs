@@ -532,15 +532,9 @@ namespace DiscImageChef.Devices.Windows
                             int regType = REG_SZ;
 
                             if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DEVICEDESC, ref regType, ptrBuf,
-                                                                BUFFER_SIZE, ref requiredSize))
-                            {
-                                host.ControllerDeviceDesc = Marshal.PtrToStringAuto(ptrBuf);
-                            }
+                                                                BUFFER_SIZE, ref requiredSize)) host.ControllerDeviceDesc = Marshal.PtrToStringAuto(ptrBuf);
                             if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf,
-                                                                BUFFER_SIZE, ref requiredSize))
-                            {
-                                host.ControllerDriverKeyName = Marshal.PtrToStringAuto(ptrBuf);
-                            }
+                                                                BUFFER_SIZE, ref requiredSize)) host.ControllerDriverKeyName = Marshal.PtrToStringAuto(ptrBuf);
                         }
                         hostList.Add(host);
                     }
@@ -855,7 +849,7 @@ namespace DiscImageChef.Devices.Windows
             // return a down stream external hub 
             internal UsbDevice GetDevice()
             {
-                if(!PortIsDeviceConnected) { return null; }
+                if(!PortIsDeviceConnected) return null;
 
                 UsbDevice device = new UsbDevice();
 
@@ -1011,7 +1005,7 @@ namespace DiscImageChef.Devices.Windows
             // return a down stream external hub 
             internal UsbHub GetHub()
             {
-                if(!PortIsHub) { return null; }
+                if(!PortIsHub) return null;
 
                 UsbHub hub = new UsbHub();
                 IntPtr h, h2;
@@ -1189,19 +1183,13 @@ namespace DiscImageChef.Devices.Windows
                         keyName = "";
 
                         if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
-                                                            ref requiredSize))
-                        {
-                            keyName = Marshal.PtrToStringAuto(ptrBuf);
-                        }
+                                                            ref requiredSize)) keyName = Marshal.PtrToStringAuto(ptrBuf);
 
                         // is it a match? 
                         if(keyName == driverKeyName)
                         {
                             if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DEVICEDESC, ref regType, ptrBuf,
-                                                                BUFFER_SIZE, ref requiredSize))
-                            {
-                                ans = Marshal.PtrToStringAuto(ptrBuf);
-                            }
+                                                                BUFFER_SIZE, ref requiredSize)) ans = Marshal.PtrToStringAuto(ptrBuf);
                             break;
                         }
                     }
@@ -1250,10 +1238,7 @@ namespace DiscImageChef.Devices.Windows
 
                         keyName = "";
                         if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
-                                                            ref requiredSize))
-                        {
-                            keyName = Marshal.PtrToStringAuto(ptrBuf);
-                        }
+                                                            ref requiredSize)) keyName = Marshal.PtrToStringAuto(ptrBuf);
 
                         // is it a match? 
                         if(keyName == driverKeyName)

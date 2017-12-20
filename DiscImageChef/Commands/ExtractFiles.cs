@@ -100,8 +100,10 @@ namespace DiscImageChef.Commands
                 else
                 {
                     if(options.Verbose)
+                    {
                         DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                     imageFormat.PluginUuid);
+                    }
                     else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
                 }
 
@@ -252,9 +254,11 @@ namespace DiscImageChef.Commands
                                                                                        outputPath);
                                                                     }
                                                                     else
+                                                                    {
                                                                         DicConsole
                                                                             .ErrorWriteLine("Cannot write xattr {0} for {1}, output exists",
                                                                                             xattr, entry);
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -294,26 +298,34 @@ namespace DiscImageChef.Commands
                                                                                  outBuf.Length, entry, outputPath);
                                                         }
                                                         else
+                                                        {
                                                             DicConsole.ErrorWriteLine("Error {0} reading file {1}",
                                                                                       error, entry);
+                                                        }
                                                     }
                                                     else
+                                                    {
                                                         DicConsole
                                                             .ErrorWriteLine("Cannot write file {0}, output exists",
                                                                             entry);
+                                                    }
                                                 }
                                                 else DicConsole.ErrorWriteLine("Error reading file {0}", entry);
                                             }
                                         }
                                         else
+                                        {
                                             DicConsole.ErrorWriteLine("Error {0} reading root directory {0}",
                                                                       error.ToString());
+                                        }
 
                                         Core.Statistics.AddFilesystem(fs.XmlFSType.Type);
                                     }
                                     else
+                                    {
                                         DicConsole.ErrorWriteLine("Unable to mount device, error {0}",
                                                                   error.ToString());
+                                    }
                                 }
                             }
                         }
@@ -391,9 +403,11 @@ namespace DiscImageChef.Commands
                                                                                outputPath);
                                                             }
                                                             else
+                                                            {
                                                                 DicConsole
                                                                     .ErrorWriteLine("Cannot write xattr {0} for {1}, output exists",
                                                                                     xattr, entry);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -431,12 +445,16 @@ namespace DiscImageChef.Commands
                                                                          outBuf.Length, entry, outputPath);
                                                 }
                                                 else
+                                                {
                                                     DicConsole.ErrorWriteLine("Error {0} reading file {1}", error,
                                                                               entry);
+                                                }
                                             }
                                             else
+                                            {
                                                 DicConsole.ErrorWriteLine("Cannot write file {0}, output exists",
                                                                           entry);
+                                            }
                                         }
                                         else DicConsole.ErrorWriteLine("Error reading file {0}", entry);
                                     }
@@ -539,9 +557,11 @@ namespace DiscImageChef.Commands
                                                                                outputPath);
                                                             }
                                                             else
+                                                            {
                                                                 DicConsole
                                                                     .ErrorWriteLine("Cannot write xattr {0} for {1}, output exists",
                                                                                     xattr, entry);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -579,12 +599,16 @@ namespace DiscImageChef.Commands
                                                                          outBuf.Length, entry, outputPath);
                                                 }
                                                 else
+                                                {
                                                     DicConsole.ErrorWriteLine("Error {0} reading file {1}", error,
                                                                               entry);
+                                                }
                                             }
                                             else
+                                            {
                                                 DicConsole.ErrorWriteLine("Cannot write file {0}, output exists",
                                                                           entry);
+                                            }
                                         }
                                         else DicConsole.ErrorWriteLine("Error reading file {0}", entry);
                                     }
@@ -670,9 +694,11 @@ namespace DiscImageChef.Commands
                                                                        xattrBuf.Length, xattr, entry, outputPath);
                                                     }
                                                     else
+                                                    {
                                                         DicConsole
                                                             .ErrorWriteLine("Cannot write xattr {0} for {1}, output exists",
                                                                             xattr, entry);
+                                                    }
                                                 }
                                             }
                                         }

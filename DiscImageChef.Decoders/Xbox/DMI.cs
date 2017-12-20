@@ -46,8 +46,8 @@ namespace DiscImageChef.Decoders.Xbox
             if(BitConverter.ToUInt32(dmi, 4) != 1) return false;
 
             // Catalogue number is two letters, five numbers, one letter
-            for(int i = 12; i < 14; i++) { if(dmi[i] < 0x41 || dmi[i] > 0x5A) return false; }
-            for(int i = 14; i < 19; i++) { if(dmi[i] < 0x30 || dmi[i] > 0x39) return false; }
+            for(int i = 12; i < 14; i++) if(dmi[i] < 0x41 || dmi[i] > 0x5A) return false;
+            for(int i = 14; i < 19; i++) if(dmi[i] < 0x30 || dmi[i] > 0x39) return false;
 
             if(dmi[19] < 0x41 || dmi[19] > 0x5A) return false;
 

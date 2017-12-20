@@ -140,12 +140,16 @@ namespace DiscImageChef.Commands
                             bool? tempStatus;
 
                             if(remainingSectors < 512)
+                            {
                                 tempStatus = inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
                                                                        currentTrack.TrackSequence, out tempfailingLbas,
                                                                        out tempunknownLbas);
+                            }
                             else
+                            {
                                 tempStatus = inputFormat.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
                                                                        out tempfailingLbas, out tempunknownLbas);
+                            }
 
                             if(checkStatus == null || tempStatus == null) checkStatus = null;
                             else if(checkStatus == false || tempStatus == false) checkStatus = false;
@@ -188,11 +192,15 @@ namespace DiscImageChef.Commands
                         bool? tempStatus;
 
                         if(remainingSectors < 512)
+                        {
                             tempStatus = inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
                                                                    out tempfailingLbas, out tempunknownLbas);
+                        }
                         else
+                        {
                             tempStatus =
                                 inputFormat.VerifySectors(currentSector, 512, out tempfailingLbas, out tempunknownLbas);
+                        }
 
                         if(checkStatus == null || tempStatus == null) checkStatus = null;
                         else if(checkStatus == false || tempStatus == false) checkStatus = false;

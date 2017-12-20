@@ -168,8 +168,10 @@ namespace DiscImageChef.Commands
                         if(options.SeparatedTracks)
                         {
                             foreach(ChecksumType chk in trackChecksum.End())
+                            {
                                 DicConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence, chk.type,
                                                      chk.Value);
+                            }
                         }
 
                         previousTrackEnd = currentTrack.TrackEndSector;

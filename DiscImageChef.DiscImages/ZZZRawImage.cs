@@ -131,7 +131,6 @@ namespace DiscImageChef.DiscImages
             else if((extension == ".adf" || extension == ".adl") && imageFilter.GetDataForkLength() == 819200)
                 ImageInfo.SectorSize = 1024;
             else
-            {
                 switch(imageFilter.GetDataForkLength())
                 {
                     case 242944:
@@ -188,7 +187,6 @@ namespace DiscImageChef.DiscImages
                         ImageInfo.SectorSize = 512;
                         break;
                 }
-            }
 
             ImageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
             ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
@@ -308,14 +306,12 @@ namespace DiscImageChef.DiscImages
 
             // Sharp X68000 SASI hard disks
             if(extension == ".hdf")
-            {
                 if(ImageInfo.ImageSize % 256 == 0)
                 {
                     ImageInfo.SectorSize = 256;
                     ImageInfo.Sectors = ImageInfo.ImageSize / ImageInfo.SectorSize;
                     ImageInfo.MediaType = MediaType.GENERIC_HDD;
                 }
-            }
 
             if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
@@ -675,7 +671,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(differentTrackZeroSize) { throw new NotImplementedException("Not yet implemented"); }
+            if(differentTrackZeroSize) throw new NotImplementedException("Not yet implemented");
             else
             {
                 if(sectorAddress > ImageInfo.Sectors - 1)
@@ -920,7 +916,6 @@ namespace DiscImageChef.DiscImages
                 return MediaType.Unknown;
             }
             else
-            {
                 switch(ImageInfo.ImageSize)
                 {
                     case 80384: return MediaType.ECMA_66;
@@ -1018,7 +1013,6 @@ namespace DiscImageChef.DiscImages
 
                     default: return MediaType.GENERIC_HDD;
                 }
-            }
         }
         #endregion
 

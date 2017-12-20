@@ -111,7 +111,7 @@ namespace DiscImageChef.DiscImages
             tmpHdr.DeviceBlocks = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
             tmpHdr.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-            for(int i = 0; i < 0xD; i++) { if(tmpHdr.DeviceName[i] < 0x20) return false; }
+            for(int i = 0; i < 0xD; i++) if(tmpHdr.DeviceName[i] < 0x20) return false;
 
             if((tmpHdr.BytesPerBlock & 0xFE00) != 0x200) return false;
 
@@ -140,7 +140,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}", imageHeader.DeviceBlocks);
             DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", imageHeader.BytesPerBlock);
 
-            for(int i = 0; i < 0xD; i++) { if(imageHeader.DeviceName[i] < 0x20) return false; }
+            for(int i = 0; i < 0xD; i++) if(imageHeader.DeviceName[i] < 0x20) return false;
 
             if((imageHeader.BytesPerBlock & 0xFE00) != 0x200) return false;
 

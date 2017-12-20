@@ -511,10 +511,7 @@ namespace DiscImageChef.Filesystems
                         ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
                         oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
 
-                        if(oldRoot.header.magic == oldDirMagic && oldRoot.tail.magic == oldDirMagic)
-                        {
-                            namebytes = oldRoot.tail.name;
-                        }
+                        if(oldRoot.header.magic == oldDirMagic && oldRoot.tail.magic == oldDirMagic) namebytes = oldRoot.tail.name;
                         else
                         {
                             // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
@@ -534,10 +531,7 @@ namespace DiscImageChef.Filesystems
                             oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
                                                                            typeof(OldDirectory));
 
-                            if(oldRoot.header.magic == oldDirMagic && oldRoot.tail.magic == oldDirMagic)
-                            {
-                                namebytes = oldRoot.tail.name;
-                            }
+                            if(oldRoot.header.magic == oldDirMagic && oldRoot.tail.magic == oldDirMagic) namebytes = oldRoot.tail.name;
                             else
                             {
                                 sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
@@ -551,10 +545,7 @@ namespace DiscImageChef.Filesystems
                                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
                                 newRoot = (NewDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
                                                                                typeof(NewDirectory));
-                                if(newRoot.header.magic == newDirMagic && newRoot.tail.magic == newDirMagic)
-                                {
-                                    namebytes = newRoot.tail.title;
-                                }
+                                if(newRoot.header.magic == newDirMagic && newRoot.tail.magic == newDirMagic) namebytes = newRoot.tail.title;
                             }
                         }
                     }

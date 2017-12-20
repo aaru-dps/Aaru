@@ -217,8 +217,6 @@ namespace DiscImageChef.DiscImages
 
                 // Flux
                 if(next != current)
-                {
-                    // Next is used
                     if(next)
                     {
                         extentStart = i;
@@ -229,7 +227,6 @@ namespace DiscImageChef.DiscImages
                         extents.Add(extentStart, i);
                         extentsOff.TryGetValue(extentStart, out ulong foo);
                     }
-                }
 
                 if(next && current) blockOff++;
 
@@ -300,13 +297,11 @@ namespace DiscImageChef.DiscImages
 
             bool allEmpty = true;
             for(uint i = 0; i < length; i++)
-            {
                 if(byteMap[sectorAddress + i] != 0)
                 {
                     allEmpty = false;
                     break;
                 }
-            }
 
             if(allEmpty) return new byte[pHdr.blockSize * length];
 

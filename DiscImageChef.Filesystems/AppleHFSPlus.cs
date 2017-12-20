@@ -111,9 +111,9 @@ namespace DiscImageChef.Filesystems
 
                     hfsp_offset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
                 }
-                else { hfsp_offset = 0; }
+                else hfsp_offset = 0;
             }
-            else { hfsp_offset = 0; }
+            else hfsp_offset = 0;
 
             vh_sector = imagePlugin.ReadSectors(partition.Start + hfsp_offset, sectorsToRead); // Read volume header
 

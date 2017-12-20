@@ -496,7 +496,7 @@ namespace DiscImageChef.Devices.Windows
             uint k = 0;
             if(!Extern.DeviceIoControlGetDeviceNumber(deviceHandle, WindowsIoctl.IoctlStorageGetDeviceNumber,
                                                       IntPtr.Zero, 0, ref sdn, (uint)Marshal.SizeOf(sdn), ref k,
-                                                      IntPtr.Zero)) { return uint.MaxValue; }
+                                                      IntPtr.Zero)) return uint.MaxValue;
 
             return (uint)sdn.deviceNumber;
         }

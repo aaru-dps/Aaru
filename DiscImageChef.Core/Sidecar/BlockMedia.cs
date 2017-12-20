@@ -234,10 +234,7 @@ namespace DiscImageChef.Core
 
             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
             if(image.PluginUuid == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
-               filterId == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-            {
-                sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
-            }
+               filterId == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000")) sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
             else
             {
                 Checksum contentChkWorker = new Checksum();
@@ -593,14 +590,18 @@ namespace DiscImageChef.Core
                                 scpBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                         }
                         else
+                        {
                             DicConsole
                                 .ErrorWriteLine("SuperCardPro image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                                 scpImage.Header.end + 1, image.ImageInfo.Cylinders);
+                        }
                     }
                     else
+                    {
                         DicConsole
                             .ErrorWriteLine("SuperCardPro image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                             2, image.ImageInfo.Heads);
+                    }
                 }
             }
             #endregion
@@ -679,14 +680,18 @@ namespace DiscImageChef.Core
                                 kfBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                         }
                         else
+                        {
                             DicConsole
                                 .ErrorWriteLine("KryoFlux image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                                 kfImage.ImageInfo.Cylinders, image.ImageInfo.Cylinders);
+                        }
                     }
                     else
+                    {
                         DicConsole
                             .ErrorWriteLine("KryoFluximage do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                             kfImage.ImageInfo.Heads, image.ImageInfo.Heads);
+                    }
                 }
             }
             #endregion
@@ -751,14 +756,18 @@ namespace DiscImageChef.Core
                                 dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                         }
                         else
+                        {
                             DicConsole
                                 .ErrorWriteLine("DiscFerret image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                                 dfiImage.ImageInfo.Cylinders, image.ImageInfo.Cylinders);
+                        }
                     }
                     else
+                    {
                         DicConsole
                             .ErrorWriteLine("DiscFerret image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                             dfiImage.ImageInfo.Heads, image.ImageInfo.Heads);
+                    }
                 }
             }
             #endregion

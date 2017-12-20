@@ -1883,7 +1883,6 @@ namespace DiscImageChef.Decoders.ATA
 
             IdentifyDevice ATAID = IdentifyDeviceResponse.Value;
             if(ATAID.GeneralConfiguration.HasFlag(GeneralConfigurationBit.NonMagnetic))
-            {
                 if((ushort)ATAID.GeneralConfiguration != 0x848A)
                 {
                     //if (ATAID.CommandSet.HasFlag(CommandSetBit.Packet))
@@ -1897,7 +1896,6 @@ namespace DiscImageChef.Decoders.ATA
                     atapi = false;
                     cfa = true;
                 }
-            }
 
             if(atapi && !cfa) sb.AppendLine("ATAPI device");
             else if(!atapi && cfa) sb.AppendLine("CompactFlash device");
@@ -1920,10 +1918,7 @@ namespace DiscImageChef.Decoders.ATA
                     if(ATAID.MediaSerial != "") sb.AppendFormat("Media serial #: {0}", ATAID.MediaSerial).AppendLine();
                 }
 
-                if(ATAID.EnabledCommandSet3.HasFlag(CommandSetBit3.WWN))
-                {
-                    sb.AppendFormat("World Wide Name: {0:X16}", ATAID.WWN).AppendLine();
-                }
+                if(ATAID.EnabledCommandSet3.HasFlag(CommandSetBit3.WWN)) sb.AppendFormat("World Wide Name: {0:X16}", ATAID.WWN).AppendLine();
             }
 
             bool ata1 = false,
@@ -2045,7 +2040,6 @@ namespace DiscImageChef.Decoders.ATA
 
             sb.Append("Maximum ATA revision supported: ");
             if(maxatalevel >= 3)
-            {
                 switch(ATAID.MinorVersion)
                 {
                     case 0x0000:
@@ -2194,7 +2188,6 @@ namespace DiscImageChef.Decoders.ATA
                         sb.AppendFormat("Unknown ATA revision 0x{0:X4}", ATAID.MinorVersion).AppendLine();
                         break;
                 }
-            }
 
             switch((ATAID.TransportMajorVersion & 0xF000) >> 12)
             {
@@ -2334,10 +2327,8 @@ namespace DiscImageChef.Decoders.ATA
             else if(!cfa)
             {
                 if(minatalevel >= 5)
-                {
                     if(ATAID.GeneralConfiguration.HasFlag(GeneralConfigurationBit.IncompleteResponse))
                         sb.AppendLine("Incomplete identify response");
-                }
                 if(ATAID.GeneralConfiguration.HasFlag(GeneralConfigurationBit.NonMagnetic))
                     sb.AppendLine("Device uses non-magnetic media");
 
@@ -2345,10 +2336,8 @@ namespace DiscImageChef.Decoders.ATA
                     sb.AppendLine("Device is removable");
 
                 if(minatalevel <= 5)
-                {
                     if(ATAID.GeneralConfiguration.HasFlag(GeneralConfigurationBit.Fixed))
                         sb.AppendLine("Device is fixed");
-                }
 
                 if(ata1)
                 {
@@ -2380,10 +2369,8 @@ namespace DiscImageChef.Decoders.ATA
             }
 
             if(ATAID.NominalRotationRate != 0x0000 && ATAID.NominalRotationRate != 0xFFFF)
-            {
                 if(ATAID.NominalRotationRate == 0x0001) sb.AppendLine("Device does not rotate.");
                 else sb.AppendFormat("Device rotate at {0} rpm", ATAID.NominalRotationRate).AppendLine();
-            }
 
             uint logicalsectorsize = 0;
             if(!atapi)
@@ -2393,10 +2380,8 @@ namespace DiscImageChef.Decoders.ATA
                 if((ATAID.PhysLogSectorSize & 0x8000) == 0x0000 && (ATAID.PhysLogSectorSize & 0x4000) == 0x4000)
                 {
                     if((ATAID.PhysLogSectorSize & 0x1000) == 0x1000)
-                    {
                         if(ATAID.LogicalSectorWords <= 255 || ATAID.LogicalAlignment == 0xFFFF) logicalsectorsize = 512;
                         else logicalsectorsize = ATAID.LogicalSectorWords * 2;
-                    }
                     else logicalsectorsize = 512;
 
                     if((ATAID.PhysLogSectorSize & 0x2000) == 0x2000)
@@ -2419,13 +2404,10 @@ namespace DiscImageChef.Decoders.ATA
 
                 if(logicalsectorsize != physicalsectorsize && (ATAID.LogicalAlignment & 0x8000) == 0x0000 &&
                    (ATAID.LogicalAlignment & 0x4000) == 0x4000)
-                {
                     sb.AppendFormat("Logical sector starts at offset {0} from physical sector",
                                     ATAID.LogicalAlignment & 0x3FFF).AppendLine();
-                }
 
                 if(minatalevel <= 5)
-                {
                     if(ATAID.CurrentCylinders > 0 && ATAID.CurrentHeads > 0 && ATAID.CurrentSectorsPerTrack > 0)
                     {
                         sb.AppendFormat("Cylinders: {0} max., {1} current", ATAID.Cylinders, ATAID.CurrentCylinders)
@@ -2445,20 +2427,12 @@ namespace DiscImageChef.Decoders.ATA
                         sb.AppendFormat("Sectors addressable in CHS mode: {0}",
                                         ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack).AppendLine();
                     }
-                }
 
-                if(ATAID.Capabilities.HasFlag(CapabilitiesBit.LBASupport))
-                {
-                    sb.AppendFormat("{0} sectors in 28-bit LBA mode", ATAID.LBASectors).AppendLine();
-                }
+                if(ATAID.Capabilities.HasFlag(CapabilitiesBit.LBASupport)) sb.AppendFormat("{0} sectors in 28-bit LBA mode", ATAID.LBASectors).AppendLine();
 
-                if(ATAID.CommandSet2.HasFlag(CommandSetBit2.LBA48))
-                {
-                    sb.AppendFormat("{0} sectors in 48-bit LBA mode", ATAID.LBA48Sectors).AppendLine();
-                }
+                if(ATAID.CommandSet2.HasFlag(CommandSetBit2.LBA48)) sb.AppendFormat("{0} sectors in 48-bit LBA mode", ATAID.LBA48Sectors).AppendLine();
 
                 if(minatalevel <= 5)
-                {
                     if(ATAID.CurrentSectors > 0)
                         sb.AppendFormat("Device size in CHS mode: {0} bytes, {1} Mb, {2} MiB",
                                         (ulong)ATAID.CurrentSectors * logicalsectorsize,
@@ -2472,91 +2446,66 @@ namespace DiscImageChef.Decoders.ATA
                                         currentSectors * logicalsectorsize / 1000 / 1000,
                                         currentSectors * 512 / 1024 / 1024).AppendLine();
                     }
-                }
 
                 if(ATAID.Capabilities.HasFlag(CapabilitiesBit.LBASupport))
-                {
                     if((ulong)ATAID.LBASectors * logicalsectorsize / 1024 / 1024 > 1000000)
-                    {
                         sb.AppendFormat("Device size in 28-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
                                         (ulong)ATAID.LBASectors * logicalsectorsize,
                                         (ulong)ATAID.LBASectors * logicalsectorsize / 1000 / 1000 / 1000 / 1000,
                                         (ulong)ATAID.LBASectors * 512 / 1024 / 1024 / 1024 / 1024).AppendLine();
-                    }
                     else if((ulong)ATAID.LBASectors * logicalsectorsize / 1024 / 1024 > 1000)
-                    {
                         sb.AppendFormat("Device size in 28-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
                                         (ulong)ATAID.LBASectors * logicalsectorsize,
                                         (ulong)ATAID.LBASectors * logicalsectorsize / 1000 / 1000 / 1000,
                                         (ulong)ATAID.LBASectors * 512 / 1024 / 1024 / 1024).AppendLine();
-                    }
                     else
-                    {
                         sb.AppendFormat("Device size in 28-bit LBA mode: {0} bytes, {1} Mb, {2} MiB",
                                         (ulong)ATAID.LBASectors * logicalsectorsize,
                                         (ulong)ATAID.LBASectors * logicalsectorsize / 1000 / 1000,
                                         (ulong)ATAID.LBASectors * 512 / 1024 / 1024).AppendLine();
-                    }
-                }
 
                 if(ATAID.CommandSet2.HasFlag(CommandSetBit2.LBA48))
-                {
                     if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ExtSectors))
-                    {
                         if(ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024 > 1000000)
-                        {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
                                             ATAID.ExtendedUserSectors * logicalsectorsize,
                                             ATAID.ExtendedUserSectors * logicalsectorsize / 1000 / 1000 / 1000 / 1000,
                                             ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024 / 1024 / 1024)
                               .AppendLine();
-                        }
                         else if(ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024 > 1000)
-                        {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
                                             ATAID.ExtendedUserSectors * logicalsectorsize,
                                             ATAID.ExtendedUserSectors * logicalsectorsize / 1000 / 1000 / 1000,
                                             ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024 / 1024)
                               .AppendLine();
-                        }
                         else
-                        {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Mb, {2} MiB",
                                             ATAID.ExtendedUserSectors * logicalsectorsize,
                                             ATAID.ExtendedUserSectors * logicalsectorsize / 1000 / 1000,
                                             ATAID.ExtendedUserSectors * logicalsectorsize / 1024 / 1024).AppendLine();
-                        }
-                    }
                     else
                     {
                         if(ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024 > 1000000)
-                        {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
                                             ATAID.LBA48Sectors * logicalsectorsize,
                                             ATAID.LBA48Sectors * logicalsectorsize / 1000 / 1000 / 1000 / 1000,
                                             ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024 / 1024 / 1024)
                               .AppendLine();
-                        }
                         else if(ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024 > 1000)
-                        {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
                                             ATAID.LBA48Sectors * logicalsectorsize,
                                             ATAID.LBA48Sectors * logicalsectorsize / 1000 / 1000 / 1000,
                                             ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024 / 1024).AppendLine();
-                        }
                         else
-                        {
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Mb, {2} MiB",
                                             ATAID.LBA48Sectors * logicalsectorsize,
                                             ATAID.LBA48Sectors * logicalsectorsize / 1000 / 1000,
                                             ATAID.LBA48Sectors * logicalsectorsize / 1024 / 1024).AppendLine();
-                        }
                     }
-                }
 
                 if(ata1 || cfa)
                 {
-                    if(cfa) { sb.AppendFormat("{0} sectors in card", ATAID.SectorsPerCard).AppendLine(); }
+                    if(cfa) sb.AppendFormat("{0} sectors in card", ATAID.SectorsPerCard).AppendLine();
                     if(ATAID.UnformattedBPT > 0)
                         sb.AppendFormat("{0} bytes per unformatted track", ATAID.UnformattedBPT).AppendLine();
                     if(ATAID.UnformattedBPS > 0)
@@ -2564,7 +2513,6 @@ namespace DiscImageChef.Decoders.ATA
                 }
             }
             if((ushort)ATAID.SpecificConfiguration != 0x0000 && (ushort)ATAID.SpecificConfiguration != 0xFFFF)
-            {
                 switch(ATAID.SpecificConfiguration)
                 {
                     case SpecificConfigurationEnum.RequiresSetIncompleteResponse:
@@ -2584,12 +2532,10 @@ namespace DiscImageChef.Decoders.ATA
                                         (ushort)ATAID.SpecificConfiguration).AppendLine();
                         break;
                 }
-            }
 
             // Obsolete since ATA-2, however, it is yet used in ATA-8 devices
             if(ATAID.BufferSize != 0x0000 && ATAID.BufferSize != 0xFFFF && ATAID.BufferType != 0x0000 &&
                ATAID.BufferType != 0xFFFF)
-            {
                 switch(ATAID.BufferType)
                 {
                     case 1:
@@ -2609,7 +2555,6 @@ namespace DiscImageChef.Decoders.ATA
                                         ATAID.BufferType).AppendLine();
                         break;
                 }
-            }
 
             if(ATAID.EccBytes != 0x0000 && ATAID.EccBytes != 0xFFFF)
                 sb.AppendFormat("READ/WRITE LONG has {0} extra bytes", ATAID.EccBytes).AppendLine();
@@ -2628,10 +2573,8 @@ namespace DiscImageChef.Decoders.ATA
 
             if(ATAID.Capabilities2.HasFlag(CapabilitiesBit2.MustBeSet) &&
                !ATAID.Capabilities2.HasFlag(CapabilitiesBit2.MustBeClear))
-            {
                 if(ATAID.Capabilities2.HasFlag(CapabilitiesBit2.SpecificStandbyTimer))
                     sb.AppendLine().Append("Device indicates a specific minimum standby timer value");
-            }
 
             if(ATAID.Capabilities3.HasFlag(CapabilitiesBit3.MultipleValid))
             {
@@ -2644,16 +2587,12 @@ namespace DiscImageChef.Decoders.ATA
 
             if(ATAID.Capabilities.HasFlag(CapabilitiesBit.PhysicalAlignment1) ||
                ATAID.Capabilities.HasFlag(CapabilitiesBit.PhysicalAlignment0))
-            {
                 sb.AppendLine().AppendFormat("Long Physical Alignment setting is {0}",
                                              (ushort)ATAID.Capabilities & 0x03);
-            }
 
             if(ata1)
-            {
                 if(ATAID.TrustedComputing.HasFlag(TrustedComputingBit.TrustedComputing))
                     sb.AppendLine().Append("Device supports doubleword I/O");
-            }
 
             if(atapi)
             {
@@ -2674,14 +2613,14 @@ namespace DiscImageChef.Decoders.ATA
             }
 
             sb.AppendLine().Append("Advanced PIO: ");
-            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode0)) { sb.Append("PIO0 "); }
-            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode1)) { sb.Append("PIO1 "); }
-            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode2)) { sb.Append("PIO2 "); }
-            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode3)) { sb.Append("PIO3 "); }
-            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode4)) { sb.Append("PIO4 "); }
-            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode5)) { sb.Append("PIO5 "); }
-            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode6)) { sb.Append("PIO6 "); }
-            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode7)) { sb.Append("PIO7 "); }
+            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode0)) sb.Append("PIO0 ");
+            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode1)) sb.Append("PIO1 ");
+            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode2)) sb.Append("PIO2 ");
+            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode3)) sb.Append("PIO3 ");
+            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode4)) sb.Append("PIO4 ");
+            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode5)) sb.Append("PIO5 ");
+            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode6)) sb.Append("PIO6 ");
+            if(ATAID.APIOSupported.HasFlag(TransferMode.Mode7)) sb.Append("PIO7 ");
 
             if(minatalevel <= 3 && !atapi)
             {
@@ -2813,28 +2752,19 @@ namespace DiscImageChef.Decoders.ATA
             }
 
             if(ATAID.MinMDMACycleTime != 0 && ATAID.RecMDMACycleTime != 0)
-            {
                 sb.AppendLine()
                   .AppendFormat("At minimum {0} ns. transfer cycle time per word in MDMA, " + "{1} ns. recommended",
                                 ATAID.MinMDMACycleTime, ATAID.RecMDMACycleTime);
-            }
             if(ATAID.MinPIOCycleTimeNoFlow != 0)
-            {
                 sb.AppendLine()
                   .AppendFormat("At minimum {0} ns. transfer cycle time per word in PIO, " + "without flow control",
                                 ATAID.MinPIOCycleTimeNoFlow);
-            }
             if(ATAID.MinPIOCycleTimeFlow != 0)
-            {
                 sb.AppendLine()
                   .AppendFormat("At minimum {0} ns. transfer cycle time per word in PIO, " + "with IORDY flow control",
                                 ATAID.MinPIOCycleTimeFlow);
-            }
 
-            if(ATAID.MaxQueueDepth != 0)
-            {
-                sb.AppendLine().AppendFormat("{0} depth of queue maximum", ATAID.MaxQueueDepth + 1);
-            }
+            if(ATAID.MaxQueueDepth != 0) sb.AppendLine().AppendFormat("{0} depth of queue maximum", ATAID.MaxQueueDepth + 1);
 
             if(atapi)
             {
@@ -2851,46 +2781,19 @@ namespace DiscImageChef.Decoders.ATA
             {
                 if(!ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear))
                 {
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen1Speed))
-                    {
-                        sb.AppendLine().Append("SATA 1.5Gb/s is supported");
-                    }
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen2Speed))
-                    {
-                        sb.AppendLine().Append("SATA 3.0Gb/s is supported");
-                    }
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen3Speed))
-                    {
-                        sb.AppendLine().Append("SATA 6.0Gb/s is supported");
-                    }
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.PowerReceipt))
-                    {
-                        sb.AppendLine().Append("Receipt of host initiated power management requests is supported");
-                    }
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.PHYEventCounter))
-                    {
-                        sb.AppendLine().Append("PHY Event counters are supported");
-                    }
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.HostSlumbTrans))
-                    {
-                        sb.AppendLine().Append("Supports host automatic partial to slumber transitions is supported");
-                    }
-                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.DevSlumbTrans))
-                    {
-                        sb.AppendLine().Append("Supports device automatic partial to slumber transitions is supported");
-                    }
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen1Speed)) sb.AppendLine().Append("SATA 1.5Gb/s is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen2Speed)) sb.AppendLine().Append("SATA 3.0Gb/s is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen3Speed)) sb.AppendLine().Append("SATA 6.0Gb/s is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.PowerReceipt)) sb.AppendLine().Append("Receipt of host initiated power management requests is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.PHYEventCounter)) sb.AppendLine().Append("PHY Event counters are supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.HostSlumbTrans)) sb.AppendLine().Append("Supports host automatic partial to slumber transitions is supported");
+                    if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.DevSlumbTrans)) sb.AppendLine().Append("Supports device automatic partial to slumber transitions is supported");
                     if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQ))
                     {
                         sb.AppendLine().Append("NCQ is supported");
 
-                        if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQPriority))
-                        {
-                            sb.AppendLine().Append("NCQ priority is supported");
-                        }
-                        if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.UnloadNCQ))
-                        {
-                            sb.AppendLine().Append("Unload is supported with outstanding NCQ commands");
-                        }
+                        if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQPriority)) sb.AppendLine().Append("NCQ priority is supported");
+                        if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.UnloadNCQ)) sb.AppendLine().Append("Unload is supported with outstanding NCQ commands");
                     }
                 }
 
@@ -2899,26 +2802,14 @@ namespace DiscImageChef.Decoders.ATA
                     if(!ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear) &&
                        ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQ))
                     {
-                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQMgmt))
-                        {
-                            sb.AppendLine().Append("NCQ queue management is supported");
-                        }
-                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQStream))
-                        {
-                            sb.AppendLine().Append("NCQ streaming is supported");
-                        }
+                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQMgmt)) sb.AppendLine().Append("NCQ queue management is supported");
+                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQStream)) sb.AppendLine().Append("NCQ streaming is supported");
                     }
 
                     if(atapi)
                     {
-                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.HostEnvDetect))
-                        {
-                            sb.AppendLine().Append("ATAPI device supports host environment detection");
-                        }
-                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.DevAttSlimline))
-                        {
-                            sb.AppendLine().Append("ATAPI device supports attention on slimline connected devices");
-                        }
+                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.HostEnvDetect)) sb.AppendLine().Append("ATAPI device supports host environment detection");
+                        if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.DevAttSlimline)) sb.AppendLine().Append("ATAPI device supports attention on slimline connected devices");
                     }
 
                     //sb.AppendFormat("Negotiated speed = {0}", ((ushort)ATAID.SATACapabilities2 & 0x000E) >> 1);
@@ -2926,13 +2817,10 @@ namespace DiscImageChef.Decoders.ATA
             }
 
             if(ATAID.InterseekDelay != 0x0000 && ATAID.InterseekDelay != 0xFFFF)
-            {
                 sb.AppendLine().AppendFormat("{0} microseconds of interseek delay for ISO-7779 accoustic testing",
                                              ATAID.InterseekDelay);
-            }
 
             if((ushort)ATAID.DeviceFormFactor != 0x0000 && (ushort)ATAID.DeviceFormFactor != 0xFFFF)
-            {
                 switch(ATAID.DeviceFormFactor)
                 {
                     case DeviceFormFactorEnum.FiveAndQuarter:
@@ -2955,16 +2843,12 @@ namespace DiscImageChef.Decoders.ATA
                                                      ATAID.DeviceFormFactor);
                         break;
                 }
-            }
 
             if(atapi)
-            {
                 if(ATAID.ATAPIByteCount > 0)
                     sb.AppendLine().AppendFormat("{0} bytes count limit for ATAPI", ATAID.ATAPIByteCount);
-            }
 
             if(cfa)
-            {
                 if((ATAID.CFAPowerMode & 0x8000) == 0x8000)
                 {
                     sb.AppendLine().Append("CompactFlash device supports power mode 1");
@@ -2976,7 +2860,6 @@ namespace DiscImageChef.Decoders.ATA
                     sb.AppendLine().AppendFormat("CompactFlash device uses a maximum of {0} mA",
                                                  ATAID.CFAPowerMode & 0x0FFF);
                 }
-            }
 
             sb.AppendLine();
 
@@ -3076,10 +2959,8 @@ namespace DiscImageChef.Decoders.ATA
                 {
                     sb.AppendLine().Append("Automatic Acoustic Management is supported");
                     if(ATAID.EnabledCommandSet2.HasFlag(CommandSetBit2.AAM))
-                    {
                         sb.AppendFormat(" and enabled with value {0} (vendor recommends {1}", ATAID.CurrentAAM,
                                         ATAID.RecommendedAAM);
-                    }
                 }
                 if(ATAID.CommandSet2.HasFlag(CommandSetBit2.SetMax))
                 {
@@ -3092,10 +2973,7 @@ namespace DiscImageChef.Decoders.ATA
                     if(ATAID.EnabledCommandSet2.HasFlag(CommandSetBit2.AddressOffsetReservedAreaBoot))
                         sb.Append(" and enabled");
                 }
-                if(ATAID.CommandSet2.HasFlag(CommandSetBit2.SetFeaturesRequired))
-                {
-                    sb.AppendLine().Append("SET FEATURES is required before spin-up");
-                }
+                if(ATAID.CommandSet2.HasFlag(CommandSetBit2.SetFeaturesRequired)) sb.AppendLine().Append("SET FEATURES is required before spin-up");
                 if(ATAID.CommandSet2.HasFlag(CommandSetBit2.PowerUpInStandby))
                 {
                     sb.AppendLine().Append("Power-up in standby is supported");
@@ -3110,10 +2988,7 @@ namespace DiscImageChef.Decoders.ATA
                 if(ATAID.CommandSet2.HasFlag(CommandSetBit2.APM))
                 {
                     sb.AppendLine().Append("Advanced Power Management is supported");
-                    if(ATAID.EnabledCommandSet2.HasFlag(CommandSetBit2.APM))
-                    {
-                        sb.AppendFormat(" and enabled with value {0}", ATAID.CurrentAPM);
-                    }
+                    if(ATAID.EnabledCommandSet2.HasFlag(CommandSetBit2.APM)) sb.AppendFormat(" and enabled with value {0}", ATAID.CurrentAPM);
                 }
                 if(ATAID.CommandSet2.HasFlag(CommandSetBit2.CompactFlash))
                 {
@@ -3159,18 +3034,9 @@ namespace DiscImageChef.Decoders.ATA
                     sb.AppendLine().Append("IDLE IMMEDIATE with UNLOAD FEATURE is supported");
                     if(ATAID.EnabledCommandSet3.HasFlag(CommandSetBit3.IdleImmediate)) sb.Append(" and enabled");
                 }
-                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.WriteURG))
-                {
-                    sb.AppendLine().Append("URG bit is supported in WRITE STREAM DMA EXT and WRITE STREAM EXT");
-                }
-                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.ReadURG))
-                {
-                    sb.AppendLine().Append("URG bit is supported in READ STREAM DMA EXT and READ STREAM EXT");
-                }
-                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.WWN))
-                {
-                    sb.AppendLine().Append("Device has a World Wide Name");
-                }
+                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.WriteURG)) sb.AppendLine().Append("URG bit is supported in WRITE STREAM DMA EXT and WRITE STREAM EXT");
+                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.ReadURG)) sb.AppendLine().Append("URG bit is supported in READ STREAM DMA EXT and READ STREAM EXT");
+                if(ATAID.CommandSet3.HasFlag(CommandSetBit3.WWN)) sb.AppendLine().Append("Device has a World Wide Name");
                 if(ATAID.CommandSet3.HasFlag(CommandSetBit3.FUAWriteQ))
                 {
                     sb.AppendLine().Append("WRITE DMA QUEUED FUA EXT is supported");
@@ -3270,62 +3136,27 @@ namespace DiscImageChef.Decoders.ATA
                 sb.AppendLine().Append("CRYPTO SCRAMBLE EXT is supported");
 
             if(ATAID.CommandSet5.HasFlag(CommandSetBit5.DeviceConfDMA))
-            {
                 sb.AppendLine()
                   .Append("DEVICE CONFIGURATION IDENTIFY DMA and DEVICE CONFIGURATION SET DMA are supported");
-            }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ReadBufferDMA))
-            {
-                sb.AppendLine().Append("READ BUFFER DMA is supported");
-            }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.WriteBufferDMA))
-            {
-                sb.AppendLine().Append("WRITE BUFFER DMA is supported");
-            }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.DownloadMicroCodeDMA))
-            {
-                sb.AppendLine().Append("DOWNLOAD MICROCODE DMA is supported");
-            }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.SetMaxDMA))
-            {
-                sb.AppendLine().Append("SET PASSWORD DMA and SET UNLOCK DMA are supported");
-            }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.Ata28))
-            {
-                sb.AppendLine().Append("Not all 28-bit commands are supported");
-            }
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ReadBufferDMA)) sb.AppendLine().Append("READ BUFFER DMA is supported");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.WriteBufferDMA)) sb.AppendLine().Append("WRITE BUFFER DMA is supported");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.DownloadMicroCodeDMA)) sb.AppendLine().Append("DOWNLOAD MICROCODE DMA is supported");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.SetMaxDMA)) sb.AppendLine().Append("SET PASSWORD DMA and SET UNLOCK DMA are supported");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.Ata28)) sb.AppendLine().Append("Not all 28-bit commands are supported");
 
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.CFast))
-            {
-                sb.AppendLine().Append("Device follows CFast specification");
-            }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.IEEE1667))
-            {
-                sb.AppendLine().Append("Device follows IEEE-1667");
-            }
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.CFast)) sb.AppendLine().Append("Device follows CFast specification");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.IEEE1667)) sb.AppendLine().Append("Device follows IEEE-1667");
 
             if(ATAID.CommandSet5.HasFlag(CommandSetBit5.DeterministicTrim))
             {
                 sb.AppendLine().Append("Read after TRIM is deterministic");
-                if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ReadZeroTrim))
-                {
-                    sb.AppendLine().Append("Read after TRIM returns empty data");
-                }
+                if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ReadZeroTrim)) sb.AppendLine().Append("Read after TRIM returns empty data");
             }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.LongPhysSectorAligError))
-            {
-                sb.AppendLine().Append("Device supports Long Physical Sector Alignment Error Reporting Control");
-            }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.Encrypted))
-            {
-                sb.AppendLine().Append("Device encrypts all user data");
-            }
-            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.AllCacheNV))
-            {
-                sb.AppendLine().Append("Device's write cache is non-volatile");
-            }
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.LongPhysSectorAligError)) sb.AppendLine().Append("Device supports Long Physical Sector Alignment Error Reporting Control");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.Encrypted)) sb.AppendLine().Append("Device encrypts all user data");
+            if(ATAID.CommandSet5.HasFlag(CommandSetBit5.AllCacheNV)) sb.AppendLine().Append("Device's write cache is non-volatile");
             if(ATAID.CommandSet5.HasFlag(CommandSetBit5.ZonedBit0) ||
-               ATAID.CommandSet5.HasFlag(CommandSetBit5.ZonedBit1)) { sb.AppendLine().Append("Device is zoned"); }
+               ATAID.CommandSet5.HasFlag(CommandSetBit5.ZonedBit1)) sb.AppendLine().Append("Device is zoned");
 
             if(ATAID.Capabilities3.HasFlag(CapabilitiesBit3.Sanitize))
             {
@@ -3339,27 +3170,21 @@ namespace DiscImageChef.Decoders.ATA
             }
 
             if(!ata1 && maxatalevel >= 8)
-            {
                 if(ATAID.TrustedComputing.HasFlag(TrustedComputingBit.Set) &&
                    !ATAID.TrustedComputing.HasFlag(TrustedComputingBit.Clear) &&
                    ATAID.TrustedComputing.HasFlag(TrustedComputingBit.TrustedComputing))
                     sb.AppendLine().Append("Trusted Computing feature set is supported");
-            }
 
             if((ATAID.TransportMajorVersion & 0xF000) >> 12 == 0x1 ||
                (ATAID.TransportMajorVersion & 0xF000) >> 12 == 0xE)
             {
                 if(!ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear))
-                {
                     if(ATAID.SATACapabilities.HasFlag(SATACapabilitiesBit.ReadLogDMAExt))
                         sb.AppendLine().Append("READ LOG DMA EXT is supported");
-                }
 
                 if(!ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.Clear))
-                {
                     if(ATAID.SATACapabilities2.HasFlag(SATACapabilitiesBit2.FPDMAQ))
                         sb.AppendLine().Append("RECEIVE FPDMA QUEUED and SEND FPDMA QUEUED are supported");
-                }
 
                 if(!ATAID.SATAFeatures.HasFlag(SATAFeaturesBit.Clear))
                 {
@@ -3385,55 +3210,37 @@ namespace DiscImageChef.Decoders.ATA
                         if(ATAID.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.InOrderData)) sb.Append(" and enabled");
                     }
                     if(!atapi)
-                    {
                         if(ATAID.SATAFeatures.HasFlag(SATAFeaturesBit.HardwareFeatureControl))
                         {
                             sb.AppendLine().Append("Hardware Feature Control is supported");
                             if(ATAID.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.HardwareFeatureControl))
                                 sb.Append(" and enabled");
                         }
-                    }
                     if(atapi)
-                    {
                         if(ATAID.SATAFeatures.HasFlag(SATAFeaturesBit.AsyncNotification))
                         {
                             sb.AppendLine().Append("Asynchronous notification is supported");
                             if(ATAID.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.AsyncNotification))
                                 sb.Append(" and enabled");
                         }
-                    }
                     if(ATAID.SATAFeatures.HasFlag(SATAFeaturesBit.SettingsPreserve))
                     {
                         sb.AppendLine().Append("Software Settings Preservation is supported");
                         if(ATAID.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.SettingsPreserve))
                             sb.Append(" and enabled");
                     }
-                    if(ATAID.SATAFeatures.HasFlag(SATAFeaturesBit.NCQAutoSense))
-                    {
-                        sb.AppendLine().Append("NCQ Autosense is supported");
-                    }
-                    if(ATAID.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.EnabledSlumber))
-                    {
-                        sb.AppendLine().Append("Automatic Partial to Slumber transitions are enabled");
-                    }
+                    if(ATAID.SATAFeatures.HasFlag(SATAFeaturesBit.NCQAutoSense)) sb.AppendLine().Append("NCQ Autosense is supported");
+                    if(ATAID.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.EnabledSlumber)) sb.AppendLine().Append("Automatic Partial to Slumber transitions are enabled");
                 }
             }
-            if((ATAID.RemovableStatusSet & 0x03) > 0)
-            {
-                sb.AppendLine().Append("Removable Media Status Notification feature set is supported");
-            }
+            if((ATAID.RemovableStatusSet & 0x03) > 0) sb.AppendLine().Append("Removable Media Status Notification feature set is supported");
 
-            if(ATAID.FreeFallSensitivity != 0x00 && ATAID.FreeFallSensitivity != 0xFF)
-            {
-                sb.AppendLine().AppendFormat("Free-fall sensitivity set to {0}", ATAID.FreeFallSensitivity);
-            }
+            if(ATAID.FreeFallSensitivity != 0x00 && ATAID.FreeFallSensitivity != 0xFF) sb.AppendLine().AppendFormat("Free-fall sensitivity set to {0}", ATAID.FreeFallSensitivity);
 
             if(ATAID.DataSetMgmt.HasFlag(DataSetMgmtBit.Trim)) sb.AppendLine().Append("TRIM is supported");
             if(ATAID.DataSetMgmtSize > 0)
-            {
                 sb.AppendLine().AppendFormat("DATA SET MANAGEMENT can receive a maximum of {0} blocks of 512 bytes",
                                              ATAID.DataSetMgmtSize);
-            }
 
             sb.AppendLine().AppendLine();
             if(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Supported))
@@ -3533,20 +3340,14 @@ namespace DiscImageChef.Decoders.ATA
             if(ATAID.ReservedWord116 != 0x0000 && ATAID.ReservedWord116 != 0xFFFF)
                 sb.AppendFormat("Word 116: 0x{0:X4}", ATAID.ReservedWord116).AppendLine();
             for(int i = 0; i < ATAID.ReservedWords121.Length; i++)
-            {
                 if(ATAID.ReservedWords121[i] != 0x0000 && ATAID.ReservedWords121[i] != 0xFFFF)
                     sb.AppendFormat("Word {1}: 0x{0:X4}", ATAID.ReservedWords121[i], 121 + i).AppendLine();
-            }
             for(int i = 0; i < ATAID.ReservedWords129.Length; i++)
-            {
                 if(ATAID.ReservedWords129[i] != 0x0000 && ATAID.ReservedWords129[i] != 0xFFFF)
                     sb.AppendFormat("Word {1}: 0x{0:X4}", ATAID.ReservedWords129[i], 129 + i).AppendLine();
-            }
             for(int i = 0; i < ATAID.ReservedCFA.Length; i++)
-            {
                 if(ATAID.ReservedCFA[i] != 0x0000 && ATAID.ReservedCFA[i] != 0xFFFF)
                     sb.AppendFormat("Word {1} (CFA): 0x{0:X4}", ATAID.ReservedCFA[i], 161 + i).AppendLine();
-            }
 
             if(ATAID.ReservedWord174 != 0x0000 && ATAID.ReservedWord174 != 0xFFFF)
                 sb.AppendFormat("Word 174: 0x{0:X4}", ATAID.ReservedWord174).AppendLine();
@@ -3563,15 +3364,11 @@ namespace DiscImageChef.Decoders.ATA
             if(ATAID.ReservedWord221 != 0x0000 && ATAID.ReservedWord221 != 0xFFFF)
                 sb.AppendFormat("Word 221: 0x{0:X4}", ATAID.ReservedWord221).AppendLine();
             for(int i = 0; i < ATAID.ReservedCEATA224.Length; i++)
-            {
                 if(ATAID.ReservedCEATA224[i] != 0x0000 && ATAID.ReservedCEATA224[i] != 0xFFFF)
                     sb.AppendFormat("Word {1} (CE-ATA): 0x{0:X4}", ATAID.ReservedCEATA224[i], 224 + i).AppendLine();
-            }
             for(int i = 0; i < ATAID.ReservedWords.Length; i++)
-            {
                 if(ATAID.ReservedWords[i] != 0x0000 && ATAID.ReservedWords[i] != 0xFFFF)
                     sb.AppendFormat("Word {1}: 0x{0:X4}", ATAID.ReservedWords[i], 236 + i).AppendLine();
-            }
 #endif
             return sb.ToString();
         }

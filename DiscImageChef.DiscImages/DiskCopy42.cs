@@ -703,10 +703,8 @@ namespace DiscImageChef.DiscImages
             byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
             if(twiggy)
-            {
                 Array.Copy(twiggyCache, (int)sectorAddress * ImageInfo.SectorSize, buffer, 0,
                            length * ImageInfo.SectorSize);
-            }
             else
             {
                 Stream stream = dc42ImageFilter.GetDataForkStream();
@@ -732,7 +730,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[length * bptag];
 
-            if(twiggy) { Array.Copy(twiggyCacheTags, (int)sectorAddress * bptag, buffer, 0, length * bptag); }
+            if(twiggy) Array.Copy(twiggyCacheTags, (int)sectorAddress * bptag, buffer, 0, length * bptag);
             else
             {
                 Stream stream = dc42ImageFilter.GetDataForkStream();

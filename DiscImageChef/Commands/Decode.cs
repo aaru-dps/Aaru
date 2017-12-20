@@ -117,8 +117,10 @@ namespace DiscImageChef.Commands
                             {
                                 byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
                                 if(identify == null)
+                                {
                                     DicConsole
                                         .WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
+                                }
                                 else
                                 {
                                     DicConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");

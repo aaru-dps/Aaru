@@ -205,7 +205,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(tracksArray[i].point >= 0xA0) continue;
                 if(!trackLengths.TryGetValue(tracksArray[i].point, out uint trkLen)) continue;
 
-                if(tracksArray[i].mode == AlcoholTrackMode.Dvd) { tracksArray[i].extraOffset = trkLen; }
+                if(tracksArray[i].mode == AlcoholTrackMode.Dvd) tracksArray[i].extraOffset = trkLen;
                 else
                 {
                     AlcoholTrackExtra extra = new AlcoholTrackExtra();
@@ -274,7 +274,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(header.type == AlcoholMediumType.Cd || header.type == AlcoholMediumType.Cdr ||
                header.type == AlcoholMediumType.Cdrw)
-            {
                 foreach(AlcoholTrackExtra extra in extrasArray)
                 {
                     tmp = new byte[8];
@@ -284,7 +283,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     descriptorFile.Write(tmp, 0, tmp.Length);
                     Marshal.FreeHGlobal(trkxPtr);
                 }
-            }
 
             if(bca != null && bca.Length > 0)
             {
@@ -502,7 +500,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             AlcoholSession[] sess = sessions.ToArray();
 
-            for(int i = 0; i < sess.Length; i++) { if(sess[i].sessionSequence == session) sess[i].nonTrackBlocks++; }
+            for(int i = 0; i < sess.Length; i++) if(sess[i].sessionSequence == session) sess[i].nonTrackBlocks++;
 
             sessions = new List<AlcoholSession>(sess);
         }

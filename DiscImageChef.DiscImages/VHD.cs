@@ -839,7 +839,6 @@ namespace DiscImageChef.DiscImages
                 {
                     locatorEntriesData = new byte[8][];
                     for(int i = 0; i < 8; i++)
-                    {
                         if(thisDynamic.LocatorEntries[i].PlatformCode != 0x00000000)
                         {
                             locatorEntriesData[i] = new byte[thisDynamic.LocatorEntries[i].PlatformDataLength];
@@ -873,7 +872,6 @@ namespace DiscImageChef.DiscImages
                                     break;
                             }
                         }
-                    }
 
                     int currentLocator = 0;
                     bool locatorFound = false;

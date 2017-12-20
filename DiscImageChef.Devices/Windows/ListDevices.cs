@@ -46,10 +46,7 @@ namespace DiscImageChef.Devices.Windows
             StringBuilder result = new StringBuilder();
             const string hextable = "0123456789abcdef";
 
-            for(int i = 0; i < hex.Length / 2; i++)
-            {
-                result.Append((char)(16 * hextable.IndexOf(hex[2 * i]) + hextable.IndexOf(hex[2 * i + 1])));
-            }
+            for(int i = 0; i < hex.Length / 2; i++) result.Append((char)(16 * hextable.IndexOf(hex[2 * i]) + hextable.IndexOf(hex[2 * i + 1])));
 
             return result.ToString();
         }
@@ -150,11 +147,8 @@ namespace DiscImageChef.Devices.Windows
                                                  start: (int)descriptor.SerialNumberOffset);
 
                     // fix any serial numbers that are returned as hex-strings
-                    if(Array.TrueForAll(info.Serial.ToCharArray(), (char c) => "0123456789abcdef".IndexOf(c) >= 0) 
-                        && (info.Serial.Length == 40))
-                    {
-                        info.Serial = HexStringToString(info.Serial).Trim();
-                    }
+                    if(Array.TrueForAll(info.Serial.ToCharArray(), (char c) => "0123456789abcdef".IndexOf(c) >= 0)
+                        && info.Serial.Length == 40) info.Serial = HexStringToString(info.Serial).Trim();
                 }
 
                 if(string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA")

@@ -47,10 +47,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Report command", "--device={0}", options.DevicePath);
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
-               char.IsLetter(options.DevicePath[0]))
-            {
-                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
-            }
+               char.IsLetter(options.DevicePath[0])) options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
 
             Device dev = new Device(options.DevicePath);
 
@@ -100,7 +97,7 @@ namespace DiscImageChef.Commands
             xmlFs.Close();
             Core.Statistics.AddCommand("device-report");
 
-            if(Settings.Settings.Current.ShareReports) { Remote.SubmitReport(report); }
+            if(Settings.Settings.Current.ShareReports) Remote.SubmitReport(report);
         }
     }
 }

@@ -50,7 +50,7 @@ namespace DiscImageChef.Devices.Windows
         {
             List<UsbDevice> devList = new List<UsbDevice>();
 
-            foreach(UsbController controller in GetHostControllers()) { ListHub(controller.GetRootHub(), devList); }
+            foreach(UsbController controller in GetHostControllers()) ListHub(controller.GetRootHub(), devList);
 
             return devList;
         }
@@ -59,14 +59,8 @@ namespace DiscImageChef.Devices.Windows
         static void ListHub(UsbHub hub, List<UsbDevice> devList)
         {
             foreach(UsbPort port in hub.GetPorts())
-            {
-                if(port.IsHub)
-                {
-                    // recursive 
-                    ListHub(port.GetHub(), devList);
-                }
-                else { if(port.IsDeviceConnected) { devList.Add(port.GetDevice()); } }
-            }
+                if(port.IsHub) ListHub(port.GetHub(), devList);
+                else { if(port.IsDeviceConnected) devList.Add(port.GetDevice()); }
         }
 
         // 
@@ -89,12 +83,7 @@ namespace DiscImageChef.Devices.Windows
         static void SearchHubDriverKeyName(UsbHub hub, ref UsbDevice foundDevice, string driverKeyName)
         {
             foreach(UsbPort port in hub.GetPorts())
-            {
-                if(port.IsHub)
-                {
-                    // recursive 
-                    SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
-                }
+                if(port.IsHub) SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
                 else
                 {
                     if(port.IsDeviceConnected)
@@ -107,7 +96,6 @@ namespace DiscImageChef.Devices.Windows
                         }
                     }
                 }
-            }
         }
 
         // 
@@ -130,12 +118,7 @@ namespace DiscImageChef.Devices.Windows
         static void SearchHubInstanceId(UsbHub hub, ref UsbDevice foundDevice, string instanceId)
         {
             foreach(UsbPort port in hub.GetPorts())
-            {
-                if(port.IsHub)
-                {
-                    // recursive 
-                    SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
-                }
+                if(port.IsHub) SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
                 else
                 {
                     if(port.IsDeviceConnected)
@@ -148,7 +131,6 @@ namespace DiscImageChef.Devices.Windows
                         }
                     }
                 }
-            }
         }
 
         const int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
@@ -198,7 +180,7 @@ namespace DiscImageChef.Devices.Windows
             // DriveLetter.  We'll use this later to find a matching 
             // DevicePath "symbolic name" 
             int devNum = GetDeviceNumber(@"\\.\" + driveLetter.TrimEnd('\\'));
-            if(devNum < 0) { return null; }
+            if(devNum < 0) return null;
 
             return FindDeviceNumber(devNum, deviceGuid);
         }
@@ -212,7 +194,7 @@ namespace DiscImageChef.Devices.Windows
             // DriveLetter.  We'll use this later to find a matching 
             // DevicePath "symbolic name" 
             int devNum = GetDeviceNumber(drivePath);
-            if(devNum < 0) { return null; }
+            if(devNum < 0) return null;
 
             return FindDeviceNumber(devNum, deviceGuid);
         }
@@ -256,10 +238,6 @@ namespace DiscImageChef.Devices.Windows
                         int nRequiredSize = 0;
                         int nBytes = BUFFER_SIZE;
                         if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, nBytes, ref nRequiredSize, ref da))
-                        {
-                            // Now that we have a DevicePath... we can use it to 
-                            // generate another DeviceNumber to see if it matches 
-                            // the one we're looking for. 
                             if(GetDeviceNumber(didd.DevicePath) == devNum)
                             {
                                 // current InstanceID is at the "USBSTOR" level, so we 
@@ -276,7 +254,6 @@ namespace DiscImageChef.Devices.Windows
                                 System.Console.WriteLine("InstanceId: {0}", instanceId);
                                 //break;
                             }
-                        }
                     }
                     i++;
                 }
@@ -286,7 +263,7 @@ namespace DiscImageChef.Devices.Windows
             }
 
             // Did we find an InterfaceID of a USB device? 
-            if(instanceId.StartsWith("USB\\")) { foundDevice = FindDeviceByInstanceId(instanceId); }
+            if(instanceId.StartsWith("USB\\")) foundDevice = FindDeviceByInstanceId(instanceId);
             return foundDevice;
         }
 

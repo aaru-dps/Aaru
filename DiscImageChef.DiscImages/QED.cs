@@ -501,7 +501,7 @@ namespace DiscImageChef.DiscImages
                 cnt++;
                 val >>= 1;
             }
-            if((val & 0x1) == 0) { cnt++; }
+            if((val & 0x1) == 0) cnt++;
 
             return cnt;
         }

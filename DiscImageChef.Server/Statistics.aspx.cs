@@ -98,6 +98,7 @@ namespace DiscImageChef.Server
                 {
                     operatingSystems = new List<NameValueStats>();
                     foreach(OsStats nvs in statistics.OperatingSystems)
+                    {
                         operatingSystems.Add(new NameValueStats
                         {
                             name = string.Format("{0}{1}{2}",
@@ -107,6 +108,7 @@ namespace DiscImageChef.Server
                                                  string.IsNullOrEmpty(nvs.version) ? "" : " ", nvs.version),
                             Value = nvs.Value
                         });
+                    }
 
                     repOperatingSystems.DataSource = operatingSystems.OrderBy(os => os.name).ToList();
                     repOperatingSystems.DataBind();
@@ -259,7 +261,7 @@ namespace DiscImageChef.Server
                         xmlFile = xmlFile.Replace('/', '_').Replace('\\', '_').Replace('?', '_');
 
                         if(!File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Reports",
-                                                     xmlFile))) { url = null; }
+                                                     xmlFile))) url = null;
 
                         devices.Add(new DeviceItem()
                         {
@@ -300,7 +302,7 @@ namespace DiscImageChef.Server
                 }
                 catch(IOException)
                 {
-                    if(fs != null) { fs.Dispose(); }
+                    if(fs != null) fs.Dispose();
                     System.Threading.Thread.Sleep(50);
                 }
             }

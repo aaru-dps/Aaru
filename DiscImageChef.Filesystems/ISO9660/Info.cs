@@ -206,11 +206,9 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         // Check if this is Joliet
                         if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
-                        {
                             if(svd.escape_sequences[2] == '@' || svd.escape_sequences[2] == 'C' ||
-                               svd.escape_sequences[2] == 'E') { jolietvd = svd; }
-                            else { break; }
-                        }
+                               svd.escape_sequences[2] == 'E') jolietvd = svd;
+                            else break;
                         else DicConsole.WriteLine("ISO9660 plugin", "Found unknown supplementary volume descriptor");
 
                         break;
@@ -358,11 +356,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
 
                                 if(nextSignature == AppleMagic)
-                                {
-                                    // Can collide with AAIP
                                     if(sa[sa_off + 3] == 1 && sa[sa_off + 2] == 7) Apple = true;
                                     else Apple |= sa[sa_off + 3] != 1;
-                                }
 
                                 if(nextSignature == SUSP_Continuation && sa_off + sa[sa_off + 2] <= sa_len)
                                 {
@@ -424,11 +419,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                     // Apple never said to include its extensions inside a continuation area, but just in case
                     if(nextSignature == AppleMagic)
-                    {
-                        // Can collide with AAIP
                         if(ca_data[ca_off + 3] == 1 && ca_data[ca_off + 2] == 7) Apple = true;
                         else Apple |= ca_data[ca_off + 3] != 1;
-                    }
 
                     if(nextSignature == SUSP_Reference && ca_off + ca_data[ca_off + 2] <= ca.ca_length_be)
                     {
@@ -718,7 +710,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                         if(flags.HasFlag(ElToritoFlags.SCSI)) ISOMetadata.AppendLine("\t\tImage contains SCSI drivers");
 
                         if(flags.HasFlag(ElToritoFlags.Continued))
-                        {
                             while(true && torito_off < vd_sector.Length)
                             {
                                 ElToritoSectionEntryExtension section_extension = new ElToritoSectionEntryExtension();
@@ -732,7 +723,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                                 if(!section_extension.extension_flags.HasFlag(ElToritoFlags.Continued)) break;
                             }
-                        }
                     }
 
                     if(section_header.header_id == ElToritoIndicator.LastHeader) break;

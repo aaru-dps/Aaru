@@ -604,7 +604,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 List<ulong> tmpList = new List<ulong>();
 
-                foreach(ulong ur in resume.BadBlocks) { for(ulong i = ur; i < ur + blocksToRead; i++) tmpList.Add(i); }
+                foreach(ulong ur in resume.BadBlocks) for(ulong i = ur; i < ur + blocksToRead; i++) tmpList.Add(i);
 
                 tmpList.Sort();
 
@@ -732,7 +732,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
-                    if(sense) { sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration); }
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration);
 
                     runningPersistent = true;
                     if(!sense && !dev.Error)
@@ -753,7 +753,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
-                    if(sense) { sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration); }
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration);
                 }
 
                 DicConsole.WriteLine();
@@ -848,7 +848,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           partitions[i].Scheme);
 
                         foreach(Filesystem plugin in plugins.PluginsList.Values)
-                        {
                             try
                             {
                                 if(plugin.Identify(imageFormat, partitions[i]))
@@ -872,7 +871,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 //DicConsole.DebugWriteLine("Dump-media command", "Plugin {0} crashed", _plugin.Name);
                             }
-                        }
 
                         if(lstFs.Count > 0) xmlFileSysInfo[i].FileSystems = lstFs.ToArray();
                     }
@@ -888,7 +886,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         new Partition {Name = "Whole device", Length = blocks, Size = blocks * blockSize};
 
                     foreach(Filesystem plugin in plugins.PluginsList.Values)
-                    {
                         try
                         {
                             if(plugin.Identify(imageFormat, wholePart))
@@ -910,7 +907,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                         }
-                    }
 
                     if(lstFs.Count > 0) xmlFileSysInfo[0].FileSystems = lstFs.ToArray();
                 }

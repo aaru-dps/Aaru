@@ -132,10 +132,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Decoders.SCSI.MMC.DiscInformation.StandardDiscInformation? discInfo =
                             Decoders.SCSI.MMC.DiscInformation.Decode000b(cmdBuf);
                         if(discInfo.HasValue)
-                        {
-                            // If it is a read-only CD, check CD type if available
                             if(dskType == MediaType.CD)
-                            {
                                 switch(discInfo.Value.DiscType)
                                 {
                                     case 0x10:
@@ -145,8 +142,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                         dskType = MediaType.CDROMXA;
                                         break;
                                 }
-                            }
-                        }
                     }
 
                     int sessions = 1;
@@ -172,15 +167,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                         bool hasVideoTrack = false;
 
                         if(toc.HasValue)
-                        {
                             foreach(FullTOC.TrackDataDescriptor track in toc.Value.TrackDescriptors)
                             {
                                 if(track.TNO == 1 && ((TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
                                                       (TOC_CONTROL)(track.CONTROL & 0x0D) ==
-                                                      TOC_CONTROL.DataTrackIncremental))
-                                {
-                                    allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
-                                }
+                                                      TOC_CONTROL.DataTrackIncremental)) allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
 
                                 if((TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
                                    (TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrackIncremental)
@@ -192,7 +183,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                 hasVideoTrack |= track.ADR == 4;
                             }
-                        }
 
                         if(hasDataTrack && hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2)
                             dskType = MediaType.CDPLUS;
@@ -204,7 +194,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Reading PMA");
                     sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                     if(!sense)
-                    {
                         if(PMA.Decode(cmdBuf).HasValue)
                         {
                             tmpBuf = new byte[cmdBuf.Length - 4];
@@ -217,12 +206,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                             };
                             DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PMA.Image, tmpBuf);
                         }
-                    }
 
                     dumpLog.WriteLine("Reading CD-Text from Lead-In");
                     sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                     if(!sense)
-                    {
                         if(CDTextOnLeadIn.Decode(cmdBuf).HasValue)
                         {
                             tmpBuf = new byte[cmdBuf.Length - 4];
@@ -235,7 +222,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                             };
                             DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].LeadInCdText.Image, tmpBuf);
                         }
-                    }
                 }
             }
 
@@ -259,7 +245,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sessionsForAlcohol[i].StartTrack = ushort.MaxValue;
             }
             foreach(FullTOC.TrackDataDescriptor trk in toc.Value.TrackDescriptors)
-            {
                 if(trk.POINT > 0 && trk.POINT < 0xA0 && trk.SessionNumber <= sessionsForAlcohol.Length)
                 {
                     if(trk.POINT < sessionsForAlcohol[trk.SessionNumber - 1].StartTrack)
@@ -267,15 +252,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(trk.POINT > sessionsForAlcohol[trk.SessionNumber - 1].EndTrack)
                         sessionsForAlcohol[trk.SessionNumber - 1].EndTrack = trk.POINT;
                 }
-            }
 
             alcohol.AddSessions(sessionsForAlcohol);
 
             foreach(FullTOC.TrackDataDescriptor trk in toc.Value.TrackDescriptors)
-            {
                 alcohol.AddTrack((byte)((trk.ADR << 4) & trk.CONTROL), trk.TNO, trk.POINT, trk.Min, trk.Sec, trk.Frame,
                                  trk.Zero, trk.PMIN, trk.PSEC, trk.PFRAME, trk.SessionNumber);
-            }
 
             FullTOC.TrackDataDescriptor[] sortedTracks =
                 toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
@@ -283,9 +265,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             long lastSector = 0;
             string lastMsf = null;
             foreach(FullTOC.TrackDataDescriptor trk in sortedTracks)
-            {
                 if(trk.ADR == 1 || trk.ADR == 4)
-                {
                     if(trk.POINT >= 0x01 && trk.POINT <= 0x63)
                     {
                         TrackType track = new TrackType
@@ -345,8 +325,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         else lastMsf = string.Format("{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe);
                         lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
                     }
-                }
-            }
 
             TrackType[] tracks = trackList.ToArray();
             for(int t = 1; t < tracks.Length; t++)
@@ -386,7 +364,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            if(dumpRaw) { throw new NotImplementedException("Raw CD dumping not yet implemented"); }
+            if(dumpRaw) throw new NotImplementedException("Raw CD dumping not yet implemented");
             else
             {
                 // TODO: Check subchannel capabilities
@@ -472,7 +450,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 dumpFile.Close();
                 if(leadInSectorsGood > 0)
-                {
                     sidecar.OpticalDisc[0].LeadIn = new BorderType[]
                     {
                         new BorderType
@@ -482,7 +459,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Size = leadInSectorsTotal * blockSize
                         }
                     };
-                }
                 else File.Delete(outputPrefix + ".leadin.bin");
 
                 DicConsole.WriteLine();
@@ -602,13 +578,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                         ibgLog.Write(i, currentSpeed * 1024);
                         extents.Add(i, blocksToRead, true);
                         if(separateSubchannel)
-                        {
                             for(int b = 0; b < blocksToRead; b++)
                             {
                                 dumpFile.Write(readBuffer, (int)(0 + b * blockSize), sectorSize);
                                 subFile.Write(readBuffer, (int)(sectorSize + b * blockSize), (int)subSize);
                             }
-                        }
                         else dumpFile.Write(readBuffer);
                     }
                     else
@@ -644,7 +618,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
                         }))
-                        {
                             switch(readBuffer[15])
                             {
                                 case 0:
@@ -660,7 +633,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     checkedDataFormat = true;
                                     break;
                             }
-                        }
                     }
 
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
@@ -812,7 +784,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
-                    if(sense) { sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration); }
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration);
 
                     runningPersistent = true;
                     if(!sense && !dev.Error)
@@ -833,7 +805,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
-                    if(sense) { sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration); }
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration);
                 }
 
                 DicConsole.WriteLine();

@@ -89,10 +89,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
-            {
-                return Errno.NoSuchExtendedAttribute;
-            }
+                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) return Errno.NoSuchExtendedAttribute;
 
             if(!catalogCache.ContainsKey(filename)) return Errno.NoSuchFile;
 

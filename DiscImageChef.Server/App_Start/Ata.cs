@@ -467,10 +467,8 @@ namespace DiscImageChef.Server.App_Start
             else if(!cfa && ataReport.GeneralConfigurationSpecified)
             {
                 if(minatalevel >= 5)
-                {
                     if(ataReport.GeneralConfiguration.HasFlag(GeneralConfigurationBit.IncompleteResponse))
                         ataOneValue.Add("Incomplete identify response");
-                }
                 if(ataReport.GeneralConfiguration.HasFlag(GeneralConfigurationBit.NonMagnetic))
                     ataOneValue.Add("Device uses non-magnetic media");
 
@@ -478,10 +476,8 @@ namespace DiscImageChef.Server.App_Start
                     ataOneValue.Add("Device is removable");
 
                 if(minatalevel <= 5)
-                {
                     if(ataReport.GeneralConfiguration.HasFlag(GeneralConfigurationBit.Fixed))
                         ataOneValue.Add("Device is fixed");
-                }
 
                 if(ata1)
                 {
@@ -514,7 +510,6 @@ namespace DiscImageChef.Server.App_Start
 
             if(ataReport.SpecificConfigurationSpecified && (ushort)ataReport.SpecificConfiguration != 0x0000 &&
                (ushort)ataReport.SpecificConfiguration != 0xFFFF)
-            {
                 switch(ataReport.SpecificConfiguration)
                 {
                     case SpecificConfigurationEnum.RequiresSetIncompleteResponse:
@@ -538,12 +533,10 @@ namespace DiscImageChef.Server.App_Start
                                                       (ushort)ataReport.SpecificConfiguration));
                         break;
                 }
-            }
 
             // Obsolete since ATA-2, however, it is yet used in ATA-8 devices
             if(ataReport.BufferSizeSpecified && ataReport.BufferTypeSpecified && ataReport.BufferSize != 0x0000 &&
                ataReport.BufferSize != 0xFFFF && ataReport.BufferType != 0x0000 && ataReport.BufferType != 0xFFFF)
-            {
                 switch(ataReport.BufferType)
                 {
                     case 1:
@@ -564,7 +557,6 @@ namespace DiscImageChef.Server.App_Start
                                                       ataReport.BufferType));
                         break;
                 }
-            }
 
             if(ataReport.CapabilitiesSpecified)
             {
@@ -572,18 +564,14 @@ namespace DiscImageChef.Server.App_Start
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.StandardStanbyTimer))
                     ataOneValue.Add("Standby time values are standard");
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.IORDY))
-                {
                     if(ataReport.Capabilities.HasFlag(CapabilitiesBit.CanDisableIORDY))
                         ataOneValue.Add("IORDY is supported and can be disabled");
                     else ataOneValue.Add("IORDY is supported");
-                }
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.DMASupport)) ataOneValue.Add("DMA is supported");
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.PhysicalAlignment1) ||
                    ataReport.Capabilities.HasFlag(CapabilitiesBit.PhysicalAlignment0))
-                {
                     ataOneValue.Add(string.Format("Long Physical Alignment setting is {0}",
                                                   (ushort)ataReport.Capabilities & 0x03));
-                }
                 if(atapi)
                 {
                     if(ataReport.Capabilities.HasFlag(CapabilitiesBit.InterleavedDMA))
@@ -598,17 +586,12 @@ namespace DiscImageChef.Server.App_Start
             }
 
             if(ataReport.Capabilities2Specified)
-            {
                 if(ataReport.Capabilities2.HasFlag(CapabilitiesBit2.MustBeSet) &&
                    !ataReport.Capabilities2.HasFlag(CapabilitiesBit2.MustBeClear))
-                {
                     if(ataReport.Capabilities2.HasFlag(CapabilitiesBit2.SpecificStandbyTimer))
                         ataOneValue.Add("Device indicates a specific minimum standby timer value");
-                }
-            }
 
             if(ataReport.Capabilities3Specified)
-            {
                 if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.MultipleValid))
                 {
                     ataOneValue
@@ -617,13 +600,10 @@ namespace DiscImageChef.Server.App_Start
                     ataOneValue.Add(string.Format("Device supports setting a maximum of {0} sectors",
                                                   ataReport.MultipleMaxSectors));
                 }
-            }
 
             if(ata1 && ataReport.TrustedComputingSpecified)
-            {
                 if(ataReport.TrustedComputing.HasFlag(TrustedComputingBit.TrustedComputing))
                     ataOneValue.Add("Device supports doubleword I/O");
-            }
 
             if(minatalevel <= 3)
             {
@@ -637,14 +617,14 @@ namespace DiscImageChef.Server.App_Start
             {
                 tmpString = "";
 
-                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode0)) { tmpString += "PIO0 "; }
-                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode1)) { tmpString += "PIO1 "; }
-                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode2)) { tmpString += "PIO2 "; }
-                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode3)) { tmpString += "PIO3 "; }
-                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode4)) { tmpString += "PIO4 "; }
-                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode5)) { tmpString += "PIO5 "; }
-                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode6)) { tmpString += "PIO6 "; }
-                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode7)) { tmpString += "PIO7 "; }
+                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode0)) tmpString += "PIO0 ";
+                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode1)) tmpString += "PIO1 ";
+                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode2)) tmpString += "PIO2 ";
+                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode3)) tmpString += "PIO3 ";
+                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode4)) tmpString += "PIO4 ";
+                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode5)) tmpString += "PIO5 ";
+                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode6)) tmpString += "PIO6 ";
+                if(ataReport.APIOSupported.HasFlag(TransferMode.Mode7)) tmpString += "PIO7 ";
 
                 ataTwoValue.Add("Advanced PIO", tmpString);
             }
@@ -812,25 +792,16 @@ namespace DiscImageChef.Server.App_Start
             }
 
             if(ataReport.MinMDMACycleTime != 0 && ataReport.RecommendedMDMACycleTime != 0)
-            {
                 ataOneValue.Add(string.Format("At minimum {0} ns. transfer cycle time per word in MDMA, " + "{1} ns. recommended",
                                               ataReport.MinMDMACycleTime, ataReport.RecommendedMDMACycleTime));
-            }
             if(ataReport.MinPIOCycleTimeNoFlow != 0)
-            {
                 ataOneValue.Add(string.Format("At minimum {0} ns. transfer cycle time per word in PIO, " + "without flow control",
                                               ataReport.MinPIOCycleTimeNoFlow));
-            }
             if(ataReport.MinPIOCycleTimeFlow != 0)
-            {
                 ataOneValue.Add(string.Format("At minimum {0} ns. transfer cycle time per word in PIO, " + "with IORDY flow control",
                                               ataReport.MinPIOCycleTimeFlow));
-            }
 
-            if(ataReport.MaxQueueDepth != 0)
-            {
-                ataOneValue.Add(string.Format("{0} depth of queue maximum", ataReport.MaxQueueDepth + 1));
-            }
+            if(ataReport.MaxQueueDepth != 0) ataOneValue.Add(string.Format("{0} depth of queue maximum", ataReport.MaxQueueDepth + 1));
 
             if(atapi)
             {
@@ -847,49 +818,25 @@ namespace DiscImageChef.Server.App_Start
             {
                 if(!ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear))
                 {
-                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen1Speed))
-                    {
-                        ataOneValue.Add(string.Format("SATA 1.5Gb/s is supported"));
-                    }
-                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen2Speed))
-                    {
-                        ataOneValue.Add(string.Format("SATA 3.0Gb/s is supported"));
-                    }
-                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen3Speed))
-                    {
-                        ataOneValue.Add(string.Format("SATA 6.0Gb/s is supported"));
-                    }
+                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen1Speed)) ataOneValue.Add(string.Format("SATA 1.5Gb/s is supported"));
+                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen2Speed)) ataOneValue.Add(string.Format("SATA 3.0Gb/s is supported"));
+                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen3Speed)) ataOneValue.Add(string.Format("SATA 6.0Gb/s is supported"));
                     if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.PowerReceipt))
-                    {
                         ataOneValue
                             .Add(string.Format("Receipt of host initiated power management requests is supported"));
-                    }
-                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.PHYEventCounter))
-                    {
-                        ataOneValue.Add(string.Format("PHY Event counters are supported"));
-                    }
+                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.PHYEventCounter)) ataOneValue.Add(string.Format("PHY Event counters are supported"));
                     if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.HostSlumbTrans))
-                    {
                         ataOneValue
                             .Add(string.Format("Supports host automatic partial to slumber transitions is supported"));
-                    }
                     if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.DevSlumbTrans))
-                    {
                         ataOneValue
                             .Add(string.Format("Supports device automatic partial to slumber transitions is supported"));
-                    }
                     if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQ))
                     {
                         ataOneValue.Add(string.Format("NCQ is supported"));
 
-                        if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQPriority))
-                        {
-                            ataOneValue.Add(string.Format("NCQ priority is supported"));
-                        }
-                        if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.UnloadNCQ))
-                        {
-                            ataOneValue.Add(string.Format("Unload is supported with outstanding NCQ commands"));
-                        }
+                        if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQPriority)) ataOneValue.Add(string.Format("NCQ priority is supported"));
+                        if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.UnloadNCQ)) ataOneValue.Add(string.Format("Unload is supported with outstanding NCQ commands"));
                     }
                 }
 
@@ -900,39 +847,25 @@ namespace DiscImageChef.Server.App_Start
                        !ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear) &&
                        ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQ))
                     {
-                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQMgmt))
-                        {
-                            ataOneValue.Add(string.Format("NCQ queue management is supported"));
-                        }
-                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQStream))
-                        {
-                            ataOneValue.Add(string.Format("NCQ streaming is supported"));
-                        }
+                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQMgmt)) ataOneValue.Add(string.Format("NCQ queue management is supported"));
+                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQStream)) ataOneValue.Add(string.Format("NCQ streaming is supported"));
                     }
 
                     if(ataReport.SATACapabilities2Specified && atapi)
                     {
-                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.HostEnvDetect))
-                        {
-                            ataOneValue.Add(string.Format("ATAPI device supports host environment detection"));
-                        }
+                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.HostEnvDetect)) ataOneValue.Add(string.Format("ATAPI device supports host environment detection"));
                         if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.DevAttSlimline))
-                        {
                             ataOneValue
                                 .Add(string.Format("ATAPI device supports attention on slimline connected devices"));
-                        }
                     }
                 }
             }
 
             if(ataReport.InterseekDelay != 0x0000 && ataReport.InterseekDelay != 0xFFFF)
-            {
                 ataOneValue.Add(string.Format("{0} microseconds of interseek delay for ISO-7779 accoustic testing",
                                               ataReport.InterseekDelay));
-            }
 
             if((ushort)ataReport.DeviceFormFactor != 0x0000 && (ushort)ataReport.DeviceFormFactor != 0xFFFF)
-            {
                 switch(ataReport.DeviceFormFactor)
                 {
                     case DeviceFormFactorEnum.FiveAndQuarter:
@@ -955,16 +888,12 @@ namespace DiscImageChef.Server.App_Start
                                                       ataReport.DeviceFormFactor));
                         break;
                 }
-            }
 
             if(atapi)
-            {
                 if(ataReport.ATAPIByteCount > 0)
                     ataOneValue.Add(string.Format("{0} bytes count limit for ATAPI", ataReport.ATAPIByteCount));
-            }
 
             if(cfa)
-            {
                 if((ataReport.CFAPowerMode & 0x8000) == 0x8000)
                 {
                     ataOneValue.Add("CompactFlash device supports power mode 1");
@@ -976,7 +905,6 @@ namespace DiscImageChef.Server.App_Start
                     ataOneValue.Add(string.Format("CompactFlash device uses a maximum of {0} mA",
                                                   ataReport.CFAPowerMode & 0x0FFF));
                 }
-            }
 
             if(ataReport.CommandSetSpecified || ataReport.CommandSet2Specified || ataReport.CommandSet3Specified ||
                ataReport.CommandSet4Specified ||
@@ -984,87 +912,61 @@ namespace DiscImageChef.Server.App_Start
             if(ataReport.CommandSetSpecified)
             {
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.Nop))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.Nop) && ataReport.EnabledCommandSetSpecified)
                         ataOneValue.Add("NOP is supported and enabled");
                     else ataOneValue.Add("NOP is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.ReadBuffer))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.ReadBuffer) &&
                        ataReport.EnabledCommandSetSpecified) ataOneValue.Add("READ BUFFER is supported and enabled");
                     else ataOneValue.Add("READ BUFFER is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.WriteBuffer))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.WriteBuffer) &&
                        ataReport.EnabledCommandSetSpecified) ataOneValue.Add("WRITE BUFFER is supported and enabled");
                     else ataOneValue.Add("WRITE BUFFER is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.HPA))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.HPA) && ataReport.EnabledCommandSetSpecified)
                         ataOneValue.Add("Host Protected Area is supported and enabled");
                     else ataOneValue.Add("Host Protected Area is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.DeviceReset))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.DeviceReset) &&
                        ataReport.EnabledCommandSetSpecified) ataOneValue.Add("DEVICE RESET is supported and enabled");
                     else ataOneValue.Add("DEVICE RESET is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.Service))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.Service) &&
                        ataReport.EnabledCommandSetSpecified)
                         ataOneValue.Add("SERVICE interrupt is supported and enabled");
                     else ataOneValue.Add("SERVICE interrupt is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.Release))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.Release) &&
                        ataReport.EnabledCommandSetSpecified) ataOneValue.Add("Release is supported and enabled");
                     else ataOneValue.Add("Release is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.LookAhead))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.LookAhead) &&
                        ataReport.EnabledCommandSetSpecified)
                         ataOneValue.Add("Look-ahead read is supported and enabled");
                     else ataOneValue.Add("Look-ahead read is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.WriteCache))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.WriteCache) &&
                        ataReport.EnabledCommandSetSpecified) ataOneValue.Add("Write cache is supported and enabled");
                     else ataOneValue.Add("Write cache is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.Packet))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.Packet) && ataReport.EnabledCommandSetSpecified
                     ) ataOneValue.Add("PACKET is supported and enabled");
                     else ataOneValue.Add("PACKET is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.PowerManagement))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.PowerManagement) &&
                        ataReport.EnabledCommandSetSpecified)
                         ataOneValue.Add("Power management is supported and enabled");
                     else ataOneValue.Add("Power management is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.RemovableMedia))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.RemovableMedia) &&
                        ataReport.EnabledCommandSetSpecified)
                         ataOneValue.Add("Removable media feature set is supported and enabled");
                     else ataOneValue.Add("Removable media feature set is supported");
-                }
                 if(ataReport.CommandSet.HasFlag(CommandSetBit.SecurityMode))
-                {
                     if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.SecurityMode) &&
                        ataReport.EnabledCommandSetSpecified) ataOneValue.Add("Security mode is supported and enabled");
                     else ataOneValue.Add("Security mode is supported");
-                }
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.LBASupport))
                     ataOneValue.Add("28-bit LBA is supported");
             }
@@ -1073,111 +975,78 @@ namespace DiscImageChef.Server.App_Start
                !ataReport.CommandSet2.HasFlag(CommandSetBit2.MustBeClear))
             {
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.LBA48))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.LBA48) &&
                        ataReport.EnabledCommandSet2Specified) ataOneValue.Add("48-bit LBA is supported and enabled");
                     else ataOneValue.Add("48-bit LBA is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.FlushCache))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.FlushCache) &&
                        ataReport.EnabledCommandSet2Specified) ataOneValue.Add("FLUSH CACHE is supported and enabled");
                     else ataOneValue.Add("FLUSH CACHE is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.FlushCacheExt))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.FlushCacheExt) &&
                        ataReport.EnabledCommandSet2Specified)
                         ataOneValue.Add("FLUSH CACHE EXT is supported and enabled");
                     else ataOneValue.Add("FLUSH CACHE EXT is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.DCO))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.DCO) && ataReport.EnabledCommandSet2Specified
                     ) ataOneValue.Add("Device Configuration Overlay feature set is supported and enabled");
                     else ataOneValue.Add("Device Configuration Overlay feature set is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.AAM))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.AAM) && ataReport.EnabledCommandSet2Specified
                     )
-                    {
                         ataOneValue
                             .Add(string.Format("Automatic Acoustic Management is supported and enabled with value {0} (vendor recommends {1}",
                                                ataReport.CurrentAAM, ataReport.RecommendedAAM));
-                    }
                     else ataOneValue.Add("Automatic Acoustic Management is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.SetMax))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.SetMax) &&
                        ataReport.EnabledCommandSet2Specified)
                         ataOneValue.Add("SET MAX security extension is supported and enabled");
                     else ataOneValue.Add("SET MAX security extension is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.AddressOffsetReservedAreaBoot))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.AddressOffsetReservedAreaBoot) &&
                        ataReport.EnabledCommandSet2Specified)
                         ataOneValue.Add("Address Offset Reserved Area Boot is supported and enabled");
                     else ataOneValue.Add("Address Offset Reserved Area Boot is supported");
-                }
-                if(ataReport.CommandSet2.HasFlag(CommandSetBit2.SetFeaturesRequired))
-                {
-                    ataOneValue.Add("SET FEATURES is required before spin-up");
-                }
+                if(ataReport.CommandSet2.HasFlag(CommandSetBit2.SetFeaturesRequired)) ataOneValue.Add("SET FEATURES is required before spin-up");
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.PowerUpInStandby))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.PowerUpInStandby) &&
                        ataReport.EnabledCommandSet2Specified)
                         ataOneValue.Add("Power-up in standby is supported and enabled");
                     else ataOneValue.Add("Power-up in standby is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.RemovableNotification))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.RemovableNotification) &&
                        ataReport.EnabledCommandSet2Specified)
                         ataOneValue.Add("Removable Media Status Notification is supported and enabled");
                     else ataOneValue.Add("Removable Media Status Notification is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.APM))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.APM) && ataReport.EnabledCommandSet2Specified
                     )
                         ataOneValue
                             .Add(string.Format("Advanced Power Management is supported and enabled with value {0}",
                                                ataReport.CurrentAPM));
                     else ataOneValue.Add("Advanced Power Management is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.CompactFlash))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.CompactFlash) &&
                        ataReport.EnabledCommandSet2Specified)
                         ataOneValue.Add("CompactFlash feature set is supported and enabled");
                     else ataOneValue.Add("CompactFlash feature set is supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.RWQueuedDMA))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.RWQueuedDMA) &&
                        ataReport.EnabledCommandSet2Specified)
                         ataOneValue.Add("READ DMA QUEUED and WRITE DMA QUEUED are supported and enabled");
                     else ataOneValue.Add("READ DMA QUEUED and WRITE DMA QUEUED are supported");
-                }
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.DownloadMicrocode))
-                {
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.DownloadMicrocode) &&
                        ataReport.EnabledCommandSet2Specified)
                         ataOneValue.Add("DOWNLOAD MICROCODE is supported and enabled");
                     else ataOneValue.Add("DOWNLOAD MICROCODE is supported");
-                }
             }
 
             if(ataReport.CommandSet.HasFlag(CommandSetBit.SMART) && ataReport.CommandSetSpecified)
-            {
                 if(ataReport.EnabledCommandSet.HasFlag(CommandSetBit.SMART) && ataReport.EnabledCommandSetSpecified)
                     ataOneValue.Add("S.M.A.R.T. is supported and enabled");
                 else ataOneValue.Add("S.M.A.R.T. is supported");
-            }
 
             if(ataReport.SCTCommandTransport.HasFlag(SCTCommandTransportBit.Supported) &&
                ataReport.SCTCommandTransportSpecified) ataOneValue.Add("S.M.A.R.T. Command Transport is supported");
@@ -1186,137 +1055,94 @@ namespace DiscImageChef.Server.App_Start
                !ataReport.CommandSet3.HasFlag(CommandSetBit3.MustBeClear))
             {
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.SMARTSelfTest))
-                {
                     if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.SMARTSelfTest) &&
                        ataReport.EnabledCommandSet3Specified)
                         ataOneValue.Add("S.M.A.R.T. self-testing is supported and enabled");
                     else ataOneValue.Add("S.M.A.R.T. self-testing is supported");
-                }
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.SMARTLog))
-                {
                     if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.SMARTLog) &&
                        ataReport.EnabledCommandSet3Specified)
                         ataOneValue.Add("S.M.A.R.T. error logging is supported and enabled");
                     else ataOneValue.Add("S.M.A.R.T. error logging is supported");
-                }
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.IdleImmediate))
-                {
                     if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.IdleImmediate) &&
                        ataReport.EnabledCommandSet3Specified)
                         ataOneValue.Add("IDLE IMMEDIATE with UNLOAD FEATURE is supported and enabled");
                     else ataOneValue.Add("IDLE IMMEDIATE with UNLOAD FEATURE is supported");
-                }
-                if(ataReport.CommandSet3.HasFlag(CommandSetBit3.WriteURG))
-                {
-                    ataOneValue.Add("URG bit is supported in WRITE STREAM DMA EXT and WRITE STREAM EXT");
-                }
-                if(ataReport.CommandSet3.HasFlag(CommandSetBit3.ReadURG))
-                {
-                    ataOneValue.Add("URG bit is supported in READ STREAM DMA EXT and READ STREAM EXT");
-                }
-                if(ataReport.CommandSet3.HasFlag(CommandSetBit3.WWN))
-                {
-                    ataOneValue.Add("Device has a World Wide Name");
-                }
+                if(ataReport.CommandSet3.HasFlag(CommandSetBit3.WriteURG)) ataOneValue.Add("URG bit is supported in WRITE STREAM DMA EXT and WRITE STREAM EXT");
+                if(ataReport.CommandSet3.HasFlag(CommandSetBit3.ReadURG)) ataOneValue.Add("URG bit is supported in READ STREAM DMA EXT and READ STREAM EXT");
+                if(ataReport.CommandSet3.HasFlag(CommandSetBit3.WWN)) ataOneValue.Add("Device has a World Wide Name");
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.FUAWriteQ))
-                {
                     if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.FUAWriteQ) &&
                        ataReport.EnabledCommandSet3Specified)
                         ataOneValue.Add("WRITE DMA QUEUED FUA EXT is supported and enabled");
                     else ataOneValue.Add("WRITE DMA QUEUED FUA EXT is supported");
-                }
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.FUAWrite))
-                {
                     if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.FUAWrite) &&
                        ataReport.EnabledCommandSet3Specified)
                         ataOneValue.Add("WRITE DMA FUA EXT and WRITE MULTIPLE FUA EXT are supported and enabled");
                     else ataOneValue.Add("WRITE DMA FUA EXT and WRITE MULTIPLE FUA EXT are supported");
-                }
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.GPL))
-                {
                     if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.GPL) && ataReport.EnabledCommandSet3Specified
                     ) ataOneValue.Add("General Purpose Logging is supported and enabled");
                     else ataOneValue.Add("General Purpose Logging is supported");
-                }
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.Streaming))
-                {
                     if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.Streaming) &&
                        ataReport.EnabledCommandSet3Specified)
                         ataOneValue.Add("Streaming feature set is supported and enabled");
                     else ataOneValue.Add("Streaming feature set is supported");
-                }
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.MCPT) && ataReport.EnabledCommandSet3Specified)
-                {
                     if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.MCPT))
                         ataOneValue.Add("Media Card Pass Through command set is supported and enabled");
                     else ataOneValue.Add("Media Card Pass Through command set is supported");
-                }
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.MediaSerial) && ataReport.EnabledCommandSet3Specified)
-                {
                     if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.MediaSerial))
                         ataOneValue.Add("Media Serial is supported and valid");
                     else ataOneValue.Add("Media Serial is supported");
-                }
             }
 
             if(ataReport.CommandSet4Specified && ataReport.CommandSet4.HasFlag(CommandSetBit4.MustBeSet) &&
                !ataReport.CommandSet4.HasFlag(CommandSetBit4.MustBeClear))
             {
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.DSN))
-                {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.DSN) && ataReport.EnabledCommandSet4Specified
                     ) ataOneValue.Add("DSN feature set is supported and enabled");
                     else ataOneValue.Add("DSN feature set is supported");
-                }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.AMAC))
-                {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.AMAC) &&
                        ataReport.EnabledCommandSet4Specified)
                         ataOneValue.Add("Accessible Max Address Configuration is supported and enabled");
                     else ataOneValue.Add("Accessible Max Address Configuration is supported");
-                }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.ExtPowerCond))
-                {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.ExtPowerCond) &&
                        ataReport.EnabledCommandSet4Specified)
                         ataOneValue.Add("Extended Power Conditions are supported and enabled");
                     else ataOneValue.Add("Extended Power Conditions are supported");
-                }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.ExtStatusReport))
-                {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.ExtStatusReport) &&
                        ataReport.EnabledCommandSet4Specified)
                         ataOneValue.Add("Extended Status Reporting is supported and enabled");
                     else ataOneValue.Add("Extended Status Reporting is supported");
-                }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.FreeFallControl))
-                {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.FreeFallControl) &&
                        ataReport.EnabledCommandSet4Specified)
                         ataOneValue.Add("Free-fall control feature set is supported and enabled");
                     else ataOneValue.Add("Free-fall control feature set is supported");
-                }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.SegmentedDownloadMicrocode))
-                {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.SegmentedDownloadMicrocode) &&
                        ataReport.EnabledCommandSet4Specified)
                         ataOneValue.Add("Segmented feature in DOWNLOAD MICROCODE is supported and enabled");
                     else ataOneValue.Add("Segmented feature in DOWNLOAD MICROCODE is supported");
-                }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.RWDMAExtGpl))
-                {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.RWDMAExtGpl) &&
                        ataReport.EnabledCommandSet4Specified)
                         ataOneValue.Add("READ/WRITE DMA EXT GPL are supported and enabled");
                     else ataOneValue.Add("READ/WRITE DMA EXT GPL are supported");
-                }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.WriteUnc))
-                {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.WriteUnc) &&
                        ataReport.EnabledCommandSet4Specified)
                         ataOneValue.Add("WRITE UNCORRECTABLE is supported and enabled");
                     else ataOneValue.Add("WRITE UNCORRECTABLE is supported");
-                }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.WRV))
                 {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.WRV) && ataReport.EnabledCommandSet4Specified
@@ -1330,11 +1156,9 @@ namespace DiscImageChef.Server.App_Start
                     ) ataOneValue.Add(string.Format("Current Write/Read/Verify mode: {0}", ataReport.WRVMode));
                 }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.DT1825))
-                {
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.DT1825) &&
                        ataReport.EnabledCommandSet4Specified) ataOneValue.Add("DT1825 is supported and enabled");
                     else ataOneValue.Add("DT1825 is supported");
-                }
             }
 
             if(ataReport.Capabilities3Specified)
@@ -1349,66 +1173,29 @@ namespace DiscImageChef.Server.App_Start
 
             if(ataReport.CommandSet5Specified)
             {
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.DeviceConfDMA))
-                {
-                    ataOneValue.Add("DEVICE CONFIGURATION IDENTIFY DMA and DEVICE CONFIGURATION SET DMA are supported");
-                }
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.ReadBufferDMA))
-                {
-                    ataOneValue.Add("READ BUFFER DMA is supported");
-                }
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.WriteBufferDMA))
-                {
-                    ataOneValue.Add("WRITE BUFFER DMA is supported");
-                }
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.DownloadMicroCodeDMA))
-                {
-                    ataOneValue.Add("DOWNLOAD MICROCODE DMA is supported");
-                }
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.SetMaxDMA))
-                {
-                    ataOneValue.Add("SET PASSWORD DMA and SET UNLOCK DMA are supported");
-                }
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.Ata28))
-                {
-                    ataOneValue.Add("Not all 28-bit commands are supported");
-                }
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.DeviceConfDMA)) ataOneValue.Add("DEVICE CONFIGURATION IDENTIFY DMA and DEVICE CONFIGURATION SET DMA are supported");
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.ReadBufferDMA)) ataOneValue.Add("READ BUFFER DMA is supported");
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.WriteBufferDMA)) ataOneValue.Add("WRITE BUFFER DMA is supported");
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.DownloadMicroCodeDMA)) ataOneValue.Add("DOWNLOAD MICROCODE DMA is supported");
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.SetMaxDMA)) ataOneValue.Add("SET PASSWORD DMA and SET UNLOCK DMA are supported");
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.Ata28)) ataOneValue.Add("Not all 28-bit commands are supported");
 
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.CFast))
-                {
-                    ataOneValue.Add("Device follows CFast specification");
-                }
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.IEEE1667))
-                {
-                    ataOneValue.Add("Device follows IEEE-1667");
-                }
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.CFast)) ataOneValue.Add("Device follows CFast specification");
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.IEEE1667)) ataOneValue.Add("Device follows IEEE-1667");
 
                 if(ataReport.CommandSet5.HasFlag(CommandSetBit5.DeterministicTrim))
                 {
                     ataOneValue.Add("Read after TRIM is deterministic");
-                    if(ataReport.CommandSet5.HasFlag(CommandSetBit5.ReadZeroTrim))
-                    {
-                        ataOneValue.Add("Read after TRIM returns empty data");
-                    }
+                    if(ataReport.CommandSet5.HasFlag(CommandSetBit5.ReadZeroTrim)) ataOneValue.Add("Read after TRIM returns empty data");
                 }
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.LongPhysSectorAligError))
-                {
-                    ataOneValue.Add("Device supports Long Physical Sector Alignment Error Reporting Control");
-                }
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.Encrypted))
-                {
-                    ataOneValue.Add("Device encrypts all user data");
-                }
-                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.AllCacheNV))
-                {
-                    ataOneValue.Add("Device's write cache is non-volatile");
-                }
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.LongPhysSectorAligError)) ataOneValue.Add("Device supports Long Physical Sector Alignment Error Reporting Control");
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.Encrypted)) ataOneValue.Add("Device encrypts all user data");
+                if(ataReport.CommandSet5.HasFlag(CommandSetBit5.AllCacheNV)) ataOneValue.Add("Device's write cache is non-volatile");
                 if(ataReport.CommandSet5.HasFlag(CommandSetBit5.ZonedBit0) ||
-                   ataReport.CommandSet5.HasFlag(CommandSetBit5.ZonedBit1)) { ataOneValue.Add("Device is zoned"); }
+                   ataReport.CommandSet5.HasFlag(CommandSetBit5.ZonedBit1)) ataOneValue.Add("Device is zoned");
             }
 
             if(ataReport.Capabilities3Specified)
-            {
                 if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.Sanitize))
                 {
                     ataOneValue.Add("Sanitize feature set is supported");
@@ -1419,125 +1206,80 @@ namespace DiscImageChef.Server.App_Start
                     if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.SanitizeAntifreeze))
                         ataOneValue.Add("SANITIZE ANTIFREEZE LOCK EXT is supported");
                 }
-            }
 
             if(!ata1 && maxatalevel >= 8 && ataReport.TrustedComputingSpecified)
-            {
                 if(ataReport.TrustedComputing.HasFlag(TrustedComputingBit.Set) &&
                    !ataReport.TrustedComputing.HasFlag(TrustedComputingBit.Clear) &&
                    ataReport.TrustedComputing.HasFlag(TrustedComputingBit.TrustedComputing))
                     ataOneValue.Add("Trusted Computing feature set is supported");
-            }
 
             if(ataReport.TransportMajorVersionSpecified && ((ataReport.TransportMajorVersion & 0xF000) >> 12 == 0x1 ||
                                                             (ataReport.TransportMajorVersion & 0xF000) >> 12 == 0xE))
             {
                 if(ataReport.SATACapabilitiesSpecified)
-                {
                     if(!ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear))
-                    {
                         if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.ReadLogDMAExt))
                             ataOneValue.Add("READ LOG DMA EXT is supported");
-                    }
-                }
 
                 if(ataReport.SATACapabilities2Specified)
-                {
                     if(!ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.Clear))
-                    {
                         if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.FPDMAQ))
                             ataOneValue.Add("RECEIVE FPDMA QUEUED and SEND FPDMA QUEUED are supported");
-                    }
-                }
 
                 if(ataReport.SATAFeaturesSpecified)
-                {
                     if(!ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.Clear))
                     {
                         if(ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.NonZeroBufferOffset))
-                        {
                             if(ataReport.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.NonZeroBufferOffset) &&
                                ataReport.EnabledSATAFeaturesSpecified)
                                 ataOneValue.Add("Non-zero buffer offsets are supported and enabled");
                             else ataOneValue.Add("Non-zero buffer offsets are supported");
-                        }
                         if(ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.DMASetup))
-                        {
                             if(ataReport.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.DMASetup) &&
                                ataReport.EnabledSATAFeaturesSpecified)
                                 ataOneValue.Add("DMA Setup auto-activation is supported and enabled");
                             else ataOneValue.Add("DMA Setup auto-activation is supported");
-                        }
                         if(ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.InitPowerMgmt))
-                        {
                             if(ataReport.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.InitPowerMgmt) &&
                                ataReport.EnabledSATAFeaturesSpecified)
                                 ataOneValue.Add("Device-initiated power management is supported and enabled");
                             else ataOneValue.Add("Device-initiated power management is supported");
-                        }
                         if(ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.InOrderData))
-                        {
                             if(ataReport.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.InOrderData) &&
                                ataReport.EnabledSATAFeaturesSpecified)
                                 ataOneValue.Add("In-order data delivery is supported and enabled");
                             else ataOneValue.Add("In-order data delivery is supported");
-                        }
                         if(!atapi)
-                        {
                             if(ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.HardwareFeatureControl))
-                            {
                                 if(ataReport.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.HardwareFeatureControl) &&
                                    ataReport.EnabledSATAFeaturesSpecified)
                                     ataOneValue.Add("Hardware Feature Control is supported and enabled");
                                 else ataOneValue.Add("Hardware Feature Control is supported");
-                            }
-                        }
                         if(atapi)
-                        {
                             if(ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.AsyncNotification) &&
                                ataReport.EnabledSATAFeaturesSpecified)
-                            {
                                 if(ataReport.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.AsyncNotification) &&
                                    ataReport.EnabledSATAFeaturesSpecified)
                                     ataOneValue.Add("Asynchronous notification is supported");
                                 else ataOneValue.Add("Asynchronous notification is supported");
-                            }
-                        }
                         if(ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.SettingsPreserve))
-                        {
                             if(ataReport.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.SettingsPreserve) &&
                                ataReport.EnabledSATAFeaturesSpecified)
                                 ataOneValue.Add("Software Settings Preservation is supported");
                             else ataOneValue.Add("Software Settings Preservation is supported");
-                        }
-                        if(ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.NCQAutoSense))
-                        {
-                            ataOneValue.Add("NCQ Autosense is supported");
-                        }
-                        if(ataReport.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.EnabledSlumber))
-                        {
-                            ataOneValue.Add("Automatic Partial to Slumber transitions are enabled");
-                        }
+                        if(ataReport.SATAFeatures.HasFlag(SATAFeaturesBit.NCQAutoSense)) ataOneValue.Add("NCQ Autosense is supported");
+                        if(ataReport.EnabledSATAFeatures.HasFlag(SATAFeaturesBit.EnabledSlumber)) ataOneValue.Add("Automatic Partial to Slumber transitions are enabled");
                     }
-                }
             }
-            if((ataReport.RemovableStatusSet & 0x03) > 0)
-            {
-                ataOneValue.Add("Removable Media Status Notification feature set is supported");
-            }
+            if((ataReport.RemovableStatusSet & 0x03) > 0) ataOneValue.Add("Removable Media Status Notification feature set is supported");
 
-            if(ataReport.FreeFallSensitivity != 0x00 && ataReport.FreeFallSensitivity != 0xFF)
-            {
-                ataOneValue.Add(string.Format("Free-fall sensitivity set to {0}", ataReport.FreeFallSensitivity));
-            }
+            if(ataReport.FreeFallSensitivity != 0x00 && ataReport.FreeFallSensitivity != 0xFF) ataOneValue.Add(string.Format("Free-fall sensitivity set to {0}", ataReport.FreeFallSensitivity));
 
             if(ataReport.DataSetMgmtSpecified && ataReport.DataSetMgmt.HasFlag(DataSetMgmtBit.Trim))
                 ataOneValue.Add("TRIM is supported");
             if(ataReport.DataSetMgmtSizeSpecified && ataReport.DataSetMgmtSize > 0)
-            {
                 ataOneValue.Add(string.Format("DATA SET MANAGEMENT can receive a maximum of {0} blocks of 512 bytes",
                                               ataReport.DataSetMgmtSize));
-            }
 
             if(ataReport.SecurityStatusSpecified && ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Supported))
             {
@@ -1630,13 +1372,11 @@ namespace DiscImageChef.Server.App_Start
                 if(ataReport.ReadCapabilities.NominalRotationRateSpecified &&
                    ataReport.ReadCapabilities.NominalRotationRate != 0x0000 &&
                    ataReport.ReadCapabilities.NominalRotationRate != 0xFFFF)
-                {
                     if(ataReport.ReadCapabilities.NominalRotationRate == 0x0001)
                         ataOneValue.Add("Device does not rotate.");
                     else
                         ataOneValue.Add(string.Format("Device rotates at {0} rpm",
                                                       ataReport.ReadCapabilities.NominalRotationRate));
-                }
 
                 if(!atapi)
                 {
@@ -1658,10 +1398,8 @@ namespace DiscImageChef.Server.App_Start
                        ataReport.ReadCapabilities.BlockSize != ataReport.ReadCapabilities.PhysicalBlockSize &&
                        (ataReport.ReadCapabilities.LogicalAlignment & 0x8000) == 0x0000 &&
                        (ataReport.ReadCapabilities.LogicalAlignment & 0x4000) == 0x4000)
-                    {
                         ataOneValue.Add(string.Format("Logical sector starts at offset {0} from physical sector",
                                                       ataReport.ReadCapabilities.LogicalAlignment & 0x3FFF));
-                    }
 
                     if(ataReport.ReadCapabilities.CHS != null && ataReport.ReadCapabilities.CurrentCHS != null)
                     {
@@ -1713,7 +1451,6 @@ namespace DiscImageChef.Server.App_Start
                                         string.Format("{0}", ataReport.ReadCapabilities.LBASectors));
 
                         if((ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize / 1024 / 1024 > 1000000)
-                        {
                             ataTwoValue.Add("Device size in 28-bit LBA mode",
                                             string.Format("{0} bytes, {1} Tb, {2:F2} TiB",
                                                           (ulong)ataReport.ReadCapabilities.LBASectors *
@@ -1722,10 +1459,8 @@ namespace DiscImageChef.Server.App_Start
                                                           logicalsectorsize / 1000 / 1000 / 1000 / 1000,
                                                           (double)((ulong)ataReport.ReadCapabilities.LBASectors *
                                                                    logicalsectorsize) / 1024 / 1024 / 1024 / 1024));
-                        }
                         else if((ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize / 1024 / 1024 >
                                 1000)
-                        {
                             ataTwoValue.Add("Device size in 28-bit LBA mode",
                                             string.Format("{0} bytes, {1} Gb, {2:F2} GiB",
                                                           (ulong)ataReport.ReadCapabilities.LBASectors *
@@ -1734,9 +1469,7 @@ namespace DiscImageChef.Server.App_Start
                                                           logicalsectorsize / 1000 / 1000 / 1000,
                                                           (double)((ulong)ataReport.ReadCapabilities.LBASectors *
                                                                    logicalsectorsize) / 1024 / 1024 / 1024));
-                        }
                         else
-                        {
                             ataTwoValue.Add("Device size in 28-bit LBA mode",
                                             string.Format("{0} bytes, {1} Mb, {2:F2} MiB",
                                                           (ulong)ataReport.ReadCapabilities.LBASectors *
@@ -1745,7 +1478,6 @@ namespace DiscImageChef.Server.App_Start
                                                           logicalsectorsize / 1000 / 1000,
                                                           (double)((ulong)ataReport.ReadCapabilities.LBASectors *
                                                                    logicalsectorsize) / 1024 / 1024));
-                        }
                     }
 
                     if(ataReport.ReadCapabilities.LBA48SectorsSpecified)
@@ -1754,7 +1486,6 @@ namespace DiscImageChef.Server.App_Start
                                         string.Format("{0}", ataReport.ReadCapabilities.LBA48Sectors));
 
                         if(ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize / 1024 / 1024 > 1000000)
-                        {
                             ataTwoValue.Add("Device size in 48-bit LBA mode",
                                             string.Format("{0} bytes, {1} Tb, {2:F2} TiB",
                                                           ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize,
@@ -1762,9 +1493,7 @@ namespace DiscImageChef.Server.App_Start
                                                           logicalsectorsize / 1000 / 1000 / 1000 / 1000,
                                                           (double)(ataReport.ReadCapabilities.LBA48Sectors *
                                                                    logicalsectorsize) / 1024 / 1024 / 1024 / 1024));
-                        }
                         else if(ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize / 1024 / 1024 > 1000)
-                        {
                             ataTwoValue.Add("Device size in 48-bit LBA mode",
                                             string.Format("{0} bytes, {1} Gb, {2:F2} GiB",
                                                           ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize,
@@ -1772,9 +1501,7 @@ namespace DiscImageChef.Server.App_Start
                                                           logicalsectorsize / 1000 / 1000 / 1000,
                                                           (double)(ataReport.ReadCapabilities.LBA48Sectors *
                                                                    logicalsectorsize) / 1024 / 1024 / 1024));
-                        }
                         else
-                        {
                             ataTwoValue.Add("Device size in 48-bit LBA mode",
                                             string.Format("{0} bytes, {1} Mb, {2:F2} MiB",
                                                           ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize,
@@ -1782,7 +1509,6 @@ namespace DiscImageChef.Server.App_Start
                                                           logicalsectorsize / 1000 / 1000,
                                                           (double)(ataReport.ReadCapabilities.LBA48Sectors *
                                                                    logicalsectorsize) / 1024 / 1024));
-                        }
                     }
 
                     if(ata1 || cfa)

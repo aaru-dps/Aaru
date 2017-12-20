@@ -93,7 +93,7 @@ namespace DiscImageChef.Core
                 }
 
                 // Still not recognized
-                if(imageFormat == null) { return null; }
+                if(imageFormat == null) return null;
 
                 return imageFormat;
             }

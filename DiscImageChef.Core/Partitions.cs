@@ -135,10 +135,7 @@ namespace DiscImageChef.Core
 
                 foreach(Partition detectedPartition in childPartitions) startLocations.Add(detectedPartition.Start);
 
-                foreach(Partition imagePartition in image.GetPartitions())
-                {
-                    if(!startLocations.Contains(imagePartition.Start)) childPartitions.Add(imagePartition);
-                }
+                foreach(Partition imagePartition in image.GetPartitions()) if(!startLocations.Contains(imagePartition.Start)) childPartitions.Add(imagePartition);
             }
 
             Partition[] childArray = childPartitions
@@ -155,7 +152,7 @@ namespace DiscImageChef.Core
 
             List<string> schemes = new List<string>();
 
-            foreach(Partition part in partitions) { if(!schemes.Contains(part.Scheme)) schemes.Add(part.Scheme); }
+            foreach(Partition part in partitions) if(!schemes.Contains(part.Scheme)) schemes.Add(part.Scheme);
 
             foreach(string scheme in schemes) Statistics.AddPartition(scheme);
         }

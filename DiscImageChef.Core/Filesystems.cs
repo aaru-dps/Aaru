@@ -45,10 +45,7 @@ namespace DiscImageChef.Core
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
 
-            foreach(Filesystem plugin in plugins.PluginsList.Values)
-            {
-                if(plugin.Identify(imagePlugin, partition)) idPlugins.Add(plugin.Name.ToLower());
-            }
+            foreach(Filesystem plugin in plugins.PluginsList.Values) if(plugin.Identify(imagePlugin, partition)) idPlugins.Add(plugin.Name.ToLower());
         }
     }
 }

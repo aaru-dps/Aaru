@@ -48,10 +48,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", options.IbgLogPath);
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
-               char.IsLetter(options.DevicePath[0]))
-            {
-                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
-            }
+               char.IsLetter(options.DevicePath[0])) options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
 
             Device dev = new Device(options.DevicePath);
 
@@ -108,8 +105,10 @@ namespace DiscImageChef.Commands
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
             if(results.SeekTotal != 0 || results.SeekMin != double.MaxValue || results.SeekMax != double.MinValue)
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+            {
                 DicConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                      results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
+            }
 
             Core.Statistics.AddMediaScan((long)results.A, (long)results.B, (long)results.C, (long)results.D,
                                          (long)results.E, (long)results.F, (long)results.Blocks, (long)results.Errored,

@@ -75,7 +75,6 @@ namespace DiscImageChef.Core
             MediaType dskType = image.ImageInfo.MediaType;
 
             foreach(MediaTagType tagType in image.ImageInfo.ReadableMediaTags)
-            {
                 switch(tagType)
                 {
                     case MediaTagType.CD_ATIP:
@@ -87,10 +86,8 @@ namespace DiscImageChef.Core
                         Decoders.CD.ATIP.CDATIP?
                             atip = Decoders.CD.ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
                         if(atip.HasValue)
-                        {
                             if(atip.Value.DDCD) dskType = atip.Value.DiscType ? MediaType.DDCDRW : MediaType.DDCDR;
                             else dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
-                        }
                         break;
                     case MediaTagType.DVD_BCA:
                         sidecar.OpticalDisc[0].BCA = new DumpType
@@ -115,7 +112,6 @@ namespace DiscImageChef.Core
                         Decoders.DVD.CSS_CPRM.LeadInCopyright? cmi =
                             Decoders.DVD.CSS_CPRM.DecodeLeadInCopyright(image.ReadDiskTag(MediaTagType.DVD_CMI));
                         if(cmi.HasValue)
-                        {
                             switch(cmi.Value.CopyrightType)
                             {
                                 case Decoders.DVD.CopyrightType.AACS:
@@ -128,7 +124,6 @@ namespace DiscImageChef.Core
                                     sidecar.OpticalDisc[0].CopyProtection = "CPRM";
                                     break;
                             }
-                        }
 
                         break;
                     case MediaTagType.DVD_DMI:
@@ -157,7 +152,6 @@ namespace DiscImageChef.Core
                         Decoders.DVD.PFI.PhysicalFormatInformation? pfi =
                             Decoders.DVD.PFI.Decode(image.ReadDiskTag(MediaTagType.DVD_PFI));
                         if(pfi.HasValue)
-                        {
                             if(dskType != MediaType.XGD && dskType != MediaType.XGD2 && dskType != MediaType.XGD3)
                             {
                                 switch(pfi.Value.DiskCategory)
@@ -219,7 +213,6 @@ namespace DiscImageChef.Core
                                 else if(pfi.Value.DiscSize == Decoders.DVD.DVDSize.OneTwenty)
                                     sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
                             }
-                        }
 
                         break;
                     case MediaTagType.CD_PMA:
@@ -230,7 +223,6 @@ namespace DiscImageChef.Core
                         };
                         break;
                 }
-            }
 
             try
             {
@@ -297,10 +289,7 @@ namespace DiscImageChef.Core
                 xmlTrk.StartSector = (long)trk.TrackStartSector;
                 xmlTrk.EndSector = (long)trk.TrackEndSector;
 
-                if(trk.Indexes != null && trk.Indexes.ContainsKey(0))
-                {
-                    if(trk.Indexes.TryGetValue(0, out ulong idx0)) xmlTrk.StartSector = (long)idx0;
-                }
+                if(trk.Indexes != null && trk.Indexes.ContainsKey(0)) if(trk.Indexes.TryGetValue(0, out ulong idx0)) xmlTrk.StartSector = (long)idx0;
 
                 if(sidecar.OpticalDisc[0].DiscType == "CD" || sidecar.OpticalDisc[0].DiscType == "GD")
                 {
@@ -333,10 +322,7 @@ namespace DiscImageChef.Core
                    // Only if filter is none...
                    (filterId == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") ||
                     // ...or AppleDouble
-                    filterId == new System.Guid("1b2165ee-c9df-4b21-bbbb-9e5892b2df4d")))
-                {
-                    xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
-                }
+                    filterId == new System.Guid("1b2165ee-c9df-4b21-bbbb-9e5892b2df4d"))) xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
                 else
                 {
                     UpdateProgress("Track {0} of {1}", trk.TrackSequence, tracks.Count);
@@ -474,7 +460,6 @@ namespace DiscImageChef.Core
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
                         foreach(Filesystem plugin in plugins.PluginsList.Values)
-                        {
                             try
                             {
                                 if(plugin.Identify(image, partitions[i]))
@@ -497,7 +482,6 @@ namespace DiscImageChef.Core
                             {
                                 //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                             }
-                        }
 
                         if(lstFs.Count > 0) xmlTrk.FileSystemInformation[i].FileSystems = lstFs.ToArray();
                     }
@@ -520,7 +504,6 @@ namespace DiscImageChef.Core
                         Sequence = (ulong)xmlTrk.Sequence.TrackNumber
                     };
                     foreach(Filesystem plugin in plugins.PluginsList.Values)
-                    {
                         try
                         {
                             if(plugin.Identify(image, xmlPart))
@@ -541,7 +524,6 @@ namespace DiscImageChef.Core
                         {
                             //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                         }
-                    }
 
                     if(lstFs.Count > 0) xmlTrk.FileSystemInformation[0].FileSystems = lstFs.ToArray();
                 }
@@ -573,7 +555,6 @@ namespace DiscImageChef.Core
                !string.IsNullOrEmpty(image.ImageInfo.DriveModel) ||
                !string.IsNullOrEmpty(image.ImageInfo.DriveFirmwareRevision) ||
                !string.IsNullOrEmpty(image.ImageInfo.DriveSerialNumber))
-            {
                 sidecar.OpticalDisc[0].DumpHardwareArray = new[]
                 {
                     new DumpHardwareType
@@ -590,7 +571,6 @@ namespace DiscImageChef.Core
                         }
                     }
                 };
-            }
         }
     }
 }

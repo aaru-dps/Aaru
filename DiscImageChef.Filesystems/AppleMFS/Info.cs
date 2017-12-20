@@ -149,7 +149,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 sb.AppendLine();
                 sb.AppendLine("Boot Block:");
                 if((BB.boot_flags & 0x40) == 0x40) sb.AppendLine("Boot block should be executed.");
-                if((BB.boot_flags & 0x80) == 0x80) { sb.AppendLine("Boot block is in new unknown format."); }
+                if((BB.boot_flags & 0x80) == 0x80) sb.AppendLine("Boot block is in new unknown format.");
                 else
                 {
                     if(BB.sec_sv_pages > 0) sb.AppendLine("Allocate secondary sound buffer at boot.");

@@ -233,15 +233,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                         sense = dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current,
                                                 0x3F, 0xFF, 5, out duration);
                         if(!sense || dev.Error)
-                        {
                             sense = dev.ModeSense10(out cmdBuf, out senseBuf, false, true,
                                                     ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
-                        }
 
                         Decoders.SCSI.Modes.DecodedMode? decMode = null;
 
                         if(!sense && !dev.Error)
-                        {
                             if(Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
                             {
                                 decMode = Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.ScsiType);
@@ -253,7 +250,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 };
                                 DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].SCSI.ModeSense10.Image, cmdBuf);
                             }
-                        }
 
                         dumpLog.WriteLine("Requesting MODE SENSE (6).");
                         sense = dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F,
@@ -264,7 +260,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(sense || dev.Error) sense = dev.ModeSense(out cmdBuf, out senseBuf, 5, out duration);
 
                         if(!sense && !dev.Error)
-                        {
                             if(Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
                             {
                                 decMode = Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.ScsiType);
@@ -276,7 +271,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 };
                                 DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].SCSI.ModeSense.Image, cmdBuf);
                             }
-                        }
 
                         if(decMode.HasValue)
                         {
@@ -295,18 +289,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint longBlockSize = scsiReader.LongBlockSize;
 
             if(dumpRaw)
-            {
                 if(blockSize == longBlockSize)
                 {
-                    if(!scsiReader.CanReadRaw)
-                    {
-                        DicConsole.ErrorWriteLine("Device doesn't seem capable of reading raw data from media.");
-                    }
+                    if(!scsiReader.CanReadRaw) DicConsole.ErrorWriteLine("Device doesn't seem capable of reading raw data from media.");
                     else
-                    {
                         DicConsole
                             .ErrorWriteLine("Device is capable of reading raw data but I've been unable to guess correct sector size.");
-                    }
 
                     if(!force)
                     {
@@ -330,7 +318,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     physicalBlockSize = longBlockSize;
                     blockSize = longBlockSize;
                 }
-            }
 
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
@@ -548,7 +535,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
-                    if(sense) { sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration); }
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration);
 
                     runningPersistent = true;
                     if(!sense && !dev.Error)
@@ -569,7 +556,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
-                    if(sense) { sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration); }
+                    if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration);
                 }
 
                 DicConsole.WriteLine();
@@ -662,7 +649,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           partitions[i].Scheme);
 
                         foreach(Filesystem plugin in plugins.PluginsList.Values)
-                        {
                             try
                             {
                                 if(plugin.Identify(imageFormat, partitions[i]))
@@ -686,7 +672,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 //DicConsole.DebugWriteLine("Dump-media command", "Plugin {0} crashed", _plugin.Name);
                             }
-                        }
 
                         if(lstFs.Count > 0) xmlFileSysInfo[i].FileSystems = lstFs.ToArray();
                     }
@@ -702,7 +687,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         new Partition {Name = "Whole device", Length = blocks, Size = blocks * blockSize};
 
                     foreach(Filesystem plugin in plugins.PluginsList.Values)
-                    {
                         try
                         {
                             if(plugin.Identify(imageFormat, wholePart))
@@ -724,7 +708,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                         }
-                    }
 
                     if(lstFs.Count > 0) xmlFileSysInfo[0].FileSystems = lstFs.ToArray();
                 }
@@ -820,12 +803,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Value = outputPrefix + ".bin"
                 };
                 if(!dev.IsRemovable || dev.IsUsb)
-                {
                     if(dev.Type == DeviceType.ATAPI) sidecar.BlockMedia[0].Interface = "ATAPI";
                     else if(dev.IsUsb) sidecar.BlockMedia[0].Interface = "USB";
                     else if(dev.IsFireWire) sidecar.BlockMedia[0].Interface = "FireWire";
                     else sidecar.BlockMedia[0].Interface = "SCSI";
-                }
                 sidecar.BlockMedia[0].LogicalBlocks = (long)blocks;
                 sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalBlockSize;
                 sidecar.BlockMedia[0].LogicalBlockSize = (int)logicalBlockSize;

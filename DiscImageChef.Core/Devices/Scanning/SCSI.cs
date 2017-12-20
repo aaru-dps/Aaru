@@ -61,7 +61,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                 {
                     Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                     if(decSense.HasValue)
-                    {
                         if(decSense.Value.ASC == 0x3A)
                         {
                             int leftRetries = 5;
@@ -128,7 +127,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                                                       Decoders.SCSI.Sense.PrettifySense(senseBuf));
                             return results;
                         }
-                    }
                     else
                     {
                         DicConsole.ErrorWriteLine("Unknown testing unit was ready.");
@@ -307,12 +305,12 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                     if(!sense)
                     {
-                        if(cmdDuration >= 500) { results.F += blocksToRead; }
-                        else if(cmdDuration >= 150) { results.E += blocksToRead; }
-                        else if(cmdDuration >= 50) { results.D += blocksToRead; }
-                        else if(cmdDuration >= 10) { results.C += blocksToRead; }
-                        else if(cmdDuration >= 3) { results.B += blocksToRead; }
-                        else { results.A += blocksToRead; }
+                        if(cmdDuration >= 500) results.F += blocksToRead;
+                        else if(cmdDuration >= 150) results.E += blocksToRead;
+                        else if(cmdDuration >= 50) results.D += blocksToRead;
+                        else if(cmdDuration >= 10) results.C += blocksToRead;
+                        else if(cmdDuration >= 3) results.B += blocksToRead;
+                        else results.A += blocksToRead;
 
                         mhddLog.Write(i, cmdDuration);
                         ibgLog.Write(i, currentSpeed * 1024);

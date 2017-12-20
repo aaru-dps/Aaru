@@ -327,10 +327,7 @@ namespace DiscImageChef.Decoders.SecureDigital
             sb.AppendFormat("\tDevice's transfer speed: {0}{1}", result, unit).AppendLine();
 
             unit = "";
-            for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1)
-            {
-                if((csd.Classes & mask) == mask) unit += string.Format(" {0}", cl);
-            }
+            for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1) if((csd.Classes & mask) == mask) unit += string.Format(" {0}", cl);
 
             sb.AppendFormat("\tDevice support command classes {0}", unit).AppendLine();
             sb.AppendFormat("\tRead block length is {0} bytes", Math.Pow(2, csd.ReadBlockLength)).AppendLine();
@@ -511,7 +508,6 @@ namespace DiscImageChef.Decoders.SecureDigital
             if(csd.TemporaryWriteProtect) sb.AppendLine("\tDevice is temporarily write protected");
 
             if(!csd.FileFormatGroup)
-            {
                 switch(csd.FileFormat)
                 {
                     case 0:
@@ -527,7 +523,6 @@ namespace DiscImageChef.Decoders.SecureDigital
                         sb.AppendFormat("\tDevice uses unknown file format code {0}", csd.FileFormat).AppendLine();
                         break;
                 }
-            }
             else
                 sb.AppendFormat("\tDevice uses unknown file format code {0} and file format group 1", csd.FileFormat)
                   .AppendLine();

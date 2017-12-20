@@ -314,7 +314,7 @@ namespace DiscImageChef.Checksums
                 Clear(ref bb, nn - kk);
                 for(i = kk - 1; i >= 0; i--)
                 {
-                    if(mm != 8) { if(data[i] > nn) return -1; /* Illegal symbol */ }
+                    if(mm != 8) if(data[i] > nn) return -1; /* Illegal symbol */
 
                     feedback = index_of[data[i] ^ bb[nn - kk - 1]];
                     if(feedback != a0)
@@ -384,7 +384,7 @@ namespace DiscImageChef.Checksums
                 /* data[] is in polynomial form, copy and convert to index form */
                 for(i = nn - 1; i >= 0; i--)
                 {
-                    if(mm != 8) { if(data[i] > nn) return -1; /* Illegal symbol */ }
+                    if(mm != 8) if(data[i] > nn) return -1; /* Illegal symbol */
 
                     recd[i] = index_of[data[i]];
                 }
@@ -405,14 +405,7 @@ namespace DiscImageChef.Checksums
                     s[i] = index_of[tmp];
                 }
 
-                if(synError == 0)
-                {
-                    /*
-                 * if syndrome is zero, data[] is a codeword and there are no
-                 * errors to correct. So return data[] unmodified
-                 */
-                    return 0;
-                }
+                if(synError == 0) return 0;
 
                 Clear(ref lambda, nn - kk);
                 lambda[0] = 1;
@@ -483,13 +476,7 @@ namespace DiscImageChef.Checksums
                     /* r is the step number */
                     /* Compute discrepancy at the r-th step in poly-form */
                     discrR = 0;
-                    for(i = 0; i < r; i++)
-                    {
-                        if(lambda[i] != 0 && s[r - i] != a0)
-                        {
-                            discrR ^= alpha_to[Modnn(index_of[lambda[i]] + s[r - i])];
-                        }
-                    }
+                    for(i = 0; i < r; i++) if(lambda[i] != 0 && s[r - i] != a0) discrR ^= alpha_to[Modnn(index_of[lambda[i]] + s[r - i])];
 
                     discrR = index_of[discrR]; /* Index form */
                     if(discrR == a0)
@@ -503,10 +490,8 @@ namespace DiscImageChef.Checksums
                         /* 7 lines below: T(x) <-- lambda(x) - discr_r*x*b(x) */
                         t[0] = lambda[0];
                         for(i = 0; i < nn - kk; i++)
-                        {
                             if(b[i] != a0) t[i + 1] = lambda[i + 1] ^ alpha_to[Modnn(discrR + b[i])];
                             else t[i + 1] = lambda[i + 1];
-                        }
 
                         if(2 * el <= r + noEras - 1)
                         {
@@ -570,14 +555,7 @@ namespace DiscImageChef.Checksums
                 DicConsole.DebugWriteLine("Reed Solomon", "\n");
 #endif
 
-                if(degLambda != count)
-                {
-                    /*
-                 * deg(lambda) unequal to number of roots => uncorrectable
-                 * error detected
-                 */
-                    return -1;
-                }
+                if(degLambda != count) return -1;
                 /*
              * Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
              * x**(NN-KK)). in index form. Also find deg(omega).
@@ -587,10 +565,7 @@ namespace DiscImageChef.Checksums
                 {
                     tmp = 0;
                     j = degLambda < i ? degLambda : i;
-                    for(; j >= 0; j--)
-                    {
-                        if(s[i + 1 - j] != a0 && lambda[j] != a0) tmp ^= alpha_to[Modnn(s[i + 1 - j] + lambda[j])];
-                    }
+                    for(; j >= 0; j--) if(s[i + 1 - j] != a0 && lambda[j] != a0) tmp ^= alpha_to[Modnn(s[i + 1 - j] + lambda[j])];
 
                     if(tmp != 0) degOmega = i;
                     omega[i] = index_of[tmp];
@@ -605,19 +580,13 @@ namespace DiscImageChef.Checksums
                 for(j = count - 1; j >= 0; j--)
                 {
                     num1 = 0;
-                    for(i = degOmega; i >= 0; i--)
-                    {
-                        if(omega[i] != a0) num1 ^= alpha_to[Modnn(omega[i] + i * root[j])];
-                    }
+                    for(i = degOmega; i >= 0; i--) if(omega[i] != a0) num1 ^= alpha_to[Modnn(omega[i] + i * root[j])];
 
                     num2 = alpha_to[Modnn(root[j] * (B0 - 1) + nn)];
                     den = 0;
 
                     /* lambda[i+1] for i even is the formal derivative lambda_pr of lambda[i] */
-                    for(i = Min(degLambda, nn - kk - 1) & ~1; i >= 0; i -= 2)
-                    {
-                        if(lambda[i + 1] != a0) den ^= alpha_to[Modnn(lambda[i + 1] + i * root[j])];
-                    }
+                    for(i = Min(degLambda, nn - kk - 1) & ~1; i >= 0; i -= 2) if(lambda[i + 1] != a0) den ^= alpha_to[Modnn(lambda[i + 1] + i * root[j])];
 
                     if(den == 0)
                     {
@@ -625,10 +594,7 @@ namespace DiscImageChef.Checksums
                         return -1;
                     }
                     /* Apply error to data */
-                    if(num1 != 0)
-                    {
-                        data[loc[j]] ^= alpha_to[Modnn(index_of[num1] + index_of[num2] + nn - index_of[den])];
-                    }
+                    if(num1 != 0) data[loc[j]] ^= alpha_to[Modnn(index_of[num1] + index_of[num2] + nn - index_of[den])];
                 }
 
                 return count;
