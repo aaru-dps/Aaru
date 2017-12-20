@@ -45,7 +45,7 @@ namespace DiscImageChef.CommonTypes
                 // Simpilified access device
                 case 0x0E:
                 {
-                    if(mediumType == 0x03 || mediumType == 0x05 || mediumType == 0x07) { goto case 0x07; }
+                    if(mediumType == 0x03 || mediumType == 0x05 || mediumType == 0x07) goto case 0x07;
 
                     if(vendor.ToLowerInvariant() == "syquest")
                     {
@@ -104,7 +104,7 @@ namespace DiscImageChef.CommonTypes
                             if(blocks == 2880) return MediaType.DOS_35_HD;
                             if(blocks == 1440) return MediaType.DOS_35_DS_DD_9;
                         }
-                        else if(blockSize == 1024) { if(blocks == 1232) return MediaType.NEC_35_HD_8; }
+                        else if(blockSize == 1024) if(blocks == 1232) return MediaType.NEC_35_HD_8;
 
                         return MediaType.Unknown;
                     }
@@ -1320,7 +1320,6 @@ namespace DiscImageChef.CommonTypes
                 {
                     if(mediumType == 0x01 || mediumType == 0x02 || mediumType == 0x03 || mediumType == 0x05 ||
                        mediumType == 0x07)
-                    {
                         switch(blockSize)
                         {
                             case 512:
@@ -1392,7 +1391,6 @@ namespace DiscImageChef.CommonTypes
                             }
                             default: return MediaType.UnknownMO;
                         }
-                    }
 
                     return MediaType.UnknownMO;
                 }
@@ -1429,7 +1427,6 @@ namespace DiscImageChef.CommonTypes
                         case 0x28: return MediaType.CDRW;
                         case 0x80:
                             if(model.ToLowerInvariant().StartsWith("ult"))
-                            {
                                 switch(densityCode)
                                 {
                                     case 0x42: return MediaType.LTO2;
@@ -1437,7 +1434,6 @@ namespace DiscImageChef.CommonTypes
                                     case 0x46: return MediaType.LTO4;
                                     case 0x58: return MediaType.LTO5;
                                 }
-                            }
 
                             break;
                     }
