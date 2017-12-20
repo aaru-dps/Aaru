@@ -73,7 +73,7 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            for(int i = 0; i < len; i++) hashInt = (hashInt >> 8) ^ table[data[i] ^ hashInt & 0xff];
+            for(int i = 0; i < len; i++) hashInt = (hashInt >> 8) ^ table[data[i] ^ (hashInt & 0xff)];
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace DiscImageChef.Checksums
             }
 
             for(int i = 0; i < fileStream.Length; i++)
-                localhashInt = (localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ localhashInt & 0xff];
+                localhashInt = (localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)];
 
             localhashInt ^= CRC32_SEED;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -200,7 +200,7 @@ namespace DiscImageChef.Checksums
                 localTable[i] = entry;
             }
 
-            for(int i = 0; i < len; i++) localhashInt = (localhashInt >> 8) ^ localTable[data[i] ^ localhashInt & 0xff];
+            for(int i = 0; i < len; i++) localhashInt = (localhashInt >> 8) ^ localTable[data[i] ^ (localhashInt & 0xff)];
 
             localhashInt ^= CRC32_SEED;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
