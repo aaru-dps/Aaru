@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     public class SaveDskF : ImagePlugin
     {
@@ -106,29 +106,29 @@ namespace DiscImageChef.ImagePlugins
         public SaveDskF()
         {
             Name = "IBM SaveDskF";
-            PluginUUID = new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
+            PluginUuid = new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
@@ -193,7 +193,7 @@ namespace DiscImageChef.ImagePlugins
             cmt = new byte[header.dataOffset - header.commentOffset];
             stream.Seek(header.commentOffset, SeekOrigin.Begin);
             stream.Read(cmt, 0, cmt.Length);
-            if(cmt.Length > 1) ImageInfo.imageComments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));
+            if(cmt.Length > 1) ImageInfo.ImageComments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));
 
             calculatedChk = 0;
             stream.Seek(0, SeekOrigin.Begin);
@@ -212,15 +212,15 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", calculatedChk,
                                       calculatedChk == header.checksum);
 
-            ImageInfo.imageApplication = "SaveDskF";
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = imageFilter.GetFilename();
-            ImageInfo.imageSize = (ulong)(stream.Length - header.dataOffset);
-            ImageInfo.sectors = (ulong)(header.sectorsPerTrack * header.heads * header.cylinders);
-            ImageInfo.sectorSize = header.sectorSize;
+            ImageInfo.ImageApplication = "SaveDskF";
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = imageFilter.GetFilename();
+            ImageInfo.ImageSize = (ulong)(stream.Length - header.dataOffset);
+            ImageInfo.Sectors = (ulong)(header.sectorsPerTrack * header.heads * header.cylinders);
+            ImageInfo.SectorSize = header.sectorSize;
 
-            ImageInfo.mediaType = MediaType.Unknown;
+            ImageInfo.MediaType = MediaType.Unknown;
             switch(header.cylinders)
             {
                 case 40:
@@ -230,10 +230,10 @@ namespace DiscImageChef.ImagePlugins
                             switch(header.sectorsPerTrack)
                             {
                                 case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_525_SS_DD_8;
+                                    ImageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
                                     break;
                                 case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_525_SS_DD_9;
+                                    ImageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
                                     break;
                             }
 
@@ -242,10 +242,10 @@ namespace DiscImageChef.ImagePlugins
                             switch(header.sectorsPerTrack)
                             {
                                 case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_525_DS_DD_8;
+                                    ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
                                     break;
                                 case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_525_DS_DD_9;
+                                    ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
                                     break;
                             }
 
@@ -260,7 +260,7 @@ namespace DiscImageChef.ImagePlugins
                             switch(header.sectorsPerTrack)
                             {
                                 case 9:
-                                    ImageInfo.mediaType = MediaType.Apricot_35;
+                                    ImageInfo.MediaType = MediaType.Apricot_35;
                                     break;
                             }
 
@@ -275,10 +275,10 @@ namespace DiscImageChef.ImagePlugins
                             switch(header.sectorsPerTrack)
                             {
                                 case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_35_SS_DD_8;
+                                    ImageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
                                     break;
                                 case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_35_SS_DD_9;
+                                    ImageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
                                     break;
                             }
 
@@ -287,22 +287,22 @@ namespace DiscImageChef.ImagePlugins
                             switch(header.sectorsPerTrack)
                             {
                                 case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_35_DS_DD_8;
+                                    ImageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
                                     break;
                                 case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
+                                    ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
                                     break;
                                 case 15:
-                                    ImageInfo.mediaType = MediaType.DOS_525_HD;
+                                    ImageInfo.MediaType = MediaType.DOS_525_HD;
                                     break;
                                 case 18:
-                                    ImageInfo.mediaType = MediaType.DOS_35_HD;
+                                    ImageInfo.MediaType = MediaType.DOS_35_HD;
                                     break;
                                 case 23:
-                                    ImageInfo.mediaType = MediaType.XDF_35;
+                                    ImageInfo.MediaType = MediaType.XDF_35;
                                     break;
                                 case 36:
-                                    ImageInfo.mediaType = MediaType.DOS_35_ED;
+                                    ImageInfo.MediaType = MediaType.DOS_35_ED;
                                     break;
                             }
 
@@ -311,15 +311,15 @@ namespace DiscImageChef.ImagePlugins
 
                     break;
                 default:
-                    ImageInfo.mediaType = MediaType.Unknown;
+                    ImageInfo.MediaType = MediaType.Unknown;
                     break;
             }
 
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            DicConsole.VerboseWriteLine("SaveDskF image contains a disk of type {0}", ImageInfo.mediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.imageComments))
-                DicConsole.VerboseWriteLine("SaveDskF comments: {0}", ImageInfo.imageComments);
+            DicConsole.VerboseWriteLine("SaveDskF image contains a disk of type {0}", ImageInfo.MediaType);
+            if(!string.IsNullOrEmpty(ImageInfo.ImageComments))
+                DicConsole.VerboseWriteLine("SaveDskF comments: {0}", ImageInfo.ImageComments);
 
             // TODO: Support compressed images
             if(header.magic == SDF_MAGIC_COMPRESSED)
@@ -328,12 +328,12 @@ namespace DiscImageChef.ImagePlugins
 
             // SaveDskF only ommits ending clusters, leaving no gaps behind, so reading all data we have...
             stream.Seek(header.dataOffset, SeekOrigin.Begin);
-            decodedDisk = new byte[ImageInfo.sectors * ImageInfo.sectorSize];
+            decodedDisk = new byte[ImageInfo.Sectors * ImageInfo.SectorSize];
             stream.Read(decodedDisk, 0, (int)(stream.Length - header.dataOffset));
 
-            ImageInfo.cylinders = header.cylinders;
-            ImageInfo.heads = header.heads;
-            ImageInfo.sectorsPerTrack = header.sectorsPerTrack;
+            ImageInfo.Cylinders = header.cylinders;
+            ImageInfo.Heads = header.heads;
+            ImageInfo.SectorsPerTrack = header.sectorsPerTrack;
 
             return true;
         }
@@ -348,24 +348,24 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
@@ -377,22 +377,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return ImageInfo.imageHasPartitions;
+            return ImageInfo.ImageHasPartitions;
         }
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -402,16 +402,16 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.sectorSize];
+            byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
-            Array.Copy(decodedDisk, (int)sectorAddress * ImageInfo.sectorSize, buffer, 0,
-                       length * ImageInfo.sectorSize);
+            Array.Copy(decodedDisk, (int)sectorAddress * ImageInfo.SectorSize, buffer, 0,
+                       length * ImageInfo.SectorSize);
 
             return buffer;
         }
@@ -423,97 +423,97 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override string GetMediaManufacturer()
         {
-            return ImageInfo.mediaManufacturer;
+            return ImageInfo.MediaManufacturer;
         }
 
         public override string GetMediaModel()
         {
-            return ImageInfo.mediaModel;
+            return ImageInfo.MediaModel;
         }
 
         public override string GetMediaSerialNumber()
         {
-            return ImageInfo.mediaSerialNumber;
+            return ImageInfo.MediaSerialNumber;
         }
 
         public override string GetMediaBarcode()
         {
-            return ImageInfo.mediaBarcode;
+            return ImageInfo.MediaBarcode;
         }
 
         public override string GetMediaPartNumber()
         {
-            return ImageInfo.mediaPartNumber;
+            return ImageInfo.MediaPartNumber;
         }
 
         public override int GetMediaSequence()
         {
-            return ImageInfo.mediaSequence;
+            return ImageInfo.MediaSequence;
         }
 
         public override int GetLastDiskSequence()
         {
-            return ImageInfo.lastMediaSequence;
+            return ImageInfo.LastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return ImageInfo.driveManufacturer;
+            return ImageInfo.DriveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return ImageInfo.driveModel;
+            return ImageInfo.DriveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return ImageInfo.driveSerialNumber;
+            return ImageInfo.DriveSerialNumber;
         }
         #endregion Public methods
 

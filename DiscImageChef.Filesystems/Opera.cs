@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.ASCII;
         }
 
-        public OperaFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public OperaFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Opera Filesystem Plugin";
             PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.ASCII;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((2 + partition.Start) >= partition.End) return false;
 
@@ -82,7 +82,7 @@ namespace DiscImageChef.Filesystems
             return Encoding.ASCII.GetString(sync_bytes) == "ZZZZZ";
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

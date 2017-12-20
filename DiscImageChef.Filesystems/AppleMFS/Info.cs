@@ -39,7 +39,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS : Filesystem
     {
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             ushort drSigWord;
 
@@ -54,7 +54,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return drSigWord == MFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

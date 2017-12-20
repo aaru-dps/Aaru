@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public NintendoPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public NintendoPlugin(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Nintendo optical filesystems";
             PluginUUID = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start != 0) return false;
 
@@ -81,7 +81,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();

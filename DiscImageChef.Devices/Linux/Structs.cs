@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 namespace DiscImageChef.Devices.Linux
 {
     [StructLayout(LayoutKind.Sequential)]
-    struct sg_io_hdr_t
+    struct SgIoHdrT
     {
         /// <summary>
         /// Always 'S' for SG v3
@@ -67,7 +67,7 @@ namespace DiscImageChef.Devices.Linux
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct mmc_ioc_cmd
+    struct MmcIocCmd
     {
         /// <summary>
         /// Implies direction of data. true = write, false = read

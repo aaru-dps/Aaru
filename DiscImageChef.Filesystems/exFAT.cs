@@ -36,7 +36,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems
 {

@@ -36,11 +36,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class BSD : PartPlugin
+    public class BSD : PartitionPlugin
     {
         const uint DISKMAGIC = 0x82564557;
         const uint DISKCIGAM = 0x57455682;
@@ -54,7 +54,7 @@ namespace DiscImageChef.PartPlugins
         public BSD()
         {
             Name = "BSD disklabel";
-            PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+            PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)

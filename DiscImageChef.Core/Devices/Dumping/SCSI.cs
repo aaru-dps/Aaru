@@ -41,7 +41,7 @@ using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    public class SCSI
+    public class Scsi
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
         public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
@@ -173,22 +173,22 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             CICMMetadataType sidecar = new CICMMetadataType();
 
-            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+            if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
             {
                 if(dumpRaw) throw new ArgumentException("Tapes cannot be dumped raw.");
 
-                SSC.Dump(dev, outputPrefix, devicePath, ref sidecar, ref resume, ref dumpLog);
+                Ssc.Dump(dev, outputPrefix, devicePath, ref sidecar, ref resume, ref dumpLog);
                 return;
             }
 
-            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+            if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
-                MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
+                Mmc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
                          ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, dumpLeadIn, encoding);
                 return;
             }
 
-            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar,
+            Sbc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar,
                      ref dskType, false, ref resume, ref dumpLog, encoding);
         }
     }

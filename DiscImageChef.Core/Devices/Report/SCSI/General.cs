@@ -52,13 +52,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             uint timeout = 5;
             ConsoleKeyInfo pressedKey;
 
-            if(dev.IsUSB) USB.Report(dev, ref report, debug, ref removable);
+            if(dev.IsUsb) Usb.Report(dev, ref report, debug, ref removable);
 
             if(dev.IsFireWire) FireWire.Report(dev, ref report, debug, ref removable);
 
-            if(dev.IsPCMCIA) PCMCIA.Report(dev, ref report, debug, ref removable);
+            if(dev.IsPcmcia) Pcmcia.Report(dev, ref report, debug, ref removable);
 
-            if(!dev.IsUSB && !dev.IsFireWire && dev.IsRemovable)
+            if(!dev.IsUsb && !dev.IsFireWire && dev.IsRemovable)
             {
                 pressedKey = new ConsoleKeyInfo();
                 while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
@@ -71,7 +71,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 removable = pressedKey.Key == ConsoleKey.Y;
             }
 
-            if(dev.Type == DeviceType.ATAPI) ATAPI.Report(dev, ref report, debug, ref removable);
+            if(dev.Type == DeviceType.ATAPI) Atapi.Report(dev, ref report, debug, ref removable);
 
             DicConsole.WriteLine("Querying SCSI INQUIRY...");
             sense = dev.ScsiInquiry(out buffer, out senseBuffer);
@@ -209,12 +209,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
             if(removable)
             {
-                if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                 {
                     dev.AllowMediumRemoval(out senseBuffer, timeout, out duration);
                     dev.EjectTray(out senseBuffer, timeout, out duration);
                 }
-                else if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                else if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
                 {
                     dev.SpcAllowMediumRemoval(out senseBuffer, timeout, out duration);
                     DicConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
@@ -225,7 +225,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             }
 
             Decoders.SCSI.Modes.DecodedMode? decMode = null;
-            Decoders.SCSI.PeripheralDeviceTypes devType = dev.SCSIType;
+            Decoders.SCSI.PeripheralDeviceTypes devType = dev.ScsiType;
 
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (10)...");
             sense = dev.ModeSense10(out byte[] mode10Buffer, out senseBuffer, false, true,
@@ -317,10 +317,10 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
             List<string> mediaTypes = new List<string>();
 
-            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
-                MMC.Report(dev, ref report, debug, ref cdromMode, ref mediaTypes);
-            else if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
-                SSC.Report(dev, ref report, debug);
+            if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                Mmc.Report(dev, ref report, debug, ref cdromMode, ref mediaTypes);
+            else if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                Ssc.Report(dev, ref report, debug);
             else
             {
                 if(removable)
@@ -440,7 +440,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 if(!sense && !dev.Error)
                                 {
                                     report.SCSI.SupportsModeSense10 = true;
-                                    decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.SCSIType);
+                                    decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.ScsiType);
                                     if(debug) mediaTest.ModeSense10Data = buffer;
                                 }
 
@@ -450,7 +450,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 {
                                     report.SCSI.SupportsModeSense6 = true;
                                     if(!decMode.HasValue)
-                                        decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
+                                        decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.ScsiType);
                                     if(debug) mediaTest.ModeSense6Data = buffer;
                                 }
 
@@ -715,7 +715,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     if(!sense && !dev.Error)
                     {
                         report.SCSI.SupportsModeSense10 = true;
-                        decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.SCSIType);
+                        decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.ScsiType);
                         if(debug) report.SCSI.ReadCapabilities.ModeSense10Data = buffer;
                     }
 
@@ -724,7 +724,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     if(!sense && !dev.Error)
                     {
                         report.SCSI.SupportsModeSense6 = true;
-                        if(!decMode.HasValue) decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
+                        if(!decMode.HasValue) decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.ScsiType);
                         if(debug) report.SCSI.ReadCapabilities.ModeSense6Data = buffer;
                     }
 

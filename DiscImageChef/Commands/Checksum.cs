@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using Schemas;
 
 namespace DiscImageChef.Commands
@@ -43,9 +43,9 @@ namespace DiscImageChef.Commands
     static class Checksum
     {
         // How many sectors to read at once
-        const uint sectorsToRead = 256;
+        const uint SECTORS_TO_READ = 256;
 
-        internal static void doChecksum(ChecksumOptions options)
+        internal static void DoChecksum(ChecksumOptions options)
         {
             DicConsole.DebugWriteLine("Checksum command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Checksum command", "--verbose={0}", options.Verbose);
@@ -53,15 +53,15 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Checksum command", "--whole-disc={0}", options.WholeDisc);
             DicConsole.DebugWriteLine("Checksum command", "--input={0}", options.InputFile);
             DicConsole.DebugWriteLine("Checksum command", "--adler32={0}", options.DoAdler32);
-            DicConsole.DebugWriteLine("Checksum command", "--crc16={0}", options.DoCRC16);
-            DicConsole.DebugWriteLine("Checksum command", "--crc32={0}", options.DoCRC32);
-            DicConsole.DebugWriteLine("Checksum command", "--crc64={0}", options.DoCRC64);
-            DicConsole.DebugWriteLine("Checksum command", "--md5={0}", options.DoMD5);
-            DicConsole.DebugWriteLine("Checksum command", "--ripemd160={0}", options.DoRIPEMD160);
-            DicConsole.DebugWriteLine("Checksum command", "--sha1={0}", options.DoSHA1);
-            DicConsole.DebugWriteLine("Checksum command", "--sha256={0}", options.DoSHA256);
-            DicConsole.DebugWriteLine("Checksum command", "--sha384={0}", options.DoSHA384);
-            DicConsole.DebugWriteLine("Checksum command", "--sha512={0}", options.DoSHA512);
+            DicConsole.DebugWriteLine("Checksum command", "--crc16={0}", options.DoCrc16);
+            DicConsole.DebugWriteLine("Checksum command", "--crc32={0}", options.DoCrc32);
+            DicConsole.DebugWriteLine("Checksum command", "--crc64={0}", options.DoCrc64);
+            DicConsole.DebugWriteLine("Checksum command", "--md5={0}", options.DoMd5);
+            DicConsole.DebugWriteLine("Checksum command", "--ripemd160={0}", options.DoRipemd160);
+            DicConsole.DebugWriteLine("Checksum command", "--sha1={0}", options.DoSha1);
+            DicConsole.DebugWriteLine("Checksum command", "--sha256={0}", options.DoSha256);
+            DicConsole.DebugWriteLine("Checksum command", "--sha384={0}", options.DoSha384);
+            DicConsole.DebugWriteLine("Checksum command", "--sha512={0}", options.DoSha512);
             DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}", options.DoSpamSum);
 
             FiltersList filtersList = new FiltersList();
@@ -83,25 +83,25 @@ namespace DiscImageChef.Commands
 
             inputFormat.OpenImage(inputFilter);
             Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
-            Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
+            Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
             EnableChecksum enabledChecksums = new EnableChecksum();
 
             if(options.DoAdler32) enabledChecksums |= EnableChecksum.Adler32;
-            if(options.DoCRC16) enabledChecksums |= EnableChecksum.CRC16;
-            if(options.DoCRC32) enabledChecksums |= EnableChecksum.CRC32;
-            if(options.DoCRC64) enabledChecksums |= EnableChecksum.CRC64;
-            if(options.DoMD5) enabledChecksums |= EnableChecksum.MD5;
-            if(options.DoRIPEMD160) enabledChecksums |= EnableChecksum.RIPEMD160;
-            if(options.DoSHA1) enabledChecksums |= EnableChecksum.SHA1;
-            if(options.DoSHA256) enabledChecksums |= EnableChecksum.SHA256;
-            if(options.DoSHA384) enabledChecksums |= EnableChecksum.SHA384;
-            if(options.DoSHA512) enabledChecksums |= EnableChecksum.SHA512;
+            if(options.DoCrc16) enabledChecksums |= EnableChecksum.Crc16;
+            if(options.DoCrc32) enabledChecksums |= EnableChecksum.Crc32;
+            if(options.DoCrc64) enabledChecksums |= EnableChecksum.Crc64;
+            if(options.DoMd5) enabledChecksums |= EnableChecksum.Md5;
+            if(options.DoRipemd160) enabledChecksums |= EnableChecksum.Ripemd160;
+            if(options.DoSha1) enabledChecksums |= EnableChecksum.Sha1;
+            if(options.DoSha256) enabledChecksums |= EnableChecksum.Sha256;
+            if(options.DoSha384) enabledChecksums |= EnableChecksum.Sha384;
+            if(options.DoSha512) enabledChecksums |= EnableChecksum.Sha512;
             if(options.DoSpamSum) enabledChecksums |= EnableChecksum.SpamSum;
 
             Core.Checksum mediaChecksum = null;
 
-            if(inputFormat.ImageInfo.imageHasPartitions)
+            if(inputFormat.ImageInfo.ImageHasPartitions)
             {
                 try
                 {
@@ -141,13 +141,13 @@ namespace DiscImageChef.Commands
                         {
                             byte[] sector;
 
-                            if((sectors - doneSectors) >= sectorsToRead)
+                            if((sectors - doneSectors) >= SECTORS_TO_READ)
                             {
-                                sector = inputFormat.ReadSectors(doneSectors, sectorsToRead,
+                                sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ,
                                                                  currentTrack.TrackSequence);
                                 DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
-                                                 currentTrack.TrackSequence, doneSectors + sectorsToRead);
-                                doneSectors += sectorsToRead;
+                                                 currentTrack.TrackSequence, doneSectors + SECTORS_TO_READ);
+                                doneSectors += SECTORS_TO_READ;
                             }
                             else
                             {
@@ -210,11 +210,11 @@ namespace DiscImageChef.Commands
                 {
                     byte[] sector;
 
-                    if((sectors - doneSectors) >= sectorsToRead)
+                    if((sectors - doneSectors) >= SECTORS_TO_READ)
                     {
-                        sector = inputFormat.ReadSectors(doneSectors, sectorsToRead);
-                        DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors, doneSectors + sectorsToRead);
-                        doneSectors += sectorsToRead;
+                        sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
+                        DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors, doneSectors + SECTORS_TO_READ);
+                        doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {

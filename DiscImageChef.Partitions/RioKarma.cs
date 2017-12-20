@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class RioKarma : PartPlugin
+    public class RioKarma : PartitionPlugin
     {
         const ushort KarmaMagic = 0xAB56;
         const byte EntryMagic = 0x4D;
@@ -46,7 +46,7 @@ namespace DiscImageChef.PartPlugins
         public RioKarma()
         {
             Name = "Rio Karma partitioning";
-            PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+            PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)

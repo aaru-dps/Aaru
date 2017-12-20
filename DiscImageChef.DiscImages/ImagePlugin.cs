@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     /// <summary>
     /// Abstract class to implement disk image reading plugins.
@@ -45,7 +45,7 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>Plugin name.</summary>
         public string Name;
         /// <summary>Plugin UUID.</summary>
-        public Guid PluginUUID;
+        public Guid PluginUuid;
         /// <summary>Image information</summary>
         public ImageInfo ImageInfo;
 
@@ -385,10 +385,10 @@ namespace DiscImageChef.ImagePlugins
         /// <returns>True if all are correct, false if any is incorrect, null if any is uncheckable.</returns>
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
-        /// <param name="FailingLBAs">List of incorrect sectors</param>
-        /// <param name="UnknownLBAs">List of uncheckable sectors</param>
-        public abstract bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs);
+        /// <param name="failingLbas">List of incorrect sectors</param>
+        /// <param name="unknownLbas">List of uncheckable sectors</param>
+        public abstract bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas);
 
         /// <summary>
         /// Verifies several sectors, relative to track.
@@ -397,10 +397,10 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="track">Track.</param>
-        /// <param name="FailingLBAs">List of incorrect sectors</param>
-        /// <param name="UnknownLBAs">List of uncheckable sectors</param>
-        public abstract bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs);
+        /// <param name="failingLbas">List of incorrect sectors</param>
+        /// <param name="unknownLbas">List of uncheckable sectors</param>
+        public abstract bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas);
 
         /// <summary>
         /// Verifies media image internal checksum.
@@ -411,13 +411,13 @@ namespace DiscImageChef.ImagePlugins
         // CD flags bitmask
 
         /// <summary>Track is quadraphonic.</summary>
-        public const byte CDFlagsFourChannel = 0x20;
+        public const byte CdFlagsFourChannel = 0x20;
         /// <summary>Track is non-audio (data).</summary>
-        public const byte CDFlagsDataTrack = 0x10;
+        public const byte CdFlagsDataTrack = 0x10;
         /// <summary>Track is copy protected.</summary>
-        public const byte CDFlagsCopyPrevent = 0x08;
+        public const byte CdFlagsCopyPrevent = 0x08;
         /// <summary>Track has pre-emphasis.</summary>
-        public const byte CDFlagsPreEmphasis = 0x04;
+        public const byte CdFlagsPreEmphasis = 0x04;
     }
 
     /// <summary>
@@ -430,13 +430,13 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>Data track (not any of the below defined ones)</summary>
         Data,
         /// <summary>Data track, compact disc mode 1</summary>
-        CDMode1,
+        CdMode1,
         /// <summary>Data track, compact disc mode 2, formless</summary>
-        CDMode2Formless,
+        CdMode2Formless,
         /// <summary>Data track, compact disc mode 2, form 1</summary>
-        CDMode2Form1,
+        CdMode2Form1,
         /// <summary>Data track, compact disc mode 2, form 2</summary>
-        CDMode2Form2
+        CdMode2Form2
     };
 
     /// <summary>
@@ -542,29 +542,29 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>Apple's GCR sector tags, 12 bytes</summary>
         AppleSectorTag,
         /// <summary>Sync frame from CD sector, 12 bytes</summary>
-        CDSectorSync,
+        CdSectorSync,
         /// <summary>CD sector header, 4 bytes</summary>
-        CDSectorHeader,
+        CdSectorHeader,
         /// <summary>CD mode 2 sector subheader</summary>
-        CDSectorSubHeader,
+        CdSectorSubHeader,
         /// <summary>CD sector EDC, 4 bytes</summary>
-        CDSectorEDC,
+        CdSectorEdc,
         /// <summary>CD sector ECC P, 172 bytes</summary>
-        CDSectorECC_P,
+        CdSectorEccP,
         /// <summary>CD sector ECC Q, 104 bytes</summary>
-        CDSectorECC_Q,
+        CdSectorEccQ,
         /// <summary>CD sector ECC (P and Q), 276 bytes</summary>
-        CDSectorECC,
+        CdSectorEcc,
         /// <summary>CD sector subchannel, 96 bytes</summary>
-        CDSectorSubchannel,
+        CdSectorSubchannel,
         /// <summary>CD track ISRC, string, 12 bytes</summary>
-        CDTrackISRC,
+        CdTrackIsrc,
         /// <summary>CD track text, string, 13 bytes</summary>
-        CDTrackText,
+        CdTrackText,
         /// <summary>CD track flags, 1 byte</summary>
-        CDTrackFlags,
+        CdTrackFlags,
         /// <summary>DVD sector copyright information</summary>
-        DVD_CMI,
+        DvdCmi,
         /// <summary>Floppy address mark (contents depend on underlying floppy format)</summary>
         FloppyAddressMark
     };

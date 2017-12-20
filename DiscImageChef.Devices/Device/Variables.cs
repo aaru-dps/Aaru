@@ -34,7 +34,7 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        Interop.PlatformID platformID;
+        Interop.PlatformID platformId;
         object fd;
         bool error;
         int lastError;
@@ -73,9 +73,9 @@ namespace DiscImageChef.Devices
         /// Gets the Platform ID for this device
         /// </summary>
         /// <value>The Platform ID</value>
-        public Interop.PlatformID PlatformID
+        public Interop.PlatformID PlatformId
         {
-            get { return platformID; }
+            get { return platformId; }
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace DiscImageChef.Devices
         /// Gets the device's SCSI peripheral device type
         /// </summary>
         /// <value>The SCSI peripheral device type.</value>
-        public Decoders.SCSI.PeripheralDeviceTypes SCSIType
+        public Decoders.SCSI.PeripheralDeviceTypes ScsiType
         {
             get { return scsiType; }
         }
@@ -178,7 +178,7 @@ namespace DiscImageChef.Devices
         /// Gets a value indicating whether this device is attached via USB.
         /// </summary>
         /// <value><c>true</c> if this device is attached via USB; otherwise, <c>false</c>.</value>
-        public bool IsUSB
+        public bool IsUsb
         {
             get { return usb; }
         }
@@ -187,7 +187,7 @@ namespace DiscImageChef.Devices
         /// Gets the USB vendor ID.
         /// </summary>
         /// <value>The USB vendor ID.</value>
-        public ushort USBVendorID
+        public ushort UsbVendorId
         {
             get { return usbVendor; }
         }
@@ -196,7 +196,7 @@ namespace DiscImageChef.Devices
         /// Gets the USB product ID.
         /// </summary>
         /// <value>The USB product ID.</value>
-        public ushort USBProductID
+        public ushort UsbProductId
         {
             get { return usbProduct; }
         }
@@ -205,7 +205,7 @@ namespace DiscImageChef.Devices
         /// Gets the USB descriptors.
         /// </summary>
         /// <value>The USB descriptors.</value>
-        public byte[] USBDescriptors
+        public byte[] UsbDescriptors
         {
             get { return usbDescriptors; }
         }
@@ -214,7 +214,7 @@ namespace DiscImageChef.Devices
         /// Gets the USB manufacturer string.
         /// </summary>
         /// <value>The USB manufacturer string.</value>
-        public string USBManufacturerString
+        public string UsbManufacturerString
         {
             get { return usbManufacturerString; }
         }
@@ -223,7 +223,7 @@ namespace DiscImageChef.Devices
         /// Gets the USB product string.
         /// </summary>
         /// <value>The USB product string.</value>
-        public string USBProductString
+        public string UsbProductString
         {
             get { return usbProductString; }
         }
@@ -232,7 +232,7 @@ namespace DiscImageChef.Devices
         /// Gets the USB serial string.
         /// </summary>
         /// <value>The USB serial string.</value>
-        public string USBSerialString
+        public string UsbSerialString
         {
             get { return usbSerialString; }
         }
@@ -250,7 +250,7 @@ namespace DiscImageChef.Devices
         /// Gets the FireWire GUID
         /// </summary>
         /// <value>The FireWire GUID.</value>
-        public ulong FireWireGUID
+        public ulong FireWireGuid
         {
             get { return firewireGuid; }
         }
@@ -304,7 +304,7 @@ namespace DiscImageChef.Devices
         /// Gets a value indicating whether this device is a PCMCIA device.
         /// </summary>
         /// <value><c>true</c> if this device is a PCMCIA device; otherwise, <c>false</c>.</value>
-        public bool IsPCMCIA
+        public bool IsPcmcia
         {
             get { return pcmcia; }
         }
@@ -312,7 +312,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Contains the PCMCIA CIS if applicable
         /// </summary>
-        public byte[] CIS
+        public byte[] Cis
         {
             get { return cis; }
         }

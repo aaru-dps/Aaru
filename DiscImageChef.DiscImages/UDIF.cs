@@ -39,43 +39,43 @@ using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.ADC;
 using SharpCompress.Compressors.BZip2;
 
 namespace DiscImageChef.DiscImages
 {
-    public class UDIF : ImagePlugin
+    public class Udif : ImagePlugin
     {
         #region Internal constants
-        const uint UDIF_Signature = 0x6B6F6C79;
-        const uint Chunk_Signature = 0x6D697368;
+        const uint UDIF_SIGNATURE = 0x6B6F6C79;
+        const uint CHUNK_SIGNATURE = 0x6D697368;
 
         // All chunk types with this mask are compressed
-        const uint ChunkType_CompressedMask = 0x80000000;
+        const uint CHUNK_TYPE_COMPRESSED_MASK = 0x80000000;
 
-        const uint ChunkType_Zero = 0x00000000;
-        const uint ChunkType_Copy = 0x00000001;
-        const uint ChunkType_NoCopy = 0x00000002;
-        const uint ChunkType_KenCode = 0x80000001;
-        const uint ChunkType_RLE = 0x80000002;
-        const uint ChunkType_LZH = 0x80000003;
-        const uint ChunkType_ADC = 0x80000004;
-        const uint ChunkType_Zlib = 0x80000005;
-        const uint ChunkType_Bzip = 0x80000006;
-        const uint ChunkType_LZFSE = 0x80000007;
-        const uint ChunkType_Commnt = 0x7FFFFFFE;
-        const uint ChunkType_End = 0xFFFFFFFF;
+        const uint CHUNK_TYPE_ZERO = 0x00000000;
+        const uint CHUNK_TYPE_COPY = 0x00000001;
+        const uint CHUNK_TYPE_NOCOPY = 0x00000002;
+        const uint CHUNK_TYPE_KENCODE = 0x80000001;
+        const uint CHUNK_TYPE_RLE = 0x80000002;
+        const uint CHUNK_TYPE_LZH = 0x80000003;
+        const uint CHUNK_TYPE_ADC = 0x80000004;
+        const uint CHUNK_TYPE_ZLIB = 0x80000005;
+        const uint CHUNK_TYPE_BZIP = 0x80000006;
+        const uint CHUNK_TYPE_LZFSE = 0x80000007;
+        const uint CHUNK_TYPE_COMMNT = 0x7FFFFFFE;
+        const uint CHUNK_TYPE_END = 0xFFFFFFFF;
 
-        const string ResourceForkKey = "resource-fork";
-        const string BlockKey = "blkx";
-        const uint BlockOSType = 0x626C6B78;
+        const string RESOURCE_FORK_KEY = "resource-fork";
+        const string BLOCK_KEY = "blkx";
+        const uint BLOCK_OS_TYPE = 0x626C6B78;
         #endregion
 
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct UDIF_Footer
+        struct UdifFooter
         {
             public uint signature;
             public uint version;
@@ -140,44 +140,44 @@ namespace DiscImageChef.DiscImages
         }
         #endregion
 
-        UDIF_Footer footer;
+        UdifFooter footer;
         Dictionary<ulong, BlockChunk> chunks;
 
         Dictionary<ulong, byte[]> sectorCache;
         Dictionary<ulong, byte[]> chunkCache;
-        const uint MaxCacheSize = 16777216;
-        const uint sectorSize = 512;
-        uint maxCachedSectors = MaxCacheSize / sectorSize;
+        const uint MAX_CACHE_SIZE = 16777216;
+        const uint SECTOR_SIZE = 512;
+        uint maxCachedSectors = MAX_CACHE_SIZE / SECTOR_SIZE;
         uint currentChunkCacheSize;
         uint buffersize;
 
         Stream imageStream;
 
-        public UDIF()
+        public Udif()
         {
             Name = "Apple Universal Disk Image Format";
-            PluginUUID = new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
+            PluginUuid = new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -187,21 +187,21 @@ namespace DiscImageChef.DiscImages
             if(stream.Length < 512) return false;
 
             stream.Seek(-Marshal.SizeOf(footer), SeekOrigin.End);
-            byte[] footer_b = new byte[Marshal.SizeOf(footer)];
+            byte[] footerB = new byte[Marshal.SizeOf(footer)];
 
-            stream.Read(footer_b, 0, Marshal.SizeOf(footer));
-            footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UDIF_Footer>(footer_b);
+            stream.Read(footerB, 0, Marshal.SizeOf(footer));
+            footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
-            if(footer.signature == UDIF_Signature) return true;
+            if(footer.signature == UDIF_SIGNATURE) return true;
 
             // Old UDIF as created by DiskCopy 6.5 using "OBSOLETE" format. (DiskCopy 5 rumored format?)
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] header_b = new byte[Marshal.SizeOf(footer)];
+            byte[] headerB = new byte[Marshal.SizeOf(footer)];
 
-            stream.Read(header_b, 0, Marshal.SizeOf(footer));
-            footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UDIF_Footer>(header_b);
+            stream.Read(headerB, 0, Marshal.SizeOf(footer));
+            footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UdifFooter>(headerB);
 
-            return footer.signature == UDIF_Signature;
+            return footer.signature == UDIF_SIGNATURE;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -211,20 +211,20 @@ namespace DiscImageChef.DiscImages
             if(stream.Length < 512) return false;
 
             stream.Seek(-Marshal.SizeOf(footer), SeekOrigin.End);
-            byte[] footer_b = new byte[Marshal.SizeOf(footer)];
+            byte[] footerB = new byte[Marshal.SizeOf(footer)];
 
-            stream.Read(footer_b, 0, Marshal.SizeOf(footer));
-            footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UDIF_Footer>(footer_b);
+            stream.Read(footerB, 0, Marshal.SizeOf(footer));
+            footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
-            if(footer.signature != UDIF_Signature)
+            if(footer.signature != UDIF_SIGNATURE)
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                footer_b = new byte[Marshal.SizeOf(footer)];
+                footerB = new byte[Marshal.SizeOf(footer)];
 
-                stream.Read(footer_b, 0, Marshal.SizeOf(footer));
-                footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UDIF_Footer>(footer_b);
+                stream.Read(footerB, 0, Marshal.SizeOf(footer));
+                footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
-                if(footer.signature != UDIF_Signature) throw new Exception("Unable to find UDIF signature.");
+                if(footer.signature != UDIF_SIGNATURE) throw new Exception("Unable to find UDIF signature.");
 
                 DicConsole.VerboseWriteLine("Found obsolete UDIF format.");
             }
@@ -271,17 +271,17 @@ namespace DiscImageChef.DiscImages
             if(footer.plistLen == 0 && footer.rsrcForkLen != 0)
             {
                 DicConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
-                byte[] rsrc_b = new byte[footer.rsrcForkLen];
+                byte[] rsrcB = new byte[footer.rsrcForkLen];
                 stream.Seek((long)footer.rsrcForkOff, SeekOrigin.Begin);
-                stream.Read(rsrc_b, 0, rsrc_b.Length);
+                stream.Read(rsrcB, 0, rsrcB.Length);
 
-                ResourceFork rsrc = new ResourceFork(rsrc_b);
+                ResourceFork rsrc = new ResourceFork(rsrcB);
 
-                if(!rsrc.ContainsKey(BlockOSType))
+                if(!rsrc.ContainsKey(BLOCK_OS_TYPE))
                     throw new
                         ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
 
-                Resource blkxRez = rsrc.GetResource(BlockOSType);
+                Resource blkxRez = rsrc.GetResource(BLOCK_OS_TYPE);
 
                 if(blkxRez == null)
                     throw new
@@ -300,24 +300,24 @@ namespace DiscImageChef.DiscImages
             else if(footer.plistLen != 0)
             {
                 DicConsole.DebugWriteLine("UDIF plugin", "Reading property list.");
-                byte[] plist_b = new byte[footer.plistLen];
+                byte[] plistB = new byte[footer.plistLen];
                 stream.Seek((long)footer.plistOff, SeekOrigin.Begin);
-                stream.Read(plist_b, 0, plist_b.Length);
+                stream.Read(plistB, 0, plistB.Length);
 
                 DicConsole.DebugWriteLine("UDIF plugin", "Parsing property list.");
-                NSDictionary plist = (NSDictionary)XmlPropertyListParser.Parse(plist_b);
+                NSDictionary plist = (NSDictionary)XmlPropertyListParser.Parse(plistB);
                 if(plist == null) throw new Exception("Could not parse property list.");
 
                 NSObject rsrcObj;
 
-                if(!plist.TryGetValue(ResourceForkKey, out rsrcObj))
+                if(!plist.TryGetValue(RESOURCE_FORK_KEY, out rsrcObj))
                     throw new Exception("Could not retrieve resource fork.");
 
                 NSDictionary rsrc = (NSDictionary)rsrcObj;
 
                 NSObject blkxObj;
 
-                if(!rsrc.TryGetValue(BlockKey, out blkxObj))
+                if(!rsrc.TryGetValue(BLOCK_KEY, out blkxObj))
                     throw new Exception("Could not retrieve block chunks array.");
 
                 NSObject[] blkx = ((NSArray)blkxObj).GetArray();
@@ -351,10 +351,10 @@ namespace DiscImageChef.DiscImages
                 bChnk.offset = footer.dataForkOff;
                 bChnk.sector = 0;
                 bChnk.sectors = footer.sectorCount;
-                bChnk.type = ChunkType_Copy;
-                ImageInfo.sectors = footer.sectorCount;
+                bChnk.type = CHUNK_TYPE_COPY;
+                ImageInfo.Sectors = footer.sectorCount;
                 chunks.Add(bChnk.sector, bChnk);
-                buffersize = 2048 * sectorSize;
+                buffersize = 2048 * SECTOR_SIZE;
                 fakeBlockChunks = true;
             }
 
@@ -388,19 +388,19 @@ namespace DiscImageChef.DiscImages
 
                 if(dev != null) pre = string.Format("{0}", version.PreReleaseVersion);
 
-                ImageInfo.imageApplicationVersion = string.Format("{0}{1}{2}{3}{4}", major, minor, release, dev, pre);
-                ImageInfo.imageApplication = version.VersionString;
-                ImageInfo.imageComments = version.VersionMessage;
+                ImageInfo.ImageApplicationVersion = string.Format("{0}{1}{2}{3}{4}", major, minor, release, dev, pre);
+                ImageInfo.ImageApplication = version.VersionString;
+                ImageInfo.ImageComments = version.VersionMessage;
 
-                if(version.MajorVersion == 3) ImageInfo.imageApplication = "ShrinkWrap™";
-                else if(version.MajorVersion == 6) ImageInfo.imageApplication = "DiskCopy";
+                if(version.MajorVersion == 3) ImageInfo.ImageApplication = "ShrinkWrap™";
+                else if(version.MajorVersion == 6) ImageInfo.ImageApplication = "DiskCopy";
             }
-            else ImageInfo.imageApplication = "DiskCopy";
+            else ImageInfo.ImageApplication = "DiskCopy";
 
-            DicConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", ImageInfo.imageApplication,
-                                      ImageInfo.imageApplicationVersion);
+            DicConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", ImageInfo.ImageApplication,
+                                      ImageInfo.ImageApplicationVersion);
 
-            ImageInfo.sectors = 0;
+            ImageInfo.Sectors = 0;
             if(!fakeBlockChunks)
             {
                 if(blkxList.Count == 0)
@@ -412,9 +412,9 @@ namespace DiscImageChef.DiscImages
                 foreach(byte[] blkxBytes in blkxList)
                 {
                     BlockHeader bHdr = new BlockHeader();
-                    byte[] bHdr_b = new byte[Marshal.SizeOf(bHdr)];
-                    Array.Copy(blkxBytes, 0, bHdr_b, 0, Marshal.SizeOf(bHdr));
-                    bHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdr_b);
+                    byte[] bHdrB = new byte[Marshal.SizeOf(bHdr)];
+                    Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf(bHdr));
+                    bHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
 
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.signature = 0x{0:X8}", bHdr.signature);
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.version = {0}", bHdr.version);
@@ -436,15 +436,15 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.reservedChk is empty? = {0}",
                                               ArrayHelpers.ArrayIsNullOrEmpty(bHdr.reservedChk));
 
-                    if(bHdr.buffers > buffersize) buffersize = bHdr.buffers * sectorSize;
+                    if(bHdr.buffers > buffersize) buffersize = bHdr.buffers * SECTOR_SIZE;
 
                     for(int i = 0; i < bHdr.chunks; i++)
                     {
                         BlockChunk bChnk = new BlockChunk();
-                        byte[] bChnk_b = new byte[Marshal.SizeOf(bChnk)];
-                        Array.Copy(blkxBytes, Marshal.SizeOf(bHdr) + Marshal.SizeOf(bChnk) * i, bChnk_b, 0,
+                        byte[] bChnkB = new byte[Marshal.SizeOf(bChnk)];
+                        Array.Copy(blkxBytes, Marshal.SizeOf(bHdr) + Marshal.SizeOf(bChnk) * i, bChnkB, 0,
                                    Marshal.SizeOf(bChnk));
-                        bChnk = BigEndianMarshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnk_b);
+                        bChnk = BigEndianMarshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
 
                         DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X8}", i, bChnk.type);
                         DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].comment = {1}", i, bChnk.comment);
@@ -453,30 +453,30 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].offset = {1}", i, bChnk.offset);
                         DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].length = {1}", i, bChnk.length);
 
-                        if(bChnk.type == ChunkType_End) break;
+                        if(bChnk.type == CHUNK_TYPE_END) break;
 
-                        ImageInfo.sectors += bChnk.sectors;
+                        ImageInfo.Sectors += bChnk.sectors;
 
                         // Chunk offset is relative
                         bChnk.sector += bHdr.sectorStart;
                         bChnk.offset += bHdr.dataOffset;
 
                         // TODO: Handle comments
-                        if(bChnk.type == ChunkType_Commnt) continue;
+                        if(bChnk.type == CHUNK_TYPE_COMMNT) continue;
 
                         // TODO: Handle compressed chunks
-                        if((bChnk.type == ChunkType_KenCode))
+                        if((bChnk.type == CHUNK_TYPE_KENCODE))
                             throw new
                                 ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                        if((bChnk.type == ChunkType_RLE))
+                        if((bChnk.type == CHUNK_TYPE_RLE))
                             throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
-                        if((bChnk.type == ChunkType_LZH))
+                        if((bChnk.type == CHUNK_TYPE_LZH))
                             throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
-                        if((bChnk.type == ChunkType_LZFSE))
+                        if((bChnk.type == CHUNK_TYPE_LZFSE))
                             throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
 
-                        if((bChnk.type > ChunkType_NoCopy && bChnk.type < ChunkType_Commnt) ||
-                           (bChnk.type > ChunkType_LZFSE && bChnk.type < ChunkType_End))
+                        if((bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT) ||
+                           (bChnk.type > CHUNK_TYPE_LZFSE && bChnk.type < CHUNK_TYPE_END))
                             throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
                                                                                bChnk.type));
 
@@ -490,25 +490,25 @@ namespace DiscImageChef.DiscImages
             currentChunkCacheSize = 0;
             imageStream = stream;
 
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectorSize = sectorSize;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.mediaType = MediaType.GENERIC_HDD;
-            ImageInfo.imageSize = ImageInfo.sectors * sectorSize;
-            ImageInfo.imageVersion = string.Format("{0}", footer.version);
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.SectorSize = SECTOR_SIZE;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.MediaType = MediaType.GENERIC_HDD;
+            ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
+            ImageInfo.ImageVersion = string.Format("{0}", footer.version);
 
-            ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-            ImageInfo.heads = 16;
-            ImageInfo.sectorsPerTrack = 63;
+            ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+            ImageInfo.Heads = 16;
+            ImageInfo.SectorsPerTrack = 63;
 
             return true;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
@@ -530,7 +530,7 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
-            long relOff = ((long)sectorAddress - (long)chunkStartSector) * sectorSize;
+            long relOff = ((long)sectorAddress - (long)chunkStartSector) * SECTOR_SIZE;
 
             if(relOff < 0)
                 throw new ArgumentOutOfRangeException(nameof(relOff),
@@ -542,7 +542,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if((currentChunk.type & ChunkType_CompressedMask) == ChunkType_CompressedMask)
+            if((currentChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
             {
                 byte[] buffer;
                 if(!chunkCache.TryGetValue(chunkStartSector, out buffer))
@@ -553,10 +553,10 @@ namespace DiscImageChef.DiscImages
                     MemoryStream cmpMs = new MemoryStream(cmpBuffer);
                     Stream decStream;
 
-                    if(currentChunk.type == ChunkType_ADC) decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
-                    else if(currentChunk.type == ChunkType_Zlib)
+                    if(currentChunk.type == CHUNK_TYPE_ADC) decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
+                    else if(currentChunk.type == CHUNK_TYPE_ZLIB)
                         decStream = new Ionic.Zlib.ZlibStream(cmpMs, Ionic.Zlib.CompressionMode.Decompress);
-                    else if(currentChunk.type == ChunkType_Bzip)
+                    else if(currentChunk.type == CHUNK_TYPE_BZIP)
                         decStream = new BZip2Stream(cmpMs, CompressionMode.Decompress);
                     else
                         throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
@@ -572,7 +572,7 @@ namespace DiscImageChef.DiscImages
                         Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
                         tmpBuffer = null;
 
-                        if(currentChunkCacheSize + realSize > MaxCacheSize)
+                        if(currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
                         {
                             chunkCache.Clear();
                             currentChunkCacheSize = 0;
@@ -590,8 +590,8 @@ namespace DiscImageChef.DiscImages
 #endif
                 }
 
-                sector = new byte[sectorSize];
-                Array.Copy(buffer, relOff, sector, 0, sectorSize);
+                sector = new byte[SECTOR_SIZE];
+                Array.Copy(buffer, relOff, sector, 0, SECTOR_SIZE);
 
                 if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
@@ -600,9 +600,9 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            if(currentChunk.type == ChunkType_NoCopy || currentChunk.type == ChunkType_Zero)
+            if(currentChunk.type == CHUNK_TYPE_NOCOPY || currentChunk.type == CHUNK_TYPE_ZERO)
             {
-                sector = new byte[sectorSize];
+                sector = new byte[SECTOR_SIZE];
 
                 if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
@@ -610,10 +610,10 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            if(currentChunk.type == ChunkType_Copy)
+            if(currentChunk.type == CHUNK_TYPE_COPY)
             {
                 imageStream.Seek((long)currentChunk.offset + relOff, SeekOrigin.Begin);
-                sector = new byte[sectorSize];
+                sector = new byte[SECTOR_SIZE];
                 imageStream.Read(sector, 0, sector.Length);
 
                 if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
@@ -628,11 +628,11 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -653,17 +653,17 @@ namespace DiscImageChef.DiscImages
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -673,47 +673,47 @@ namespace DiscImageChef.DiscImages
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         #region Unsupported features
@@ -857,18 +857,18 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

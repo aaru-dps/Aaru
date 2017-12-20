@@ -72,7 +72,7 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Certance_ParkUnpark;
+            cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;
             if(park) cdb[4] = 1;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,

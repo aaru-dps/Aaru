@@ -179,7 +179,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
             start:
             System.Console.Clear();
-            bool sense = dev.HPReadLong(out byte[] buffer, out byte[] senseBuffer, relative, address, length, bps,
+            bool sense = dev.HpReadLong(out byte[] buffer, out byte[] senseBuffer, relative, address, length, bps,
                                         physical, sectorCount, dev.Timeout, out double duration);
 
             menu:

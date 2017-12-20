@@ -42,15 +42,15 @@ using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    internal static class SSC
+    internal static class Ssc
     {
         internal static void Dump(Device dev, string outputPrefix, string devicePath, ref CICMMetadataType sidecar,
                                   ref Metadata.Resume resume, ref DumpLog dumpLog)
         {
             Decoders.SCSI.FixedSense? fxSense;
             bool aborted;
-            MHDDLog mhddLog;
-            IBGLog ibgLog;
+            MhddLog mhddLog;
+            IbgLog ibgLog;
             bool sense = false;
             ulong blocks = 0;
             uint blockSize = 0;
@@ -226,9 +226,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(!sense && !dev.Error)
             {
-                if(Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.SCSIType).HasValue)
+                if(Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
                 {
-                    decMode = Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.SCSIType);
+                    decMode = Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.ScsiType);
                     sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
                     {
                         Image = outputPrefix + ".modesense10.bin",
@@ -249,9 +249,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(!sense && !dev.Error)
             {
-                if(Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.SCSIType).HasValue)
+                if(Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
                 {
-                    decMode = Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.SCSIType);
+                    decMode = Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.ScsiType);
                     sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
                     {
                         Image = outputPrefix + ".modesense.bin",
@@ -274,12 +274,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             else blockSize = 1;
 
             if(dskType == MediaType.Unknown)
-                dskType = MediaTypeFromSCSI.Get((byte)dev.SCSIType, dev.Manufacturer, dev.Model, scsiMediumTypeTape,
+                dskType = MediaTypeFromScsi.Get((byte)dev.ScsiType, dev.Manufacturer, dev.Model, scsiMediumTypeTape,
                                                 scsiDensityCodeTape, blocks, blockSize);
 
             DicConsole.WriteLine("Media identified as {0}", dskType);
 
-            dumpLog.WriteLine("SCSI device type: {0}.", dev.SCSIType);
+            dumpLog.WriteLine("SCSI device type: {0}.", dev.ScsiType);
             dumpLog.WriteLine("SCSI medium type: {0}.", scsiMediumTypeTape);
             dumpLog.WriteLine("SCSI density type: {0}.", scsiDensityCodeTape);
             dumpLog.WriteLine("Media identified as {0}.", dskType);
@@ -383,8 +383,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             DataFile dumpFile = new DataFile(outputPrefix + ".bin");
             dataChk = new Checksum();
             start = DateTime.UtcNow;
-            mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
-            ibgLog = new IBGLog(outputPrefix + ".ibg", 0x0008);
+            mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
+            ibgLog = new IbgLog(outputPrefix + ".ibg", 0x0008);
 
             currentTapeFile = new TapeFileType
             {
@@ -664,7 +664,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             sidecar.BlockMedia[0].DumpHardwareArray[0].Model = dev.Model;
             sidecar.BlockMedia[0].DumpHardwareArray[0].Revision = dev.Revision;
             sidecar.BlockMedia[0].DumpHardwareArray[0].Serial = dev.Serial;
-            sidecar.BlockMedia[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
+            sidecar.BlockMedia[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformId);
             sidecar.BlockMedia[0].TapeInformation = partitions.ToArray();
 
             if(!aborted)

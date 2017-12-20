@@ -1225,7 +1225,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
         {
             start:
             System.Console.Clear();
-            bool sense = dev.PlextorReadEepromCDR(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
+            bool sense = dev.PlextorReadEepromCdr(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
                                                   out double duration);
 
             menu:

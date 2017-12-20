@@ -49,7 +49,7 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckCorrectFile()
         {
-            MD5Context ctx = new MD5Context();
+            Md5Context ctx = new Md5Context();
             ctx.Init();
             string result = ctx.File(Path.Combine(Consts.TestFilesRoot, "filters", "pcexchange", "FINDER.DAT"),
                                      out byte[] tmp);
@@ -88,7 +88,7 @@ namespace DiscImageChef.Tests.Filters
             str.Close();
             str.Dispose();
             filter.Close();
-            MD5Context ctx = new MD5Context();
+            Md5Context ctx = new Md5Context();
             ctx.Init();
             string result = ctx.Data(data, out byte[] tmp);
             Assert.AreEqual(ExpectedContents, result);
@@ -105,7 +105,7 @@ namespace DiscImageChef.Tests.Filters
             str.Close();
             str.Dispose();
             filter.Close();
-            MD5Context ctx = new MD5Context();
+            Md5Context ctx = new Md5Context();
             ctx.Init();
             string result = ctx.Data(data, out byte[] tmp);
             Assert.AreEqual(ExpectedResource, result);

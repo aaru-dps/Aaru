@@ -38,7 +38,7 @@ namespace DiscImageChef.Commands
 {
     static class ListDevices
     {
-        internal static void doListDevices(ListDevicesOptions options)
+        internal static void DoListDevices(ListDevicesOptions options)
         {
             DicConsole.DebugWriteLine("Media-Info command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}", options.Verbose);
@@ -48,7 +48,7 @@ namespace DiscImageChef.Commands
             if(devices == null || devices.Length == 0) DicConsole.WriteLine("No known devices attached.");
             else
             {
-                devices = devices.OrderBy(d => d.path).ToArray();
+                devices = devices.OrderBy(d => d.Path).ToArray();
 
                 DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
                                      "Serial", "Bus", "Supported?");
@@ -56,8 +56,8 @@ namespace DiscImageChef.Commands
                                      "----------------", "------------------------", "------------------------",
                                      "----------", "----------");
                 foreach(Devices.DeviceInfo dev in devices)
-                    DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.path, dev.vendor,
-                                         dev.model, dev.serial, dev.bus, dev.supported);
+                    DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
+                                         dev.Model, dev.Serial, dev.Bus, dev.Supported);
             }
 
             Core.Statistics.AddCommand("list-devices");

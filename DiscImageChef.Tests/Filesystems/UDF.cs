@@ -31,7 +31,6 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
@@ -102,16 +101,16 @@ namespace DiscImageChef.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "udf", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new Vdi();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.UDF();
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
-                    Length = image.ImageInfo.sectors,
-                    Size = image.ImageInfo.sectors * image.ImageInfo.sectorSize
+                    Length = image.ImageInfo.Sectors,
+                    Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out string information);

@@ -57,7 +57,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public HPFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public HPFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "OS/2 High Performance File System";
             PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
@@ -65,7 +65,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((16 + partition.Start) >= partition.End) return false;
 
@@ -81,7 +81,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -206,7 +206,7 @@ namespace DiscImageChef.Filesystems
                hpfs_bpb.signature2 == 0xAA55)
             {
                 xmlFSType.Bootable = true;
-                SHA1Context sha1Ctx = new SHA1Context();
+                Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 string bootChk = sha1Ctx.Data(hpfs_bpb.boot_code, out byte[] sha1_out);
                 sb.AppendLine("Volume is bootable");

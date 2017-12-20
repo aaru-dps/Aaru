@@ -1004,13 +1004,13 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[6];
             byte[] buffer = new byte[0];
             bool sense;
-            byte[] count_b = BitConverter.GetBytes(count);
+            byte[] countB = BitConverter.GetBytes(count);
 
             cdb[0] = (byte)ScsiCommands.Space;
             cdb[1] = (byte)((byte)code & 0x0F);
-            cdb[2] = count_b[2];
-            cdb[3] = count_b[1];
-            cdb[4] = count_b[0];
+            cdb[2] = countB[2];
+            cdb[3] = countB[1];
+            cdb[4] = countB[0];
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out sense);

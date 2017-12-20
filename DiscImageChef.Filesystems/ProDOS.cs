@@ -94,7 +94,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public ProDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public ProDOSPlugin(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple ProDOS filesystem";
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
@@ -102,7 +102,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
 
@@ -156,7 +156,7 @@ namespace DiscImageChef.Filesystems
             return total_blocks <= (partition.End - partition.Start + 1);
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
@@ -305,7 +305,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Files = rootDirectoryKeyBlock.header.file_count;
             xmlFSType.FilesSpecified = true;
             xmlFSType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
-            xmlFSType.ClusterSize = (int)(((partition.End - partition.Start) + 1) * imagePlugin.ImageInfo.sectorSize /
+            xmlFSType.ClusterSize = (int)(((partition.End - partition.Start) + 1) * imagePlugin.ImageInfo.SectorSize /
                                           (ulong)xmlFSType.Clusters);
             xmlFSType.Type = "ProDOS";
 

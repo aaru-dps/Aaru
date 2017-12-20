@@ -34,41 +34,41 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     public struct ImageInfo
     {
-        public bool imageHasPartitions;
-        public bool imageHasSessions;
-        public ulong imageSize;
-        public ulong sectors;
-        public uint sectorSize;
-        public List<MediaTagType> readableMediaTags;
-        public List<SectorTagType> readableSectorTags;
-        public string imageVersion;
-        public string imageApplication;
-        public string imageApplicationVersion;
-        public string imageCreator;
-        public DateTime imageCreationTime;
-        public DateTime imageLastModificationTime;
-        public string imageName;
-        public string imageComments;
-        public string mediaManufacturer;
-        public string mediaModel;
-        public string mediaSerialNumber;
-        public string mediaBarcode;
-        public string mediaPartNumber;
-        public MediaType mediaType;
-        public int mediaSequence;
-        public int lastMediaSequence;
-        public string driveManufacturer;
-        public string driveModel;
-        public string driveSerialNumber;
-        public string driveFirmwareRevision;
-        public XmlMediaType xmlMediaType;
+        public bool ImageHasPartitions;
+        public bool ImageHasSessions;
+        public ulong ImageSize;
+        public ulong Sectors;
+        public uint SectorSize;
+        public List<MediaTagType> ReadableMediaTags;
+        public List<SectorTagType> ReadableSectorTags;
+        public string ImageVersion;
+        public string ImageApplication;
+        public string ImageApplicationVersion;
+        public string ImageCreator;
+        public DateTime ImageCreationTime;
+        public DateTime ImageLastModificationTime;
+        public string ImageName;
+        public string ImageComments;
+        public string MediaManufacturer;
+        public string MediaModel;
+        public string MediaSerialNumber;
+        public string MediaBarcode;
+        public string MediaPartNumber;
+        public MediaType MediaType;
+        public int MediaSequence;
+        public int LastMediaSequence;
+        public string DriveManufacturer;
+        public string DriveModel;
+        public string DriveSerialNumber;
+        public string DriveFirmwareRevision;
+        public XmlMediaType XmlMediaType;
         // CHS geometry...
-        public uint cylinders;
-        public uint heads;
-        public uint sectorsPerTrack;
+        public uint Cylinders;
+        public uint Heads;
+        public uint SectorsPerTrack;
     }
 }

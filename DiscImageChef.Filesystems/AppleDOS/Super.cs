@@ -51,7 +51,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// </summary>
         public override Errno Mount(bool debug)
         {
-            if(device.ImageInfo.sectors != 455 && device.ImageInfo.sectors != 560)
+            if(device.ImageInfo.Sectors != 455 && device.ImageInfo.Sectors != 560)
             {
                 DicConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
                 return Errno.InOutError;
@@ -63,21 +63,21 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 return Errno.InOutError;
             }
 
-            if(device.ImageInfo.sectorSize != 256)
+            if(device.ImageInfo.SectorSize != 256)
             {
                 DicConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
                 return Errno.InOutError;
             }
 
-            if(device.ImageInfo.sectors == 455) sectorsPerTrack = 13;
+            if(device.ImageInfo.Sectors == 455) sectorsPerTrack = 13;
             else sectorsPerTrack = 16;
 
             // Read the VTOC
-            byte[] vtoc_b = device.ReadSector((ulong)(17 * sectorsPerTrack));
-            vtoc = new VTOC();
+            byte[] vtocB = device.ReadSector((ulong)(17 * sectorsPerTrack));
+            vtoc = new Vtoc();
             IntPtr vtocPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(vtoc_b, 0, vtocPtr, 256);
-            vtoc = (VTOC)Marshal.PtrToStructure(vtocPtr, typeof(VTOC));
+            Marshal.Copy(vtocB, 0, vtocPtr, 256);
+            vtoc = (Vtoc)Marshal.PtrToStructure(vtocPtr, typeof(Vtoc));
             Marshal.FreeHGlobal(vtocPtr);
 
             track1UsedByFiles = false;
@@ -103,7 +103,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             // Create XML metadata for mounted filesystem
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Bootable = true;
-            xmlFSType.Clusters = (long)device.ImageInfo.sectors;
+            xmlFSType.Clusters = (long)device.ImageInfo.Sectors;
             xmlFSType.ClusterSize = vtoc.bytesPerSector;
             xmlFSType.Files = catalogCache.Count;
             xmlFSType.FilesSpecified = true;
@@ -137,7 +137,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         public override Errno StatFs(ref FileSystemInfo stat)
         {
             stat = new FileSystemInfo();
-            stat.Blocks = (long)device.ImageInfo.sectors;
+            stat.Blocks = (long)device.ImageInfo.Sectors;
             stat.FilenameLength = 30;
             stat.Files = (ulong)catalogCache.Count;
             stat.FreeBlocks = stat.Blocks - usedSectors;

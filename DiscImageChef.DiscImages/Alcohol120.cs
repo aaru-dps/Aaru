@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     public class Alcohol120 : ImagePlugin
     {
@@ -169,28 +169,28 @@ namespace DiscImageChef.ImagePlugins
         public Alcohol120()
         {
             Name = "Alcohol 120% Media Descriptor Structure";
-            PluginUUID = new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
+            PluginUuid = new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -437,13 +437,13 @@ namespace DiscImageChef.ImagePlugins
                     {
                         case AlcoholMediumType.DVD:
                         case AlcoholMediumType.DVDR:
-                            ImageInfo.readableMediaTags.Add(MediaTagType.DVD_BCA);
+                            ImageInfo.ReadableMediaTags.Add(MediaTagType.DVD_BCA);
                             break;
                     }
                 }
             }
 
-            ImageInfo.mediaType = AlcoholMediumTypeToMediaType(header.type);
+            ImageInfo.MediaType = AlcoholMediumTypeToMediaType(header.type);
 
             if(isDvd)
             {
@@ -473,58 +473,58 @@ namespace DiscImageChef.ImagePlugins
                         switch(pfi0.Value.DiskCategory)
                         {
                             case Decoders.DVD.DiskCategory.DVDPR:
-                                ImageInfo.mediaType = MediaType.DVDPR;
+                                ImageInfo.MediaType = MediaType.DVDPR;
                                 break;
                             case Decoders.DVD.DiskCategory.DVDPRDL:
-                                ImageInfo.mediaType = MediaType.DVDPRDL;
+                                ImageInfo.MediaType = MediaType.DVDPRDL;
                                 break;
                             case Decoders.DVD.DiskCategory.DVDPRW:
-                                ImageInfo.mediaType = MediaType.DVDPRW;
+                                ImageInfo.MediaType = MediaType.DVDPRW;
                                 break;
                             case Decoders.DVD.DiskCategory.DVDPRWDL:
-                                ImageInfo.mediaType = MediaType.DVDPRWDL;
+                                ImageInfo.MediaType = MediaType.DVDPRWDL;
                                 break;
                             case Decoders.DVD.DiskCategory.DVDR:
-                                if(pfi0.Value.PartVersion == 6) ImageInfo.mediaType = MediaType.DVDRDL;
-                                else ImageInfo.mediaType = MediaType.DVDR;
+                                if(pfi0.Value.PartVersion == 6) ImageInfo.MediaType = MediaType.DVDRDL;
+                                else ImageInfo.MediaType = MediaType.DVDR;
                                 break;
                             case Decoders.DVD.DiskCategory.DVDRAM:
-                                ImageInfo.mediaType = MediaType.DVDRAM;
+                                ImageInfo.MediaType = MediaType.DVDRAM;
                                 break;
                             default:
-                                ImageInfo.mediaType = MediaType.DVDROM;
+                                ImageInfo.MediaType = MediaType.DVDROM;
                                 break;
                             case Decoders.DVD.DiskCategory.DVDRW:
-                                if(pfi0.Value.PartVersion == 3) ImageInfo.mediaType = MediaType.DVDRWDL;
-                                else ImageInfo.mediaType = MediaType.DVDRW;
+                                if(pfi0.Value.PartVersion == 3) ImageInfo.MediaType = MediaType.DVDRWDL;
+                                else ImageInfo.MediaType = MediaType.DVDRW;
                                 break;
                             case Decoders.DVD.DiskCategory.HDDVDR:
-                                ImageInfo.mediaType = MediaType.HDDVDR;
+                                ImageInfo.MediaType = MediaType.HDDVDR;
                                 break;
                             case Decoders.DVD.DiskCategory.HDDVDRAM:
-                                ImageInfo.mediaType = MediaType.HDDVDRAM;
+                                ImageInfo.MediaType = MediaType.HDDVDRAM;
                                 break;
                             case Decoders.DVD.DiskCategory.HDDVDROM:
-                                ImageInfo.mediaType = MediaType.HDDVDROM;
+                                ImageInfo.MediaType = MediaType.HDDVDROM;
                                 break;
                             case Decoders.DVD.DiskCategory.HDDVDRW:
-                                ImageInfo.mediaType = MediaType.HDDVDRW;
+                                ImageInfo.MediaType = MediaType.HDDVDRW;
                                 break;
                             case Decoders.DVD.DiskCategory.Nintendo:
                                 if(pfi0.Value.DiscSize == Decoders.DVD.DVDSize.Eighty)
-                                    ImageInfo.mediaType = MediaType.GOD;
-                                else ImageInfo.mediaType = MediaType.WOD;
+                                    ImageInfo.MediaType = MediaType.GOD;
+                                else ImageInfo.MediaType = MediaType.WOD;
                                 break;
                             case Decoders.DVD.DiskCategory.UMD:
-                                ImageInfo.mediaType = MediaType.UMD;
+                                ImageInfo.MediaType = MediaType.UMD;
                                 break;
                         }
 
-                        if(Decoders.Xbox.DMI.IsXbox(dmi)) ImageInfo.mediaType = MediaType.XGD;
-                        else if(Decoders.Xbox.DMI.IsXbox360(dmi)) ImageInfo.mediaType = MediaType.XGD2;
+                        if(Decoders.Xbox.DMI.IsXbox(dmi)) ImageInfo.MediaType = MediaType.XGD;
+                        else if(Decoders.Xbox.DMI.IsXbox360(dmi)) ImageInfo.MediaType = MediaType.XGD2;
 
-                        ImageInfo.readableMediaTags.Add(MediaTagType.DVD_PFI);
-                        ImageInfo.readableMediaTags.Add(MediaTagType.DVD_DMI);
+                        ImageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
+                        ImageInfo.ReadableMediaTags.Add(MediaTagType.DVD_DMI);
                     }
                 }
             }
@@ -560,14 +560,14 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
-                if(!data && !firstdata) ImageInfo.mediaType = MediaType.CDDA;
-                else if(firstaudio && data && sessions.Count > 1 && mode2) ImageInfo.mediaType = MediaType.CDPLUS;
-                else if((firstdata && audio) || mode2) ImageInfo.mediaType = MediaType.CDROMXA;
-                else if(!audio) ImageInfo.mediaType = MediaType.CDROM;
-                else ImageInfo.mediaType = MediaType.CD;
+                if(!data && !firstdata) ImageInfo.MediaType = MediaType.CDDA;
+                else if(firstaudio && data && sessions.Count > 1 && mode2) ImageInfo.MediaType = MediaType.CDPLUS;
+                else if((firstdata && audio) || mode2) ImageInfo.MediaType = MediaType.CDROMXA;
+                else if(!audio) ImageInfo.MediaType = MediaType.CDROM;
+                else ImageInfo.MediaType = MediaType.CD;
             }
 
-            DicConsole.DebugWriteLine("Alcohol 120% plugin", "ImageInfo.mediaType = {0}", ImageInfo.mediaType);
+            DicConsole.DebugWriteLine("Alcohol 120% plugin", "ImageInfo.mediaType = {0}", ImageInfo.MediaType);
 
             sessions = new List<Session>();
             foreach(AlcoholSession alcSes in alcSessions.Values)
@@ -610,7 +610,7 @@ namespace DiscImageChef.ImagePlugins
                     partition.Type = trk.mode.ToString();
 
                     partitions.Add(partition);
-                    ImageInfo.sectors += extra.sectors;
+                    ImageInfo.Sectors += extra.sectors;
                     byte_offset += partition.Size;
                 }
 
@@ -621,45 +621,45 @@ namespace DiscImageChef.ImagePlugins
                     case AlcoholTrackMode.Mode1:
                     case AlcoholTrackMode.Mode2F1:
                     case AlcoholTrackMode.Mode2F1Alt:
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_P))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_P);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_Q))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_Q);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
-                        if(ImageInfo.sectorSize < 2048) ImageInfo.sectorSize = 2048;
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                        if(ImageInfo.SectorSize < 2048) ImageInfo.SectorSize = 2048;
                         break;
                     case AlcoholTrackMode.Mode2:
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
-                        if(ImageInfo.sectorSize < 2336) ImageInfo.sectorSize = 2336;
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                        if(ImageInfo.SectorSize < 2336) ImageInfo.SectorSize = 2336;
                         break;
                     case AlcoholTrackMode.Mode2F2:
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                        if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
-                            ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
-                        if(ImageInfo.sectorSize < 2324) ImageInfo.sectorSize = 2324;
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                        if(ImageInfo.SectorSize < 2324) ImageInfo.SectorSize = 2324;
                         break;
                     case AlcoholTrackMode.DVD:
-                        ImageInfo.sectorSize = 2048;
+                        ImageInfo.SectorSize = 2048;
                         break;
                     default:
-                        ImageInfo.sectorSize = 2352;
+                        ImageInfo.SectorSize = 2352;
                         break;
                 }
             }
@@ -677,7 +677,7 @@ namespace DiscImageChef.ImagePlugins
                 DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition size in bytes: {0}", partition.Size);
             }
 
-            ImageInfo.imageApplication = "Alcohol 120%";
+            ImageInfo.ImageApplication = "Alcohol 120%";
 
             DicConsole.DebugWriteLine("Alcohol 120% plugin", "Data filename: {0}", alcFile);
 
@@ -686,11 +686,11 @@ namespace DiscImageChef.ImagePlugins
 
             if(alcImage == null) throw new Exception("Cannot open data file");
 
-            ImageInfo.imageSize = (ulong)alcImage.GetDataForkLength();
-            ImageInfo.imageCreationTime = alcImage.GetCreationTime();
-            ImageInfo.imageLastModificationTime = alcImage.GetLastWriteTime();
-            ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
-            ImageInfo.imageVersion = string.Format("{0}.{1}", header.version[0], header.version[1]);
+            ImageInfo.ImageSize = (ulong)alcImage.GetDataForkLength();
+            ImageInfo.ImageCreationTime = alcImage.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = alcImage.GetLastWriteTime();
+            ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+            ImageInfo.ImageVersion = string.Format("{0}.{1}", header.version[0], header.version[1]);
 
             if(!isDvd)
             {
@@ -735,43 +735,43 @@ namespace DiscImageChef.ImagePlugins
                     DicConsole.DebugWriteLine("Alcohol 120% plugin", "TOC not correctly rebuilt");
                     fullToc = null;
                 }
-                else ImageInfo.readableMediaTags.Add(MediaTagType.CD_FullTOC);
+                else ImageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
 
-                ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
+                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
             }
 
-            if(ImageInfo.mediaType == MediaType.XGD2)
+            if(ImageInfo.MediaType == MediaType.XGD2)
             {
                 // All XGD3 all have the same number of blocks
-                if(ImageInfo.sectors == 25063 || // Locked (or non compatible drive)
-                   ImageInfo.sectors == 4229664 || // Xtreme unlock
-                   ImageInfo.sectors == 4246304) // Wxripper unlock
-                    ImageInfo.mediaType = MediaType.XGD3;
+                if(ImageInfo.Sectors == 25063 || // Locked (or non compatible drive)
+                   ImageInfo.Sectors == 4229664 || // Xtreme unlock
+                   ImageInfo.Sectors == 4246304) // Wxripper unlock
+                    ImageInfo.MediaType = MediaType.XGD3;
             }
 
-            DicConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", ImageInfo.mediaType);
+            DicConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", ImageInfo.MediaType);
 
             return true;
         }
 
         public override bool ImageHasPartitions()
         {
-            return ImageInfo.imageHasPartitions;
+            return ImageInfo.ImageHasPartitions;
         }
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -994,15 +994,15 @@ namespace DiscImageChef.ImagePlugins
 
             switch(tag)
             {
-                case SectorTagType.CDSectorECC:
-                case SectorTagType.CDSectorECC_P:
-                case SectorTagType.CDSectorECC_Q:
-                case SectorTagType.CDSectorEDC:
-                case SectorTagType.CDSectorHeader:
-                case SectorTagType.CDSectorSubchannel:
-                case SectorTagType.CDSectorSubHeader:
-                case SectorTagType.CDSectorSync: break;
-                case SectorTagType.CDTrackFlags: return new byte[] {((byte)(_track.adrCtl & 0x0F))};
+                case SectorTagType.CdSectorEcc:
+                case SectorTagType.CdSectorEccP:
+                case SectorTagType.CdSectorEccQ:
+                case SectorTagType.CdSectorEdc:
+                case SectorTagType.CdSectorHeader:
+                case SectorTagType.CdSectorSubchannel:
+                case SectorTagType.CdSectorSubHeader:
+                case SectorTagType.CdSectorSync: break;
+                case SectorTagType.CdTrackFlags: return new byte[] {((byte)(_track.adrCtl & 0x0F))};
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
@@ -1011,51 +1011,51 @@ namespace DiscImageChef.ImagePlugins
                 case AlcoholTrackMode.Mode1:
                     switch(tag)
                     {
-                        case SectorTagType.CDSectorSync:
+                        case SectorTagType.CdSectorSync:
                         {
                             sector_offset = 0;
                             sector_size = 12;
                             sector_skip = 2340;
                             break;
                         }
-                        case SectorTagType.CDSectorHeader:
+                        case SectorTagType.CdSectorHeader:
                         {
                             sector_offset = 12;
                             sector_size = 4;
                             sector_skip = 2336;
                             break;
                         }
-                        case SectorTagType.CDSectorSubHeader:
+                        case SectorTagType.CdSectorSubHeader:
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                        case SectorTagType.CDSectorECC:
+                        case SectorTagType.CdSectorEcc:
                         {
                             sector_offset = 2076;
                             sector_size = 276;
                             sector_skip = 0;
                             break;
                         }
-                        case SectorTagType.CDSectorECC_P:
+                        case SectorTagType.CdSectorEccP:
                         {
                             sector_offset = 2076;
                             sector_size = 172;
                             sector_skip = 104;
                             break;
                         }
-                        case SectorTagType.CDSectorECC_Q:
+                        case SectorTagType.CdSectorEccQ:
                         {
                             sector_offset = 2248;
                             sector_size = 104;
                             sector_skip = 0;
                             break;
                         }
-                        case SectorTagType.CDSectorEDC:
+                        case SectorTagType.CdSectorEdc:
                         {
                             sector_offset = 2064;
                             sector_size = 4;
                             sector_skip = 284;
                             break;
                         }
-                        case SectorTagType.CDSectorSubchannel:
+                        case SectorTagType.CdSectorSubchannel:
                         {
                             switch(_track.subMode)
                             {
@@ -1078,27 +1078,27 @@ namespace DiscImageChef.ImagePlugins
                 {
                     switch(tag)
                     {
-                        case SectorTagType.CDSectorSync:
-                        case SectorTagType.CDSectorHeader:
-                        case SectorTagType.CDSectorECC:
-                        case SectorTagType.CDSectorECC_P:
-                        case SectorTagType.CDSectorECC_Q:
+                        case SectorTagType.CdSectorSync:
+                        case SectorTagType.CdSectorHeader:
+                        case SectorTagType.CdSectorEcc:
+                        case SectorTagType.CdSectorEccP:
+                        case SectorTagType.CdSectorEccQ:
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                        case SectorTagType.CDSectorSubHeader:
+                        case SectorTagType.CdSectorSubHeader:
                         {
                             sector_offset = 0;
                             sector_size = 8;
                             sector_skip = 2328;
                             break;
                         }
-                        case SectorTagType.CDSectorEDC:
+                        case SectorTagType.CdSectorEdc:
                         {
                             sector_offset = 2332;
                             sector_size = 4;
                             sector_skip = 0;
                             break;
                         }
-                        case SectorTagType.CDSectorSubchannel:
+                        case SectorTagType.CdSectorSubchannel:
                         {
                             switch(_track.subMode)
                             {
@@ -1122,56 +1122,56 @@ namespace DiscImageChef.ImagePlugins
                 case AlcoholTrackMode.Mode2F1Alt:
                     switch(tag)
                     {
-                        case SectorTagType.CDSectorSync:
+                        case SectorTagType.CdSectorSync:
                         {
                             sector_offset = 0;
                             sector_size = 12;
                             sector_skip = 2340;
                             break;
                         }
-                        case SectorTagType.CDSectorHeader:
+                        case SectorTagType.CdSectorHeader:
                         {
                             sector_offset = 12;
                             sector_size = 4;
                             sector_skip = 2336;
                             break;
                         }
-                        case SectorTagType.CDSectorSubHeader:
+                        case SectorTagType.CdSectorSubHeader:
                         {
                             sector_offset = 16;
                             sector_size = 8;
                             sector_skip = 2328;
                             break;
                         }
-                        case SectorTagType.CDSectorECC:
+                        case SectorTagType.CdSectorEcc:
                         {
                             sector_offset = 2076;
                             sector_size = 276;
                             sector_skip = 0;
                             break;
                         }
-                        case SectorTagType.CDSectorECC_P:
+                        case SectorTagType.CdSectorEccP:
                         {
                             sector_offset = 2076;
                             sector_size = 172;
                             sector_skip = 104;
                             break;
                         }
-                        case SectorTagType.CDSectorECC_Q:
+                        case SectorTagType.CdSectorEccQ:
                         {
                             sector_offset = 2248;
                             sector_size = 104;
                             sector_skip = 0;
                             break;
                         }
-                        case SectorTagType.CDSectorEDC:
+                        case SectorTagType.CdSectorEdc:
                         {
                             sector_offset = 2072;
                             sector_size = 4;
                             sector_skip = 276;
                             break;
                         }
-                        case SectorTagType.CDSectorSubchannel:
+                        case SectorTagType.CdSectorSubchannel:
                         {
                             switch(_track.subMode)
                             {
@@ -1193,35 +1193,35 @@ namespace DiscImageChef.ImagePlugins
                 case AlcoholTrackMode.Mode2F2:
                     switch(tag)
                     {
-                        case SectorTagType.CDSectorSync:
+                        case SectorTagType.CdSectorSync:
                         {
                             sector_offset = 0;
                             sector_size = 12;
                             sector_skip = 2340;
                             break;
                         }
-                        case SectorTagType.CDSectorHeader:
+                        case SectorTagType.CdSectorHeader:
                         {
                             sector_offset = 12;
                             sector_size = 4;
                             sector_skip = 2336;
                             break;
                         }
-                        case SectorTagType.CDSectorSubHeader:
+                        case SectorTagType.CdSectorSubHeader:
                         {
                             sector_offset = 16;
                             sector_size = 8;
                             sector_skip = 2328;
                             break;
                         }
-                        case SectorTagType.CDSectorEDC:
+                        case SectorTagType.CdSectorEdc:
                         {
                             sector_offset = 2348;
                             sector_size = 4;
                             sector_skip = 0;
                             break;
                         }
-                        case SectorTagType.CDSectorSubchannel:
+                        case SectorTagType.CdSectorSubchannel:
                         {
                             switch(_track.subMode)
                             {
@@ -1244,7 +1244,7 @@ namespace DiscImageChef.ImagePlugins
                 {
                     switch(tag)
                     {
-                        case SectorTagType.CDSectorSubchannel:
+                        case SectorTagType.CdSectorSubchannel:
                         {
                             switch(_track.subMode)
                             {
@@ -1273,7 +1273,7 @@ namespace DiscImageChef.ImagePlugins
                     sector_skip += 0;
                     break;
                 case AlcoholSubchannelMode.Interleaved:
-                    if(tag != SectorTagType.CDSectorSubchannel) sector_skip += 96;
+                    if(tag != SectorTagType.CdSectorSubchannel) sector_skip += 96;
                     break;
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported subchannel type");
             }
@@ -1388,17 +1388,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override List<Partition> GetPartitions()
@@ -1535,73 +1535,73 @@ namespace DiscImageChef.ImagePlugins
         public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
-            return Checksums.CDChecksums.CheckCDSector(buffer);
+            return Checksums.CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
-            return Checksums.CDChecksums.CheckCDSector(buffer);
+            return Checksums.CdChecksums.CheckCdSector(buffer);
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
             int bps = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
+                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
                     case null:
-                        UnknownLBAs.Add((ulong)i + sectorAddress);
+                        unknownLbas.Add((ulong)i + sectorAddress);
                         break;
                     case false:
-                        FailingLBAs.Add((ulong)i + sectorAddress);
+                        failingLbas.Add((ulong)i + sectorAddress);
                         break;
                 }
             }
 
-            if(UnknownLBAs.Count > 0) return null;
-            if(FailingLBAs.Count > 0) return false;
+            if(unknownLbas.Count > 0) return null;
+            if(failingLbas.Count > 0) return false;
 
             return true;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
             int bps = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
+                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
                     case null:
-                        UnknownLBAs.Add((ulong)i + sectorAddress);
+                        unknownLbas.Add((ulong)i + sectorAddress);
                         break;
                     case false:
-                        FailingLBAs.Add((ulong)i + sectorAddress);
+                        failingLbas.Add((ulong)i + sectorAddress);
                         break;
                 }
             }
 
-            if(UnknownLBAs.Count > 0) return null;
-            if(FailingLBAs.Count > 0) return false;
+            if(unknownLbas.Count > 0) return null;
+            if(failingLbas.Count > 0) return false;
 
             return true;
         }
@@ -1647,11 +1647,11 @@ namespace DiscImageChef.ImagePlugins
         {
             switch(trackType)
             {
-                case AlcoholTrackMode.Mode1: return TrackType.CDMode1;
+                case AlcoholTrackMode.Mode1: return TrackType.CdMode1;
                 case AlcoholTrackMode.Mode2F1:
-                case AlcoholTrackMode.Mode2F1Alt: return TrackType.CDMode2Form1;
-                case AlcoholTrackMode.Mode2F2: return TrackType.CDMode2Form2;
-                case AlcoholTrackMode.Mode2: return TrackType.CDMode2Formless;
+                case AlcoholTrackMode.Mode2F1Alt: return TrackType.CdMode2Form1;
+                case AlcoholTrackMode.Mode2F2: return TrackType.CdMode2Form2;
+                case AlcoholTrackMode.Mode2: return TrackType.CdMode2Formless;
                 case AlcoholTrackMode.Audio: return TrackType.Audio;
                 default: return TrackType.Data;
             }
@@ -1674,82 +1674,82 @@ namespace DiscImageChef.ImagePlugins
         #region Unsupported features
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override string GetMediaSerialNumber()
         {
-            return ImageInfo.mediaSerialNumber;
+            return ImageInfo.MediaSerialNumber;
         }
 
         public override string GetMediaBarcode()
         {
-            return ImageInfo.mediaBarcode;
+            return ImageInfo.MediaBarcode;
         }
 
         public override int GetMediaSequence()
         {
-            return ImageInfo.mediaSequence;
+            return ImageInfo.MediaSequence;
         }
 
         public override int GetLastDiskSequence()
         {
-            return ImageInfo.lastMediaSequence;
+            return ImageInfo.LastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return ImageInfo.driveManufacturer;
+            return ImageInfo.DriveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return ImageInfo.driveModel;
+            return ImageInfo.DriveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return ImageInfo.driveSerialNumber;
+            return ImageInfo.DriveSerialNumber;
         }
 
         public override string GetMediaPartNumber()
         {
-            return ImageInfo.mediaPartNumber;
+            return ImageInfo.MediaPartNumber;
         }
 
         public override string GetMediaManufacturer()
         {
-            return ImageInfo.mediaManufacturer;
+            return ImageInfo.MediaManufacturer;
         }
 
         public override string GetMediaModel()
         {
-            return ImageInfo.mediaModel;
+            return ImageInfo.MediaModel;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
         #endregion Unsupported features
     }

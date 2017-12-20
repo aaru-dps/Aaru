@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using Extents;
 
 namespace DiscImageChef.DiscImages
@@ -46,7 +46,7 @@ namespace DiscImageChef.DiscImages
     public class Partimage : ImagePlugin
     {
         #region Internal constants
-        readonly byte[] PartimageMagic =
+        readonly byte[] partimageMagic =
         {
             0x50, 0x61, 0x52, 0x74, 0x49, 0x6D, 0x41, 0x67, 0x45, 0x2D, 0x56, 0x6F, 0x4C, 0x75, 0x4D, 0x65, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -60,34 +60,34 @@ namespace DiscImageChef.DiscImages
         const int MAX_DESC_GEOMETRY = 1024;
         const int MAX_DESC_IDENTIFY = 4096;
         const int CHECK_FREQUENCY = 65536;
-        readonly string MAGIC_BEGIN_LOCALHEADER = "MAGIC-BEGIN-LOCALHEADER";
-        readonly string MAGIC_BEGIN_DATABLOCKS = "MAGIC-BEGIN-DATABLOCKS";
-        readonly string MAGIC_BEGIN_BITMAP = "MAGIC-BEGIN-BITMAP";
-        readonly string MAGIC_BEGIN_MBRBACKUP = "MAGIC-BEGIN-MBRBACKUP";
-        readonly string MAGIC_BEGIN_TAIL = "MAGIC-BEGIN-TAIL";
-        readonly string MAGIC_BEGIN_INFO = "MAGIC-BEGIN-INFO";
-        readonly string MAGIC_BEGIN_EXT000 = "MAGIC-BEGIN-EXT000"; // reserved for future use
-        readonly string MAGIC_BEGIN_EXT001 = "MAGIC-BEGIN-EXT001"; // reserved for future use
-        readonly string MAGIC_BEGIN_EXT002 = "MAGIC-BEGIN-EXT002"; // reserved for future use
-        readonly string MAGIC_BEGIN_EXT003 = "MAGIC-BEGIN-EXT003"; // reserved for future use
-        readonly string MAGIC_BEGIN_EXT004 = "MAGIC-BEGIN-EXT004"; // reserved for future use
-        readonly string MAGIC_BEGIN_EXT005 = "MAGIC-BEGIN-EXT005"; // reserved for future use
-        readonly string MAGIC_BEGIN_EXT006 = "MAGIC-BEGIN-EXT006"; // reserved for future use
-        readonly string MAGIC_BEGIN_EXT007 = "MAGIC-BEGIN-EXT007"; // reserved for future use
-        readonly string MAGIC_BEGIN_EXT008 = "MAGIC-BEGIN-EXT008"; // reserved for future use
-        readonly string MAGIC_BEGIN_EXT009 = "MAGIC-BEGIN-EXT009"; // reserved for future use
-        readonly string MAGIC_BEGIN_VOLUME = "PaRtImAgE-VoLuMe";
+        const string MAGIC_BEGIN_LOCALHEADER = "MAGIC-BEGIN-LOCALHEADER";
+        const string MAGIC_BEGIN_DATABLOCKS = "MAGIC-BEGIN-DATABLOCKS";
+        const string MAGIC_BEGIN_BITMAP = "MAGIC-BEGIN-BITMAP";
+        const string MAGIC_BEGIN_MBRBACKUP = "MAGIC-BEGIN-MBRBACKUP";
+        const string MAGIC_BEGIN_TAIL = "MAGIC-BEGIN-TAIL";
+        const string MAGIC_BEGIN_INFO = "MAGIC-BEGIN-INFO";
+        const string MAGIC_BEGIN_EXT000 = "MAGIC-BEGIN-EXT000"; // reserved for future use
+        const string MAGIC_BEGIN_EXT001 = "MAGIC-BEGIN-EXT001"; // reserved for future use
+        const string MAGIC_BEGIN_EXT002 = "MAGIC-BEGIN-EXT002"; // reserved for future use
+        const string MAGIC_BEGIN_EXT003 = "MAGIC-BEGIN-EXT003"; // reserved for future use
+        const string MAGIC_BEGIN_EXT004 = "MAGIC-BEGIN-EXT004"; // reserved for future use
+        const string MAGIC_BEGIN_EXT005 = "MAGIC-BEGIN-EXT005"; // reserved for future use
+        const string MAGIC_BEGIN_EXT006 = "MAGIC-BEGIN-EXT006"; // reserved for future use
+        const string MAGIC_BEGIN_EXT007 = "MAGIC-BEGIN-EXT007"; // reserved for future use
+        const string MAGIC_BEGIN_EXT008 = "MAGIC-BEGIN-EXT008"; // reserved for future use
+        const string MAGIC_BEGIN_EXT009 = "MAGIC-BEGIN-EXT009"; // reserved for future use
+        const string MAGIC_BEGIN_VOLUME = "PaRtImAgE-VoLuMe";
         #endregion
 
         #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         /// <summary>
         /// Partimage disk image header, little-endian
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PartimageHeader
         {
             /// <summary>
-            /// Magic, <see cref="PartimageMagic"/>
+            /// Magic, <see cref="Partimage.partimageMagic"/>
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] magic;
             /// <summary>
@@ -108,23 +108,23 @@ namespace DiscImageChef.DiscImages
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 404)] public byte[] reserved;
         }
 
-        struct portable_tm
+        struct PortableTm
         {
-            public uint tm_sec;
-            public uint tm_min;
-            public uint tm_hour;
-            public uint tm_mday;
-            public uint tm_mon;
-            public uint tm_year;
-            public uint tm_wday;
-            public uint tm_yday;
-            public uint tm_isdst;
+            public uint Second;
+            public uint Minute;
+            public uint Hour;
+            public uint DayOfMonth;
+            public uint Month;
+            public uint Year;
+            public uint DayOfWeek;
+            public uint DayOfYear;
+            public uint IsDst;
 
-            public uint tm_gmtoff;
-            public uint tm_zone;
+            public uint GmtOff;
+            public uint Timezone;
         };
 
-        enum pCompression : uint
+        enum PCompression : uint
         {
             None = 0,
             Gzip = 1,
@@ -132,15 +132,15 @@ namespace DiscImageChef.DiscImages
             Lzo = 3
         }
 
-        enum pEncryption : uint
+        enum PEncryption : uint
         {
             None = 0,
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         /// <summary>
         /// Partimage CMainHeader
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PartimageMainHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
@@ -159,9 +159,9 @@ namespace DiscImageChef.DiscImages
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameVersion;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_UNAMEINFOLEN)] public byte[] szUnameMachine;
 
-            public pCompression dwCompression; // COMPRESS_XXXXXX
+            public PCompression dwCompression; // COMPRESS_XXXXXX
             public uint dwMainFlags;
-            public portable_tm dateCreate; // date of image creation
+            public PortableTm dateCreate; // date of image creation
             public ulong qwPartSize; // size of the partition in bytes
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_HOSTNAMESIZE)] public byte[] szHostname;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[] szVersion; // version of the image file
@@ -171,7 +171,7 @@ namespace DiscImageChef.DiscImages
             public uint dwMbrSize; // size of a MBR record (allow to change the size in the next versions)
 
             // future encryption support
-            public pEncryption dwEncryptAlgo; // algo used to encrypt data
+            public PEncryption dwEncryptAlgo; // algo used to encrypt data
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] cHashTestKey; // used to test the password without giving it
 
@@ -245,16 +245,16 @@ namespace DiscImageChef.DiscImages
         }
         #endregion
 
-        PartimageHeader CVolumeHeader;
-        PartimageMainHeader CMainHeader;
+        PartimageHeader cVolumeHeader;
+        PartimageMainHeader cMainHeader;
         byte[] bitmap;
         Stream imageStream;
         long dataOff;
 
         Dictionary<ulong, byte[]> sectorCache;
 
-        const uint MaxCacheSize = 16777216;
-        uint maxCachedSectors = MaxCacheSize / 512;
+        const uint MAX_CACHE_SIZE = 16777216;
+        uint maxCachedSectors = MAX_CACHE_SIZE / 512;
 
         ExtentsULong extents;
         Dictionary<ulong, ulong> extentsOff;
@@ -262,27 +262,27 @@ namespace DiscImageChef.DiscImages
         public Partimage()
         {
             Name = "Partimage disk image";
-            PluginUUID = new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
+            PluginUuid = new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageApplication = "Partimage";
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageApplication = "Partimage";
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -292,15 +292,15 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] pHdr_b = new byte[Marshal.SizeOf(CVolumeHeader)];
-            stream.Read(pHdr_b, 0, Marshal.SizeOf(CVolumeHeader));
-            CVolumeHeader = new PartimageHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(CVolumeHeader));
-            Marshal.Copy(pHdr_b, 0, headerPtr, Marshal.SizeOf(CVolumeHeader));
-            CVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
+            byte[] pHdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
+            stream.Read(pHdrB, 0, Marshal.SizeOf(cVolumeHeader));
+            cVolumeHeader = new PartimageHeader();
+            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cVolumeHeader));
+            Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(cVolumeHeader));
+            cVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
             Marshal.FreeHGlobal(headerPtr);
 
-            return PartimageMagic.SequenceEqual(CVolumeHeader.magic);
+            return partimageMagic.SequenceEqual(cVolumeHeader.magic);
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -310,149 +310,149 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(CVolumeHeader)];
-            stream.Read(hdr_b, 0, Marshal.SizeOf(CVolumeHeader));
-            CVolumeHeader = new PartimageHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(CVolumeHeader));
-            Marshal.Copy(hdr_b, 0, headerPtr, Marshal.SizeOf(CVolumeHeader));
-            CVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
+            byte[] hdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
+            stream.Read(hdrB, 0, Marshal.SizeOf(cVolumeHeader));
+            cVolumeHeader = new PartimageHeader();
+            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cVolumeHeader));
+            Marshal.Copy(hdrB, 0, headerPtr, Marshal.SizeOf(cVolumeHeader));
+            cVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
             Marshal.FreeHGlobal(headerPtr);
 
             DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.magic = {0}",
-                                      StringHandlers.CToString(CVolumeHeader.magic));
+                                      StringHandlers.CToString(cVolumeHeader.magic));
             DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.version = {0}",
-                                      StringHandlers.CToString(CVolumeHeader.version));
+                                      StringHandlers.CToString(cVolumeHeader.version));
             DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.volumeNumber = {0}",
-                                      CVolumeHeader.volumeNumber);
+                                      cVolumeHeader.volumeNumber);
             DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.identificator = {0:X16}",
-                                      CVolumeHeader.identificator);
+                                      cVolumeHeader.identificator);
 
             // TODO: Support multifile volumes
-            if(CVolumeHeader.volumeNumber > 0)
+            if(cVolumeHeader.volumeNumber > 0)
                 throw new FeatureSupportedButNotImplementedImageException("Support for multiple volumes not supported");
 
-            hdr_b = new byte[Marshal.SizeOf(CMainHeader)];
-            stream.Read(hdr_b, 0, Marshal.SizeOf(CMainHeader));
-            CMainHeader = new PartimageMainHeader();
-            headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(CMainHeader));
-            Marshal.Copy(hdr_b, 0, headerPtr, Marshal.SizeOf(CMainHeader));
-            CMainHeader = (PartimageMainHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageMainHeader));
+            hdrB = new byte[Marshal.SizeOf(cMainHeader)];
+            stream.Read(hdrB, 0, Marshal.SizeOf(cMainHeader));
+            cMainHeader = new PartimageMainHeader();
+            headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cMainHeader));
+            Marshal.Copy(hdrB, 0, headerPtr, Marshal.SizeOf(cMainHeader));
+            cMainHeader = (PartimageMainHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageMainHeader));
             Marshal.FreeHGlobal(headerPtr);
 
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFileSystem = {0}",
-                                      StringHandlers.CToString(CMainHeader.szFileSystem));
+                                      StringHandlers.CToString(cMainHeader.szFileSystem));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szPartDescription = {0}",
-                                      StringHandlers.CToString(CMainHeader.szPartDescription));
+                                      StringHandlers.CToString(cMainHeader.szPartDescription));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szOriginalDevice = {0}",
-                                      StringHandlers.CToString(CMainHeader.szOriginalDevice));
+                                      StringHandlers.CToString(cMainHeader.szOriginalDevice));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFirstImageFilepath = {0}",
-                                      StringHandlers.CToString(CMainHeader.szFirstImageFilepath));
+                                      StringHandlers.CToString(cMainHeader.szFirstImageFilepath));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameSysname = {0}",
-                                      StringHandlers.CToString(CMainHeader.szUnameSysname));
+                                      StringHandlers.CToString(cMainHeader.szUnameSysname));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameNodename = {0}",
-                                      StringHandlers.CToString(CMainHeader.szUnameNodename));
+                                      StringHandlers.CToString(cMainHeader.szUnameNodename));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameRelease = {0}",
-                                      StringHandlers.CToString(CMainHeader.szUnameRelease));
+                                      StringHandlers.CToString(cMainHeader.szUnameRelease));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameVersion = {0}",
-                                      StringHandlers.CToString(CMainHeader.szUnameVersion));
+                                      StringHandlers.CToString(cMainHeader.szUnameVersion));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameMachine = {0}",
-                                      StringHandlers.CToString(CMainHeader.szUnameMachine));
+                                      StringHandlers.CToString(cMainHeader.szUnameMachine));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwCompression = {0} ({1})",
-                                      CMainHeader.dwCompression, (uint)CMainHeader.dwCompression);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMainFlags = {0}", CMainHeader.dwMainFlags);
+                                      cMainHeader.dwCompression, (uint)cMainHeader.dwCompression);
+            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMainFlags = {0}", cMainHeader.dwMainFlags);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_sec = {0}",
-                                      CMainHeader.dateCreate.tm_sec);
+                                      cMainHeader.dateCreate.Second);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_min = {0}",
-                                      CMainHeader.dateCreate.tm_min);
+                                      cMainHeader.dateCreate.Minute);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_hour = {0}",
-                                      CMainHeader.dateCreate.tm_hour);
+                                      cMainHeader.dateCreate.Hour);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_mday = {0}",
-                                      CMainHeader.dateCreate.tm_mday);
+                                      cMainHeader.dateCreate.DayOfMonth);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_mon = {0}",
-                                      CMainHeader.dateCreate.tm_mon);
+                                      cMainHeader.dateCreate.Month);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_year = {0}",
-                                      CMainHeader.dateCreate.tm_year);
+                                      cMainHeader.dateCreate.Year);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_wday = {0}",
-                                      CMainHeader.dateCreate.tm_wday);
+                                      cMainHeader.dateCreate.DayOfWeek);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_yday = {0}",
-                                      CMainHeader.dateCreate.tm_yday);
+                                      cMainHeader.dateCreate.DayOfYear);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_isdst = {0}",
-                                      CMainHeader.dateCreate.tm_isdst);
+                                      cMainHeader.dateCreate.IsDst);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_gmtoffsec = {0}",
-                                      CMainHeader.dateCreate.tm_gmtoff);
+                                      cMainHeader.dateCreate.GmtOff);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_zone = {0}",
-                                      CMainHeader.dateCreate.tm_zone);
+                                      cMainHeader.dateCreate.Timezone);
 
-            DateTime dateCreate = new DateTime(1900 + (int)CMainHeader.dateCreate.tm_year,
-                                               (int)CMainHeader.dateCreate.tm_mon + 1,
-                                               (int)CMainHeader.dateCreate.tm_mday, (int)CMainHeader.dateCreate.tm_hour,
-                                               (int)CMainHeader.dateCreate.tm_min, (int)CMainHeader.dateCreate.tm_sec);
+            DateTime dateCreate = new DateTime(1900 + (int)cMainHeader.dateCreate.Year,
+                                               (int)cMainHeader.dateCreate.Month + 1,
+                                               (int)cMainHeader.dateCreate.DayOfMonth, (int)cMainHeader.dateCreate.Hour,
+                                               (int)cMainHeader.dateCreate.Minute, (int)cMainHeader.dateCreate.Second);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate = {0}", dateCreate);
 
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.qwPartSize = {0}", CMainHeader.qwPartSize);
+            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.qwPartSize = {0}", cMainHeader.qwPartSize);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szHostname = {0}",
-                                      StringHandlers.CToString(CMainHeader.szHostname));
+                                      StringHandlers.CToString(cMainHeader.szHostname));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szVersion = {0}",
-                                      StringHandlers.CToString(CMainHeader.szVersion));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrCount = {0}", CMainHeader.dwMbrCount);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrSize = {0}", CMainHeader.dwMbrSize);
+                                      StringHandlers.CToString(cMainHeader.szVersion));
+            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrCount = {0}", cMainHeader.dwMbrCount);
+            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrSize = {0}", cMainHeader.dwMbrSize);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwEncryptAlgo = {0} ({1})",
-                                      CMainHeader.dwEncryptAlgo, (uint)CMainHeader.dwEncryptAlgo);
+                                      cMainHeader.dwEncryptAlgo, (uint)cMainHeader.dwEncryptAlgo);
             DicConsole.DebugWriteLine("Partimage plugin", "ArrayIsNullOrEmpty(CMainHeader.cHashTestKey) = {0}",
-                                      ArrayHelpers.ArrayIsNullOrEmpty(CMainHeader.cHashTestKey));
+                                      ArrayHelpers.ArrayIsNullOrEmpty(cMainHeader.cHashTestKey));
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture000 = {0}",
-                                      CMainHeader.dwReservedFuture000);
+                                      cMainHeader.dwReservedFuture000);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture001 = {0}",
-                                      CMainHeader.dwReservedFuture001);
+                                      cMainHeader.dwReservedFuture001);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture002 = {0}",
-                                      CMainHeader.dwReservedFuture002);
+                                      cMainHeader.dwReservedFuture002);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture003 = {0}",
-                                      CMainHeader.dwReservedFuture003);
+                                      cMainHeader.dwReservedFuture003);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture004 = {0}",
-                                      CMainHeader.dwReservedFuture004);
+                                      cMainHeader.dwReservedFuture004);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture005 = {0}",
-                                      CMainHeader.dwReservedFuture005);
+                                      cMainHeader.dwReservedFuture005);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture006 = {0}",
-                                      CMainHeader.dwReservedFuture006);
+                                      cMainHeader.dwReservedFuture006);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture007 = {0}",
-                                      CMainHeader.dwReservedFuture007);
+                                      cMainHeader.dwReservedFuture007);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture008 = {0}",
-                                      CMainHeader.dwReservedFuture008);
+                                      cMainHeader.dwReservedFuture008);
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture009 = {0}",
-                                      CMainHeader.dwReservedFuture009);
+                                      cMainHeader.dwReservedFuture009);
             DicConsole.DebugWriteLine("Partimage plugin", "ArrayIsNullOrEmpty(CMainHeader.cReserved) = {0}",
-                                      ArrayHelpers.ArrayIsNullOrEmpty(CMainHeader.cReserved));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.crc = 0x{0:X8}", CMainHeader.crc);
+                                      ArrayHelpers.ArrayIsNullOrEmpty(cMainHeader.cReserved));
+            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.crc = 0x{0:X8}", cMainHeader.crc);
 
             // partimage 0.6.1 does not support them either
-            if(CMainHeader.dwEncryptAlgo != pEncryption.None)
+            if(cMainHeader.dwEncryptAlgo != PEncryption.None)
                 throw new ImageNotSupportedException("Encrypted images are currently not supported.");
 
             string magic;
 
             // Skip MBRs
-            if(CMainHeader.dwMbrCount > 0)
+            if(cMainHeader.dwMbrCount > 0)
             {
-                hdr_b = new byte[MAGIC_BEGIN_MBRBACKUP.Length];
-                stream.Read(hdr_b, 0, MAGIC_BEGIN_MBRBACKUP.Length);
-                magic = StringHandlers.CToString(hdr_b);
+                hdrB = new byte[MAGIC_BEGIN_MBRBACKUP.Length];
+                stream.Read(hdrB, 0, MAGIC_BEGIN_MBRBACKUP.Length);
+                magic = StringHandlers.CToString(hdrB);
                 if(!magic.Equals(MAGIC_BEGIN_MBRBACKUP)) throw new ImageNotSupportedException("Cannot find MBRs");
 
-                stream.Seek(CMainHeader.dwMbrSize * CMainHeader.dwMbrCount, SeekOrigin.Current);
+                stream.Seek(cMainHeader.dwMbrSize * cMainHeader.dwMbrCount, SeekOrigin.Current);
             }
 
             // Skip extended headers and their CRC fields
             stream.Seek((MAGIC_BEGIN_EXT000.Length + 4) * 10, SeekOrigin.Current);
 
-            hdr_b = new byte[MAGIC_BEGIN_LOCALHEADER.Length];
-            stream.Read(hdr_b, 0, MAGIC_BEGIN_LOCALHEADER.Length);
-            magic = StringHandlers.CToString(hdr_b);
+            hdrB = new byte[MAGIC_BEGIN_LOCALHEADER.Length];
+            stream.Read(hdrB, 0, MAGIC_BEGIN_LOCALHEADER.Length);
+            magic = StringHandlers.CToString(hdrB);
             if(!magic.Equals(MAGIC_BEGIN_LOCALHEADER)) throw new ImageNotSupportedException("Cannot find local header");
 
-            hdr_b = new byte[Marshal.SizeOf(typeof(CLocalHeader))];
-            stream.Read(hdr_b, 0, Marshal.SizeOf(typeof(CLocalHeader)));
+            hdrB = new byte[Marshal.SizeOf(typeof(CLocalHeader))];
+            stream.Read(hdrB, 0, Marshal.SizeOf(typeof(CLocalHeader)));
             headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(CLocalHeader)));
-            Marshal.Copy(hdr_b, 0, headerPtr, Marshal.SizeOf(typeof(CLocalHeader)));
+            Marshal.Copy(hdrB, 0, headerPtr, Marshal.SizeOf(typeof(CLocalHeader)));
             CLocalHeader localHeader = (CLocalHeader)Marshal.PtrToStructure(headerPtr, typeof(CLocalHeader));
             Marshal.FreeHGlobal(headerPtr);
 
@@ -469,25 +469,25 @@ namespace DiscImageChef.DiscImages
                                       ArrayHelpers.ArrayIsNullOrEmpty(localHeader.cReserved));
             DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.crc = 0x{0:X8}", localHeader.crc);
 
-            hdr_b = new byte[MAGIC_BEGIN_BITMAP.Length];
-            stream.Read(hdr_b, 0, MAGIC_BEGIN_BITMAP.Length);
-            magic = StringHandlers.CToString(hdr_b);
+            hdrB = new byte[MAGIC_BEGIN_BITMAP.Length];
+            stream.Read(hdrB, 0, MAGIC_BEGIN_BITMAP.Length);
+            magic = StringHandlers.CToString(hdrB);
             if(!magic.Equals(MAGIC_BEGIN_BITMAP)) throw new ImageNotSupportedException("Cannot find bitmap");
 
             bitmap = new byte[localHeader.qwBitmapSize];
             stream.Read(bitmap, 0, (int)localHeader.qwBitmapSize);
 
-            hdr_b = new byte[MAGIC_BEGIN_INFO.Length];
-            stream.Read(hdr_b, 0, MAGIC_BEGIN_INFO.Length);
-            magic = StringHandlers.CToString(hdr_b);
+            hdrB = new byte[MAGIC_BEGIN_INFO.Length];
+            stream.Read(hdrB, 0, MAGIC_BEGIN_INFO.Length);
+            magic = StringHandlers.CToString(hdrB);
             if(!magic.Equals(MAGIC_BEGIN_INFO)) throw new ImageNotSupportedException("Cannot find info block");
 
             // Skip info block and its checksum
             stream.Seek(16384 + 4, SeekOrigin.Current);
 
-            hdr_b = new byte[MAGIC_BEGIN_DATABLOCKS.Length];
-            stream.Read(hdr_b, 0, MAGIC_BEGIN_DATABLOCKS.Length);
-            magic = StringHandlers.CToString(hdr_b);
+            hdrB = new byte[MAGIC_BEGIN_DATABLOCKS.Length];
+            stream.Read(hdrB, 0, MAGIC_BEGIN_DATABLOCKS.Length);
+            magic = StringHandlers.CToString(hdrB);
             if(!magic.Equals(MAGIC_BEGIN_DATABLOCKS)) throw new ImageNotSupportedException("Cannot find data blocks");
 
             dataOff = stream.Position;
@@ -497,9 +497,9 @@ namespace DiscImageChef.DiscImages
             // Seek to tail
             stream.Seek(-(Marshal.SizeOf(typeof(CMainTail)) + MAGIC_BEGIN_TAIL.Length), SeekOrigin.End);
 
-            hdr_b = new byte[MAGIC_BEGIN_TAIL.Length];
-            stream.Read(hdr_b, 0, MAGIC_BEGIN_TAIL.Length);
-            magic = StringHandlers.CToString(hdr_b);
+            hdrB = new byte[MAGIC_BEGIN_TAIL.Length];
+            stream.Read(hdrB, 0, MAGIC_BEGIN_TAIL.Length);
+            magic = StringHandlers.CToString(hdrB);
             if(!magic.Equals(MAGIC_BEGIN_TAIL))
                 throw new
                     ImageNotSupportedException("Cannot find tail. Multiple volumes are not supported or image is corrupt.");
@@ -543,16 +543,16 @@ namespace DiscImageChef.DiscImages
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            ImageInfo.imageCreationTime = dateCreate;
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectors = localHeader.qwBlocksCount + 1;
-            ImageInfo.sectorSize = (uint)localHeader.qwBlockSize;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.mediaType = MediaType.GENERIC_HDD;
-            ImageInfo.imageVersion = StringHandlers.CToString(CMainHeader.szVersion);
-            ImageInfo.imageComments = StringHandlers.CToString(CMainHeader.szPartDescription);
-            ImageInfo.imageSize =
+            ImageInfo.ImageCreationTime = dateCreate;
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Sectors = localHeader.qwBlocksCount + 1;
+            ImageInfo.SectorSize = (uint)localHeader.qwBlockSize;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.MediaType = MediaType.GENERIC_HDD;
+            ImageInfo.ImageVersion = StringHandlers.CToString(cMainHeader.szVersion);
+            ImageInfo.ImageComments = StringHandlers.CToString(cMainHeader.szPartDescription);
+            ImageInfo.ImageSize =
                 (ulong)(stream.Length - (dataOff + Marshal.SizeOf(typeof(CMainTail)) + MAGIC_BEGIN_TAIL.Length));
             imageStream = stream;
 
@@ -568,11 +568,11 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if((bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) == 0) return new byte[ImageInfo.sectorSize];
+            if((bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) == 0) return new byte[ImageInfo.SectorSize];
 
             byte[] sector;
 
@@ -584,14 +584,14 @@ namespace DiscImageChef.DiscImages
             // Start of data +
             long imageOff = dataOff +
                             // How many stored bytes to skip
-                            (long)(blockOff * ImageInfo.sectorSize) +
+                            (long)(blockOff * ImageInfo.SectorSize) +
                             // How many bytes of CRC blocks to skip
-                            (long)(blockOff / (CHECK_FREQUENCY / ImageInfo.sectorSize)) *
+                            (long)(blockOff / (CHECK_FREQUENCY / ImageInfo.SectorSize)) *
                             Marshal.SizeOf(typeof(CCheck));
 
-            sector = new byte[ImageInfo.sectorSize];
+            sector = new byte[ImageInfo.SectorSize];
             imageStream.Seek(imageOff, SeekOrigin.Begin);
-            imageStream.Read(sector, 0, (int)ImageInfo.sectorSize);
+            imageStream.Read(sector, 0, (int)ImageInfo.SectorSize);
 
             if(sectorCache.Count > maxCachedSectors)
             {
@@ -606,11 +606,11 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -625,7 +625,7 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
-            if(allEmpty) return new byte[ImageInfo.sectorSize * length];
+            if(allEmpty) return new byte[ImageInfo.SectorSize * length];
 
             for(uint i = 0; i < length; i++)
             {
@@ -643,17 +643,17 @@ namespace DiscImageChef.DiscImages
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -663,47 +663,47 @@ namespace DiscImageChef.DiscImages
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         #region Unsupported features
@@ -847,18 +847,18 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

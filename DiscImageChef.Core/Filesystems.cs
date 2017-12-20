@@ -33,21 +33,21 @@
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filesystems;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Core
 {
     public static class Filesystems
     {
-        public static void Identify(ImagePlugin imagePlugin, out List<string> id_plugins, Partition partition)
+        public static void Identify(ImagePlugin imagePlugin, out List<string> idPlugins, Partition partition)
         {
-            id_plugins = new List<string>();
+            idPlugins = new List<string>();
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
 
-            foreach(Filesystem _plugin in plugins.PluginsList.Values)
+            foreach(Filesystem plugin in plugins.PluginsList.Values)
             {
-                if(_plugin.Identify(imagePlugin, partition)) id_plugins.Add(_plugin.Name.ToLower());
+                if(plugin.Identify(imagePlugin, partition)) idPlugins.Add(plugin.Name.ToLower());
             }
         }
     }

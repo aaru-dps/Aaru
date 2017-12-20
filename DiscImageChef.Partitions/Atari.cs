@@ -35,9 +35,9 @@ using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class AtariPartitions : PartPlugin
+    public class AtariPartitions : PartitionPlugin
     {
         const uint TypeGEMDOS = 0x0047454D;
         const uint TypeBigGEMDOS = 0x0042474D;
@@ -55,10 +55,10 @@ namespace DiscImageChef.PartPlugins
         public AtariPartitions()
         {
             Name = "Atari partitions";
-            PluginUUID = new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
+            PluginUuid = new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin,
+        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
                                             out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<CommonTypes.Partition>();
@@ -99,7 +99,7 @@ namespace DiscImageChef.PartPlugins
             table.badLength = BigEndianBitConverter.ToUInt32(sector, 506);
             table.checksum = BigEndianBitConverter.ToUInt16(sector, 510);
 
-            Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
+            Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
             sha1Ctx.Init();
             sha1Ctx.Update(table.boot);
             DicConsole.DebugWriteLine("Atari partition plugin", "Boot code SHA1: {0}", sha1Ctx.End());

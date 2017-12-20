@@ -39,65 +39,65 @@ using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.DiscImages
 {
     public class VMware : ImagePlugin
     {
         #region Internal constants
-        const uint VMwareExtentMagic = 0x564D444B;
-        const uint VMwareCowMagic = 0x44574F43;
+        const uint VMWARE_EXTENT_MAGIC = 0x564D444B;
+        const uint VMWARE_COW_MAGIC = 0x44574F43;
 
-        const string VMTypeCustom = "custom";
-        const string VMTypeMonoSparse = "monolithicSparse";
-        const string VMTypeMonoFlat = "monolithicFlat";
-        const string VMTypeSplitSparse = "twoGbMaxExtentSparse";
-        const string VMTypeSplitFlat = "twoGbMaxExtentFlat";
-        const string VMTypeFullDevice = "fullDevice";
-        const string VMTypePartDevice = "partitionedDevice";
-        const string VMFSTypeFlat = "vmfsPreallocated";
-        const string VMFSTypeZero = "vmfsEagerZeroedThick";
-        const string VMFSTypeThin = "vmfsThin";
-        const string VMFSTypeSparse = "vmfsSparse";
-        const string VMFSTypeRDM = "vmfsRDM";
-        const string VMFSTypeRDMOld = "vmfsRawDeviceMap";
-        const string VMFSTypeRDMP = "vmfsRDMP";
-        const string VMFSTypeRDMPOld = "vmfsPassthroughRawDeviceMap";
-        const string VMFSTypeRaw = "vmfsRaw";
-        const string VMFSType = "vmfs";
-        const string VMTypeStream = "streamOptimized";
+        const string VM_TYPE_CUSTOM = "custom";
+        const string VM_TYPE_MONO_SPARSE = "monolithicSparse";
+        const string VM_TYPE_MONO_FLAT = "monolithicFlat";
+        const string VM_TYPE_SPLIT_SPARSE = "twoGbMaxExtentSparse";
+        const string VM_TYPE_SPLIT_FLAT = "twoGbMaxExtentFlat";
+        const string VM_TYPE_FULL_DEVICE = "fullDevice";
+        const string VM_TYPE_PART_DEVICE = "partitionedDevice";
+        const string VMFS_TYPE_FLAT = "vmfsPreallocated";
+        const string VMFS_TYPE_ZERO = "vmfsEagerZeroedThick";
+        const string VMFS_TYPE_THIN = "vmfsThin";
+        const string VMFS_TYPE_SPARSE = "vmfsSparse";
+        const string VMFS_TYPE_RDM = "vmfsRDM";
+        const string VMFS_TYPE_RDM_OLD = "vmfsRawDeviceMap";
+        const string VMFS_TYPE_RDMP = "vmfsRDMP";
+        const string VMFS_TYPE_RDMP_OLD = "vmfsPassthroughRawDeviceMap";
+        const string VMFS_TYPE_RAW = "vmfsRaw";
+        const string VMFS_TYPE = "vmfs";
+        const string VM_TYPE_STREAM = "streamOptimized";
 
-        const string DDFMagic = "# Disk DescriptorFile";
-        readonly byte[] DDFMagicBytes =
+        const string DDF_MAGIC = "# Disk DescriptorFile";
+        readonly byte[] ddfMagicBytes =
         {
             0x23, 0x20, 0x44, 0x69, 0x73, 0x6B, 0x20, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x6F, 0x72, 0x46,
             0x69, 0x6C, 0x65
         };
 
-        const string VersionRegEx = "^\\s*version\\s*=\\s*(?<version>\\d+)$";
-        const string CidRegEx = "^\\s*CID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
-        const string ParenCidRegEx = "^\\s*parentCID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
-        const string TypeRegEx =
+        const string VERSION_REGEX = "^\\s*version\\s*=\\s*(?<version>\\d+)$";
+        const string CID_REGEX = "^\\s*CID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
+        const string PAREN_CID_REGEX = "^\\s*parentCID\\s*=\\s*(?<cid>[0123456789abcdef]{8})$";
+        const string TYPE_REGEX =
                 "^\\s*createType\\s*=\\s*\\\"(?<type>custom|monolithicSparse|monolithicFlat|twoGbMaxExtentSparse|twoGbMaxExtentFlat|fullDevice|partitionedDevice|vmfs|vmfsPreallocated|vmfsEagerZeroedThick|vmfsThin|vmfsSparse|vmfsRDM|vmfsRawDeviceMap|vmfsRDMP|vmfsPassthroughRawDeviceMap|vmfsRaw|streamOptimized)\\\"$"
             ;
-        const string ExtentRegEx =
+        const string EXTENT_REGEX =
                 "^\\s*(?<access>(RW|RDONLY|NOACCESS))\\s+(?<sectors>\\d+)\\s+(?<type>(FLAT|SPARSE|ZERO|VMFS|VMFSSPARSE|VMFSRDM|VMFSRAW))\\s+\\\"(?<filename>.+)\\\"(\\s*(?<offset>\\d+))?$"
             ;
-        const string DDBTypeRegEx = "^\\s*ddb\\.adapterType\\s*=\\s*\\\"(?<type>ide|buslogic|lsilogic|legacyESX)\\\"$";
-        const string DDBSectorsRegEx = "^\\s*ddb\\.geometry\\.sectors\\s*=\\s*\\\"(?<sectors>\\d+)\\\"$";
-        const string DDBHeadsRegex = "^\\s*ddb\\.geometry\\.heads\\s*=\\s*\\\"(?<heads>\\d+)\\\"$";
-        const string DDBCylindersRegEx = "^\\s*ddb\\.geometry\\.cylinders\\s*=\\s*\\\"(?<cylinders>\\d+)\\\"$";
-        const string ParentRegEx = "^\\s*parentFileNameHint\\s*=\\s*\\\"(?<filename>.+)\\\"$";
+        const string DDB_TYPE_REGEX = "^\\s*ddb\\.adapterType\\s*=\\s*\\\"(?<type>ide|buslogic|lsilogic|legacyESX)\\\"$";
+        const string DDB_SECTORS_REGEX = "^\\s*ddb\\.geometry\\.sectors\\s*=\\s*\\\"(?<sectors>\\d+)\\\"$";
+        const string DDB_HEADS_REGEX = "^\\s*ddb\\.geometry\\.heads\\s*=\\s*\\\"(?<heads>\\d+)\\\"$";
+        const string DDB_CYLINDERS_REGEX = "^\\s*ddb\\.geometry\\.cylinders\\s*=\\s*\\\"(?<cylinders>\\d+)\\\"$";
+        const string PARENT_REGEX = "^\\s*parentFileNameHint\\s*=\\s*\\\"(?<filename>.+)\\\"$";
 
-        const uint FlagsValidNewLine = 0x01;
-        const uint FlagsUseRedundantTable = 0x02;
-        const uint FlagsZeroGrainGTE = 0x04;
-        const uint FlagsCompression = 0x10000;
-        const uint FlagsMarkers = 0x20000;
+        const uint FLAGS_VALID_NEW_LINE = 0x01;
+        const uint FLAGS_USE_REDUNDANT_TABLE = 0x02;
+        const uint FLAGS_ZERO_GRAIN_GTE = 0x04;
+        const uint FLAGS_COMPRESSION = 0x10000;
+        const uint FLAGS_MARKERS = 0x20000;
 
-        const ushort CompressionNone = 0;
-        const ushort CompressionDeflate = 1;
+        const ushort COMPRESSION_NONE = 0;
+        const ushort COMPRESSION_DEFLATE = 1;
         #endregion
 
         #region Internal Structures
@@ -153,12 +153,12 @@ namespace DiscImageChef.DiscImages
 
         struct VMwareExtent
         {
-            public string access;
-            public uint sectors;
-            public string type;
-            public Filter filter;
-            public string filename;
-            public uint offset;
+            public string Access;
+            public uint Sectors;
+            public string Type;
+            public Filter Filter;
+            public string Filename;
+            public uint Offset;
         }
 
         VMwareExtentHeader vmEHdr;
@@ -174,9 +174,9 @@ namespace DiscImageChef.DiscImages
         Dictionary<ulong, VMwareExtent> extents;
         string parentName;
 
-        const uint MaxCacheSize = 16777216;
-        const uint sectorSize = 512;
-        uint maxCachedSectors = MaxCacheSize / sectorSize;
+        const uint MAX_CACHE_SIZE = 16777216;
+        const uint SECTOR_SIZE = 512;
+        uint maxCachedSectors = MAX_CACHE_SIZE / SECTOR_SIZE;
         uint maxCachedGrains;
 
         ImagePlugin parentImage;
@@ -189,28 +189,28 @@ namespace DiscImageChef.DiscImages
         public VMware()
         {
             Name = "VMware disk image";
-            PluginUUID = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+            PluginUuid = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = "VMware";
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = "VMware";
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -222,11 +222,11 @@ namespace DiscImageChef.DiscImages
             if(stream.Length > Marshal.SizeOf(vmEHdr))
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmEHdr_b = new byte[Marshal.SizeOf(vmEHdr)];
-                stream.Read(vmEHdr_b, 0, Marshal.SizeOf(vmEHdr));
+                byte[] vmEHdrB = new byte[Marshal.SizeOf(vmEHdr)];
+                stream.Read(vmEHdrB, 0, Marshal.SizeOf(vmEHdr));
                 vmEHdr = new VMwareExtentHeader();
                 IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmEHdr));
-                Marshal.Copy(vmEHdr_b, 0, headerPtr, Marshal.SizeOf(vmEHdr));
+                Marshal.Copy(vmEHdrB, 0, headerPtr, Marshal.SizeOf(vmEHdr));
                 vmEHdr = (VMwareExtentHeader)Marshal.PtrToStructure(headerPtr, typeof(VMwareExtentHeader));
                 Marshal.FreeHGlobal(headerPtr);
 
@@ -237,22 +237,22 @@ namespace DiscImageChef.DiscImages
                 if(stream.Length > Marshal.SizeOf(vmCHdr))
                 {
                     stream.Seek(0, SeekOrigin.Begin);
-                    byte[] vmCHdr_b = new byte[Marshal.SizeOf(vmCHdr)];
-                    stream.Read(vmCHdr_b, 0, Marshal.SizeOf(vmCHdr));
+                    byte[] vmCHdrB = new byte[Marshal.SizeOf(vmCHdr)];
+                    stream.Read(vmCHdrB, 0, Marshal.SizeOf(vmCHdr));
                     headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmCHdr));
-                    Marshal.Copy(vmCHdr_b, 0, headerPtr, Marshal.SizeOf(vmCHdr));
+                    Marshal.Copy(vmCHdrB, 0, headerPtr, Marshal.SizeOf(vmCHdr));
                     vmCHdr = (VMwareCowHeader)Marshal.PtrToStructure(headerPtr, typeof(VMwareCowHeader));
                     Marshal.FreeHGlobal(headerPtr);
                 }
 
-                return DDFMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMwareExtentMagic ||
-                       vmCHdr.magic == VMwareCowMagic;
+                return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
+                       vmCHdr.magic == VMWARE_COW_MAGIC;
             }
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(ddfMagic, 0, 0x15);
 
-            return DDFMagicBytes.SequenceEqual(ddfMagic);
+            return ddfMagicBytes.SequenceEqual(ddfMagic);
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -266,10 +266,10 @@ namespace DiscImageChef.DiscImages
             if(stream.Length > Marshal.SizeOf(vmEHdr))
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmEHdr_b = new byte[Marshal.SizeOf(vmEHdr)];
-                stream.Read(vmEHdr_b, 0, Marshal.SizeOf(vmEHdr));
+                byte[] vmEHdrB = new byte[Marshal.SizeOf(vmEHdr)];
+                stream.Read(vmEHdrB, 0, Marshal.SizeOf(vmEHdr));
                 IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmEHdr));
-                Marshal.Copy(vmEHdr_b, 0, headerPtr, Marshal.SizeOf(vmEHdr));
+                Marshal.Copy(vmEHdrB, 0, headerPtr, Marshal.SizeOf(vmEHdr));
                 vmEHdr = (VMwareExtentHeader)Marshal.PtrToStructure(headerPtr, typeof(VMwareExtentHeader));
                 Marshal.FreeHGlobal(headerPtr);
             }
@@ -277,10 +277,10 @@ namespace DiscImageChef.DiscImages
             if(stream.Length > Marshal.SizeOf(vmCHdr))
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmCHdr_b = new byte[Marshal.SizeOf(vmCHdr)];
-                stream.Read(vmCHdr_b, 0, Marshal.SizeOf(vmCHdr));
+                byte[] vmCHdrB = new byte[Marshal.SizeOf(vmCHdr)];
+                stream.Read(vmCHdrB, 0, Marshal.SizeOf(vmCHdr));
                 IntPtr cowPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmCHdr));
-                Marshal.Copy(vmCHdr_b, 0, cowPtr, Marshal.SizeOf(vmCHdr));
+                Marshal.Copy(vmCHdrB, 0, cowPtr, Marshal.SizeOf(vmCHdr));
                 vmCHdr = (VMwareCowHeader)Marshal.PtrToStructure(cowPtr, typeof(VMwareCowHeader));
                 Marshal.FreeHGlobal(cowPtr);
             }
@@ -289,7 +289,7 @@ namespace DiscImageChef.DiscImages
             bool vmEHdrSet = false;
             bool cowD = false;
 
-            if(vmEHdr.magic == VMwareExtentMagic)
+            if(vmEHdr.magic == VMWARE_EXTENT_MAGIC)
             {
                 vmEHdrSet = true;
                 gdFilter = imageFilter;
@@ -297,15 +297,15 @@ namespace DiscImageChef.DiscImages
                 if(vmEHdr.descriptorOffset == 0 || vmEHdr.descriptorSize == 0)
                     throw new Exception("Please open VMDK descriptor.");
 
-                byte[] ddfEmbed = new byte[vmEHdr.descriptorSize * sectorSize];
+                byte[] ddfEmbed = new byte[vmEHdr.descriptorSize * SECTOR_SIZE];
 
-                stream.Seek((long)(vmEHdr.descriptorOffset * sectorSize), SeekOrigin.Begin);
+                stream.Seek((long)(vmEHdr.descriptorOffset * SECTOR_SIZE), SeekOrigin.Begin);
                 stream.Read(ddfEmbed, 0, ddfEmbed.Length);
                 ddfStream.Write(ddfEmbed, 0, ddfEmbed.Length);
 
                 embedded = true;
             }
-            else if(vmCHdr.magic == VMwareCowMagic)
+            else if(vmCHdr.magic == VMWARE_COW_MAGIC)
             {
                 gdFilter = imageFilter;
                 cowD = true;
@@ -316,7 +316,7 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(ddfMagic, 0, 0x15);
 
-                if(!DDFMagicBytes.SequenceEqual(ddfMagic)) throw new Exception("Not a descriptor.");
+                if(!ddfMagicBytes.SequenceEqual(ddfMagic)) throw new Exception("Not a descriptor.");
 
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] ddfExternal = new byte[imageFilter.GetDataForkLength()];
@@ -349,136 +349,136 @@ namespace DiscImageChef.DiscImages
                     {
                         VMwareCowHeader extHdrCow = new VMwareCowHeader();
                         extentStream.Seek(0, SeekOrigin.Begin);
-                        byte[] vmCHdr_b = new byte[Marshal.SizeOf(extHdrCow)];
-                        extentStream.Read(vmCHdr_b, 0, Marshal.SizeOf(extHdrCow));
+                        byte[] vmCHdrB = new byte[Marshal.SizeOf(extHdrCow)];
+                        extentStream.Read(vmCHdrB, 0, Marshal.SizeOf(extHdrCow));
                         IntPtr cowPtr = Marshal.AllocHGlobal(Marshal.SizeOf(extHdrCow));
-                        Marshal.Copy(vmCHdr_b, 0, cowPtr, Marshal.SizeOf(extHdrCow));
+                        Marshal.Copy(vmCHdrB, 0, cowPtr, Marshal.SizeOf(extHdrCow));
                         extHdrCow = (VMwareCowHeader)Marshal.PtrToStructure(cowPtr, typeof(VMwareCowHeader));
                         Marshal.FreeHGlobal(cowPtr);
 
-                        if(extHdrCow.magic != VMwareCowMagic) break;
+                        if(extHdrCow.magic != VMWARE_COW_MAGIC) break;
 
                         VMwareExtent newExtent = new VMwareExtent();
-                        newExtent.access = "RW";
-                        newExtent.filter = extentFilter;
-                        newExtent.filename = extentFilter.GetFilename();
-                        newExtent.offset = 0;
-                        newExtent.sectors = extHdrCow.sectors;
-                        newExtent.type = "SPARSE";
+                        newExtent.Access = "RW";
+                        newExtent.Filter = extentFilter;
+                        newExtent.Filename = extentFilter.GetFilename();
+                        newExtent.Offset = 0;
+                        newExtent.Sectors = extHdrCow.sectors;
+                        newExtent.Type = "SPARSE";
 
-                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access,
-                                                  newExtent.sectors, newExtent.type, newExtent.filename,
-                                                  newExtent.offset);
+                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
+                                                  newExtent.Sectors, newExtent.Type, newExtent.Filename,
+                                                  newExtent.Offset);
 
                         extents.Add(currentSector, newExtent);
-                        currentSector += newExtent.sectors;
+                        currentSector += newExtent.Sectors;
                     }
                     else break;
 
                     cowCount++;
                 }
 
-                imageType = VMTypeSplitSparse;
+                imageType = VM_TYPE_SPLIT_SPARSE;
             }
             else
             {
                 ddfStream.Seek(0, SeekOrigin.Begin);
 
-                Regex RegexVersion = new Regex(VersionRegEx);
-                Regex RegexCid = new Regex(CidRegEx);
-                Regex RegexParentCid = new Regex(ParenCidRegEx);
-                Regex RegexType = new Regex(TypeRegEx);
-                Regex RegexExtent = new Regex(ExtentRegEx);
-                Regex RegexParent = new Regex(ParentRegEx);
-                Regex RegexCylinders = new Regex(DDBCylindersRegEx);
-                Regex RegexHeads = new Regex(DDBHeadsRegex);
-                Regex RegexSectors = new Regex(DDBSectorsRegEx);
+                Regex regexVersion = new Regex(VERSION_REGEX);
+                Regex regexCid = new Regex(CID_REGEX);
+                Regex regexParentCid = new Regex(PAREN_CID_REGEX);
+                Regex regexType = new Regex(TYPE_REGEX);
+                Regex regexExtent = new Regex(EXTENT_REGEX);
+                Regex regexParent = new Regex(PARENT_REGEX);
+                Regex regexCylinders = new Regex(DDB_CYLINDERS_REGEX);
+                Regex regexHeads = new Regex(DDB_HEADS_REGEX);
+                Regex regexSectors = new Regex(DDB_SECTORS_REGEX);
 
-                Match MatchVersion;
-                Match MatchCid;
-                Match MatchParentCid;
-                Match MatchType;
-                Match MatchExtent;
-                Match MatchParent;
-                Match MatchCylinders;
-                Match MatchHeads;
-                Match MatchSectors;
+                Match matchVersion;
+                Match matchCid;
+                Match matchParentCid;
+                Match matchType;
+                Match matchExtent;
+                Match matchParent;
+                Match matchCylinders;
+                Match matchHeads;
+                Match matchSectors;
 
                 StreamReader ddfStreamRdr = new StreamReader(ddfStream);
 
                 while(ddfStreamRdr.Peek() >= 0)
                 {
-                    string _line = ddfStreamRdr.ReadLine();
+                    string line = ddfStreamRdr.ReadLine();
 
-                    MatchVersion = RegexVersion.Match(_line);
-                    MatchCid = RegexCid.Match(_line);
-                    MatchParentCid = RegexParentCid.Match(_line);
-                    MatchType = RegexType.Match(_line);
-                    MatchExtent = RegexExtent.Match(_line);
-                    MatchParent = RegexParent.Match(_line);
-                    MatchCylinders = RegexCylinders.Match(_line);
-                    MatchHeads = RegexHeads.Match(_line);
-                    MatchSectors = RegexSectors.Match(_line);
+                    matchVersion = regexVersion.Match(line);
+                    matchCid = regexCid.Match(line);
+                    matchParentCid = regexParentCid.Match(line);
+                    matchType = regexType.Match(line);
+                    matchExtent = regexExtent.Match(line);
+                    matchParent = regexParent.Match(line);
+                    matchCylinders = regexCylinders.Match(line);
+                    matchHeads = regexHeads.Match(line);
+                    matchSectors = regexSectors.Match(line);
 
-                    if(MatchVersion.Success)
+                    if(matchVersion.Success)
                     {
-                        uint.TryParse(MatchVersion.Groups["version"].Value, out version);
+                        uint.TryParse(matchVersion.Groups["version"].Value, out version);
                         DicConsole.DebugWriteLine("VMware plugin", "version = {0}", version);
                     }
-                    else if(MatchCid.Success)
+                    else if(matchCid.Success)
                     {
-                        cid = Convert.ToUInt32(MatchCid.Groups["cid"].Value, 16);
+                        cid = Convert.ToUInt32(matchCid.Groups["cid"].Value, 16);
                         DicConsole.DebugWriteLine("VMware plugin", "cid = {0:x8}", cid);
                     }
-                    else if(MatchParentCid.Success)
+                    else if(matchParentCid.Success)
                     {
-                        parentCid = Convert.ToUInt32(MatchParentCid.Groups["cid"].Value, 16);
+                        parentCid = Convert.ToUInt32(matchParentCid.Groups["cid"].Value, 16);
                         DicConsole.DebugWriteLine("VMware plugin", "parentCID = {0:x8}", parentCid);
                     }
-                    else if(MatchType.Success)
+                    else if(matchType.Success)
                     {
-                        imageType = MatchType.Groups["type"].Value;
+                        imageType = matchType.Groups["type"].Value;
                         DicConsole.DebugWriteLine("VMware plugin", "createType = \"{0}\"", imageType);
                     }
-                    else if(MatchExtent.Success)
+                    else if(matchExtent.Success)
                     {
                         VMwareExtent newExtent = new VMwareExtent();
-                        newExtent.access = MatchExtent.Groups["access"].Value;
+                        newExtent.Access = matchExtent.Groups["access"].Value;
                         if(!embedded)
-                            newExtent.filter =
+                            newExtent.Filter =
                                 new FiltersList()
                                     .GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.GetBasePath()),
-                                                            MatchExtent.Groups["filename"].Value));
-                        else newExtent.filter = imageFilter;
-                        uint.TryParse(MatchExtent.Groups["offset"].Value, out newExtent.offset);
-                        uint.TryParse(MatchExtent.Groups["sectors"].Value, out newExtent.sectors);
-                        newExtent.type = MatchExtent.Groups["type"].Value;
-                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access,
-                                                  newExtent.sectors, newExtent.type, newExtent.filename,
-                                                  newExtent.offset);
+                                                            matchExtent.Groups["filename"].Value));
+                        else newExtent.Filter = imageFilter;
+                        uint.TryParse(matchExtent.Groups["offset"].Value, out newExtent.Offset);
+                        uint.TryParse(matchExtent.Groups["sectors"].Value, out newExtent.Sectors);
+                        newExtent.Type = matchExtent.Groups["type"].Value;
+                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
+                                                  newExtent.Sectors, newExtent.Type, newExtent.Filename,
+                                                  newExtent.Offset);
 
                         extents.Add(currentSector, newExtent);
-                        currentSector += newExtent.sectors;
+                        currentSector += newExtent.Sectors;
                     }
-                    else if(MatchParent.Success)
+                    else if(matchParent.Success)
                     {
-                        parentName = MatchParent.Groups["filename"].Value;
+                        parentName = matchParent.Groups["filename"].Value;
                         DicConsole.DebugWriteLine("VMware plugin", "parentFileNameHint = \"{0}\"", parentName);
                         hasParent = true;
                     }
-                    else if(MatchCylinders.Success)
+                    else if(matchCylinders.Success)
                     {
-                        uint.TryParse(MatchCylinders.Groups["cylinders"].Value, out ImageInfo.cylinders);
+                        uint.TryParse(matchCylinders.Groups["cylinders"].Value, out ImageInfo.Cylinders);
                         matchedCyls = true;
                     }
-                    else if(MatchHeads.Success)
+                    else if(matchHeads.Success)
                     {
-                        uint.TryParse(MatchHeads.Groups["heads"].Value, out ImageInfo.heads);
+                        uint.TryParse(matchHeads.Groups["heads"].Value, out ImageInfo.Heads);
                         matchedHds = true;
                     }
-                    else if(MatchSectors.Success)
+                    else if(matchSectors.Success)
                     {
-                        uint.TryParse(MatchSectors.Groups["sectors"].Value, out ImageInfo.sectorsPerTrack);
+                        uint.TryParse(matchSectors.Groups["sectors"].Value, out ImageInfo.SectorsPerTrack);
                         matchedSpt = true;
                     }
                 }
@@ -488,24 +488,24 @@ namespace DiscImageChef.DiscImages
 
             switch(imageType)
             {
-                case VMTypeMonoSparse: //"monolithicSparse";
-                case VMTypeMonoFlat: //"monolithicFlat";
-                case VMTypeSplitSparse: //"twoGbMaxExtentSparse";
-                case VMTypeSplitFlat: //"twoGbMaxExtentFlat";
-                case VMFSTypeFlat: //"vmfsPreallocated";
-                case VMFSTypeZero: //"vmfsEagerZeroedThick";
-                case VMFSTypeThin: //"vmfsThin";
-                case VMFSTypeSparse: //"vmfsSparse";
-                case VMFSType: //"vmfs";
-                case VMTypeStream: //"streamOptimized";
+                case VM_TYPE_MONO_SPARSE: //"monolithicSparse";
+                case VM_TYPE_MONO_FLAT: //"monolithicFlat";
+                case VM_TYPE_SPLIT_SPARSE: //"twoGbMaxExtentSparse";
+                case VM_TYPE_SPLIT_FLAT: //"twoGbMaxExtentFlat";
+                case VMFS_TYPE_FLAT: //"vmfsPreallocated";
+                case VMFS_TYPE_ZERO: //"vmfsEagerZeroedThick";
+                case VMFS_TYPE_THIN: //"vmfsThin";
+                case VMFS_TYPE_SPARSE: //"vmfsSparse";
+                case VMFS_TYPE: //"vmfs";
+                case VM_TYPE_STREAM: //"streamOptimized";
                     break;
-                case VMTypeFullDevice: //"fullDevice";
-                case VMTypePartDevice: //"partitionedDevice";
-                case VMFSTypeRDM: //"vmfsRDM";
-                case VMFSTypeRDMOld: //"vmfsRawDeviceMap";
-                case VMFSTypeRDMP: //"vmfsRDMP";
-                case VMFSTypeRDMPOld: //"vmfsPassthroughRawDeviceMap";
-                case VMFSTypeRaw: //"vmfsRaw";
+                case VM_TYPE_FULL_DEVICE: //"fullDevice";
+                case VM_TYPE_PART_DEVICE: //"partitionedDevice";
+                case VMFS_TYPE_RDM: //"vmfsRDM";
+                case VMFS_TYPE_RDM_OLD: //"vmfsRawDeviceMap";
+                case VMFS_TYPE_RDMP: //"vmfsRDMP";
+                case VMFS_TYPE_RDMP_OLD: //"vmfsPassthroughRawDeviceMap";
+                case VMFS_TYPE_RAW: //"vmfsRaw";
                     throw new
                         ImageNotSupportedException("Raw device image files are not supported, try accessing the device directly.");
                 default:
@@ -517,43 +517,43 @@ namespace DiscImageChef.DiscImages
 
             foreach(VMwareExtent extent in extents.Values)
             {
-                if(extent.filter == null)
-                    throw new Exception(string.Format("Extent file {0} not found.", extent.filename));
+                if(extent.Filter == null)
+                    throw new Exception(string.Format("Extent file {0} not found.", extent.Filename));
 
-                if(extent.access == "NOACCESS") throw new Exception("Cannot access NOACCESS extents ;).");
+                if(extent.Access == "NOACCESS") throw new Exception("Cannot access NOACCESS extents ;).");
 
-                if(extent.type != "FLAT" && extent.type != "ZERO" && extent.type != "VMFS" && !cowD)
+                if(extent.Type != "FLAT" && extent.Type != "ZERO" && extent.Type != "VMFS" && !cowD)
                 {
-                    Stream extentStream = extent.filter.GetDataForkStream();
+                    Stream extentStream = extent.Filter.GetDataForkStream();
                     extentStream.Seek(0, SeekOrigin.Begin);
 
-                    if(extentStream.Length < sectorSize)
-                        throw new Exception(string.Format("Extent {0} is too small.", extent.filename));
+                    if(extentStream.Length < SECTOR_SIZE)
+                        throw new Exception(string.Format("Extent {0} is too small.", extent.Filename));
 
                     VMwareExtentHeader extentHdr = new VMwareExtentHeader();
-                    byte[] extentHdr_b = new byte[Marshal.SizeOf(extentHdr)];
-                    extentStream.Read(extentHdr_b, 0, Marshal.SizeOf(extentHdr));
+                    byte[] extentHdrB = new byte[Marshal.SizeOf(extentHdr)];
+                    extentStream.Read(extentHdrB, 0, Marshal.SizeOf(extentHdr));
                     IntPtr extentHdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(extentHdr));
-                    Marshal.Copy(extentHdr_b, 0, extentHdrPtr, Marshal.SizeOf(extentHdr));
+                    Marshal.Copy(extentHdrB, 0, extentHdrPtr, Marshal.SizeOf(extentHdr));
                     extentHdr = (VMwareExtentHeader)Marshal.PtrToStructure(extentHdrPtr, typeof(VMwareExtentHeader));
                     Marshal.FreeHGlobal(extentHdrPtr);
 
-                    if(extentHdr.magic != VMwareExtentMagic)
-                        throw new Exception(string.Format("{0} is not an VMware extent.", extent.filter));
+                    if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
+                        throw new Exception(string.Format("{0} is not an VMware extent.", extent.Filter));
 
-                    if(extentHdr.capacity < extent.sectors)
+                    if(extentHdr.capacity < extent.Sectors)
                         throw new
                             Exception(string.Format("Extent contains incorrect number of sectors, {0}. {1} were expected",
-                                                    extentHdr.capacity, extent.sectors));
+                                                    extentHdr.capacity, extent.Sectors));
 
                     // TODO: Support compressed extents
-                    if(extentHdr.compression != CompressionNone)
+                    if(extentHdr.compression != COMPRESSION_NONE)
                         throw new ImageNotSupportedException("Compressed extents are not yet supported.");
 
                     if(!vmEHdrSet)
                     {
                         vmEHdr = extentHdr;
-                        gdFilter = extent.filter;
+                        gdFilter = extent.Filter;
                         vmEHdrSet = true;
                     }
 
@@ -565,12 +565,12 @@ namespace DiscImageChef.DiscImages
                 throw new
                     Exception("There are sparse extents but there is no header to find the grain tables, cannot proceed.");
 
-            ImageInfo.sectors = currentSector;
+            ImageInfo.Sectors = currentSector;
 
             uint grains = 0;
             uint gdEntries = 0;
             long gdOffset = 0;
-            uint GTEsPerGT = 0;
+            uint gtEsPerGt = 0;
 
             if(oneNoFlat && !cowD)
             {
@@ -596,11 +596,11 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", vmEHdr.compression);
 
                 grainSize = vmEHdr.grainSize;
-                grains = (uint)(ImageInfo.sectors / vmEHdr.grainSize) + 1;
+                grains = (uint)(ImageInfo.Sectors / vmEHdr.grainSize) + 1;
                 gdEntries = grains / vmEHdr.GTEsPerGT;
-                GTEsPerGT = vmEHdr.GTEsPerGT;
+                gtEsPerGt = vmEHdr.GTEsPerGT;
 
-                if((vmEHdr.flags & FlagsUseRedundantTable) == FlagsUseRedundantTable) gdOffset = (long)vmEHdr.rgdOffset;
+                if((vmEHdr.flags & FLAGS_USE_REDUNDANT_TABLE) == FLAGS_USE_REDUNDANT_TABLE) gdOffset = (long)vmEHdr.rgdOffset;
                 else gdOffset = (long)vmEHdr.gdOffset;
             }
             else if(oneNoFlat && cowD)
@@ -624,12 +624,12 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", vmCHdr.uncleanShutdown);
 
                 grainSize = vmCHdr.grainSize;
-                grains = (uint)(ImageInfo.sectors / vmCHdr.grainSize) + 1;
+                grains = (uint)(ImageInfo.Sectors / vmCHdr.grainSize) + 1;
                 gdEntries = vmCHdr.numGDEntries;
                 gdOffset = vmCHdr.gdOffset;
-                GTEsPerGT = grains / gdEntries;
-                ImageInfo.imageName = StringHandlers.CToString(vmCHdr.name);
-                ImageInfo.imageComments = StringHandlers.CToString(vmCHdr.description);
+                gtEsPerGt = grains / gdEntries;
+                ImageInfo.ImageName = StringHandlers.CToString(vmCHdr.name);
+                ImageInfo.ImageComments = StringHandlers.CToString(vmCHdr.description);
                 version = vmCHdr.version;
             }
 
@@ -637,12 +637,12 @@ namespace DiscImageChef.DiscImages
             {
                 if(grains == 0 || gdEntries == 0) throw new Exception("Some error ocurred setting GD sizes");
 
-                DicConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables", ImageInfo.sectors,
+                DicConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables", ImageInfo.Sectors,
                                           grains, gdEntries);
 
                 Stream gdStream = gdFilter.GetDataForkStream();
 
-                gdStream.Seek(gdOffset * sectorSize, SeekOrigin.Begin);
+                gdStream.Seek(gdOffset * SECTOR_SIZE, SeekOrigin.Begin);
 
                 DicConsole.DebugWriteLine("VMware plugin", "Reading grain directory");
                 uint[] gd = new uint[gdEntries];
@@ -655,17 +655,17 @@ namespace DiscImageChef.DiscImages
                 gTable = new uint[grains];
                 foreach(uint gtOff in gd)
                 {
-                    byte[] gtBytes = new byte[GTEsPerGT * 4];
-                    gdStream.Seek(gtOff * sectorSize, SeekOrigin.Begin);
+                    byte[] gtBytes = new byte[gtEsPerGt * 4];
+                    gdStream.Seek(gtOff * SECTOR_SIZE, SeekOrigin.Begin);
                     gdStream.Read(gtBytes, 0, gtBytes.Length);
-                    for(int i = 0; i < GTEsPerGT; i++)
+                    for(int i = 0; i < gtEsPerGt; i++)
                     {
                         gTable[currentGrain] = BitConverter.ToUInt32(gtBytes, i * 4);
                         currentGrain++;
                     }
                 }
 
-                maxCachedGrains = (uint)(MaxCacheSize / (grainSize * sectorSize));
+                maxCachedGrains = (uint)(MAX_CACHE_SIZE / (grainSize * SECTOR_SIZE));
 
                 grainCache = new Dictionary<ulong, byte[]>();
             }
@@ -684,28 +684,28 @@ namespace DiscImageChef.DiscImages
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectorSize = sectorSize;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.mediaType = MediaType.GENERIC_HDD;
-            ImageInfo.imageSize = ImageInfo.sectors * sectorSize;
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.SectorSize = SECTOR_SIZE;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.MediaType = MediaType.GENERIC_HDD;
+            ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
             // VMDK version 1 started on VMware 4, so there is a previous version, "COWD"
-            if(cowD) ImageInfo.imageVersion = string.Format("{0}", version);
-            else ImageInfo.imageVersion = string.Format("{0}", version + 3);
+            if(cowD) ImageInfo.ImageVersion = string.Format("{0}", version);
+            else ImageInfo.ImageVersion = string.Format("{0}", version + 3);
 
             if(cowD)
             {
-                ImageInfo.cylinders = vmCHdr.cylinders;
-                ImageInfo.heads = vmCHdr.heads;
-                ImageInfo.sectorsPerTrack = vmCHdr.spt;
+                ImageInfo.Cylinders = vmCHdr.cylinders;
+                ImageInfo.Heads = vmCHdr.heads;
+                ImageInfo.SectorsPerTrack = vmCHdr.spt;
             }
             else if(!matchedCyls || !matchedHds || !matchedSpt)
             {
-                ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-                ImageInfo.heads = 16;
-                ImageInfo.sectorsPerTrack = 63;
+                ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+                ImageInfo.Heads = 16;
+                ImageInfo.SectorsPerTrack = 63;
             }
 
             return true;
@@ -713,7 +713,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
@@ -741,9 +741,9 @@ namespace DiscImageChef.DiscImages
 
             Stream dataStream;
 
-            if(currentExtent.type == "ZERO")
+            if(currentExtent.Type == "ZERO")
             {
-                sector = new byte[sectorSize];
+                sector = new byte[SECTOR_SIZE];
 
                 if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
@@ -751,12 +751,12 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            if(currentExtent.type == "FLAT" || currentExtent.type == "VMFS")
+            if(currentExtent.Type == "FLAT" || currentExtent.Type == "VMFS")
             {
-                dataStream = currentExtent.filter.GetDataForkStream();
-                dataStream.Seek((long)((currentExtent.offset + (sectorAddress - extentStartSector)) * sectorSize),
+                dataStream = currentExtent.Filter.GetDataForkStream();
+                dataStream.Seek((long)((currentExtent.Offset + (sectorAddress - extentStartSector)) * SECTOR_SIZE),
                                 SeekOrigin.Begin);
-                sector = new byte[sectorSize];
+                sector = new byte[SECTOR_SIZE];
                 dataStream.Read(sector, 0, sector.Length);
 
                 if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
@@ -766,7 +766,7 @@ namespace DiscImageChef.DiscImages
             }
 
             ulong index = sectorAddress / grainSize;
-            ulong secOff = (sectorAddress % grainSize) * sectorSize;
+            ulong secOff = (sectorAddress % grainSize) * SECTOR_SIZE;
 
             uint grainOff = gTable[index];
 
@@ -774,7 +774,7 @@ namespace DiscImageChef.DiscImages
 
             if(grainOff == 0 || grainOff == 1)
             {
-                sector = new byte[sectorSize];
+                sector = new byte[SECTOR_SIZE];
 
                 if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
@@ -782,13 +782,13 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            byte[] grain = new byte[sectorSize * grainSize];
+            byte[] grain = new byte[SECTOR_SIZE * grainSize];
 
             if(!grainCache.TryGetValue(grainOff, out grain))
             {
-                grain = new byte[sectorSize * grainSize];
-                dataStream = currentExtent.filter.GetDataForkStream();
-                dataStream.Seek((long)(((grainOff - extentStartSector) * sectorSize)), SeekOrigin.Begin);
+                grain = new byte[SECTOR_SIZE * grainSize];
+                dataStream = currentExtent.Filter.GetDataForkStream();
+                dataStream.Seek((long)(((grainOff - extentStartSector) * SECTOR_SIZE)), SeekOrigin.Begin);
                 dataStream.Read(grain, 0, grain.Length);
 
                 if(grainCache.Count >= maxCachedGrains) grainCache.Clear();
@@ -796,8 +796,8 @@ namespace DiscImageChef.DiscImages
                 grainCache.Add(grainOff, grain);
             }
 
-            sector = new byte[sectorSize];
-            Array.Copy(grain, (int)secOff, sector, 0, sectorSize);
+            sector = new byte[SECTOR_SIZE];
+            Array.Copy(grain, (int)secOff, sector, 0, SECTOR_SIZE);
 
             if(sectorCache.Count > maxCachedSectors) sectorCache.Clear();
 
@@ -808,11 +808,11 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -833,17 +833,17 @@ namespace DiscImageChef.DiscImages
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -853,47 +853,47 @@ namespace DiscImageChef.DiscImages
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         #region Unsupported features
@@ -1037,18 +1037,18 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

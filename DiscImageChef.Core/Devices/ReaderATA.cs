@@ -57,7 +57,7 @@ namespace DiscImageChef.Core.Devices
 
         Identify.IdentifyDevice ataId;
 
-        internal bool IsLBA
+        internal bool IsLba
         {
             get { return lbaMode; }
         }
@@ -74,7 +74,7 @@ namespace DiscImageChef.Core.Devices
             get { return sectors; }
         }
 
-        (uint, byte, byte) GetDeviceCHS()
+        (uint, byte, byte) GetDeviceChs()
         {
             if(dev.Type != DeviceType.ATA) return (0, 0, 0);
 
@@ -100,7 +100,7 @@ namespace DiscImageChef.Core.Devices
 
         ulong AtaGetBlocks()
         {
-            GetDeviceCHS();
+            GetDeviceChs();
 
             if(ataId.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
             {
@@ -350,7 +350,7 @@ namespace DiscImageChef.Core.Devices
             return error;
         }
 
-        bool AtaReadCHS(out byte[] buffer, ushort cylinder, byte head, byte sectir, out double duration)
+        bool AtaReadChs(out byte[] buffer, ushort cylinder, byte head, byte sectir, out double duration)
         {
             bool error = true;
             bool sense;
@@ -401,7 +401,7 @@ namespace DiscImageChef.Core.Devices
             return !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0);
         }
 
-        bool AtaSeekCHS(ushort cylinder, byte head, byte sector, out double duration)
+        bool AtaSeekChs(ushort cylinder, byte head, byte sector, out double duration)
         {
             AtaErrorRegistersCHS errorChs;
 

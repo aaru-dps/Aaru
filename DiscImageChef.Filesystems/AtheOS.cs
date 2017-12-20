@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public AtheOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AtheOS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "AtheOS Filesystem";
             PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
@@ -71,7 +71,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.GetSectorSize();
             uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.GetSectorSize();
@@ -93,7 +93,7 @@ namespace DiscImageChef.Filesystems
             return magic == AFS_MAGIC1;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

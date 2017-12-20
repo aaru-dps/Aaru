@@ -165,7 +165,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public RBF(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public RBF(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "OS-9 Random Block File Plugin";
             PluginUUID = new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
@@ -173,7 +173,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 256) return false;
 
@@ -206,7 +206,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

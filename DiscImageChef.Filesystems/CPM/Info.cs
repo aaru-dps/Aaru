@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.CPM
 {
@@ -47,7 +47,7 @@ namespace DiscImageChef.Filesystems.CPM
         {
             // This will only continue on devices with a chance to have ever been used by CP/M while failing on all others
             // It's ugly, but will stop a lot of false positives
-            switch(imagePlugin.ImageInfo.mediaType)
+            switch(imagePlugin.ImageInfo.MediaType)
             {
                 case MediaType.Unknown:
                 case MediaType.Apple32SS:

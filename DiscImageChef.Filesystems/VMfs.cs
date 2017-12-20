@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public VMfs(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public VMfs(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "VMware filesystem";
             PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
@@ -93,11 +93,11 @@ namespace DiscImageChef.Filesystems
         const uint VMfs_MAGIC = 0xC001D00D;
         const uint VMfs_Base = 0x00100000;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
-            ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.sectorSize;
+            ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.SectorSize;
 
             if(partition.Start + vmfsSuperOff > partition.End) return false;
 
@@ -108,10 +108,10 @@ namespace DiscImageChef.Filesystems
             return magic == VMfs_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
-            ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.sectorSize;
+            ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.SectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             VolumeInfo volInfo = new VolumeInfo();
@@ -148,8 +148,8 @@ namespace DiscImageChef.Filesystems
             xmlFSType.CreationDateSpecified = true;
             xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(mtimeSecs, mtimeNanoSecs);
             xmlFSType.ModificationDateSpecified = true;
-            xmlFSType.Clusters = volInfo.size * 256 / imagePlugin.ImageInfo.sectorSize;
-            xmlFSType.ClusterSize = (int)imagePlugin.ImageInfo.sectorSize;
+            xmlFSType.Clusters = volInfo.size * 256 / imagePlugin.ImageInfo.SectorSize;
+            xmlFSType.ClusterSize = (int)imagePlugin.ImageInfo.SectorSize;
             xmlFSType.VolumeSerial = volInfo.uuid.ToString();
         }
 

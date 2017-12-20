@@ -36,18 +36,18 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class PC98 : PartPlugin
+    public class PC98 : PartitionPlugin
     {
         const ushort IntelMagic = 0xAA55;
 
         public PC98()
         {
             Name = "NEC PC-9800 partition table";
-            PluginUUID = new Guid("27333401-C7C2-447D-961C-22AD0641A09A\n");
+            PluginUuid = new Guid("27333401-C7C2-447D-961C-22AD0641A09A\n");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -87,16 +87,16 @@ namespace DiscImageChef.PartPlugins
                                           StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
                 if(entry.dp_scyl != entry.dp_ecyl && entry.dp_ecyl > 0 &&
-                   entry.dp_scyl <= imagePlugin.ImageInfo.cylinders &&
-                   entry.dp_ecyl <= imagePlugin.ImageInfo.cylinders && entry.dp_shd <= imagePlugin.ImageInfo.heads &&
-                   entry.dp_ehd <= imagePlugin.ImageInfo.heads &&
-                   entry.dp_ssect <= imagePlugin.ImageInfo.sectorsPerTrack &&
-                   entry.dp_esect <= imagePlugin.ImageInfo.sectorsPerTrack)
+                   entry.dp_scyl <= imagePlugin.ImageInfo.Cylinders &&
+                   entry.dp_ecyl <= imagePlugin.ImageInfo.Cylinders && entry.dp_shd <= imagePlugin.ImageInfo.Heads &&
+                   entry.dp_ehd <= imagePlugin.ImageInfo.Heads &&
+                   entry.dp_ssect <= imagePlugin.ImageInfo.SectorsPerTrack &&
+                   entry.dp_esect <= imagePlugin.ImageInfo.SectorsPerTrack)
                 {
                     Partition part = new Partition
                     {
                         Start = Helpers.CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1),
-                                                  imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack),
+                                                  imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack),
                         Type = DecodePC98Sid(entry.dp_sid),
                         Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
                         Sequence = counter,
@@ -104,8 +104,8 @@ namespace DiscImageChef.PartPlugins
                     };
                     part.Offset = part.Start * imagePlugin.GetSectorSize();
                     part.Length = Helpers.CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1),
-                                                    imagePlugin.ImageInfo.heads,
-                                                    imagePlugin.ImageInfo.sectorsPerTrack) - part.Start;
+                                                    imagePlugin.ImageInfo.Heads,
+                                                    imagePlugin.ImageInfo.SectorsPerTrack) - part.Start;
                     part.Size = part.Length * imagePlugin.GetSectorSize();
 
                     DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
@@ -117,7 +117,7 @@ namespace DiscImageChef.PartPlugins
                     DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
 
                     if(((entry.dp_mid & 0x20) == 0x20 || (entry.dp_mid & 0x44) == 0x44) &&
-                       part.Start < imagePlugin.ImageInfo.sectors && part.End <= imagePlugin.ImageInfo.sectors)
+                       part.Start < imagePlugin.ImageInfo.Sectors && part.End <= imagePlugin.ImageInfo.Sectors)
                     {
                         partitions.Add(part);
                         counter++;

@@ -57,7 +57,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("koi8-r");
         }
 
-        public AODOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AODOS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Alexander Osipov DOS file system";
             PluginUUID = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
@@ -99,16 +99,16 @@ namespace DiscImageChef.Filesystems
 
         readonly byte[] AODOSIdentifier = {0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20};
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             // Does AO-DOS support hard disks?
             if(partition.Start > 0) return false;
 
             // How is it really?
-            if(imagePlugin.ImageInfo.sectorSize != 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize != 512) return false;
 
             // Does AO-DOS support any other kind of disk?
-            if(imagePlugin.ImageInfo.sectors != 800 && imagePlugin.ImageInfo.sectors != 1600) return false;
+            if(imagePlugin.ImageInfo.Sectors != 800 && imagePlugin.ImageInfo.Sectors != 1600) return false;
 
             byte[] sector;
 
@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems
             return bb.identifier.SequenceEqual(AODOSIdentifier);
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] sector;
@@ -141,11 +141,11 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType
             {
                 Type = "Alexander Osipov DOS file system",
-                Clusters = (long)imagePlugin.ImageInfo.sectors,
-                ClusterSize = (int)imagePlugin.ImageInfo.sectorSize,
+                Clusters = (long)imagePlugin.ImageInfo.Sectors,
+                ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
                 Files = bb.files,
                 FilesSpecified = true,
-                FreeClusters = (long)(imagePlugin.ImageInfo.sectors - bb.usedSectors),
+                FreeClusters = (long)(imagePlugin.ImageInfo.Sectors - bb.usedSectors),
                 FreeClustersSpecified = true,
                 VolumeName = StringHandlers.SpacePaddedToString(bb.volumeLabel, CurrentEncoding),
                 Bootable = true

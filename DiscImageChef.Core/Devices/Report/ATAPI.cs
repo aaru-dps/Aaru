@@ -36,7 +36,7 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
-    static class ATAPI
+    static class Atapi
     {
         internal static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
         {

@@ -464,7 +464,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("MODE SENSE (6) decoded response:");
                     if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.SCSI.Modes.PrettifyModeHeader6(buffer, dev.SCSIType));
+                        DicConsole.WriteLine("{0}", Decoders.SCSI.Modes.PrettifyModeHeader6(buffer, dev.ScsiType));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -655,7 +655,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("MODE SENSE (10) decoded response:");
                     if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.SCSI.Modes.PrettifyModeHeader10(buffer, dev.SCSIType));
+                        DicConsole.WriteLine("{0}", Decoders.SCSI.Modes.PrettifyModeHeader10(buffer, dev.ScsiType));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();

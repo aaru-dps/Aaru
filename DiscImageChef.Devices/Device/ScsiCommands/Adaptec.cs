@@ -69,7 +69,7 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Adaptec_Translate;
+            cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
             cdb[2] = (byte)((lba & 0xFF00) >> 8);
             cdb[3] = (byte)(lba & 0xFF);
@@ -115,7 +115,7 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Adaptec_SetErrorThreshold;
+            cdb[0] = (byte)ScsiCommands.AdaptecSetErrorThreshold;
             if(drive1) cdb[1] += 0x20;
             cdb[4] = 1;
 
@@ -157,7 +157,7 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Adaptec_Translate;
+            cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
             if(drive1) cdb[1] += 0x20;
             cdb[4] = (byte)buffer.Length;
 
@@ -187,7 +187,7 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Adaptec_WriteBuffer;
+            cdb[0] = (byte)ScsiCommands.AdaptecWriteBuffer;
 
             lastError = SendScsiCommand(cdb, ref oneKBuffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
                                         out sense);
@@ -212,7 +212,7 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Adaptec_ReadBuffer;
+            cdb[0] = (byte)ScsiCommands.AdaptecReadBuffer;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);

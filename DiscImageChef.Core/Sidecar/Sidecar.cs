@@ -32,7 +32,7 @@
 
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using Schemas;
 
 namespace DiscImageChef.Core
@@ -84,7 +84,7 @@ namespace DiscImageChef.Core
 
             List<ChecksumType> imgChecksums = imgChkWorker.End();
 
-            switch(image.ImageInfo.xmlMediaType)
+            switch(image.ImageInfo.XmlMediaType)
             {
                 case XmlMediaType.OpticalDisc:
                     OpticalDisc(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar);

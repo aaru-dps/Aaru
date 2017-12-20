@@ -68,14 +68,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.BigEndianUnicode;
         }
 
-        public AppleHFSPlus(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AppleHFSPlus(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple HFS+ filesystem";
             PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
             CurrentEncoding = Encoding.BigEndianUnicode;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((2 + partition.Start) >= partition.End) return false;
 
@@ -87,8 +87,8 @@ namespace DiscImageChef.Filesystems
             byte[] vh_sector;
             ulong hfsp_offset;
 
-            uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.sectorSize;
-            if(0x800 % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
+            uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.SectorSize;
+            if(0x800 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
             vh_sector = imagePlugin.ReadSectors(partition.Start,
                                                 sectorsToRead); // Read volume header, of HFS Wrapper MDB
@@ -123,7 +123,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -138,8 +138,8 @@ namespace DiscImageChef.Filesystems
             bool wrapped;
             byte[] vh_sector;
 
-            uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.sectorSize;
-            if(0x800 % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
+            uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.SectorSize;
+            if(0x800 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
             vh_sector = imagePlugin.ReadSectors(partition.Start,
                                                 sectorsToRead); // Read volume header, of HFS Wrapper MDB

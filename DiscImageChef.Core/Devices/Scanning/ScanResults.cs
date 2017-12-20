@@ -36,23 +36,23 @@ namespace DiscImageChef.Core.Devices.Scanning
 {
     public struct ScanResults
     {
-        public double totalTime;
-        public double processingTime;
-        public double avgSpeed;
-        public double maxSpeed;
-        public double minSpeed;
+        public double TotalTime;
+        public double ProcessingTime;
+        public double AvgSpeed;
+        public double MaxSpeed;
+        public double MinSpeed;
         public ulong A;
         public ulong B;
         public ulong C;
         public ulong D;
         public ulong E;
         public ulong F;
-        public List<ulong> unreadableSectors;
-        public double seekMax;
-        public double seekMin;
-        public double seekTotal;
-        public int seekTimes;
-        public ulong blocks;
-        public ulong errored;
+        public List<ulong> UnreadableSectors;
+        public double SeekMax;
+        public double SeekMin;
+        public double SeekTotal;
+        public int SeekTimes;
+        public ulong Blocks;
+        public ulong Errored;
     }
 }

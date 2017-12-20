@@ -40,7 +40,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     public class SuperCardPro : ImagePlugin
     {
@@ -64,9 +64,9 @@ namespace DiscImageChef.ImagePlugins
 
         public struct TrackHeader
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] signature;
-            public byte trackNumber;
-            public TrackEntry[] entries;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] Signature;
+            public byte TrackNumber;
+            public TrackEntry[] Entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -100,15 +100,15 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// SuperCardPro header signature: "SCP"
         /// </summary>
-        readonly byte[] ScpSignature = {0x53, 0x43, 0x50};
+        readonly byte[] scpSignature = {0x53, 0x43, 0x50};
         /// <summary>
         /// SuperCardPro track header signature: "TRK"
         /// </summary>
-        readonly byte[] TrkSignature = {0x54, 0x52, 0x4B};
+        readonly byte[] trkSignature = {0x54, 0x52, 0x4B};
         /// <summary>
         /// SuperCardPro footer signature: "FPCS"
         /// </summary>
-        const uint FooterSignature = 0x53435046;
+        const uint FOOTER_SIGNATURE = 0x53435046;
 
         public enum ScpDiskType : byte
         {
@@ -168,136 +168,136 @@ namespace DiscImageChef.ImagePlugins
 
         #region Internal variables
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
-        public ScpHeader header;
-        public Dictionary<byte, TrackHeader> tracks;
+        public ScpHeader Header;
+        public Dictionary<byte, TrackHeader> Tracks;
         Stream scpStream;
         #endregion Internal variables
 
         public SuperCardPro()
         {
             Name = "SuperCardPro";
-            PluginUUID = new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
+            PluginUuid = new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
         #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
-            header = new ScpHeader();
+            Header = new ScpHeader();
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf(header)) return false;
+            if(stream.Length < Marshal.SizeOf(Header)) return false;
 
-            byte[] hdr = new byte[Marshal.SizeOf(header)];
-            stream.Read(hdr, 0, Marshal.SizeOf(header));
+            byte[] hdr = new byte[Marshal.SizeOf(Header)];
+            stream.Read(hdr, 0, Marshal.SizeOf(Header));
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(header));
-            header = (ScpHeader)Marshal.PtrToStructure(hdrPtr, typeof(ScpHeader));
+            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(Header));
+            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(Header));
+            Header = (ScpHeader)Marshal.PtrToStructure(hdrPtr, typeof(ScpHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
-            return ScpSignature.SequenceEqual(header.signature);
+            return scpSignature.SequenceEqual(Header.signature);
         }
 
         public override bool OpenImage(Filter imageFilter)
         {
-            header = new ScpHeader();
+            Header = new ScpHeader();
             scpStream = imageFilter.GetDataForkStream();
             scpStream.Seek(0, SeekOrigin.Begin);
-            if(scpStream.Length < Marshal.SizeOf(header)) return false;
+            if(scpStream.Length < Marshal.SizeOf(Header)) return false;
 
-            byte[] hdr = new byte[Marshal.SizeOf(header)];
-            scpStream.Read(hdr, 0, Marshal.SizeOf(header));
+            byte[] hdr = new byte[Marshal.SizeOf(Header)];
+            scpStream.Read(hdr, 0, Marshal.SizeOf(Header));
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(header));
-            header = (ScpHeader)Marshal.PtrToStructure(hdrPtr, typeof(ScpHeader));
+            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(Header));
+            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(Header));
+            Header = (ScpHeader)Marshal.PtrToStructure(hdrPtr, typeof(ScpHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.signature = \"{0}\"",
-                                      StringHandlers.CToString(header.signature));
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.version = {0}.{1}", (header.version & 0xF0) >> 4,
-                                      header.version & 0xF);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.type = {0}", header.type);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.revolutions = {0}", header.revolutions);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.start = {0}", header.start);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.end = {0}", header.end);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.flags = {0}", header.flags);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.bitCellEncoding = {0}", header.bitCellEncoding);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.heads = {0}", header.heads);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.reserved = {0}", header.reserved);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.checksum = 0x{0:X8}", header.checksum);
+                                      StringHandlers.CToString(Header.signature));
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.version = {0}.{1}", (Header.version & 0xF0) >> 4,
+                                      Header.version & 0xF);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.type = {0}", Header.type);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.revolutions = {0}", Header.revolutions);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.start = {0}", Header.start);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.end = {0}", Header.end);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.flags = {0}", Header.flags);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.bitCellEncoding = {0}", Header.bitCellEncoding);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.heads = {0}", Header.heads);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.reserved = {0}", Header.reserved);
+            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.checksum = 0x{0:X8}", Header.checksum);
 
-            if(!ScpSignature.SequenceEqual(header.signature)) return false;
+            if(!scpSignature.SequenceEqual(Header.signature)) return false;
 
-            tracks = new Dictionary<byte, TrackHeader>();
+            Tracks = new Dictionary<byte, TrackHeader>();
 
-            for(byte t = header.start; t <= header.end; t++)
+            for(byte t = Header.start; t <= Header.end; t++)
             {
-                if(t >= header.offsets.Length) break;
+                if(t >= Header.offsets.Length) break;
 
-                scpStream.Position = header.offsets[t];
+                scpStream.Position = Header.offsets[t];
                 TrackHeader trk = new TrackHeader();
-                trk.signature = new byte[3];
-                trk.entries = new TrackEntry[header.revolutions];
-                scpStream.Read(trk.signature, 0, trk.signature.Length);
-                trk.trackNumber = (byte)scpStream.ReadByte();
+                trk.Signature = new byte[3];
+                trk.Entries = new TrackEntry[Header.revolutions];
+                scpStream.Read(trk.Signature, 0, trk.Signature.Length);
+                trk.TrackNumber = (byte)scpStream.ReadByte();
 
-                if(!trk.signature.SequenceEqual(TrkSignature))
+                if(!trk.Signature.SequenceEqual(trkSignature))
                 {
                     DicConsole.DebugWriteLine("SuperCardPro plugin",
-                                              "Track header at {0} contains incorrect signature.", header.offsets[t]);
+                                              "Track header at {0} contains incorrect signature.", Header.offsets[t]);
                     continue;
                 }
 
-                if(trk.trackNumber != t)
+                if(trk.TrackNumber != t)
                 {
                     DicConsole.DebugWriteLine("SuperCardPro plugin", "Track number at {0} should be {1} but is {2}.",
-                                              header.offsets[t], t, trk.trackNumber);
+                                              Header.offsets[t], t, trk.TrackNumber);
                     continue;
                 }
 
-                DicConsole.DebugWriteLine("SuperCardPro plugin", "Found track {0} at {1}.", t, header.offsets[t]);
+                DicConsole.DebugWriteLine("SuperCardPro plugin", "Found track {0} at {1}.", t, Header.offsets[t]);
 
-                for(byte r = 0; r < header.revolutions; r++)
+                for(byte r = 0; r < Header.revolutions; r++)
                 {
                     byte[] rev = new byte[Marshal.SizeOf(typeof(TrackEntry))];
                     scpStream.Read(rev, 0, Marshal.SizeOf(typeof(TrackEntry)));
 
                     IntPtr revPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(TrackEntry)));
                     Marshal.Copy(rev, 0, revPtr, Marshal.SizeOf(typeof(TrackEntry)));
-                    trk.entries[r] = (TrackEntry)Marshal.PtrToStructure(revPtr, typeof(TrackEntry));
+                    trk.Entries[r] = (TrackEntry)Marshal.PtrToStructure(revPtr, typeof(TrackEntry));
                     Marshal.FreeHGlobal(revPtr);
                     // De-relative offsets
-                    trk.entries[r].dataOffset += header.offsets[t];
+                    trk.Entries[r].dataOffset += Header.offsets[t];
                 }
 
-                tracks.Add(t, trk);
+                Tracks.Add(t, trk);
             }
 
-            if(header.flags.HasFlag(ScpFlags.HasFooter))
+            if(Header.flags.HasFlag(ScpFlags.HasFooter))
             {
                 long position = scpStream.Position;
                 scpStream.Seek(-4, SeekOrigin.End);
@@ -308,7 +308,7 @@ namespace DiscImageChef.ImagePlugins
                     scpStream.Read(footerSig, 0, 4);
                     uint footerMagic = BitConverter.ToUInt32(footerSig, 0);
 
-                    if(footerMagic == FooterSignature)
+                    if(footerMagic == FOOTER_SIGNATURE)
                     {
                         scpStream.Seek(-Marshal.SizeOf(typeof(ScpFooter)), SeekOrigin.Current);
 
@@ -350,46 +350,46 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.signature = \"{0}\"",
                                                   StringHandlers.CToString(BitConverter.GetBytes(footer.signature)));
 
-                        ImageInfo.driveManufacturer = ReadPStringUTF8(scpStream, footer.manufacturerOffset);
-                        ImageInfo.driveModel = ReadPStringUTF8(scpStream, footer.modelOffset);
-                        ImageInfo.driveSerialNumber = ReadPStringUTF8(scpStream, footer.serialOffset);
-                        ImageInfo.imageCreator = ReadPStringUTF8(scpStream, footer.creatorOffset);
-                        ImageInfo.imageApplication = ReadPStringUTF8(scpStream, footer.applicationOffset);
-                        ImageInfo.imageComments = ReadPStringUTF8(scpStream, footer.commentsOffset);
+                        ImageInfo.DriveManufacturer = ReadPStringUtf8(scpStream, footer.manufacturerOffset);
+                        ImageInfo.DriveModel = ReadPStringUtf8(scpStream, footer.modelOffset);
+                        ImageInfo.DriveSerialNumber = ReadPStringUtf8(scpStream, footer.serialOffset);
+                        ImageInfo.ImageCreator = ReadPStringUtf8(scpStream, footer.creatorOffset);
+                        ImageInfo.ImageApplication = ReadPStringUtf8(scpStream, footer.applicationOffset);
+                        ImageInfo.ImageComments = ReadPStringUtf8(scpStream, footer.commentsOffset);
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveManufacturer = \"{0}\"",
-                                                  ImageInfo.driveManufacturer);
+                                                  ImageInfo.DriveManufacturer);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveModel = \"{0}\"",
-                                                  ImageInfo.driveModel);
+                                                  ImageInfo.DriveModel);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveSerialNumber = \"{0}\"",
-                                                  ImageInfo.driveSerialNumber);
+                                                  ImageInfo.DriveSerialNumber);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreator = \"{0}\"",
-                                                  ImageInfo.imageCreator);
+                                                  ImageInfo.ImageCreator);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageApplication = \"{0}\"",
-                                                  ImageInfo.imageApplication);
+                                                  ImageInfo.ImageApplication);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageComments = \"{0}\"",
-                                                  ImageInfo.imageComments);
+                                                  ImageInfo.ImageComments);
 
                         if(footer.creationTime != 0)
-                            ImageInfo.imageCreationTime = DateHandlers.UNIXToDateTime(footer.creationTime);
-                        else ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+                            ImageInfo.ImageCreationTime = DateHandlers.UNIXToDateTime(footer.creationTime);
+                        else ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
 
                         if(footer.modificationTime != 0)
-                            ImageInfo.imageLastModificationTime = DateHandlers.UNIXToDateTime(footer.modificationTime);
-                        else ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+                            ImageInfo.ImageLastModificationTime = DateHandlers.UNIXToDateTime(footer.modificationTime);
+                        else ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}",
-                                                  ImageInfo.imageCreationTime);
+                                                  ImageInfo.ImageCreationTime);
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageLastModificationTime = {0}",
-                                                  ImageInfo.imageLastModificationTime);
+                                                  ImageInfo.ImageLastModificationTime);
 
-                        ImageInfo.imageApplicationVersion =
+                        ImageInfo.ImageApplicationVersion =
                             string.Format("{0}.{1}", (footer.applicationVersion & 0xF0) >> 4,
                                           footer.applicationVersion & 0xF);
-                        ImageInfo.driveFirmwareRevision =
+                        ImageInfo.DriveFirmwareRevision =
                             string.Format("{0}.{1}", (footer.firmwareVersion & 0xF0) >> 4,
                                           footer.firmwareVersion & 0xF);
-                        ImageInfo.imageVersion =
+                        ImageInfo.ImageVersion =
                             string.Format("{0}.{1}", (footer.imageVersion & 0xF0) >> 4, footer.imageVersion & 0xF);
 
                         break;
@@ -400,25 +400,25 @@ namespace DiscImageChef.ImagePlugins
             }
             else
             {
-                ImageInfo.imageApplication = "SuperCardPro";
-                ImageInfo.imageApplicationVersion =
-                    string.Format("{0}.{1}", (header.version & 0xF0) >> 4, header.version & 0xF);
-                ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-                ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-                ImageInfo.imageVersion = "1.5";
+                ImageInfo.ImageApplication = "SuperCardPro";
+                ImageInfo.ImageApplicationVersion =
+                    string.Format("{0}.{1}", (Header.version & 0xF0) >> 4, Header.version & 0xF);
+                ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+                ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+                ImageInfo.ImageVersion = "1.5";
             }
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        string ReadPStringUTF8(Stream stream, uint position)
+        string ReadPStringUtf8(Stream stream, uint position)
         {
             if(position == 0) return null;
 
             stream.Position = position;
-            byte[] len_b = new byte[2];
-            stream.Read(len_b, 0, 2);
-            ushort len = BitConverter.ToUInt16(len_b, 0);
+            byte[] lenB = new byte[2];
+            stream.Read(lenB, 0, 2);
+            ushort len = BitConverter.ToUInt16(lenB, 0);
 
             if(len == 0 || len + stream.Position >= stream.Length) return null;
 
@@ -430,22 +430,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return ImageInfo.imageHasPartitions;
+            return ImageInfo.ImageHasPartitions;
         }
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -495,98 +495,98 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         // TODO: Check if it exists. If so, read it.
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override string GetMediaManufacturer()
         {
-            return ImageInfo.mediaManufacturer;
+            return ImageInfo.MediaManufacturer;
         }
 
         public override string GetMediaModel()
         {
-            return ImageInfo.mediaModel;
+            return ImageInfo.MediaModel;
         }
 
         public override string GetMediaSerialNumber()
         {
-            return ImageInfo.mediaSerialNumber;
+            return ImageInfo.MediaSerialNumber;
         }
 
         public override string GetMediaBarcode()
         {
-            return ImageInfo.mediaBarcode;
+            return ImageInfo.MediaBarcode;
         }
 
         public override string GetMediaPartNumber()
         {
-            return ImageInfo.mediaPartNumber;
+            return ImageInfo.MediaPartNumber;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override int GetMediaSequence()
         {
-            return ImageInfo.mediaSequence;
+            return ImageInfo.MediaSequence;
         }
 
         public override int GetLastDiskSequence()
         {
-            return ImageInfo.lastMediaSequence;
+            return ImageInfo.LastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return ImageInfo.driveManufacturer;
+            return ImageInfo.DriveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return ImageInfo.driveModel;
+            return ImageInfo.DriveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return ImageInfo.driveSerialNumber;
+            return ImageInfo.DriveSerialNumber;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -594,15 +594,15 @@ namespace DiscImageChef.ImagePlugins
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
         public override bool? VerifyMediaImage()
         {
-            if(header.flags.HasFlag(ScpFlags.Writable)) return null;
+            if(Header.flags.HasFlag(ScpFlags.Writable)) return null;
 
             byte[] wholeFile = new byte[scpStream.Length];
             uint sum = 0;
@@ -612,7 +612,7 @@ namespace DiscImageChef.ImagePlugins
 
             for(int i = 0x10; i < wholeFile.Length; i++) sum += wholeFile[i];
 
-            return header.checksum == sum;
+            return Header.checksum == sum;
         }
         #endregion Public methods
 
@@ -672,8 +672,8 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

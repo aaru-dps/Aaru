@@ -237,7 +237,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public ZFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public ZFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "ZFS Filesystem Plugin";
             PluginUUID = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
@@ -245,7 +245,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -269,7 +269,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -279,7 +279,7 @@ namespace DiscImageChef.Filesystems
             ulong magic;
 
             ulong nvlistOff = 32;
-            uint nvlistLen = 114688 / imagePlugin.ImageInfo.sectorSize;
+            uint nvlistLen = 114688 / imagePlugin.ImageInfo.SectorSize;
             byte[] nvlist;
 
             if(partition.Start + 31 < partition.End)

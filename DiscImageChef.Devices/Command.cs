@@ -54,9 +54,9 @@ namespace DiscImageChef.Devices
         internal static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
                                           uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
-            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendScsiCommand(ptID, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration,
+            return SendScsiCommand(ptId, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration,
                                    out sense);
         }
 
@@ -64,7 +64,7 @@ namespace DiscImageChef.Devices
         /// Sends a SCSI command
         /// </summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
-        /// <param name="ptID">Platform ID for executing the command</param>
+        /// <param name="ptId">Platform ID for executing the command</param>
         /// <param name="fd">File handle</param>
         /// <param name="cdb">SCSI CDB</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -73,11 +73,11 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        internal static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer,
+        internal static int SendScsiCommand(Interop.PlatformID ptId, object fd, byte[] cdb, ref byte[] buffer,
                                           out byte[] senseBuffer, uint timeout, ScsiDirection direction,
                                           out double duration, out bool sense)
         {
-            switch(ptID)
+            switch(ptId)
             {
                 case Interop.PlatformID.Win32NT:
                 {
@@ -127,21 +127,21 @@ namespace DiscImageChef.Devices
                 }
                 case Interop.PlatformID.FreeBSD:
                 {
-                    FreeBSD.ccb_flags flags = 0;
+                    FreeBSD.CcbFlags flags = 0;
 
                     switch(direction)
                     {
                         case ScsiDirection.In:
-                            flags = FreeBSD.ccb_flags.CAM_DIR_IN;
+                            flags = FreeBSD.CcbFlags.CamDirIn;
                             break;
                         case ScsiDirection.Out:
-                            flags = FreeBSD.ccb_flags.CAM_DIR_OUT;
+                            flags = FreeBSD.CcbFlags.CamDirOut;
                             break;
                         case ScsiDirection.Bidirectional:
-                            flags = FreeBSD.ccb_flags.CAM_DIR_BOTH;
+                            flags = FreeBSD.CcbFlags.CamDirBoth;
                             break;
                         case ScsiDirection.None:
-                            flags = FreeBSD.ccb_flags.CAM_DIR_NONE;
+                            flags = FreeBSD.CcbFlags.CamDirNone;
                             break;
                     }
 
@@ -151,7 +151,7 @@ namespace DiscImageChef.Devices
                                : FreeBSD.Command.SendScsiCommand((IntPtr)fd, cdb, ref buffer, out senseBuffer, timeout,
                                                                  flags, out duration, out sense);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
             }
         }
 
@@ -159,18 +159,18 @@ namespace DiscImageChef.Devices
                                          AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                          uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        internal static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersCHS registers,
+        internal static int SendAtaCommand(Interop.PlatformID ptId, object fd, AtaRegistersCHS registers,
                                          out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
-            switch(ptID)
+            switch(ptId)
             {
                 case Interop.PlatformID.Win32NT:
                 {
@@ -200,7 +200,7 @@ namespace DiscImageChef.Devices
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
             }
         }
 
@@ -209,18 +209,18 @@ namespace DiscImageChef.Devices
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
-            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        internal static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA28 registers,
+        internal static int SendAtaCommand(Interop.PlatformID ptId, object fd, AtaRegistersLBA28 registers,
                                          out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
-            switch(ptID)
+            switch(ptId)
             {
                 case Interop.PlatformID.Win32NT:
                 {
@@ -250,7 +250,7 @@ namespace DiscImageChef.Devices
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
             }
         }
 
@@ -259,18 +259,18 @@ namespace DiscImageChef.Devices
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
-            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        internal static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA48 registers,
+        internal static int SendAtaCommand(Interop.PlatformID ptId, object fd, AtaRegistersLBA48 registers,
                                          out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
-            switch(ptID)
+            switch(ptId)
             {
                 case Interop.PlatformID.Win32NT:
                 {
@@ -289,7 +289,7 @@ namespace DiscImageChef.Devices
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
             }
         }
 
@@ -297,18 +297,18 @@ namespace DiscImageChef.Devices
                                          uint argument, uint blockSize, uint blocks, ref byte[] buffer,
                                          out uint[] response, out double duration, out bool sense, uint timeout = 0)
         {
-            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendMmcCommand(ptID, (int)fd, command, write, isApplication, flags, argument, blockSize, blocks,
+            return SendMmcCommand(ptId, (int)fd, command, write, isApplication, flags, argument, blockSize, blocks,
                                   ref buffer, out response, out duration, out sense, timeout);
         }
 
-        internal static int SendMmcCommand(Interop.PlatformID ptID, object fd, MmcCommands command, bool write,
+        internal static int SendMmcCommand(Interop.PlatformID ptId, object fd, MmcCommands command, bool write,
                                          bool isApplication, MmcFlags flags, uint argument, uint blockSize, uint blocks,
                                          ref byte[] buffer, out uint[] response, out double duration, out bool sense,
                                          uint timeout = 0)
         {
-            switch(ptID)
+            switch(ptId)
             {
                 case Interop.PlatformID.Win32NT:
                 {
@@ -322,7 +322,7 @@ namespace DiscImageChef.Devices
                                                         blockSize, blocks, ref buffer, out response, out duration,
                                                         out sense, timeout);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
             }
         }
     }

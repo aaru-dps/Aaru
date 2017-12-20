@@ -54,7 +54,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[2064 * transferLength];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.HlDtSt_Vendor;
+            cdb[0] = (byte)ScsiCommands.HlDtStVendor;
             cdb[1] = 0x48;
             cdb[2] = 0x49;
             cdb[3] = 0x54;

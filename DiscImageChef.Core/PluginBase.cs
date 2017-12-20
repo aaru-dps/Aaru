@@ -36,21 +36,21 @@ using System.Reflection;
 using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.Filesystems;
-using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
+using DiscImageChef.DiscImages;
+using DiscImageChef.Partitions;
 
 namespace DiscImageChef.Core
 {
     public class PluginBase
     {
         public SortedDictionary<string, Filesystem> PluginsList;
-        public SortedDictionary<string, PartPlugin> PartPluginsList;
+        public SortedDictionary<string, PartitionPlugin> PartPluginsList;
         public SortedDictionary<string, ImagePlugin> ImagePluginsList;
 
         public PluginBase()
         {
             PluginsList = new SortedDictionary<string, Filesystem>();
-            PartPluginsList = new SortedDictionary<string, PartPlugin>();
+            PartPluginsList = new SortedDictionary<string, PartitionPlugin>();
             ImagePluginsList = new SortedDictionary<string, ImagePlugin>();
         }
 
@@ -73,15 +73,15 @@ namespace DiscImageChef.Core
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
             }
 
-            assembly = Assembly.GetAssembly(typeof(PartPlugin));
+            assembly = Assembly.GetAssembly(typeof(PartitionPlugin));
 
             foreach(Type type in assembly.GetTypes())
             {
                 try
                 {
-                    if(type.IsSubclassOf(typeof(PartPlugin)))
+                    if(type.IsSubclassOf(typeof(PartitionPlugin)))
                     {
-                        PartPlugin plugin = (PartPlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                        PartitionPlugin plugin = (PartitionPlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterPartPlugin(plugin);
                     }
                 }
@@ -121,7 +121,7 @@ namespace DiscImageChef.Core
             if(!PluginsList.ContainsKey(plugin.Name.ToLower())) { PluginsList.Add(plugin.Name.ToLower(), plugin); }
         }
 
-        void RegisterPartPlugin(PartPlugin partplugin)
+        void RegisterPartPlugin(PartitionPlugin partplugin)
         {
             if(!PartPluginsList.ContainsKey(partplugin.Name.ToLower()))
             {

@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public PFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public PFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Professional File System";
             PluginUUID = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
@@ -185,7 +185,7 @@ namespace DiscImageChef.Filesystems
         /// </summary>
         const uint MUPFS_DISK = 0x6D755046;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
 
@@ -199,7 +199,7 @@ namespace DiscImageChef.Filesystems
                    magic == MUPFS_DISK;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] RootBlockSector = imagePlugin.ReadSector(2 + partition.Start);

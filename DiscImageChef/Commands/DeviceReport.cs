@@ -40,7 +40,7 @@ namespace DiscImageChef.Commands
 {
     static class DeviceReport
     {
-        internal static void doDeviceReport(DeviceReportOptions options)
+        internal static void DoDeviceReport(DeviceReportOptions options)
         {
             DicConsole.DebugWriteLine("Device-Report command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", options.Verbose);
@@ -76,14 +76,14 @@ namespace DiscImageChef.Commands
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    Core.Devices.Report.ATA.Report(dev, ref report, options.Debug, ref removable);
+                    Core.Devices.Report.Ata.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
                     Core.Devices.Report.SecureDigital.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 case DeviceType.NVMe:
-                    Core.Devices.Report.NVMe.Report(dev, ref report, options.Debug, ref removable);
+                    Core.Devices.Report.Nvme.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:

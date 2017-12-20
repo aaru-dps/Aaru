@@ -81,7 +81,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public AcornADFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AcornADFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Acorn Advanced Disc Filing System";
             PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
@@ -259,14 +259,14 @@ namespace DiscImageChef.Filesystems
         }
 
         // TODO: BBC Master hard disks are untested...
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
             ulong sbSector;
             uint sectorsToRead;
 
-            if(imagePlugin.ImageInfo.sectorSize < 256) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 256) return false;
 
             byte[] sector;
             GCHandle ptr;
@@ -311,9 +311,9 @@ namespace DiscImageChef.Filesystems
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum == oldChk1 && oldMap0.checksum != 0 &&
                    oldMap1.checksum != 0)
                 {
-                    sbSector = oldDirectoryLocation / imagePlugin.ImageInfo.sectorSize;
-                    sectorsToRead = oldDirectorySize / imagePlugin.ImageInfo.sectorSize;
-                    if(oldDirectorySize % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
+                    sbSector = oldDirectoryLocation / imagePlugin.ImageInfo.SectorSize;
+                    sectorsToRead = oldDirectorySize / imagePlugin.ImageInfo.SectorSize;
+                    if(oldDirectorySize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
                     sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
                     if(sector.Length > oldDirectorySize)
@@ -338,9 +338,9 @@ namespace DiscImageChef.Filesystems
                        (oldRoot.header.magic == newDirMagic && oldRoot.tail.magic == newDirMagic)) return true;
 
                     // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
-                    sbSector = newDirectoryLocation / imagePlugin.ImageInfo.sectorSize;
-                    sectorsToRead = newDirectorySize / imagePlugin.ImageInfo.sectorSize;
-                    if(newDirectorySize % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
+                    sbSector = newDirectoryLocation / imagePlugin.ImageInfo.SectorSize;
+                    sectorsToRead = newDirectorySize / imagePlugin.ImageInfo.SectorSize;
+                    if(newDirectorySize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
                     sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
                     if(sector.Length > oldDirectorySize)
@@ -374,9 +374,9 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
 
-            sbSector = bootBlockLocation / imagePlugin.ImageInfo.sectorSize;
-            sectorsToRead = bootBlockSize / imagePlugin.ImageInfo.sectorSize;
-            if(bootBlockSize % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
+            sbSector = bootBlockLocation / imagePlugin.ImageInfo.SectorSize;
+            sectorsToRead = bootBlockSize / imagePlugin.ImageInfo.SectorSize;
+            if(bootBlockSize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
             if(sbSector + partition.Start + sectorsToRead >= partition.End) return false;
 
@@ -430,7 +430,7 @@ namespace DiscImageChef.Filesystems
         // TODO: Find root directory on volumes with DiscRecord
         // TODO: Support big directories (ADFS-G?)
         // TODO: Find the real freemap on volumes with DiscRecord, as DiscRecord's discid may be empty but this one isn't
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
@@ -489,16 +489,16 @@ namespace DiscImageChef.Filesystems
                     xmlFSType = new Schemas.FileSystemType
                     {
                         Bootable = oldMap1.boot != 0, // Or not?
-                        Clusters = (long)(bytes / imagePlugin.ImageInfo.sectorSize),
-                        ClusterSize = (int)imagePlugin.ImageInfo.sectorSize,
+                        Clusters = (long)(bytes / imagePlugin.ImageInfo.SectorSize),
+                        ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
                         Type = "Acorn Advanced Disc Filing System",
                     };
 
                     if(ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
                     {
-                        sbSector = oldDirectoryLocation / imagePlugin.ImageInfo.sectorSize;
-                        sectorsToRead = oldDirectorySize / imagePlugin.ImageInfo.sectorSize;
-                        if(oldDirectorySize % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
+                        sbSector = oldDirectoryLocation / imagePlugin.ImageInfo.SectorSize;
+                        sectorsToRead = oldDirectorySize / imagePlugin.ImageInfo.SectorSize;
+                        if(oldDirectorySize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
                         sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
                         if(sector.Length > oldDirectorySize)
@@ -518,9 +518,9 @@ namespace DiscImageChef.Filesystems
                         else
                         {
                             // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
-                            sbSector = newDirectoryLocation / imagePlugin.ImageInfo.sectorSize;
-                            sectorsToRead = newDirectorySize / imagePlugin.ImageInfo.sectorSize;
-                            if(newDirectorySize % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
+                            sbSector = newDirectoryLocation / imagePlugin.ImageInfo.SectorSize;
+                            sectorsToRead = newDirectorySize / imagePlugin.ImageInfo.SectorSize;
+                            if(newDirectorySize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
                             sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
                             if(sector.Length > oldDirectorySize)
@@ -561,7 +561,7 @@ namespace DiscImageChef.Filesystems
 
                     sbInformation.AppendLine("Acorn Advanced Disc Filing System");
                     sbInformation.AppendLine();
-                    sbInformation.AppendFormat("{0} bytes per sector", imagePlugin.ImageInfo.sectorSize).AppendLine();
+                    sbInformation.AppendFormat("{0} bytes per sector", imagePlugin.ImageInfo.SectorSize).AppendLine();
                     sbInformation.AppendFormat("Volume has {0} bytes", bytes).AppendLine();
                     sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(namebytes, CurrentEncoding))
                                  .AppendLine();
@@ -587,9 +587,9 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
 
-            sbSector = bootBlockLocation / imagePlugin.ImageInfo.sectorSize;
-            sectorsToRead = bootBlockSize / imagePlugin.ImageInfo.sectorSize;
-            if(bootBlockSize % imagePlugin.ImageInfo.sectorSize > 0) sectorsToRead++;
+            sbSector = bootBlockLocation / imagePlugin.ImageInfo.SectorSize;
+            sectorsToRead = bootBlockSize / imagePlugin.ImageInfo.SectorSize;
+            if(bootBlockSize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
             byte[] bootSector = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead);
             int bootChk = 0;

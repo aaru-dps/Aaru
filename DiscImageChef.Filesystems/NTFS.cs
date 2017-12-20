@@ -56,14 +56,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.Unicode;
         }
 
-        public NTFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public NTFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "New Technology File System (NTFS)";
             PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
             CurrentEncoding = Encoding.Unicode;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((2 + partition.Start) >= partition.End) return false;
 
@@ -92,7 +92,7 @@ namespace DiscImageChef.Filesystems
             return signature == 0xAA55;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -147,7 +147,7 @@ namespace DiscImageChef.Filesystems
                ntfs_bb.signature2 == 0xAA55)
             {
                 xmlFSType.Bootable = true;
-                SHA1Context sha1Ctx = new SHA1Context();
+                Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 string bootChk = sha1Ctx.Data(ntfs_bb.boot_code, out byte[] sha1_out);
                 sb.AppendLine("Volume is bootable");

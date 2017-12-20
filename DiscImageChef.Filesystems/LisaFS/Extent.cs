@@ -33,7 +33,7 @@
 using System;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -78,11 +78,11 @@ namespace DiscImageChef.Filesystems.LisaFS
             // This happens on some disks.
             // This is a filesystem corruption that makes LisaOS crash on scavenge.
             // This code just allow to ignore that corruption by searching the Extents File using sector tags
-            if(ptr >= device.ImageInfo.sectors)
+            if(ptr >= device.ImageInfo.Sectors)
             {
                 bool found = false;
 
-                for(ulong i = 0; i < device.ImageInfo.sectors; i++)
+                for(ulong i = 0; i < device.ImageInfo.Sectors; i++)
                 {
                     DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out extTag);
                     if(extTag.fileID == fileId * -1)

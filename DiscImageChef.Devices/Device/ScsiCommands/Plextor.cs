@@ -123,14 +123,14 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool PlextorReadEepromCDR(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        public bool PlextorReadEepromCdr(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer = new byte[256];
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_ReadEeprom;
+            cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
             cdb[8] = 1;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -157,7 +157,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_ReadEeprom;
+            cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
             cdb[8] = 2;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -187,7 +187,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_ReadEeprom;
+            cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
             cdb[1] = 1;
             cdb[7] = block;
             cdb[8] = (byte)((blockSize & 0xFF00) >> 8);
@@ -224,7 +224,7 @@ namespace DiscImageChef.Devices
             max = 0;
             last = 0;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_PoweRec;
+            cdb[0] = (byte)ScsiCommands.PlextorPoweRec;
             cdb[9] = (byte)buf.Length;
 
             lastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -264,7 +264,7 @@ namespace DiscImageChef.Devices
             enabled = false;
             speed = 0;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_Extend2;
+            cdb[0] = (byte)ScsiCommands.PlextorExtend2;
             cdb[1] = (byte)PlextorSubCommands.GetMode;
             cdb[9] = (byte)buf.Length;
 
@@ -299,7 +299,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[0] = (byte)ScsiCommands.PlextorExtend;
             cdb[1] = (byte)PlextorSubCommands.GetMode;
             cdb[2] = (byte)PlextorSubCommands.Silent;
             cdb[3] = 4;
@@ -329,7 +329,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[0] = (byte)ScsiCommands.PlextorExtend;
             cdb[1] = (byte)PlextorSubCommands.GetMode;
             cdb[2] = (byte)PlextorSubCommands.GigaRec;
             cdb[10] = (byte)buffer.Length;
@@ -359,7 +359,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[0] = (byte)ScsiCommands.PlextorExtend;
             cdb[1] = (byte)PlextorSubCommands.GetMode;
             cdb[2] = (byte)PlextorSubCommands.VariRec;
             cdb[10] = (byte)buffer.Length;
@@ -391,7 +391,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[0] = (byte)ScsiCommands.PlextorExtend;
             cdb[2] = (byte)PlextorSubCommands.SecuRec;
             cdb[10] = (byte)buffer.Length;
 
@@ -419,7 +419,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[0] = (byte)ScsiCommands.PlextorExtend;
             cdb[1] = (byte)PlextorSubCommands.GetMode;
             cdb[2] = (byte)PlextorSubCommands.SpeedRead;
             cdb[10] = (byte)buffer.Length;
@@ -448,7 +448,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[0] = (byte)ScsiCommands.PlextorExtend;
             cdb[1] = (byte)PlextorSubCommands.GetMode;
             cdb[2] = (byte)PlextorSubCommands.SessionHide;
             cdb[9] = (byte)buffer.Length;
@@ -478,12 +478,12 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[0] = (byte)ScsiCommands.PlextorExtend;
             cdb[1] = (byte)PlextorSubCommands.GetMode;
             cdb[2] = (byte)PlextorSubCommands.BitSet;
             cdb[9] = (byte)buffer.Length;
 
-            if(dualLayer) cdb[3] = (byte)PlextorSubCommands.BitSetRDL;
+            if(dualLayer) cdb[3] = (byte)PlextorSubCommands.BitSetRdl;
             else cdb[3] = (byte)PlextorSubCommands.BitSetR;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -511,7 +511,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[12];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[0] = (byte)ScsiCommands.PlextorExtend;
             cdb[1] = (byte)PlextorSubCommands.GetMode;
             cdb[2] = (byte)PlextorSubCommands.TestWriteDvdPlus;
             cdb[10] = (byte)buffer.Length;

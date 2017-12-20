@@ -53,7 +53,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[10];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.NEC_ReadCdDa;
+            cdb[0] = (byte)ScsiCommands.NecReadCdDa;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
             cdb[3] = (byte)((lba & 0xFF0000) >> 16);
             cdb[4] = (byte)((lba & 0xFF00) >> 8);

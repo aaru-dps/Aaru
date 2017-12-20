@@ -221,7 +221,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public dump(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public dump(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "dump(8) Plugin";
             PluginUUID = new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
@@ -229,7 +229,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -270,7 +270,7 @@ namespace DiscImageChef.Filesystems
                    newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

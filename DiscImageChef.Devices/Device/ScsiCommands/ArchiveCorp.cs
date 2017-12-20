@@ -51,7 +51,7 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Archive_RequestBlockAddress;
+            cdb[0] = (byte)ScsiCommands.ArchiveRequestBlockAddress;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
             cdb[2] = (byte)((lba & 0xFF00) >> 8);
             cdb[3] = (byte)(lba & 0xFF);
@@ -94,7 +94,7 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Archive_SeekBlock;
+            cdb[0] = (byte)ScsiCommands.ArchiveSeekBlock;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
             cdb[2] = (byte)((lba & 0xFF00) >> 8);
             cdb[3] = (byte)(lba & 0xFF);

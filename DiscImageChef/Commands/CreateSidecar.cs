@@ -37,14 +37,14 @@ using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using Schemas;
 
 namespace DiscImageChef.Commands
 {
     static class CreateSidecar
     {
-        internal static void doSidecar(CreateSidecarOptions options)
+        internal static void DoSidecar(CreateSidecarOptions options)
         {
             Sidecar.InitProgressEvent += Progress.InitProgress;
             Sidecar.UpdateProgressEvent += Progress.UpdateProgress;
@@ -79,7 +79,7 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
-                ImagePlugin _imageFormat;
+                ImagePlugin imageFormat;
 
                 FiltersList filtersList = new FiltersList();
                 Filter inputFilter = filtersList.GetFilter(options.InputFile);
@@ -92,9 +92,9 @@ namespace DiscImageChef.Commands
 
                 try
                 {
-                    _imageFormat = ImageFormat.Detect(inputFilter);
+                    imageFormat = ImageFormat.Detect(inputFilter);
 
-                    if(_imageFormat == null)
+                    if(imageFormat == null)
                     {
                         DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
                         return;
@@ -102,14 +102,14 @@ namespace DiscImageChef.Commands
                     else
                     {
                         if(options.Verbose)
-                            DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", _imageFormat.Name,
-                                                        _imageFormat.PluginUUID);
-                        else DicConsole.WriteLine("Image format identified by {0}.", _imageFormat.Name);
+                            DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
+                                                        imageFormat.PluginUuid);
+                        else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
                     }
 
                     try
                     {
-                        if(!_imageFormat.OpenImage(inputFilter))
+                        if(!imageFormat.OpenImage(inputFilter))
                         {
                             DicConsole.WriteLine("Unable to open image format");
                             DicConsole.WriteLine("No error given");
@@ -125,11 +125,11 @@ namespace DiscImageChef.Commands
                         return;
                     }
 
-                    Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
+                    Core.Statistics.AddMediaFormat(imageFormat.GetImageFormat());
                     Core.Statistics.AddFilter(inputFilter.Name);
 
                     CICMMetadataType sidecar =
-                        Sidecar.Create(_imageFormat, options.InputFile, inputFilter.UUID, encoding);
+                        Sidecar.Create(imageFormat, options.InputFile, inputFilter.UUID, encoding);
 
                     DicConsole.WriteLine("Writing metadata sidecar");
 

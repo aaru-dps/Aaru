@@ -38,24 +38,24 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.DiscImages
 {
     public class Parallels : ImagePlugin
     {
         #region Internal constants
-        readonly byte[] ParallelsMagic =
+        readonly byte[] parallelsMagic =
             {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x74, 0x46, 0x72, 0x65, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65};
-        readonly byte[] ParallelsExtMagic =
+        readonly byte[] parallelsExtMagic =
             {0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x46, 0x72, 0x65, 0x53, 0x70, 0x61, 0x63, 0x45, 0x78, 0x74};
 
-        const uint ParallelsVersion = 2;
+        const uint PARALLELS_VERSION = 2;
 
-        const uint ParallelsInUse = 0x746F6E59;
-        const uint ParallelsClosed = 0x312E3276;
+        const uint PARALLELS_INUSE = 0x746F6E59;
+        const uint PARALLELS_CLOSED = 0x312E3276;
 
-        const uint ParallelsEmpty = 0x00000001;
+        const uint PARALLELS_EMPTY = 0x00000001;
         #endregion
 
         #region Internal Structures
@@ -66,7 +66,7 @@ namespace DiscImageChef.DiscImages
         struct ParallelsHeader
         {
             /// <summary>
-            /// Magic, <see cref="ParallelsMagic"/> or <see cref="ParallelsExtMagic"/> 
+            /// Magic, <see cref="Parallels.parallelsMagic"/> or <see cref="Parallels.parallelsExtMagic"/> 
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] magic;
             /// <summary>
@@ -94,7 +94,7 @@ namespace DiscImageChef.DiscImages
             /// </summary>
             public ulong sectors;
             /// <summary>
-            /// Set to <see cref="ParallelsInUse"/> if image is opened by any software, <see cref="ParallelsClosed"/> if not, and 0 if old version
+            /// Set to <see cref="Parallels.PARALLELS_INUSE"/> if image is opened by any software, <see cref="Parallels.PARALLELS_CLOSED"/> if not, and 0 if old version
             /// </summary>
             public uint in_use;
             /// <summary>
@@ -114,7 +114,7 @@ namespace DiscImageChef.DiscImages
 
         bool extended;
         ParallelsHeader pHdr;
-        uint[] BAT;
+        uint[] bat;
         long dataOffset;
         uint clusterBytes;
         bool empty;
@@ -122,34 +122,34 @@ namespace DiscImageChef.DiscImages
 
         Dictionary<ulong, byte[]> sectorCache;
 
-        const uint MaxCacheSize = 16777216;
-        uint maxCachedSectors = MaxCacheSize / 512;
+        const uint MAX_CACHE_SIZE = 16777216;
+        uint maxCachedSectors = MAX_CACHE_SIZE / 512;
 
         public Parallels()
         {
             Name = "Parallels disk image";
-            PluginUUID = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+            PluginUuid = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = "2";
-            ImageInfo.imageApplication = "Parallels";
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = "2";
+            ImageInfo.ImageApplication = "Parallels";
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -159,15 +159,15 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] pHdr_b = new byte[Marshal.SizeOf(pHdr)];
-            stream.Read(pHdr_b, 0, Marshal.SizeOf(pHdr));
+            byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
+            stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
             pHdr = new ParallelsHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
-            Marshal.Copy(pHdr_b, 0, headerPtr, Marshal.SizeOf(pHdr));
+            Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
             pHdr = (ParallelsHeader)Marshal.PtrToStructure(headerPtr, typeof(ParallelsHeader));
             Marshal.FreeHGlobal(headerPtr);
 
-            return ParallelsMagic.SequenceEqual(pHdr.magic) || ParallelsExtMagic.SequenceEqual(pHdr.magic);
+            return parallelsMagic.SequenceEqual(pHdr.magic) || parallelsExtMagic.SequenceEqual(pHdr.magic);
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -177,11 +177,11 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] pHdr_b = new byte[Marshal.SizeOf(pHdr)];
-            stream.Read(pHdr_b, 0, Marshal.SizeOf(pHdr));
+            byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
+            stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
             pHdr = new ParallelsHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
-            Marshal.Copy(pHdr_b, 0, headerPtr, Marshal.SizeOf(pHdr));
+            Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
             pHdr = (ParallelsHeader)Marshal.PtrToStructure(headerPtr, typeof(ParallelsHeader));
             Marshal.FreeHGlobal(headerPtr);
 
@@ -197,14 +197,14 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}", pHdr.flags);
             DicConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}", pHdr.ext_off);
 
-            extended = ParallelsExtMagic.SequenceEqual(pHdr.magic);
+            extended = parallelsExtMagic.SequenceEqual(pHdr.magic);
             DicConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", extended);
 
             DicConsole.DebugWriteLine("Parallels plugin", "Reading BAT");
-            BAT = new uint[pHdr.bat_entries];
-            byte[] BAT_b = new byte[pHdr.bat_entries * 4];
-            stream.Read(BAT_b, 0, BAT_b.Length);
-            for(int i = 0; i < BAT.Length; i++) BAT[i] = BitConverter.ToUInt32(BAT_b, i * 4);
+            bat = new uint[pHdr.bat_entries];
+            byte[] batB = new byte[pHdr.bat_entries * 4];
+            stream.Read(batB, 0, batB.Length);
+            for(int i = 0; i < bat.Length; i++) bat[i] = BitConverter.ToUInt32(batB, i * 4);
 
             clusterBytes = pHdr.cluster_size * 512;
             if(pHdr.data_off > 0) dataOffset = pHdr.data_off * 512;
@@ -212,19 +212,19 @@ namespace DiscImageChef.DiscImages
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            empty = (pHdr.flags & ParallelsEmpty) == ParallelsEmpty;
+            empty = (pHdr.flags & PARALLELS_EMPTY) == PARALLELS_EMPTY;
 
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectors = pHdr.sectors;
-            ImageInfo.sectorSize = 512;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.mediaType = MediaType.GENERIC_HDD;
-            ImageInfo.imageSize = pHdr.sectors * 512;
-            ImageInfo.cylinders = pHdr.cylinders;
-            ImageInfo.heads = pHdr.heads;
-            ImageInfo.sectorsPerTrack = (uint)((ImageInfo.sectors / ImageInfo.cylinders) / ImageInfo.heads);
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Sectors = pHdr.sectors;
+            ImageInfo.SectorSize = 512;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.MediaType = MediaType.GENERIC_HDD;
+            ImageInfo.ImageSize = pHdr.sectors * 512;
+            ImageInfo.Cylinders = pHdr.cylinders;
+            ImageInfo.Heads = pHdr.heads;
+            ImageInfo.SectorsPerTrack = (uint)((ImageInfo.Sectors / ImageInfo.Cylinders) / ImageInfo.Heads);
             imageStream = stream;
 
             return true;
@@ -232,7 +232,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
@@ -245,7 +245,7 @@ namespace DiscImageChef.DiscImages
             ulong index = sectorAddress / pHdr.cluster_size;
             ulong secOff = sectorAddress % pHdr.cluster_size;
 
-            uint batOff = BAT[index];
+            uint batOff = bat[index];
             ulong imageOff;
 
             if(batOff == 0) return new byte[512];
@@ -268,11 +268,11 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             if(empty) return new byte[512 * length];
@@ -295,17 +295,17 @@ namespace DiscImageChef.DiscImages
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -315,47 +315,47 @@ namespace DiscImageChef.DiscImages
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         #region Unsupported features
@@ -499,18 +499,18 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

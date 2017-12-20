@@ -30,7 +30,7 @@ using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
@@ -120,15 +120,15 @@ namespace DiscImageChef.Tests.Filesystems
                 filter.Open(location);
                 ImagePlugin image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 Filesystem fs = new FAT();
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
-                    Length = image.ImageInfo.sectors,
-                    Size = image.ImageInfo.sectors * image.ImageInfo.sectorSize
+                    Length = image.ImageInfo.Sectors,
+                    Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out string information);

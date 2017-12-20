@@ -46,7 +46,7 @@ namespace DiscImageChef.Core.Devices.Report
             else if(dev.Type == DeviceType.SecureDigital) report.SecureDigital = new mmcsdType();
 
             DicConsole.WriteLine("Trying to get CID...");
-            bool sense = dev.ReadCID(out byte[] cid, out uint[] response, dev.Timeout, out double duration);
+            bool sense = dev.ReadCid(out byte[] cid, out uint[] response, dev.Timeout, out double duration);
 
             if(!sense)
             {
@@ -77,7 +77,7 @@ namespace DiscImageChef.Core.Devices.Report
             else DicConsole.WriteLine("Could not read CID...");
 
             DicConsole.WriteLine("Trying to get CSD...");
-            sense = dev.ReadCSD(out byte[] csd, out response, dev.Timeout, out duration);
+            sense = dev.ReadCsd(out byte[] csd, out response, dev.Timeout, out duration);
 
             if(!sense)
             {
@@ -91,7 +91,7 @@ namespace DiscImageChef.Core.Devices.Report
             if(dev.Type == DeviceType.MMC)
             {
                 DicConsole.WriteLine("Trying to get OCR...");
-                sense = dev.ReadOCR(out byte[] ocr, out response, dev.Timeout, out duration);
+                sense = dev.ReadOcr(out byte[] ocr, out response, dev.Timeout, out duration);
 
                 if(!sense)
                 {
@@ -101,7 +101,7 @@ namespace DiscImageChef.Core.Devices.Report
                 else DicConsole.WriteLine("Could not read OCR...");
 
                 DicConsole.WriteLine("Trying to get Extended CSD...");
-                sense = dev.ReadExtendedCSD(out byte[] ecsd, out response, dev.Timeout, out duration);
+                sense = dev.ReadExtendedCsd(out byte[] ecsd, out response, dev.Timeout, out duration);
 
                 if(!sense)
                 {
@@ -113,7 +113,7 @@ namespace DiscImageChef.Core.Devices.Report
             else if(dev.Type == DeviceType.SecureDigital)
             {
                 DicConsole.WriteLine("Trying to get OCR...");
-                sense = dev.ReadSDOCR(out byte[] ocr, out response, dev.Timeout, out duration);
+                sense = dev.ReadSdocr(out byte[] ocr, out response, dev.Timeout, out duration);
 
                 if(!sense)
                 {
@@ -123,7 +123,7 @@ namespace DiscImageChef.Core.Devices.Report
                 else DicConsole.WriteLine("Could not read OCR...");
 
                 DicConsole.WriteLine("Trying to get SCR...");
-                sense = dev.ReadSCR(out byte[] scr, out response, dev.Timeout, out duration);
+                sense = dev.ReadScr(out byte[] scr, out response, dev.Timeout, out duration);
 
                 if(!sense)
                 {

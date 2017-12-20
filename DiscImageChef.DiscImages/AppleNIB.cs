@@ -39,10 +39,10 @@ using DiscImageChef.Console;
 using DiscImageChef.Decoders.Floppy;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     // TODO: Checksum sectors
-    public class AppleNIB : ImagePlugin
+    public class AppleNib : ImagePlugin
     {
         Dictionary<ulong, byte[]> longSectors;
         Dictionary<ulong, byte[]> cookedSectors;
@@ -65,31 +65,31 @@ namespace DiscImageChef.ImagePlugins
             0x2C, 0x20, 0x44, 0x49, 0x47, 0x49, 0x54, 0x41, 0x4C, 0x20, 0x52, 0x45, 0x53, 0x45, 0x41, 0x52, 0x43, 0x48
         };
 
-        public AppleNIB()
+        public AppleNib()
         {
             Name = "Apple NIB";
-            PluginUUID = new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
+            PluginUuid = new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -196,17 +196,17 @@ namespace DiscImageChef.ImagePlugins
                                                   "Hardware sector {0} of track {1} goes to logical sector {2}",
                                                   sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
                         rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
-                        ImageInfo.sectors++;
+                        ImageInfo.Sectors++;
                     }
                     else
                     {
-                        rawSectors.Add(ImageInfo.sectors, sector);
-                        ImageInfo.sectors++;
+                        rawSectors.Add(ImageInfo.Sectors, sector);
+                        ImageInfo.Sectors++;
                     }
                 }
             }
 
-            DicConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", ImageInfo.sectors);
+            DicConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", ImageInfo.Sectors);
 
             DicConsole.DebugWriteLine("Apple NIB Plugin", "Cooking sectors");
 
@@ -224,27 +224,27 @@ namespace DiscImageChef.ImagePlugins
                 addressFields.Add(kvp.Key, addr);
             }
 
-            ImageInfo.imageSize = (ulong)imageFilter.GetDataForkLength();
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            if(ImageInfo.sectors == 455) ImageInfo.mediaType = MediaType.Apple32SS;
-            else if(ImageInfo.sectors == 560) ImageInfo.mediaType = MediaType.Apple33SS;
-            else ImageInfo.mediaType = MediaType.Unknown;
-            ImageInfo.sectorSize = 256;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.readableSectorTags.Add(SectorTagType.FloppyAddressMark);
-            switch(ImageInfo.mediaType)
+            ImageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            if(ImageInfo.Sectors == 455) ImageInfo.MediaType = MediaType.Apple32SS;
+            else if(ImageInfo.Sectors == 560) ImageInfo.MediaType = MediaType.Apple33SS;
+            else ImageInfo.MediaType = MediaType.Unknown;
+            ImageInfo.SectorSize = 256;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
+            switch(ImageInfo.MediaType)
             {
                 case MediaType.Apple32SS:
-                    ImageInfo.cylinders = 35;
-                    ImageInfo.heads = 1;
-                    ImageInfo.sectorsPerTrack = 13;
+                    ImageInfo.Cylinders = 35;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.SectorsPerTrack = 13;
                     break;
                 case MediaType.Apple33SS:
-                    ImageInfo.cylinders = 35;
-                    ImageInfo.heads = 1;
-                    ImageInfo.sectorsPerTrack = 16;
+                    ImageInfo.Cylinders = 35;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.SectorsPerTrack = 16;
                     break;
             }
 
@@ -258,17 +258,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -278,47 +278,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            switch(ImageInfo.sectors)
+            switch(ImageInfo.Sectors)
             {
                 case 455: return MediaType.Apple32SS;
                 case 560: return MediaType.Apple33SS;
@@ -328,7 +328,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
@@ -339,11 +339,11 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -359,7 +359,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
@@ -373,11 +373,11 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             if(tag != SectorTagType.FloppyAddressMark)
@@ -396,7 +396,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorLong(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
@@ -407,11 +407,11 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -546,18 +546,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

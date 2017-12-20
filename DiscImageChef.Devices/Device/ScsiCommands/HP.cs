@@ -48,10 +48,10 @@ namespace DiscImageChef.Devices
         /// <param name="pba">If set to <c>true</c> address contain physical block address.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool HPReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, ushort blockBytes,
+        public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, ushort blockBytes,
                                bool pba, uint timeout, out double duration)
         {
-            return HPReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout,
+            return HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout,
                               out duration);
         }
 
@@ -69,7 +69,7 @@ namespace DiscImageChef.Devices
         /// <param name="sectorCount">If set to <c>true</c> <paramref name="transferLen"/> is a count of secors to read. Otherwise it will be ignored</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool HPReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
+        public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
                                ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
                                out double duration)
         {

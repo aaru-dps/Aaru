@@ -39,36 +39,36 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Filters;
 using static DiscImageChef.Decoders.ATA.Identify;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     public class RsIde : ImagePlugin
     {
         public RsIde()
         {
             Name = "RS-IDE Hard Disk Image";
-            PluginUUID = new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
+            PluginUuid = new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
@@ -89,7 +89,7 @@ namespace DiscImageChef.ImagePlugins
             HalfSectors = 1
         }
 
-        Filter RsIdeImageFilter;
+        Filter rsIdeImageFilter;
         ushort dataOff;
         readonly byte[] signature = {0x52, 0x53, 0x2D, 0x49, 0x44, 0x45, 0x1A};
         byte[] identify;
@@ -110,11 +110,11 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(typeof(RsIdeHeader))];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[Marshal.SizeOf(typeof(RsIdeHeader))];
+            stream.Read(hdrB, 0, hdrB.Length);
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(RsIdeHeader)));
-            Marshal.Copy(hdr_b, 0, hdrPtr, Marshal.SizeOf(typeof(RsIdeHeader)));
+            Marshal.Copy(hdrB, 0, hdrPtr, Marshal.SizeOf(typeof(RsIdeHeader)));
             RsIdeHeader hdr = (RsIdeHeader)Marshal.PtrToStructure(hdrPtr, typeof(RsIdeHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
@@ -122,15 +122,15 @@ namespace DiscImageChef.ImagePlugins
 
             dataOff = hdr.dataOff;
 
-            ImageInfo.mediaType = MediaType.GENERIC_HDD;
-            ImageInfo.sectorSize = (uint)(hdr.flags.HasFlag(RsIdeFlags.HalfSectors) ? 256 : 512);
-            ImageInfo.imageSize = (ulong)(stream.Length - dataOff);
-            ImageInfo.sectors = ImageInfo.imageSize / ImageInfo.sectorSize;
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.imageVersion = string.Format("{0}.{1}", hdr.revision >> 8, hdr.revision & 0x0F);
+            ImageInfo.MediaType = MediaType.GENERIC_HDD;
+            ImageInfo.SectorSize = (uint)(hdr.flags.HasFlag(RsIdeFlags.HalfSectors) ? 256 : 512);
+            ImageInfo.ImageSize = (ulong)(stream.Length - dataOff);
+            ImageInfo.Sectors = ImageInfo.ImageSize / ImageInfo.SectorSize;
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.ImageVersion = string.Format("{0}.{1}", hdr.revision >> 8, hdr.revision & 0x0F);
 
             if(!ArrayHelpers.ArrayIsNullOrEmpty(hdr.identify))
             {
@@ -140,26 +140,26 @@ namespace DiscImageChef.ImagePlugins
 
                 if(ataId.HasValue)
                 {
-                    ImageInfo.readableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
-                    ImageInfo.cylinders = ataId.Value.Cylinders;
-                    ImageInfo.heads = ataId.Value.Heads;
-                    ImageInfo.sectorsPerTrack = ataId.Value.SectorsPerCard;
-                    ImageInfo.driveFirmwareRevision = ataId.Value.FirmwareRevision;
-                    ImageInfo.driveModel = ataId.Value.Model;
-                    ImageInfo.driveSerialNumber = ataId.Value.SerialNumber;
-                    ImageInfo.mediaSerialNumber = ataId.Value.MediaSerial;
-                    ImageInfo.mediaManufacturer = ataId.Value.MediaManufacturer;
+                    ImageInfo.ReadableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
+                    ImageInfo.Cylinders = ataId.Value.Cylinders;
+                    ImageInfo.Heads = ataId.Value.Heads;
+                    ImageInfo.SectorsPerTrack = ataId.Value.SectorsPerCard;
+                    ImageInfo.DriveFirmwareRevision = ataId.Value.FirmwareRevision;
+                    ImageInfo.DriveModel = ataId.Value.Model;
+                    ImageInfo.DriveSerialNumber = ataId.Value.SerialNumber;
+                    ImageInfo.MediaSerialNumber = ataId.Value.MediaSerial;
+                    ImageInfo.MediaManufacturer = ataId.Value.MediaManufacturer;
                 }
             }
 
-            if(ImageInfo.cylinders == 0 || ImageInfo.heads == 0 || ImageInfo.sectorsPerTrack == 0)
+            if(ImageInfo.Cylinders == 0 || ImageInfo.Heads == 0 || ImageInfo.SectorsPerTrack == 0)
             {
-                ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-                ImageInfo.heads = 16;
-                ImageInfo.sectorsPerTrack = 63;
+                ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+                ImageInfo.Heads = 16;
+                ImageInfo.SectorsPerTrack = 63;
             }
 
-            RsIdeImageFilter = imageFilter;
+            rsIdeImageFilter = imageFilter;
 
             return true;
         }
@@ -171,17 +171,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -191,47 +191,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -241,19 +241,19 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.sectorSize];
+            byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
-            Stream stream = RsIdeImageFilter.GetDataForkStream();
+            Stream stream = rsIdeImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(dataOff + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(dataOff + sectorAddress * ImageInfo.SectorSize), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
+            stream.Read(buffer, 0, (int)(length * ImageInfo.SectorSize));
 
             return buffer;
         }
@@ -261,7 +261,7 @@ namespace DiscImageChef.ImagePlugins
         #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
-            if(ImageInfo.readableMediaTags.Contains(tag) && tag == MediaTagType.ATA_IDENTIFY)
+            if(ImageInfo.ReadableMediaTags.Contains(tag) && tag == MediaTagType.ATA_IDENTIFY)
             {
                 byte[] buffer = new byte[512];
                 Array.Copy(identify, 0, buffer, 0, 512);
@@ -323,7 +323,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetMediaManufacturer()
         {
-            return ImageInfo.mediaManufacturer;
+            return ImageInfo.MediaManufacturer;
         }
 
         public override string GetMediaModel()
@@ -333,7 +333,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetMediaSerialNumber()
         {
-            return ImageInfo.mediaSerialNumber;
+            return ImageInfo.MediaSerialNumber;
         }
 
         public override string GetMediaBarcode()
@@ -358,17 +358,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetDriveManufacturer()
         {
-            return ImageInfo.driveManufacturer;
+            return ImageInfo.DriveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return ImageInfo.driveModel;
+            return ImageInfo.DriveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return ImageInfo.driveSerialNumber;
+            return ImageInfo.DriveSerialNumber;
         }
 
         public override List<Partition> GetPartitions()
@@ -406,18 +406,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

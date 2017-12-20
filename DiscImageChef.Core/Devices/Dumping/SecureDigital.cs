@@ -41,7 +41,7 @@ using DiscImageChef.Decoders.MMC;
 using DiscImageChef.Devices;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using Extents;
 using Schemas;
 
@@ -54,8 +54,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 ref DumpLog dumpLog, Encoding encoding)
         {
             bool aborted;
-            MHDDLog mhddLog;
-            IBGLog ibgLog;
+            MhddLog mhddLog;
+            IbgLog ibgLog;
 
             if(dumpRaw)
             {
@@ -95,7 +95,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 CSD csdDecoded = new CSD();
 
                 dumpLog.WriteLine("Reading Extended CSD");
-                sense = dev.ReadExtendedCSD(out ecsd, out response, timeout, out duration);
+                sense = dev.ReadExtendedCsd(out ecsd, out response, timeout, out duration);
                 if(!sense)
                 {
                     ecsdDecoded = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
@@ -110,7 +110,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else ecsd = null;
 
                 dumpLog.WriteLine("Reading CSD");
-                sense = dev.ReadCSD(out csd, out response, timeout, out duration);
+                sense = dev.ReadCsd(out csd, out response, timeout, out duration);
                 if(!sense)
                 {
                     if(blocks == 0)
@@ -123,7 +123,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else csd = null;
 
                 dumpLog.WriteLine("Reading OCR");
-                sense = dev.ReadOCR(out ocr, out response, timeout, out duration);
+                sense = dev.ReadOcr(out ocr, out response, timeout, out duration);
                 if(sense) ocr = null;
 
                 sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
@@ -133,7 +133,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Decoders.SecureDigital.CSD csdDecoded = new Decoders.SecureDigital.CSD();
 
                 dumpLog.WriteLine("Reading CSD");
-                sense = dev.ReadCSD(out csd, out response, timeout, out duration);
+                sense = dev.ReadCsd(out csd, out response, timeout, out duration);
                 if(!sense)
                 {
                     csdDecoded = Decoders.SecureDigital.Decoders.DecodeCSD(csd);
@@ -147,18 +147,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else csd = null;
 
                 dumpLog.WriteLine("Reading OCR");
-                sense = dev.ReadSDOCR(out ocr, out response, timeout, out duration);
+                sense = dev.ReadSdocr(out ocr, out response, timeout, out duration);
                 if(sense) ocr = null;
 
                 dumpLog.WriteLine("Reading SCR");
-                sense = dev.ReadSCR(out scr, out response, timeout, out duration);
+                sense = dev.ReadScr(out scr, out response, timeout, out duration);
                 if(sense) scr = null;
 
                 sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
             }
 
             dumpLog.WriteLine("Reading CID");
-            sense = dev.ReadCID(out cid, out response, timeout, out duration);
+            sense = dev.ReadCid(out cid, out response, timeout, out duration);
             if(sense) cid = null;
 
             DumpType cidDump = null;
@@ -283,15 +283,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DumpHardwareType currentTry = null;
             ExtentsULong extents = null;
-            ResumeSupport.Process(true, false, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformID,
+            ResumeSupport.Process(true, false, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
                                   ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
                 throw new Exception("Could not process resume file, not continuing...");
 
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-            mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-            ibgLog = new IBGLog(outputPrefix + ".ibg", currentProfile);
+            mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+            ibgLog = new IbgLog(outputPrefix + ".ibg", currentProfile);
             dumpFile = new DataFile(outputPrefix + ".bin");
             dumpFile.Seek(resume.NextBlock, blockSize);
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
@@ -445,7 +445,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins(encoding);
-            ImagePlugin _imageFormat;
+            ImagePlugin imageFormat;
 
             FiltersList filtersList = new FiltersList();
             Filter inputFilter = filtersList.GetFilter(outputPrefix + ".bin");
@@ -456,16 +456,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            _imageFormat = ImageFormat.Detect(inputFilter);
+            imageFormat = ImageFormat.Detect(inputFilter);
             PartitionType[] xmlFileSysInfo = null;
 
-            try { if(!_imageFormat.OpenImage(inputFilter)) _imageFormat = null; }
-            catch { _imageFormat = null; }
+            try { if(!imageFormat.OpenImage(inputFilter)) imageFormat = null; }
+            catch { imageFormat = null; }
 
-            if(_imageFormat != null)
+            if(imageFormat != null)
             {
                 dumpLog.WriteLine("Getting partitions.");
-                List<Partition> partitions = Partitions.GetAll(_imageFormat);
+                List<Partition> partitions = Partitions.GetAll(imageFormat);
                 Partitions.AddSchemesToStats(partitions);
                 dumpLog.WriteLine("Found {0} partitions.", partitions.Count);
 
@@ -488,16 +488,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           i, partitions[i].Start, partitions[i].End, partitions[i].Type,
                                           partitions[i].Scheme);
 
-                        foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                        foreach(Filesystem plugin in plugins.PluginsList.Values)
                         {
                             try
                             {
-                                if(_plugin.Identify(_imageFormat, partitions[i]))
+                                if(plugin.Identify(imageFormat, partitions[i]))
                                 {
-                                    _plugin.GetInformation(_imageFormat, partitions[i], out string foo);
-                                    lstFs.Add(_plugin.XmlFSType);
-                                    Statistics.AddFilesystem(_plugin.XmlFSType.Type);
-                                    dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
+                                    plugin.GetInformation(imageFormat, partitions[i], out string foo);
+                                    lstFs.Add(plugin.XmlFSType);
+                                    Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                    dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
                                 }
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -522,16 +522,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Partition wholePart =
                         new Partition {Name = "Whole device", Length = blocks, Size = blocks * blockSize};
 
-                    foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                    foreach(Filesystem plugin in plugins.PluginsList.Values)
                     {
                         try
                         {
-                            if(_plugin.Identify(_imageFormat, wholePart))
+                            if(plugin.Identify(imageFormat, wholePart))
                             {
-                                _plugin.GetInformation(_imageFormat, wholePart, out string foo);
-                                lstFs.Add(_plugin.XmlFSType);
-                                Statistics.AddFilesystem(_plugin.XmlFSType.Type);
-                                dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
+                                plugin.GetInformation(imageFormat, wholePart, out string foo);
+                                lstFs.Add(plugin.XmlFSType);
+                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
                             }
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body

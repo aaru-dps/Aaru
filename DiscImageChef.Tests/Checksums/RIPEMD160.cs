@@ -49,7 +49,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void RIPEMD160EmptyFile()
         {
-            RIPEMD160Context ctx = new RIPEMD160Context();
+            Ripemd160Context ctx = new Ripemd160Context();
             ctx.Init();
             byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
@@ -64,7 +64,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            RIPEMD160Context ctx = new RIPEMD160Context();
+            Ripemd160Context ctx = new Ripemd160Context();
             ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
@@ -79,7 +79,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            RIPEMD160Context ctx = new RIPEMD160Context();
+            Ripemd160Context ctx = new Ripemd160Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -89,7 +89,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void RIPEMD160RandomFile()
         {
-            RIPEMD160Context ctx = new RIPEMD160Context();
+            Ripemd160Context ctx = new Ripemd160Context();
             ctx.Init();
             byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
@@ -104,7 +104,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            RIPEMD160Context ctx = new RIPEMD160Context();
+            Ripemd160Context ctx = new Ripemd160Context();
             ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
@@ -119,7 +119,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            RIPEMD160Context ctx = new RIPEMD160Context();
+            Ripemd160Context ctx = new Ripemd160Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

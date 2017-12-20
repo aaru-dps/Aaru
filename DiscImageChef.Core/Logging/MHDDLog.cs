@@ -37,11 +37,11 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Logging
 {
-    class MHDDLog
+    class MhddLog
     {
         FileStream mhddFs;
 
-        internal MHDDLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
+        internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
         {
             if(dev != null && !string.IsNullOrEmpty(outputFile))
             {
@@ -98,7 +98,7 @@ namespace DiscImageChef.Core.Logging
                 byte[] scanblocksizeBytes = Encoding.ASCII.GetBytes(scanblocksize);
                 byte[] verBytes = Encoding.ASCII.GetBytes(ver);
 
-                uint Pointer = (uint)(deviceBytes.Length + modeBytes.Length + fwBytes.Length + snBytes.Length +
+                uint pointer = (uint)(deviceBytes.Length + modeBytes.Length + fwBytes.Length + snBytes.Length +
                                       sectorsBytes.Length + sectorsizeBytes.Length + scanblocksizeBytes.Length +
                                       verBytes.Length + 2 * 9 + // New lines
                                       4); // Pointer
@@ -107,7 +107,7 @@ namespace DiscImageChef.Core.Logging
                 newLine[0] = 0x0D;
                 newLine[1] = 0x0A;
 
-                mhddFs.Write(BitConverter.GetBytes(Pointer), 0, 4);
+                mhddFs.Write(BitConverter.GetBytes(pointer), 0, 4);
                 mhddFs.Write(newLine, 0, 2);
                 mhddFs.Write(verBytes, 0, verBytes.Length);
                 mhddFs.Write(newLine, 0, 2);

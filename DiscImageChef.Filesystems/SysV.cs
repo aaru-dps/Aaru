@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public SysVfs(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public SysVfs(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNIX System V filesystem";
             PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
@@ -81,7 +81,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((2 + partition.Start) >= partition.End) return false;
 
@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             // Sectors in a cylinder
-            int spc = (int)(imagePlugin.ImageInfo.heads * imagePlugin.ImageInfo.sectorsPerTrack);
+            int spc = (int)(imagePlugin.ImageInfo.Heads * imagePlugin.ImageInfo.SectorsPerTrack);
 
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
             int[] locations =
@@ -134,7 +134,7 @@ namespace DiscImageChef.Filesystems
 
             foreach(int i in locations)
             {
-                if(i + sb_size_in_sectors >= (int)imagePlugin.ImageInfo.sectors) break;
+                if(i + sb_size_in_sectors >= (int)imagePlugin.ImageInfo.Sectors) break;
 
                 byte[] sb_sector = imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors);
 
@@ -192,7 +192,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -220,7 +220,7 @@ namespace DiscImageChef.Filesystems
                 sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
             else sb_size_in_sectors = 1; // If not a single sector can store it
             // Sectors in a cylinder
-            int spc = (int)(imagePlugin.ImageInfo.heads * imagePlugin.ImageInfo.sectorsPerTrack);
+            int spc = (int)(imagePlugin.ImageInfo.Heads * imagePlugin.ImageInfo.SectorsPerTrack);
 
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
             int[] locations =

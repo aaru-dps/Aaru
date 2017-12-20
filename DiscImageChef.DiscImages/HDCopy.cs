@@ -71,16 +71,16 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
-    public class HDCopy : ImagePlugin
+    public class HdCopy : ImagePlugin
     {
         #region Internal structures
         /// <summary>
         /// The global header of a HDCP image file
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HDCPFileHeader
+        struct HdcpFileHeader
         {
             /// <summary>
             /// Last cylinder (zero-based)
@@ -105,7 +105,7 @@ namespace DiscImageChef.ImagePlugins
         /// The header for a RLE-compressed block
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HDCPBlockHeader
+        struct HdcpBlockHeader
         {
             /// <summary>
             /// The length of the compressed block, in bytes. Little-endian.
@@ -120,15 +120,15 @@ namespace DiscImageChef.ImagePlugins
 
         struct MediaTypeTableEntry
         {
-            public byte tracks;
-            public byte sectorsPerTrack;
-            public MediaType mediaType;
+            public byte Tracks;
+            public byte SectorsPerTrack;
+            public MediaType MediaType;
 
-            public MediaTypeTableEntry(byte _tracks, byte _sectorsPerTrack, MediaType _mediaType)
+            public MediaTypeTableEntry(byte tracks, byte sectorsPerTrack, MediaType mediaType)
             {
-                tracks = _tracks;
-                sectorsPerTrack = _sectorsPerTrack;
-                mediaType = _mediaType;
+                Tracks = tracks;
+                SectorsPerTrack = sectorsPerTrack;
+                MediaType = mediaType;
             }
         }
         #endregion
@@ -137,7 +137,7 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// The HDCP file header after the image has been opened
         /// </summary>
-        private HDCPFileHeader fileHeader;
+        private HdcpFileHeader fileHeader;
 
         /// <summary>
         /// Every track that has been read is cached here
@@ -167,36 +167,36 @@ namespace DiscImageChef.ImagePlugins
         };
         #endregion
 
-        public HDCopy()
+        public HdCopy()
         {
             Name = "HD-Copy disk image";
-            PluginUUID = new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
+            PluginUuid = new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
         {
-            HDCPFileHeader fheader;
+            HdcpFileHeader fheader;
 
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -208,7 +208,7 @@ namespace DiscImageChef.ImagePlugins
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
             Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
-            fheader = (HDCPFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HDCPFileHeader));
+            fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
             /* Some sanity checks on the values we just read.
@@ -232,7 +232,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool OpenImage(Filter imageFilter)
         {
-            HDCPFileHeader fheader;
+            HdcpFileHeader fheader;
             long currentOffset;
 
             Stream stream = imageFilter.GetDataForkStream();
@@ -243,31 +243,31 @@ namespace DiscImageChef.ImagePlugins
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
             Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
-            fheader = (HDCPFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HDCPFileHeader));
+            fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
             Marshal.FreeHGlobal(hdrPtr);
             DicConsole.DebugWriteLine("HDCP plugin",
                                       "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
                                       fheader.lastCylinder + 1, fheader.sectorsPerTrack);
 
-            ImageInfo.cylinders = (uint)fheader.lastCylinder + 1;
-            ImageInfo.sectorsPerTrack = fheader.sectorsPerTrack;
-            ImageInfo.sectorSize = 512; // only 512 bytes per sector supported
-            ImageInfo.heads = 2; // only 2-sided floppies are supported
-            ImageInfo.sectors = 2 * ImageInfo.cylinders * ImageInfo.sectorsPerTrack;
-            ImageInfo.imageSize = ImageInfo.sectors * ImageInfo.sectorSize;
+            ImageInfo.Cylinders = (uint)fheader.lastCylinder + 1;
+            ImageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
+            ImageInfo.SectorSize = 512; // only 512 bytes per sector supported
+            ImageInfo.Heads = 2; // only 2-sided floppies are supported
+            ImageInfo.Sectors = 2 * ImageInfo.Cylinders * ImageInfo.SectorsPerTrack;
+            ImageInfo.ImageSize = ImageInfo.Sectors * ImageInfo.SectorSize;
 
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.mediaType = GetMediaType();
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.MediaType = GetMediaType();
 
             // the start offset of the track data
             currentOffset = 2 + 2 * 82;
 
             // build table of track offsets
-            for(int i = 0; i < ImageInfo.cylinders * 2; i++)
+            for(int i = 0; i < ImageInfo.Cylinders * 2; i++)
             {
                 if(fheader.trackMap[i] == 0)
                 {
@@ -313,17 +313,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -333,50 +333,50 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
             foreach(MediaTypeTableEntry ent in mediaTypes)
             {
-                if((ent.tracks == ImageInfo.cylinders) && (ent.sectorsPerTrack == ImageInfo.sectorsPerTrack))
-                    return ent.mediaType;
+                if((ent.Tracks == ImageInfo.Cylinders) && (ent.SectorsPerTrack == ImageInfo.SectorsPerTrack))
+                    return ent.MediaType;
             }
 
             return MediaType.Unknown;
@@ -384,7 +384,7 @@ namespace DiscImageChef.ImagePlugins
 
         private void ReadTrackIntoCache(Stream stream, int tracknum)
         {
-            byte[] trackData = new byte[ImageInfo.sectorSize * ImageInfo.sectorsPerTrack];
+            byte[] trackData = new byte[ImageInfo.SectorSize * ImageInfo.SectorsPerTrack];
             byte[] blkHeader = new byte[3];
             byte escapeByte;
             byte fillByte;
@@ -423,7 +423,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             // check that the number of bytes decompressed matches a whole track
-            if(dIndex != ImageInfo.sectorSize * ImageInfo.sectorsPerTrack)
+            if(dIndex != ImageInfo.SectorSize * ImageInfo.SectorsPerTrack)
                 throw new InvalidDataException("Track decompression yielded incomplete data");
 
             // store track in cache
@@ -432,28 +432,28 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            int trackNum = (int)(sectorAddress / ImageInfo.sectorsPerTrack);
-            int sectorOffset = (int)(sectorAddress % (ImageInfo.sectorsPerTrack * ImageInfo.sectorSize));
+            int trackNum = (int)(sectorAddress / ImageInfo.SectorsPerTrack);
+            int sectorOffset = (int)(sectorAddress % (ImageInfo.SectorsPerTrack * ImageInfo.SectorSize));
             byte[] result;
 
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(trackNum > 2 * ImageInfo.cylinders)
+            if(trackNum > 2 * ImageInfo.Cylinders)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            result = new byte[ImageInfo.sectorSize];
+            result = new byte[ImageInfo.SectorSize];
             if(trackOffset[trackNum] == -1)
             {
                 // track is not present. Fill with zeroes.
-                Array.Clear(result, 0, (int)ImageInfo.sectorSize);
+                Array.Clear(result, 0, (int)ImageInfo.SectorSize);
             }
             else
             {
                 // track is present in file, make sure it has been loaded
                 if(!trackCache.ContainsKey(trackNum)) ReadTrackIntoCache(hdcpImageFilter.GetDataForkStream(), trackNum);
 
-                Array.Copy(trackCache[trackNum], sectorOffset, result, 0, ImageInfo.sectorSize);
+                Array.Copy(trackCache[trackNum], sectorOffset, result, 0, ImageInfo.SectorSize);
             }
 
             return result;
@@ -461,14 +461,14 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            byte[] result = new byte[length * ImageInfo.sectorSize];
+            byte[] result = new byte[length * ImageInfo.SectorSize];
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             for(int i = 0; i < length; i++)
             {
-                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * ImageInfo.sectorSize);
+                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * ImageInfo.SectorSize);
             }
 
             return result;
@@ -615,18 +615,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

@@ -59,7 +59,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public FAT(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public FAT(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Microsoft File Allocation Table";
             PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((2 + partition.Start) >= partition.End) return false;
 
@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems
             huge_sectors = BitConverter.ToUInt64(bpb_sector, 0x052);
             fat_id = fat_sector[0];
             int bits_in_bps = Helpers.CountBits.Count(bps);
-            if(imagePlugin.ImageInfo.sectorSize >= 512) bootable = BitConverter.ToUInt16(bpb_sector, 0x1FE);
+            if(imagePlugin.ImageInfo.SectorSize >= 512) bootable = BitConverter.ToUInt16(bpb_sector, 0x1FE);
 
             bool correct_spc = spc == 1 || spc == 2 || spc == 4 || spc == 8 || spc == 16 || spc == 32 || spc == 64;
             string msx_string = Encoding.ASCII.GetString(msx_id);
@@ -168,7 +168,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("FAT plugin", "apricot_fat_sectors = {0}", apricot_fat_sectors);
 
             // This is to support FAT partitions on hybrid ISO/USB images
-            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
             {
                 sectors /= 4;
                 big_sectors /= 4;
@@ -285,31 +285,31 @@ namespace DiscImageChef.Filesystems
             switch(fat_id)
             {
                 case 0xE5:
-                    if(imagePlugin.ImageInfo.sectors == 2002 && imagePlugin.ImageInfo.sectorSize == 128)
+                    if(imagePlugin.ImageInfo.Sectors == 2002 && imagePlugin.ImageInfo.SectorSize == 128)
                         fat2_sector_no = 2;
                     break;
                 case 0xFD:
-                    if(imagePlugin.ImageInfo.sectors == 4004 && imagePlugin.ImageInfo.sectorSize == 128)
+                    if(imagePlugin.ImageInfo.Sectors == 4004 && imagePlugin.ImageInfo.SectorSize == 128)
                         fat2_sector_no = 7;
-                    else if(imagePlugin.ImageInfo.sectors == 2002 && imagePlugin.ImageInfo.sectorSize == 128)
+                    else if(imagePlugin.ImageInfo.Sectors == 2002 && imagePlugin.ImageInfo.SectorSize == 128)
                         fat2_sector_no = 7;
                     break;
                 case 0xFE:
-                    if(imagePlugin.ImageInfo.sectors == 320 && imagePlugin.ImageInfo.sectorSize == 512)
+                    if(imagePlugin.ImageInfo.Sectors == 320 && imagePlugin.ImageInfo.SectorSize == 512)
                         fat2_sector_no = 2;
-                    else if(imagePlugin.ImageInfo.sectors == 2002 && imagePlugin.ImageInfo.sectorSize == 128)
+                    else if(imagePlugin.ImageInfo.Sectors == 2002 && imagePlugin.ImageInfo.SectorSize == 128)
                         fat2_sector_no = 7;
-                    else if(imagePlugin.ImageInfo.sectors == 1232 && imagePlugin.ImageInfo.sectorSize == 1024)
+                    else if(imagePlugin.ImageInfo.Sectors == 1232 && imagePlugin.ImageInfo.SectorSize == 1024)
                         fat2_sector_no = 3;
-                    else if(imagePlugin.ImageInfo.sectors == 616 && imagePlugin.ImageInfo.sectorSize == 1024)
+                    else if(imagePlugin.ImageInfo.Sectors == 616 && imagePlugin.ImageInfo.SectorSize == 1024)
                         fat2_sector_no = 2;
-                    else if(imagePlugin.ImageInfo.sectors == 720 && imagePlugin.ImageInfo.sectorSize == 128)
+                    else if(imagePlugin.ImageInfo.Sectors == 720 && imagePlugin.ImageInfo.SectorSize == 128)
                         fat2_sector_no = 5;
-                    else if(imagePlugin.ImageInfo.sectors == 640 && imagePlugin.ImageInfo.sectorSize == 512)
+                    else if(imagePlugin.ImageInfo.Sectors == 640 && imagePlugin.ImageInfo.SectorSize == 512)
                         fat2_sector_no = 2;
                     break;
                 case 0xFF:
-                    if(imagePlugin.ImageInfo.sectors == 640 && imagePlugin.ImageInfo.sectorSize == 512)
+                    if(imagePlugin.ImageInfo.Sectors == 640 && imagePlugin.ImageInfo.SectorSize == 512)
                         fat2_sector_no = 2;
                     break;
                 default:
@@ -333,7 +333,7 @@ namespace DiscImageChef.Filesystems
             return fat_id == fat2_sector[0];
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -369,7 +369,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] bpb_sector = imagePlugin.ReadSectors(partition.Start, 2);
 
-            if(imagePlugin.ImageInfo.sectorSize >= 256)
+            if(imagePlugin.ImageInfo.SectorSize >= 256)
             {
                 IntPtr bpbPtr = Marshal.AllocHGlobal(512);
                 Marshal.Copy(bpb_sector, 0, bpbPtr, 512);
@@ -436,7 +436,7 @@ namespace DiscImageChef.Filesystems
                                            ApricotBPB.mainBPB.spc == 64;
 
                 // This is to support FAT partitions on hybrid ISO/USB images
-                if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+                if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
                 {
                     atariBPB.sectors /= 4;
                     msxBPB.sectors /= 4;
@@ -598,7 +598,7 @@ namespace DiscImageChef.Filesystems
             ulong root_directory_sector = 0;
             string extraInfo = null;
             string bootChk = null;
-            Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
+            Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
             sha1Ctx.Init();
             byte[] chkTmp;
 
@@ -677,7 +677,7 @@ namespace DiscImageChef.Filesystems
                 switch(fat_sector[0])
                 {
                     case 0xE5:
-                        if(imagePlugin.ImageInfo.sectors == 2002 && imagePlugin.ImageInfo.sectorSize == 128)
+                        if(imagePlugin.ImageInfo.Sectors == 2002 && imagePlugin.ImageInfo.SectorSize == 128)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBPB.bps = 128;
@@ -694,7 +694,7 @@ namespace DiscImageChef.Filesystems
                         }
                         break;
                     case 0xFD:
-                        if(imagePlugin.ImageInfo.sectors == 4004 && imagePlugin.ImageInfo.sectorSize == 128)
+                        if(imagePlugin.ImageInfo.Sectors == 4004 && imagePlugin.ImageInfo.SectorSize == 128)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBPB.bps = 128;
@@ -709,7 +709,7 @@ namespace DiscImageChef.Filesystems
                             fakeBPB.hsectors = 0;
                             fakeBPB.spfat = 6;
                         }
-                        else if(imagePlugin.ImageInfo.sectors == 2002 && imagePlugin.ImageInfo.sectorSize == 128)
+                        else if(imagePlugin.ImageInfo.Sectors == 2002 && imagePlugin.ImageInfo.SectorSize == 128)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBPB.bps = 128;
@@ -726,7 +726,7 @@ namespace DiscImageChef.Filesystems
                         }
                         break;
                     case 0xFE:
-                        if(imagePlugin.ImageInfo.sectors == 320 && imagePlugin.ImageInfo.sectorSize == 512)
+                        if(imagePlugin.ImageInfo.Sectors == 320 && imagePlugin.ImageInfo.SectorSize == 512)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" SSDD.");
                             fakeBPB.bps = 512;
@@ -741,7 +741,7 @@ namespace DiscImageChef.Filesystems
                             fakeBPB.hsectors = 0;
                             fakeBPB.spfat = 1;
                         }
-                        else if(imagePlugin.ImageInfo.sectors == 2002 && imagePlugin.ImageInfo.sectorSize == 128)
+                        else if(imagePlugin.ImageInfo.Sectors == 2002 && imagePlugin.ImageInfo.SectorSize == 128)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBPB.bps = 128;
@@ -756,7 +756,7 @@ namespace DiscImageChef.Filesystems
                             fakeBPB.hsectors = 0;
                             fakeBPB.spfat = 6;
                         }
-                        else if(imagePlugin.ImageInfo.sectors == 1232 && imagePlugin.ImageInfo.sectorSize == 1024)
+                        else if(imagePlugin.ImageInfo.Sectors == 1232 && imagePlugin.ImageInfo.SectorSize == 1024)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBPB.bps = 1024;
@@ -771,7 +771,7 @@ namespace DiscImageChef.Filesystems
                             fakeBPB.hsectors = 0;
                             fakeBPB.spfat = 2;
                         }
-                        else if(imagePlugin.ImageInfo.sectors == 616 && imagePlugin.ImageInfo.sectorSize == 1024)
+                        else if(imagePlugin.ImageInfo.Sectors == 616 && imagePlugin.ImageInfo.SectorSize == 1024)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBPB.bps = 1024;
@@ -785,7 +785,7 @@ namespace DiscImageChef.Filesystems
                             fakeBPB.heads = 2;
                             fakeBPB.hsectors = 0;
                         }
-                        else if(imagePlugin.ImageInfo.sectors == 720 && imagePlugin.ImageInfo.sectorSize == 128)
+                        else if(imagePlugin.ImageInfo.Sectors == 720 && imagePlugin.ImageInfo.SectorSize == 128)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBPB.bps = 128;
@@ -800,7 +800,7 @@ namespace DiscImageChef.Filesystems
                             fakeBPB.hsectors = 0;
                             fakeBPB.spfat = 4;
                         }
-                        else if(imagePlugin.ImageInfo.sectors == 640 && imagePlugin.ImageInfo.sectorSize == 512)
+                        else if(imagePlugin.ImageInfo.Sectors == 640 && imagePlugin.ImageInfo.SectorSize == 512)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
                             fakeBPB.bps = 512;
@@ -817,7 +817,7 @@ namespace DiscImageChef.Filesystems
                         }
                         break;
                     case 0xFF:
-                        if(imagePlugin.ImageInfo.sectors == 640 && imagePlugin.ImageInfo.sectorSize == 512)
+                        if(imagePlugin.ImageInfo.Sectors == 640 && imagePlugin.ImageInfo.SectorSize == 512)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
                             fakeBPB.bps = 512;
@@ -844,7 +844,7 @@ namespace DiscImageChef.Filesystems
                 isFAT32 = true;
 
                 // This is to support FAT partitions on hybrid ISO/USB images
-                if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+                if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
                 {
                     Fat32BPB.bps *= 4;
                     Fat32BPB.spc /= 4;
@@ -934,7 +934,7 @@ namespace DiscImageChef.Filesystems
                 xmlFSType.Bootable |= (Fat32BPB.jump[0] == 0xEB && Fat32BPB.jump[1] > 0x58 && Fat32BPB.jump[1] < 0x80 &&
                                        Fat32BPB.boot_signature == 0xAA55);
 
-                sectors_per_real_sector = Fat32BPB.bps / imagePlugin.ImageInfo.sectorSize;
+                sectors_per_real_sector = Fat32BPB.bps / imagePlugin.ImageInfo.SectorSize;
                 // First root directory sector
                 root_directory_sector =
                     (ulong)((Fat32BPB.root_cluster - 2) * Fat32BPB.spc + Fat32BPB.big_spfat * Fat32BPB.fats_no +
@@ -1158,7 +1158,7 @@ namespace DiscImageChef.Filesystems
             if(!isFAT32)
             {
                 // This is to support FAT partitions on hybrid ISO/USB images
-                if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+                if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
                 {
                     fakeBPB.bps *= 4;
                     fakeBPB.spc /= 4;
@@ -1311,17 +1311,17 @@ namespace DiscImageChef.Filesystems
                     xmlFSType.Bootable |= (fakeBPB.jump[0] == 0xEB && fakeBPB.jump[1] > 0x58 &&
                                            fakeBPB.jump[1] < 0x80 && fakeBPB.boot_signature == 0xAA55);
 
-                sectors_per_real_sector = fakeBPB.bps / imagePlugin.ImageInfo.sectorSize;
+                sectors_per_real_sector = fakeBPB.bps / imagePlugin.ImageInfo.SectorSize;
                 // First root directory sector
                 root_directory_sector =
                     (ulong)(fakeBPB.spfat * fakeBPB.fats_no + fakeBPB.rsectors) * sectors_per_real_sector;
-                sectors_for_root_directory = (uint)((fakeBPB.root_ent * 32) / imagePlugin.ImageInfo.sectorSize);
+                sectors_for_root_directory = (uint)((fakeBPB.root_ent * 32) / imagePlugin.ImageInfo.SectorSize);
             }
 
             if(extraInfo != null) sb.Append(extraInfo);
 
             if(root_directory_sector + partition.Start < partition.End &&
-               imagePlugin.ImageInfo.xmlMediaType != ImagePlugins.XmlMediaType.OpticalDisc)
+               imagePlugin.ImageInfo.XmlMediaType != DiscImages.XmlMediaType.OpticalDisc)
             {
                 byte[] root_directory =
                     imagePlugin.ReadSectors(root_directory_sector + partition.Start, sectors_for_root_directory);

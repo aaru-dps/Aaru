@@ -259,7 +259,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_8x = 0x80,
+        Vendor_8X = 0x80,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
@@ -267,83 +267,83 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_C0 = 0xC0,
+        VendorC0 = 0xC0,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_C1 = 0xC1,
+        VendorC1 = 0xC1,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_C2 = 0xC2,
+        VendorC2 = 0xC2,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_C3 = 0xC3,
+        VendorC3 = 0xC3,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F0 = 0xF0,
+        VendorF0 = 0xF0,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F1 = 0xF1,
+        VendorF1 = 0xF1,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F2 = 0xF2,
+        VendorF2 = 0xF2,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F3 = 0xF3,
+        VendorF3 = 0xF3,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F4 = 0xF4,
+        VendorF4 = 0xF4,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F5 = 0xF5,
+        VendorF5 = 0xF5,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F6 = 0xF6,
+        VendorF6 = 0xF6,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F7 = 0xF7,
+        VendorF7 = 0xF7,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F8 = 0xF8,
+        VendorF8 = 0xF8,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_F9 = 0xF9,
+        VendorF9 = 0xF9,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_FA = 0xFA,
+        VendorFa = 0xFA,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_FB = 0xFB,
+        VendorFb = 0xFB,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_FC = 0xFC,
+        VendorFc = 0xFC,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_FD = 0xFD,
+        VendorFd = 0xFD,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_FE = 0xFE,
+        VendorFe = 0xFE,
         /// <summary>
         /// Unknown vendor command
         /// </summary>
-        Vendor_FF = 0xFF,
+        VendorFf = 0xFF,
         #endregion Commands defined on ATA rev. 4c
 
         #region Commands defined on ATA-2 rev. 4c
@@ -651,9 +651,9 @@ namespace DiscImageChef.Devices
 
         #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
         /// <summary>
-        /// Sends <see cref="AtaNCQQueueManagementSubcommands"/>
+        /// Sends <see cref="AtaNcqQueueManagementSubcommands"/>
         /// </summary>
-        NCQQueueManagement = 0x63,
+        NcqQueueManagement = 0x63,
         /// <summary>
         /// Sets the device date and time
         /// </summary>
@@ -867,13 +867,13 @@ namespace DiscImageChef.Devices
     /// <summary>
     /// All known ATA NCQ QUEUE MANAGEMENT sub-commands
     /// </summary>
-    public enum AtaNCQQueueManagementSubcommands : byte
+    public enum AtaNcqQueueManagementSubcommands : byte
     {
         #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
         /// <summary>
         /// Aborts pending NCQ commands
         /// </summary>
-        AbortNCQQueue = 0x00,
+        AbortNcqQueue = 0x00,
         /// <summary>
         /// Controls how NCQ Streaming commands are processed by the device
         /// </summary>
@@ -1321,11 +1321,11 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// SASI rev. 0a
         /// </summary>
-        WriteECC = 0xE1,
+        WriteEcc = 0xE1,
         /// <summary>
         /// SASI rev. 0a
         /// </summary>
-        ReadID = 0xE2,
+        ReadId = 0xE2,
         /// <summary>
         /// SASI rev. 0a
         /// </summary>
@@ -1574,7 +1574,7 @@ namespace DiscImageChef.Devices
         /// 4.- Write the buffer to the blocks
         /// SBC-3 rev. 16
         /// </summary>
-        ORWrite = 0x8B,
+        OrWrite = 0x8B,
         /// <summary>
         /// Transfers requested blocks to devices' cache
         /// SCSI-2 X3T9.2/375R rev. 10l
@@ -1737,29 +1737,29 @@ namespace DiscImageChef.Devices
         /// </summary>
         WriteSame16 = 0x93,
         /// <summary>
-        /// Requets XOR data generated by an <see cref="XDWrite"/> or <see cref="Regenerate"/> command
+        /// Requets XOR data generated by an <see cref="XdWrite"/> or <see cref="Regenerate"/> command
         /// SBC-1 rev. 8c
         /// </summary>
-        XDRead = 0x52,
+        XdRead = 0x52,
         /// <summary>
-        /// XORs the data sent with data on the medium and stores it until an <see cref="XDRead"/> is issued
+        /// XORs the data sent with data on the medium and stores it until an <see cref="XdRead"/> is issued
         /// SBC-1 rev. 8c
         /// </summary>
-        XDWrite = 0x50,
+        XdWrite = 0x50,
         /// <summary>
-        /// XORs the data sent with data on the medium and stores it until an <see cref="XDRead"/> is issued
+        /// XORs the data sent with data on the medium and stores it until an <see cref="XdRead"/> is issued
         /// SBC-1 rev. 8c
         /// </summary>
-        XDWrite16 = 0x80,
+        XdWrite16 = 0x80,
         /// <summary>
         /// Requets the target to XOR the sent data with the data on the medium and return the results
         /// </summary>
-        XDWriteRead = 0x53,
+        XdWriteRead = 0x53,
         /// <summary>
         /// Requests the target to XOR the data transferred with the data on the medium and writes it to the medium
         /// SBC-1 rev. 8c
         /// </summary>
-        XPWrite = 0x51,
+        XpWrite = 0x51,
         #endregion SCSI Block Commands (SBC)
 
         #region SCSI Streaming Commands (SSC)
@@ -2361,7 +2361,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Requests the drive the status from the previous WriteCDP command.
         /// </summary>
-        ReadCDP = 0xE4,
+        ReadCdp = 0xE4,
         /// <summary>
         /// Requests status from the drive
         /// </summary>
@@ -2443,200 +2443,200 @@ namespace DiscImageChef.Devices
         /// Verifies that the device can be accessed
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_TestUnit = TestUnitReady,
+        SegaTestUnit = TestUnitReady,
         /// <summary>
         /// Gets current CD status
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_RequestStatus = 0x10,
+        SegaRequestStatus = 0x10,
         /// <summary>
         /// Gets CD block mode info
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_RequestMode = 0x11,
+        SegaRequestMode = 0x11,
         /// <summary>
         /// Sets CD block mode
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_SetMode = 0x12,
+        SegaSetMode = 0x12,
         /// <summary>
         /// Requests device error info
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_RequestError = 0x13,
+        SegaRequestError = 0x13,
         /// <summary>
         /// Gets disc TOC
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_GetToc = 0x14,
+        SegaGetToc = 0x14,
         /// <summary>
         /// Gets specified session data
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_RequestSession = 0x15,
+        SegaRequestSession = 0x15,
         /// <summary>
         /// Stops the drive and opens the drive tray, or, on manual trays, stays busy until it is opened
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_OpenTray = 0x16,
+        SegaOpenTray = 0x16,
         /// <summary>
         /// Starts audio playback
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_PlayCd = 0x20,
+        SegaPlayCd = 0x20,
         /// <summary>
         /// Moves drive pickup to specified block
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_Seek = 0x21,
+        SegaSeek = 0x21,
         /// <summary>
         /// Fast-forwards or fast-reverses until Lead-In or Lead-Out arrive, or until another command is issued
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_Scan = 0x22,
+        SegaScan = 0x22,
         /// <summary>
         /// Reads blocks from the disc
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_Read = 0x30,
+        SegaRead = 0x30,
         /// <summary>
         /// Reads blocks from the disc seeking to another position at end
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_Read2 = 0x31,
+        SegaRead2 = 0x31,
         /// <summary>
         /// Reads disc subcode
         /// Sega SPI ver. 1.30
         /// </summary>
-        Sega_GetSubcode = 0x40,
+        SegaGetSubcode = 0x40,
         #endregion SEGA Packet Interface (all are 12-byte CDB)
 
         /// <summary>
         /// Variable sized Command Description Block
         /// SPC-4 rev. 16
         /// </summary>
-        VariableSizedCDB = 0x7F,
+        VariableSizedCdb = 0x7F,
 
         #region Plextor vendor commands
         /// <summary>
         /// Sends extended commands (like SpeedRead) to Plextor drives
         /// </summary>
-        Plextor_Extend = 0xE9,
+        PlextorExtend = 0xE9,
         /// <summary>
         /// Command for Plextor PoweRec
         /// </summary>
-        Plextor_PoweRec = 0xEB,
+        PlextorPoweRec = 0xEB,
         /// <summary>
         /// Sends extended commands (like PoweRec) to Plextor drives
         /// </summary>
-        Plextor_Extend2 = 0xED,
+        PlextorExtend2 = 0xED,
         /// <summary>
         /// Resets Plextor drives
         /// </summary>
-        Plextor_Reset = 0xEE,
+        PlextorReset = 0xEE,
         /// <summary>
         /// Reads drive statistics from Plextor drives EEPROM
         /// </summary>
-        Plextor_ReadEeprom = 0xF1,
+        PlextorReadEeprom = 0xF1,
         #endregion Plextor vendor commands
 
         #region HL-DT-ST vendor commands
         /// <summary>
         /// Sends debugging commands to HL-DT-ST DVD drives
         /// </summary>
-        HlDtSt_Vendor = 0xE7,
+        HlDtStVendor = 0xE7,
         #endregion HL-DT-ST vendor commands
 
         #region NEC vendor commands
         /// <summary>
         /// Reads CD-DA data
         /// </summary>
-        NEC_ReadCdDa = 0xD4,
+        NecReadCdDa = 0xD4,
         #endregion NEC vendor commands
 
         #region Adaptec vendor commands
         /// <summary>
         /// Translates a SCSI LBA to a drive's CHS
         /// </summary>
-        Adaptec_Translate = 0x0F,
+        AdaptecTranslate = 0x0F,
         /// <summary>
         /// Configures Adaptec controller error threshold
         /// </summary>
-        Adaptec_SetErrorThreshold = 0x10,
+        AdaptecSetErrorThreshold = 0x10,
         /// <summary>
         /// Reads and resets error and statistical counters
         /// </summary>
-        Adaptec_ReadCounters = 0x11,
+        AdaptecReadCounters = 0x11,
         /// <summary>
         /// Writes to controller's RAM
         /// </summary>
-        Adaptec_WriteBuffer = 0x13,
+        AdaptecWriteBuffer = 0x13,
         /// <summary>
         /// Reads controller's RAM
         /// </summary>
-        Adaptec_ReadBuffer = 0x14,
+        AdaptecReadBuffer = 0x14,
         #endregion Adaptec vendor commands
 
         #region Archive Corp. vendor commands
         /// <summary>
         /// Gets current position's block address
         /// </summary>
-        Archive_RequestBlockAddress = 0x02,
+        ArchiveRequestBlockAddress = 0x02,
         /// <summary>
         /// Seeks to specified block address
         /// </summary>
-        Archive_SeekBlock = 0x0C,
+        ArchiveSeekBlock = 0x0C,
         #endregion Archive Corp. vendor commands
 
         #region Certance vendor commands
         /// <summary>
         /// Parks the load arm in preparation for transport
         /// </summary>
-        Certance_ParkUnpark = 0x06,
+        CertanceParkUnpark = 0x06,
         #endregion Certance vendor commands
 
         #region Fujitsu vendor commands
         /// <summary>
         /// Used to check the controller's data and control path
         /// </summary>
-        Fujitsu_LoopWriteToRead = 0xC1,
+        FujitsuLoopWriteToRead = 0xC1,
         /// <summary>
         /// Used to display a message on the operator panel
         /// </summary>
-        Fujitsu_Display = 0xCF,
+        FujitsuDisplay = 0xCF,
         #endregion Fujitsu vendor commands
 
         #region M-Systems vendor commands
         /// <summary>
         /// Securely erases all flash blocks, including defective, spared and unused
         /// </summary>
-        MSystems_SecurityErase = 0xFF,
+        MSystemsSecurityErase = 0xFF,
         /// <summary>
         /// Securely erases all flash blocks, including defective, spared and unused
         /// </summary>
-        MSystems_SecurityEraseOld = 0xDF,
+        MSystemsSecurityEraseOld = 0xDF,
         #endregion M-Systems vendor commands
 
         #region Plasmon vendor commands
         /// <summary>
         /// Retrieves sector address
         /// </summary>
-        Plasmon_ReadSectorLocation = 0xE6,
+        PlasmonReadSectorLocation = 0xE6,
         /// <summary>
         /// Makes a Compliant WORM block completely unreadable
         /// </summary>
-        Plasmon_Shred = 0xEE,
+        PlasmonShred = 0xEE,
         #endregion Plasmon vendor commands
 
         #region Kreon vendor commands
         /// <summary>
         /// Most Kreon commands start with this
         /// </summary>
-        Kreon_Command = 0xFF,
+        KreonCommand = 0xFF,
         /// <summary>
         /// Kreon extract Security Sectors command start with this
         /// </summary>
-        Kreon_SS_Command = 0xAD
+        KreonSsCommand = 0xAD
         #endregion Kreon vendor commands
     }
     #endregion SCSI Commands
@@ -2718,7 +2718,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Unknown Serial ATA
         /// </summary>
-        FPDma = 12,
+        FpDma = 12,
         /// <summary>
         /// Requests the Extended ATA Status Return Descriptor
         /// </summary>
@@ -2746,14 +2746,14 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// The STPSIU contains the data length
         /// </summary>
-        SPTSIU = 3
+        Sptsiu = 3
     }
     #endregion SCSI's ATA Command Pass-Through
 
     /// <summary>
     /// ZBC sub-commands, mask 0x1F
     /// </summary>
-    public enum ZBCSubCommands : byte
+    public enum ZbcSubCommands : byte
     {
         /// <summary>
         /// Returns list with zones of specified types
@@ -2842,11 +2842,11 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Disc Structures for DVD and HD DVD
         /// </summary>
-        DVD = 0x00,
+        Dvd = 0x00,
         /// <summary>
         /// Disc Structures for BD
         /// </summary>
-        BD = 0x01
+        Bd = 0x01
     }
 
     public enum MmcDiscStructureFormat : byte
@@ -2856,31 +2856,31 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// AACS Volume Identifier
         /// </summary>
-        AACSVolId = 0x80,
+        AacsVolId = 0x80,
         /// <summary>
         /// AACS Pre-recorded Media Serial Number
         /// </summary>
-        AACSMediaSerial = 0x81,
+        AacsMediaSerial = 0x81,
         /// <summary>
         /// AACS Media Identifier
         /// </summary>
-        AACSMediaId = 0x82,
+        AacsMediaId = 0x82,
         /// <summary>
         /// AACS Lead-in Media Key Block
         /// </summary>
-        AACSMKB = 0x83,
+        Aacsmkb = 0x83,
         /// <summary>
         /// AACS Data Keys
         /// </summary>
-        AACSDataKeys = 0x84,
+        AacsDataKeys = 0x84,
         /// <summary>
         /// AACS LBA extents
         /// </summary>
-        AACSLBAExtents = 0x85,
+        AacslbaExtents = 0x85,
         /// <summary>
         /// CPRM Media Key Block specified by AACS
         /// </summary>
-        AACSMKBCPRM = 0x86,
+        Aacsmkbcprm = 0x86,
         /// <summary>
         /// Recognized format layers
         /// </summary>
@@ -2930,27 +2930,27 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// DDS from DVD-RAM
         /// </summary>
-        DVDRAM_DDS = 0x08,
+        DvdramDds = 0x08,
         /// <summary>
         /// DVD-RAM Medium Status
         /// </summary>
-        DVDRAM_MediumStatus = 0x09,
+        DvdramMediumStatus = 0x09,
         /// <summary>
         /// DVD-RAM Spare Area Information
         /// </summary>
-        DVDRAM_SpareAreaInformation = 0x0A,
+        DvdramSpareAreaInformation = 0x0A,
         /// <summary>
         /// DVD-RAM Recording Type Information
         /// </summary>
-        DVDRAM_RecordingType = 0x0B,
+        DvdramRecordingType = 0x0B,
         /// <summary>
         /// DVD-R/-RW RMD in last Border-out
         /// </summary>
-        LastBorderOutRMD = 0x0C,
+        LastBorderOutRmd = 0x0C,
         /// <summary>
         /// Specified RMD from last recorded Border-out
         /// </summary>
-        SpecifiedRMD = 0x0D,
+        SpecifiedRmd = 0x0D,
         /// <summary>
         /// DVD-R/-RW Lead-in pre-recorded information
         /// </summary>
@@ -2958,35 +2958,35 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// DVD-R/-RW Media Identifier
         /// </summary>
-        DVDR_MediaIdentifier = 0x0F,
+        DvdrMediaIdentifier = 0x0F,
         /// <summary>
         /// DVD-R/-RW Physical Format Information
         /// </summary>
-        DVDR_PhysicalInformation = 0x10,
+        DvdrPhysicalInformation = 0x10,
         /// <summary>
         /// ADIP
         /// </summary>
-        ADIP = 0x11,
+        Adip = 0x11,
         /// <summary>
         /// HD DVD Lead-in Copyright Protection Information
         /// </summary>
-        HDDVD_CopyrightInformation = 0x12,
+        HddvdCopyrightInformation = 0x12,
         /// <summary>
         /// AACS Lead-in Copyright Data Section
         /// </summary>
-        DVD_AACS = 0x15,
+        DvdAacs = 0x15,
         /// <summary>
         /// HD DVD-R Medium Status
         /// </summary>
-        HDDVDR_MediumStatus = 0x19,
+        HddvdrMediumStatus = 0x19,
         /// <summary>
         /// HD DVD-R Last recorded RMD in the latest RMZ
         /// </summary>
-        HDDVDR_LastRMD = 0x1A,
+        HddvdrLastRmd = 0x1A,
         /// <summary>
         /// DVD+/-R DL and DVD-Download DL layer capacity
         /// </summary>
-        DVDR_LayerCapacity = 0x20,
+        DvdrLayerCapacity = 0x20,
         /// <summary>
         /// DVD-R DL Middle Zone start address
         /// </summary>
@@ -2998,7 +2998,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// DVD-R DL Start LBA of the manual layer jump
         /// </summary>
-        ManualLayerJumpStartLBA = 0x23,
+        ManualLayerJumpStartLba = 0x23,
         /// <summary>
         /// DVD-R DL Remapping information of the specified Anchor Point
         /// </summary>
@@ -3006,7 +3006,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Disc Control Block
         /// </summary>
-        DCB = 0x30,
+        Dcb = 0x30,
 
         // BD Disc Structures
         /// <summary>
@@ -3016,11 +3016,11 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Blu-ray Burst Cutting Area
         /// </summary>
-        BD_BurstCuttingArea = 0x03,
+        BdBurstCuttingArea = 0x03,
         /// <summary>
         /// Blu-ray DDS
         /// </summary>
-        BD_DDS = 0x08,
+        BdDds = 0x08,
         /// <summary>
         /// Blu-ray Cartridge Status
         /// </summary>
@@ -3028,15 +3028,15 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Blu-ray Spare Area Information
         /// </summary>
-        BD_SpareAreaInformation = 0x0A,
+        BdSpareAreaInformation = 0x0A,
         /// <summary>
         /// Unmodified DFL
         /// </summary>
-        RawDFL = 0x12,
+        RawDfl = 0x12,
         /// <summary>
         /// Physical Access Control
         /// </summary>
-        PAC = 0x30
+        Pac = 0x30
     }
 
     public enum ScsiServiceActions : byte
@@ -3047,7 +3047,7 @@ namespace DiscImageChef.Devices
         /// Requests parameter data describing provisioning status for the specified LBA
         /// SBC-3 rev. 25
         /// </summary>
-        GetLBAStatus = 0x12,
+        GetLbaStatus = 0x12,
         /// <summary>
         /// Gets device capacity
         /// SBC-2 rev. 4
@@ -3086,7 +3086,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// POW Resources Information
         /// </summary>
-        POWResources = 0x02
+        PowResources = 0x02
     }
 
     public enum MmcSectorTypes : byte
@@ -3098,7 +3098,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Only CD-DA sectors shall be returned
         /// </summary>
-        CDDA = 0x01,
+        Cdda = 0x01,
         /// <summary>
         /// Only Mode 1 sectors shall be returned
         /// </summary>
@@ -3170,7 +3170,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// De-interleaved and error-corrected R to W subchannel data shall be transferred
         /// </summary>
-        RW = 0x04
+        Rw = 0x04
     }
 
     public enum PioneerSubchannel : byte
@@ -3272,7 +3272,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Book setting for DVD+R DL
         /// </summary>
-        BitSetRDL = 0x0E,
+        BitSetRdl = 0x0E,
         /// <summary>
         /// Plextor SpeedRead
         /// </summary>
@@ -3439,7 +3439,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Asks device to send their CID numbers (BCR, R2)
         /// </summary>
-        AllSendCID = 2,
+        AllSendCid = 2,
         /// <summary>
         /// Assigns a relative address to the device (AC, R1)
         /// </summary>
@@ -3447,7 +3447,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Programs the DSR of the device (BC)
         /// </summary>
-        SetDSR = 4,
+        SetDsr = 4,
         /// <summary>
         /// Toggles the device between sleep and standby (AC, R1b)
         /// </summary>
@@ -3463,15 +3463,15 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Asks device to send its extended card-specific data (ExtCSD) (ADTC, R1)
         /// </summary>
-        SendExtCSD = 8,
+        SendExtCsd = 8,
         /// <summary>
         /// Asks device to send its card-specific data (CSD) (AC, R2)
         /// </summary>
-        SendCSD = 9,
+        SendCsd = 9,
         /// <summary>
         /// Asks device to send its card identification (CID) (AC, R2)
         /// </summary>
-        SendCID = 10,
+        SendCid = 10,
         /// <summary>
         /// Reads data stream from device, starting at given address, until a <see cref="StopTransmission"/> follows (ADTC, R1)
         /// </summary>
@@ -3496,8 +3496,8 @@ namespace DiscImageChef.Devices
         /// The host sends the bus testing data pattern to a device (ADTC, R1)
         /// </summary>
         BusTestWrite = 19,
-        SPIReadOCR = 58,
-        SPICRCOnOff = 59,
+        SpiReadOcr = 58,
+        SpicrcOnOff = 59,
         #endregion Class 1 MMC Commands (Basic and read-stream)
 
         #region Class 2 MMC Commands (Block-oriented read)
@@ -3516,7 +3516,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// 128 blocks of tuning pattern is sent for HS200 optimal sampling point detection (ADTC, R1)
         /// </summary>
-        SendTuningBlockHS200 = 21,
+        SendTuningBlockHs200 = 21,
         #endregion Class 2 MMC Commands (Block-oriented read)
 
         #region Class 3 MMC Commands (Stream write)
@@ -3542,11 +3542,11 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Programs the Card Information register (ADTC, R1)
         /// </summary>
-        ProgramCID = 26,
+        ProgramCid = 26,
         /// <summary>
         /// Programs the programmable bits of the CSD (ADTC, R1)
         /// </summary>
-        ProgramCSD = 27,
+        ProgramCsd = 27,
         /// <summary>
         /// Sets the real time clock according to information in block (ADTC, R1)
         /// </summary>
@@ -3609,11 +3609,11 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Used to write and read 8 bit data field, used to access application dependent registers not defined in MMC standard (AC, R4)
         /// </summary>
-        FastIO = 39,
+        FastIo = 39,
         /// <summary>
         /// Sets the system into interrupt mode (BCR, R5)
         /// </summary>
-        GoIRQState = 40,
+        GoIrqState = 40,
         #endregion Class 9 MMC Commands (I/O mode)
 
         #region Class 10 MMC Commands (Security Protocols)
@@ -3724,7 +3724,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Reads the SD Configuration Register SCR (ADTC, R1)
         /// </summary>
-        SendSCR = 51,
+        SendScr = 51,
     }
 
     [Flags]
@@ -3736,30 +3736,30 @@ namespace DiscImageChef.Devices
         ResponseBusy = 1 << 3,
         ResponseOpcode = 1 << 4,
         CommandMask = 3 << 5,
-        CommandAC = 0 << 5,
-        CommandADTC = 1 << 5,
-        CommandBC = 2 << 5,
-        CommandBCR = 3 << 5,
-        ResponseSPI_S1 = 1 << 7,
-        ResponseSPI_S2 = 1 << 8,
-        ResponseSPI_B4 = 1 << 9,
-        ResponseSPI_Busy = 1 << 10,
+        CommandAc = 0 << 5,
+        CommandAdtc = 1 << 5,
+        CommandBc = 2 << 5,
+        CommandBcr = 3 << 5,
+        ResponseSpiS1 = 1 << 7,
+        ResponseSpiS2 = 1 << 8,
+        ResponseSpiB4 = 1 << 9,
+        ResponseSpiBusy = 1 << 10,
         ResponseNone = 0,
-        Response_R1 = ResponsePresent | ResponseCrc | ResponseOpcode,
-        Response_R1b = ResponsePresent | ResponseCrc | ResponseOpcode | ResponseBusy,
-        Response_R2 = ResponsePresent | Response136 | ResponseCrc,
-        Response_R3 = ResponsePresent,
-        Response_R4 = ResponsePresent,
-        Response_R5 = ResponsePresent | ResponseCrc | ResponseOpcode,
-        Response_R6 = ResponsePresent | ResponseCrc | ResponseOpcode,
-        Response_R7 = ResponsePresent | ResponseCrc | ResponseOpcode,
-        ResponseSPI_R1 = ResponseSPI_S1,
-        ResponseSPI_R1b = ResponseSPI_S1 | ResponseSPI_Busy,
-        ResponseSPI_R2 = ResponseSPI_S1 | ResponseSPI_S2,
-        ResponseSPI_R3 = ResponseSPI_S1 | ResponseSPI_B4,
-        ResponseSPI_R4 = ResponseSPI_S1 | ResponseSPI_B4,
-        ResponseSPI_R5 = ResponseSPI_S1 | ResponseSPI_S2,
-        ResponseSPI_R7 = ResponseSPI_S1 | ResponseSPI_B4
+        ResponseR1 = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseR1B = ResponsePresent | ResponseCrc | ResponseOpcode | ResponseBusy,
+        ResponseR2 = ResponsePresent | Response136 | ResponseCrc,
+        ResponseR3 = ResponsePresent,
+        ResponseR4 = ResponsePresent,
+        ResponseR5 = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseR6 = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseR7 = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseSpiR1 = ResponseSpiS1,
+        ResponseSpiR1B = ResponseSpiS1 | ResponseSpiBusy,
+        ResponseSpiR2 = ResponseSpiS1 | ResponseSpiS2,
+        ResponseSpiR3 = ResponseSpiS1 | ResponseSpiB4,
+        ResponseSpiR4 = ResponseSpiS1 | ResponseSpiB4,
+        ResponseSpiR5 = ResponseSpiS1 | ResponseSpiS2,
+        ResponseSpiR7 = ResponseSpiS1 | ResponseSpiB4
     }
 
     [Flags]
@@ -3776,7 +3776,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Drive can read and decrypt the SS from Xbox 360 discs
         /// </summary>
-        DecryptSS360,
+        DecryptSs360,
         /// <summary>
         /// Drive has full challenge response capabilities with Xbox 360 discs
         /// </summary>
@@ -3792,7 +3792,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Drive can read and decrypt the SS from Xbox discs
         /// </summary>
-        DecryptSS,
+        DecryptSs,
         /// <summary>
         /// Drive has full challenge response capabilities with Xbox discs
         /// </summary>

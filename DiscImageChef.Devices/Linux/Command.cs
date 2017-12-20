@@ -60,42 +60,42 @@ namespace DiscImageChef.Devices.Linux
 
             if(buffer == null) return -1;
 
-            sg_io_hdr_t io_hdr = new sg_io_hdr_t();
+            SgIoHdrT ioHdr = new SgIoHdrT();
 
             senseBuffer = new byte[32];
 
-            io_hdr.interface_id = 'S';
-            io_hdr.cmd_len = (byte)cdb.Length;
-            io_hdr.mx_sb_len = (byte)senseBuffer.Length;
-            io_hdr.dxfer_direction = direction;
-            io_hdr.dxfer_len = (uint)buffer.Length;
-            io_hdr.dxferp = Marshal.AllocHGlobal(buffer.Length);
-            io_hdr.cmdp = Marshal.AllocHGlobal(cdb.Length);
-            io_hdr.sbp = Marshal.AllocHGlobal(senseBuffer.Length);
-            io_hdr.timeout = timeout * 1000;
+            ioHdr.interface_id = 'S';
+            ioHdr.cmd_len = (byte)cdb.Length;
+            ioHdr.mx_sb_len = (byte)senseBuffer.Length;
+            ioHdr.dxfer_direction = direction;
+            ioHdr.dxfer_len = (uint)buffer.Length;
+            ioHdr.dxferp = Marshal.AllocHGlobal(buffer.Length);
+            ioHdr.cmdp = Marshal.AllocHGlobal(cdb.Length);
+            ioHdr.sbp = Marshal.AllocHGlobal(senseBuffer.Length);
+            ioHdr.timeout = timeout * 1000;
 
-            Marshal.Copy(buffer, 0, io_hdr.dxferp, buffer.Length);
-            Marshal.Copy(cdb, 0, io_hdr.cmdp, cdb.Length);
-            Marshal.Copy(senseBuffer, 0, io_hdr.sbp, senseBuffer.Length);
+            Marshal.Copy(buffer, 0, ioHdr.dxferp, buffer.Length);
+            Marshal.Copy(cdb, 0, ioHdr.cmdp, cdb.Length);
+            Marshal.Copy(senseBuffer, 0, ioHdr.sbp, senseBuffer.Length);
 
             DateTime start = DateTime.UtcNow;
-            int error = Extern.ioctlSg(fd, LinuxIoctl.SG_IO, ref io_hdr);
+            int error = Extern.ioctlSg(fd, LinuxIoctl.SgIo, ref ioHdr);
             DateTime end = DateTime.UtcNow;
 
             if(error < 0) error = Marshal.GetLastWin32Error();
 
-            Marshal.Copy(io_hdr.dxferp, buffer, 0, buffer.Length);
-            Marshal.Copy(io_hdr.cmdp, cdb, 0, cdb.Length);
-            Marshal.Copy(io_hdr.sbp, senseBuffer, 0, senseBuffer.Length);
+            Marshal.Copy(ioHdr.dxferp, buffer, 0, buffer.Length);
+            Marshal.Copy(ioHdr.cmdp, cdb, 0, cdb.Length);
+            Marshal.Copy(ioHdr.sbp, senseBuffer, 0, senseBuffer.Length);
 
-            sense |= (io_hdr.info & SgInfo.OkMask) != SgInfo.Ok;
+            sense |= (ioHdr.info & SgInfo.OkMask) != SgInfo.Ok;
 
-            if(io_hdr.duration > 0) duration = io_hdr.duration;
+            if(ioHdr.duration > 0) duration = ioHdr.duration;
             else duration = (end - start).TotalMilliseconds;
 
-            Marshal.FreeHGlobal(io_hdr.dxferp);
-            Marshal.FreeHGlobal(io_hdr.cmdp);
-            Marshal.FreeHGlobal(io_hdr.sbp);
+            Marshal.FreeHGlobal(ioHdr.dxferp);
+            Marshal.FreeHGlobal(ioHdr.cmdp);
+            Marshal.FreeHGlobal(ioHdr.sbp);
 
             return error;
         }
@@ -339,28 +339,28 @@ namespace DiscImageChef.Devices.Linux
 
             if(buffer == null) return -1;
 
-            mmc_ioc_cmd io_cmd = new mmc_ioc_cmd();
+            MmcIocCmd ioCmd = new MmcIocCmd();
 
             IntPtr bufPtr = Marshal.AllocHGlobal(buffer.Length);
 
-            io_cmd.write_flag = write;
-            io_cmd.is_ascmd = isApplication;
-            io_cmd.opcode = (uint)command;
-            io_cmd.arg = argument;
-            io_cmd.flags = flags;
-            io_cmd.blksz = blockSize;
-            io_cmd.blocks = blocks;
+            ioCmd.write_flag = write;
+            ioCmd.is_ascmd = isApplication;
+            ioCmd.opcode = (uint)command;
+            ioCmd.arg = argument;
+            ioCmd.flags = flags;
+            ioCmd.blksz = blockSize;
+            ioCmd.blocks = blocks;
             if(timeout > 0)
             {
-                io_cmd.data_timeout_ns = timeout * 1000000000;
-                io_cmd.cmd_timeout_ms = timeout * 1000;
+                ioCmd.data_timeout_ns = timeout * 1000000000;
+                ioCmd.cmd_timeout_ms = timeout * 1000;
             }
-            io_cmd.data_ptr = (ulong)bufPtr;
+            ioCmd.data_ptr = (ulong)bufPtr;
 
             Marshal.Copy(buffer, 0, bufPtr, buffer.Length);
 
             DateTime start = DateTime.UtcNow;
-            int error = Extern.ioctlMmc(fd, LinuxIoctl.MMC_IOC_CMD, ref io_cmd);
+            int error = Extern.ioctlMmc(fd, LinuxIoctl.MmcIocCmd, ref ioCmd);
             DateTime end = DateTime.UtcNow;
 
             sense |= error < 0;
@@ -369,7 +369,7 @@ namespace DiscImageChef.Devices.Linux
 
             Marshal.Copy(bufPtr, buffer, 0, buffer.Length);
 
-            response = io_cmd.response;
+            response = ioCmd.response;
             duration = (end - start).TotalMilliseconds;
 
             Marshal.FreeHGlobal(bufPtr);

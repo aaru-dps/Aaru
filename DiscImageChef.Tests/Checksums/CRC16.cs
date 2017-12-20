@@ -41,7 +41,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void CRC16EmptyFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            byte[] result = Crc16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -54,7 +54,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            Crc16Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -67,7 +67,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            Crc16Context ctx = new Crc16Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -77,7 +77,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void CRC16RandomFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            byte[] result = Crc16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
@@ -90,7 +90,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            Crc16Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 
@@ -103,7 +103,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            Crc16Context ctx = new Crc16Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

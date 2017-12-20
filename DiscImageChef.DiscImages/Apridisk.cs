@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     public class Apridisk : ImagePlugin
     {
@@ -93,29 +93,29 @@ namespace DiscImageChef.ImagePlugins
         public Apridisk()
         {
             Name = "ACT Apricot Disk Image";
-            PluginUUID = new Guid("43408CF3-6DB3-449F-A779-2B0E497C5B14");
+            PluginUuid = new Guid("43408CF3-6DB3-449F-A779-2B0E497C5B14");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
@@ -168,16 +168,16 @@ namespace DiscImageChef.ImagePlugins
                         stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                         byte[] comment_b = new byte[record.dataSize];
                         stream.Read(comment_b, 0, comment_b.Length);
-                        ImageInfo.imageComments = StringHandlers.CToString(comment_b);
-                        DicConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", ImageInfo.imageComments);
+                        ImageInfo.ImageComments = StringHandlers.CToString(comment_b);
+                        DicConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", ImageInfo.ImageComments);
                         break;
                     case RecordType.Creator:
                         DicConsole.DebugWriteLine("Apridisk plugin", "Found creator record at {0}", stream.Position);
                         stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                         byte[] creator_b = new byte[record.dataSize];
                         stream.Read(creator_b, 0, creator_b.Length);
-                        ImageInfo.imageCreator = StringHandlers.CToString(creator_b);
-                        DicConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", ImageInfo.imageCreator);
+                        ImageInfo.ImageCreator = StringHandlers.CToString(creator_b);
+                        DicConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", ImageInfo.ImageCreator);
                         break;
                     case RecordType.Sector:
                         if(record.compression != CompressType.Compressed &&
@@ -217,8 +217,8 @@ namespace DiscImageChef.ImagePlugins
             // Total sectors per track
             uint[][] spts = new uint[totalCylinders][];
 
-            ImageInfo.cylinders = (ushort)totalCylinders;
-            ImageInfo.heads = (byte)totalHeads;
+            ImageInfo.Cylinders = (ushort)totalCylinders;
+            ImageInfo.Heads = (byte)totalHeads;
 
             DicConsole.DebugWriteLine("Apridisk plugin",
                                       "Found {0} cylinders and {1} heads with a maximum sector number of {2}",
@@ -233,7 +233,7 @@ namespace DiscImageChef.ImagePlugins
                 for(int j = 0; j < totalHeads; j++) sectorsData[i][j] = new byte[maxSector + 1][];
             }
 
-            ImageInfo.sectorSize = uint.MaxValue;
+            ImageInfo.SectorSize = uint.MaxValue;
 
             ulong headersizes = 0;
 
@@ -271,7 +271,7 @@ namespace DiscImageChef.ImagePlugins
                             realLength = Decompress(data, out sectorsData[record.cylinder][record.head][record.sector]);
                         else sectorsData[record.cylinder][record.head][record.sector] = data;
 
-                        if(realLength < ImageInfo.sectorSize) ImageInfo.sectorSize = realLength;
+                        if(realLength < ImageInfo.SectorSize) ImageInfo.SectorSize = realLength;
 
                         headersizes += record.headerSize + record.dataSize;
 
@@ -280,36 +280,36 @@ namespace DiscImageChef.ImagePlugins
             }
 
             DicConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} bytes per sector",
-                                      ImageInfo.sectorSize);
+                                      ImageInfo.SectorSize);
 
             // Count sectors per track
             uint spt = uint.MaxValue;
-            for(ushort cyl = 0; cyl < ImageInfo.cylinders; cyl++)
+            for(ushort cyl = 0; cyl < ImageInfo.Cylinders; cyl++)
             {
-                for(ushort head = 0; head < ImageInfo.heads; head++)
+                for(ushort head = 0; head < ImageInfo.Heads; head++)
                 {
                     if(spts[cyl][head] < spt) spt = spts[cyl][head];
                 }
             }
 
-            ImageInfo.sectorsPerTrack = spt;
+            ImageInfo.SectorsPerTrack = spt;
 
             DicConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} sectors per track",
-                                      ImageInfo.sectorsPerTrack);
+                                      ImageInfo.SectorsPerTrack);
 
-            if(ImageInfo.cylinders == 70 && ImageInfo.heads == 1 && ImageInfo.sectorsPerTrack == 9)
-                ImageInfo.mediaType = MediaType.Apricot_35;
-            else if(ImageInfo.cylinders == 80 && ImageInfo.heads == 1 && ImageInfo.sectorsPerTrack == 9)
-                ImageInfo.mediaType = MediaType.DOS_35_SS_DD_9;
-            else if(ImageInfo.cylinders == 80 && ImageInfo.heads == 2 && ImageInfo.sectorsPerTrack == 9)
-                ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
+            if(ImageInfo.Cylinders == 70 && ImageInfo.Heads == 1 && ImageInfo.SectorsPerTrack == 9)
+                ImageInfo.MediaType = MediaType.Apricot_35;
+            else if(ImageInfo.Cylinders == 80 && ImageInfo.Heads == 1 && ImageInfo.SectorsPerTrack == 9)
+                ImageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
+            else if(ImageInfo.Cylinders == 80 && ImageInfo.Heads == 2 && ImageInfo.SectorsPerTrack == 9)
+                ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
 
-            ImageInfo.imageSize = (ulong)stream.Length - headersizes;
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectors = ImageInfo.cylinders * ImageInfo.heads * ImageInfo.sectorsPerTrack;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.ImageSize = (ulong)stream.Length - headersizes;
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Sectors = ImageInfo.Cylinders * ImageInfo.Heads * ImageInfo.SectorsPerTrack;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             /*
             FileStream debugFs = new FileStream("debug.img", FileMode.CreateNew, FileAccess.Write);
@@ -354,17 +354,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -374,47 +374,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -435,10 +435,10 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream buffer = new MemoryStream();
@@ -453,9 +453,9 @@ namespace DiscImageChef.ImagePlugins
 
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
-            ushort cylinder = (ushort)(lba / (ImageInfo.heads * ImageInfo.sectorsPerTrack));
-            byte head = (byte)((lba / ImageInfo.sectorsPerTrack) % ImageInfo.heads);
-            byte sector = (byte)((lba % ImageInfo.sectorsPerTrack) + 1);
+            ushort cylinder = (ushort)(lba / (ImageInfo.Heads * ImageInfo.SectorsPerTrack));
+            byte head = (byte)((lba / ImageInfo.SectorsPerTrack) % ImageInfo.Heads);
+            byte sector = (byte)((lba % ImageInfo.SectorsPerTrack) + 1);
 
             return (cylinder, head, sector);
         }
@@ -601,18 +601,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

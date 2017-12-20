@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public AmigaDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AmigaDOSPlugin(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Amiga DOS filesystem";
             PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
@@ -208,7 +208,7 @@ namespace DiscImageChef.Filesystems
         public const uint TypeHeader = 2;
         public const uint SubTypeRoot = 1;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -306,7 +306,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
@@ -443,7 +443,7 @@ namespace DiscImageChef.Filesystems
 
             if(bootBlk.checksum == bsum)
             {
-                Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
+                Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
                 sha1Ctx.Init();
                 sha1Ctx.Update(bootBlk.bootCode);
                 sbInformation.AppendLine("Volume is bootable");
@@ -458,7 +458,7 @@ namespace DiscImageChef.Filesystems
             if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
                 sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
 
-            long blocks = (long)((((partition.End - partition.Start) + 1) * imagePlugin.ImageInfo.sectorSize) /
+            long blocks = (long)((((partition.End - partition.Start) + 1) * imagePlugin.ImageInfo.SectorSize) /
                                  blockSize);
 
             sbInformation.AppendFormat("Volume block size is {0} bytes", blockSize).AppendLine();

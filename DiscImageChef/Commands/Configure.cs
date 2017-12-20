@@ -38,7 +38,7 @@ namespace DiscImageChef.Commands
 {
     static class Configure
     {
-        internal static void doConfigure()
+        internal static void DoConfigure()
         {
             ConsoleKeyInfo pressedKey = new ConsoleKeyInfo();
 

@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filesystems;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using Schemas;
 
 namespace DiscImageChef.Core
@@ -72,9 +72,9 @@ namespace DiscImageChef.Core
                 sidecar.OpticalDisc[0].Sequence.TotalMedia = 1;
             }
 
-            MediaType dskType = image.ImageInfo.mediaType;
+            MediaType dskType = image.ImageInfo.MediaType;
 
-            foreach(MediaTagType tagType in image.ImageInfo.readableMediaTags)
+            foreach(MediaTagType tagType in image.ImageInfo.ReadableMediaTags)
             {
                 switch(tagType)
                 {
@@ -254,22 +254,22 @@ namespace DiscImageChef.Core
                 Schemas.TrackType xmlTrk = new Schemas.TrackType();
                 switch(trk.TrackType)
                 {
-                    case ImagePlugins.TrackType.Audio:
+                    case DiscImages.TrackType.Audio:
                         xmlTrk.TrackType1 = TrackTypeTrackType.audio;
                         break;
-                    case ImagePlugins.TrackType.CDMode2Form2:
+                    case DiscImages.TrackType.CdMode2Form2:
                         xmlTrk.TrackType1 = TrackTypeTrackType.m2f2;
                         break;
-                    case ImagePlugins.TrackType.CDMode2Formless:
+                    case DiscImages.TrackType.CdMode2Formless:
                         xmlTrk.TrackType1 = TrackTypeTrackType.mode2;
                         break;
-                    case ImagePlugins.TrackType.CDMode2Form1:
+                    case DiscImages.TrackType.CdMode2Form1:
                         xmlTrk.TrackType1 = TrackTypeTrackType.m2f1;
                         break;
-                    case ImagePlugins.TrackType.CDMode1:
+                    case DiscImages.TrackType.CdMode1:
                         xmlTrk.TrackType1 = TrackTypeTrackType.mode1;
                         break;
-                    case ImagePlugins.TrackType.Data:
+                    case DiscImages.TrackType.Data:
                         switch(sidecar.OpticalDisc[0].DiscType)
                         {
                             case "BD":
@@ -329,7 +329,7 @@ namespace DiscImageChef.Core
                 ulong doneSectors = 0;
 
                 // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
-                if(image.PluginUUID == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
+                if(image.PluginUuid == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
                    // Only if filter is none...
                    (filterId == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") ||
                     // ...or AppleDouble
@@ -422,7 +422,7 @@ namespace DiscImageChef.Core
                         if((sectors - doneSectors) >= sectorsToRead)
                         {
                             sector = image.ReadSectorsTag(doneSectors, sectorsToRead, (uint)xmlTrk.Sequence.TrackNumber,
-                                                          SectorTagType.CDSectorSubchannel);
+                                                          SectorTagType.CdSectorSubchannel);
                             UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
                             doneSectors += sectorsToRead;
@@ -431,7 +431,7 @@ namespace DiscImageChef.Core
                         {
                             sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
                                                           (uint)xmlTrk.Sequence.TrackNumber,
-                                                          SectorTagType.CDSectorSubchannel);
+                                                          SectorTagType.CdSectorSubchannel);
                             UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
                             doneSectors += (sectors - doneSectors);
@@ -473,21 +473,21 @@ namespace DiscImageChef.Core
                         };
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                        foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                        foreach(Filesystem plugin in plugins.PluginsList.Values)
                         {
                             try
                             {
-                                if(_plugin.Identify(image, partitions[i]))
+                                if(plugin.Identify(image, partitions[i]))
                                 {
-                                    _plugin.GetInformation(image, partitions[i], out string foo);
-                                    lstFs.Add(_plugin.XmlFSType);
-                                    Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+                                    plugin.GetInformation(image, partitions[i], out string foo);
+                                    lstFs.Add(plugin.XmlFSType);
+                                    Statistics.AddFilesystem(plugin.XmlFSType.Type);
 
-                                    if(_plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                    if(_plugin.XmlFSType.Type == "PC Engine filesystem")
+                                    if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
+                                    if(plugin.XmlFSType.Type == "PC Engine filesystem")
                                         dskType = MediaType.SuperCDROM2;
-                                    if(_plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                    if(_plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
+                                    if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
+                                    if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
                                         dskType = MediaType.GOD;
                                 }
                             }
@@ -519,20 +519,20 @@ namespace DiscImageChef.Core
                         Size = (ulong)xmlTrk.Size,
                         Sequence = (ulong)xmlTrk.Sequence.TrackNumber
                     };
-                    foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                    foreach(Filesystem plugin in plugins.PluginsList.Values)
                     {
                         try
                         {
-                            if(_plugin.Identify(image, xmlPart))
+                            if(plugin.Identify(image, xmlPart))
                             {
-                                _plugin.GetInformation(image, xmlPart, out string foo);
-                                lstFs.Add(_plugin.XmlFSType);
-                                Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+                                plugin.GetInformation(image, xmlPart, out string foo);
+                                lstFs.Add(plugin.XmlFSType);
+                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
 
-                                if(_plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                if(_plugin.XmlFSType.Type == "PC Engine filesystem") dskType = MediaType.SuperCDROM2;
-                                if(_plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                if(_plugin.XmlFSType.Type == "Nintendo Gamecube filesystem") dskType = MediaType.GOD;
+                                if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
+                                if(plugin.XmlFSType.Type == "PC Engine filesystem") dskType = MediaType.SuperCDROM2;
+                                if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
+                                if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem") dskType = MediaType.GOD;
                             }
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -569,20 +569,20 @@ namespace DiscImageChef.Core
             sidecar.OpticalDisc[0].DiscSubType = dscSubType;
             Statistics.AddMedia(dskType, false);
 
-            if(!string.IsNullOrEmpty(image.ImageInfo.driveManufacturer) ||
-               !string.IsNullOrEmpty(image.ImageInfo.driveModel) ||
-               !string.IsNullOrEmpty(image.ImageInfo.driveFirmwareRevision) ||
-               !string.IsNullOrEmpty(image.ImageInfo.driveSerialNumber))
+            if(!string.IsNullOrEmpty(image.ImageInfo.DriveManufacturer) ||
+               !string.IsNullOrEmpty(image.ImageInfo.DriveModel) ||
+               !string.IsNullOrEmpty(image.ImageInfo.DriveFirmwareRevision) ||
+               !string.IsNullOrEmpty(image.ImageInfo.DriveSerialNumber))
             {
                 sidecar.OpticalDisc[0].DumpHardwareArray = new[]
                 {
                     new DumpHardwareType
                     {
-                        Extents = new[] {new ExtentType {Start = 0, End = image.ImageInfo.sectors}},
-                        Manufacturer = image.ImageInfo.driveManufacturer,
-                        Model = image.ImageInfo.driveModel,
-                        Firmware = image.ImageInfo.driveFirmwareRevision,
-                        Serial = image.ImageInfo.driveSerialNumber,
+                        Extents = new[] {new ExtentType {Start = 0, End = image.ImageInfo.Sectors}},
+                        Manufacturer = image.ImageInfo.DriveManufacturer,
+                        Model = image.ImageInfo.DriveModel,
+                        Firmware = image.ImageInfo.DriveFirmwareRevision,
+                        Serial = image.ImageInfo.DriveSerialNumber,
                         Software = new SoftwareType
                         {
                             Name = image.GetImageApplication(),

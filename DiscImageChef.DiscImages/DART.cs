@@ -40,53 +40,53 @@ using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.DiscImages
 {
-    public class DART : ImagePlugin
+    public class Dart : ImagePlugin
     {
         #region Internal constants
         // Disk types
-        const byte kMacDisk = 1;
-        const byte kLisaDisk = 2;
-        const byte kAppleIIDisk = 3;
-        const byte kMacHiDDisk = 16;
-        const byte kMSDOSLowDDisk = 17;
-        const byte kMSDOSHiDDisk = 18;
+        const byte DISK_MAC = 1;
+        const byte DISK_LISA = 2;
+        const byte DISK_APPLE2 = 3;
+        const byte DISK_MAC_HD = 16;
+        const byte DISK_DOS = 17;
+        const byte DISK_DOS_HD = 18;
 
         // Compression types
         // "fast"
-        const byte kRLECompress = 0;
+        const byte COMPRESS_RLE = 0;
         // "best"
-        const byte kLZHCompress = 1;
+        const byte COMPRESS_LZH = 1;
         // DART <= 1.4
-        const byte kNoCompress = 2;
+        const byte COMPRESS_NONE = 2;
 
         // Valid sizes
-        const short kLisa400KSize = 400;
-        const short kMac400KSize = 400;
-        const short kMac800KSize = 800;
-        const short kMac1440KSize = 1440;
-        const short kApple800KSize = 800;
-        const short kMSDOS720KSize = 720;
-        const short kMSDOS1440KSize = 1440;
+        const short SIZE_LISA = 400;
+        const short SIZE_MAC_SS = 400;
+        const short SIZE_MAC = 800;
+        const short SIZE_MAC_HD = 1440;
+        const short SIZE_APPLE2 = 800;
+        const short SIZE_DOS = 720;
+        const short SIZE_DOS_HD = 1440;
 
         // bLength array sizes
-        const int blockArrayLenLow = 40;
-        const int blockArrayLenHigh = 72;
+        const int BLOCK_ARRAY_LEN_LOW = 40;
+        const int BLOCK_ARRAY_LEN_HIGH = 72;
 
-        const int sectorsPerBlock = 40;
-        const int sectorSize = 512;
-        const int tagSectorSize = 12;
-        const int dataSize = sectorsPerBlock * sectorSize;
-        const int tagSize = sectorsPerBlock * tagSectorSize;
-        const int bufferSize = (sectorsPerBlock * sectorSize) + (sectorsPerBlock * tagSectorSize);
+        const int SECTORS_PER_BLOCK = 40;
+        const int SECTOR_SIZE = 512;
+        const int TAG_SECTOR_SIZE = 12;
+        const int DATA_SIZE = SECTORS_PER_BLOCK * SECTOR_SIZE;
+        const int TAG_SIZE = SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
+        const int BUFFER_SIZE = (SECTORS_PER_BLOCK * SECTOR_SIZE) + (SECTORS_PER_BLOCK * TAG_SECTOR_SIZE);
         #endregion
 
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DART_Header
+        struct DartHeader
         {
             public byte srcCmp;
             public byte srcType;
@@ -100,31 +100,31 @@ namespace DiscImageChef.DiscImages
         uint dataChecksum;
         uint tagChecksum;
 
-        public DART()
+        public Dart()
         {
             Name = "Apple Disk Archival/Retrieval Tool";
-            PluginUUID = new Guid("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
+            PluginUuid = new Guid("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -133,42 +133,42 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 84) return false;
 
-            DART_Header header = new DART_Header();
+            DartHeader header = new DartHeader();
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] header_b = new byte[Marshal.SizeOf(header)];
+            byte[] headerB = new byte[Marshal.SizeOf(header)];
 
-            stream.Read(header_b, 0, Marshal.SizeOf(header));
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<DART_Header>(header_b);
+            stream.Read(headerB, 0, Marshal.SizeOf(header));
+            header = BigEndianMarshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
 
-            if(header.srcCmp > kNoCompress) return false;
+            if(header.srcCmp > COMPRESS_NONE) return false;
 
             int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
 
             switch(header.srcType)
             {
-                case kMacDisk:
-                    if(header.srcSize != kMac400KSize && header.srcSize != kMac800KSize) return false;
+                case DISK_MAC:
+                    if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC) return false;
 
                     break;
-                case kLisaDisk:
-                    if(header.srcSize != kLisa400KSize) return false;
+                case DISK_LISA:
+                    if(header.srcSize != SIZE_LISA) return false;
 
                     break;
-                case kAppleIIDisk:
-                    if(header.srcSize != kApple800KSize) return false;
+                case DISK_APPLE2:
+                    if(header.srcSize != SIZE_APPLE2) return false;
 
                     break;
-                case kMacHiDDisk:
-                    if(header.srcSize != kMac1440KSize) return false;
+                case DISK_MAC_HD:
+                    if(header.srcSize != SIZE_MAC_HD) return false;
 
                     expectedMaxSize += 64;
                     break;
-                case kMSDOSLowDDisk:
-                    if(header.srcSize != kMSDOS720KSize) return false;
+                case DISK_DOS:
+                    if(header.srcSize != SIZE_DOS) return false;
 
                     break;
-                case kMSDOSHiDDisk:
-                    if(header.srcSize != kMSDOS1440KSize) return false;
+                case DISK_DOS_HD:
+                    if(header.srcSize != SIZE_DOS_HD) return false;
 
                     expectedMaxSize += 64;
                     break;
@@ -186,42 +186,42 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 84) return false;
 
-            DART_Header header = new DART_Header();
+            DartHeader header = new DartHeader();
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] header_b = new byte[Marshal.SizeOf(header)];
+            byte[] headerB = new byte[Marshal.SizeOf(header)];
 
-            stream.Read(header_b, 0, Marshal.SizeOf(header));
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<DART_Header>(header_b);
+            stream.Read(headerB, 0, Marshal.SizeOf(header));
+            header = BigEndianMarshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
 
-            if(header.srcCmp > kNoCompress) return false;
+            if(header.srcCmp > COMPRESS_NONE) return false;
 
             int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
 
             switch(header.srcType)
             {
-                case kMacDisk:
-                    if(header.srcSize != kMac400KSize && header.srcSize != kMac800KSize) return false;
+                case DISK_MAC:
+                    if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC) return false;
 
                     break;
-                case kLisaDisk:
-                    if(header.srcSize != kLisa400KSize) return false;
+                case DISK_LISA:
+                    if(header.srcSize != SIZE_LISA) return false;
 
                     break;
-                case kAppleIIDisk:
-                    if(header.srcSize != kAppleIIDisk) return false;
+                case DISK_APPLE2:
+                    if(header.srcSize != DISK_APPLE2) return false;
 
                     break;
-                case kMacHiDDisk:
-                    if(header.srcSize != kMac1440KSize) return false;
+                case DISK_MAC_HD:
+                    if(header.srcSize != SIZE_MAC_HD) return false;
 
                     expectedMaxSize += 64;
                     break;
-                case kMSDOSLowDDisk:
-                    if(header.srcSize != kMSDOS720KSize) return false;
+                case DISK_DOS:
+                    if(header.srcSize != SIZE_DOS) return false;
 
                     break;
-                case kMSDOSHiDDisk:
-                    if(header.srcSize != kMSDOS1440KSize) return false;
+                case DISK_DOS_HD:
+                    if(header.srcSize != SIZE_DOS_HD) return false;
 
                     expectedMaxSize += 64;
                     break;
@@ -232,8 +232,8 @@ namespace DiscImageChef.DiscImages
 
             short[] bLength;
 
-            if(header.srcType == kMacHiDDisk || header.srcType == kMSDOSHiDDisk) bLength = new short[blockArrayLenHigh];
-            else bLength = new short[blockArrayLenLow];
+            if(header.srcType == DISK_MAC_HD || header.srcType == DISK_DOS_HD) bLength = new short[BLOCK_ARRAY_LEN_HIGH];
+            else bLength = new short[BLOCK_ARRAY_LEN_LOW];
 
             byte[] tmpShort;
             for(int i = 0; i < bLength.Length; i++)
@@ -253,14 +253,14 @@ namespace DiscImageChef.DiscImages
             {
                 if(bLength[i] != 0)
                 {
-                    buffer = new byte[bufferSize];
+                    buffer = new byte[BUFFER_SIZE];
                     if(bLength[i] == -1)
                     {
-                        stream.Read(buffer, 0, bufferSize);
-                        dataMs.Write(buffer, 0, dataSize);
-                        tagMs.Write(buffer, dataSize, tagSize);
+                        stream.Read(buffer, 0, BUFFER_SIZE);
+                        dataMs.Write(buffer, 0, DATA_SIZE);
+                        tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
                     }
-                    else if(header.srcCmp == kRLECompress)
+                    else if(header.srcCmp == COMPRESS_RLE)
                     {
                         temp = new byte[bLength[i] * 2];
                         stream.Read(temp, 0, temp.Length);
@@ -276,9 +276,9 @@ namespace DiscImageChef.DiscImages
             }
 
             dataCache = dataMs.ToArray();
-            if(header.srcType == kLisaDisk || header.srcType == kMacDisk || header.srcType == kAppleIIDisk)
+            if(header.srcType == DISK_LISA || header.srcType == DISK_MAC || header.srcType == DISK_APPLE2)
             {
-                ImageInfo.readableSectorTags.Add(SectorTagType.AppleSectorTag);
+                ImageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
                 tagCache = tagMs.ToArray();
             }
 
@@ -326,10 +326,10 @@ namespace DiscImageChef.DiscImages
 
                                 if(dev != null) pre = string.Format("{0}", version.PreReleaseVersion);
 
-                                ImageInfo.imageApplicationVersion =
+                                ImageInfo.ImageApplicationVersion =
                                     string.Format("{0}{1}{2}{3}{4}", major, minor, release, dev, pre);
-                                ImageInfo.imageApplication = version.VersionString;
-                                ImageInfo.imageComments = version.VersionMessage;
+                                ImageInfo.ImageApplication = version.VersionString;
+                                ImageInfo.ImageComments = version.VersionMessage;
                             }
                         }
                     }
@@ -349,8 +349,8 @@ namespace DiscImageChef.DiscImages
 
                             if(dArtMatch.Success)
                             {
-                                ImageInfo.imageApplication = "DART";
-                                ImageInfo.imageApplicationVersion = dArtMatch.Groups["version"].Value;
+                                ImageInfo.ImageApplication = "DART";
+                                ImageInfo.ImageApplicationVersion = dArtMatch.Groups["version"].Value;
                                 dataChecksum = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
                                 tagChecksum = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value, 16);
                             }
@@ -379,44 +379,44 @@ namespace DiscImageChef.DiscImages
             }
             catch(InvalidCastException) { }
 
-            DicConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", ImageInfo.imageApplication,
-                                      ImageInfo.imageApplicationVersion);
+            DicConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", ImageInfo.ImageApplication,
+                                      ImageInfo.ImageApplicationVersion);
 
-            ImageInfo.sectors = (ulong)(header.srcSize * 2);
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectorSize = sectorSize;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.imageSize = ImageInfo.sectors * sectorSize;
-            if(header.srcCmp == kNoCompress) ImageInfo.imageVersion = "1.4";
-            else ImageInfo.imageVersion = "1.5";
+            ImageInfo.Sectors = (ulong)(header.srcSize * 2);
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.SectorSize = SECTOR_SIZE;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
+            if(header.srcCmp == COMPRESS_NONE) ImageInfo.ImageVersion = "1.4";
+            else ImageInfo.ImageVersion = "1.5";
 
             switch(header.srcSize)
             {
-                case kMac400KSize:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 1;
-                    ImageInfo.sectorsPerTrack = 10;
-                    ImageInfo.mediaType = MediaType.AppleSonySS;
+                case SIZE_MAC_SS:
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.SectorsPerTrack = 10;
+                    ImageInfo.MediaType = MediaType.AppleSonySS;
                     break;
-                case kMac800KSize:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 10;
-                    ImageInfo.mediaType = MediaType.AppleSonyDS;
+                case SIZE_MAC:
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 10;
+                    ImageInfo.MediaType = MediaType.AppleSonyDS;
                     break;
-                case kMSDOS720KSize:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 9;
-                    ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
+                case SIZE_DOS:
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 9;
+                    ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
                     break;
-                case kMac1440KSize:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 18;
-                    ImageInfo.mediaType = MediaType.DOS_35_HD;
+                case SIZE_MAC_HD:
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 18;
+                    ImageInfo.MediaType = MediaType.DOS_35_HD;
                     break;
             }
 
@@ -435,15 +435,15 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.sectorSize];
+            byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
-            Array.Copy(dataCache, (int)sectorAddress * ImageInfo.sectorSize, buffer, 0, length * ImageInfo.sectorSize);
+            Array.Copy(dataCache, (int)sectorAddress * ImageInfo.SectorSize, buffer, 0, length * ImageInfo.SectorSize);
 
             return buffer;
         }
@@ -456,15 +456,15 @@ namespace DiscImageChef.DiscImages
             if(tagCache == null || tagCache.Length == 0)
                 throw new FeatureNotPresentImageException("Disk image does not have tags");
 
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * tagSectorSize];
+            byte[] buffer = new byte[length * TAG_SECTOR_SIZE];
 
-            Array.Copy(tagCache, (int)sectorAddress * tagSectorSize, buffer, 0, length * tagSectorSize);
+            Array.Copy(tagCache, (int)sectorAddress * TAG_SECTOR_SIZE, buffer, 0, length * TAG_SECTOR_SIZE);
 
             return buffer;
         }
@@ -476,10 +476,10 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] data = ReadSectors(sectorAddress, length);
@@ -488,10 +488,10 @@ namespace DiscImageChef.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                Array.Copy(data, i * (ImageInfo.sectorSize), buffer, i * (ImageInfo.sectorSize + tagSectorSize),
-                           ImageInfo.sectorSize);
-                Array.Copy(tags, i * (tagSectorSize), buffer,
-                           i * (ImageInfo.sectorSize + tagSectorSize) + ImageInfo.sectorSize, tagSectorSize);
+                Array.Copy(data, i * (ImageInfo.SectorSize), buffer, i * (ImageInfo.SectorSize + TAG_SECTOR_SIZE),
+                           ImageInfo.SectorSize);
+                Array.Copy(tags, i * (TAG_SECTOR_SIZE), buffer,
+                           i * (ImageInfo.SectorSize + TAG_SECTOR_SIZE) + ImageInfo.SectorSize, TAG_SECTOR_SIZE);
             }
 
             return buffer;
@@ -504,17 +504,17 @@ namespace DiscImageChef.DiscImages
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -524,47 +524,47 @@ namespace DiscImageChef.DiscImages
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         #region Unsupported features
@@ -688,18 +688,18 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

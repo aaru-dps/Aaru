@@ -39,14 +39,14 @@ using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Commands
 {
     // TODO: Rewrite this, has an insane amount of repeating code ;)
     static class ExtractFiles
     {
-        internal static void doExtractFiles(ExtractFilesOptions options)
+        internal static void DoExtractFiles(ExtractFilesOptions options)
         {
             DicConsole.DebugWriteLine("Extract-Files command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Extract-Files command", "--verbose={0}", options.Verbose);
@@ -83,16 +83,16 @@ namespace DiscImageChef.Commands
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins(encoding);
 
-            List<string> id_plugins;
-            Filesystem _plugin;
-            ImagePlugin _imageFormat;
+            List<string> idPlugins;
+            Filesystem plugin;
+            ImagePlugin imageFormat;
             Errno error;
 
             try
             {
-                _imageFormat = ImageFormat.Detect(inputFilter);
+                imageFormat = ImageFormat.Detect(inputFilter);
 
-                if(_imageFormat == null)
+                if(imageFormat == null)
                 {
                     DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
                     return;
@@ -100,9 +100,9 @@ namespace DiscImageChef.Commands
                 else
                 {
                     if(options.Verbose)
-                        DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", _imageFormat.Name,
-                                                    _imageFormat.PluginUUID);
-                    else DicConsole.WriteLine("Image format identified by {0}.", _imageFormat.Name);
+                        DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
+                                                    imageFormat.PluginUuid);
+                    else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
                 }
 
                 if(Directory.Exists(options.OutputDir) || File.Exists(options.OutputDir))
@@ -115,7 +115,7 @@ namespace DiscImageChef.Commands
 
                 try
                 {
-                    if(!_imageFormat.OpenImage(inputFilter))
+                    if(!imageFormat.OpenImage(inputFilter))
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
@@ -124,14 +124,14 @@ namespace DiscImageChef.Commands
 
                     DicConsole.DebugWriteLine("Extract-Files command", "Correctly opened image file.");
                     DicConsole.DebugWriteLine("Extract-Files command", "Image without headers is {0} bytes.",
-                                              _imageFormat.GetImageSize());
+                                              imageFormat.GetImageSize());
                     DicConsole.DebugWriteLine("Extract-Files command", "Image has {0} sectors.",
-                                              _imageFormat.GetSectors());
+                                              imageFormat.GetSectors());
                     DicConsole.DebugWriteLine("Extract-Files command", "Image identifies disk type as {0}.",
-                                              _imageFormat.GetMediaType());
+                                              imageFormat.GetMediaType());
 
-                    Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
-                    Core.Statistics.AddMedia(_imageFormat.ImageInfo.mediaType, false);
+                    Core.Statistics.AddMediaFormat(imageFormat.GetImageFormat());
+                    Core.Statistics.AddMedia(imageFormat.ImageInfo.MediaType, false);
                     Core.Statistics.AddFilter(inputFilter.Name);
                 }
                 catch(Exception ex)
@@ -141,8 +141,8 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
-                List<Partition> partitions = Partitions.GetAll(_imageFormat);
-                Partitions.AddSchemesToStats(partitions);
+                List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
+                Core.Partitions.AddSchemesToStats(partitions);
 
                 if(partitions.Count == 0) DicConsole.DebugWriteLine("Extract-Files command", "No partitions found");
                 else
@@ -156,22 +156,22 @@ namespace DiscImageChef.Commands
 
                         DicConsole.WriteLine("Identifying filesystem on partition");
 
-                        Core.Filesystems.Identify(_imageFormat, out id_plugins, partitions[i]);
-                        if(id_plugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
-                        else if(id_plugins.Count > 1)
+                        Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                        if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
+                        else if(idPlugins.Count > 1)
                         {
-                            DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
+                            DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
 
-                            foreach(string plugin_name in id_plugins)
+                            foreach(string pluginName in idPlugins)
                             {
-                                if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
+                                if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                                 {
-                                    DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
-                                    Filesystem fs = (Filesystem)_plugin
+                                    DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
+                                    Filesystem fs = (Filesystem)plugin
                                         .GetType().GetConstructor(new Type[]
                                         {
                                             typeof(ImagePlugin), typeof(Partition), typeof(System.Text.Encoding)
-                                        }).Invoke(new object[] {_imageFormat, partitions[i], null});
+                                        }).Invoke(new object[] {imageFormat, partitions[i], null});
 
                                     error = fs.Mount(options.Debug);
                                     if(error == Errno.NoError)
@@ -319,13 +319,13 @@ namespace DiscImageChef.Commands
                         }
                         else
                         {
-                            plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                            DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
-                            Filesystem fs = (Filesystem)_plugin
+                            plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+                            DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
+                            Filesystem fs = (Filesystem)plugin
                                 .GetType().GetConstructor(new Type[]
                                 {
                                     typeof(ImagePlugin), typeof(Partition), typeof(System.Text.Encoding)
-                                }).Invoke(new object[] {_imageFormat, partitions[i], null});
+                                }).Invoke(new object[] {imageFormat, partitions[i], null});
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
                             {
@@ -454,26 +454,26 @@ namespace DiscImageChef.Commands
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
-                    Length = _imageFormat.GetSectors(),
-                    Size = _imageFormat.GetSectors() * _imageFormat.GetSectorSize()
+                    Length = imageFormat.GetSectors(),
+                    Size = imageFormat.GetSectors() * imageFormat.GetSectorSize()
                 };
 
-                Core.Filesystems.Identify(_imageFormat, out id_plugins, wholePart);
-                if(id_plugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
-                else if(id_plugins.Count > 1)
+                Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
+                else if(idPlugins.Count > 1)
                 {
-                    DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
+                    DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
 
-                    foreach(string plugin_name in id_plugins)
+                    foreach(string pluginName in idPlugins)
                     {
-                        if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
+                        if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                         {
-                            DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
-                            Filesystem fs = (Filesystem)_plugin
+                            DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
+                            Filesystem fs = (Filesystem)plugin
                                 .GetType().GetConstructor(new Type[]
                                 {
                                     typeof(ImagePlugin), typeof(Partition), typeof(System.Text.Encoding)
-                                }).Invoke(new object[] {_imageFormat, wholePart, null});
+                                }).Invoke(new object[] {imageFormat, wholePart, null});
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
                             {
@@ -600,13 +600,13 @@ namespace DiscImageChef.Commands
                 }
                 else
                 {
-                    plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                    DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
-                    Filesystem fs = (Filesystem)_plugin
+                    plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+                    DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
+                    Filesystem fs = (Filesystem)plugin
                         .GetType().GetConstructor(new Type[]
                         {
                             typeof(ImagePlugin), typeof(Partition), typeof(System.Text.Encoding)
-                        }).Invoke(new object[] {_imageFormat, wholePart, null});
+                        }).Invoke(new object[] {imageFormat, wholePart, null});
                     error = fs.Mount(options.Debug);
                     if(error == Errno.NoError)
                     {

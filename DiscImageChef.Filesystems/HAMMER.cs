@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public HAMMER(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public HAMMER(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "HAMMER Filesystem";
             PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
@@ -71,7 +71,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
 
@@ -88,7 +88,7 @@ namespace DiscImageChef.Filesystems
             return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

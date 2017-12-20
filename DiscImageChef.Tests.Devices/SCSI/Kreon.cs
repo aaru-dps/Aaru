@@ -130,7 +130,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
             start:
             System.Console.Clear();
-            bool sense = dev.KreonExtractSS(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration,
+            bool sense = dev.KreonExtractSs(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration,
                                             requestNumber);
 
             menu:

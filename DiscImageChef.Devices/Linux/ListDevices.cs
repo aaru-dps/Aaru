@@ -60,70 +60,70 @@ namespace DiscImageChef.Devices.Linux
             for(int i = 0; i < sysdevs.Length; i++)
             {
                 devices[i] = new DeviceInfo();
-                devices[i].path = "/dev/" + Path.GetFileName(sysdevs[i]);
+                devices[i].Path = "/dev/" + Path.GetFileName(sysdevs[i]);
 
                 if(hasUdev)
                 {
                     udevDev = Extern.udev_device_new_from_subsystem_sysname(udev, "block",
                                                                             Path.GetFileName(sysdevs[i]));
-                    devices[i].vendor = Extern.udev_device_get_property_value(udevDev, "ID_VENDOR");
-                    devices[i].model = Extern.udev_device_get_property_value(udevDev, "ID_MODEL");
-                    if(!string.IsNullOrEmpty(devices[i].model)) devices[i].model = devices[i].model.Replace('_', ' ');
-                    devices[i].serial = Extern.udev_device_get_property_value(udevDev, "ID_SCSI_SERIAL");
-                    if(string.IsNullOrEmpty(devices[i].serial))
-                        devices[i].serial = Extern.udev_device_get_property_value(udevDev, "ID_SERIAL_SHORT");
-                    devices[i].bus = Extern.udev_device_get_property_value(udevDev, "ID_BUS");
+                    devices[i].Vendor = Extern.udev_device_get_property_value(udevDev, "ID_VENDOR");
+                    devices[i].Model = Extern.udev_device_get_property_value(udevDev, "ID_MODEL");
+                    if(!string.IsNullOrEmpty(devices[i].Model)) devices[i].Model = devices[i].Model.Replace('_', ' ');
+                    devices[i].Serial = Extern.udev_device_get_property_value(udevDev, "ID_SCSI_SERIAL");
+                    if(string.IsNullOrEmpty(devices[i].Serial))
+                        devices[i].Serial = Extern.udev_device_get_property_value(udevDev, "ID_SERIAL_SHORT");
+                    devices[i].Bus = Extern.udev_device_get_property_value(udevDev, "ID_BUS");
                 }
 
-                if(File.Exists(Path.Combine(sysdevs[i], "device/vendor")) && string.IsNullOrEmpty(devices[i].vendor))
+                if(File.Exists(Path.Combine(sysdevs[i], "device/vendor")) && string.IsNullOrEmpty(devices[i].Vendor))
                 {
                     sr = new StreamReader(Path.Combine(sysdevs[i], "device/vendor"), Encoding.ASCII);
-                    devices[i].vendor = sr.ReadLine().Trim();
+                    devices[i].Vendor = sr.ReadLine().Trim();
                 }
-                else if(devices[i].path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
-                    devices[i].vendor = "Linux";
+                else if(devices[i].Path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
+                    devices[i].Vendor = "Linux";
 
                 if(File.Exists(Path.Combine(sysdevs[i], "device/model")) &&
-                   (string.IsNullOrEmpty(devices[i].model) || devices[i].bus == "ata"))
+                   (string.IsNullOrEmpty(devices[i].Model) || devices[i].Bus == "ata"))
                 {
                     sr = new StreamReader(Path.Combine(sysdevs[i], "device/model"), Encoding.ASCII);
-                    devices[i].model = sr.ReadLine().Trim();
+                    devices[i].Model = sr.ReadLine().Trim();
                 }
-                else if(devices[i].path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
-                    devices[i].model = "Linux";
+                else if(devices[i].Path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
+                    devices[i].Model = "Linux";
 
-                if(File.Exists(Path.Combine(sysdevs[i], "device/serial")) && string.IsNullOrEmpty(devices[i].serial))
+                if(File.Exists(Path.Combine(sysdevs[i], "device/serial")) && string.IsNullOrEmpty(devices[i].Serial))
                 {
                     sr = new StreamReader(Path.Combine(sysdevs[i], "device/serial"), Encoding.ASCII);
-                    devices[i].serial = sr.ReadLine().Trim();
+                    devices[i].Serial = sr.ReadLine().Trim();
                 }
 
-                if(string.IsNullOrEmpty(devices[i].vendor) || devices[i].vendor == "ATA")
+                if(string.IsNullOrEmpty(devices[i].Vendor) || devices[i].Vendor == "ATA")
                 {
-                    if(devices[i].model != null)
+                    if(devices[i].Model != null)
                     {
-                        string[] pieces = devices[i].model.Split(' ');
+                        string[] pieces = devices[i].Model.Split(' ');
                         if(pieces.Length > 1)
                         {
-                            devices[i].vendor = pieces[0];
-                            devices[i].model = devices[i].model.Substring(pieces[0].Length + 1);
+                            devices[i].Vendor = pieces[0];
+                            devices[i].Model = devices[i].Model.Substring(pieces[0].Length + 1);
                         }
                     }
                 }
 
                 // TODO: Get better device type from sysfs paths
-                if(string.IsNullOrEmpty(devices[i].bus))
+                if(string.IsNullOrEmpty(devices[i].Bus))
                 {
-                    if(devices[i].path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
-                        devices[i].bus = "loop";
-                    else if(devices[i].path.StartsWith("/dev/nvme", StringComparison.CurrentCulture))
-                        devices[i].bus = "NVMe";
-                    else if(devices[i].path.StartsWith("/dev/mmc", StringComparison.CurrentCulture))
-                        devices[i].bus = "MMC/SD";
+                    if(devices[i].Path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
+                        devices[i].Bus = "loop";
+                    else if(devices[i].Path.StartsWith("/dev/nvme", StringComparison.CurrentCulture))
+                        devices[i].Bus = "NVMe";
+                    else if(devices[i].Path.StartsWith("/dev/mmc", StringComparison.CurrentCulture))
+                        devices[i].Bus = "MMC/SD";
                 }
-                else devices[i].bus = devices[i].bus.ToUpper();
+                else devices[i].Bus = devices[i].Bus.ToUpper();
 
-                switch(devices[i].bus)
+                switch(devices[i].Bus)
                 {
                     case "ATA":
                     case "ATAPI":
@@ -132,7 +132,7 @@ namespace DiscImageChef.Devices.Linux
                     case "PCMCIA":
                     case "FireWire":
                     case "MMC/SD":
-                        devices[i].supported = true;
+                        devices[i].Supported = true;
                         break;
                 }
             }

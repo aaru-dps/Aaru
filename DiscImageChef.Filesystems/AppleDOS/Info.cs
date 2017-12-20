@@ -34,7 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
@@ -42,19 +42,19 @@ namespace DiscImageChef.Filesystems.AppleDOS
     {
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.ImageInfo.sectors != 455 && imagePlugin.ImageInfo.sectors != 560) return false;
+            if(imagePlugin.ImageInfo.Sectors != 455 && imagePlugin.ImageInfo.Sectors != 560) return false;
 
-            if(partition.Start > 0 || imagePlugin.ImageInfo.sectorSize != 256) return false;
+            if(partition.Start > 0 || imagePlugin.ImageInfo.SectorSize != 256) return false;
 
             int spt = 0;
-            if(imagePlugin.ImageInfo.sectors == 455) spt = 13;
+            if(imagePlugin.ImageInfo.Sectors == 455) spt = 13;
             else spt = 16;
 
-            byte[] vtoc_b = imagePlugin.ReadSector((ulong)(17 * spt));
-            vtoc = new VTOC();
+            byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
+            vtoc = new Vtoc();
             IntPtr vtocPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(vtoc_b, 0, vtocPtr, 256);
-            vtoc = (VTOC)Marshal.PtrToStructure(vtocPtr, typeof(VTOC));
+            Marshal.Copy(vtocB, 0, vtocPtr, 256);
+            vtoc = (Vtoc)Marshal.PtrToStructure(vtocPtr, typeof(Vtoc));
             Marshal.FreeHGlobal(vtocPtr);
 
             return vtoc.catalogSector < spt && vtoc.maxTrackSectorPairsPerSector <= 122 &&
@@ -67,14 +67,14 @@ namespace DiscImageChef.Filesystems.AppleDOS
             StringBuilder sb = new StringBuilder();
 
             int spt = 0;
-            if(imagePlugin.ImageInfo.sectors == 455) spt = 13;
+            if(imagePlugin.ImageInfo.Sectors == 455) spt = 13;
             else spt = 16;
 
-            byte[] vtoc_b = imagePlugin.ReadSector((ulong)(17 * spt));
-            vtoc = new VTOC();
+            byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
+            vtoc = new Vtoc();
             IntPtr vtocPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(vtoc_b, 0, vtocPtr, 256);
-            vtoc = (VTOC)Marshal.PtrToStructure(vtocPtr, typeof(VTOC));
+            Marshal.Copy(vtocB, 0, vtocPtr, 256);
+            vtoc = (Vtoc)Marshal.PtrToStructure(vtocPtr, typeof(Vtoc));
             Marshal.FreeHGlobal(vtocPtr);
 
             sb.AppendLine("Apple DOS File System");
@@ -94,8 +94,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Bootable = true;
-            xmlFSType.Clusters = (long)imagePlugin.ImageInfo.sectors;
-            xmlFSType.ClusterSize = (int)imagePlugin.ImageInfo.sectorSize;
+            xmlFSType.Clusters = (long)imagePlugin.ImageInfo.Sectors;
+            xmlFSType.ClusterSize = (int)imagePlugin.ImageInfo.SectorSize;
             xmlFSType.Type = "Apple DOS";
 
             return;

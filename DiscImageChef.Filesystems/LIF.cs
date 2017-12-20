@@ -76,7 +76,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public LIF(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public LIF(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "HP Logical Interchange Format Plugin";
             PluginUUID = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
@@ -84,7 +84,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 256) return false;
 
@@ -97,7 +97,7 @@ namespace DiscImageChef.Filesystems
             return LIFSb.magic == LIF_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

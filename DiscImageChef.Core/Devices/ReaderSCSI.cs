@@ -110,7 +110,7 @@ namespace DiscImageChef.Core.Devices
                 Decoders.SCSI.FixedSense? decSense;
                 readRaw = false;
 
-                if(dev.SCSIType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                if(dev.ScsiType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                 {
                     /*testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 0xFFFF, timeout, out duration);
                     if (testSense && !dev.Error)
@@ -417,7 +417,7 @@ namespace DiscImageChef.Core.Devices
                 if(sense && blocks == 0)
                 {
                     // Not all MMC devices support READ CAPACITY, as they have READ TOC
-                    if(dev.SCSIType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                    if(dev.ScsiType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                     {
                         errorMessage = string.Format("Unable to get media capacity\n" + "{0}",
                                                      Decoders.SCSI.Sense.PrettifySense(senseBuf));

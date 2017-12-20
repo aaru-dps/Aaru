@@ -35,18 +35,18 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class SGI : PartPlugin
+    public class SGI : PartitionPlugin
     {
         const int SGI_MAGIC = 0x0BE5A941;
 
         public SGI()
         {
             Name = "SGI Disk Volume Header";
-            PluginUUID = new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
+            PluginUuid = new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)

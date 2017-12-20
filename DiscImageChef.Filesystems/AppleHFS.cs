@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public AppleHFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AppleHFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple Hierarchical File System";
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
@@ -78,7 +78,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((2 + partition.Start) >= partition.End) return false;
 
@@ -119,7 +119,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -309,7 +309,7 @@ namespace DiscImageChef.Filesystems
             return;
         }
 
-        static byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, ulong LBA)
+        static byte[] Read2048SectorAs512(DiscImages.ImagePlugin imagePlugin, ulong LBA)
         {
             ulong LBA2k = LBA / 4;
             int Remainder = (int)(LBA % 4);

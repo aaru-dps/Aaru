@@ -35,13 +35,13 @@ using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Commands
 {
     static class Verify
     {
-        internal static void doVerify(VerifyOptions options)
+        internal static void DoVerify(VerifyOptions options)
         {
             DicConsole.DebugWriteLine("Verify command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Verify command", "--verbose={0}", options.Verbose);
@@ -68,7 +68,7 @@ namespace DiscImageChef.Commands
 
             inputFormat.OpenImage(inputFilter);
             Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
-            Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
+            Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
 
             bool? correctDisc = null;
@@ -79,11 +79,11 @@ namespace DiscImageChef.Commands
 
             if(options.VerifyDisc)
             {
-                DateTime StartCheck = DateTime.UtcNow;
+                DateTime startCheck = DateTime.UtcNow;
                 bool? discCheckStatus = inputFormat.VerifyMediaImage();
-                DateTime EndCheck = DateTime.UtcNow;
+                DateTime endCheck = DateTime.UtcNow;
 
-                TimeSpan CheckTime = EndCheck - StartCheck;
+                TimeSpan checkTime = endCheck - startCheck;
 
                 switch(discCheckStatus)
                 {
@@ -99,7 +99,7 @@ namespace DiscImageChef.Commands
                 }
 
                 correctDisc = discCheckStatus;
-                DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", CheckTime.TotalSeconds);
+                DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
             }
 
             if(options.VerifySectors)
@@ -113,10 +113,10 @@ namespace DiscImageChef.Commands
                 }
                 catch { formatHasTracks = false; }
 
-                DateTime StartCheck;
-                DateTime EndCheck;
-                List<ulong> FailingLBAs = new List<ulong>();
-                List<ulong> UnknownLBAs = new List<ulong>();
+                DateTime startCheck;
+                DateTime endCheck;
+                List<ulong> failingLbas = new List<ulong>();
+                List<ulong> unknownLbas = new List<ulong>();
                 bool? checkStatus = null;
 
                 if(formatHasTracks)
@@ -124,7 +124,7 @@ namespace DiscImageChef.Commands
                     List<Track> inputTracks = inputFormat.GetTracks();
                     ulong currentSectorAll = 0;
 
-                    StartCheck = DateTime.UtcNow;
+                    startCheck = DateTime.UtcNow;
                     foreach(Track currentTrack in inputTracks)
                     {
                         ulong remainingSectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector;
@@ -135,26 +135,26 @@ namespace DiscImageChef.Commands
                             DicConsole.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll,
                                              inputFormat.GetSectors(), currentTrack.TrackSequence);
 
-                            List<ulong> tempFailingLBAs;
-                            List<ulong> tempUnknownLBAs;
+                            List<ulong> tempfailingLbas;
+                            List<ulong> tempunknownLbas;
                             bool? tempStatus;
 
                             if(remainingSectors < 512)
                                 tempStatus = inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                       currentTrack.TrackSequence, out tempFailingLBAs,
-                                                                       out tempUnknownLBAs);
+                                                                       currentTrack.TrackSequence, out tempfailingLbas,
+                                                                       out tempunknownLbas);
                             else
                                 tempStatus = inputFormat.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
-                                                                       out tempFailingLBAs, out tempUnknownLBAs);
+                                                                       out tempfailingLbas, out tempunknownLbas);
 
                             if(checkStatus == null || tempStatus == null) checkStatus = null;
                             else if(checkStatus == false || tempStatus == false) checkStatus = false;
                             else if(checkStatus == true && tempStatus == true) checkStatus = true;
                             else checkStatus = null;
 
-                            foreach(ulong failLBA in tempFailingLBAs) FailingLBAs.Add(failLBA);
+                            foreach(ulong failLba in tempfailingLbas) failingLbas.Add(failLba);
 
-                            foreach(ulong unknownLBA in tempUnknownLBAs) UnknownLBAs.Add(unknownLBA);
+                            foreach(ulong unknownLba in tempunknownLbas) unknownLbas.Add(unknownLba);
 
                             if(remainingSectors < 512)
                             {
@@ -171,37 +171,37 @@ namespace DiscImageChef.Commands
                         }
                     }
 
-                    EndCheck = DateTime.UtcNow;
+                    endCheck = DateTime.UtcNow;
                 }
                 else
                 {
                     ulong remainingSectors = inputFormat.GetSectors();
                     ulong currentSector = 0;
 
-                    StartCheck = DateTime.UtcNow;
+                    startCheck = DateTime.UtcNow;
                     while(remainingSectors > 0)
                     {
                         DicConsole.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.GetSectors());
 
-                        List<ulong> tempFailingLBAs;
-                        List<ulong> tempUnknownLBAs;
+                        List<ulong> tempfailingLbas;
+                        List<ulong> tempunknownLbas;
                         bool? tempStatus;
 
                         if(remainingSectors < 512)
                             tempStatus = inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                   out tempFailingLBAs, out tempUnknownLBAs);
+                                                                   out tempfailingLbas, out tempunknownLbas);
                         else
                             tempStatus =
-                                inputFormat.VerifySectors(currentSector, 512, out tempFailingLBAs, out tempUnknownLBAs);
+                                inputFormat.VerifySectors(currentSector, 512, out tempfailingLbas, out tempunknownLbas);
 
                         if(checkStatus == null || tempStatus == null) checkStatus = null;
                         else if(checkStatus == false || tempStatus == false) checkStatus = false;
                         else if(checkStatus == true && tempStatus == true) checkStatus = true;
                         else checkStatus = null;
 
-                        foreach(ulong failLBA in tempFailingLBAs) FailingLBAs.Add(failLBA);
+                        foreach(ulong failLba in tempfailingLbas) failingLbas.Add(failLba);
 
-                        foreach(ulong unknownLBA in tempUnknownLBAs) UnknownLBAs.Add(unknownLBA);
+                        foreach(ulong unknownLba in tempunknownLbas) unknownLbas.Add(unknownLba);
 
                         if(remainingSectors < 512)
                         {
@@ -215,10 +215,10 @@ namespace DiscImageChef.Commands
                         }
                     }
 
-                    EndCheck = DateTime.UtcNow;
+                    endCheck = DateTime.UtcNow;
                 }
 
-                TimeSpan CheckTime = EndCheck - StartCheck;
+                TimeSpan checkTime = endCheck - startCheck;
 
                 DicConsole.Write("\r");
 
@@ -235,31 +235,31 @@ namespace DiscImageChef.Commands
                         break;
                 }
 
-                DicConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", CheckTime.TotalSeconds);
+                DicConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
 
                 if(options.Verbose)
                 {
                     DicConsole.VerboseWriteLine("LBAs with error:");
-                    if(FailingLBAs.Count == (int)inputFormat.GetSectors())
+                    if(failingLbas.Count == (int)inputFormat.GetSectors())
                         DicConsole.VerboseWriteLine("\tall sectors.");
                     else
-                        for(int i = 0; i < FailingLBAs.Count; i++) DicConsole.VerboseWriteLine("\t{0}", FailingLBAs[i]);
+                        for(int i = 0; i < failingLbas.Count; i++) DicConsole.VerboseWriteLine("\t{0}", failingLbas[i]);
 
                     DicConsole.WriteLine("LBAs without checksum:");
-                    if(UnknownLBAs.Count == (int)inputFormat.GetSectors())
+                    if(unknownLbas.Count == (int)inputFormat.GetSectors())
                         DicConsole.VerboseWriteLine("\tall sectors.");
                     else
-                        for(int i = 0; i < UnknownLBAs.Count; i++) DicConsole.VerboseWriteLine("\t{0}", UnknownLBAs[i]);
+                        for(int i = 0; i < unknownLbas.Count; i++) DicConsole.VerboseWriteLine("\t{0}", unknownLbas[i]);
                 }
 
                 DicConsole.WriteLine("Total sectors........... {0}", inputFormat.GetSectors());
-                DicConsole.WriteLine("Total errors............ {0}", FailingLBAs.Count);
-                DicConsole.WriteLine("Total unknowns.......... {0}", UnknownLBAs.Count);
-                DicConsole.WriteLine("Total errors+unknowns... {0}", FailingLBAs.Count + UnknownLBAs.Count);
+                DicConsole.WriteLine("Total errors............ {0}", failingLbas.Count);
+                DicConsole.WriteLine("Total unknowns.......... {0}", unknownLbas.Count);
+                DicConsole.WriteLine("Total errors+unknowns... {0}", failingLbas.Count + unknownLbas.Count);
 
                 totalSectors = (long)inputFormat.GetSectors();
-                errorSectors = FailingLBAs.Count;
-                unknownSectors = UnknownLBAs.Count;
+                errorSectors = failingLbas.Count;
+                unknownSectors = unknownLbas.Count;
                 correctSectors = totalSectors - errorSectors - unknownSectors;
             }
 

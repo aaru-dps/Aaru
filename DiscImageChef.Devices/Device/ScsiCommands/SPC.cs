@@ -233,13 +233,13 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="dbd">If set to <c>true</c> device MUST not return any block descriptor.</param>
         /// <param name="pageControl">Page control.</param>
         /// <param name="pageCode">Page code.</param>
-        public bool ModeSense6(out byte[] buffer, out byte[] senseBuffer, bool DBD,
+        public bool ModeSense6(out byte[] buffer, out byte[] senseBuffer, bool dbd,
                                ScsiModeSensePageControl pageControl, byte pageCode, uint timeout, out double duration)
         {
-            return ModeSense6(out buffer, out senseBuffer, DBD, pageControl, pageCode, 0, timeout, out duration);
+            return ModeSense6(out buffer, out senseBuffer, dbd, pageControl, pageCode, 0, timeout, out duration);
         }
 
         /// <summary>
@@ -250,11 +250,11 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="dbd">If set to <c>true</c> device MUST not return any block descriptor.</param>
         /// <param name="pageControl">Page control.</param>
         /// <param name="pageCode">Page code.</param>
         /// <param name="subPageCode">Sub-page code.</param>
-        public bool ModeSense6(out byte[] buffer, out byte[] senseBuffer, bool DBD,
+        public bool ModeSense6(out byte[] buffer, out byte[] senseBuffer, bool dbd,
                                ScsiModeSensePageControl pageControl, byte pageCode, byte subPageCode, uint timeout,
                                out double duration)
         {
@@ -264,7 +264,7 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ModeSense;
-            if(DBD) cdb[1] = 0x08;
+            if(dbd) cdb[1] = 0x08;
             cdb[2] |= (byte)pageControl;
             cdb[2] |= (byte)(pageCode & 0x3F);
             cdb[3] = subPageCode;
@@ -299,13 +299,13 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="dbd">If set to <c>true</c> device MUST not return any block descriptor.</param>
         /// <param name="pageControl">Page control.</param>
         /// <param name="pageCode">Page code.</param>
-        public bool ModeSense10(out byte[] buffer, out byte[] senseBuffer, bool DBD,
+        public bool ModeSense10(out byte[] buffer, out byte[] senseBuffer, bool dbd,
                                 ScsiModeSensePageControl pageControl, byte pageCode, uint timeout, out double duration)
         {
-            return ModeSense10(out buffer, out senseBuffer, false, DBD, pageControl, pageCode, 0, timeout,
+            return ModeSense10(out buffer, out senseBuffer, false, dbd, pageControl, pageCode, 0, timeout,
                                out duration);
         }
 
@@ -317,14 +317,14 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="dbd">If set to <c>true</c> device MUST not return any block descriptor.</param>
         /// <param name="pageControl">Page control.</param>
         /// <param name="pageCode">Page code.</param>
-        /// <param name="LLBAA">If set means 64-bit LBAs are accepted by the caller.</param>
-        public bool ModeSense10(out byte[] buffer, out byte[] senseBuffer, bool LLBAA, bool DBD,
+        /// <param name="llbaa">If set means 64-bit LBAs are accepted by the caller.</param>
+        public bool ModeSense10(out byte[] buffer, out byte[] senseBuffer, bool llbaa, bool dbd,
                                 ScsiModeSensePageControl pageControl, byte pageCode, uint timeout, out double duration)
         {
-            return ModeSense10(out buffer, out senseBuffer, LLBAA, DBD, pageControl, pageCode, 0, timeout,
+            return ModeSense10(out buffer, out senseBuffer, llbaa, dbd, pageControl, pageCode, 0, timeout,
                                out duration);
         }
 
@@ -336,12 +336,12 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="dbd">If set to <c>true</c> device MUST not return any block descriptor.</param>
         /// <param name="pageControl">Page control.</param>
         /// <param name="pageCode">Page code.</param>
         /// <param name="subPageCode">Sub-page code.</param>
-        /// <param name="LLBAA">If set means 64-bit LBAs are accepted by the caller.</param>
-        public bool ModeSense10(out byte[] buffer, out byte[] senseBuffer, bool LLBAA, bool DBD,
+        /// <param name="llbaa">If set means 64-bit LBAs are accepted by the caller.</param>
+        public bool ModeSense10(out byte[] buffer, out byte[] senseBuffer, bool llbaa, bool dbd,
                                 ScsiModeSensePageControl pageControl, byte pageCode, byte subPageCode, uint timeout,
                                 out double duration)
         {
@@ -351,8 +351,8 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ModeSense10;
-            if(LLBAA) cdb[1] |= 0x10;
-            if(DBD) cdb[1] |= 0x08;
+            if(llbaa) cdb[1] |= 0x10;
+            if(dbd) cdb[1] |= 0x08;
             cdb[2] |= (byte)pageControl;
             cdb[2] |= (byte)(pageCode & 0x3F);
             cdb[3] = subPageCode;
@@ -472,12 +472,12 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ CAPACITY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="RelAddr">Indicates that <paramref name="address"/> is relative to current medium position</param>
-        /// <param name="address">Address where information is requested from, only valid if <paramref name="PMI"/> is set</param>
-        /// <param name="PMI">If set, it is requesting partial media capacity</param>
+        /// <param name="relAddr">Indicates that <paramref name="address"/> is relative to current medium position</param>
+        /// <param name="address">Address where information is requested from, only valid if <paramref name="pmi"/> is set</param>
+        /// <param name="pmi">If set, it is requesting partial media capacity</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadCapacity(out byte[] buffer, out byte[] senseBuffer, bool RelAddr, uint address, bool PMI,
+        public bool ReadCapacity(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, bool pmi,
                                  uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
@@ -487,10 +487,10 @@ namespace DiscImageChef.Devices
 
             cdb[0] = (byte)ScsiCommands.ReadCapacity;
 
-            if(PMI)
+            if(pmi)
             {
                 cdb[8] = 0x01;
-                if(RelAddr) cdb[1] = 0x01;
+                if(relAddr) cdb[1] = 0x01;
 
                 cdb[2] = (byte)((address & 0xFF000000) >> 24);
                 cdb[3] = (byte)((address & 0xFF0000) >> 16);
@@ -526,11 +526,11 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ CAPACITY(16) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="address">Address where information is requested from, only valid if <paramref name="PMI"/> is set</param>
-        /// <param name="PMI">If set, it is requesting partial media capacity</param>
+        /// <param name="address">Address where information is requested from, only valid if <paramref name="pmi"/> is set</param>
+        /// <param name="pmi">If set, it is requesting partial media capacity</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadCapacity16(out byte[] buffer, out byte[] senseBuffer, ulong address, bool PMI, uint timeout,
+        public bool ReadCapacity16(out byte[] buffer, out byte[] senseBuffer, ulong address, bool pmi, uint timeout,
                                    out double duration)
         {
             senseBuffer = new byte[32];
@@ -541,7 +541,7 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.ServiceActionIn;
             cdb[1] = (byte)ScsiServiceActions.ReadCapacity16;
 
-            if(PMI)
+            if(pmi)
             {
                 cdb[14] = 0x01;
                 byte[] temp = BitConverter.GetBytes(address);
@@ -738,10 +738,10 @@ namespace DiscImageChef.Devices
             // Prevent overflows
             if(buffer.Length > 255)
             {
-                if(platformID != Interop.PlatformID.Win32NT && platformID != Interop.PlatformID.Win32S &&
-                   platformID != Interop.PlatformID.Win32Windows && platformID != Interop.PlatformID.WinCE &&
-                   platformID != Interop.PlatformID.WindowsPhone &&
-                   platformID != Interop.PlatformID.Xbox) lastError = 75;
+                if(platformId != Interop.PlatformID.Win32NT && platformId != Interop.PlatformID.Win32S &&
+                   platformId != Interop.PlatformID.Win32Windows && platformId != Interop.PlatformID.WinCE &&
+                   platformId != Interop.PlatformID.WindowsPhone &&
+                   platformId != Interop.PlatformID.Xbox) lastError = 75;
                 else lastError = 111;
                 error = true;
                 duration = 0;
@@ -781,10 +781,10 @@ namespace DiscImageChef.Devices
             // Prevent overflows
             if(buffer.Length > 65535)
             {
-                if(platformID != Interop.PlatformID.Win32NT && platformID != Interop.PlatformID.Win32S &&
-                   platformID != Interop.PlatformID.Win32Windows && platformID != Interop.PlatformID.WinCE &&
-                   platformID != Interop.PlatformID.WindowsPhone &&
-                   platformID != Interop.PlatformID.Xbox) lastError = 75;
+                if(platformId != Interop.PlatformID.Win32NT && platformId != Interop.PlatformID.Win32S &&
+                   platformId != Interop.PlatformID.Win32Windows && platformId != Interop.PlatformID.WinCE &&
+                   platformId != Interop.PlatformID.WindowsPhone &&
+                   platformId != Interop.PlatformID.Xbox) lastError = 75;
                 else lastError = 111;
                 error = true;
                 duration = 0;

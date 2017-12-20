@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public Cram(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public Cram(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Cram filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
@@ -93,7 +93,7 @@ namespace DiscImageChef.Filesystems
         const uint Cram_MAGIC = 0x28CD3D45;
         const uint Cram_CIGAM = 0x453DCD28;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -104,7 +104,7 @@ namespace DiscImageChef.Filesystems
             return magic == Cram_MAGIC || magic == Cram_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] sector = imagePlugin.ReadSector(partition.Start);

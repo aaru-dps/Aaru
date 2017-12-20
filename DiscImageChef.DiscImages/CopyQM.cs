@@ -38,13 +38,13 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
-    public class CopyQM : ImagePlugin
+    public class CopyQm : ImagePlugin
     {
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CopyQMHeader
+        struct CopyQmHeader
         {
             /// <summary>0x00 magic, "CQ"</summary>
             public ushort magic;
@@ -119,11 +119,11 @@ namespace DiscImageChef.ImagePlugins
         const byte COPYQM_BLIND = 1;
         const byte COPYQM_HFS = 2;
 
-        const byte COPYQM_525DD = 1;
-        const byte COPYQM_525HD = 2;
-        const byte COPYQM_35DD = 3;
-        const byte COPYQM_35HD = 4;
-        const byte COPYQM_35ED = 6;
+        const byte COPYQM_525_DD = 1;
+        const byte COPYQM_525_HD = 2;
+        const byte COPYQM_35_DD = 3;
+        const byte COPYQM_35_HD = 4;
+        const byte COPYQM_35_ED = 6;
 
         readonly uint[] copyQmCrcTable =
         {
@@ -160,7 +160,7 @@ namespace DiscImageChef.ImagePlugins
         #endregion Internal Constants
 
         #region Internal variables
-        CopyQMHeader header;
+        CopyQmHeader header;
         byte[] decodedDisk;
         MemoryStream decodedImage;
 
@@ -168,31 +168,31 @@ namespace DiscImageChef.ImagePlugins
         uint calculatedDataCrc;
         #endregion Internal variables
 
-        public CopyQM()
+        public CopyQm()
         {
             Name = "Sydex CopyQM";
-            PluginUUID = new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
+            PluginUuid = new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         #region Public methods
@@ -221,10 +221,10 @@ namespace DiscImageChef.ImagePlugins
             byte[] cmt;
 
             stream.Read(hdr, 0, 133);
-            header = new CopyQMHeader();
+            header = new CopyQmHeader();
             IntPtr hdrPtr = Marshal.AllocHGlobal(133);
             Marshal.Copy(hdr, 0, hdrPtr, 133);
-            header = (CopyQMHeader)Marshal.PtrToStructure(hdrPtr, typeof(CopyQMHeader));
+            header = (CopyQmHeader)Marshal.PtrToStructure(hdrPtr, typeof(CopyQmHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
             DicConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}", header.magic);
@@ -259,7 +259,7 @@ namespace DiscImageChef.ImagePlugins
 
             cmt = new byte[header.commentLength];
             stream.Read(cmt, 0, header.commentLength);
-            ImageInfo.imageComments = StringHandlers.CToString(cmt);
+            ImageInfo.ImageComments = StringHandlers.CToString(cmt);
             decodedImage = new MemoryStream();
 
             calculatedDataCrc = 0;
@@ -324,100 +324,100 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", calculatedDataCrc,
                                       calculatedDataCrc == header.crc);
 
-            ImageInfo.imageApplication = "CopyQM";
-            ImageInfo.imageCreationTime = DateHandlers.DOSToDateTime(header.date, header.time);
-            ImageInfo.imageLastModificationTime = ImageInfo.imageCreationTime;
-            ImageInfo.imageName = header.volumeLabel;
-            ImageInfo.imageSize = (ulong)(stream.Length - 133 - header.commentLength);
-            ImageInfo.sectors = (ulong)sectors;
-            ImageInfo.sectorSize = header.sectorSize;
+            ImageInfo.ImageApplication = "CopyQM";
+            ImageInfo.ImageCreationTime = DateHandlers.DOSToDateTime(header.date, header.time);
+            ImageInfo.ImageLastModificationTime = ImageInfo.ImageCreationTime;
+            ImageInfo.ImageName = header.volumeLabel;
+            ImageInfo.ImageSize = (ulong)(stream.Length - 133 - header.commentLength);
+            ImageInfo.Sectors = (ulong)sectors;
+            ImageInfo.SectorSize = header.sectorSize;
 
             switch(header.drive)
             {
-                case COPYQM_525HD:
+                case COPYQM_525_HD:
                     if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 15 &&
-                       header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_525_HD;
+                       header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_525_HD;
                     else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 16 &&
-                            header.sectorSize == 256) ImageInfo.mediaType = MediaType.ACORN_525_DS_DD;
+                            header.sectorSize == 256) ImageInfo.MediaType = MediaType.ACORN_525_DS_DD;
                     else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 16 &&
-                            header.sectorSize == 256) ImageInfo.mediaType = MediaType.ACORN_525_SS_DD_80;
+                            header.sectorSize == 256) ImageInfo.MediaType = MediaType.ACORN_525_SS_DD_80;
                     else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 10 &&
-                            header.sectorSize == 256) ImageInfo.mediaType = MediaType.ACORN_525_SS_SD_80;
+                            header.sectorSize == 256) ImageInfo.MediaType = MediaType.ACORN_525_SS_SD_80;
                     else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 1024) ImageInfo.mediaType = MediaType.NEC_525_HD;
+                            header.sectorSize == 1024) ImageInfo.MediaType = MediaType.NEC_525_HD;
                     else if(header.heads == 2 && header.totalCylinders == 77 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 1024) ImageInfo.mediaType = MediaType.SHARP_525;
-                    else goto case COPYQM_525DD;
+                            header.sectorSize == 1024) ImageInfo.MediaType = MediaType.SHARP_525;
+                    else goto case COPYQM_525_DD;
                     break;
-                case COPYQM_525DD:
+                case COPYQM_525_DD:
                     if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 8 &&
-                       header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_525_SS_DD_8;
+                       header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
                     else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 9 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_525_SS_DD_9;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
                     else if(header.heads == 2 && header.totalCylinders == 40 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_525_DS_DD_8;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
                     else if(header.heads == 2 && header.totalCylinders == 40 && header.sectorsPerTrack == 9 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_525_DS_DD_9;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
                     else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 18 &&
-                            header.sectorSize == 128) ImageInfo.mediaType = MediaType.ATARI_525_SD;
+                            header.sectorSize == 128) ImageInfo.MediaType = MediaType.ATARI_525_SD;
                     else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 26 &&
-                            header.sectorSize == 128) ImageInfo.mediaType = MediaType.ATARI_525_ED;
+                            header.sectorSize == 128) ImageInfo.MediaType = MediaType.ATARI_525_ED;
                     else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 18 &&
-                            header.sectorSize == 256) ImageInfo.mediaType = MediaType.ATARI_525_DD;
-                    else ImageInfo.mediaType = MediaType.Unknown;
+                            header.sectorSize == 256) ImageInfo.MediaType = MediaType.ATARI_525_DD;
+                    else ImageInfo.MediaType = MediaType.Unknown;
                     break;
-                case COPYQM_35ED:
+                case COPYQM_35_ED:
                     if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 36 &&
-                       header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_35_ED;
-                    else goto case COPYQM_35HD;
+                       header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_35_ED;
+                    else goto case COPYQM_35_HD;
                     break;
-                case COPYQM_35HD:
+                case COPYQM_35_HD:
                     if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 18 &&
-                       header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_35_HD;
+                       header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_35_HD;
                     else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 21 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.DMF;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.DMF;
                     else if(header.heads == 2 && header.totalCylinders == 82 && header.sectorsPerTrack == 21 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.DMF_82;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.DMF_82;
                     else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 1024) ImageInfo.mediaType = MediaType.NEC_35_HD_8;
+                            header.sectorSize == 1024) ImageInfo.MediaType = MediaType.NEC_35_HD_8;
                     else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 15 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.NEC_35_HD_15;
-                    else goto case COPYQM_35DD;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.NEC_35_HD_15;
+                    else goto case COPYQM_35_DD;
                     break;
-                case COPYQM_35DD:
+                case COPYQM_35_DD:
                     if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 9 &&
-                       header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
+                       header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
                     else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_35_DS_DD_8;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
                     else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 9 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_35_SS_DD_9;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
                     else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.DOS_35_SS_DD_8;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
                     else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 5 &&
-                            header.sectorSize == 1024) ImageInfo.mediaType = MediaType.ACORN_35_DS_DD;
+                            header.sectorSize == 1024) ImageInfo.MediaType = MediaType.ACORN_35_DS_DD;
                     else if(header.heads == 2 && header.totalCylinders == 77 && header.sectorsPerTrack == 8 &&
-                            header.sectorSize == 1024) ImageInfo.mediaType = MediaType.SHARP_35;
+                            header.sectorSize == 1024) ImageInfo.MediaType = MediaType.SHARP_35;
                     else if(header.heads == 1 && header.totalCylinders == 70 && header.sectorsPerTrack == 9 &&
-                            header.sectorSize == 512) ImageInfo.mediaType = MediaType.Apricot_35;
-                    else ImageInfo.mediaType = MediaType.Unknown;
+                            header.sectorSize == 512) ImageInfo.MediaType = MediaType.Apricot_35;
+                    else ImageInfo.MediaType = MediaType.Unknown;
                     break;
                 default:
-                    ImageInfo.mediaType = MediaType.Unknown;
+                    ImageInfo.MediaType = MediaType.Unknown;
                     break;
             }
 
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             decodedDisk = decodedImage.ToArray();
 
             decodedImage.Close();
 
-            DicConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", ImageInfo.mediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.imageComments))
-                DicConsole.VerboseWriteLine("CopyQM comments: {0}", ImageInfo.imageComments);
+            DicConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", ImageInfo.MediaType);
+            if(!string.IsNullOrEmpty(ImageInfo.ImageComments))
+                DicConsole.VerboseWriteLine("CopyQM comments: {0}", ImageInfo.ImageComments);
 
-            ImageInfo.heads = header.heads;
-            ImageInfo.cylinders = header.imageCylinders;
-            ImageInfo.sectorsPerTrack = header.sectorsPerTrack;
+            ImageInfo.Heads = header.heads;
+            ImageInfo.Cylinders = header.imageCylinders;
+            ImageInfo.SectorsPerTrack = header.sectorsPerTrack;
 
             return true;
         }
@@ -432,24 +432,24 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
@@ -461,22 +461,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return ImageInfo.imageHasPartitions;
+            return ImageInfo.ImageHasPartitions;
         }
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -486,16 +486,16 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.sectorSize];
+            byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
-            Array.Copy(decodedDisk, (int)sectorAddress * ImageInfo.sectorSize, buffer, 0,
-                       length * ImageInfo.sectorSize);
+            Array.Copy(decodedDisk, (int)sectorAddress * ImageInfo.SectorSize, buffer, 0,
+                       length * ImageInfo.SectorSize);
 
             return buffer;
         }
@@ -507,97 +507,97 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override string GetMediaManufacturer()
         {
-            return ImageInfo.mediaManufacturer;
+            return ImageInfo.MediaManufacturer;
         }
 
         public override string GetMediaModel()
         {
-            return ImageInfo.mediaModel;
+            return ImageInfo.MediaModel;
         }
 
         public override string GetMediaSerialNumber()
         {
-            return ImageInfo.mediaSerialNumber;
+            return ImageInfo.MediaSerialNumber;
         }
 
         public override string GetMediaBarcode()
         {
-            return ImageInfo.mediaBarcode;
+            return ImageInfo.MediaBarcode;
         }
 
         public override string GetMediaPartNumber()
         {
-            return ImageInfo.mediaPartNumber;
+            return ImageInfo.MediaPartNumber;
         }
 
         public override int GetMediaSequence()
         {
-            return ImageInfo.mediaSequence;
+            return ImageInfo.MediaSequence;
         }
 
         public override int GetLastDiskSequence()
         {
-            return ImageInfo.lastMediaSequence;
+            return ImageInfo.LastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return ImageInfo.driveManufacturer;
+            return ImageInfo.DriveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return ImageInfo.driveModel;
+            return ImageInfo.DriveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return ImageInfo.driveSerialNumber;
+            return ImageInfo.DriveSerialNumber;
         }
         #endregion Public methods
 

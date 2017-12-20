@@ -80,7 +80,7 @@ namespace DiscImageChef.Core.Devices
         {
             get { return ataSeek || seek6 || seek10; }
         }
-        internal bool CanSeekLBA
+        internal bool CanSeekLba
         {
             get { return ataSeekLba || seek6 || seek10; }
         }
@@ -177,11 +177,11 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        internal bool ReadCHS(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration)
+        internal bool ReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration)
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA: return AtaReadCHS(out buffer, cylinder, head, sector, out duration);
+                case DeviceType.ATA: return AtaReadChs(out buffer, cylinder, head, sector, out duration);
                 default:
                     buffer = null;
                     duration = 0d;
@@ -202,11 +202,11 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        internal bool SeekCHS(ushort cylinder, byte head, byte sector, out double duration)
+        internal bool SeekChs(ushort cylinder, byte head, byte sector, out double duration)
         {
             switch(dev.Type)
             {
-                case DeviceType.ATA: return AtaSeekCHS(cylinder, head, sector, out duration);
+                case DeviceType.ATA: return AtaSeekChs(cylinder, head, sector, out duration);
                 default:
                     duration = 0;
                     return true;

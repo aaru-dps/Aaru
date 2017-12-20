@@ -38,82 +38,82 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
-    public class Apple2MG : ImagePlugin
+    public class Apple2Mg : ImagePlugin
     {
         #region Internal Structures
         // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
-        struct A2IMGHeader
+        struct A2ImgHeader
         {
             /// <summary>
             /// Offset 0x00, magic
             /// </summary>
-            public uint magic;
+            public uint Magic;
             /// <summary>
             /// Offset 0x04, disk image creator ID
             /// </summary>
-            public uint creator;
+            public uint Creator;
             /// <summary>
             /// Offset 0x08, header size, constant 0x0040
             /// </summary>
-            public ushort headerSize;
+            public ushort HeaderSize;
             /// <summary>
             /// Offset 0x0A, disk image version
             /// </summary>
-            public ushort version;
+            public ushort Version;
             /// <summary>
             /// Offset 0x0C, disk image format
             /// </summary>
-            public uint imageFormat;
+            public uint ImageFormat;
             /// <summary>
             /// Offset 0x10, flags and volume number
             /// </summary>
-            public uint flags;
+            public uint Flags;
             /// <summary>
             /// Offset 0x14, blocks for ProDOS, 0 otherwise
             /// </summary>
-            public uint blocks;
+            public uint Blocks;
             /// <summary>
             /// Offset 0x18, offset to data
             /// </summary>
-            public uint dataOffset;
+            public uint DataOffset;
             /// <summary>
             /// Offset 0x1C, data size in bytes
             /// </summary>
-            public uint dataSize;
+            public uint DataSize;
             /// <summary>
             /// Offset 0x20, offset to optional comment
             /// </summary>
-            public uint commentOffset;
+            public uint CommentOffset;
             /// <summary>
             /// Offset 0x24, length of optional comment
             /// </summary>
-            public uint commentSize;
+            public uint CommentSize;
             /// <summary>
             /// Offset 0x28, offset to creator specific chunk
             /// </summary>
-            public uint creatorSpecificOffset;
+            public uint CreatorSpecificOffset;
             /// <summary>
             /// Offset 0x2C, creator specific chunk size
             /// </summary>
-            public uint creatorSpecificSize;
+            public uint CreatorSpecificSize;
             /// <summary>
             /// Offset 0x30, reserved, should be zero
             /// </summary>
-            public uint reserved1;
+            public uint Reserved1;
             /// <summary>
             /// Offset 0x34, reserved, should be zero
             /// </summary>
-            public uint reserved2;
+            public uint Reserved2;
             /// <summary>
             /// Offset 0x38, reserved, should be zero
             /// </summary>
-            public uint reserved3;
+            public uint Reserved3;
             /// <summary>
             /// Offset 0x3C, reserved, should be zero
             /// </summary>
-            public uint reserved4;
+            public uint Reserved4;
         }
         #endregion
 
@@ -121,75 +121,75 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// Magic number, "2IMG"
         /// </summary>
-        public const uint MAGIC = 0x474D4932;
+        const uint MAGIC = 0x474D4932;
         /// <summary>
         /// Disk image created by ASIMOV2, "!nfc"
         /// </summary>
-        public const uint CreatorAsimov = 0x63666E21;
+        const uint CREATOR_ASIMOV = 0x63666E21;
         /// <summary>
         /// Disk image created by Bernie ][ the Rescue, "B2TR"
         /// </summary>
-        public const uint CreatorBernie = 0x52543242;
+        const uint CREATOR_BERNIE = 0x52543242;
         /// <summary>
         /// Disk image created by Catakig, "CTKG"
         /// </summary>
-        public const uint CreatorCatakig = 0x474B5443;
+        const uint CREATOR_CATAKIG = 0x474B5443;
         /// <summary>
         /// Disk image created by Sheppy's ImageMaker, "ShIm"
         /// </summary>
-        public const uint CreatorSheppy = 0x6D496853;
+        const uint CREATOR_SHEPPY = 0x6D496853;
         /// <summary>
         /// Disk image created by Sweet16, "WOOF"
         /// </summary>
-        public const uint CreatorSweet = 0x464F4F57;
+        const uint CREATOR_SWEET = 0x464F4F57;
         /// <summary>
         /// Disk image created by XGS, "XGS!"
         /// </summary>
-        public const uint CreatorXGS = 0x21534758;
+        const uint CREATOR_XGS = 0x21534758;
         /// <summary>
         /// Disk image created by CiderPress, "CdrP"
         /// </summary>
-        public const uint CreatorCider = 0x50726443;
+        const uint CREATOR_CIDER = 0x50726443;
 
-        public const uint DOSSectorOrder = 0x00000000;
-        public const uint ProDOSSectorOrder = 0x00000001;
-        public const uint NIBSectorOrder = 0x00000002;
+        const uint DOS_SECTOR_ORDER = 0x00000000;
+        const uint PRODOS_SECTOR_ORDER = 0x00000001;
+        const uint NIB_SECTOR_ORDER = 0x00000002;
 
-        public const uint LockedDisk = 0x80000000;
-        public const uint ValidVolumeNumber = 0x00000100;
-        public const uint VolumeNumberMask = 0x000000FF;
+        const uint LOCKED_DISK = 0x80000000;
+        const uint VALID_VOLUME_NUMBER = 0x00000100;
+        const uint VOLUME_NUMBER_MASK = 0x000000FF;
         #endregion
 
         #region Internal variables
-        A2IMGHeader ImageHeader;
-        Filter a2mgImageFilter;
+        A2ImgHeader imageHeader;
+        Filter a2MgImageFilter;
         #endregion
 
-        public Apple2MG()
+        public Apple2Mg()
         {
             Name = "Apple 2IMG";
-            PluginUUID = new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
+            PluginUuid = new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -231,7 +231,7 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            ImageHeader = new A2IMGHeader();
+            imageHeader = new A2ImgHeader();
 
             byte[] header = new byte[64];
             stream.Read(header, 0, 64);
@@ -241,152 +241,152 @@ namespace DiscImageChef.ImagePlugins
             Array.Copy(header, 0, magic, 0, 4);
             Array.Copy(header, 4, creator, 0, 4);
 
-            ImageHeader.magic = BitConverter.ToUInt32(header, 0x00);
-            ImageHeader.creator = BitConverter.ToUInt32(header, 0x04);
-            ImageHeader.headerSize = BitConverter.ToUInt16(header, 0x08);
-            ImageHeader.version = BitConverter.ToUInt16(header, 0x0A);
-            ImageHeader.imageFormat = BitConverter.ToUInt32(header, 0x0C);
-            ImageHeader.flags = BitConverter.ToUInt32(header, 0x10);
-            ImageHeader.blocks = BitConverter.ToUInt32(header, 0x14);
-            ImageHeader.dataOffset = BitConverter.ToUInt32(header, 0x18);
-            ImageHeader.dataSize = BitConverter.ToUInt32(header, 0x1C);
-            ImageHeader.commentOffset = BitConverter.ToUInt32(header, 0x20);
-            ImageHeader.commentSize = BitConverter.ToUInt32(header, 0x24);
-            ImageHeader.creatorSpecificOffset = BitConverter.ToUInt32(header, 0x28);
-            ImageHeader.creatorSpecificSize = BitConverter.ToUInt32(header, 0x2C);
-            ImageHeader.reserved1 = BitConverter.ToUInt32(header, 0x30);
-            ImageHeader.reserved2 = BitConverter.ToUInt32(header, 0x34);
-            ImageHeader.reserved3 = BitConverter.ToUInt32(header, 0x38);
-            ImageHeader.reserved4 = BitConverter.ToUInt32(header, 0x3C);
+            imageHeader.Magic = BitConverter.ToUInt32(header, 0x00);
+            imageHeader.Creator = BitConverter.ToUInt32(header, 0x04);
+            imageHeader.HeaderSize = BitConverter.ToUInt16(header, 0x08);
+            imageHeader.Version = BitConverter.ToUInt16(header, 0x0A);
+            imageHeader.ImageFormat = BitConverter.ToUInt32(header, 0x0C);
+            imageHeader.Flags = BitConverter.ToUInt32(header, 0x10);
+            imageHeader.Blocks = BitConverter.ToUInt32(header, 0x14);
+            imageHeader.DataOffset = BitConverter.ToUInt32(header, 0x18);
+            imageHeader.DataSize = BitConverter.ToUInt32(header, 0x1C);
+            imageHeader.CommentOffset = BitConverter.ToUInt32(header, 0x20);
+            imageHeader.CommentSize = BitConverter.ToUInt32(header, 0x24);
+            imageHeader.CreatorSpecificOffset = BitConverter.ToUInt32(header, 0x28);
+            imageHeader.CreatorSpecificSize = BitConverter.ToUInt32(header, 0x2C);
+            imageHeader.Reserved1 = BitConverter.ToUInt32(header, 0x30);
+            imageHeader.Reserved2 = BitConverter.ToUInt32(header, 0x34);
+            imageHeader.Reserved3 = BitConverter.ToUInt32(header, 0x38);
+            imageHeader.Reserved4 = BitConverter.ToUInt32(header, 0x3C);
 
-            if(ImageHeader.dataSize == 0x00800C00)
+            if(imageHeader.DataSize == 0x00800C00)
             {
-                ImageHeader.dataSize = 0x000C8000;
+                imageHeader.DataSize = 0x000C8000;
                 DicConsole.DebugWriteLine("2MG plugin", "Detected incorrect endian on data size field, correcting.");
             }
 
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}", ImageHeader.headerSize);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}", ImageHeader.version);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.imageFormat = {0}", ImageHeader.imageFormat);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.flags = 0x{0:X8}", ImageHeader.flags);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.blocks = {0}", ImageHeader.blocks);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}", ImageHeader.dataOffset);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}", ImageHeader.dataSize);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", ImageHeader.commentOffset);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}", ImageHeader.commentSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}", imageHeader.HeaderSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}", imageHeader.Version);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.imageFormat = {0}", imageHeader.ImageFormat);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.flags = 0x{0:X8}", imageHeader.Flags);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.blocks = {0}", imageHeader.Blocks);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}", imageHeader.DataOffset);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}", imageHeader.DataSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", imageHeader.CommentOffset);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}", imageHeader.CommentSize);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
-                                      ImageHeader.creatorSpecificOffset);
+                                      imageHeader.CreatorSpecificOffset);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificSize = {0}",
-                                      ImageHeader.creatorSpecificSize);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved1 = 0x{0:X8}", ImageHeader.reserved1);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved2 = 0x{0:X8}", ImageHeader.reserved2);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", ImageHeader.reserved3);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", ImageHeader.reserved4);
+                                      imageHeader.CreatorSpecificSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved1 = 0x{0:X8}", imageHeader.Reserved1);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved2 = 0x{0:X8}", imageHeader.Reserved2);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", imageHeader.Reserved3);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", imageHeader.Reserved4);
 
-            if(ImageHeader.dataSize == 0 && ImageHeader.blocks == 0 &&
-               ImageHeader.imageFormat != ProDOSSectorOrder) return false;
+            if(imageHeader.DataSize == 0 && imageHeader.Blocks == 0 &&
+               imageHeader.ImageFormat != PRODOS_SECTOR_ORDER) return false;
 
-            if(ImageHeader.imageFormat == ProDOSSectorOrder && ImageHeader.blocks == 0) return false;
+            if(imageHeader.ImageFormat == PRODOS_SECTOR_ORDER && imageHeader.Blocks == 0) return false;
 
-            if(ImageHeader.imageFormat == ProDOSSectorOrder) ImageHeader.dataSize = ImageHeader.blocks * 512;
-            else if(ImageHeader.blocks == 0 && ImageHeader.dataSize != 0)
-                ImageHeader.blocks = ImageHeader.dataSize / 256;
-            else if(ImageHeader.dataSize == 0 && ImageHeader.blocks != 0)
-                ImageHeader.dataSize = ImageHeader.blocks * 256;
+            if(imageHeader.ImageFormat == PRODOS_SECTOR_ORDER) imageHeader.DataSize = imageHeader.Blocks * 512;
+            else if(imageHeader.Blocks == 0 && imageHeader.DataSize != 0)
+                imageHeader.Blocks = imageHeader.DataSize / 256;
+            else if(imageHeader.DataSize == 0 && imageHeader.Blocks != 0)
+                imageHeader.DataSize = imageHeader.Blocks * 256;
 
-            ImageInfo.sectorSize = (uint)(ImageHeader.imageFormat == ProDOSSectorOrder ? 512 : 256);
+            ImageInfo.SectorSize = (uint)(imageHeader.ImageFormat == PRODOS_SECTOR_ORDER ? 512 : 256);
 
-            ImageInfo.sectors = ImageHeader.blocks;
-            ImageInfo.imageSize = ImageHeader.dataSize;
+            ImageInfo.Sectors = imageHeader.Blocks;
+            ImageInfo.ImageSize = imageHeader.DataSize;
 
-            switch(ImageHeader.creator)
+            switch(imageHeader.Creator)
             {
-                case CreatorAsimov:
-                    ImageInfo.imageApplication = "ASIMOV2";
+                case CREATOR_ASIMOV:
+                    ImageInfo.ImageApplication = "ASIMOV2";
                     break;
-                case CreatorBernie:
-                    ImageInfo.imageApplication = "Bernie ][ the Rescue";
+                case CREATOR_BERNIE:
+                    ImageInfo.ImageApplication = "Bernie ][ the Rescue";
                     break;
-                case CreatorCatakig:
-                    ImageInfo.imageApplication = "Catakig";
+                case CREATOR_CATAKIG:
+                    ImageInfo.ImageApplication = "Catakig";
                     break;
-                case CreatorSheppy:
-                    ImageInfo.imageApplication = "Sheppy's ImageMaker";
+                case CREATOR_SHEPPY:
+                    ImageInfo.ImageApplication = "Sheppy's ImageMaker";
                     break;
-                case CreatorSweet:
-                    ImageInfo.imageApplication = "Sweet16";
+                case CREATOR_SWEET:
+                    ImageInfo.ImageApplication = "Sweet16";
                     break;
-                case CreatorXGS:
-                    ImageInfo.imageApplication = "XGS";
+                case CREATOR_XGS:
+                    ImageInfo.ImageApplication = "XGS";
                     break;
-                case CreatorCider:
-                    ImageInfo.imageApplication = "CiderPress";
+                case CREATOR_CIDER:
+                    ImageInfo.ImageApplication = "CiderPress";
                     break;
                 default:
-                    ImageInfo.imageApplication =
+                    ImageInfo.ImageApplication =
                         string.Format("Unknown creator code \"{0}\"", Encoding.ASCII.GetString(creator));
                     break;
             }
 
-            ImageInfo.imageVersion = ImageHeader.version.ToString();
+            ImageInfo.ImageVersion = imageHeader.Version.ToString();
 
-            if(ImageHeader.commentOffset != 0 && ImageHeader.commentSize != 0)
+            if(imageHeader.CommentOffset != 0 && imageHeader.CommentSize != 0)
             {
-                stream.Seek(ImageHeader.commentOffset, SeekOrigin.Begin);
+                stream.Seek(imageHeader.CommentOffset, SeekOrigin.Begin);
 
-                byte[] comments = new byte[ImageHeader.commentSize];
-                stream.Read(comments, 0, (int)ImageHeader.commentSize);
-                ImageInfo.imageComments = Encoding.ASCII.GetString(comments);
+                byte[] comments = new byte[imageHeader.CommentSize];
+                stream.Read(comments, 0, (int)imageHeader.CommentSize);
+                ImageInfo.ImageComments = Encoding.ASCII.GetString(comments);
             }
 
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.mediaType = GetMediaType();
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.MediaType = GetMediaType();
 
-            a2mgImageFilter = imageFilter;
+            a2MgImageFilter = imageFilter;
 
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            DicConsole.VerboseWriteLine("2MG image contains a disk of type {0}", ImageInfo.mediaType);
-            if(!string.IsNullOrEmpty(ImageInfo.imageComments))
-                DicConsole.VerboseWriteLine("2MG comments: {0}", ImageInfo.imageComments);
+            DicConsole.VerboseWriteLine("2MG image contains a disk of type {0}", ImageInfo.MediaType);
+            if(!string.IsNullOrEmpty(ImageInfo.ImageComments))
+                DicConsole.VerboseWriteLine("2MG comments: {0}", ImageInfo.ImageComments);
 
-            switch(ImageInfo.mediaType)
+            switch(ImageInfo.MediaType)
             {
                 case MediaType.Apple32SS:
-                    ImageInfo.cylinders = 35;
-                    ImageInfo.heads = 1;
-                    ImageInfo.sectorsPerTrack = 13;
+                    ImageInfo.Cylinders = 35;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.SectorsPerTrack = 13;
                     break;
                 case MediaType.Apple32DS:
-                    ImageInfo.cylinders = 35;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 13;
+                    ImageInfo.Cylinders = 35;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 13;
                     break;
                 case MediaType.Apple33SS:
-                    ImageInfo.cylinders = 35;
-                    ImageInfo.heads = 1;
-                    ImageInfo.sectorsPerTrack = 16;
+                    ImageInfo.Cylinders = 35;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.Apple33DS:
-                    ImageInfo.cylinders = 35;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 16;
+                    ImageInfo.Cylinders = 35;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.AppleSonySS:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 1;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 1;
                     // Variable sectors per track, this suffices
-                    ImageInfo.sectorsPerTrack = 10;
+                    ImageInfo.SectorsPerTrack = 10;
                     break;
                 case MediaType.AppleSonyDS:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 2;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 2;
                     // Variable sectors per track, this suffices
-                    ImageInfo.sectorsPerTrack = 10;
+                    ImageInfo.SectorsPerTrack = 10;
                     break;
             }
 
@@ -400,17 +400,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -420,47 +420,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            switch(ImageInfo.sectors)
+            switch(ImageInfo.Sectors)
             {
                 case 455: return MediaType.Apple32SS;
                 case 910: return MediaType.Apple32DS;
@@ -479,19 +479,19 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.sectorSize];
+            byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
-            Stream stream = a2mgImageFilter.GetDataForkStream();
+            Stream stream = a2MgImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(ImageHeader.dataOffset + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(imageHeader.DataOffset + sectorAddress * ImageInfo.SectorSize), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
+            stream.Read(buffer, 0, (int)(length * ImageInfo.SectorSize));
 
             return buffer;
         }
@@ -637,18 +637,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

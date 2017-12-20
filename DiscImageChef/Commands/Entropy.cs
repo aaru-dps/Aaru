@@ -36,13 +36,13 @@ using DiscImageChef.Checksums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Commands
 {
     static class Entropy
     {
-        internal static void doEntropy(EntropyOptions options)
+        internal static void DoEntropy(EntropyOptions options)
         {
             DicConsole.DebugWriteLine("Entropy command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Entropy command", "--verbose={0}", options.Verbose);
@@ -70,7 +70,7 @@ namespace DiscImageChef.Commands
 
             inputFormat.OpenImage(inputFilter);
             Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
-            Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
+            Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
 
             if(options.SeparatedTracks)
@@ -81,7 +81,7 @@ namespace DiscImageChef.Commands
 
                     foreach(Track currentTrack in inputTracks)
                     {
-                        SHA1Context sha1ctxTrack = new SHA1Context();
+                        Sha1Context sha1CtxTrack = new Sha1Context();
                         ulong[] entTable = new ulong[256];
                         ulong trackSize = 0;
                         List<string> uniqueSectorsPerTrack = new List<string>();
@@ -97,7 +97,7 @@ namespace DiscImageChef.Commands
                             if(options.DuplicatedSectors)
                             {
                                 byte[] garbage;
-                                string sectorHash = sha1ctxTrack.Data(sector, out garbage);
+                                string sectorHash = sha1CtxTrack.Data(sector, out garbage);
                                 if(!uniqueSectorsPerTrack.Contains(sectorHash)) uniqueSectorsPerTrack.Add(sectorHash);
                             }
 
@@ -136,7 +136,7 @@ namespace DiscImageChef.Commands
 
             if(options.WholeDisc)
             {
-                SHA1Context sha1Ctx = new SHA1Context();
+                Sha1Context sha1Ctx = new Sha1Context();
                 ulong[] entTable = new ulong[256];
                 ulong diskSize = 0;
                 List<string> uniqueSectors = new List<string>();

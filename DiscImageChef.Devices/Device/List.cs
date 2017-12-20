@@ -36,12 +36,12 @@ namespace DiscImageChef.Devices
 {
     public struct DeviceInfo
     {
-        public string path;
-        public string vendor;
-        public string model;
-        public string serial;
-        public string bus;
-        public bool supported;
+        public string Path;
+        public string Vendor;
+        public string Model;
+        public string Serial;
+        public string Bus;
+        public bool Supported;
     }
 
     public partial class Device

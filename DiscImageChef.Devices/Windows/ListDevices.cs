@@ -43,7 +43,7 @@ namespace DiscImageChef.Devices.Windows
     {
         internal static DeviceInfo[] GetList()
         {
-            List<string> DeviceIDs = new List<string>();
+            List<string> deviceIDs = new List<string>();
 
             try
             {
@@ -51,17 +51,17 @@ namespace DiscImageChef.Devices.Windows
                     new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");
                 ManagementObjectCollection objCol = mgmtObjSearcher.Get();
 
-                foreach(ManagementObject drive in objCol) DeviceIDs.Add((string)drive["DeviceID"]);
+                foreach(ManagementObject drive in objCol) deviceIDs.Add((string)drive["DeviceID"]);
 
                 mgmtObjSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_TapeDrive");
                 objCol = mgmtObjSearcher.Get();
 
-                foreach(ManagementObject drive in objCol) DeviceIDs.Add((string)drive["DeviceID"]);
+                foreach(ManagementObject drive in objCol) deviceIDs.Add((string)drive["DeviceID"]);
 
                 mgmtObjSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_CDROMDrive");
                 objCol = mgmtObjSearcher.Get();
 
-                foreach(ManagementObject drive in objCol) DeviceIDs.Add((string)drive["Drive"]);
+                foreach(ManagementObject drive in objCol) deviceIDs.Add((string)drive["Drive"]);
             }
             catch(Exception ex)
             {
@@ -72,9 +72,9 @@ namespace DiscImageChef.Devices.Windows
 #endif
             }
 
-            List<DeviceInfo> dev_list = new List<DeviceInfo>();
+            List<DeviceInfo> devList = new List<DeviceInfo>();
 
-            foreach(string devId in DeviceIDs)
+            foreach(string devId in deviceIDs)
             {
                 string physId = devId;
                 // TODO: This can be done better
@@ -92,56 +92,56 @@ namespace DiscImageChef.Devices.Windows
                 //descriptor.RawDeviceProperties = new byte[16384];
 
                 IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
-                byte[] descriptor_b = new byte[1000];
+                byte[] descriptorB = new byte[1000];
 
                 uint returned = 0;
                 int error = 0;
 
-                bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IOCTL_STORAGE_QUERY_PROPERTY,
+                bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IoctlStorageQueryProperty,
                                                                     ref query, (uint)Marshal.SizeOf(query),
                                                                     descriptorPtr, 1000, ref returned, IntPtr.Zero);
 
                 if(hasError) error = Marshal.GetLastWin32Error();
 
-                Marshal.Copy(descriptorPtr, descriptor_b, 0, 1000);
+                Marshal.Copy(descriptorPtr, descriptorB, 0, 1000);
 
                 if(hasError && error != 0) continue;
 
                 StorageDeviceDescriptor descriptor = new StorageDeviceDescriptor();
-                descriptor.Version = BitConverter.ToUInt32(descriptor_b, 0);
-                descriptor.Size = BitConverter.ToUInt32(descriptor_b, 4);
-                descriptor.DeviceType = descriptor_b[8];
-                descriptor.DeviceTypeModifier = descriptor_b[9];
-                descriptor.RemovableMedia = BitConverter.ToBoolean(descriptor_b, 10);
-                descriptor.CommandQueueing = BitConverter.ToBoolean(descriptor_b, 11);
-                descriptor.VendorIdOffset = BitConverter.ToUInt32(descriptor_b, 12);
-                descriptor.ProductIdOffset = BitConverter.ToUInt32(descriptor_b, 16);
-                descriptor.ProductRevisionOffset = BitConverter.ToUInt32(descriptor_b, 20);
-                descriptor.SerialNumberOffset = BitConverter.ToUInt32(descriptor_b, 24);
-                descriptor.BusType = (StorageBusType)BitConverter.ToUInt32(descriptor_b, 28);
-                descriptor.RawPropertiesLength = BitConverter.ToUInt32(descriptor_b, 32);
+                descriptor.Version = BitConverter.ToUInt32(descriptorB, 0);
+                descriptor.Size = BitConverter.ToUInt32(descriptorB, 4);
+                descriptor.DeviceType = descriptorB[8];
+                descriptor.DeviceTypeModifier = descriptorB[9];
+                descriptor.RemovableMedia = BitConverter.ToBoolean(descriptorB, 10);
+                descriptor.CommandQueueing = BitConverter.ToBoolean(descriptorB, 11);
+                descriptor.VendorIdOffset = BitConverter.ToUInt32(descriptorB, 12);
+                descriptor.ProductIdOffset = BitConverter.ToUInt32(descriptorB, 16);
+                descriptor.ProductRevisionOffset = BitConverter.ToUInt32(descriptorB, 20);
+                descriptor.SerialNumberOffset = BitConverter.ToUInt32(descriptorB, 24);
+                descriptor.BusType = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28);
+                descriptor.RawPropertiesLength = BitConverter.ToUInt32(descriptorB, 32);
 
-                DeviceInfo info = new DeviceInfo {path = physId, bus = descriptor.BusType.ToString()};
+                DeviceInfo info = new DeviceInfo {Path = physId, Bus = descriptor.BusType.ToString()};
 
                 if(descriptor.VendorIdOffset > 0)
-                    info.vendor =
-                        StringHandlers.CToString(descriptor_b, Encoding.ASCII, start: (int)descriptor.VendorIdOffset);
+                    info.Vendor =
+                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: (int)descriptor.VendorIdOffset);
                 if(descriptor.ProductIdOffset > 0)
-                    info.model =
-                        StringHandlers.CToString(descriptor_b, Encoding.ASCII, start: (int)descriptor.ProductIdOffset);
+                    info.Model =
+                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: (int)descriptor.ProductIdOffset);
                 // TODO: Get serial number of SCSI and USB devices, probably also FireWire (untested)
                 if(descriptor.SerialNumberOffset > 0)
-                    info.serial =
-                        StringHandlers.CToString(descriptor_b, Encoding.ASCII,
+                    info.Serial =
+                        StringHandlers.CToString(descriptorB, Encoding.ASCII,
                                                  start: (int)descriptor.SerialNumberOffset);
 
-                if(string.IsNullOrEmpty(info.vendor) || info.vendor == "ATA")
+                if(string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA")
                 {
-                    string[] pieces = info.model.Split(' ');
+                    string[] pieces = info.Model.Split(' ');
                     if(pieces.Length > 1)
                     {
-                        info.vendor = pieces[0];
-                        info.model = info.model.Substring(pieces[0].Length + 1);
+                        info.Vendor = pieces[0];
+                        info.Model = info.Model.Substring(pieces[0].Length + 1);
                     }
                 }
 
@@ -157,15 +157,15 @@ namespace DiscImageChef.Devices.Windows
                     case StorageBusType.iSCSI:
                     case StorageBusType.SAS:
                     case StorageBusType.SATA:
-                        info.supported = true;
+                        info.Supported = true;
                         break;
                 }
 
                 Marshal.FreeHGlobal(descriptorPtr);
-                dev_list.Add(info);
+                devList.Add(info);
             }
 
-            DeviceInfo[] devices = dev_list.ToArray();
+            DeviceInfo[] devices = devList.ToArray();
 
             return devices;
         }

@@ -37,59 +37,59 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
-    public class BLU : ImagePlugin
+    public class Blu : ImagePlugin
     {
         #region Internal Structures
-        struct BLUHeader
+        struct BluHeader
         {
-            public byte[] deviceName;
-            public uint deviceType;
-            public uint deviceBlocks;
-            public ushort bytesPerBlock;
+            public byte[] DeviceName;
+            public uint DeviceType;
+            public uint DeviceBlocks;
+            public ushort BytesPerBlock;
         }
         #endregion Internal Structures
 
         #region Internal Constants
-        const string profileName = "PROFILE      ";
-        const string profile10Name = "PROFILE 10   ";
-        const string widgetName = "WIDGET-10    ";
-        const string priamName = "PRIAMDTATOWER";
+        const string PROFILE_NAME = "PROFILE      ";
+        const string PROFILE10_NAME = "PROFILE 10   ";
+        const string WIDGET_NAME = "WIDGET-10    ";
+        const string PRIAM_NAME = "PRIAMDTATOWER";
         #endregion Internal Constants
 
         #region Internal variables
-        BLUHeader ImageHeader;
+        BluHeader imageHeader;
         Filter bluImageFilter;
         int bptag;
         #endregion Internal variables
 
         #region Public methods
-        public BLU()
+        public Blu()
         {
             Name = "Basic Lisa Utility";
-            PluginUUID = new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
+            PluginUuid = new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -102,18 +102,18 @@ namespace DiscImageChef.ImagePlugins
             byte[] header = new byte[0x17];
             stream.Read(header, 0, 0x17);
 
-            BLUHeader tmpHdr = new BLUHeader();
-            tmpHdr.deviceName = new byte[0x0D];
+            BluHeader tmpHdr = new BluHeader();
+            tmpHdr.DeviceName = new byte[0x0D];
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            Array.Copy(header, 0, tmpHdr.deviceName, 0, 0x0D);
-            tmpHdr.deviceType = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;
-            tmpHdr.deviceBlocks = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
-            tmpHdr.bytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
+            Array.Copy(header, 0, tmpHdr.DeviceName, 0, 0x0D);
+            tmpHdr.DeviceType = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;
+            tmpHdr.DeviceBlocks = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
+            tmpHdr.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-            for(int i = 0; i < 0xD; i++) { if(tmpHdr.deviceName[i] < 0x20) return false; }
+            for(int i = 0; i < 0xD; i++) { if(tmpHdr.DeviceName[i] < 0x20) return false; }
 
-            if((tmpHdr.bytesPerBlock & 0xFE00) != 0x200) return false;
+            if((tmpHdr.BytesPerBlock & 0xFE00) != 0x200) return false;
 
             return true;
         }
@@ -123,91 +123,91 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            ImageHeader = new BLUHeader();
-            ImageHeader.deviceName = new byte[0x0D];
+            imageHeader = new BluHeader();
+            imageHeader.DeviceName = new byte[0x0D];
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             byte[] header = new byte[0x17];
             stream.Read(header, 0, 0x17);
-            Array.Copy(header, 0, ImageHeader.deviceName, 0, 0x0D);
-            ImageHeader.deviceType = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;
-            ImageHeader.deviceBlocks = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
-            ImageHeader.bytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
+            Array.Copy(header, 0, imageHeader.DeviceName, 0, 0x0D);
+            imageHeader.DeviceType = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;
+            imageHeader.DeviceBlocks = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
+            imageHeader.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
             DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceName = \"{0}\"",
-                                      StringHandlers.CToString(ImageHeader.deviceName));
-            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceType = {0}", ImageHeader.deviceType);
-            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}", ImageHeader.deviceBlocks);
-            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", ImageHeader.bytesPerBlock);
+                                      StringHandlers.CToString(imageHeader.DeviceName));
+            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceType = {0}", imageHeader.DeviceType);
+            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}", imageHeader.DeviceBlocks);
+            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", imageHeader.BytesPerBlock);
 
-            for(int i = 0; i < 0xD; i++) { if(ImageHeader.deviceName[i] < 0x20) return false; }
+            for(int i = 0; i < 0xD; i++) { if(imageHeader.DeviceName[i] < 0x20) return false; }
 
-            if((ImageHeader.bytesPerBlock & 0xFE00) != 0x200) return false;
+            if((imageHeader.BytesPerBlock & 0xFE00) != 0x200) return false;
 
             stream.Seek(0, SeekOrigin.Begin);
-            header = new byte[ImageHeader.bytesPerBlock];
-            stream.Read(header, 0, ImageHeader.bytesPerBlock);
+            header = new byte[imageHeader.BytesPerBlock];
+            stream.Read(header, 0, imageHeader.BytesPerBlock);
 
-            ImageInfo.sectorSize = 0x200;
+            ImageInfo.SectorSize = 0x200;
 
-            ImageInfo.sectors = ImageHeader.deviceBlocks;
-            ImageInfo.imageSize = ImageHeader.deviceBlocks * ImageHeader.bytesPerBlock;
-            bptag = ImageHeader.bytesPerBlock - 0x200;
+            ImageInfo.Sectors = imageHeader.DeviceBlocks;
+            ImageInfo.ImageSize = imageHeader.DeviceBlocks * imageHeader.BytesPerBlock;
+            bptag = imageHeader.BytesPerBlock - 0x200;
             byte[] hdrTag = new byte[bptag];
             Array.Copy(header, 0x200, hdrTag, 0, bptag);
 
-            switch(StringHandlers.CToString(ImageHeader.deviceName))
+            switch(StringHandlers.CToString(imageHeader.DeviceName))
             {
-                case profileName:
-                    if(ImageInfo.sectors == 0x2600) ImageInfo.mediaType = MediaType.AppleProfile;
-                    else ImageInfo.mediaType = MediaType.GENERIC_HDD;
-                    ImageInfo.cylinders = 152;
-                    ImageInfo.heads = 4;
-                    ImageInfo.sectorsPerTrack = 16;
+                case PROFILE_NAME:
+                    if(ImageInfo.Sectors == 0x2600) ImageInfo.MediaType = MediaType.AppleProfile;
+                    else ImageInfo.MediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.Cylinders = 152;
+                    ImageInfo.Heads = 4;
+                    ImageInfo.SectorsPerTrack = 16;
                     break;
-                case profile10Name:
-                    if(ImageInfo.sectors == 0x4C00) ImageInfo.mediaType = MediaType.AppleProfile;
-                    else ImageInfo.mediaType = MediaType.GENERIC_HDD;
-                    ImageInfo.cylinders = 304;
-                    ImageInfo.heads = 4;
-                    ImageInfo.sectorsPerTrack = 16;
+                case PROFILE10_NAME:
+                    if(ImageInfo.Sectors == 0x4C00) ImageInfo.MediaType = MediaType.AppleProfile;
+                    else ImageInfo.MediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.Cylinders = 304;
+                    ImageInfo.Heads = 4;
+                    ImageInfo.SectorsPerTrack = 16;
                     break;
-                case widgetName:
-                    if(ImageInfo.sectors == 0x4C00) ImageInfo.mediaType = MediaType.AppleWidget;
-                    else ImageInfo.mediaType = MediaType.GENERIC_HDD;
-                    ImageInfo.cylinders = 304;
-                    ImageInfo.heads = 4;
-                    ImageInfo.sectorsPerTrack = 16;
+                case WIDGET_NAME:
+                    if(ImageInfo.Sectors == 0x4C00) ImageInfo.MediaType = MediaType.AppleWidget;
+                    else ImageInfo.MediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.Cylinders = 304;
+                    ImageInfo.Heads = 4;
+                    ImageInfo.SectorsPerTrack = 16;
                     break;
-                case priamName:
-                    if(ImageInfo.sectors == 0x022C7C) ImageInfo.mediaType = MediaType.PriamDataTower;
-                    else ImageInfo.mediaType = MediaType.GENERIC_HDD;
+                case PRIAM_NAME:
+                    if(ImageInfo.Sectors == 0x022C7C) ImageInfo.MediaType = MediaType.PriamDataTower;
+                    else ImageInfo.MediaType = MediaType.GENERIC_HDD;
                     // This values are invented...
-                    ImageInfo.cylinders = 419;
-                    ImageInfo.heads = 4;
-                    ImageInfo.sectorsPerTrack = 85;
+                    ImageInfo.Cylinders = 419;
+                    ImageInfo.Heads = 4;
+                    ImageInfo.SectorsPerTrack = 85;
                     break;
                 default:
-                    ImageInfo.mediaType = MediaType.GENERIC_HDD;
-                    ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-                    ImageInfo.heads = 16;
-                    ImageInfo.sectorsPerTrack = 63;
+                    ImageInfo.MediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+                    ImageInfo.Heads = 16;
+                    ImageInfo.SectorsPerTrack = 63;
                     break;
             }
 
-            ImageInfo.imageApplication = StringHandlers.CToString(hdrTag);
+            ImageInfo.ImageApplication = StringHandlers.CToString(hdrTag);
 
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
             bluImageFilter = imageFilter;
 
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            if(bptag > 0) ImageInfo.readableSectorTags.Add(SectorTagType.AppleSectorTag);
+            if(bptag > 0) ImageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
 
-            DicConsole.VerboseWriteLine("BLU image contains a disk of type {0}", ImageInfo.mediaType);
+            DicConsole.VerboseWriteLine("BLU image contains a disk of type {0}", ImageInfo.MediaType);
 
             return true;
         }
@@ -223,24 +223,24 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
@@ -253,22 +253,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return ImageInfo.imageHasPartitions;
+            return ImageInfo.ImageHasPartitions;
         }
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -283,10 +283,10 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream buffer = new MemoryStream();
@@ -295,7 +295,7 @@ namespace DiscImageChef.ImagePlugins
             int skip = bptag;
 
             Stream stream = bluImageFilter.GetDataForkStream();
-            stream.Seek((long)((sectorAddress + 1) * ImageHeader.bytesPerBlock), SeekOrigin.Begin);
+            stream.Seek((long)((sectorAddress + 1) * imageHeader.BytesPerBlock), SeekOrigin.Begin);
 
             for(int i = 0; i < length; i++)
             {
@@ -316,10 +316,10 @@ namespace DiscImageChef.ImagePlugins
 
             if(bptag == 0) throw new FeatureNotPresentImageException("Disk image does not have tags");
 
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream buffer = new MemoryStream();
@@ -328,7 +328,7 @@ namespace DiscImageChef.ImagePlugins
             int skip = 0;
 
             Stream stream = bluImageFilter.GetDataForkStream();
-            stream.Seek((long)((sectorAddress + 1) * ImageHeader.bytesPerBlock), SeekOrigin.Begin);
+            stream.Seek((long)((sectorAddress + 1) * imageHeader.BytesPerBlock), SeekOrigin.Begin);
 
             for(int i = 0; i < length; i++)
             {
@@ -349,15 +349,15 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageHeader.bytesPerBlock];
+            byte[] buffer = new byte[length * imageHeader.BytesPerBlock];
             Stream stream = bluImageFilter.GetDataForkStream();
-            stream.Seek((long)((sectorAddress + 1) * ImageHeader.bytesPerBlock), SeekOrigin.Begin);
+            stream.Seek((long)((sectorAddress + 1) * imageHeader.BytesPerBlock), SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
             return buffer;
@@ -370,37 +370,37 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
         #endregion Public methods
 
@@ -412,62 +412,62 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override string GetMediaManufacturer()
         {
-            return ImageInfo.mediaManufacturer;
+            return ImageInfo.MediaManufacturer;
         }
 
         public override string GetMediaModel()
         {
-            return ImageInfo.mediaModel;
+            return ImageInfo.MediaModel;
         }
 
         public override string GetMediaSerialNumber()
         {
-            return ImageInfo.mediaSerialNumber;
+            return ImageInfo.MediaSerialNumber;
         }
 
         public override string GetMediaBarcode()
         {
-            return ImageInfo.mediaBarcode;
+            return ImageInfo.MediaBarcode;
         }
 
         public override string GetMediaPartNumber()
         {
-            return ImageInfo.mediaPartNumber;
+            return ImageInfo.MediaPartNumber;
         }
 
         public override int GetMediaSequence()
         {
-            return ImageInfo.mediaSequence;
+            return ImageInfo.MediaSequence;
         }
 
         public override int GetLastDiskSequence()
         {
-            return ImageInfo.lastMediaSequence;
+            return ImageInfo.LastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return ImageInfo.driveManufacturer;
+            return ImageInfo.DriveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return ImageInfo.driveModel;
+            return ImageInfo.DriveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return ImageInfo.driveSerialNumber;
+            return ImageInfo.DriveSerialNumber;
         }
 
         public override List<Partition> GetPartitions()

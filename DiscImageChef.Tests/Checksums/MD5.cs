@@ -43,7 +43,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void MD5EmptyFile()
         {
-            MD5Context ctx = new MD5Context();
+            Md5Context ctx = new Md5Context();
             ctx.Init();
             byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
@@ -58,7 +58,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            MD5Context ctx = new MD5Context();
+            Md5Context ctx = new Md5Context();
             ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
@@ -73,7 +73,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            MD5Context ctx = new MD5Context();
+            Md5Context ctx = new Md5Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -83,7 +83,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void MD5RandomFile()
         {
-            MD5Context ctx = new MD5Context();
+            Md5Context ctx = new Md5Context();
             ctx.Init();
             byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
@@ -98,7 +98,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            MD5Context ctx = new MD5Context();
+            Md5Context ctx = new Md5Context();
             ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
@@ -113,7 +113,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            MD5Context ctx = new MD5Context();
+            Md5Context ctx = new Md5Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

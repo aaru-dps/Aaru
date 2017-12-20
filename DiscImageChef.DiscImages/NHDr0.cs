@@ -40,14 +40,14 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     // Info from http://www.geocities.jp/t98next/nhdr0.txt
-    public class NHDr0 : ImagePlugin
+    public class Nhdr0 : ImagePlugin
     {
         #region Internal structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NHDr0Header
+        struct Nhdr0Header
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] szFileID;
             public byte reserved1;
@@ -65,36 +65,36 @@ namespace DiscImageChef.ImagePlugins
         readonly byte[] signature =
             {0x54, 0x39, 0x38, 0x48, 0x44, 0x44, 0x49, 0x4D, 0x41, 0x47, 0x45, 0x2E, 0x52, 0x30, 0x00};
 
-        public NHDr0()
+        public Nhdr0()
         {
             Name = "T98-Next NHD r0 Disk Image";
-            PluginUUID = new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
+            PluginUuid = new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
-        NHDr0Header nhdhdr;
+        Nhdr0Header nhdhdr;
         Filter nhdImageFilter;
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -104,15 +104,15 @@ namespace DiscImageChef.ImagePlugins
             // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            nhdhdr = new NHDr0Header();
+            nhdhdr = new Nhdr0Header();
 
             if(stream.Length < Marshal.SizeOf(nhdhdr)) return false;
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(nhdhdr)];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[Marshal.SizeOf(nhdhdr)];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-            nhdhdr = (NHDr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(NHDr0Header));
+            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
+            nhdhdr = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
             handle.Free();
 
             if(!nhdhdr.szFileID.SequenceEqual(signature)) return false;
@@ -138,30 +138,30 @@ namespace DiscImageChef.ImagePlugins
             // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            nhdhdr = new NHDr0Header();
+            nhdhdr = new Nhdr0Header();
 
             if(stream.Length < Marshal.SizeOf(nhdhdr)) return false;
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(nhdhdr)];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[Marshal.SizeOf(nhdhdr)];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-            nhdhdr = (NHDr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(NHDr0Header));
+            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
+            nhdhdr = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
             handle.Free();
 
-            ImageInfo.mediaType = MediaType.GENERIC_HDD;
+            ImageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            ImageInfo.imageSize = (ulong)(stream.Length - nhdhdr.dwHeadSize);
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectors = (ulong)(nhdhdr.dwCylinder * nhdhdr.wHead * nhdhdr.wSect);
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.sectorSize = (uint)nhdhdr.wSectLen;
-            ImageInfo.cylinders = (uint)nhdhdr.dwCylinder;
-            ImageInfo.heads = (uint)nhdhdr.wHead;
-            ImageInfo.sectorsPerTrack = (uint)nhdhdr.wSect;
-            ImageInfo.imageComments = StringHandlers.CToString(nhdhdr.szComment, shiftjis);
+            ImageInfo.ImageSize = (ulong)(stream.Length - nhdhdr.dwHeadSize);
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Sectors = (ulong)(nhdhdr.dwCylinder * nhdhdr.wHead * nhdhdr.wSect);
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.SectorSize = (uint)nhdhdr.wSectLen;
+            ImageInfo.Cylinders = (uint)nhdhdr.dwCylinder;
+            ImageInfo.Heads = (uint)nhdhdr.wHead;
+            ImageInfo.SectorsPerTrack = (uint)nhdhdr.wSect;
+            ImageInfo.ImageComments = StringHandlers.CToString(nhdhdr.szComment, shiftjis);
 
             nhdImageFilter = imageFilter;
 
@@ -175,17 +175,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -195,47 +195,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -245,19 +245,19 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.sectorSize];
+            byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
             Stream stream = nhdImageFilter.GetDataForkStream();
 
-            stream.Seek((long)((ulong)nhdhdr.dwHeadSize + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
+            stream.Seek((long)((ulong)nhdhdr.dwHeadSize + sectorAddress * ImageInfo.SectorSize), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
+            stream.Read(buffer, 0, (int)(length * ImageInfo.SectorSize));
 
             return buffer;
         }
@@ -403,18 +403,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

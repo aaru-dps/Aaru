@@ -37,9 +37,9 @@ using System.Text;
 using DiscImageChef.Console;
 
 // Information learnt from XNU source and testing against real disks
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class NeXTDisklabel : PartPlugin
+    public class NeXTDisklabel : PartitionPlugin
     {
         const uint NEXT_MAGIC1 = 0x4E655854;
         // "NeXT"
@@ -55,10 +55,10 @@ namespace DiscImageChef.PartPlugins
         public NeXTDisklabel()
         {
             Name = "NeXT Disklabel";
-            PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+            PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin,
+        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
                                             out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             bool magic_found = false;
@@ -92,8 +92,8 @@ namespace DiscImageChef.PartPlugins
 
             if(!magic_found) return false;
 
-            uint sectors_to_read = 7680 / imagePlugin.ImageInfo.sectorSize;
-            if(7680 % imagePlugin.ImageInfo.sectorSize > 0) sectors_to_read++;
+            uint sectors_to_read = 7680 / imagePlugin.ImageInfo.SectorSize;
+            if(7680 % imagePlugin.ImageInfo.SectorSize > 0) sectors_to_read++;
 
             label_sector = imagePlugin.ReadSectors(label_position, sectors_to_read);
 
@@ -185,10 +185,10 @@ namespace DiscImageChef.PartPlugins
                         Scheme = Name
                     };
 
-                    if(part.Start + part.Length > imagePlugin.ImageInfo.sectors)
+                    if(part.Start + part.Length > imagePlugin.ImageInfo.Sectors)
                     {
                         DicConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
-                        part.Length = imagePlugin.ImageInfo.sectors - part.Start;
+                        part.Length = imagePlugin.ImageInfo.Sectors - part.Start;
                         part.Size = part.Length * sector_size;
                         DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
                                                   part.Length);

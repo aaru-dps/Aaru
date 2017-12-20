@@ -45,7 +45,7 @@ namespace DiscImageChef.Devices
         {
             if(fd != null)
             {
-                switch(platformID)
+                switch(platformId)
                 {
                     case Interop.PlatformID.Win32NT:
                         Windows.Extern.CloseHandle((SafeFileHandle)fd);

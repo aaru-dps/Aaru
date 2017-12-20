@@ -65,14 +65,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public FATX(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public FATX(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "FATX Filesystem Plugin";
             PluginUUID = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -84,7 +84,7 @@ namespace DiscImageChef.Filesystems
             return fatxSb.magic == FATX_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -103,15 +103,15 @@ namespace DiscImageChef.Filesystems
             sb.AppendLine("FATX filesystem");
             sb.AppendFormat("Filesystem id {0}", fatxSb.id).AppendLine();
             sb.AppendFormat("{0} sectors ({1} bytes) per cluster", fatxSb.sectorsPerCluster,
-                            fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.sectorSize).AppendLine();
+                            fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.SectorSize).AppendLine();
             sb.AppendFormat("Root directory starts on cluster {0}", fatxSb.rootDirectoryCluster).AppendLine();
 
             information = sb.ToString();
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "FATX filesystem";
-            xmlFSType.ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.sectorSize);
-            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize /
+            xmlFSType.ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.SectorSize);
+            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
                                         (ulong)xmlFSType.ClusterSize);
         }
 

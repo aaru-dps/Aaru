@@ -707,7 +707,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
                         DicConsole.WriteLine("Sector type");
                         DicConsole.WriteLine("Available values: {0} {1} {2} {3} {4} {5}", MmcSectorTypes.AllTypes,
-                                             MmcSectorTypes.CDDA, MmcSectorTypes.Mode1, MmcSectorTypes.Mode2,
+                                             MmcSectorTypes.Cdda, MmcSectorTypes.Mode1, MmcSectorTypes.Mode2,
                                              MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
@@ -788,7 +788,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
                         DicConsole.WriteLine("Subchannel mode");
                         DicConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcSubchannel.None, MmcSubchannel.Raw,
-                                             MmcSubchannel.Q16, MmcSubchannel.RW);
+                                             MmcSubchannel.Q16, MmcSubchannel.Rw);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
                         if(!System.Enum.TryParse(strDev, true, out subchan))
@@ -1013,7 +1013,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
                         DicConsole.WriteLine("Sector type");
                         DicConsole.WriteLine("Available values: {0} {1} {2} {3} {4} {5}", MmcSectorTypes.AllTypes,
-                                             MmcSectorTypes.CDDA, MmcSectorTypes.Mode1, MmcSectorTypes.Mode2,
+                                             MmcSectorTypes.Cdda, MmcSectorTypes.Mode1, MmcSectorTypes.Mode2,
                                              MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
@@ -1094,7 +1094,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
                         DicConsole.WriteLine("Subchannel mode");
                         DicConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcSubchannel.None, MmcSubchannel.Raw,
-                                             MmcSubchannel.Q16, MmcSubchannel.RW);
+                                             MmcSubchannel.Q16, MmcSubchannel.Rw);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
                         if(!System.Enum.TryParse(strDev, true, out subchan))
@@ -1239,7 +1239,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                         DicConsole.WriteLine("Available values: {0} {1} {2}",
                                              MmcDiscInformationDataTypes.DiscInformation,
                                              MmcDiscInformationDataTypes.TrackResources,
-                                             MmcDiscInformationDataTypes.POWResources);
+                                             MmcDiscInformationDataTypes.PowResources);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
                         if(!System.Enum.TryParse(strDev, true, out info))
@@ -1347,7 +1347,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
 
         static void ReadDiscStructure(string devPath, Device dev)
         {
-            MmcDiscStructureMediaType mediaType = MmcDiscStructureMediaType.DVD;
+            MmcDiscStructureMediaType mediaType = MmcDiscStructureMediaType.Dvd;
             MmcDiscStructureFormat format = MmcDiscStructureFormat.CapabilityList;
             uint address = 0;
             byte layer = 0;
@@ -1387,21 +1387,21 @@ namespace DiscImageChef.Tests.Devices.SCSI
                         return;
                     case 1:
                         DicConsole.WriteLine("Media type");
-                        DicConsole.WriteLine("Available values: {0} {1}", MmcDiscStructureMediaType.DVD,
-                                             MmcDiscStructureMediaType.BD);
+                        DicConsole.WriteLine("Available values: {0} {1}", MmcDiscStructureMediaType.Dvd,
+                                             MmcDiscStructureMediaType.Bd);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
                         if(!System.Enum.TryParse(strDev, true, out mediaType))
                         {
                             DicConsole.WriteLine("Not a correct media type. Press any key to continue...");
-                            mediaType = MmcDiscStructureMediaType.DVD;
+                            mediaType = MmcDiscStructureMediaType.Dvd;
                             System.Console.ReadKey();
                             continue;
                         }
 
                         DicConsole.WriteLine("Format");
                         DicConsole.WriteLine("Available values:");
-                        if(mediaType == MmcDiscStructureMediaType.DVD)
+                        if(mediaType == MmcDiscStructureMediaType.Dvd)
                         {
                             DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.PhysicalInformation,
                                                  MmcDiscStructureFormat.CopyrightInformation,
@@ -1412,39 +1412,39 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                                  MmcDiscStructureFormat.SectorCopyrightInformation,
                                                  MmcDiscStructureFormat.MediaIdentifier,
                                                  MmcDiscStructureFormat.MediaKeyBlock);
-                            DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DVDRAM_DDS,
-                                                 MmcDiscStructureFormat.DVDRAM_MediumStatus,
-                                                 MmcDiscStructureFormat.DVDRAM_SpareAreaInformation,
-                                                 MmcDiscStructureFormat.DVDRAM_RecordingType);
-                            DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.LastBorderOutRMD,
-                                                 MmcDiscStructureFormat.SpecifiedRMD,
+                            DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DvdramDds,
+                                                 MmcDiscStructureFormat.DvdramMediumStatus,
+                                                 MmcDiscStructureFormat.DvdramSpareAreaInformation,
+                                                 MmcDiscStructureFormat.DvdramRecordingType);
+                            DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.LastBorderOutRmd,
+                                                 MmcDiscStructureFormat.SpecifiedRmd,
                                                  MmcDiscStructureFormat.PreRecordedInfo,
-                                                 MmcDiscStructureFormat.DVDR_MediaIdentifier);
-                            DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DVDR_PhysicalInformation,
-                                                 MmcDiscStructureFormat.ADIP,
-                                                 MmcDiscStructureFormat.HDDVD_CopyrightInformation,
-                                                 MmcDiscStructureFormat.DVD_AACS);
-                            DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.HDDVDR_MediumStatus,
-                                                 MmcDiscStructureFormat.HDDVDR_LastRMD,
-                                                 MmcDiscStructureFormat.DVDR_LayerCapacity,
+                                                 MmcDiscStructureFormat.DvdrMediaIdentifier);
+                            DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DvdrPhysicalInformation,
+                                                 MmcDiscStructureFormat.Adip,
+                                                 MmcDiscStructureFormat.HddvdCopyrightInformation,
+                                                 MmcDiscStructureFormat.DvdAacs);
+                            DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.HddvdrMediumStatus,
+                                                 MmcDiscStructureFormat.HddvdrLastRmd,
+                                                 MmcDiscStructureFormat.DvdrLayerCapacity,
                                                  MmcDiscStructureFormat.MiddleZoneStart);
                             DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.JumpIntervalSize,
-                                                 MmcDiscStructureFormat.ManualLayerJumpStartLBA,
-                                                 MmcDiscStructureFormat.RemapAnchorPoint, MmcDiscStructureFormat.DCB);
+                                                 MmcDiscStructureFormat.ManualLayerJumpStartLba,
+                                                 MmcDiscStructureFormat.RemapAnchorPoint, MmcDiscStructureFormat.Dcb);
                         }
-                        if(mediaType == MmcDiscStructureMediaType.BD)
+                        if(mediaType == MmcDiscStructureMediaType.Bd)
                         {
                             DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DiscInformation,
-                                                 MmcDiscStructureFormat.BD_BurstCuttingArea,
-                                                 MmcDiscStructureFormat.BD_DDS, MmcDiscStructureFormat.CartridgeStatus);
-                            DicConsole.WriteLine("\t{0} {1} {2}", MmcDiscStructureFormat.BD_SpareAreaInformation,
-                                                 MmcDiscStructureFormat.RawDFL, MmcDiscStructureFormat.PAC);
+                                                 MmcDiscStructureFormat.BdBurstCuttingArea,
+                                                 MmcDiscStructureFormat.BdDds, MmcDiscStructureFormat.CartridgeStatus);
+                            DicConsole.WriteLine("\t{0} {1} {2}", MmcDiscStructureFormat.BdSpareAreaInformation,
+                                                 MmcDiscStructureFormat.RawDfl, MmcDiscStructureFormat.Pac);
                         }
-                        DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AACSVolId,
-                                             MmcDiscStructureFormat.AACSMediaSerial, MmcDiscStructureFormat.AACSMediaId,
-                                             MmcDiscStructureFormat.AACSMKB);
-                        DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AACSDataKeys,
-                                             MmcDiscStructureFormat.AACSLBAExtents, MmcDiscStructureFormat.AACSMKBCPRM,
+                        DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AacsVolId,
+                                             MmcDiscStructureFormat.AacsMediaSerial, MmcDiscStructureFormat.AacsMediaId,
+                                             MmcDiscStructureFormat.Aacsmkb);
+                        DicConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AacsDataKeys,
+                                             MmcDiscStructureFormat.AacslbaExtents, MmcDiscStructureFormat.Aacsmkbcprm,
                                              MmcDiscStructureFormat.RecognizedFormatLayers);
                         DicConsole.WriteLine("\t{0} {1}", MmcDiscStructureFormat.WriteProtectionStatus,
                                              MmcDiscStructureFormat.CapabilityList);

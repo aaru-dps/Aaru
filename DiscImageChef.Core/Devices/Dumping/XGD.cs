@@ -40,22 +40,22 @@ using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
+using DiscImageChef.DiscImages;
+using DiscImageChef.Partitions;
 using Extents;
 using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    internal static class XGD
+    internal static class Xgd
     {
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
                                   ref MediaType dskType, ref Metadata.Resume resume, ref DumpLog dumpLog,
                                   Encoding encoding)
         {
-            MHDDLog mhddLog;
-            IBGLog ibgLog;
+            MhddLog mhddLog;
+            IbgLog ibgLog;
             bool sense = false;
             ulong blocks = 0;
             uint blockSize = 2048;
@@ -74,7 +74,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
 
             dumpLog.WriteLine("Reading Xbox Security Sector.");
-            sense = dev.KreonExtractSS(out byte[] ssBuf, out byte[] senseBuf, dev.Timeout, out double duration);
+            sense = dev.KreonExtractSs(out byte[] ssBuf, out byte[] senseBuf, dev.Timeout, out double duration);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot get Xbox Security Sector, not continuing.");
@@ -83,8 +83,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             dumpLog.WriteLine("Decoding Xbox Security Sector.");
-            Decoders.Xbox.SS.SecuritySector? xboxSS = Decoders.Xbox.SS.Decode(ssBuf);
-            if(!xboxSS.HasValue)
+            Decoders.Xbox.SS.SecuritySector? xboxSs = Decoders.Xbox.SS.Decode(ssBuf);
+            if(!xboxSs.HasValue)
             {
                 dumpLog.WriteLine("Cannot decode Xbox Security Sector, not continuing.");
                 DicConsole.ErrorWriteLine("Cannot decode Xbox Security Sector, not continuing.");
@@ -136,7 +136,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + (readBuffer[3]));
             dumpLog.WriteLine("Reading Physical Format Information.");
-            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0,
+            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out duration);
             if(sense)
             {
@@ -159,7 +159,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                       Decoders.DVD.PFI.Decode(readBuffer).Value.DataAreaStartPSN + 1;
             l1Video = totalSize - l0Video + 1;
             dumpLog.WriteLine("Reading Disc Manufacturing Information.");
-            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0,
+            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.DiscManufacturingInformation, 0, 0, out duration);
             if(sense)
             {
@@ -224,7 +224,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + (readBuffer[3]));
             dumpLog.WriteLine("Reading Physical Format Information.");
-            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0,
+            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out duration);
             if(sense)
             {
@@ -249,7 +249,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].Xbox.PFI.Image, tmpBuf, "Unlocked PFI", true);
 
             dumpLog.WriteLine("Reading Disc Manufacturing Information.");
-            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0,
+            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.DiscManufacturingInformation, 0, 0, out duration);
             if(sense)
             {
@@ -320,8 +320,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-            mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-            ibgLog = new IBGLog(outputPrefix + ".ibg", 0x0010);
+            mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+            ibgLog = new IbgLog(outputPrefix + ".ibg", 0x0010);
             dumpFile = new DataFile(outputPrefix + ".iso");
 
             start = DateTime.UtcNow;
@@ -332,7 +332,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint saveBlocksToRead = blocksToRead;
             DumpHardwareType currentTry = null;
             ExtentsULong extents = null;
-            ResumeSupport.Process(true, true, totalSize, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformID,
+            ResumeSupport.Process(true, true, totalSize, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
                                   ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
                 throw new Exception("Could not process resume file, not continuing...");
@@ -358,16 +358,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                 // Extents
                 if(e < 16)
                 {
-                    if(xboxSS.Value.Extents[e].StartPSN <= xboxSS.Value.Layer0EndPSN)
-                        extentStart = xboxSS.Value.Extents[e].StartPSN - 0x30000;
+                    if(xboxSs.Value.Extents[e].StartPSN <= xboxSs.Value.Layer0EndPSN)
+                        extentStart = xboxSs.Value.Extents[e].StartPSN - 0x30000;
                     else
-                        extentStart = (xboxSS.Value.Layer0EndPSN + 1) * 2 -
-                                      ((xboxSS.Value.Extents[e].StartPSN ^ 0xFFFFFF) + 1) - 0x30000;
-                    if(xboxSS.Value.Extents[e].EndPSN <= xboxSS.Value.Layer0EndPSN)
-                        extentEnd = xboxSS.Value.Extents[e].EndPSN - 0x30000;
+                        extentStart = (xboxSs.Value.Layer0EndPSN + 1) * 2 -
+                                      ((xboxSs.Value.Extents[e].StartPSN ^ 0xFFFFFF) + 1) - 0x30000;
+                    if(xboxSs.Value.Extents[e].EndPSN <= xboxSs.Value.Layer0EndPSN)
+                        extentEnd = xboxSs.Value.Extents[e].EndPSN - 0x30000;
                     else
-                        extentEnd = (xboxSS.Value.Layer0EndPSN + 1) * 2 -
-                                    ((xboxSS.Value.Extents[e].EndPSN ^ 0xFFFFFF) + 1) - 0x30000;
+                        extentEnd = (xboxSs.Value.Layer0EndPSN + 1) * 2 -
+                                    ((xboxSs.Value.Extents[e].EndPSN ^ 0xFFFFFF) + 1) - 0x30000;
                 }
                 // After last extent
                 else
@@ -667,15 +667,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         sense = dev.ModeSense10(out readBuffer, out senseBuf, false, ScsiModeSensePageControl.Current,
                                                 0x01, dev.Timeout, out duration);
-                        if(!sense) currentMode = Decoders.SCSI.Modes.DecodeMode10(readBuffer, dev.SCSIType);
+                        if(!sense) currentMode = Decoders.SCSI.Modes.DecodeMode10(readBuffer, dev.ScsiType);
                     }
-                    else currentMode = Decoders.SCSI.Modes.DecodeMode6(readBuffer, dev.SCSIType);
+                    else currentMode = Decoders.SCSI.Modes.DecodeMode6(readBuffer, dev.ScsiType);
 
                     if(currentMode.HasValue) currentModePage = currentMode.Value.Pages[0];
 
-                    if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                    if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                     {
-                        Decoders.SCSI.Modes.ModePage_01_MMC pgMMC =
+                        Decoders.SCSI.Modes.ModePage_01_MMC pgMmc =
                             new Decoders.SCSI.Modes.ModePage_01_MMC
                             {
                                 PS = false,
@@ -691,12 +691,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 {
                                     Page = 0x01,
                                     Subpage = 0x00,
-                                    PageResponse = Decoders.SCSI.Modes.EncodeModePage_01_MMC(pgMMC)
+                                    PageResponse = Decoders.SCSI.Modes.EncodeModePage_01_MMC(pgMmc)
                                 }
                             }
                         };
-                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
-                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.ScsiType);
+                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.ScsiType);
                     }
                     else
                     {
@@ -726,8 +726,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 }
                             }
                         };
-                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
-                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.ScsiType);
+                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.ScsiType);
                     }
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
@@ -748,8 +748,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Header = new Decoders.SCSI.Modes.ModeHeader(),
                         Pages = new Decoders.SCSI.Modes.ModePage[] {currentModePage.Value}
                     };
-                    md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
-                    md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+                    md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.ScsiType);
+                    md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.ScsiType);
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
@@ -805,7 +805,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins(encoding);
-            ImagePlugin _imageFormat;
+            ImagePlugin imageFormat;
             FiltersList filtersList = new FiltersList();
             Filter inputFilter = filtersList.GetFilter(outputPrefix + ".iso");
 
@@ -815,16 +815,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            _imageFormat = ImageFormat.Detect(inputFilter);
+            imageFormat = ImageFormat.Detect(inputFilter);
             PartitionType[] xmlFileSysInfo = null;
 
-            try { if(!_imageFormat.OpenImage(inputFilter)) _imageFormat = null; }
-            catch { _imageFormat = null; }
+            try { if(!imageFormat.OpenImage(inputFilter)) imageFormat = null; }
+            catch { imageFormat = null; }
 
-            if(_imageFormat != null)
+            if(imageFormat != null)
             {
                 dumpLog.WriteLine("Getting partitions.");
-                List<Partition> partitions = Partitions.GetAll(_imageFormat);
+                List<Partition> partitions = Partitions.GetAll(imageFormat);
                 Partitions.AddSchemesToStats(partitions);
                 dumpLog.WriteLine("Found {0} partitions.", partitions.Count);
 
@@ -847,22 +847,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           i, partitions[i].Start, partitions[i].End, partitions[i].Type,
                                           partitions[i].Scheme);
 
-                        foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                        foreach(Filesystem plugin in plugins.PluginsList.Values)
                         {
                             try
                             {
-                                if(_plugin.Identify(_imageFormat, partitions[i]))
+                                if(plugin.Identify(imageFormat, partitions[i]))
                                 {
-                                    _plugin.GetInformation(_imageFormat, partitions[i], out string foo);
-                                    lstFs.Add(_plugin.XmlFSType);
-                                    Statistics.AddFilesystem(_plugin.XmlFSType.Type);
-                                    dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
+                                    plugin.GetInformation(imageFormat, partitions[i], out string foo);
+                                    lstFs.Add(plugin.XmlFSType);
+                                    Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                    dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                                    if(_plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                    if(_plugin.XmlFSType.Type == "PC Engine filesystem")
+                                    if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
+                                    if(plugin.XmlFSType.Type == "PC Engine filesystem")
                                         dskType = MediaType.SuperCDROM2;
-                                    if(_plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                    if(_plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
+                                    if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
+                                    if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
                                         dskType = MediaType.GOD;
                                 }
                             }
@@ -887,21 +887,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Partition wholePart =
                         new Partition {Name = "Whole device", Length = blocks, Size = blocks * blockSize};
 
-                    foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                    foreach(Filesystem plugin in plugins.PluginsList.Values)
                     {
                         try
                         {
-                            if(_plugin.Identify(_imageFormat, wholePart))
+                            if(plugin.Identify(imageFormat, wholePart))
                             {
-                                _plugin.GetInformation(_imageFormat, wholePart, out string foo);
-                                lstFs.Add(_plugin.XmlFSType);
-                                Statistics.AddFilesystem(_plugin.XmlFSType.Type);
-                                dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
+                                plugin.GetInformation(imageFormat, wholePart, out string foo);
+                                lstFs.Add(plugin.XmlFSType);
+                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                                if(_plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                if(_plugin.XmlFSType.Type == "PC Engine filesystem") dskType = MediaType.SuperCDROM2;
-                                if(_plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                if(_plugin.XmlFSType.Type == "Nintendo Gamecube filesystem") dskType = MediaType.GOD;
+                                if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
+                                if(plugin.XmlFSType.Type == "PC Engine filesystem") dskType = MediaType.SuperCDROM2;
+                                if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
+                                if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem") dskType = MediaType.GOD;
                             }
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body

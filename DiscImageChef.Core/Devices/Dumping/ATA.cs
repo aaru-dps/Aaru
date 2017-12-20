@@ -41,22 +41,22 @@ using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Devices;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
+using DiscImageChef.DiscImages;
+using DiscImageChef.Partitions;
 using Schemas;
 using Extents;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    public class ATA
+    public class Ata
     {
         public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                 bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume,
                                 ref DumpLog dumpLog, Encoding encoding)
         {
             bool aborted;
-            MHDDLog mhddLog;
-            IBGLog ibgLog;
+            MhddLog mhddLog;
+            IbgLog ibgLog;
 
             if(dumpRaw)
             {
@@ -84,24 +84,24 @@ namespace DiscImageChef.Core.Devices.Dumping
                 CICMMetadataType sidecar =
                     new CICMMetadataType() {BlockMedia = new BlockMediaType[] {new BlockMediaType()}};
 
-                if(dev.IsUSB)
+                if(dev.IsUsb)
                 {
                     dumpLog.WriteLine("Reading USB descriptors.");
                     sidecar.BlockMedia[0].USB = new USBType
                     {
-                        ProductID = dev.USBProductID,
-                        VendorID = dev.USBVendorID,
+                        ProductID = dev.UsbProductId,
+                        VendorID = dev.UsbVendorId,
                         Descriptors = new DumpType
                         {
                             Image = outputPrefix + ".usbdescriptors.bin",
-                            Size = dev.USBDescriptors.Length,
-                            Checksums = Checksum.GetChecksums(dev.USBDescriptors).ToArray()
+                            Size = dev.UsbDescriptors.Length,
+                            Checksums = Checksum.GetChecksums(dev.UsbDescriptors).ToArray()
                         }
                     };
-                    DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].USB.Descriptors.Image, dev.USBDescriptors);
+                    DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].USB.Descriptors.Image, dev.UsbDescriptors);
                 }
 
-                if(dev.IsPCMCIA)
+                if(dev.IsPcmcia)
                 {
                     dumpLog.WriteLine("Reading PCMCIA CIS.");
                     sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
@@ -109,13 +109,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                         CIS = new DumpType
                         {
                             Image = outputPrefix + ".cis.bin",
-                            Size = dev.CIS.Length,
-                            Checksums = Checksum.GetChecksums(dev.CIS).ToArray()
+                            Size = dev.Cis.Length,
+                            Checksums = Checksum.GetChecksums(dev.Cis).ToArray()
                         }
                     };
-                    DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].PCMCIA.CIS.Image, dev.CIS);
+                    DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].PCMCIA.CIS.Image, dev.Cis);
                     dumpLog.WriteLine("Decoding PCMCIA CIS.");
-                    Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.CIS);
+                    Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.Cis);
                     if(tuples != null)
                     {
                         foreach(Decoders.PCMCIA.Tuple tuple in tuples)
@@ -222,17 +222,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                                                       .Removable));
                 DumpHardwareType currentTry = null;
                 ExtentsULong extents = null;
-                ResumeSupport.Process(ataReader.IsLBA, removable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
-                                      dev.PlatformID, ref resume, ref currentTry, ref extents);
+                ResumeSupport.Process(ataReader.IsLba, removable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
+                                      dev.PlatformId, ref resume, ref currentTry, ref extents);
                 if(currentTry == null || extents == null)
                     throw new Exception("Could not process resume file, not continuing...");
 
-                if(ataReader.IsLBA)
+                if(ataReader.IsLba)
                 {
                     DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                    mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-                    ibgLog = new IBGLog(outputPrefix + ".ibg", currentProfile);
+                    mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                    ibgLog = new IbgLog(outputPrefix + ".ibg", currentProfile);
                     dumpFile = new DataFile(outputPrefix + ".bin");
                     if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
 
@@ -350,18 +350,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else
                 {
-                    mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-                    ibgLog = new IBGLog(outputPrefix + ".ibg", currentProfile);
+                    mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                    ibgLog = new IbgLog(outputPrefix + ".ibg", currentProfile);
                     dumpFile = new DataFile(outputPrefix + ".bin");
 
                     ulong currentBlock = 0;
                     blocks = (ulong)(cylinders * heads * sectors);
                     start = DateTime.UtcNow;
-                    for(ushort Cy = 0; Cy < cylinders; Cy++)
+                    for(ushort cy = 0; cy < cylinders; cy++)
                     {
-                        for(byte Hd = 0; Hd < heads; Hd++)
+                        for(byte hd = 0; hd < heads; hd++)
                         {
-                            for(byte Sc = 1; Sc < sectors; Sc++)
+                            for(byte sc = 1; sc < sectors; sc++)
                             {
                                 if(aborted)
                                 {
@@ -375,10 +375,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                                DicConsole.Write("\rReading cylinder {0} head {1} sector {2} ({3:F3} MiB/sec.)", Cy, Hd,
-                                                 Sc, currentSpeed);
+                                DicConsole.Write("\rReading cylinder {0} head {1} sector {2} ({3:F3} MiB/sec.)", cy, hd,
+                                                 sc, currentSpeed);
 
-                                bool error = ataReader.ReadCHS(out cmdBuf, Cy, Hd, Sc, out duration);
+                                bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration);
 
                                 totalDuration += duration;
 
@@ -388,7 +388,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                     dumpFile.Write(cmdBuf);
                                     extents.Add(currentBlock);
-                                    dumpLog.WriteLine("Error reading cylinder {0} head {1} sector {2}.", Cy, Hd, Sc);
+                                    dumpLog.WriteLine("Error reading cylinder {0} head {1} sector {2}.", cy, hd, sc);
                                 }
                                 else
                                 {
@@ -461,7 +461,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 PluginBase plugins = new PluginBase();
                 plugins.RegisterAllPlugins(encoding);
-                ImagePlugin _imageFormat;
+                ImagePlugin imageFormat;
 
                 FiltersList filtersList = new FiltersList();
                 Filter inputFilter = filtersList.GetFilter(outputPrefix + ".bin");
@@ -472,16 +472,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                     return;
                 }
 
-                _imageFormat = ImageFormat.Detect(inputFilter);
+                imageFormat = ImageFormat.Detect(inputFilter);
                 PartitionType[] xmlFileSysInfo = null;
 
-                try { if(!_imageFormat.OpenImage(inputFilter)) _imageFormat = null; }
-                catch { _imageFormat = null; }
+                try { if(!imageFormat.OpenImage(inputFilter)) imageFormat = null; }
+                catch { imageFormat = null; }
 
-                if(_imageFormat != null)
+                if(imageFormat != null)
                 {
                     dumpLog.WriteLine("Getting partitions.");
-                    List<Partition> partitions = Partitions.GetAll(_imageFormat);
+                    List<Partition> partitions = Partitions.GetAll(imageFormat);
                     Partitions.AddSchemesToStats(partitions);
                     dumpLog.WriteLine("Found {0} partitions.", partitions.Count);
 
@@ -505,16 +505,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                                            i, partitions[i].Start, partitions[i].End, partitions[i].Type,
                                            partitions[i].Scheme);
 
-                            foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                            foreach(Filesystem plugin in plugins.PluginsList.Values)
                             {
                                 try
                                 {
-                                    if(_plugin.Identify(_imageFormat, partitions[i]))
+                                    if(plugin.Identify(imageFormat, partitions[i]))
                                     {
-                                        _plugin.GetInformation(_imageFormat, partitions[i], out string foo);
-                                        lstFs.Add(_plugin.XmlFSType);
-                                        Statistics.AddFilesystem(_plugin.XmlFSType.Type);
-                                        dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
+                                        plugin.GetInformation(imageFormat, partitions[i], out string foo);
+                                        lstFs.Add(plugin.XmlFSType);
+                                        Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                        dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
                                     }
                                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -543,16 +543,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Size = blocks * blockSize
                         };
 
-                        foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                        foreach(Filesystem plugin in plugins.PluginsList.Values)
                         {
                             try
                             {
-                                if(_plugin.Identify(_imageFormat, wholePart))
+                                if(plugin.Identify(imageFormat, wholePart))
                                 {
-                                    _plugin.GetInformation(_imageFormat, wholePart, out string foo);
-                                    lstFs.Add(_plugin.XmlFSType);
-                                    Statistics.AddFilesystem(_plugin.XmlFSType.Type);
-                                    dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
+                                    plugin.GetInformation(imageFormat, wholePart, out string foo);
+                                    lstFs.Add(plugin.XmlFSType);
+                                    Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                    dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
                                 }
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -571,7 +571,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 string xmlDskTyp, xmlDskSubTyp;
                 if(dev.IsCompactFlash)
                     Metadata.MediaType.MediaTypeToString(MediaType.CompactFlash, out xmlDskTyp, out xmlDskSubTyp);
-                else if(dev.IsPCMCIA)
+                else if(dev.IsPcmcia)
                     Metadata.MediaType.MediaTypeToString(MediaType.PCCardTypeI, out xmlDskTyp, out xmlDskSubTyp);
                 else Metadata.MediaType.MediaTypeToString(MediaType.GENERIC_HDD, out xmlDskTyp, out xmlDskSubTyp);
                 sidecar.BlockMedia[0].DiskType = xmlDskTyp;

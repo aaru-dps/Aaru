@@ -34,7 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
@@ -65,7 +65,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         List<string> lockedFiles;
         #endregion Caches
 
-        VTOC vtoc;
+        Vtoc vtoc;
         ulong start;
         int sectorsPerTrack;
         ulong totalFileEntries;

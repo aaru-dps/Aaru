@@ -59,7 +59,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public FFSPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public FFSPlugin(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
             PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((2 + partition.Start) >= partition.End) return false;
 
@@ -102,7 +102,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

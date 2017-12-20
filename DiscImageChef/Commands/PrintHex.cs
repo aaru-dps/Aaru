@@ -33,13 +33,13 @@
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Commands
 {
     static class PrintHex
     {
-        internal static void doPrintHex(PrintHexOptions options)
+        internal static void DoPrintHex(PrintHexOptions options)
         {
             DicConsole.DebugWriteLine("PrintHex command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("PrintHex command", "--verbose={0}", options.Verbose);
@@ -73,7 +73,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Sector {0}", options.StartSector + i);
                 byte[] sector;
 
-                if(inputFormat.ImageInfo.readableSectorTags == null)
+                if(inputFormat.ImageInfo.ReadableSectorTags == null)
                 {
                     DicConsole
                         .WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
@@ -81,7 +81,7 @@ namespace DiscImageChef.Commands
                 }
                 else
                 {
-                    if(inputFormat.ImageInfo.readableSectorTags.Count == 0)
+                    if(inputFormat.ImageInfo.ReadableSectorTags.Count == 0)
                     {
                         DicConsole
                             .WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");

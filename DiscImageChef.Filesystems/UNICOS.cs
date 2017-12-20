@@ -147,7 +147,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public UNICOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public UNICOS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNICOS Filesystem Plugin";
             PluginUUID = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
@@ -155,7 +155,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -175,7 +175,7 @@ namespace DiscImageChef.Filesystems
             return unicosSb.s_magic == UNICOS_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

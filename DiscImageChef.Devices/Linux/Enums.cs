@@ -61,7 +61,7 @@ namespace DiscImageChef.Devices.Linux
         /// <summary>
         /// O_NOCTTY
         /// </summary>
-        NoControlTTY = 00000400,
+        NoControlTty = 00000400,
         /// <summary>
         /// O_TRUNC
         /// </summary>
@@ -143,10 +143,10 @@ namespace DiscImageChef.Devices.Linux
     enum LinuxIoctl : uint
     {
         // SCSI IOCtls
-        SG_GET_VERSION_NUM = 0x2282,
-        SG_IO = 0x2285,
+        SgGetVersionNum = 0x2282,
+        SgIo = 0x2285,
         // MMC IOCtl
-        MMC_IOC_CMD = 0xC048B300
+        MmcIocCmd = 0xC048B300
     }
 
     [Flags]

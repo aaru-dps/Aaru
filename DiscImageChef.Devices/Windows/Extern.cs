@@ -49,51 +49,51 @@ namespace DiscImageChef.Devices.Windows
                                                          FileAttributes flagsAndAttributes, IntPtr templateFile);
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-        internal static extern bool DeviceIoControlScsi(SafeFileHandle hDevice, WindowsIoctl IoControlCode,
-                                                        ref ScsiPassThroughDirectAndSenseBuffer InBuffer,
+        internal static extern bool DeviceIoControlScsi(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
+                                                        ref ScsiPassThroughDirectAndSenseBuffer inBuffer,
                                                         uint nInBufferSize,
-                                                        ref ScsiPassThroughDirectAndSenseBuffer OutBuffer,
+                                                        ref ScsiPassThroughDirectAndSenseBuffer outBuffer,
                                                         uint nOutBufferSize, ref uint pBytesReturned,
-                                                        IntPtr Overlapped);
+                                                        IntPtr overlapped);
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-        internal static extern bool DeviceIoControlAta(SafeFileHandle hDevice, WindowsIoctl IoControlCode,
-                                                       ref AtaPassThroughDirectWithBuffer InBuffer, uint nInBufferSize,
-                                                       ref AtaPassThroughDirectWithBuffer OutBuffer,
-                                                       uint nOutBufferSize, ref uint pBytesReturned, IntPtr Overlapped);
+        internal static extern bool DeviceIoControlAta(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
+                                                       ref AtaPassThroughDirectWithBuffer inBuffer, uint nInBufferSize,
+                                                       ref AtaPassThroughDirectWithBuffer outBuffer,
+                                                       uint nOutBufferSize, ref uint pBytesReturned, IntPtr overlapped);
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-        internal static extern bool DeviceIoControlStorageQuery(SafeFileHandle hDevice, WindowsIoctl IoControlCode,
-                                                                ref StoragePropertyQuery InBuffer, uint nInBufferSize,
-                                                                IntPtr OutBuffer, uint nOutBufferSize,
-                                                                ref uint pBytesReturned, IntPtr Overlapped);
+        internal static extern bool DeviceIoControlStorageQuery(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
+                                                                ref StoragePropertyQuery inBuffer, uint nInBufferSize,
+                                                                IntPtr outBuffer, uint nOutBufferSize,
+                                                                ref uint pBytesReturned, IntPtr overlapped);
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-        internal static extern bool DeviceIoControlIde(SafeFileHandle hDevice, WindowsIoctl IoControlCode,
-                                                       ref IdePassThroughDirect InBuffer, uint nInBufferSize,
-                                                       ref IdePassThroughDirect OutBuffer, uint nOutBufferSize,
-                                                       ref uint pBytesReturned, IntPtr Overlapped);
+        internal static extern bool DeviceIoControlIde(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
+                                                       ref IdePassThroughDirect inBuffer, uint nInBufferSize,
+                                                       ref IdePassThroughDirect outBuffer, uint nOutBufferSize,
+                                                       ref uint pBytesReturned, IntPtr overlapped);
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-        internal static extern bool DeviceIoControlGetDeviceNumber(SafeFileHandle hDevice, WindowsIoctl IoControlCode,
-                                                                   IntPtr InBuffer, uint nInBufferSize,
-                                                                   ref StorageDeviceNumber OutBuffer,
+        internal static extern bool DeviceIoControlGetDeviceNumber(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
+                                                                   IntPtr inBuffer, uint nInBufferSize,
+                                                                   ref StorageDeviceNumber outBuffer,
                                                                    uint nOutBufferSize, ref uint pBytesReturned,
-                                                                   IntPtr Overlapped);
+                                                                   IntPtr overlapped);
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-        internal static extern bool DeviceIoControl(SafeFileHandle hDevice, WindowsIoctl IoControlCode, IntPtr InBuffer,
-                                                    uint nInBufferSize, ref SffdiskQueryDeviceProtocolData OutBuffer,
-                                                    uint nOutBufferSize, out uint pBytesReturned, IntPtr Overlapped);
+        internal static extern bool DeviceIoControl(SafeFileHandle hDevice, WindowsIoctl ioControlCode, IntPtr inBuffer,
+                                                    uint nInBufferSize, ref SffdiskQueryDeviceProtocolData outBuffer,
+                                                    uint nOutBufferSize, out uint pBytesReturned, IntPtr overlapped);
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-        internal static extern bool DeviceIoControl(SafeFileHandle hDevice, WindowsIoctl IoControlCode, byte[] InBuffer,
-                                                    uint nInBufferSize, byte[] OutBuffer, uint nOutBufferSize,
-                                                    out uint pBytesReturned, IntPtr Overlapped);
+        internal static extern bool DeviceIoControl(SafeFileHandle hDevice, WindowsIoctl ioControlCode, byte[] inBuffer,
+                                                    uint nInBufferSize, byte[] outBuffer, uint nOutBufferSize,
+                                                    out uint pBytesReturned, IntPtr overlapped);
 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-        internal static extern SafeFileHandle SetupDiGetClassDevs(ref Guid ClassGuid, IntPtr Enumerator,
-                                                                  IntPtr hwndParent, DeviceGetClassFlags Flags);
+        internal static extern SafeFileHandle SetupDiGetClassDevs(ref Guid classGuid, IntPtr enumerator,
+                                                                  IntPtr hwndParent, DeviceGetClassFlags flags);
 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool SetupDiEnumDeviceInterfaces(SafeFileHandle hDevInfo, IntPtr devInfo,

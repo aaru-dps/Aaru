@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     public class DiscFerret : ImagePlugin
     {
@@ -57,70 +57,70 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// "DFER"
         /// </summary>
-        const uint DfiMagic = 0x52454644;
+        const uint DFI_MAGIC = 0x52454644;
         /// <summary>
         /// "DFE2"
         /// </summary>
-        const uint DfiMagic2 = 0x32454644;
+        const uint DFI_MAGIC2 = 0x32454644;
         #endregion Internal Constants
 
         #region Internal variables
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
-        public SortedDictionary<int, long> trackOffsets;
-        public SortedDictionary<int, long> trackLengths;
+        public SortedDictionary<int, long> TrackOffsets;
+        public SortedDictionary<int, long> TrackLengths;
         #endregion Internal variables
 
         public DiscFerret()
         {
             Name = "DiscFerret";
-            PluginUUID = new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
+            PluginUuid = new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
         #region Public methods
         public override bool IdentifyImage(Filter imageFilter)
         {
-            byte[] magic_b = new byte[4];
+            byte[] magicB = new byte[4];
             Stream stream = imageFilter.GetDataForkStream();
-            stream.Read(magic_b, 0, 4);
-            uint magic = BitConverter.ToUInt32(magic_b, 0);
+            stream.Read(magicB, 0, 4);
+            uint magic = BitConverter.ToUInt32(magicB, 0);
 
-            return magic == DfiMagic || magic == DfiMagic2;
+            return magic == DFI_MAGIC || magic == DFI_MAGIC2;
         }
 
         public override bool OpenImage(Filter imageFilter)
         {
-            byte[] magic_b = new byte[4];
+            byte[] magicB = new byte[4];
             Stream stream = imageFilter.GetDataForkStream();
-            stream.Read(magic_b, 0, 4);
-            uint magic = BitConverter.ToUInt32(magic_b, 0);
+            stream.Read(magicB, 0, 4);
+            uint magic = BitConverter.ToUInt32(magicB, 0);
 
-            if(magic != DfiMagic && magic != DfiMagic2) return false;
+            if(magic != DFI_MAGIC && magic != DFI_MAGIC2) return false;
 
-            trackOffsets = new SortedDictionary<int, long>();
-            trackLengths = new SortedDictionary<int, long>();
+            TrackOffsets = new SortedDictionary<int, long>();
+            TrackLengths = new SortedDictionary<int, long>();
             int t = -1;
             ushort lastCylinder = 0, lastHead = 0;
             bool endOfTrack = false;
@@ -155,52 +155,52 @@ namespace DiscImageChef.ImagePlugins
                 {
                     lastCylinder = blockHeader.cylinder;
                     lastHead = 0;
-                    trackOffsets.Add(t, offset);
-                    trackLengths.Add(t, thisOffset - offset + 1);
+                    TrackOffsets.Add(t, offset);
+                    TrackLengths.Add(t, thisOffset - offset + 1);
                     offset = thisOffset;
                     t++;
                 }
                 else if(blockHeader.head > 0 && blockHeader.head > lastHead)
                 {
                     lastHead = blockHeader.head;
-                    trackOffsets.Add(t, offset);
-                    trackLengths.Add(t, thisOffset - offset + 1);
+                    TrackOffsets.Add(t, offset);
+                    TrackLengths.Add(t, thisOffset - offset + 1);
                     offset = thisOffset;
                     t++;
                 }
 
-                if(blockHeader.cylinder > ImageInfo.cylinders) ImageInfo.cylinders = blockHeader.cylinder;
-                if(blockHeader.head > ImageInfo.heads) ImageInfo.heads = blockHeader.head;
+                if(blockHeader.cylinder > ImageInfo.Cylinders) ImageInfo.Cylinders = blockHeader.cylinder;
+                if(blockHeader.head > ImageInfo.Heads) ImageInfo.Heads = blockHeader.head;
             }
 
-            ImageInfo.heads++;
-            ImageInfo.cylinders++;
+            ImageInfo.Heads++;
+            ImageInfo.Cylinders++;
 
-            ImageInfo.imageApplication = "DiscFerret";
-            if(magic == DfiMagic2) ImageInfo.imageApplicationVersion = "2.0";
-            else ImageInfo.imageApplicationVersion = "1.0";
+            ImageInfo.ImageApplication = "DiscFerret";
+            if(magic == DFI_MAGIC2) ImageInfo.ImageApplicationVersion = "2.0";
+            else ImageInfo.ImageApplicationVersion = "1.0";
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
         public override bool ImageHasPartitions()
         {
-            return ImageInfo.imageHasPartitions;
+            return ImageInfo.ImageHasPartitions;
         }
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -250,97 +250,97 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override string GetMediaManufacturer()
         {
-            return ImageInfo.mediaManufacturer;
+            return ImageInfo.MediaManufacturer;
         }
 
         public override string GetMediaModel()
         {
-            return ImageInfo.mediaModel;
+            return ImageInfo.MediaModel;
         }
 
         public override string GetMediaSerialNumber()
         {
-            return ImageInfo.mediaSerialNumber;
+            return ImageInfo.MediaSerialNumber;
         }
 
         public override string GetMediaBarcode()
         {
-            return ImageInfo.mediaBarcode;
+            return ImageInfo.MediaBarcode;
         }
 
         public override string GetMediaPartNumber()
         {
-            return ImageInfo.mediaPartNumber;
+            return ImageInfo.MediaPartNumber;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override int GetMediaSequence()
         {
-            return ImageInfo.mediaSequence;
+            return ImageInfo.MediaSequence;
         }
 
         public override int GetLastDiskSequence()
         {
-            return ImageInfo.lastMediaSequence;
+            return ImageInfo.LastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return ImageInfo.driveManufacturer;
+            return ImageInfo.DriveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return ImageInfo.driveModel;
+            return ImageInfo.DriveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return ImageInfo.driveSerialNumber;
+            return ImageInfo.DriveSerialNumber;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -348,8 +348,8 @@ namespace DiscImageChef.ImagePlugins
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -411,8 +411,8 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

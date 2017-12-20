@@ -40,7 +40,7 @@ namespace DiscImageChef.Commands
 {
     static class DeviceInfo
     {
-        internal static void doDeviceInfo(DeviceInfoOptions options)
+        internal static void DoDeviceInfo(DeviceInfoOptions options)
         {
             DicConsole.DebugWriteLine("Device-Info command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}", options.Verbose);
@@ -63,16 +63,16 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
-            if(dev.IsUSB)
+            if(dev.IsUsb)
             {
                 DicConsole.WriteLine("USB device");
-                if(dev.USBDescriptors != null)
-                    DicConsole.WriteLine("USB descriptor is {0} bytes", dev.USBDescriptors.Length);
-                DicConsole.WriteLine("USB Vendor ID: {0:X4}", dev.USBVendorID);
-                DicConsole.WriteLine("USB Product ID: {0:X4}", dev.USBProductID);
-                DicConsole.WriteLine("USB Manufacturer: {0}", dev.USBManufacturerString);
-                DicConsole.WriteLine("USB Product: {0}", dev.USBProductString);
-                DicConsole.WriteLine("USB Serial number: {0}", dev.USBSerialString);
+                if(dev.UsbDescriptors != null)
+                    DicConsole.WriteLine("USB descriptor is {0} bytes", dev.UsbDescriptors.Length);
+                DicConsole.WriteLine("USB Vendor ID: {0:X4}", dev.UsbVendorId);
+                DicConsole.WriteLine("USB Product ID: {0:X4}", dev.UsbProductId);
+                DicConsole.WriteLine("USB Manufacturer: {0}", dev.UsbManufacturerString);
+                DicConsole.WriteLine("USB Product: {0}", dev.UsbProductString);
+                DicConsole.WriteLine("USB Serial number: {0}", dev.UsbSerialString);
                 DicConsole.WriteLine();
             }
 
@@ -83,15 +83,15 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("FireWire Model ID: {0:X6}", dev.FireWireModel);
                 DicConsole.WriteLine("FireWire Manufacturer: {0}", dev.FireWireVendorName);
                 DicConsole.WriteLine("FireWire Model: {0}", dev.FireWireModelName);
-                DicConsole.WriteLine("FireWire GUID: {0:X16}", dev.FireWireGUID);
+                DicConsole.WriteLine("FireWire GUID: {0:X16}", dev.FireWireGuid);
                 DicConsole.WriteLine();
             }
 
-            if(dev.IsPCMCIA)
+            if(dev.IsPcmcia)
             {
                 DicConsole.WriteLine("PCMCIA device");
-                DicConsole.WriteLine("PCMCIA CIS is {0} bytes", dev.CIS.Length);
-                Decoders.PCMCIA.Tuple[] tuples = Decoders.PCMCIA.CIS.GetTuples(dev.CIS);
+                DicConsole.WriteLine("PCMCIA CIS is {0} bytes", dev.Cis.Length);
+                Decoders.PCMCIA.Tuple[] tuples = Decoders.PCMCIA.CIS.GetTuples(dev.Cis);
                 if(tuples != null)
                 {
                     foreach(Decoders.PCMCIA.Tuple tuple in tuples)
@@ -1285,7 +1285,7 @@ namespace DiscImageChef.Commands
                                 {
                                     if(dev.Model.StartsWith("CD-R   ", StringComparison.Ordinal))
                                     {
-                                        plxtSense = dev.PlextorReadEepromCDR(out plxtBuf, out senseBuf, dev.Timeout,
+                                        plxtSense = dev.PlextorReadEepromCdr(out plxtBuf, out senseBuf, dev.Timeout,
                                                                              out duration);
                                     }
                                     break;
@@ -1467,7 +1467,7 @@ namespace DiscImageChef.Commands
                                 DicConsole.WriteLine("Drive has kreon firmware:");
                                 if(krFeatures.HasFlag(KreonFeatures.ChallengeResponse))
                                     DicConsole.WriteLine("\tCan do challenge/response with Xbox discs");
-                                if(krFeatures.HasFlag(KreonFeatures.DecryptSS))
+                                if(krFeatures.HasFlag(KreonFeatures.DecryptSs))
                                     DicConsole.WriteLine("\tCan read and descrypt SS from Xbox discs");
                                 if(krFeatures.HasFlag(KreonFeatures.XtremeUnlock))
                                     DicConsole.WriteLine("\tCan set xtreme unlock state with Xbox discs");
@@ -1475,7 +1475,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("\tCan set wxripper unlock state with Xbox discs");
                                 if(krFeatures.HasFlag(KreonFeatures.ChallengeResponse360))
                                     DicConsole.WriteLine("\tCan do challenge/response with Xbox 360 discs");
-                                if(krFeatures.HasFlag(KreonFeatures.DecryptSS360))
+                                if(krFeatures.HasFlag(KreonFeatures.DecryptSs360))
                                     DicConsole.WriteLine("\tCan read and descrypt SS from Xbox 360 discs");
                                 if(krFeatures.HasFlag(KreonFeatures.XtremeUnlock360))
                                     DicConsole.WriteLine("\tCan set xtreme unlock state with Xbox 360 discs");
@@ -1549,7 +1549,7 @@ namespace DiscImageChef.Commands
                 {
                     bool noInfo = true;
 
-                    bool sense = dev.ReadCID(out byte[] mmcBuf, out uint[] response, dev.Timeout, out double duration);
+                    bool sense = dev.ReadCid(out byte[] mmcBuf, out uint[] response, dev.Timeout, out double duration);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1557,7 +1557,7 @@ namespace DiscImageChef.Commands
                                          mmcBuf);
                         DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCID(mmcBuf));
                     }
-                    sense = dev.ReadCSD(out mmcBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadCsd(out mmcBuf, out response, dev.Timeout, out duration);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1565,7 +1565,7 @@ namespace DiscImageChef.Commands
                                          mmcBuf);
                         DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCSD(mmcBuf));
                     }
-                    sense = dev.ReadOCR(out mmcBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadOcr(out mmcBuf, out response, dev.Timeout, out duration);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1573,7 +1573,7 @@ namespace DiscImageChef.Commands
                                          mmcBuf);
                         DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyOCR(mmcBuf));
                     }
-                    sense = dev.ReadExtendedCSD(out mmcBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadExtendedCsd(out mmcBuf, out response, dev.Timeout, out duration);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1589,7 +1589,7 @@ namespace DiscImageChef.Commands
                 {
                     bool noInfo = true;
 
-                    bool sense = dev.ReadCID(out byte[] sdBuf, out uint[] response, dev.Timeout, out double duration);
+                    bool sense = dev.ReadCid(out byte[] sdBuf, out uint[] response, dev.Timeout, out double duration);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1597,7 +1597,7 @@ namespace DiscImageChef.Commands
                                          "SecureDigital CID", sdBuf);
                         DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(sdBuf));
                     }
-                    sense = dev.ReadCSD(out sdBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadCsd(out sdBuf, out response, dev.Timeout, out duration);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1605,7 +1605,7 @@ namespace DiscImageChef.Commands
                                          "SecureDigital CSD", sdBuf);
                         DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(sdBuf));
                     }
-                    sense = dev.ReadSDOCR(out sdBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadSdocr(out sdBuf, out response, dev.Timeout, out duration);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1613,7 +1613,7 @@ namespace DiscImageChef.Commands
                                          "SecureDigital OCR", sdBuf);
                         DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(sdBuf));
                     }
-                    sense = dev.ReadSCR(out sdBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadScr(out sdBuf, out response, dev.Timeout, out duration);
                     if(!sense)
                     {
                         noInfo = false;

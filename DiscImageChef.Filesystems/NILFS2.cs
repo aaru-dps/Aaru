@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public NILFS2(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public NILFS2(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "NILFS2 Plugin";
             PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
@@ -119,7 +119,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -144,7 +144,7 @@ namespace DiscImageChef.Filesystems
             return nilfsSb.magic == NILFS2_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

@@ -39,13 +39,13 @@ namespace DiscImageChef.Commands
 {
     static class MediaScan
     {
-        internal static void doMediaScan(MediaScanOptions options)
+        internal static void DoMediaScan(MediaScanOptions options)
         {
             DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Media-Scan command", "--device={0}", options.DevicePath);
-            DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", options.MHDDLogPath);
-            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", options.IBGLogPath);
+            DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", options.MhddLogPath);
+            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", options.IbgLogPath);
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
                char.IsLetter(options.DevicePath[0]))
@@ -68,27 +68,27 @@ namespace DiscImageChef.Commands
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    results = ATA.Scan(options.MHDDLogPath, options.IBGLogPath, options.DevicePath, dev);
+                    results = Ata.Scan(options.MhddLogPath, options.IbgLogPath, options.DevicePath, dev);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    results = SecureDigital.Scan(options.MHDDLogPath, options.IBGLogPath, options.DevicePath, dev);
+                    results = SecureDigital.Scan(options.MhddLogPath, options.IbgLogPath, options.DevicePath, dev);
                     break;
                 case DeviceType.NVMe:
-                    results = NVMe.Scan(options.MHDDLogPath, options.IBGLogPath, options.DevicePath, dev);
+                    results = Nvme.Scan(options.MhddLogPath, options.IbgLogPath, options.DevicePath, dev);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    results = SCSI.Scan(options.MHDDLogPath, options.IBGLogPath, options.DevicePath, dev);
+                    results = Scsi.Scan(options.MhddLogPath, options.IbgLogPath, options.DevicePath, dev);
                     break;
                 default: throw new NotSupportedException("Unknown device type.");
             }
 
-            DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.totalTime,
-                                 results.processingTime);
-            DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.", results.avgSpeed);
-            DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.maxSpeed);
-            DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.minSpeed);
+            DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
+                                 results.ProcessingTime);
+            DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.", results.AvgSpeed);
+            DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.MaxSpeed);
+            DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.MinSpeed);
             DicConsole.WriteLine("Summary:");
             DicConsole.WriteLine("{0} sectors took less than 3 ms.", results.A);
             DicConsole.WriteLine("{0} sectors took less than 10 ms but more than 3 ms.", results.B);
@@ -96,24 +96,24 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("{0} sectors took less than 150 ms but more than 50 ms.", results.D);
             DicConsole.WriteLine("{0} sectors took less than 500 ms but more than 150 ms.", results.E);
             DicConsole.WriteLine("{0} sectors took more than 500 ms.", results.F);
-            DicConsole.WriteLine("{0} sectors could not be read.", results.unreadableSectors.Count);
-            if(results.unreadableSectors.Count > 0)
+            DicConsole.WriteLine("{0} sectors could not be read.", results.UnreadableSectors.Count);
+            if(results.UnreadableSectors.Count > 0)
             {
-                foreach(ulong bad in results.unreadableSectors)
+                foreach(ulong bad in results.UnreadableSectors)
                     DicConsole.WriteLine("Sector {0} could not be read", bad);
             }
 
             DicConsole.WriteLine();
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-            if(results.seekTotal != 0 || results.seekMin != double.MaxValue || results.seekMax != double.MinValue)
+            if(results.SeekTotal != 0 || results.SeekMin != double.MaxValue || results.SeekMax != double.MinValue)
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
                 DicConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
-                                     results.seekTimes, results.seekMax, results.seekMin, results.seekTotal / 1000);
+                                     results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
 
             Core.Statistics.AddMediaScan((long)results.A, (long)results.B, (long)results.C, (long)results.D,
-                                         (long)results.E, (long)results.F, (long)results.blocks, (long)results.errored,
-                                         (long)(results.blocks - results.errored));
+                                         (long)results.E, (long)results.F, (long)results.Blocks, (long)results.Errored,
+                                         (long)(results.Blocks - results.Errored));
             Core.Statistics.AddCommand("media-scan");
         }
     }

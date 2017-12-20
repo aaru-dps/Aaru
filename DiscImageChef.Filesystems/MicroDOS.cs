@@ -60,7 +60,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public MicroDOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public MicroDOS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "MicroDOS file system";
             PluginUUID = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
@@ -68,7 +68,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((1 + partition.Start) >= partition.End) return false;
 
@@ -85,7 +85,7 @@ namespace DiscImageChef.Filesystems
             return block0.label == magic && block0.mklabel == magic2;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

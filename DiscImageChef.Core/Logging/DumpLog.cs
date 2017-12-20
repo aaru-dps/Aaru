@@ -84,22 +84,22 @@ namespace DiscImageChef.Core.Logging
                 logSw.WriteLine("Removable device: {0}", dev.IsRemovable);
                 logSw.WriteLine("Device type: {0}", dev.Type);
                 logSw.WriteLine("CompactFlash device: {0}", dev.IsCompactFlash);
-                logSw.WriteLine("PCMCIA device: {0}", dev.IsPCMCIA);
-                logSw.WriteLine("USB device: {0}", dev.IsUSB);
-                if(dev.IsUSB)
+                logSw.WriteLine("PCMCIA device: {0}", dev.IsPcmcia);
+                logSw.WriteLine("USB device: {0}", dev.IsUsb);
+                if(dev.IsUsb)
                 {
-                    logSw.WriteLine("USB manufacturer: {0}", dev.USBManufacturerString);
-                    logSw.WriteLine("USB product: {0}", dev.USBProductString);
-                    logSw.WriteLine("USB serial: {0}", dev.USBSerialString);
-                    logSw.WriteLine("USB vendor ID: {0:X4}h", dev.USBVendorID);
-                    logSw.WriteLine("USB product ID: {0:X4}h", dev.USBProductID);
+                    logSw.WriteLine("USB manufacturer: {0}", dev.UsbManufacturerString);
+                    logSw.WriteLine("USB product: {0}", dev.UsbProductString);
+                    logSw.WriteLine("USB serial: {0}", dev.UsbSerialString);
+                    logSw.WriteLine("USB vendor ID: {0:X4}h", dev.UsbVendorId);
+                    logSw.WriteLine("USB product ID: {0:X4}h", dev.UsbProductId);
                 }
                 logSw.WriteLine("FireWire device: {0}", dev.IsFireWire);
                 if(dev.IsFireWire)
                 {
                     logSw.WriteLine("FireWire vendor: {0}", dev.FireWireVendorName);
                     logSw.WriteLine("FireWire model: {0}", dev.FireWireModelName);
-                    logSw.WriteLine("FireWire GUID: 0x{0:X16}", dev.FireWireGUID);
+                    logSw.WriteLine("FireWire GUID: 0x{0:X16}", dev.FireWireGuid);
                     logSw.WriteLine("FireWire vendor ID: 0x{0:X8}", dev.FireWireVendor);
                     logSw.WriteLine("FireWire product ID: 0x{0:X8}", dev.FireWireModel);
                 }

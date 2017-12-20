@@ -32,7 +32,7 @@
 
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using Schemas;
 
 namespace DiscImageChef.Core

@@ -33,7 +33,7 @@
 using System;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Core
 {
@@ -43,23 +43,23 @@ namespace DiscImageChef.Core
         {
             try
             {
-                ImagePlugin _imageFormat;
+                ImagePlugin imageFormat;
                 PluginBase plugins = new PluginBase();
                 plugins.RegisterAllPlugins();
 
-                _imageFormat = null;
+                imageFormat = null;
 
                 // Check all but RAW plugin
-                foreach(ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
+                foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values)
                 {
-                    if(_imageplugin.PluginUUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                    if(imageplugin.PluginUuid != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                     {
                         try
                         {
-                            DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", _imageplugin.Name);
-                            if(_imageplugin.IdentifyImage(imageFilter))
+                            DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
+                            if(imageplugin.IdentifyImage(imageFilter))
                             {
-                                _imageFormat = _imageplugin;
+                                imageFormat = imageplugin;
                                 break;
                             }
                         }
@@ -70,18 +70,18 @@ namespace DiscImageChef.Core
                 }
 
                 // Check only RAW plugin
-                if(_imageFormat == null)
+                if(imageFormat == null)
                 {
-                    foreach(ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
+                    foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values)
                     {
-                        if(_imageplugin.PluginUUID == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                        if(imageplugin.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                         {
                             try
                             {
-                                DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", _imageplugin.Name);
-                                if(_imageplugin.IdentifyImage(imageFilter))
+                                DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
+                                if(imageplugin.IdentifyImage(imageFilter))
                                 {
-                                    _imageFormat = _imageplugin;
+                                    imageFormat = imageplugin;
                                     break;
                                 }
                             }
@@ -93,9 +93,9 @@ namespace DiscImageChef.Core
                 }
 
                 // Still not recognized
-                if(_imageFormat == null) { return null; }
+                if(imageFormat == null) { return null; }
 
-                return _imageFormat;
+                return imageFormat;
             }
             catch { return null; }
         }

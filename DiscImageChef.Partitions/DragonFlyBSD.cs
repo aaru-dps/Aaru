@@ -34,18 +34,18 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class DragonFlyBSD : PartPlugin
+    public class DragonFlyBSD : PartitionPlugin
     {
         const uint DISK_MAGIC64 = 0xC4464C59;
 
         public DragonFlyBSD()
         {
             Name = "DragonFly BSD 64-bit disklabel";
-            PluginUUID = new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
+            PluginUuid = new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)

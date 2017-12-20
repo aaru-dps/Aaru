@@ -36,13 +36,13 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        public bool ReadCSD(out byte[] buffer, out uint[] response, uint timeout, out double duration)
+        public bool ReadCsd(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[16];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendCSD, false, false,
-                                       MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 | MmcFlags.CommandAC, 0, 16, 1,
+            lastError = SendMmcCommand(MmcCommands.SendCsd, false, false,
+                                       MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
@@ -51,13 +51,13 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadCID(out byte[] buffer, out uint[] response, uint timeout, out double duration)
+        public bool ReadCid(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[16];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendCID, false, false,
-                                       MmcFlags.ResponseSPI_R2 | MmcFlags.Response_R2 | MmcFlags.CommandAC, 0, 16, 1,
+            lastError = SendMmcCommand(MmcCommands.SendCid, false, false,
+                                       MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
@@ -66,13 +66,13 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadOCR(out byte[] buffer, out uint[] response, uint timeout, out double duration)
+        public bool ReadOcr(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[4];
             bool sense = false;
 
             lastError = SendMmcCommand(MmcCommands.SendOpCond, false, true,
-                                       MmcFlags.ResponseSPI_R3 | MmcFlags.Response_R3 | MmcFlags.CommandBCR, 0, 4, 1,
+                                       MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0, 4, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
@@ -81,13 +81,13 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadExtendedCSD(out byte[] buffer, out uint[] response, uint timeout, out double duration)
+        public bool ReadExtendedCsd(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[512];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendExtCSD, false, false,
-                                       MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandADTC, 0, 512, 1,
+            lastError = SendMmcCommand(MmcCommands.SendExtCsd, false, false,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0, 512, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
@@ -102,7 +102,7 @@ namespace DiscImageChef.Devices
             bool sense = false;
 
             lastError = SendMmcCommand(MmcCommands.SetBlocklen, false, false,
-                                       MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandAC, length, 0,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, length, 0,
                                        0, ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
@@ -125,7 +125,7 @@ namespace DiscImageChef.Devices
             else command = MmcCommands.ReadSingleBlock;
 
             lastError = SendMmcCommand(command, false, false,
-                                       MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandADTC, address,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
                                        blockSize, transferLength, ref buffer, out response, out duration, out sense,
                                        timeout);
             error = lastError != 0;
@@ -134,7 +134,7 @@ namespace DiscImageChef.Devices
             {
                 byte[] foo = new byte[0];
                 SendMmcCommand(MmcCommands.StopTransmission, false, false,
-                               MmcFlags.Response_R1b | MmcFlags.ResponseSPI_R1b | MmcFlags.CommandAC, 0, 0, 0, ref foo,
+                               MmcFlags.ResponseR1B | MmcFlags.ResponseSpiR1B | MmcFlags.CommandAc, 0, 0, 0, ref foo,
                                out uint[] responseStop, out double stopDuration, out bool stopSense, timeout);
                 duration += stopDuration;
                 DicConsole.DebugWriteLine("MMC Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
@@ -150,7 +150,7 @@ namespace DiscImageChef.Devices
             bool sense = false;
 
             lastError = SendMmcCommand(MmcCommands.SendStatus, false, true,
-                                       MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandAC, 0, 4, 1,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, 0, 4, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 

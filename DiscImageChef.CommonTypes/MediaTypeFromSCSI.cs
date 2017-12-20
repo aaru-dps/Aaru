@@ -33,7 +33,7 @@
 namespace DiscImageChef.CommonTypes
 {
 #pragma warning disable RECS0063 // Warns when a culture-aware 'StartsWith' call is used by default.
-    public static class MediaTypeFromSCSI
+    public static class MediaTypeFromScsi
     {
         public static MediaType Get(byte scsiPeripheralType, string vendor, string model, byte mediumType,
                                     byte densityCode, ulong blocks, uint blockSize)

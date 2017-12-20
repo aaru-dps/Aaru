@@ -37,7 +37,7 @@ namespace DiscImageChef.Commands
 {
     static class Statistics
     {
-        internal static void showStats()
+        internal static void ShowStats()
         {
             if(Core.Statistics.AllStats == null)
             {

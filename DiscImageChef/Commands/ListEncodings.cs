@@ -44,7 +44,7 @@ namespace DiscImageChef.Commands
             public string DisplayName;
         }
 
-        internal static void DoList(ListEncodingsOptions EncodingOptions)
+        internal static void DoList(ListEncodingsOptions encodingOptions)
         {
             List<CommonEncodingInfo> encodings = new List<CommonEncodingInfo>();
 

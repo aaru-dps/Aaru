@@ -35,11 +35,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class Apricot : PartPlugin
+    public class Apricot : PartitionPlugin
     {
         readonly string[] operatingSystemCodes = {"Invalid", "MS-DOS", "UCSD Pascal", "CP/M", "Concurrent CP/M"};
         readonly string[] bootTypeCodes =
@@ -59,7 +59,7 @@ namespace DiscImageChef.PartPlugins
         public Apricot()
         {
             Name = "ACT Apricot partitions";
-            PluginUUID = new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
+            PluginUuid = new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)

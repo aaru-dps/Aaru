@@ -46,63 +46,63 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Get a list of all connected devices 
         // 
-        static internal List<USBDevice> GetConnectedDevices()
+        static internal List<UsbDevice> GetConnectedDevices()
         {
-            List<USBDevice> DevList = new List<USBDevice>();
+            List<UsbDevice> devList = new List<UsbDevice>();
 
-            foreach(USBController Controller in GetHostControllers()) { ListHub(Controller.GetRootHub(), DevList); }
+            foreach(UsbController controller in GetHostControllers()) { ListHub(controller.GetRootHub(), devList); }
 
-            return DevList;
+            return devList;
         }
 
         // private routine for enumerating a hub 
-        static void ListHub(USBHub Hub, List<USBDevice> DevList)
+        static void ListHub(UsbHub hub, List<UsbDevice> devList)
         {
-            foreach(USBPort Port in Hub.GetPorts())
+            foreach(UsbPort port in hub.GetPorts())
             {
-                if(Port.IsHub)
+                if(port.IsHub)
                 {
                     // recursive 
-                    ListHub(Port.GetHub(), DevList);
+                    ListHub(port.GetHub(), devList);
                 }
-                else { if(Port.IsDeviceConnected) { DevList.Add(Port.GetDevice()); } }
+                else { if(port.IsDeviceConnected) { devList.Add(port.GetDevice()); } }
             }
         }
 
         // 
         // Find a device based upon it's DriverKeyName 
         // 
-        static internal USBDevice FindDeviceByDriverKeyName(string DriverKeyName)
+        static internal UsbDevice FindDeviceByDriverKeyName(string driverKeyName)
         {
-            USBDevice FoundDevice = null;
+            UsbDevice foundDevice = null;
 
-            foreach(USBController Controller in GetHostControllers())
+            foreach(UsbController controller in GetHostControllers())
             {
-                SearchHubDriverKeyName(Controller.GetRootHub(), ref FoundDevice, DriverKeyName);
-                if(FoundDevice != null) break;
+                SearchHubDriverKeyName(controller.GetRootHub(), ref foundDevice, driverKeyName);
+                if(foundDevice != null) break;
             }
 
-            return FoundDevice;
+            return foundDevice;
         }
 
         // private routine for enumerating a hub 
-        static void SearchHubDriverKeyName(USBHub Hub, ref USBDevice FoundDevice, string DriverKeyName)
+        static void SearchHubDriverKeyName(UsbHub hub, ref UsbDevice foundDevice, string driverKeyName)
         {
-            foreach(USBPort Port in Hub.GetPorts())
+            foreach(UsbPort port in hub.GetPorts())
             {
-                if(Port.IsHub)
+                if(port.IsHub)
                 {
                     // recursive 
-                    SearchHubDriverKeyName(Port.GetHub(), ref FoundDevice, DriverKeyName);
+                    SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
                 }
                 else
                 {
-                    if(Port.IsDeviceConnected)
+                    if(port.IsDeviceConnected)
                     {
-                        USBDevice Device = Port.GetDevice();
-                        if(Device.DeviceDriverKey == DriverKeyName)
+                        UsbDevice device = port.GetDevice();
+                        if(device.DeviceDriverKey == driverKeyName)
                         {
-                            FoundDevice = Device;
+                            foundDevice = device;
                             break;
                         }
                     }
@@ -113,37 +113,37 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Find a device based upon it's Instance ID 
         // 
-        static internal USBDevice FindDeviceByInstanceID(string InstanceID)
+        static internal UsbDevice FindDeviceByInstanceId(string instanceId)
         {
-            USBDevice FoundDevice = null;
+            UsbDevice foundDevice = null;
 
-            foreach(USBController Controller in GetHostControllers())
+            foreach(UsbController controller in GetHostControllers())
             {
-                SearchHubInstanceID(Controller.GetRootHub(), ref FoundDevice, InstanceID);
-                if(FoundDevice != null) break;
+                SearchHubInstanceId(controller.GetRootHub(), ref foundDevice, instanceId);
+                if(foundDevice != null) break;
             }
 
-            return FoundDevice;
+            return foundDevice;
         }
 
         // private routine for enumerating a hub 
-        static void SearchHubInstanceID(USBHub Hub, ref USBDevice FoundDevice, string InstanceID)
+        static void SearchHubInstanceId(UsbHub hub, ref UsbDevice foundDevice, string instanceId)
         {
-            foreach(USBPort Port in Hub.GetPorts())
+            foreach(UsbPort port in hub.GetPorts())
             {
-                if(Port.IsHub)
+                if(port.IsHub)
                 {
                     // recursive 
-                    SearchHubInstanceID(Port.GetHub(), ref FoundDevice, InstanceID);
+                    SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
                 }
                 else
                 {
-                    if(Port.IsDeviceConnected)
+                    if(port.IsDeviceConnected)
                     {
-                        USBDevice Device = Port.GetDevice();
-                        if(Device.InstanceID == InstanceID)
+                        UsbDevice device = port.GetDevice();
+                        if(device.InstanceId == instanceId)
                         {
-                            FoundDevice = Device;
+                            foundDevice = device;
                             break;
                         }
                     }
@@ -152,9 +152,9 @@ namespace DiscImageChef.Devices.Windows
         }
 
         const int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
-        internal const string GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-        internal const string GUID_DEVINTERFACE_CDROM = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
-        internal const string GUID_DEVINTERFACE_FLOPPY = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceDisk = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceCdrom = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceFloppy = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
 
         //typedef struct _STORAGE_DEVICE_NUMBER { 
         //  DEVICE_TYPE  DeviceType; 
@@ -162,7 +162,7 @@ namespace DiscImageChef.Devices.Windows
         //  ULONG  PartitionNumber; 
         //} STORAGE_DEVICE_NUMBER, *PSTORAGE_DEVICE_NUMBER; 
         [StructLayout(LayoutKind.Sequential)]
-        struct STORAGE_DEVICE_NUMBER
+        struct StorageDeviceNumber
         {
             internal int DeviceType;
             internal int DeviceNumber;
@@ -184,72 +184,72 @@ namespace DiscImageChef.Devices.Windows
         //    IN ULONG  ulFlags 
         //); 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-        static extern int CM_Get_Device_ID(IntPtr dnDevInst, IntPtr Buffer, int BufferLen, int ulFlags);
+        static extern int CM_Get_Device_ID(IntPtr dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
 
         // 
         // Find a device based upon a Drive Letter 
         // 
-        static internal USBDevice FindDriveLetter(string DriveLetter, string deviceGuid)
+        static internal UsbDevice FindDriveLetter(string driveLetter, string deviceGuid)
         {
-            USBDevice FoundDevice = null;
-            string InstanceID = "";
+            UsbDevice foundDevice = null;
+            string instanceId = "";
 
             // We start by getting the unique DeviceNumber of the given 
             // DriveLetter.  We'll use this later to find a matching 
             // DevicePath "symbolic name" 
-            int DevNum = GetDeviceNumber(@"\\.\" + DriveLetter.TrimEnd('\\'));
-            if(DevNum < 0) { return null; }
+            int devNum = GetDeviceNumber(@"\\.\" + driveLetter.TrimEnd('\\'));
+            if(devNum < 0) { return null; }
 
-            return FindDeviceNumber(DevNum, deviceGuid);
+            return FindDeviceNumber(devNum, deviceGuid);
         }
 
-        static internal USBDevice FindDrivePath(string DrivePath, string deviceGuid)
+        static internal UsbDevice FindDrivePath(string drivePath, string deviceGuid)
         {
-            USBDevice FoundDevice = null;
-            string InstanceID = "";
+            UsbDevice foundDevice = null;
+            string instanceId = "";
 
             // We start by getting the unique DeviceNumber of the given 
             // DriveLetter.  We'll use this later to find a matching 
             // DevicePath "symbolic name" 
-            int DevNum = GetDeviceNumber(DrivePath);
-            if(DevNum < 0) { return null; }
+            int devNum = GetDeviceNumber(drivePath);
+            if(devNum < 0) { return null; }
 
-            return FindDeviceNumber(DevNum, deviceGuid);
+            return FindDeviceNumber(devNum, deviceGuid);
         }
 
         // 
         // Find a device based upon a Drive Letter 
         // 
-        static internal USBDevice FindDeviceNumber(int DevNum, string deviceGuid)
+        static internal UsbDevice FindDeviceNumber(int devNum, string deviceGuid)
         {
-            USBDevice FoundDevice = null;
-            string InstanceID = "";
+            UsbDevice foundDevice = null;
+            string instanceId = "";
 
-            Guid DiskGUID = new Guid(deviceGuid);
+            Guid diskGuid = new Guid(deviceGuid);
 
             // We start at the "root" of the device tree and look for all 
             // devices that match the interface GUID of a disk 
-            IntPtr h = SetupDiGetClassDevs(ref DiskGUID, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+            IntPtr h = SetupDiGetClassDevs(ref diskGuid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
             if(h.ToInt32() != INVALID_HANDLE_VALUE)
             {
-                bool Success = true;
+                bool success = true;
                 int i = 0;
                 do
                 {
                     // create a Device Interface Data structure 
-                    SP_DEVICE_INTERFACE_DATA dia = new SP_DEVICE_INTERFACE_DATA();
+                    SpDeviceInterfaceData dia = new SpDeviceInterfaceData();
                     dia.cbSize = Marshal.SizeOf(dia);
 
                     // start the enumeration  
-                    Success = SetupDiEnumDeviceInterfaces(h, IntPtr.Zero, ref DiskGUID, i, ref dia);
-                    if(Success)
+                    success = SetupDiEnumDeviceInterfaces(h, IntPtr.Zero, ref diskGuid, i, ref dia);
+                    if(success)
                     {
                         // build a DevInfo Data structure 
-                        SP_DEVINFO_DATA da = new SP_DEVINFO_DATA();
+                        SpDevinfoData da = new SpDevinfoData();
                         da.cbSize = Marshal.SizeOf(da);
 
                         // build a Device Interface Detail Data structure 
-                        SP_DEVICE_INTERFACE_DETAIL_DATA didd = new SP_DEVICE_INTERFACE_DETAIL_DATA();
+                        SpDeviceInterfaceDetailData didd = new SpDeviceInterfaceDetailData();
                         didd.cbSize = 4 + Marshal.SystemDefaultCharSize; // trust me :) 
 
                         // now we can get some more detailed information 
@@ -260,7 +260,7 @@ namespace DiscImageChef.Devices.Windows
                             // Now that we have a DevicePath... we can use it to 
                             // generate another DeviceNumber to see if it matches 
                             // the one we're looking for. 
-                            if(GetDeviceNumber(didd.DevicePath) == DevNum)
+                            if(GetDeviceNumber(didd.DevicePath) == devNum)
                             {
                                 // current InstanceID is at the "USBSTOR" level, so we 
                                 // need up "move up" one level to get to the "USB" level 
@@ -270,46 +270,46 @@ namespace DiscImageChef.Devices.Windows
                                 // Now we get the InstanceID of the USB level device 
                                 IntPtr ptrInstanceBuf = Marshal.AllocHGlobal(nBytes);
                                 CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, nBytes, 0);
-                                InstanceID = Marshal.PtrToStringAuto(ptrInstanceBuf);
+                                instanceId = Marshal.PtrToStringAuto(ptrInstanceBuf);
 
                                 Marshal.FreeHGlobal(ptrInstanceBuf);
-                                System.Console.WriteLine("InstanceId: {0}", InstanceID);
+                                System.Console.WriteLine("InstanceId: {0}", instanceId);
                                 //break;
                             }
                         }
                     }
                     i++;
                 }
-                while(Success);
+                while(success);
 
                 SetupDiDestroyDeviceInfoList(h);
             }
 
             // Did we find an InterfaceID of a USB device? 
-            if(InstanceID.StartsWith("USB\\")) { FoundDevice = FindDeviceByInstanceID(InstanceID); }
-            return FoundDevice;
+            if(instanceId.StartsWith("USB\\")) { foundDevice = FindDeviceByInstanceId(instanceId); }
+            return foundDevice;
         }
 
         // return a unique device number for the given device path 
-        private static int GetDeviceNumber(string DevicePath)
+        private static int GetDeviceNumber(string devicePath)
         {
             int ans = -1;
 
-            IntPtr h = CreateFile(DevicePath.TrimEnd('\\'), 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+            IntPtr h = CreateFile(devicePath.TrimEnd('\\'), 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
             if(h.ToInt32() != INVALID_HANDLE_VALUE)
             {
                 int requiredSize;
-                STORAGE_DEVICE_NUMBER Sdn = new STORAGE_DEVICE_NUMBER();
-                int nBytes = Marshal.SizeOf(Sdn);
+                StorageDeviceNumber sdn = new StorageDeviceNumber();
+                int nBytes = Marshal.SizeOf(sdn);
                 IntPtr ptrSdn = Marshal.AllocHGlobal(nBytes);
 
                 if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out requiredSize,
                                    IntPtr.Zero))
                 {
-                    Sdn = (STORAGE_DEVICE_NUMBER)Marshal.PtrToStructure(ptrSdn, typeof(STORAGE_DEVICE_NUMBER));
+                    sdn = (StorageDeviceNumber)Marshal.PtrToStructure(ptrSdn, typeof(StorageDeviceNumber));
                     // just my way of combining the relevant parts of the 
                     // STORAGE_DEVICE_NUMBER into a single number 
-                    ans = (Sdn.DeviceType << 8) + Sdn.DeviceNumber;
+                    ans = (sdn.DeviceType << 8) + sdn.DeviceNumber;
                 }
                 Marshal.FreeHGlobal(ptrSdn);
                 CloseHandle(h);

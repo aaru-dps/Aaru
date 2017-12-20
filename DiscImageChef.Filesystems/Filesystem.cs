@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin">Image plugin.</param>
         /// <param name="partition">Partition.</param>
         /// <param name="encoding">Which encoding to use for this filesystem.</param>
-        protected Filesystem(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding) { }
+        protected Filesystem(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding) { }
 
         /// <summary>
         /// Identifies the filesystem in the specified LBA
@@ -77,7 +77,7 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partition">Partition.</param>
         /// <returns><c>true</c>, if the filesystem is recognized, <c>false</c> otherwise.</returns>
-        public abstract bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition);
+        public abstract bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition);
 
         /// <summary>
         /// Gets information about the identified filesystem.
@@ -85,7 +85,7 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partition">Partition.</param>
         /// <param name="information">Filesystem information.</param>
-        public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public abstract void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information);
 
         /// <summary>

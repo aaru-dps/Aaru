@@ -39,7 +39,7 @@ namespace DiscImageChef.Checksums
     public class Adler32Context
     {
         ushort sum1, sum2;
-        const ushort AdlerModule = 65521;
+        const ushort ADLER_MODULE = 65521;
 
         /// <summary>
         /// Initializes the Adler-32 sums
@@ -59,8 +59,8 @@ namespace DiscImageChef.Checksums
         {
             for(int i = 0; i < len; i++)
             {
-                sum1 = (ushort)((sum1 + data[i]) % AdlerModule);
-                sum2 = (ushort)((sum2 + sum1) % AdlerModule);
+                sum1 = (ushort)((sum1 + data[i]) % ADLER_MODULE);
+                sum2 = (ushort)((sum2 + sum1) % ADLER_MODULE);
             }
         }
 
@@ -127,8 +127,8 @@ namespace DiscImageChef.Checksums
 
             for(int i = 0; i < fileStream.Length; i++)
             {
-                localSum1 = (ushort)((localSum1 + fileStream.ReadByte()) % AdlerModule);
-                localSum2 = (ushort)((localSum2 + localSum1) % AdlerModule);
+                localSum1 = (ushort)((localSum1 + fileStream.ReadByte()) % ADLER_MODULE);
+                localSum2 = (ushort)((localSum2 + localSum1) % ADLER_MODULE);
             }
 
             finalSum = (uint)((localSum2 << 16) | localSum1);
@@ -161,8 +161,8 @@ namespace DiscImageChef.Checksums
 
             for(int i = 0; i < len; i++)
             {
-                localSum1 = (ushort)((localSum1 + data[i]) % AdlerModule);
-                localSum2 = (ushort)((localSum2 + localSum1) % AdlerModule);
+                localSum1 = (ushort)((localSum1 + data[i]) % ADLER_MODULE);
+                localSum2 = (ushort)((localSum2 + localSum1) % ADLER_MODULE);
             }
 
             finalSum = (uint)((localSum2 << 16) | localSum1);

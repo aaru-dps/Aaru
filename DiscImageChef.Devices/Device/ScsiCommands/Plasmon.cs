@@ -51,7 +51,7 @@ namespace DiscImageChef.Devices
         public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
                                     ushort blockBytes, bool pba, uint timeout, out double duration)
         {
-            return HPReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout,
+            return HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout,
                               out duration);
         }
 
@@ -73,7 +73,7 @@ namespace DiscImageChef.Devices
                                     ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
                                     out double duration)
         {
-            return HPReadLong(out buffer, out senseBuffer, relAddr, address, transferLen, blockBytes, pba, sectorCount,
+            return HpReadLong(out buffer, out senseBuffer, relAddr, address, transferLen, blockBytes, pba, sectorCount,
                               timeout, out duration);
         }
 
@@ -94,7 +94,7 @@ namespace DiscImageChef.Devices
             byte[] cdb = new byte[10];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Plasmon_ReadSectorLocation;
+            cdb[0] = (byte)ScsiCommands.PlasmonReadSectorLocation;
             cdb[2] = (byte)((address & 0xFF000000) >> 24);
             cdb[3] = (byte)((address & 0xFF0000) >> 16);
             cdb[4] = (byte)((address & 0xFF00) >> 8);

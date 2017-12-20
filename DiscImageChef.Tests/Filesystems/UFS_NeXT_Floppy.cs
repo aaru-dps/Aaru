@@ -31,7 +31,7 @@ using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
@@ -71,8 +71,8 @@ namespace DiscImageChef.Tests.Filesystems
                 filter.Open(location);
                 ImagePlugin image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Filesystem fs = new DiscImageChef.Filesystems.FFSPlugin();
                 int part = -1;

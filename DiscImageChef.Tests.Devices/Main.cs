@@ -50,7 +50,7 @@ namespace DiscImageChef.Tests.Devices
                 return;
             }
 
-            devices = devices.OrderBy(d => d.path).ToArray();
+            devices = devices.OrderBy(d => d.Path).ToArray();
 
             int item;
             string strDev;
@@ -67,9 +67,9 @@ namespace DiscImageChef.Tests.Devices
                                      "----------------", "------------------------", "------------------------",
                                      "----------", "----------", "--------");
                 for(int i = 0; i < devices.Length; i++)
-                    DicConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].path,
-                                         devices[i].vendor, devices[i].model, devices[i].serial, devices[i].bus,
-                                         devices[i].supported, i + 1);
+                    DicConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].Path,
+                                         devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
+                                         devices[i].Supported, i + 1);
 
                 DicConsole.Write("Please choose which drive to test (0 to exit): ");
                 strDev = System.Console.ReadLine();
@@ -93,7 +93,7 @@ namespace DiscImageChef.Tests.Devices
                     continue;
                 }
 
-                Device(devices[item - 1].path);
+                Device(devices[item - 1].Path);
             }
         }
     }

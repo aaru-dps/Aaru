@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                 {
-                    if(device.ImageInfo.readableSectorTags.Contains(ImagePlugins.SectorTagType.AppleSectorTag))
+                    if(device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag))
                         xattrs.Add("com.apple.macintosh.tags");
 
                     return Errno.NoError;
@@ -72,13 +72,13 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(entry.flRLgLen > 0)
             {
                 xattrs.Add("com.apple.ResourceFork");
-                if(debug && device.ImageInfo.readableSectorTags.Contains(ImagePlugins.SectorTagType.AppleSectorTag))
+                if(debug && device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag))
                     xattrs.Add("com.apple.ResourceFork.tags");
             }
 
             if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds)) xattrs.Add("com.apple.FinderInfo");
 
-            if(debug && device.ImageInfo.readableSectorTags.Contains(ImagePlugins.SectorTagType.AppleSectorTag) &&
+            if(debug && device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag) &&
                entry.flLgLen > 0) xattrs.Add("com.apple.macintosh.tags");
 
             xattrs.Sort();
@@ -100,7 +100,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                 {
-                    if(device.ImageInfo.readableSectorTags.Contains(ImagePlugins.SectorTagType.AppleSectorTag) &&
+                    if(device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag) &&
                        string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
                     {
                         if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
@@ -165,7 +165,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 return Errno.NoError;
             }
 
-            if(debug && device.ImageInfo.readableSectorTags.Contains(ImagePlugins.SectorTagType.AppleSectorTag) &&
+            if(debug && device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag) &&
                string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
             {
                 error = ReadFile(path, out buf, false, true);

@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Partitions

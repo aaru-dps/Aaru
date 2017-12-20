@@ -40,8 +40,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     static class ResumeSupport
     {
-        internal static void Process(bool isLba, bool removable, ulong blocks, string Manufacturer, string Model,
-                                   string Serial, Interop.PlatformID platform, ref Resume resume,
+        internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
+                                   string serial, Interop.PlatformID platform, ref Resume resume,
                                    ref DumpHardwareType currentTry, ref ExtentsULong extents)
         {
             if(resume != null)
@@ -61,20 +61,20 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 foreach(DumpHardwareType oldtry in resume.Tries)
                 {
-                    if(oldtry.Manufacturer != Manufacturer && !removable)
+                    if(oldtry.Manufacturer != manufacturer && !removable)
                         throw new
                             Exception(string.Format("Resume file specifies a device manufactured by {0} but you're requesting to dump one by {1}, not continuing...",
-                                                    oldtry.Manufacturer, Manufacturer));
+                                                    oldtry.Manufacturer, manufacturer));
 
-                    if(oldtry.Model != Model && !removable)
+                    if(oldtry.Model != model && !removable)
                         throw new
                             Exception(string.Format("Resume file specifies a device model {0} but you're requesting to dump model {1}, not continuing...",
-                                                    oldtry.Model, Model));
+                                                    oldtry.Model, model));
 
-                    if(oldtry.Serial != Serial && !removable)
+                    if(oldtry.Serial != serial && !removable)
                         throw new
                             Exception(string.Format("Resume file specifies a device with serial {0} but you're requesting to dump one with serial {1}, not continuing...",
-                                                    oldtry.Serial, Serial));
+                                                    oldtry.Serial, serial));
 
                     if(oldtry.Software == null) throw new Exception("Found corrupt resume file, cannot continue...");
 
@@ -82,8 +82,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                        oldtry.Software.OperatingSystem == platform.ToString() &&
                        oldtry.Software.Version == Version.GetVersion())
                     {
-                        if(removable && (oldtry.Manufacturer != Manufacturer || oldtry.Model != Model ||
-                                         oldtry.Serial != Serial)) continue;
+                        if(removable && (oldtry.Manufacturer != manufacturer || oldtry.Model != model ||
+                                         oldtry.Serial != serial)) continue;
 
                         currentTry = oldtry;
                         extents = ExtentsConverter.FromMetadata(currentTry.Extents);
@@ -96,9 +96,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     currentTry = new DumpHardwareType
                     {
                         Software = Version.GetSoftwareType(platform),
-                        Manufacturer = Manufacturer,
-                        Model = Model,
-                        Serial = Serial,
+                        Manufacturer = manufacturer,
+                        Model = model,
+                        Serial = serial,
                     };
                     resume.Tries.Add(currentTry);
                     extents = new ExtentsULong();
@@ -116,9 +116,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 currentTry = new DumpHardwareType
                 {
                     Software = Version.GetSoftwareType(platform),
-                    Manufacturer = Manufacturer,
-                    Model = Model,
-                    Serial = Serial
+                    Manufacturer = manufacturer,
+                    Model = model,
+                    Serial = serial
                 };
                 resume.Tries.Add(currentTry);
                 extents = new ExtentsULong();

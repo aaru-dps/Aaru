@@ -32,7 +32,6 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
@@ -98,10 +97,10 @@ namespace DiscImageChef.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat32_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new Vdi();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Filesystem fs = new FAT();
                 Assert.AreEqual(true, fs.Identify(image, partitions[0]), testfiles[i]);

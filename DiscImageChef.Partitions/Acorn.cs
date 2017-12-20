@@ -35,11 +35,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class Acorn : PartPlugin
+    public class Acorn : PartitionPlugin
     {
         const ulong ADFS_SB_POS = 0xC00;
         const uint LINUX_MAGIC = 0xDEAFA1DE;
@@ -53,7 +53,7 @@ namespace DiscImageChef.PartPlugins
         public Acorn()
         {
             Name = "Acorn FileCore partitions";
-            PluginUUID = new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
+            PluginUuid = new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -98,7 +98,7 @@ namespace DiscImageChef.PartPlugins
                     Size = (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
                     Length =
                         ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) /
-                        imagePlugin.ImageInfo.sectorSize,
+                        imagePlugin.ImageInfo.SectorSize,
                     Type = "ADFS",
                     Name = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
                 };

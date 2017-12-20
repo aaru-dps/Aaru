@@ -44,7 +44,7 @@ namespace DiscImageChef.Commands
 {
     static class DumpMedia
     {
-        internal static void doDumpMedia(DumpMediaOptions options)
+        internal static void DoDumpMedia(DumpMediaOptions options)
         {
             DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", options.Verbose);
@@ -121,7 +121,7 @@ namespace DiscImageChef.Commands
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    ATA.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
+                    Ata.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
                              options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
                     break;
                 case DeviceType.MMC:
@@ -131,12 +131,12 @@ namespace DiscImageChef.Commands
                                        ref dumpLog, encoding);
                     break;
                 case DeviceType.NVMe:
-                    NVMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
+                    NvMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
                               options.Raw, options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
+                    Scsi.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force,
                               options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel,
                               ref resume, ref dumpLog, options.LeadIn, encoding);
                     break;

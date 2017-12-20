@@ -73,8 +73,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             int bytesInBlockMap = ((volMDB.drNmAlBlks * 12) / 8) + ((volMDB.drNmAlBlks * 12) % 8);
             int bytesBeforeBlockMap = 64;
             int bytesInWholeMDB = bytesInBlockMap + bytesBeforeBlockMap;
-            int sectorsInWholeMDB = (bytesInWholeMDB / (int)device.ImageInfo.sectorSize) +
-                                    (bytesInWholeMDB % (int)device.ImageInfo.sectorSize);
+            int sectorsInWholeMDB = (bytesInWholeMDB / (int)device.ImageInfo.SectorSize) +
+                                    (bytesInWholeMDB % (int)device.ImageInfo.SectorSize);
             byte[] wholeMDB = device.ReadSectors(partitionStart + 2, (uint)sectorsInWholeMDB);
             blockMapBytes = new byte[bytesInBlockMap];
             Array.Copy(wholeMDB, bytesBeforeBlockMap, blockMapBytes, 0, blockMapBytes.Length);
@@ -105,17 +105,17 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 offset += 12;
             }
 
-            if(device.ImageInfo.readableSectorTags.Contains(ImagePlugins.SectorTagType.AppleSectorTag))
+            if(device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag))
             {
-                mdbTags = device.ReadSectorTag(2 + partitionStart, ImagePlugins.SectorTagType.AppleSectorTag);
-                bootTags = device.ReadSectorTag(0 + partitionStart, ImagePlugins.SectorTagType.AppleSectorTag);
+                mdbTags = device.ReadSectorTag(2 + partitionStart, DiscImages.SectorTagType.AppleSectorTag);
+                bootTags = device.ReadSectorTag(0 + partitionStart, DiscImages.SectorTagType.AppleSectorTag);
                 directoryTags = device.ReadSectorsTag(volMDB.drDirSt + partitionStart, volMDB.drBlLen,
-                                                      ImagePlugins.SectorTagType.AppleSectorTag);
+                                                      DiscImages.SectorTagType.AppleSectorTag);
                 bitmapTags = device.ReadSectorsTag(partitionStart + 2, (uint)sectorsInWholeMDB,
-                                                   ImagePlugins.SectorTagType.AppleSectorTag);
+                                                   DiscImages.SectorTagType.AppleSectorTag);
             }
 
-            sectorsPerBlock = (int)(volMDB.drAlBlkSiz / device.ImageInfo.sectorSize);
+            sectorsPerBlock = (int)(volMDB.drAlBlkSiz / device.ImageInfo.SectorSize);
 
             if(!FillDirectory()) return Errno.InvalidArgument;
 

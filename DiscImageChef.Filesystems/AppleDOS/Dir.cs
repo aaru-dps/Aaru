@@ -87,19 +87,19 @@ namespace DiscImageChef.Filesystems.AppleDOS
             fileSizeCache = new Dictionary<string, int>();
             lockedFiles = new List<string>();
 
-            if(lba == 0 || lba > device.ImageInfo.sectors) return Errno.InvalidArgument;
+            if(lba == 0 || lba > device.ImageInfo.Sectors) return Errno.InvalidArgument;
 
             while(lba != 0)
             {
                 usedSectors++;
-                byte[] catSector_b = device.ReadSector(lba);
+                byte[] catSectorB = device.ReadSector(lba);
                 totalFileEntries += 7;
-                if(debug) catalogMs.Write(catSector_b, 0, catSector_b.Length);
+                if(debug) catalogMs.Write(catSectorB, 0, catSectorB.Length);
 
                 // Read the catalog sector
                 CatalogSector catSector = new CatalogSector();
                 IntPtr catPtr = Marshal.AllocHGlobal(256);
-                Marshal.Copy(catSector_b, 0, catPtr, 256);
+                Marshal.Copy(catSectorB, 0, catPtr, 256);
                 catSector = (CatalogSector)Marshal.PtrToStructure(catPtr, typeof(CatalogSector));
                 Marshal.FreeHGlobal(catPtr);
 
@@ -110,13 +110,13 @@ namespace DiscImageChef.Filesystems.AppleDOS
                         track1UsedByFiles |= entry.extentTrack == 1;
                         track2UsedByFiles |= entry.extentTrack == 2;
 
-                        byte[] filename_b = new byte[30];
+                        byte[] filenameB = new byte[30];
                         ushort ts = (ushort)((entry.extentTrack << 8) | entry.extentSector);
 
                         // Apple DOS has high byte set over ASCII.
-                        for(int i = 0; i < 30; i++) filename_b[i] = (byte)(entry.filename[i] & 0x7F);
+                        for(int i = 0; i < 30; i++) filenameB[i] = (byte)(entry.filename[i] & 0x7F);
 
-                        string filename = StringHandlers.SpacePaddedToString(filename_b, CurrentEncoding);
+                        string filename = StringHandlers.SpacePaddedToString(filenameB, CurrentEncoding);
 
                         if(!catalogCache.ContainsKey(filename)) catalogCache.Add(filename, ts);
 
@@ -133,7 +133,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
                 lba = (ulong)((catSector.trackOfNext * sectorsPerTrack) + catSector.sectorOfNext);
 
-                if(lba > device.ImageInfo.sectors) break;
+                if(lba > device.ImageInfo.Sectors) break;
             }
 
             if(debug) catalogBlocks = catalogMs.ToArray();

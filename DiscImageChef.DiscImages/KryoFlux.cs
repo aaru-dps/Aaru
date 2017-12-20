@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     public class KryoFlux : ImagePlugin
     {
@@ -102,29 +102,29 @@ namespace DiscImageChef.ImagePlugins
         public KryoFlux()
         {
             Name = "KryoFlux STREAM";
-            PluginUUID = new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
+            PluginUuid = new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
@@ -242,8 +242,8 @@ namespace DiscImageChef.ImagePlugins
                 trackFilter.Open(trackfile);
                 if(!trackFilter.IsOpened()) throw new IOException("Could not open KryoFlux track file.");
 
-                ImageInfo.imageCreationTime = DateTime.MaxValue;
-                ImageInfo.imageLastModificationTime = DateTime.MinValue;
+                ImageInfo.ImageCreationTime = DateTime.MaxValue;
+                ImageInfo.ImageLastModificationTime = DateTime.MinValue;
 
                 Stream trackStream = trackFilter.GetDataForkStream();
                 while(trackStream.Position < trackStream.Length)
@@ -305,8 +305,8 @@ namespace DiscImageChef.ImagePlugins
                                     DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
                                                            DateTimeStyles.AssumeLocal, out blockTime);
                                 }
-                                else if(kvp[0] == kfName) ImageInfo.imageApplication = kvp[1];
-                                else if(kvp[0] == kfVersion) ImageInfo.imageApplicationVersion = kvp[1];
+                                else if(kvp[0] == kfName) ImageInfo.ImageApplication = kvp[1];
+                                else if(kvp[0] == kfVersion) ImageInfo.ImageApplicationVersion = kvp[1];
                             }
 
                             if(foundDate)
@@ -315,10 +315,10 @@ namespace DiscImageChef.ImagePlugins
                                                                        blockTime.Hour, blockTime.Minute,
                                                                        blockTime.Second);
                                 DicConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
-                                if(blockTimestamp < ImageInfo.imageCreationTime)
-                                    ImageInfo.imageCreationTime = blockTimestamp;
-                                if(blockTimestamp > ImageInfo.imageLastModificationTime)
-                                    ImageInfo.imageLastModificationTime = blockTimestamp;
+                                if(blockTimestamp < ImageInfo.ImageCreationTime)
+                                    ImageInfo.ImageCreationTime = blockTimestamp;
+                                if(blockTimestamp > ImageInfo.ImageLastModificationTime)
+                                    ImageInfo.ImageLastModificationTime = blockTimestamp;
                             }
 
                             break;
@@ -345,8 +345,8 @@ namespace DiscImageChef.ImagePlugins
                 tracks.Add(t, trackFilter);
             }
 
-            ImageInfo.heads = heads;
-            ImageInfo.cylinders = (uint)(tracks.Count / heads);
+            ImageInfo.Heads = heads;
+            ImageInfo.Cylinders = (uint)(tracks.Count / heads);
             #endregion TODO: This is supposing NoFilter, shouldn't
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
@@ -354,22 +354,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return ImageInfo.imageHasPartitions;
+            return ImageInfo.ImageHasPartitions;
         }
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadDiskTag(MediaTagType tag)
@@ -419,97 +419,97 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override string GetMediaManufacturer()
         {
-            return ImageInfo.mediaManufacturer;
+            return ImageInfo.MediaManufacturer;
         }
 
         public override string GetMediaModel()
         {
-            return ImageInfo.mediaModel;
+            return ImageInfo.MediaModel;
         }
 
         public override string GetMediaSerialNumber()
         {
-            return ImageInfo.mediaSerialNumber;
+            return ImageInfo.MediaSerialNumber;
         }
 
         public override string GetMediaBarcode()
         {
-            return ImageInfo.mediaBarcode;
+            return ImageInfo.MediaBarcode;
         }
 
         public override string GetMediaPartNumber()
         {
-            return ImageInfo.mediaPartNumber;
+            return ImageInfo.MediaPartNumber;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override int GetMediaSequence()
         {
-            return ImageInfo.mediaSequence;
+            return ImageInfo.MediaSequence;
         }
 
         public override int GetLastDiskSequence()
         {
-            return ImageInfo.lastMediaSequence;
+            return ImageInfo.LastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return ImageInfo.driveManufacturer;
+            return ImageInfo.DriveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return ImageInfo.driveModel;
+            return ImageInfo.DriveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return ImageInfo.driveSerialNumber;
+            return ImageInfo.DriveSerialNumber;
         }
 
         public override bool? VerifySector(ulong sectorAddress)
@@ -517,8 +517,8 @@ namespace DiscImageChef.ImagePlugins
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
@@ -580,8 +580,8 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

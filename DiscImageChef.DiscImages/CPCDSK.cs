@@ -41,15 +41,15 @@ using DiscImageChef.Console;
 using DiscImageChef.Decoders.Floppy;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
-    public class CPCDSK : ImagePlugin
+    public class Cpcdsk : ImagePlugin
     {
         #region Internal constants
         /// <summary>
         /// Identifier for CPCEMU disk images, "MV - CPCEMU Disk-File"
         /// </summary>
-        readonly byte[] CPCDSKId =
+        readonly byte[] cpcdskId =
         {
             0x4D, 0x56, 0x20, 0x2D, 0x20, 0x43, 0x50, 0x43, 0x45, 0x4D, 0x55, 0x20, 0x44, 0x69, 0x73, 0x6B, 0x2D, 0x46,
             0x69, 0x6C, 0x65
@@ -57,7 +57,7 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// Identifier for DU54 disk images, "MV - CPC format Disk Image (DU54)"
         /// </summary>
-        readonly byte[] DU54Id =
+        readonly byte[] du54Id =
         {
             0x4D, 0x56, 0x20, 0x2D, 0x20, 0x43, 0x50, 0x43, 0x20, 0x66, 0x6F, 0x72, 0x6D, 0x61, 0x74, 0x20, 0x44, 0x69,
             0x73, 0x6B, 0x20
@@ -65,7 +65,7 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// Identifier for Extended CPCEMU disk images, "EXTENDED CPC DSK File"
         /// </summary>
-        readonly byte[] EDSKId =
+        readonly byte[] edskId =
         {
             0x45, 0x58, 0x54, 0x45, 0x4E, 0x44, 0x45, 0x44, 0x20, 0x43, 0x50, 0x43, 0x20, 0x44, 0x53, 0x4B, 0x20, 0x46,
             0x69, 0x6C, 0x65
@@ -73,12 +73,12 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// Identifier for track information, "Track-Info\r\n"
         /// </summary>
-        readonly byte[] TrackId = {0x54, 0x72, 0x61, 0x63, 0x6B, 0x2D, 0x49, 0x6E, 0x66, 0x6F};
+        readonly byte[] trackId = {0x54, 0x72, 0x61, 0x63, 0x6B, 0x2D, 0x49, 0x6E, 0x66, 0x6F};
         #endregion
 
         #region Internal structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CPCDiskInfo
+        struct CpcDiskInfo
         {
             /// <summary>
             /// Magic number, "MV - CPCEMU Disk-File" in old files, "EXTENDED CPC DSK File" in extended ones
@@ -111,7 +111,7 @@ namespace DiscImageChef.ImagePlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CPCTrackInfo
+        struct CpcTrackInfo
         {
             /// <summary>
             /// Magic number, "Track-Info\r\n"
@@ -157,14 +157,14 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Informatino for up to 32 sectors
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public CPCSectorInfo[] sectorsInfo;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public CpcSectorInfo[] sectorsInfo;
         }
 
         /// <summary>
         /// Sector information
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CPCSectorInfo
+        struct CpcSectorInfo
         {
             /// <summary>
             /// Track number from address mark
@@ -203,31 +203,31 @@ namespace DiscImageChef.ImagePlugins
         Dictionary<ulong, byte[]> addressMarks;
         #endregion
 
-        public CPCDSK()
+        public Cpcdsk()
         {
             Name = "CPCEMU Disk-File and Extended CPC Disk-File";
-            PluginUUID = new Guid("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
+            PluginUuid = new Guid("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -237,19 +237,19 @@ namespace DiscImageChef.ImagePlugins
 
             if(stream.Length < 512) return false;
 
-            byte[] header_b = new byte[256];
-            stream.Read(header_b, 0, 256);
-            CPCDiskInfo header = new CPCDiskInfo();
+            byte[] headerB = new byte[256];
+            stream.Read(headerB, 0, 256);
+            CpcDiskInfo header = new CpcDiskInfo();
             IntPtr headerPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(header_b, 0, headerPtr, 256);
-            header = (CPCDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CPCDiskInfo));
+            Marshal.Copy(headerB, 0, headerPtr, 256);
+            header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
             Marshal.FreeHGlobal(headerPtr);
 
             DicConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                       StringHandlers.CToString(header.magic));
 
-            return CPCDSKId.SequenceEqual(header.magic) || EDSKId.SequenceEqual(header.magic) ||
-                   DU54Id.SequenceEqual(header.magic);
+            return cpcdskId.SequenceEqual(header.magic) || edskId.SequenceEqual(header.magic) ||
+                   du54Id.SequenceEqual(header.magic);
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -259,18 +259,18 @@ namespace DiscImageChef.ImagePlugins
 
             if(stream.Length < 512) return false;
 
-            byte[] header_b = new byte[256];
-            stream.Read(header_b, 0, 256);
-            CPCDiskInfo header = new CPCDiskInfo();
+            byte[] headerB = new byte[256];
+            stream.Read(headerB, 0, 256);
+            CpcDiskInfo header = new CpcDiskInfo();
             IntPtr headerPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(header_b, 0, headerPtr, 256);
-            header = (CPCDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CPCDiskInfo));
+            Marshal.Copy(headerB, 0, headerPtr, 256);
+            header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
             Marshal.FreeHGlobal(headerPtr);
 
-            if(!CPCDSKId.SequenceEqual(header.magic) && !EDSKId.SequenceEqual(header.magic) &&
-               !DU54Id.SequenceEqual(header.magic)) return false;
+            if(!cpcdskId.SequenceEqual(header.magic) && !edskId.SequenceEqual(header.magic) &&
+               !du54Id.SequenceEqual(header.magic)) return false;
 
-            extended = EDSKId.SequenceEqual(header.magic);
+            extended = edskId.SequenceEqual(header.magic);
             DicConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", extended);
             DicConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                       StringHandlers.CToString(header.magic));
@@ -311,15 +311,15 @@ namespace DiscImageChef.ImagePlugins
 
                     long trackPos = stream.Position;
 
-                    byte[] track_b = new byte[256];
-                    stream.Read(track_b, 0, 256);
-                    CPCTrackInfo trackInfo = new CPCTrackInfo();
+                    byte[] trackB = new byte[256];
+                    stream.Read(trackB, 0, 256);
+                    CpcTrackInfo trackInfo = new CpcTrackInfo();
                     IntPtr trackPtr = Marshal.AllocHGlobal(256);
-                    Marshal.Copy(track_b, 0, trackPtr, 256);
-                    trackInfo = (CPCTrackInfo)Marshal.PtrToStructure(trackPtr, typeof(CPCTrackInfo));
+                    Marshal.Copy(trackB, 0, trackPtr, 256);
+                    trackInfo = (CpcTrackInfo)Marshal.PtrToStructure(trackPtr, typeof(CpcTrackInfo));
                     Marshal.FreeHGlobal(trackPtr);
 
-                    if(!TrackId.SequenceEqual(trackInfo.magic))
+                    if(!trackId.SequenceEqual(trackInfo.magic))
                     {
                         DicConsole.ErrorWriteLine("Not the expected track info.");
                         return false;
@@ -403,7 +403,7 @@ namespace DiscImageChef.ImagePlugins
                         amForCrc[7] = (byte)trackInfo.sectorsInfo[k - 1].size;
                         byte[] amCrc;
 
-                        CRC16Context.Data(amForCrc, 8, out amCrc);
+                        Crc16Context.Data(amForCrc, 8, out amCrc);
 
                         byte[] addressMark = new byte[22];
                         Array.Copy(amForCrc, 0, addressMark, 12, 8);
@@ -417,20 +417,20 @@ namespace DiscImageChef.ImagePlugins
                         sectors.Add(currentSector, thisTrackSectors[s]);
                         addressMarks.Add(currentSector, thisTrackAddressMarks[s]);
                         currentSector++;
-                        if(thisTrackSectors[s].Length > ImageInfo.sectorSize)
-                            ImageInfo.sectorSize = (uint)thisTrackSectors[s].Length;
+                        if(thisTrackSectors[s].Length > ImageInfo.SectorSize)
+                            ImageInfo.SectorSize = (uint)thisTrackSectors[s].Length;
                     }
 
                     stream.Seek(trackPos, SeekOrigin.Begin);
                     if(extended)
                     {
                         stream.Seek(header.tracksizeTable[i * header.sides + j] * 256, SeekOrigin.Current);
-                        ImageInfo.imageSize += (ulong)(header.tracksizeTable[i * header.sides + j] * 256) - 256;
+                        ImageInfo.ImageSize += (ulong)(header.tracksizeTable[i * header.sides + j] * 256) - 256;
                     }
                     else
                     {
                         stream.Seek(header.tracksize, SeekOrigin.Current);
-                        ImageInfo.imageSize += (ulong)header.tracksize - 256;
+                        ImageInfo.ImageSize += (ulong)header.tracksize - 256;
                     }
 
                     readtracks++;
@@ -441,14 +441,14 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("CPCDSK plugin", "Read {0} tracks", readtracks);
             DicConsole.DebugWriteLine("CPCDSK plugin", "All tracks are same size? {0}", allTracksSameSize);
 
-            ImageInfo.imageApplication = StringHandlers.CToString(header.creator);
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectors = (ulong)sectors.Count;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.mediaType = MediaType.CompactFloppy;
-            ImageInfo.readableSectorTags.Add(SectorTagType.FloppyAddressMark);
+            ImageInfo.ImageApplication = StringHandlers.CToString(header.creator);
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Sectors = (ulong)sectors.Count;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.MediaType = MediaType.CompactFloppy;
+            ImageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
 
             // Debug writing full disk as raw
             /*
@@ -462,9 +462,9 @@ namespace DiscImageChef.ImagePlugins
             foo.Close();
             */
 
-            ImageInfo.cylinders = header.tracks;
-            ImageInfo.heads = header.sides;
-            ImageInfo.sectorsPerTrack = (uint)(ImageInfo.sectors / (ImageInfo.cylinders * ImageInfo.heads));
+            ImageInfo.Cylinders = header.tracks;
+            ImageInfo.Heads = header.sides;
+            ImageInfo.SectorsPerTrack = (uint)(ImageInfo.Sectors / (ImageInfo.Cylinders * ImageInfo.Heads));
 
             return true;
         }
@@ -492,17 +492,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -512,47 +512,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -566,11 +566,11 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -600,11 +600,11 @@ namespace DiscImageChef.ImagePlugins
             if(tag != SectorTagType.FloppyAddressMark)
                 throw new FeatureUnsupportedImageException(string.Format("Tag {0} not supported by image format", tag));
 
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -749,18 +749,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

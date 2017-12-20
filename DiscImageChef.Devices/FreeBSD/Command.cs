@@ -56,7 +56,7 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
         internal static int SendScsiCommand64(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
-                                              uint timeout, ccb_flags direction, out double duration, out bool sense)
+                                              uint timeout, CcbFlags direction, out double duration, out bool sense)
         {
             senseBuffer = null;
             duration = 0;
@@ -73,8 +73,8 @@ namespace DiscImageChef.Devices.FreeBSD
                 return Marshal.GetLastWin32Error();
             }
 
-            ccb_scsiio64 csio = (ccb_scsiio64)Marshal.PtrToStructure(ccbPtr, typeof(ccb_scsiio64));
-            csio.ccb_h.func_code = xpt_opcode.XPT_SCSI_IO;
+            CcbScsiio64 csio = (CcbScsiio64)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio64));
+            csio.ccb_h.func_code = XptOpcode.XptScsiIo;
             csio.ccb_h.flags = direction;
             csio.ccb_h.xflags = 0;
             csio.ccb_h.retry_count = 1;
@@ -93,9 +93,9 @@ namespace DiscImageChef.Devices.FreeBSD
                 cdbPtr = Marshal.AllocHGlobal(cdb.Length);
                 byte[] cdbPtrBytes = BitConverter.GetBytes(cdbPtr.ToInt64());
                 Array.Copy(cdbPtrBytes, 0, csio.cdb_bytes, 0, IntPtr.Size);
-                csio.ccb_h.flags |= ccb_flags.CAM_CDB_POINTER;
+                csio.ccb_h.flags |= CcbFlags.CamCdbPointer;
             }
-            csio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+            csio.ccb_h.flags |= CcbFlags.CamDevQfrzdis;
 
             Marshal.Copy(buffer, 0, csio.data_ptr, buffer.Length);
             Marshal.StructureToPtr(csio, ccbPtr, false);
@@ -106,28 +106,28 @@ namespace DiscImageChef.Devices.FreeBSD
 
             if(error < 0) error = Marshal.GetLastWin32Error();
 
-            csio = (ccb_scsiio64)Marshal.PtrToStructure(ccbPtr, typeof(ccb_scsiio64));
+            csio = (CcbScsiio64)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio64));
 
-            if((csio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_REQ_CMP &&
-               (csio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_SCSI_STATUS_ERROR)
+            if((csio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamReqCmp &&
+               (csio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
                 DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", csio.ccb_h.status, error);
                 sense = true;
             }
 
-            if((csio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_SCSI_STATUS_ERROR)
+            if((csio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamScsiStatusError)
             {
                 sense = true;
                 senseBuffer = new byte[1];
                 senseBuffer[0] = csio.scsi_status;
             }
 
-            if((csio.ccb_h.status & cam_status.CAM_AUTOSNS_VALID) != 0)
+            if((csio.ccb_h.status & CamStatus.CamAutosnsValid) != 0)
             {
                 if(csio.sense_len - csio.sense_resid > 0)
                 {
-                    sense = (csio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_SCSI_STATUS_ERROR;
+                    sense = (csio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamScsiStatusError;
                     senseBuffer = new byte[csio.sense_len - csio.sense_resid];
                     senseBuffer[0] = csio.sense_data.error_code;
                     Array.Copy(csio.sense_data.sense_buf, 0, senseBuffer, 1, senseBuffer.Length - 1);
@@ -138,12 +138,12 @@ namespace DiscImageChef.Devices.FreeBSD
             cdb = new byte[csio.cdb_len];
 
             Marshal.Copy(csio.data_ptr, buffer, 0, buffer.Length);
-            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
+            if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer))
                 Marshal.Copy(new IntPtr(BitConverter.ToInt64(csio.cdb_bytes, 0)), cdb, 0, cdb.Length);
             else Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
             duration = (end - start).TotalMilliseconds;
 
-            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER)) Marshal.FreeHGlobal(cdbPtr);
+            if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer)) Marshal.FreeHGlobal(cdbPtr);
             Marshal.FreeHGlobal(csio.data_ptr);
             cam_freeccb(ccbPtr);
 
@@ -163,7 +163,7 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
         internal static int SendScsiCommand(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
-                                            uint timeout, ccb_flags direction, out double duration, out bool sense)
+                                            uint timeout, CcbFlags direction, out double duration, out bool sense)
         {
             senseBuffer = null;
             duration = 0;
@@ -180,8 +180,8 @@ namespace DiscImageChef.Devices.FreeBSD
                 return Marshal.GetLastWin32Error();
             }
 
-            ccb_scsiio csio = (ccb_scsiio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_scsiio));
-            csio.ccb_h.func_code = xpt_opcode.XPT_SCSI_IO;
+            CcbScsiio csio = (CcbScsiio)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio));
+            csio.ccb_h.func_code = XptOpcode.XptScsiIo;
             csio.ccb_h.flags = direction;
             csio.ccb_h.xflags = 0;
             csio.ccb_h.retry_count = 1;
@@ -200,9 +200,9 @@ namespace DiscImageChef.Devices.FreeBSD
                 cdbPtr = Marshal.AllocHGlobal(cdb.Length);
                 byte[] cdbPtrBytes = BitConverter.GetBytes(cdbPtr.ToInt32());
                 Array.Copy(cdbPtrBytes, 0, csio.cdb_bytes, 0, IntPtr.Size);
-                csio.ccb_h.flags |= ccb_flags.CAM_CDB_POINTER;
+                csio.ccb_h.flags |= CcbFlags.CamCdbPointer;
             }
-            csio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+            csio.ccb_h.flags |= CcbFlags.CamDevQfrzdis;
 
             Marshal.Copy(buffer, 0, csio.data_ptr, buffer.Length);
             Marshal.StructureToPtr(csio, ccbPtr, false);
@@ -213,28 +213,28 @@ namespace DiscImageChef.Devices.FreeBSD
 
             if(error < 0) error = Marshal.GetLastWin32Error();
 
-            csio = (ccb_scsiio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_scsiio));
+            csio = (CcbScsiio)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio));
 
-            if((csio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_REQ_CMP &&
-               (csio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_SCSI_STATUS_ERROR)
+            if((csio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamReqCmp &&
+               (csio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
                 DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", csio.ccb_h.status, error);
                 sense = true;
             }
 
-            if((csio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_SCSI_STATUS_ERROR)
+            if((csio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamScsiStatusError)
             {
                 sense = true;
                 senseBuffer = new byte[1];
                 senseBuffer[0] = csio.scsi_status;
             }
 
-            if((csio.ccb_h.status & cam_status.CAM_AUTOSNS_VALID) != 0)
+            if((csio.ccb_h.status & CamStatus.CamAutosnsValid) != 0)
             {
                 if(csio.sense_len - csio.sense_resid > 0)
                 {
-                    sense = (csio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_SCSI_STATUS_ERROR;
+                    sense = (csio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamScsiStatusError;
                     senseBuffer = new byte[csio.sense_len - csio.sense_resid];
                     senseBuffer[0] = csio.sense_data.error_code;
                     Array.Copy(csio.sense_data.sense_buf, 0, senseBuffer, 1, senseBuffer.Length - 1);
@@ -245,19 +245,19 @@ namespace DiscImageChef.Devices.FreeBSD
             cdb = new byte[csio.cdb_len];
 
             Marshal.Copy(csio.data_ptr, buffer, 0, buffer.Length);
-            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER))
+            if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer))
                 Marshal.Copy(new IntPtr(BitConverter.ToInt32(csio.cdb_bytes, 0)), cdb, 0, cdb.Length);
             else Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
             duration = (end - start).TotalMilliseconds;
 
-            if(csio.ccb_h.flags.HasFlag(ccb_flags.CAM_CDB_POINTER)) Marshal.FreeHGlobal(cdbPtr);
+            if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer)) Marshal.FreeHGlobal(cdbPtr);
             Marshal.FreeHGlobal(csio.data_ptr);
             cam_freeccb(ccbPtr);
 
             return error;
         }
 
-        static ccb_flags AtaProtocolToCamFlags(AtaProtocol protocol)
+        static CcbFlags AtaProtocolToCamFlags(AtaProtocol protocol)
         {
             switch(protocol)
             {
@@ -266,12 +266,12 @@ namespace DiscImageChef.Devices.FreeBSD
                 case AtaProtocol.HardReset:
                 case AtaProtocol.NonData:
                 case AtaProtocol.SoftReset:
-                case AtaProtocol.ReturnResponse: return ccb_flags.CAM_DIR_NONE;
+                case AtaProtocol.ReturnResponse: return CcbFlags.CamDirNone;
                 case AtaProtocol.PioIn:
-                case AtaProtocol.UDmaIn: return ccb_flags.CAM_DIR_IN;
+                case AtaProtocol.UDmaIn: return CcbFlags.CamDirIn;
                 case AtaProtocol.PioOut:
-                case AtaProtocol.UDmaOut: return ccb_flags.CAM_DIR_OUT;
-                default: return ccb_flags.CAM_DIR_NONE;
+                case AtaProtocol.UDmaOut: return CcbFlags.CamDirOut;
+                default: return CcbFlags.CamDirNone;
             }
         }
 
@@ -287,8 +287,8 @@ namespace DiscImageChef.Devices.FreeBSD
 
             IntPtr ccbPtr = cam_getccb(dev);
 
-            ccb_ataio ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
-            ataio.ccb_h.func_code = xpt_opcode.XPT_ATA_IO;
+            CcbAtaio ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
+            ataio.ccb_h.func_code = XptOpcode.XptAtaIo;
             ataio.ccb_h.flags = AtaProtocolToCamFlags(protocol);
             ataio.ccb_h.xflags = 0;
             ataio.ccb_h.retry_count = 1;
@@ -296,7 +296,7 @@ namespace DiscImageChef.Devices.FreeBSD
             ataio.ccb_h.timeout = timeout;
             ataio.data_ptr = Marshal.AllocHGlobal(buffer.Length);
             ataio.dxfer_len = (uint)buffer.Length;
-            ataio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+            ataio.ccb_h.flags |= CcbFlags.CamDevQfrzdis;
             ataio.cmd.flags = CamAtaIoFlags.NeedResult;
             switch(protocol)
             {
@@ -304,10 +304,10 @@ namespace DiscImageChef.Devices.FreeBSD
                 case AtaProtocol.DmaQueued:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
-                    ataio.cmd.flags |= CamAtaIoFlags.DMA;
+                    ataio.cmd.flags |= CamAtaIoFlags.Dma;
                     break;
-                case AtaProtocol.FPDma:
-                    ataio.cmd.flags |= CamAtaIoFlags.FPDMA;
+                case AtaProtocol.FpDma:
+                    ataio.cmd.flags |= CamAtaIoFlags.Fpdma;
                     break;
             }
 
@@ -328,17 +328,17 @@ namespace DiscImageChef.Devices.FreeBSD
 
             if(error < 0) error = Marshal.GetLastWin32Error();
 
-            ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
+            ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
 
-            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_REQ_CMP &&
-               (ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_SCSI_STATUS_ERROR)
+            if((ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamReqCmp &&
+               (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
                 DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
                 sense = true;
             }
 
-            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_ATA_STATUS_ERROR) sense = true;
+            if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError) sense = true;
 
             errorRegisters.cylinderHigh = ataio.res.lba_high;
             errorRegisters.cylinderLow = ataio.res.lba_mid;
@@ -373,8 +373,8 @@ namespace DiscImageChef.Devices.FreeBSD
 
             IntPtr ccbPtr = cam_getccb(dev);
 
-            ccb_ataio ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
-            ataio.ccb_h.func_code = xpt_opcode.XPT_ATA_IO;
+            CcbAtaio ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
+            ataio.ccb_h.func_code = XptOpcode.XptAtaIo;
             ataio.ccb_h.flags = AtaProtocolToCamFlags(protocol);
             ataio.ccb_h.xflags = 0;
             ataio.ccb_h.retry_count = 1;
@@ -382,7 +382,7 @@ namespace DiscImageChef.Devices.FreeBSD
             ataio.ccb_h.timeout = timeout;
             ataio.data_ptr = Marshal.AllocHGlobal(buffer.Length);
             ataio.dxfer_len = (uint)buffer.Length;
-            ataio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+            ataio.ccb_h.flags |= CcbFlags.CamDevQfrzdis;
             ataio.cmd.flags = CamAtaIoFlags.NeedResult;
             switch(protocol)
             {
@@ -390,10 +390,10 @@ namespace DiscImageChef.Devices.FreeBSD
                 case AtaProtocol.DmaQueued:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
-                    ataio.cmd.flags |= CamAtaIoFlags.DMA;
+                    ataio.cmd.flags |= CamAtaIoFlags.Dma;
                     break;
-                case AtaProtocol.FPDma:
-                    ataio.cmd.flags |= CamAtaIoFlags.FPDMA;
+                case AtaProtocol.FpDma:
+                    ataio.cmd.flags |= CamAtaIoFlags.Fpdma;
                     break;
             }
 
@@ -414,17 +414,17 @@ namespace DiscImageChef.Devices.FreeBSD
 
             if(error < 0) error = Marshal.GetLastWin32Error();
 
-            ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
+            ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
 
-            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_REQ_CMP &&
-               (ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_SCSI_STATUS_ERROR)
+            if((ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamReqCmp &&
+               (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
                 DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
                 sense = true;
             }
 
-            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_ATA_STATUS_ERROR) sense = true;
+            if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError) sense = true;
 
             errorRegisters.lbaHigh = ataio.res.lba_high;
             errorRegisters.lbaMid = ataio.res.lba_mid;
@@ -463,8 +463,8 @@ namespace DiscImageChef.Devices.FreeBSD
 
             IntPtr ccbPtr = cam_getccb(dev);
 
-            ccb_ataio ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
-            ataio.ccb_h.func_code = xpt_opcode.XPT_ATA_IO;
+            CcbAtaio ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
+            ataio.ccb_h.func_code = XptOpcode.XptAtaIo;
             ataio.ccb_h.flags = AtaProtocolToCamFlags(protocol);
             ataio.ccb_h.xflags = 0;
             ataio.ccb_h.retry_count = 1;
@@ -472,7 +472,7 @@ namespace DiscImageChef.Devices.FreeBSD
             ataio.ccb_h.timeout = timeout;
             ataio.data_ptr = Marshal.AllocHGlobal(buffer.Length);
             ataio.dxfer_len = (uint)buffer.Length;
-            ataio.ccb_h.flags |= ccb_flags.CAM_DEV_QFRZDIS;
+            ataio.ccb_h.flags |= CcbFlags.CamDevQfrzdis;
             ataio.cmd.flags = CamAtaIoFlags.NeedResult | CamAtaIoFlags.ExtendedCommand;
             switch(protocol)
             {
@@ -480,10 +480,10 @@ namespace DiscImageChef.Devices.FreeBSD
                 case AtaProtocol.DmaQueued:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
-                    ataio.cmd.flags |= CamAtaIoFlags.DMA;
+                    ataio.cmd.flags |= CamAtaIoFlags.Dma;
                     break;
-                case AtaProtocol.FPDma:
-                    ataio.cmd.flags |= CamAtaIoFlags.FPDMA;
+                case AtaProtocol.FpDma:
+                    ataio.cmd.flags |= CamAtaIoFlags.Fpdma;
                     break;
             }
 
@@ -509,17 +509,17 @@ namespace DiscImageChef.Devices.FreeBSD
 
             if(error < 0) error = Marshal.GetLastWin32Error();
 
-            ataio = (ccb_ataio)Marshal.PtrToStructure(ccbPtr, typeof(ccb_ataio));
+            ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
 
-            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_REQ_CMP &&
-               (ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) != cam_status.CAM_SCSI_STATUS_ERROR)
+            if((ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamReqCmp &&
+               (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
                 DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
                 sense = true;
             }
 
-            if((ataio.ccb_h.status & cam_status.CAM_STATUS_MASK) == cam_status.CAM_ATA_STATUS_ERROR) sense = true;
+            if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError) sense = true;
 
             errorRegisters.sectorCount = (ushort)((ataio.res.sector_count_exp << 8) + ataio.res.sector_count);
             errorRegisters.lbaLow = (ushort)((ataio.res.lba_low_exp << 8) + ataio.res.lba_low);

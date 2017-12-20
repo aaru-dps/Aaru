@@ -279,7 +279,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 if(tags)
                     sectors =
                         device.ReadSectorsTag((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart,
-                                              (uint)sectorsPerBlock, ImagePlugins.SectorTagType.AppleSectorTag);
+                                              (uint)sectorsPerBlock, DiscImages.SectorTagType.AppleSectorTag);
                 else
                     sectors =
                         device.ReadSectors((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart,

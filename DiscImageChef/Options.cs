@@ -84,13 +84,13 @@ namespace DiscImageChef
         public bool DoAdler32 { get; set; }
 
         [Option("crc16", Default = true, HelpText = "Calculates CRC16.")]
-        public bool DoCRC16 { get; set; }
+        public bool DoCrc16 { get; set; }
 
         [Option('c', "crc32", Default = true, HelpText = "Calculates CRC32.")]
-        public bool DoCRC32 { get; set; }
+        public bool DoCrc32 { get; set; }
 
         [Option("crc64", Default = false, HelpText = "Calculates CRC64 (ECMA).")]
-        public bool DoCRC64 { get; set; }
+        public bool DoCrc64 { get; set; }
 
         /*[Option("fletcher16", Default = false,
             HelpText = "Calculates Fletcher-16.")]
@@ -101,22 +101,22 @@ namespace DiscImageChef
         public bool DoFletcher32 { get; set; }*/
 
         [Option('m', "md5", Default = true, HelpText = "Calculates MD5.")]
-        public bool DoMD5 { get; set; }
+        public bool DoMd5 { get; set; }
 
         [Option("ripemd160", Default = false, HelpText = "Calculates RIPEMD160.")]
-        public bool DoRIPEMD160 { get; set; }
+        public bool DoRipemd160 { get; set; }
 
         [Option('s', "sha1", Default = true, HelpText = "Calculates SHA1.")]
-        public bool DoSHA1 { get; set; }
+        public bool DoSha1 { get; set; }
 
         [Option("sha256", Default = false, HelpText = "Calculates SHA256.")]
-        public bool DoSHA256 { get; set; }
+        public bool DoSha256 { get; set; }
 
         [Option("sha384", Default = false, HelpText = "Calculates SHA384.")]
-        public bool DoSHA384 { get; set; }
+        public bool DoSha384 { get; set; }
 
         [Option("sha512", Default = false, HelpText = "Calculates SHA512.")]
-        public bool DoSHA512 { get; set; }
+        public bool DoSha512 { get; set; }
 
         [Option('f', "spamsum", Default = true, HelpText = "Calculates SpamSum fuzzy hash.")]
         public bool DoSpamSum { get; set; }
@@ -223,11 +223,11 @@ namespace DiscImageChef
 
         [Option('m', "mhdd-log", Required = false, Default = "",
             HelpText = "Write a log of the scan in the format used by MHDD.")]
-        public string MHDDLogPath { get; set; }
+        public string MhddLogPath { get; set; }
 
         [Option('b', "ibg-log", Required = false, Default = "",
             HelpText = "Write a log of the scan in the format used by ImgBurn.")]
-        public string IBGLogPath { get; set; }
+        public string IbgLogPath { get; set; }
     }
 
     [Verb("formats", HelpText = "Lists all supported disc images, partition schemes and file systems.")]

@@ -219,7 +219,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct USB_SETUP_PACKET
+    struct UsbSetupPacket
     {
         public byte bmRequest;
         public byte bRequest;
@@ -229,10 +229,10 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct USB_DESCRIPTOR_REQUEST
+    struct UsbDescriptorRequest
     {
         public int ConnectionIndex;
-        public USB_SETUP_PACKET SetupPacket;
+        public UsbSetupPacket SetupPacket;
         //public byte[] Data;
     }
 

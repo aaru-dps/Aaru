@@ -35,11 +35,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class VTOC : PartPlugin
+    public class VTOC : PartitionPlugin
     {
         const uint PD_MAGIC = 0xCA5E600D;
         const uint VTOC_SANE = 0x600DDEEE;
@@ -51,7 +51,7 @@ namespace DiscImageChef.PartPlugins
         public VTOC()
         {
             Name = "UNIX VTOC";
-            PluginUUID = new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
+            PluginUuid = new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)

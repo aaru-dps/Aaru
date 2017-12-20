@@ -34,7 +34,7 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -58,8 +58,8 @@ namespace DiscImageChef.Filesystems.LisaFS
                 // Lisa OS is unable to work on disks without tags.
                 // This code is designed like that.
                 // However with some effort the code may be modified to ignore them.
-                if(device.ImageInfo.readableSectorTags == null ||
-                   !device.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                if(device.ImageInfo.ReadableSectorTags == null ||
+                   !device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                 {
                     DicConsole.DebugWriteLine("LisaFS plugin", "Underlying device does not support Lisa tags");
                     return Errno.InOutError;
@@ -76,7 +76,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 }
 
                 // MDDF cannot be at end of device, of course
-                volumePrefix = device.ImageInfo.sectors;
+                volumePrefix = device.ImageInfo.Sectors;
 
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
                 for(ulong i = 0; i < 100; i++)
@@ -86,7 +86,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);
 
-                    if(volumePrefix == device.ImageInfo.sectors && searchTag.fileID == FILEID_LOADER_SIGNED)
+                    if(volumePrefix == device.ImageInfo.Sectors && searchTag.fileID == FILEID_LOADER_SIGNED)
                         volumePrefix = i - 1;
 
                     if(searchTag.fileID == FILEID_MDDF)

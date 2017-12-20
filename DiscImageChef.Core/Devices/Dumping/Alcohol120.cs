@@ -36,7 +36,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -121,17 +121,17 @@ namespace DiscImageChef.Core.Devices.Dumping
         #region Internal enumerations
         enum AlcoholMediumType : ushort
         {
-            CD = 0x00,
-            CDR = 0x01,
-            CDRW = 0x02,
-            DVD = 0x10,
-            DVDR = 0x12
+            Cd = 0x00,
+            Cdr = 0x01,
+            Cdrw = 0x02,
+            Dvd = 0x10,
+            Dvdr = 0x12
         }
 
         enum AlcoholTrackMode : byte
         {
             NoData = 0x00,
-            DVD = 0x02,
+            Dvd = 0x02,
             Audio = 0xA9,
             Mode1 = 0xAA,
             Mode2 = 0xAB,
@@ -205,7 +205,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(tracksArray[i].point >= 0xA0) continue;
                 if(!trackLengths.TryGetValue(tracksArray[i].point, out uint trkLen)) continue;
 
-                if(tracksArray[i].mode == AlcoholTrackMode.DVD) { tracksArray[i].extraOffset = trkLen; }
+                if(tracksArray[i].mode == AlcoholTrackMode.Dvd) { tracksArray[i].extraOffset = trkLen; }
                 else
                 {
                     AlcoholTrackExtra extra = new AlcoholTrackExtra();
@@ -272,8 +272,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Marshal.FreeHGlobal(trkPtr);
             }
 
-            if(header.type == AlcoholMediumType.CD || header.type == AlcoholMediumType.CDR ||
-               header.type == AlcoholMediumType.CDRW)
+            if(header.type == AlcoholMediumType.Cd || header.type == AlcoholMediumType.Cdr ||
+               header.type == AlcoholMediumType.Cdrw)
             {
                 foreach(AlcoholTrackExtra extra in extrasArray)
                 {
@@ -331,7 +331,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 case MediaType.DVDRDL:
                 case MediaType.DVDRW:
                 case MediaType.DVDRWDL:
-                    header.type = AlcoholMediumType.DVDR;
+                    header.type = AlcoholMediumType.Dvdr;
                     break;
                 case MediaType.CD:
                 case MediaType.CDDA:
@@ -357,21 +357,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                 case MediaType.VCDHD:
                 case MediaType.GDROM:
                 case MediaType.ThreeDO:
-                    header.type = AlcoholMediumType.CD;
+                    header.type = AlcoholMediumType.Cd;
                     break;
                 case MediaType.CDR:
                 case MediaType.DDCDR:
                 case MediaType.GDR:
-                    header.type = AlcoholMediumType.CDR;
+                    header.type = AlcoholMediumType.Cdr;
                     break;
                 case MediaType.CDRW:
                 case MediaType.DDCDRW:
                 case MediaType.CDMO:
                 case MediaType.CDMRW:
-                    header.type = AlcoholMediumType.CDRW;
+                    header.type = AlcoholMediumType.Cdrw;
                     break;
                 default:
-                    header.type = AlcoholMediumType.DVD;
+                    header.type = AlcoholMediumType.Dvd;
                     break;
             }
         }
@@ -404,18 +404,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                         trkArray[i].mode = AlcoholTrackMode.Audio;
                         break;
                     case TrackType.Data:
-                        trkArray[i].mode = AlcoholTrackMode.DVD;
+                        trkArray[i].mode = AlcoholTrackMode.Dvd;
                         break;
-                    case TrackType.CDMode1:
+                    case TrackType.CdMode1:
                         trkArray[i].mode = AlcoholTrackMode.Mode1;
                         break;
-                    case TrackType.CDMode2Formless:
+                    case TrackType.CdMode2Formless:
                         trkArray[i].mode = AlcoholTrackMode.Mode2;
                         break;
-                    case TrackType.CDMode2Form1:
+                    case TrackType.CdMode2Form1:
                         trkArray[i].mode = AlcoholTrackMode.Mode2F1;
                         break;
-                    case TrackType.CDMode2Form2:
+                    case TrackType.CdMode2Form2:
                         trkArray[i].mode = AlcoholTrackMode.Mode2F2;
                         break;
                     default: throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
@@ -507,12 +507,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             sessions = new List<AlcoholSession>(sess);
         }
 
-        internal void AddBCA(byte[] bca)
+        internal void AddBca(byte[] bca)
         {
             this.bca = bca;
         }
 
-        internal void AddPFI(byte[] pfi)
+        internal void AddPfi(byte[] pfi)
         {
             if(pfi.Length == 2052)
             {
@@ -522,7 +522,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             else this.pfi = pfi;
         }
 
-        internal void AddDMI(byte[] dmi)
+        internal void AddDmi(byte[] dmi)
         {
             if(dmi.Length == 2052)
             {

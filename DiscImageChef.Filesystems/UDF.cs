@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems
 {
@@ -231,13 +231,13 @@ namespace DiscImageChef.Filesystems
             public ushort maximumWriteUDF;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             // UDF needs at least that
             if(partition.End - partition.Start < 256) return false;
 
             // UDF needs at least that
-            if(imagePlugin.ImageInfo.sectorSize < 512) return false;
+            if(imagePlugin.ImageInfo.SectorSize < 512) return false;
 
             byte[] sector;
             AnchorVolumeDescriptorPointer anchor = new AnchorVolumeDescriptorPointer();
@@ -321,7 +321,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] sector;
@@ -457,7 +457,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ApplicationIdentifier = CurrentEncoding
                 .GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] {'\u0000'});
             xmlFSType.ClusterSize = (int)lvd.logicalBlockSize;
-            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize) /
+            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize) /
                                         (ulong)xmlFSType.ClusterSize);
             xmlFSType.ModificationDate = ECMAToDateTime(lvid.recordingDateTime);
             xmlFSType.ModificationDateSpecified = true;

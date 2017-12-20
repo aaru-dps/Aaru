@@ -35,9 +35,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class GuidPartitionTable : PartPlugin
+    public class GuidPartitionTable : PartitionPlugin
     {
         const ulong GptMagic = 0x5452415020494645;
         const uint GptRevision1 = 0x00010000;
@@ -45,10 +45,10 @@ namespace DiscImageChef.PartPlugins
         public GuidPartitionTable()
         {
             Name = "GUID Partition Table";
-            PluginUUID = new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
+            PluginUuid = new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin,
+        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
                                             out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<CommonTypes.Partition>();
@@ -65,7 +65,7 @@ namespace DiscImageChef.PartPlugins
 
             if(signature != GptMagic)
             {
-                if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+                if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
                 {
                     hdrBytes = imagePlugin.ReadSector(sectorOffset);
                     signature = BitConverter.ToUInt64(hdrBytes, 512);

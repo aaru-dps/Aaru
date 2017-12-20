@@ -41,7 +41,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660 : Filesystem
     {
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             byte VDType;
 
@@ -75,7 +75,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                    CurrentEncoding.GetString(VDMagic) == CdiMagic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -562,7 +562,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(torito != null)
             {
                 vd_sector = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start);
-                Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
+                Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
                 sha1Ctx.Init();
                 byte[] boot_image;
 

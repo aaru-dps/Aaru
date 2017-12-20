@@ -43,7 +43,7 @@ using Extents;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    using ImagePlugins;
+    using DiscImages;
     using Metadata;
     using MediaType = CommonTypes.MediaType;
     using Session = Decoders.CD.Session;
@@ -56,8 +56,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   ref MediaType dskType, bool separateSubchannel, ref Resume resume,
                                   ref DumpLog dumpLog, Alcohol120 alcohol, bool dumpLeadIn)
         {
-            MHDDLog mhddLog;
-            IBGLog ibgLog;
+            MhddLog mhddLog;
+            IbgLog ibgLog;
             bool sense = false;
             ulong blocks = 0;
             // TODO: Check subchannel support
@@ -252,7 +252,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            ImagePlugins.Session[] sessionsForAlcohol = new ImagePlugins.Session[toc.Value.LastCompleteSession];
+            DiscImages.Session[] sessionsForAlcohol = new DiscImages.Session[toc.Value.LastCompleteSession];
             for(int i = 0; i < sessionsForAlcohol.Length; i++)
             {
                 sessionsForAlcohol[i].SessionSequence = (ushort)(i + 1);
@@ -281,7 +281,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
             List<TrackType> trackList = new List<TrackType>();
             long lastSector = 0;
-            string lastMSF = null;
+            string lastMsf = null;
             foreach(FullTOC.TrackDataDescriptor trk in sortedTracks)
             {
                 if(trk.ADR == 1 || trk.ADR == 4)
@@ -341,8 +341,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             phour = trk.PHOUR;
                         }
 
-                        if(phour > 0) lastMSF = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe, phour);
-                        else lastMSF = string.Format("{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe);
+                        if(phour > 0) lastMsf = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe, phour);
+                        else lastMsf = string.Format("{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe);
                         lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
                     }
                 }
@@ -376,7 +376,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else tracks[t - 1].EndMSF = string.Format("{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe);
             }
 
-            tracks[tracks.Length - 1].EndMSF = lastMSF;
+            tracks[tracks.Length - 1].EndMSF = lastMsf;
             tracks[tracks.Length - 1].EndSector = lastSector;
             blocks = (ulong)(lastSector + 1);
 
@@ -399,7 +399,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DumpHardwareType currentTry = null;
             ExtentsULong extents = null;
-            ResumeSupport.Process(true, true, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformID,
+            ResumeSupport.Process(true, true, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
                                   ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
                 throw new Exception("Could not process resume file, not continuing...");
@@ -420,7 +420,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dumpLog.WriteLine("Reading Lead-in");
                 for(int leadInBlock = -150; leadInBlock < 0 && resume.NextBlock == 0; leadInBlock++)
                 {
-                    if(dev.PlatformID == Interop.PlatformID.FreeBSD)
+                    if(dev.PlatformId == Interop.PlatformID.FreeBSD)
                     {
                         DicConsole.DebugWriteLine("Dump-Media",
                                                   "FreeBSD panics when reading CD Lead-in, see upstream bug #224253.");
@@ -515,7 +515,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
             dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
             dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
-            dumpLog.WriteLine("SCSI device type: {0}.", dev.SCSIType);
+            dumpLog.WriteLine("SCSI device type: {0}.", dev.ScsiType);
             dumpLog.WriteLine("Media identified as {0}.", dskType);
             alcohol.SetMediaType(dskType);
 
@@ -523,8 +523,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             alcohol.SetExtension(".bin");
             DataFile subFile = null;
             if(separateSubchannel) subFile = new DataFile(outputPrefix + ".sub");
-            mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-            ibgLog = new IBGLog(outputPrefix + ".ibg", 0x0008);
+            mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+            ibgLog = new IbgLog(outputPrefix + ".ibg", 0x0008);
 
             dumpFile.Seek(resume.NextBlock, (ulong)sectorSize);
             if(separateSubchannel) subFile.Seek(resume.NextBlock, subSize);
@@ -669,30 +669,30 @@ namespace DiscImageChef.Core.Devices.Dumping
                     resume.NextBlock = i + blocksToRead;
                 }
 
-                ImagePlugins.TrackType trkType;
+                DiscImages.TrackType trkType;
                 switch(tracks[t].TrackType1)
                 {
                     case TrackTypeTrackType.audio:
-                        trkType = ImagePlugins.TrackType.Audio;
+                        trkType = DiscImages.TrackType.Audio;
                         break;
                     case TrackTypeTrackType.mode1:
-                        trkType = ImagePlugins.TrackType.CDMode1;
+                        trkType = DiscImages.TrackType.CdMode1;
                         break;
                     case TrackTypeTrackType.mode2:
-                        trkType = ImagePlugins.TrackType.CDMode2Formless;
+                        trkType = DiscImages.TrackType.CdMode2Formless;
                         break;
                     case TrackTypeTrackType.m2f1:
-                        trkType = ImagePlugins.TrackType.CDMode2Form1;
+                        trkType = DiscImages.TrackType.CdMode2Form1;
                         break;
                     case TrackTypeTrackType.m2f2:
-                        trkType = ImagePlugins.TrackType.CDMode2Form2;
+                        trkType = DiscImages.TrackType.CdMode2Form2;
                         break;
                     case TrackTypeTrackType.dvd:
                     case TrackTypeTrackType.hddvd:
                     case TrackTypeTrackType.bluray:
                     case TrackTypeTrackType.ddcd:
                     case TrackTypeTrackType.mode0:
-                        trkType = ImagePlugins.TrackType.Data;
+                        trkType = DiscImages.TrackType.Data;
                         break;
                     default: throw new ArgumentOutOfRangeException();
                 }
@@ -786,13 +786,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         sense = dev.ModeSense10(out readBuffer, out senseBuf, false, ScsiModeSensePageControl.Current,
                                                 0x01, dev.Timeout, out duration);
-                        if(!sense) currentMode = Decoders.SCSI.Modes.DecodeMode10(readBuffer, dev.SCSIType);
+                        if(!sense) currentMode = Decoders.SCSI.Modes.DecodeMode10(readBuffer, dev.ScsiType);
                     }
-                    else currentMode = Decoders.SCSI.Modes.DecodeMode6(readBuffer, dev.SCSIType);
+                    else currentMode = Decoders.SCSI.Modes.DecodeMode6(readBuffer, dev.ScsiType);
 
                     if(currentMode.HasValue) currentModePage = currentMode.Value.Pages[0];
 
-                    Decoders.SCSI.Modes.ModePage_01_MMC pgMMC =
+                    Decoders.SCSI.Modes.ModePage_01_MMC pgMmc =
                         new Decoders.SCSI.Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 255, Parameter = 0x20};
                     Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode
                     {
@@ -803,12 +803,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 Page = 0x01,
                                 Subpage = 0x00,
-                                PageResponse = Decoders.SCSI.Modes.EncodeModePage_01_MMC(pgMMC)
+                                PageResponse = Decoders.SCSI.Modes.EncodeModePage_01_MMC(pgMmc)
                             }
                         }
                     };
-                    md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
-                    md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+                    md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.ScsiType);
+                    md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.ScsiType);
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
@@ -828,8 +828,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Header = new Decoders.SCSI.Modes.ModeHeader(),
                         Pages = new Decoders.SCSI.Modes.ModePage[] {currentModePage.Value}
                     };
-                    md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
-                    md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+                    md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.ScsiType);
+                    md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.ScsiType);
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);

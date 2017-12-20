@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class DEC : PartPlugin
+    public class DEC : PartitionPlugin
     {
         const int PT_MAGIC = 0x032957;
         const int PT_VALID = 1;
@@ -46,7 +46,7 @@ namespace DiscImageChef.PartPlugins
         public DEC()
         {
             Name = "DEC disklabel";
-            PluginUUID = new Guid("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
+            PluginUuid = new Guid("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)

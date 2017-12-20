@@ -50,15 +50,15 @@ namespace DiscImageChef.Devices.FreeBSD
             {
                 DeviceInfo deviceInfo = new DeviceInfo();
                 IntPtr dev = cam_open_device(passDevice, FileFlags.ReadWrite);
-                cam_device camDevice = (cam_device)Marshal.PtrToStructure(dev, typeof(cam_device));
+                CamDevice camDevice = (CamDevice)Marshal.PtrToStructure(dev, typeof(CamDevice));
 
                 IntPtr ccbPtr = cam_getccb(dev);
 
                 if(ccbPtr.ToInt64() == 0) continue;
 
-                ccb_getdev cgd = (ccb_getdev)Marshal.PtrToStructure(ccbPtr, typeof(ccb_getdev));
+                CcbGetdev cgd = (CcbGetdev)Marshal.PtrToStructure(ccbPtr, typeof(CcbGetdev));
 
-                cgd.ccb_h.func_code = xpt_opcode.XPT_GDEV_TYPE;
+                cgd.ccb_h.func_code = XptOpcode.XptGdevType;
 
                 Marshal.StructureToPtr(cgd, ccbPtr, false);
 
@@ -70,22 +70,22 @@ namespace DiscImageChef.Devices.FreeBSD
                     continue;
                 }
 
-                cgd = (ccb_getdev)Marshal.PtrToStructure(ccbPtr, typeof(ccb_getdev));
+                cgd = (CcbGetdev)Marshal.PtrToStructure(ccbPtr, typeof(CcbGetdev));
 
                 cam_freeccb(ccbPtr);
                 cam_close_device(dev);
 
-                string simName = StringHandlers.CToString(camDevice.sim_name);
-                deviceInfo.path = passDevice;
-                byte[] serialNumber = new byte[camDevice.serial_num_len];
-                Array.Copy(camDevice.serial_num, 0, serialNumber, 0, serialNumber.Length);
-                deviceInfo.serial = StringHandlers.CToString(serialNumber);
+                string simName = StringHandlers.CToString(camDevice.SimName);
+                deviceInfo.Path = passDevice;
+                byte[] serialNumber = new byte[camDevice.SerialNumLen];
+                Array.Copy(camDevice.SerialNum, 0, serialNumber, 0, serialNumber.Length);
+                deviceInfo.Serial = StringHandlers.CToString(serialNumber);
 
                 switch(cgd.protocol)
                 {
-                    case cam_proto.PROTO_ATA:
-                    case cam_proto.PROTO_ATAPI:
-                    case cam_proto.PROTO_SATAPM:
+                    case CamProto.ProtoAta:
+                    case CamProto.ProtoAtapi:
+                    case CamProto.ProtoSatapm:
                     {
                         // Little-endian FreeBSD gives it resorted
                         // Big-endian FreeBSD, no idea
@@ -103,49 +103,49 @@ namespace DiscImageChef.Devices.FreeBSD
 
                             if(separated.Length == 1)
                             {
-                                deviceInfo.vendor = "ATA";
-                                deviceInfo.model = separated[0];
+                                deviceInfo.Vendor = "ATA";
+                                deviceInfo.Model = separated[0];
                             }
                             else
                             {
-                                deviceInfo.vendor = separated[0];
-                                deviceInfo.model = separated[separated.Length - 1];
+                                deviceInfo.Vendor = separated[0];
+                                deviceInfo.Model = separated[separated.Length - 1];
                             }
 
-                            deviceInfo.serial = idt.Value.SerialNumber;
-                            deviceInfo.bus = simName == "ahcich" ? "SATA" : "ATA";
-                            deviceInfo.supported = simName != "ata";
+                            deviceInfo.Serial = idt.Value.SerialNumber;
+                            deviceInfo.Bus = simName == "ahcich" ? "SATA" : "ATA";
+                            deviceInfo.Supported = simName != "ata";
                         }
-                        if(cgd.protocol == cam_proto.PROTO_ATAPI) goto case cam_proto.PROTO_SCSI;
+                        if(cgd.protocol == CamProto.ProtoAtapi) goto case CamProto.ProtoScsi;
                         break;
                     }
-                    case cam_proto.PROTO_SCSI:
+                    case CamProto.ProtoScsi:
                     {
                         Decoders.SCSI.Inquiry.SCSIInquiry? inq = Decoders.SCSI.Inquiry.Decode(cgd.inq_data);
                         if(inq.HasValue)
                         {
-                            deviceInfo.vendor = StringHandlers.CToString(inq.Value.VendorIdentification).Trim();
-                            deviceInfo.model = StringHandlers.CToString(inq.Value.ProductIdentification).Trim();
-                            deviceInfo.bus = simName == "ata" || simName == "ahcich" ? "ATAPI" : "SCSI";
-                            deviceInfo.supported = simName != "ata";
+                            deviceInfo.Vendor = StringHandlers.CToString(inq.Value.VendorIdentification).Trim();
+                            deviceInfo.Model = StringHandlers.CToString(inq.Value.ProductIdentification).Trim();
+                            deviceInfo.Bus = simName == "ata" || simName == "ahcich" ? "ATAPI" : "SCSI";
+                            deviceInfo.Supported = simName != "ata";
                         }
                         break;
                     }
-                    case cam_proto.PROTO_NVME:
-                        deviceInfo.bus = "NVMe";
-                        deviceInfo.supported = false;
+                    case CamProto.ProtoNvme:
+                        deviceInfo.Bus = "NVMe";
+                        deviceInfo.Supported = false;
                         break;
-                    case cam_proto.PROTO_MMCSD:
-                        deviceInfo.model = "Unknown card";
-                        deviceInfo.bus = "MMC/SD";
-                        deviceInfo.supported = false;
+                    case CamProto.ProtoMmcsd:
+                        deviceInfo.Model = "Unknown card";
+                        deviceInfo.Bus = "MMC/SD";
+                        deviceInfo.Supported = false;
                         break;
                 }
 
                 listDevices.Add(deviceInfo);
             }
 
-            return listDevices.Count > 0 ? listDevices.OrderBy(t => t.path).ToArray() : null;
+            return listDevices.Count > 0 ? listDevices.OrderBy(t => t.Path).ToArray() : null;
         }
     }
 }

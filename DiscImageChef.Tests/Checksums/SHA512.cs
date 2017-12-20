@@ -53,7 +53,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void SHA512EmptyFile()
         {
-            SHA512Context ctx = new SHA512Context();
+            Sha512Context ctx = new Sha512Context();
             ctx.Init();
             byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
@@ -68,7 +68,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SHA512Context ctx = new SHA512Context();
+            Sha512Context ctx = new Sha512Context();
             ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
@@ -83,7 +83,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SHA512Context ctx = new SHA512Context();
+            Sha512Context ctx = new Sha512Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -93,7 +93,7 @@ namespace DiscImageChef.Tests.Checksums
         [Test]
         public void SHA512RandomFile()
         {
-            SHA512Context ctx = new SHA512Context();
+            Sha512Context ctx = new Sha512Context();
             ctx.Init();
             byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
@@ -108,7 +108,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SHA512Context ctx = new SHA512Context();
+            Sha512Context ctx = new Sha512Context();
             ctx.Init();
             ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
@@ -123,7 +123,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SHA512Context ctx = new SHA512Context();
+            Sha512Context ctx = new Sha512Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

@@ -38,35 +38,35 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
-    public class QED : ImagePlugin
+    public class Qed : ImagePlugin
     {
         #region Internal constants
         /// <summary>
         /// Magic number: 'Q', 'E', 'D', 0x00
         /// </summary>
-        const uint QedMagic = 0x00444551;
+        const uint QED_MAGIC = 0x00444551;
 
         /// <summary>
         /// Mask of unsupported incompatible features
         /// </summary>
-        const ulong QedFeatureMask = 0xFFFFFFFFFFFFFFF8;
+        const ulong QED_FEATURE_MASK = 0xFFFFFFFFFFFFFFF8;
 
         /// <summary>
         /// File is differential (has a backing file)
         /// </summary>
-        const ulong QedFeature_BackingFile = 0x01;
+        const ulong QED_FEATURE_BACKING_FILE = 0x01;
         /// <summary>
         /// Image needs a consistency check before writing
         /// </summary>
-        const ulong QedFeature_NeedsCheck = 0x02;
+        const ulong QED_FEATURE_NEEDS_CHECK = 0x02;
         /// <summary>s
         /// Backing file is a raw disk image
         /// </summary>
-        const ulong QedFeature_RawBacking = 0x04;
+        const ulong QED_FEATURE_RAW_BACKING = 0x04;
 
-        const int MaxCacheSize = 16777216;
+        const int MAX_CACHE_SIZE = 16777216;
         #endregion
 
         #region Internal Structures
@@ -77,7 +77,7 @@ namespace DiscImageChef.ImagePlugins
         struct QedHeader
         {
             /// <summary>
-            /// <see cref="QedMagic"/> 
+            /// <see cref="Qed.QED_MAGIC"/> 
             /// </summary>
             public uint magic;
             /// <summary>
@@ -138,37 +138,37 @@ namespace DiscImageChef.ImagePlugins
         Dictionary<ulong, byte[]> clusterCache;
         Dictionary<ulong, ulong[]> l2TableCache;
 
-        uint maxCachedSectors = MaxCacheSize / 512;
+        uint maxCachedSectors = MAX_CACHE_SIZE / 512;
         uint maxL2TableCache;
         uint maxClusterCache;
 
         Stream imageStream;
 
-        public QED()
+        public Qed()
         {
             Name = "QEMU Enhanced Disk image";
-            PluginUUID = new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
+            PluginUuid = new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = "1";
-            ImageInfo.imageApplication = "QEMU";
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = "1";
+            ImageInfo.ImageApplication = "QEMU";
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -178,15 +178,15 @@ namespace DiscImageChef.ImagePlugins
 
             if(stream.Length < 512) return false;
 
-            byte[] qHdr_b = new byte[64];
-            stream.Read(qHdr_b, 0, 64);
+            byte[] qHdrB = new byte[64];
+            stream.Read(qHdrB, 0, 64);
             qHdr = new QedHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(64);
-            Marshal.Copy(qHdr_b, 0, headerPtr, 64);
+            Marshal.Copy(qHdrB, 0, headerPtr, 64);
             qHdr = (QedHeader)Marshal.PtrToStructure(headerPtr, typeof(QedHeader));
             Marshal.FreeHGlobal(headerPtr);
 
-            return qHdr.magic == QedMagic;
+            return qHdr.magic == QED_MAGIC;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -196,11 +196,11 @@ namespace DiscImageChef.ImagePlugins
 
             if(stream.Length < 512) return false;
 
-            byte[] qHdr_b = new byte[64];
-            stream.Read(qHdr_b, 0, 64);
+            byte[] qHdrB = new byte[64];
+            stream.Read(qHdrB, 0, 64);
             qHdr = new QedHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(64);
-            Marshal.Copy(qHdr_b, 0, headerPtr, 64);
+            Marshal.Copy(qHdrB, 0, headerPtr, 64);
             qHdr = (QedHeader)Marshal.PtrToStructure(headerPtr, typeof(QedHeader));
             Marshal.FreeHGlobal(headerPtr);
 
@@ -233,12 +233,12 @@ namespace DiscImageChef.ImagePlugins
                 throw new ArgumentOutOfRangeException(nameof(qHdr.table_size),
                                                       "Table size must be between 1 and 16 clusters");
 
-            if((qHdr.features & QedFeatureMask) > 0)
+            if((qHdr.features & QED_FEATURE_MASK) > 0)
                 throw new ArgumentOutOfRangeException(nameof(qHdr.features),
                                                       string.Format("Image uses unknown incompatible features {0:X}",
-                                                                    qHdr.features & QedFeatureMask));
+                                                                    qHdr.features & QED_FEATURE_MASK));
 
-            if((qHdr.features & QedFeature_BackingFile) == QedFeature_BackingFile)
+            if((qHdr.features & QED_FEATURE_BACKING_FILE) == QED_FEATURE_BACKING_FILE)
                 throw new NotImplementedException("Differencing images not yet supported");
 
             clusterSectors = qHdr.cluster_size / 512;
@@ -247,18 +247,18 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", clusterSectors);
             DicConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}", tableSize);
 
-            byte[] l1Table_b = new byte[tableSize * 8];
+            byte[] l1TableB = new byte[tableSize * 8];
             stream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
-            stream.Read(l1Table_b, 0, (int)tableSize * 8);
+            stream.Read(l1TableB, 0, (int)tableSize * 8);
             l1Table = new ulong[tableSize];
             DicConsole.DebugWriteLine("QED plugin", "Reading L1 table");
-            for(long i = 0; i < l1Table.LongLength; i++) l1Table[i] = BitConverter.ToUInt64(l1Table_b, (int)(i * 8));
+            for(long i = 0; i < l1Table.LongLength; i++) l1Table[i] = BitConverter.ToUInt64(l1TableB, (int)(i * 8));
 
             l1Mask = 0;
             int c = 0;
-            clusterBits = ctz32(qHdr.cluster_size);
+            clusterBits = Ctz32(qHdr.cluster_size);
             l2Mask = (tableSize - 1) << clusterBits;
-            l1Shift = clusterBits + ctz32(tableSize);
+            l1Shift = clusterBits + Ctz32(tableSize);
 
             for(int i = 0; i < 64; i++)
             {
@@ -280,8 +280,8 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("QED plugin", "qHdr.l2Mask = {0:X}", l2Mask);
             DicConsole.DebugWriteLine("QED plugin", "qHdr.sectorMask = {0:X}", sectorMask);
 
-            maxL2TableCache = MaxCacheSize / (tableSize);
-            maxClusterCache = MaxCacheSize / qHdr.cluster_size;
+            maxL2TableCache = MAX_CACHE_SIZE / (tableSize);
+            maxClusterCache = MAX_CACHE_SIZE / qHdr.cluster_size;
 
             imageStream = stream;
 
@@ -289,25 +289,25 @@ namespace DiscImageChef.ImagePlugins
             l2TableCache = new Dictionary<ulong, ulong[]>();
             clusterCache = new Dictionary<ulong, byte[]>();
 
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectors = qHdr.image_size / 512;
-            ImageInfo.sectorSize = 512;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.mediaType = MediaType.GENERIC_HDD;
-            ImageInfo.imageSize = qHdr.image_size;
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Sectors = qHdr.image_size / 512;
+            ImageInfo.SectorSize = 512;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.MediaType = MediaType.GENERIC_HDD;
+            ImageInfo.ImageSize = qHdr.image_size;
 
-            ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
-            ImageInfo.heads = 16;
-            ImageInfo.sectorsPerTrack = 63;
+            ImageInfo.Cylinders = (uint)((ImageInfo.Sectors / 16) / 63);
+            ImageInfo.Heads = 16;
+            ImageInfo.SectorsPerTrack = 63;
 
             return true;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
@@ -335,11 +335,11 @@ namespace DiscImageChef.ImagePlugins
             {
                 l2Table = new ulong[tableSize];
                 imageStream.Seek((long)l1Table[l1Off], SeekOrigin.Begin);
-                byte[] l2Table_b = new byte[tableSize * 8];
-                imageStream.Read(l2Table_b, 0, (int)tableSize * 8);
+                byte[] l2TableB = new byte[tableSize * 8];
+                imageStream.Read(l2TableB, 0, (int)tableSize * 8);
                 DicConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
                 for(long i = 0; i < l2Table.LongLength; i++)
-                    l2Table[i] = BitConverter.ToUInt64(l2Table_b, (int)(i * 8));
+                    l2Table[i] = BitConverter.ToUInt64(l2TableB, (int)(i * 8));
 
                 if(l2TableCache.Count >= maxL2TableCache) l2TableCache.Clear();
 
@@ -378,11 +378,11 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream ms = new MemoryStream();
@@ -403,17 +403,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -423,47 +423,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         bool IsPowerOfTwo(uint x)
@@ -473,7 +473,7 @@ namespace DiscImageChef.ImagePlugins
             return (x == 1);
         }
 
-        static int ctz32(uint val)
+        static int Ctz32(uint val)
         {
             int cnt = 0;
             if((val & 0xFFFF) == 0)
@@ -647,18 +647,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

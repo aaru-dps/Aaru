@@ -37,7 +37,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     /* This is a very simple format created by a German application called CisCopy, aka CCOPY.EXE, with extension .DCF.
      * First byte indicates the floppy type, limited to standard formats.
@@ -90,28 +90,28 @@ namespace DiscImageChef.ImagePlugins
         public CisCopy()
         {
             Name = "CisCopy Disk Image (DC-File)";
-            PluginUUID = new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
+            PluginUuid = new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         #region Public methods
@@ -262,72 +262,72 @@ namespace DiscImageChef.ImagePlugins
                         debugStream.Close();
             */
 
-            ImageInfo.imageApplication = "CisCopy";
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = imageFilter.GetFilename();
-            ImageInfo.imageSize = (ulong)(stream.Length - 2 - trackBytes.Length);
-            ImageInfo.sectorSize = 512;
+            ImageInfo.ImageApplication = "CisCopy";
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = imageFilter.GetFilename();
+            ImageInfo.ImageSize = (ulong)(stream.Length - 2 - trackBytes.Length);
+            ImageInfo.SectorSize = 512;
 
             switch(type)
             {
                 case DiskType.MD1DD8:
-                    ImageInfo.mediaType = MediaType.DOS_525_SS_DD_8;
-                    ImageInfo.sectors = 40 * 1 * 8;
-                    ImageInfo.heads = 1;
-                    ImageInfo.cylinders = 40;
-                    ImageInfo.sectorsPerTrack = 8;
+                    ImageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
+                    ImageInfo.Sectors = 40 * 1 * 8;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.Cylinders = 40;
+                    ImageInfo.SectorsPerTrack = 8;
                     break;
                 case DiskType.MD2DD8:
-                    ImageInfo.mediaType = MediaType.DOS_525_DS_DD_8;
-                    ImageInfo.sectors = 40 * 2 * 8;
-                    ImageInfo.heads = 2;
-                    ImageInfo.cylinders = 40;
-                    ImageInfo.sectorsPerTrack = 8;
+                    ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
+                    ImageInfo.Sectors = 40 * 2 * 8;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.Cylinders = 40;
+                    ImageInfo.SectorsPerTrack = 8;
                     break;
                 case DiskType.MD1DD:
-                    ImageInfo.mediaType = MediaType.DOS_525_SS_DD_9;
-                    ImageInfo.sectors = 40 * 1 * 9;
-                    ImageInfo.heads = 1;
-                    ImageInfo.cylinders = 40;
-                    ImageInfo.sectorsPerTrack = 9;
+                    ImageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
+                    ImageInfo.Sectors = 40 * 1 * 9;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.Cylinders = 40;
+                    ImageInfo.SectorsPerTrack = 9;
                     break;
                 case DiskType.MD2DD:
-                    ImageInfo.mediaType = MediaType.DOS_525_DS_DD_9;
-                    ImageInfo.sectors = 40 * 2 * 9;
-                    ImageInfo.heads = 2;
-                    ImageInfo.cylinders = 40;
-                    ImageInfo.sectorsPerTrack = 9;
+                    ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
+                    ImageInfo.Sectors = 40 * 2 * 9;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.Cylinders = 40;
+                    ImageInfo.SectorsPerTrack = 9;
                     break;
                 case DiskType.MF2DD:
-                    ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
-                    ImageInfo.sectors = 80 * 2 * 9;
-                    ImageInfo.heads = 2;
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.sectorsPerTrack = 9;
+                    ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+                    ImageInfo.Sectors = 80 * 2 * 9;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.SectorsPerTrack = 9;
                     break;
                 case DiskType.MD2HD:
-                    ImageInfo.mediaType = MediaType.DOS_525_HD;
-                    ImageInfo.sectors = 80 * 2 * 15;
-                    ImageInfo.heads = 2;
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.sectorsPerTrack = 15;
+                    ImageInfo.MediaType = MediaType.DOS_525_HD;
+                    ImageInfo.Sectors = 80 * 2 * 15;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.SectorsPerTrack = 15;
                     break;
                 case DiskType.MF2HD:
-                    ImageInfo.mediaType = MediaType.DOS_35_HD;
-                    ImageInfo.sectors = 80 * 2 * 18;
-                    ImageInfo.heads = 2;
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.sectorsPerTrack = 18;
+                    ImageInfo.MediaType = MediaType.DOS_35_HD;
+                    ImageInfo.Sectors = 80 * 2 * 18;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.SectorsPerTrack = 18;
                     break;
             }
 
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             decodedDisk = decodedImage.ToArray();
 
             decodedImage.Close();
 
-            DicConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", ImageInfo.mediaType);
+            DicConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", ImageInfo.MediaType);
 
             return true;
         }
@@ -342,24 +342,24 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) UnknownLBAs.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
@@ -371,22 +371,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return ImageInfo.imageHasPartitions;
+            return ImageInfo.ImageHasPartitions;
         }
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -396,16 +396,16 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.sectorSize];
+            byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
-            Array.Copy(decodedDisk, (int)sectorAddress * ImageInfo.sectorSize, buffer, 0,
-                       length * ImageInfo.sectorSize);
+            Array.Copy(decodedDisk, (int)sectorAddress * ImageInfo.SectorSize, buffer, 0,
+                       length * ImageInfo.SectorSize);
 
             return buffer;
         }
@@ -417,97 +417,97 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override string GetMediaManufacturer()
         {
-            return ImageInfo.mediaManufacturer;
+            return ImageInfo.MediaManufacturer;
         }
 
         public override string GetMediaModel()
         {
-            return ImageInfo.mediaModel;
+            return ImageInfo.MediaModel;
         }
 
         public override string GetMediaSerialNumber()
         {
-            return ImageInfo.mediaSerialNumber;
+            return ImageInfo.MediaSerialNumber;
         }
 
         public override string GetMediaBarcode()
         {
-            return ImageInfo.mediaBarcode;
+            return ImageInfo.MediaBarcode;
         }
 
         public override string GetMediaPartNumber()
         {
-            return ImageInfo.mediaPartNumber;
+            return ImageInfo.MediaPartNumber;
         }
 
         public override int GetMediaSequence()
         {
-            return ImageInfo.mediaSequence;
+            return ImageInfo.MediaSequence;
         }
 
         public override int GetLastDiskSequence()
         {
-            return ImageInfo.lastMediaSequence;
+            return ImageInfo.LastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return ImageInfo.driveManufacturer;
+            return ImageInfo.DriveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return ImageInfo.driveModel;
+            return ImageInfo.DriveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return ImageInfo.driveSerialNumber;
+            return ImageInfo.DriveSerialNumber;
         }
         #endregion Public methods
 

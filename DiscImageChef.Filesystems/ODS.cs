@@ -65,7 +65,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public ODS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public ODS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Files-11 On-Disk Structure";
             PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if((2 + partition.Start) >= partition.End) return false;
 
@@ -91,7 +91,7 @@ namespace DiscImageChef.Filesystems
             if(magic == "DECFILE11A  " || magic == "DECFILE11B  ") return true;
 
             // Optical disc
-            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
             {
                 if(hb_sector.Length < 0x400) return false;
 
@@ -108,7 +108,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -126,7 +126,7 @@ namespace DiscImageChef.Filesystems
             handle.Free();
 
             // Optical disc
-            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc &&
+            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc &&
                StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
                StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
             {

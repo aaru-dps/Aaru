@@ -31,7 +31,6 @@ using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Partitions
@@ -102,7 +101,7 @@ namespace DiscImageChef.Tests.Partitions
                 string location = Path.Combine(Consts.TestFilesRoot, "partitions", "acorn", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new Vdi();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

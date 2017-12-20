@@ -96,7 +96,7 @@ namespace DiscImageChef.Devices
             Array.Copy(firstHalfBytes, 0, buffer, 1, 8);
             Array.Copy(secondHalfBytes, 0, buffer, 9, 8);
 
-            cdb[0] = (byte)ScsiCommands.Fujitsu_Display;
+            cdb[0] = (byte)ScsiCommands.FujitsuDisplay;
             cdb[6] = (byte)buffer.Length;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,

@@ -36,18 +36,18 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class Human68K : PartPlugin
+    public class Human68K : PartitionPlugin
     {
         const uint X68kMagic = 0x5836384B;
 
         public Human68K()
         {
             Name = "Human 68k partitions";
-            PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+            PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)

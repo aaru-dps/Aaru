@@ -36,13 +36,13 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        public bool ReadSDStatus(out byte[] buffer, out uint[] response, uint timeout, out double duration)
+        public bool ReadSdStatus(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[64];
             bool sense = false;
 
             lastError = SendMmcCommand((MmcCommands)SecureDigitalCommands.SendStatus, false, true,
-                                       MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandADTC, 0, 64, 1,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0, 64, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
@@ -51,13 +51,13 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadSDOCR(out byte[] buffer, out uint[] response, uint timeout, out double duration)
+        public bool ReadSdocr(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[4];
             bool sense = false;
 
             lastError = SendMmcCommand((MmcCommands)SecureDigitalCommands.SendOperatingCondition, false, true,
-                                       MmcFlags.ResponseSPI_R3 | MmcFlags.Response_R3 | MmcFlags.CommandBCR, 0, 4, 1,
+                                       MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0, 4, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 
@@ -66,13 +66,13 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool ReadSCR(out byte[] buffer, out uint[] response, uint timeout, out double duration)
+        public bool ReadScr(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[8];
             bool sense = false;
 
-            lastError = SendMmcCommand((MmcCommands)SecureDigitalCommands.SendSCR, false, true,
-                                       MmcFlags.ResponseSPI_R1 | MmcFlags.Response_R1 | MmcFlags.CommandADTC, 0, 8, 1,
+            lastError = SendMmcCommand((MmcCommands)SecureDigitalCommands.SendScr, false, true,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0, 8, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
             error = lastError != 0;
 

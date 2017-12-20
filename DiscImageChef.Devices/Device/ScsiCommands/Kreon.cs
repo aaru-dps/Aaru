@@ -51,7 +51,7 @@ namespace DiscImageChef.Devices
             byte[] buffer = new byte[0];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Kreon_Command;
+            cdb[0] = (byte)ScsiCommands.KreonCommand;
             cdb[1] = 0x08;
             cdb[2] = 0x01;
             cdb[3] = 0x01;
@@ -116,7 +116,7 @@ namespace DiscImageChef.Devices
             byte[] buffer = new byte[0];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Kreon_Command;
+            cdb[0] = (byte)ScsiCommands.KreonCommand;
             cdb[1] = 0x08;
             cdb[2] = 0x01;
             cdb[3] = 0x11;
@@ -148,7 +148,7 @@ namespace DiscImageChef.Devices
             bool sense;
             features = 0;
 
-            cdb[0] = (byte)ScsiCommands.Kreon_Command;
+            cdb[0] = (byte)ScsiCommands.KreonCommand;
             cdb[1] = 0x08;
             cdb[2] = 0x01;
             cdb[3] = 0x10;
@@ -178,7 +178,7 @@ namespace DiscImageChef.Devices
                         features |= KreonFeatures.WxripperUnlock360;
                         break;
                     case 0x2001:
-                        features |= KreonFeatures.DecryptSS360;
+                        features |= KreonFeatures.DecryptSs360;
                         break;
                     case 0x2101:
                         features |= KreonFeatures.ChallengeResponse360;
@@ -190,7 +190,7 @@ namespace DiscImageChef.Devices
                         features |= KreonFeatures.WxripperUnlock;
                         break;
                     case 0x2002:
-                        features |= KreonFeatures.DecryptSS;
+                        features |= KreonFeatures.DecryptSs;
                         break;
                     case 0x2102:
                         features |= KreonFeatures.ChallengeResponse;
@@ -215,7 +215,7 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         /// <param name="buffer">The SS sector.</param>
-        public bool KreonExtractSS(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration,
+        public bool KreonExtractSs(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration,
                                    byte requestNumber = 0x00)
         {
             buffer = new byte[2048];
@@ -223,7 +223,7 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             bool sense;
 
-            cdb[0] = (byte)ScsiCommands.Kreon_SS_Command;
+            cdb[0] = (byte)ScsiCommands.KreonSsCommand;
             cdb[1] = 0x00;
             cdb[2] = 0xFF;
             cdb[3] = 0x02;

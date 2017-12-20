@@ -110,14 +110,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.Unicode;
         }
 
-        public F2FS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public F2FS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "F2FS Plugin";
             PluginUUID = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
             CurrentEncoding = Encoding.Unicode;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < F2FS_MinSector || imagePlugin.GetSectorSize() > F2FS_MaxSector)
                 return false;
@@ -143,7 +143,7 @@ namespace DiscImageChef.Filesystems
             return f2fsSb.magic == F2FS_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

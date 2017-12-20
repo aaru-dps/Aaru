@@ -106,7 +106,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public EFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public EFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Extent File System Plugin";
             PluginUUID = new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
@@ -114,12 +114,12 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
             // Misaligned
-            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
             {
                 EFS_Superblock efs_sb = new EFS_Superblock();
 
@@ -161,7 +161,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -170,7 +170,7 @@ namespace DiscImageChef.Filesystems
             EFS_Superblock efsSb = new EFS_Superblock();
 
             // Misaligned
-            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
             {
                 uint sbSize = (uint)((Marshal.SizeOf(efsSb) + 0x400) / imagePlugin.GetSectorSize());
                 if((Marshal.SizeOf(efsSb) + 0x400) % imagePlugin.GetSectorSize() != 0) sbSize++;

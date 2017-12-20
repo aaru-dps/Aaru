@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     public class UkvFdi : ImagePlugin
     {
@@ -87,29 +87,29 @@ namespace DiscImageChef.ImagePlugins
         public UkvFdi()
         {
             Name = "Spectrum Floppy Disk Image";
-            PluginUUID = new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
+            PluginUuid = new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
@@ -158,9 +158,9 @@ namespace DiscImageChef.ImagePlugins
             stream.Seek(hdr.descOff, SeekOrigin.Begin);
             byte[] description = new byte[hdr.dataOff - hdr.descOff];
             stream.Read(description, 0, description.Length);
-            ImageInfo.imageComments = StringHandlers.CToString(description);
+            ImageInfo.ImageComments = StringHandlers.CToString(description);
 
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", ImageInfo.imageComments);
+            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", ImageInfo.ImageComments);
 
             stream.Seek(0xE + hdr.addInfoLen, SeekOrigin.Begin);
 
@@ -168,8 +168,8 @@ namespace DiscImageChef.ImagePlugins
             uint[][][] sectorsOff = new uint[hdr.cylinders][][];
             sectorsData = new byte[hdr.cylinders][][][];
 
-            ImageInfo.cylinders = hdr.cylinders;
-            ImageInfo.heads = hdr.heads;
+            ImageInfo.Cylinders = hdr.cylinders;
+            ImageInfo.Heads = hdr.heads;
 
             // Read track descriptors
             for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
@@ -218,7 +218,7 @@ namespace DiscImageChef.ImagePlugins
                         sectorsOff[cyl][head][sec] = secOff + trkOff + hdr.dataOff;
                         sectorsData[cyl][head][sec] = new byte[128 << n];
 
-                        if(128 << n > ImageInfo.sectorSize) ImageInfo.sectorSize = (uint)(128 << n);
+                        if(128 << n > ImageInfo.SectorSize) ImageInfo.SectorSize = (uint)(128 << n);
                     }
                 }
             }
@@ -247,23 +247,23 @@ namespace DiscImageChef.ImagePlugins
                         else
                         {
                             sectorsData[cyl][head] = new byte[spt][];
-                            for(int i = 0; i < spt; i++) sectorsData[cyl][head][i] = new byte[ImageInfo.sectorSize];
+                            for(int i = 0; i < spt; i++) sectorsData[cyl][head][i] = new byte[ImageInfo.SectorSize];
                         }
                     }
                 }
 
-                if(emptyCyl) ImageInfo.cylinders--;
+                if(emptyCyl) ImageInfo.Cylinders--;
             }
 
             // TODO: What about double sided, half track pitch compact floppies?
-            ImageInfo.mediaType = MediaType.CompactFloppy;
-            ImageInfo.imageSize = (ulong)stream.Length - hdr.dataOff;
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectorsPerTrack = (uint)spt;
-            ImageInfo.sectors = ImageInfo.cylinders * ImageInfo.heads * ImageInfo.sectorsPerTrack;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.MediaType = MediaType.CompactFloppy;
+            ImageInfo.ImageSize = (ulong)stream.Length - hdr.dataOff;
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.SectorsPerTrack = (uint)spt;
+            ImageInfo.Sectors = ImageInfo.Cylinders * ImageInfo.Heads * ImageInfo.SectorsPerTrack;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             return true;
         }
@@ -275,17 +275,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -295,47 +295,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -356,10 +356,10 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream buffer = new MemoryStream();
@@ -374,9 +374,9 @@ namespace DiscImageChef.ImagePlugins
 
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
-            ushort cylinder = (ushort)(lba / (ImageInfo.heads * ImageInfo.sectorsPerTrack));
-            byte head = (byte)((lba / ImageInfo.sectorsPerTrack) % ImageInfo.heads);
-            byte sector = (byte)((lba % ImageInfo.sectorsPerTrack) + 1);
+            ushort cylinder = (ushort)(lba / (ImageInfo.Heads * ImageInfo.SectorsPerTrack));
+            byte head = (byte)((lba / ImageInfo.SectorsPerTrack) % ImageInfo.Heads);
+            byte sector = (byte)((lba % ImageInfo.SectorsPerTrack) + 1);
 
             return (cylinder, head, sector);
         }
@@ -522,18 +522,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

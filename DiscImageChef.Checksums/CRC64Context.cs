@@ -38,10 +38,10 @@ namespace DiscImageChef.Checksums
     /// <summary>
     /// Provides a UNIX similar API to calculate CRC64 (ECMA).
     /// </summary>
-    public class CRC64Context
+    public class Crc64Context
     {
-        const ulong crc64Poly = 0xC96C5795D7870F42;
-        const ulong crc64Seed = 0xFFFFFFFFFFFFFFFF;
+        const ulong CRC64_POLY = 0xC96C5795D7870F42;
+        const ulong CRC64_SEED = 0xFFFFFFFFFFFFFFFF;
 
         ulong[] table;
         ulong hashInt;
@@ -51,14 +51,14 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public void Init()
         {
-            hashInt = crc64Seed;
+            hashInt = CRC64_SEED;
 
             table = new ulong[256];
             for(int i = 0; i < 256; i++)
             {
                 ulong entry = (ulong)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (entry >> 1) ^ crc64Poly;
+                    if((entry & 1) == 1) entry = (entry >> 1) ^ CRC64_POLY;
                     else entry = entry >> 1;
 
                 table[i] = entry;
@@ -89,7 +89,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            hashInt ^= crc64Seed;
+            hashInt ^= CRC64_SEED;
             BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(hashInt);
         }
@@ -99,7 +99,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            hashInt ^= crc64Seed;
+            hashInt ^= CRC64_SEED;
             StringBuilder crc64Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
@@ -133,14 +133,14 @@ namespace DiscImageChef.Checksums
             ulong[] localTable;
             ulong localhashInt;
 
-            localhashInt = crc64Seed;
+            localhashInt = CRC64_SEED;
 
             localTable = new ulong[256];
             for(int i = 0; i < 256; i++)
             {
                 ulong entry = (ulong)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (entry >> 1) ^ crc64Poly;
+                    if((entry & 1) == 1) entry = (entry >> 1) ^ CRC64_POLY;
                     else entry = entry >> 1;
 
                 localTable[i] = entry;
@@ -149,7 +149,7 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < fileStream.Length; i++)
                 localhashInt = (localhashInt >> 8) ^ localTable[(ulong)fileStream.ReadByte() ^ localhashInt & 0xffL];
 
-            localhashInt ^= crc64Seed;
+            localhashInt ^= CRC64_SEED;
             BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
             hash = BigEndianBitConverter.GetBytes(localhashInt);
 
@@ -170,7 +170,7 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            return Data(data, len, out hash, crc64Poly, crc64Seed);
+            return Data(data, len, out hash, CRC64_POLY, CRC64_SEED);
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace DiscImageChef.Checksums
 
             for(int i = 0; i < len; i++) localhashInt = (localhashInt >> 8) ^ localTable[data[i] ^ localhashInt & 0xff];
 
-            localhashInt ^= crc64Seed;
+            localhashInt ^= CRC64_SEED;
             BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
             hash = BigEndianBitConverter.GetBytes(localhashInt);
 

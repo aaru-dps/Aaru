@@ -113,7 +113,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public QNX6(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public QNX6(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX6 Plugin";
             PluginUUID = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
@@ -121,7 +121,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             uint sectors = QNX6_SuperBlockSize / imagePlugin.GetSectorSize();
             uint bootSectors = QNX6_BootBlocksSize / imagePlugin.GetSectorSize();
@@ -147,7 +147,7 @@ namespace DiscImageChef.Filesystems
             return qnxSb.magic == QNX6_Magic || audiSb.magic == QNX6_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

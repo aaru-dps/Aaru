@@ -32,8 +32,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
+using DiscImageChef.Partitions;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
@@ -63,11 +62,11 @@ namespace DiscImageChef.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "btrfs", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new Vdi();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
+                Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
+                PartitionPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions, 0), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.BTRFS();
                 int part = -1;

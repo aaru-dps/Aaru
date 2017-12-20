@@ -48,10 +48,10 @@ namespace DiscImageChef.Devices.Linux
         internal static extern int ioctlInt(int fd, LinuxIoctl request, out int value);
 
         [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-        internal static extern int ioctlSg(int fd, LinuxIoctl request, ref sg_io_hdr_t value);
+        internal static extern int ioctlSg(int fd, LinuxIoctl request, ref SgIoHdrT value);
 
         [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-        internal static extern int ioctlMmc(int fd, LinuxIoctl request, ref mmc_ioc_cmd value);
+        internal static extern int ioctlMmc(int fd, LinuxIoctl request, ref MmcIocCmd value);
 
         [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
         internal static extern int readlink(string path, System.IntPtr buf, int bufsize);
@@ -67,6 +67,6 @@ namespace DiscImageChef.Devices.Linux
             IntPtr udev, string subsystem, string sysname);
 
         [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
-        internal static extern string udev_device_get_property_value(IntPtr udev_device, string key);
+        internal static extern string udev_device_get_property_value(IntPtr udevDevice, string key);
     }
 }

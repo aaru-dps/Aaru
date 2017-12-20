@@ -41,7 +41,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Decoders.Floppy;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     // Information from Quasi88's FORMAT.TXT file
     // Japanese comments copied from there
@@ -51,14 +51,14 @@ namespace DiscImageChef.ImagePlugins
         enum DiskType : byte
         {
             D2 = 0x00,
-            DD2 = 0x10,
-            HD2 = 0x20,
+            Dd2 = 0x10,
+            Hd2 = 0x20,
         }
 
         enum DensityType : byte
         {
-            MFM = 0x00,
-            FM = 0x40,
+            Mfm = 0x00,
+            Fm = 0x40,
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace DiscImageChef.ImagePlugins
             /// CRC error in address fields
             /// ID CRC エラー
             /// </summary>
-            IDError = 0xA0,
+            IdError = 0xA0,
             /// <summary>
             /// CRC error in data block
             /// データ CRC エラー
@@ -101,8 +101,8 @@ namespace DiscImageChef.ImagePlugins
         #endregion
 
         #region Internal constants
-        readonly byte[] ReservedEmpty = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        const byte ReadOnly = 0x10;
+        readonly byte[] reservedEmpty = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        const byte READ_ONLY = 0x10;
         #endregion
 
         #region Internal structures
@@ -202,29 +202,29 @@ namespace DiscImageChef.ImagePlugins
         public D88()
         {
             Name = "D88 Disk Image";
-            PluginUUID = new Guid("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
+            PluginUuid = new Guid("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
@@ -235,39 +235,39 @@ namespace DiscImageChef.ImagePlugins
             // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            D88Header d88hdr = new D88Header();
+            D88Header d88Hdr = new D88Header();
 
-            if(stream.Length < Marshal.SizeOf(d88hdr)) return false;
+            if(stream.Length < Marshal.SizeOf(d88Hdr)) return false;
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(d88hdr)];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[Marshal.SizeOf(d88Hdr)];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-            d88hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
+            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
+            d88Hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
             handle.Free();
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
-                                      StringHandlers.CToString(d88hdr.name, shiftjis));
+                                      StringHandlers.CToString(d88Hdr.name, shiftjis));
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
-                                      d88hdr.reserved.SequenceEqual(ReservedEmpty));
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88hdr.write_protect);
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", d88hdr.disk_type,
-                                      (byte)d88hdr.disk_type);
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", d88hdr.disk_size);
+                                      d88Hdr.reserved.SequenceEqual(reservedEmpty));
+            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88Hdr.write_protect);
+            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", d88Hdr.disk_type,
+                                      (byte)d88Hdr.disk_type);
+            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", d88Hdr.disk_size);
 
-            if(d88hdr.disk_size != stream.Length) return false;
+            if(d88Hdr.disk_size != stream.Length) return false;
 
-            if(d88hdr.disk_type != DiskType.D2 && d88hdr.disk_type != DiskType.DD2 &&
-               d88hdr.disk_type != DiskType.HD2) return false;
+            if(d88Hdr.disk_type != DiskType.D2 && d88Hdr.disk_type != DiskType.Dd2 &&
+               d88Hdr.disk_type != DiskType.Hd2) return false;
 
-            if(!d88hdr.reserved.SequenceEqual(ReservedEmpty)) return false;
+            if(!d88Hdr.reserved.SequenceEqual(reservedEmpty)) return false;
 
             int counter = 0;
-            for(int i = 0; i < d88hdr.track_table.Length; i++)
+            for(int i = 0; i < d88Hdr.track_table.Length; i++)
             {
-                if(d88hdr.track_table[i] > 0) counter++;
+                if(d88Hdr.track_table[i] > 0) counter++;
 
-                if(d88hdr.track_table[i] < 0 || d88hdr.track_table[i] > stream.Length) return false;
+                if(d88Hdr.track_table[i] < 0 || d88Hdr.track_table[i] > stream.Length) return false;
             }
 
             DicConsole.DebugWriteLine("D88 plugin", "{0} tracks", counter);
@@ -282,39 +282,39 @@ namespace DiscImageChef.ImagePlugins
             // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            D88Header d88hdr = new D88Header();
+            D88Header d88Hdr = new D88Header();
 
-            if(stream.Length < Marshal.SizeOf(d88hdr)) return false;
+            if(stream.Length < Marshal.SizeOf(d88Hdr)) return false;
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(d88hdr)];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[Marshal.SizeOf(d88Hdr)];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-            d88hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
+            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
+            d88Hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
             handle.Free();
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
-                                      StringHandlers.CToString(d88hdr.name, shiftjis));
+                                      StringHandlers.CToString(d88Hdr.name, shiftjis));
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
-                                      d88hdr.reserved.SequenceEqual(ReservedEmpty));
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88hdr.write_protect);
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", d88hdr.disk_type,
-                                      (byte)d88hdr.disk_type);
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", d88hdr.disk_size);
+                                      d88Hdr.reserved.SequenceEqual(reservedEmpty));
+            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88Hdr.write_protect);
+            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", d88Hdr.disk_type,
+                                      (byte)d88Hdr.disk_type);
+            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", d88Hdr.disk_size);
 
-            if(d88hdr.disk_size != stream.Length) return false;
+            if(d88Hdr.disk_size != stream.Length) return false;
 
-            if(d88hdr.disk_type != DiskType.D2 && d88hdr.disk_type != DiskType.DD2 &&
-               d88hdr.disk_type != DiskType.HD2) return false;
+            if(d88Hdr.disk_type != DiskType.D2 && d88Hdr.disk_type != DiskType.Dd2 &&
+               d88Hdr.disk_type != DiskType.Hd2) return false;
 
-            if(!d88hdr.reserved.SequenceEqual(ReservedEmpty)) return false;
+            if(!d88Hdr.reserved.SequenceEqual(reservedEmpty)) return false;
 
             int trkCounter = 0;
-            for(int i = 0; i < d88hdr.track_table.Length; i++)
+            for(int i = 0; i < d88Hdr.track_table.Length; i++)
             {
-                if(d88hdr.track_table[i] > 0) trkCounter++;
+                if(d88Hdr.track_table[i] > 0) trkCounter++;
 
-                if(d88hdr.track_table[i] < 0 || d88hdr.track_table[i] > stream.Length) return false;
+                if(d88Hdr.track_table[i] < 0 || d88Hdr.track_table[i] > stream.Length) return false;
             }
 
             DicConsole.DebugWriteLine("D88 plugin", "{0} tracks", trkCounter);
@@ -322,11 +322,11 @@ namespace DiscImageChef.ImagePlugins
             if(trkCounter == 0) return false;
 
             SectorHeader sechdr = new SectorHeader();
-            hdr_b = new byte[Marshal.SizeOf(sechdr)];
-            stream.Seek(d88hdr.track_table[0], SeekOrigin.Begin);
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            hdrB = new byte[Marshal.SizeOf(sechdr)];
+            stream.Seek(d88Hdr.track_table[0], SeekOrigin.Begin);
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
+            handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
             sechdr = (SectorHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SectorHeader));
             handle.Free();
 
@@ -347,11 +347,11 @@ namespace DiscImageChef.ImagePlugins
 
             for(int i = 0; i < trkCounter; i++)
             {
-                stream.Seek(d88hdr.track_table[i], SeekOrigin.Begin);
-                stream.Read(hdr_b, 0, hdr_b.Length);
+                stream.Seek(d88Hdr.track_table[i], SeekOrigin.Begin);
+                stream.Read(hdrB, 0, hdrB.Length);
                 SortedDictionary<byte, byte[]> sectors = new SortedDictionary<byte, byte[]>();
 
-                handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
+                handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
                 sechdr = (SectorHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SectorHeader));
                 handle.Free();
 
@@ -364,15 +364,15 @@ namespace DiscImageChef.ImagePlugins
                 }
 
                 short maxJ = sechdr.spt;
-                byte[] sec_b;
+                byte[] secB;
                 for(short j = 1; j < maxJ; j++)
                 {
-                    sec_b = new byte[sechdr.size_of_data];
-                    stream.Read(sec_b, 0, sec_b.Length);
-                    sectors.Add(sechdr.r, sec_b);
-                    stream.Read(hdr_b, 0, hdr_b.Length);
+                    secB = new byte[sechdr.size_of_data];
+                    stream.Read(secB, 0, secB.Length);
+                    sectors.Add(sechdr.r, secB);
+                    stream.Read(hdrB, 0, hdrB.Length);
 
-                    handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
+                    handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
                     sechdr = (SectorHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SectorHeader));
                     handle.Free();
 
@@ -385,9 +385,9 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
-                sec_b = new byte[sechdr.size_of_data];
-                stream.Read(sec_b, 0, sec_b.Length);
-                sectors.Add(sechdr.r, sec_b);
+                secB = new byte[sechdr.size_of_data];
+                stream.Read(secB, 0, secB.Length);
+                sectors.Add(sechdr.r, secB);
 
                 foreach(KeyValuePair<byte, byte[]> kvp in sectors) sectorsData.Add(kvp.Value);
             }
@@ -401,32 +401,32 @@ namespace DiscImageChef.ImagePlugins
             debugStream.Close();
             */
 
-            ImageInfo.mediaType = MediaType.Unknown;
+            ImageInfo.MediaType = MediaType.Unknown;
             if(allEqual)
             {
                 if(trkCounter == 154 && spt == 26 && bps == IBMSectorSizeCode.EighthKilo)
-                    ImageInfo.mediaType = MediaType.NEC_8_SD;
+                    ImageInfo.MediaType = MediaType.NEC_8_SD;
                 else if(bps == IBMSectorSizeCode.QuarterKilo)
                 {
-                    if(trkCounter == 80 && spt == 16) ImageInfo.mediaType = MediaType.NEC_525_SS;
-                    else if(trkCounter == 154 && spt == 26) ImageInfo.mediaType = MediaType.NEC_8_DD;
-                    else if(trkCounter == 160 && spt == 16) ImageInfo.mediaType = MediaType.NEC_525_DS;
+                    if(trkCounter == 80 && spt == 16) ImageInfo.MediaType = MediaType.NEC_525_SS;
+                    else if(trkCounter == 154 && spt == 26) ImageInfo.MediaType = MediaType.NEC_8_DD;
+                    else if(trkCounter == 160 && spt == 16) ImageInfo.MediaType = MediaType.NEC_525_DS;
                 }
                 else if(trkCounter == 154 && spt == 8 && bps == IBMSectorSizeCode.Kilo)
-                    ImageInfo.mediaType = MediaType.NEC_525_HD;
+                    ImageInfo.MediaType = MediaType.NEC_525_HD;
                 else if(bps == IBMSectorSizeCode.HalfKilo)
                 {
-                    switch(d88hdr.track_table.Length)
+                    switch(d88Hdr.track_table.Length)
                     {
                         case 40:
                         {
                             switch(spt)
                             {
                                 case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_525_SS_DD_8;
+                                    ImageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
                                     break;
                                 case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_525_SS_DD_9;
+                                    ImageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
                                     break;
                             }
                         }
@@ -437,10 +437,10 @@ namespace DiscImageChef.ImagePlugins
                             switch(spt)
                             {
                                 case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_525_DS_DD_8;
+                                    ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
                                     break;
                                 case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_525_DS_DD_9;
+                                    ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
                                     break;
                             }
                         }
@@ -451,106 +451,106 @@ namespace DiscImageChef.ImagePlugins
                             switch(spt)
                             {
                                 case 15:
-                                    ImageInfo.mediaType = MediaType.NEC_35_HD_15;
+                                    ImageInfo.MediaType = MediaType.NEC_35_HD_15;
                                     break;
                                 case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
+                                    ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
                                     break;
                                 case 18:
-                                    ImageInfo.mediaType = MediaType.DOS_35_HD;
+                                    ImageInfo.MediaType = MediaType.DOS_35_HD;
                                     break;
                                 case 36:
-                                    ImageInfo.mediaType = MediaType.DOS_35_ED;
+                                    ImageInfo.MediaType = MediaType.DOS_35_ED;
                                     break;
                             }
                         }
 
                             break;
                         case 480:
-                            if(spt == 38) ImageInfo.mediaType = MediaType.NEC_35_TD;
+                            if(spt == 38) ImageInfo.MediaType = MediaType.NEC_35_TD;
                             break;
                     }
                 }
             }
 
-            DicConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", ImageInfo.mediaType);
+            DicConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", ImageInfo.MediaType);
 
-            ImageInfo.imageSize = (ulong)d88hdr.disk_size;
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectors = (ulong)sectorsData.Count;
-            ImageInfo.imageComments = StringHandlers.CToString(d88hdr.name, shiftjis);
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.sectorSize = (uint)(128 << (int)bps);
+            ImageInfo.ImageSize = (ulong)d88Hdr.disk_size;
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Sectors = (ulong)sectorsData.Count;
+            ImageInfo.ImageComments = StringHandlers.CToString(d88Hdr.name, shiftjis);
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.SectorSize = (uint)(128 << (int)bps);
 
-            switch(ImageInfo.mediaType)
+            switch(ImageInfo.MediaType)
             {
                 case MediaType.NEC_525_SS:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 1;
-                    ImageInfo.sectorsPerTrack = 16;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.NEC_8_SD:
                 case MediaType.NEC_8_DD:
-                    ImageInfo.cylinders = 77;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 26;
+                    ImageInfo.Cylinders = 77;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 26;
                     break;
                 case MediaType.NEC_525_DS:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 16;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 16;
                     break;
                 case MediaType.NEC_525_HD:
-                    ImageInfo.cylinders = 77;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 8;
+                    ImageInfo.Cylinders = 77;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 8;
                     break;
                 case MediaType.DOS_525_SS_DD_8:
-                    ImageInfo.cylinders = 40;
-                    ImageInfo.heads = 1;
-                    ImageInfo.sectorsPerTrack = 8;
+                    ImageInfo.Cylinders = 40;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.SectorsPerTrack = 8;
                     break;
                 case MediaType.DOS_525_SS_DD_9:
-                    ImageInfo.cylinders = 40;
-                    ImageInfo.heads = 1;
-                    ImageInfo.sectorsPerTrack = 9;
+                    ImageInfo.Cylinders = 40;
+                    ImageInfo.Heads = 1;
+                    ImageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.DOS_525_DS_DD_8:
-                    ImageInfo.cylinders = 40;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 8;
+                    ImageInfo.Cylinders = 40;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 8;
                     break;
                 case MediaType.DOS_525_DS_DD_9:
-                    ImageInfo.cylinders = 40;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 9;
+                    ImageInfo.Cylinders = 40;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.NEC_35_HD_15:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 15;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 15;
                     break;
                 case MediaType.DOS_35_DS_DD_9:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 9;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 9;
                     break;
                 case MediaType.DOS_35_HD:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 18;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 18;
                     break;
                 case MediaType.DOS_35_ED:
-                    ImageInfo.cylinders = 80;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 36;
+                    ImageInfo.Cylinders = 80;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 36;
                     break;
                 case MediaType.NEC_35_TD:
-                    ImageInfo.cylinders = 240;
-                    ImageInfo.heads = 2;
-                    ImageInfo.sectorsPerTrack = 38;
+                    ImageInfo.Cylinders = 240;
+                    ImageInfo.Heads = 2;
+                    ImageInfo.SectorsPerTrack = 38;
                     break;
             }
 
@@ -564,17 +564,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -584,47 +584,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -634,10 +634,10 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             MemoryStream buffer = new MemoryStream();
@@ -788,18 +788,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

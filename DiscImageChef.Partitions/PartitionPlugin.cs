@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : PartPlugin.cs
+// Filename       : PartitionPlugin.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Partitioning scheme plugins.
@@ -34,19 +34,19 @@
 using System;
 using System.Collections.Generic;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
     /// <summary>
     /// Abstract class to implement partitioning schemes interpreting plugins.
     /// </summary>
-    public abstract class PartPlugin
+    public abstract class PartitionPlugin
     {
         /// <summary>Plugin name.</summary>
         public string Name;
         /// <summary>Plugin UUID.</summary>
-        public Guid PluginUUID;
+        public Guid PluginUuid;
 
-        protected PartPlugin() { }
+        protected PartitionPlugin() { }
 
         /// <summary>
         /// Interprets a partitioning scheme.
@@ -55,7 +55,7 @@ namespace DiscImageChef.PartPlugins
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partitions">Returns list of partitions.</param>
         /// <param name="sectorOffset">At which sector to start searching for the partition scheme.</param>
-        public abstract bool GetInformation(ImagePlugins.ImagePlugin imagePlugin,
+        public abstract bool GetInformation(DiscImages.ImagePlugin imagePlugin,
                                             out List<CommonTypes.Partition> partitions, ulong sectorOffset);
     }
 }

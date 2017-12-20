@@ -38,7 +38,7 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Logging
 {
-    class IBGLog
+    class IbgLog
     {
         static FileStream ibgFs;
         static StringBuilder ibgSb;
@@ -54,7 +54,7 @@ namespace DiscImageChef.Core.Logging
         static ulong ibgIntSector;
         static int ibgSampleRate;
 
-        internal IBGLog(string outputFile, ushort currentProfile)
+        internal IbgLog(string outputFile, ushort currentProfile)
         {
             if(!string.IsNullOrEmpty(outputFile))
             {
@@ -230,7 +230,7 @@ namespace DiscImageChef.Core.Logging
                 StringBuilder ibgHeader = new StringBuilder();
                 string ibgBusType;
 
-                if(dev.IsUSB) ibgBusType = "USB";
+                if(dev.IsUsb) ibgBusType = "USB";
                 else if(dev.IsFireWire) ibgBusType = "FireWire";
                 else ibgBusType = dev.Type.ToString();
 

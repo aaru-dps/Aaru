@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public VxFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public VxFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Veritas filesystem";
             PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
@@ -212,9 +212,9 @@ namespace DiscImageChef.Filesystems
         const uint VxFS_MAGIC = 0xA501FCF5;
         const uint VxFS_Base = 0x400;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
-            ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.sectorSize;
+            ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.SectorSize;
 
             if(partition.Start + vmfsSuperOff >= partition.End) return false;
 
@@ -225,10 +225,10 @@ namespace DiscImageChef.Filesystems
             return magic == VxFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
-            ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.sectorSize;
+            ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.SectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             VxSuperBlock vxSb = new VxSuperBlock();

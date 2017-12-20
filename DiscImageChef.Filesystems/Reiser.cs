@@ -103,7 +103,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public Reiser(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public Reiser(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Reiser Filesystem Plugin";
             PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -137,7 +137,7 @@ namespace DiscImageChef.Filesystems
                    ReiserJr_Magic.SequenceEqual(reiserSb.magic);
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

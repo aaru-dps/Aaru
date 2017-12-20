@@ -66,61 +66,61 @@ namespace DiscImageChef
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.Analyze.doAnalyze(opts);
+                      Commands.Analyze.DoAnalyze(opts);
                   }).WithParsed<CompareOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.Compare.doCompare(opts);
+                      Commands.Compare.DoCompare(opts);
                   }).WithParsed<ChecksumOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.Checksum.doChecksum(opts);
+                      Commands.Checksum.DoChecksum(opts);
                   }).WithParsed<EntropyOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.Entropy.doEntropy(opts);
+                      Commands.Entropy.DoEntropy(opts);
                   }).WithParsed<VerifyOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.Verify.doVerify(opts);
+                      Commands.Verify.DoVerify(opts);
                   }).WithParsed<PrintHexOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.PrintHex.doPrintHex(opts);
+                      Commands.PrintHex.DoPrintHex(opts);
                   }).WithParsed<DecodeOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.Decode.doDecode(opts);
+                      Commands.Decode.DoDecode(opts);
                   }).WithParsed<DeviceInfoOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.DeviceInfo.doDeviceInfo(opts);
+                      Commands.DeviceInfo.DoDeviceInfo(opts);
                   }).WithParsed<MediaInfoOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.MediaInfo.doMediaInfo(opts);
+                      Commands.MediaInfo.DoMediaInfo(opts);
                   }).WithParsed<MediaScanOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.MediaScan.doMediaScan(opts);
+                      Commands.MediaScan.DoMediaScan(opts);
                   }).WithParsed<FormatsOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
@@ -132,43 +132,43 @@ namespace DiscImageChef
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.Benchmark.doBenchmark(opts);
+                      Commands.Benchmark.DoBenchmark(opts);
                   }).WithParsed<CreateSidecarOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.CreateSidecar.doSidecar(opts);
+                      Commands.CreateSidecar.DoSidecar(opts);
                   }).WithParsed<DumpMediaOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.DumpMedia.doDumpMedia(opts);
+                      Commands.DumpMedia.DoDumpMedia(opts);
                   }).WithParsed<DeviceReportOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.DeviceReport.doDeviceReport(opts);
+                      Commands.DeviceReport.DoDeviceReport(opts);
                   }).WithParsed<LsOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.Ls.doLs(opts);
+                      Commands.Ls.DoLs(opts);
                   }).WithParsed<ExtractFilesOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.ExtractFiles.doExtractFiles(opts);
+                      Commands.ExtractFiles.DoExtractFiles(opts);
                   }).WithParsed<ListDevicesOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
                       if(opts.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                       PrintCopyright();
-                      Commands.ListDevices.doListDevices(opts);
+                      Commands.ListDevices.DoListDevices(opts);
                   }).WithParsed<ListEncodingsOptions>(opts =>
                   {
                       if(opts.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
@@ -178,11 +178,11 @@ namespace DiscImageChef
                   }).WithParsed<ConfigureOptions>(opts =>
                   {
                       PrintCopyright();
-                      Commands.Configure.doConfigure();
+                      Commands.Configure.DoConfigure();
                   }).WithParsed<StatsOptions>(opts =>
                   {
                       PrintCopyright();
-                      Commands.Statistics.showStats();
+                      Commands.Statistics.ShowStats();
                   }).WithNotParsed(errs => Environment.Exit(1));
 
             Core.Statistics.SaveStats();
@@ -191,13 +191,13 @@ namespace DiscImageChef
         static void PrintCopyright()
         {
             object[] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-            string AssemblyTitle = ((AssemblyTitleAttribute)attributes[0]).Title;
+            string assemblyTitle = ((AssemblyTitleAttribute)attributes[0]).Title;
             attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-            Version AssemblyVersion = typeof(MainClass).Assembly.GetName().Version;
-            string AssemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+            Version assemblyVersion = typeof(MainClass).Assembly.GetName().Version;
+            string assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 
-            DicConsole.WriteLine("{0} {1}", AssemblyTitle, AssemblyVersion);
-            DicConsole.WriteLine("{0}", AssemblyCopyright);
+            DicConsole.WriteLine("{0} {1}", assemblyTitle, assemblyVersion);
+            DicConsole.WriteLine("{0}", assemblyCopyright);
             DicConsole.WriteLine();
         }
     }

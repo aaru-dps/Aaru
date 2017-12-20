@@ -61,7 +61,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public BTRFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public BTRFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "B-tree file system";
             PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
@@ -125,7 +125,7 @@ namespace DiscImageChef.Filesystems
             public Guid uuid;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -153,7 +153,7 @@ namespace DiscImageChef.Filesystems
             return btrfsSb.magic == btrfsMagic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();

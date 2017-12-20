@@ -36,13 +36,13 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
-    static class PCMCIA
+    static class Pcmcia
     {
         internal static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
         {
             report.PCMCIA = new pcmciaType();
-            report.PCMCIA.CIS = dev.CIS;
-            Tuple[] tuples = CIS.GetTuples(dev.CIS);
+            report.PCMCIA.CIS = dev.Cis;
+            Tuple[] tuples = CIS.GetTuples(dev.Cis);
             if(tuples != null)
             {
                 foreach(Tuple tuple in tuples)

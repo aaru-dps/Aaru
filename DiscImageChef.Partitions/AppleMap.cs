@@ -36,11 +36,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
     // Information about structures learnt from Inside Macintosh
     // Constants from image testing
-    public class AppleMap : PartPlugin
+    public class AppleMap : PartitionPlugin
     {
         /// <summary>"ER", driver descriptor magic</summary>
         const ushort DDM_MAGIC = 0x4552;
@@ -54,10 +54,10 @@ namespace DiscImageChef.PartPlugins
         public AppleMap()
         {
             Name = "Apple Partition Map";
-            PluginUUID = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
+            PluginUuid = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin,
+        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
                                             out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             uint sector_size;
@@ -318,19 +318,19 @@ namespace DiscImageChef.PartPlugins
                         }
 
                         _partition.Description = sb.ToString();
-                        if(_partition.Start < imagePlugin.ImageInfo.sectors &&
-                           _partition.End < imagePlugin.ImageInfo.sectors)
+                        if(_partition.Start < imagePlugin.ImageInfo.Sectors &&
+                           _partition.End < imagePlugin.ImageInfo.Sectors)
                         {
                             partitions.Add(_partition);
                             sequence++;
                         }
                         // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
-                        else if(_partition.Start < imagePlugin.ImageInfo.sectors)
+                        else if(_partition.Start < imagePlugin.ImageInfo.Sectors)
                         {
                             DicConsole.DebugWriteLine("AppleMap Plugin",
                                                       "Cutting last partition end ({0}) to media size ({1})",
-                                                      _partition.End, imagePlugin.ImageInfo.sectors - 1);
-                            _partition.Length = imagePlugin.ImageInfo.sectors - _partition.Start;
+                                                      _partition.End, imagePlugin.ImageInfo.Sectors - 1);
+                            _partition.Length = imagePlugin.ImageInfo.Sectors - _partition.Start;
                             partitions.Add(_partition);
                             sequence++;
                         }
@@ -338,7 +338,7 @@ namespace DiscImageChef.PartPlugins
                         {
                             DicConsole.DebugWriteLine("AppleMap Plugin",
                                                       "Not adding partition becaus start ({0}) is outside media size ({1})",
-                                                      _partition.Start, imagePlugin.ImageInfo.sectors - 1);
+                                                      _partition.Start, imagePlugin.ImageInfo.Sectors - 1);
                         }
                     }
                 }

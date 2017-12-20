@@ -41,7 +41,7 @@ namespace DiscImageChef.Tests.Devices
 
             while(true)
             {
-                DicConsole.WriteLine("dev.PlatformID = {0}", dev.PlatformID);
+                DicConsole.WriteLine("dev.PlatformID = {0}", dev.PlatformId);
                 DicConsole.WriteLine("dev.FileHandle = {0}", dev.FileHandle);
                 DicConsole.WriteLine("dev.Timeout = {0}", dev.Timeout);
                 DicConsole.WriteLine("dev.Error = {0}", dev.Error);
@@ -51,25 +51,25 @@ namespace DiscImageChef.Tests.Devices
                 DicConsole.WriteLine("dev.Model = \"{0}\"", dev.Model);
                 DicConsole.WriteLine("dev.Revision = \"{0}\"", dev.Revision);
                 DicConsole.WriteLine("dev.Serial = \"{0}\"", dev.Serial);
-                DicConsole.WriteLine("dev.SCSIType = {0}", dev.SCSIType);
+                DicConsole.WriteLine("dev.SCSIType = {0}", dev.ScsiType);
                 DicConsole.WriteLine("dev.IsRemovable = {0}", dev.IsRemovable);
-                DicConsole.WriteLine("dev.IsUSB = {0}", dev.IsUSB);
-                DicConsole.WriteLine("dev.USBVendorID = 0x{0:X4}", dev.USBVendorID);
-                DicConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.USBProductID);
+                DicConsole.WriteLine("dev.IsUSB = {0}", dev.IsUsb);
+                DicConsole.WriteLine("dev.USBVendorID = 0x{0:X4}", dev.UsbVendorId);
+                DicConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.UsbProductId);
                 DicConsole.WriteLine("dev.USBDescriptors.Length = {0}",
-                                     dev.USBDescriptors == null ? "null" : dev.USBDescriptors.Length.ToString());
-                DicConsole.WriteLine("dev.USBManufacturerString = \"{0}\"", dev.USBManufacturerString);
-                DicConsole.WriteLine("dev.USBProductString = \"{0}\"", dev.USBProductString);
-                DicConsole.WriteLine("dev.USBSerialString = \"{0}\"", dev.USBSerialString);
+                                     dev.UsbDescriptors == null ? "null" : dev.UsbDescriptors.Length.ToString());
+                DicConsole.WriteLine("dev.USBManufacturerString = \"{0}\"", dev.UsbManufacturerString);
+                DicConsole.WriteLine("dev.USBProductString = \"{0}\"", dev.UsbProductString);
+                DicConsole.WriteLine("dev.USBSerialString = \"{0}\"", dev.UsbSerialString);
                 DicConsole.WriteLine("dev.IsFireWire = {0}", dev.IsFireWire);
-                DicConsole.WriteLine("dev.FireWireGUID = {0:X16}", dev.FireWireGUID);
+                DicConsole.WriteLine("dev.FireWireGUID = {0:X16}", dev.FireWireGuid);
                 DicConsole.WriteLine("dev.FireWireModel = 0x{0:X8}", dev.FireWireModel);
                 DicConsole.WriteLine("dev.FireWireModelName = \"{0}\"", dev.FireWireModelName);
                 DicConsole.WriteLine("dev.FireWireVendor = 0x{0:X8}", dev.FireWireVendor);
                 DicConsole.WriteLine("dev.FireWireVendorName = \"{0}\"", dev.FireWireVendorName);
                 DicConsole.WriteLine("dev.IsCompactFlash = {0}", dev.IsCompactFlash);
-                DicConsole.WriteLine("dev.IsPCMCIA = {0}", dev.IsPCMCIA);
-                DicConsole.WriteLine("dev.CIS.Length = {0}", dev.CIS == null ? "null" : dev.CIS.Length.ToString());
+                DicConsole.WriteLine("dev.IsPCMCIA = {0}", dev.IsPcmcia);
+                DicConsole.WriteLine("dev.CIS.Length = {0}", dev.Cis == null ? "null" : dev.Cis.Length.ToString());
 
                 DicConsole.WriteLine("Press any key to continue...", devPath);
                 System.Console.ReadKey();
@@ -101,7 +101,7 @@ namespace DiscImageChef.Tests.Devices
                         System.Console.Clear();
                         DicConsole.WriteLine("Device: {0}", devPath);
                         DicConsole.WriteLine("USB descriptors:");
-                        if(dev.USBDescriptors != null) PrintHex.PrintHexArray(dev.USBDescriptors, 64);
+                        if(dev.UsbDescriptors != null) PrintHex.PrintHexArray(dev.UsbDescriptors, 64);
                         DicConsole.WriteLine("Press any key to continue...");
                         System.Console.ReadKey();
                         goto menu;
@@ -109,7 +109,7 @@ namespace DiscImageChef.Tests.Devices
                         System.Console.Clear();
                         DicConsole.WriteLine("Device: {0}", devPath);
                         DicConsole.WriteLine("PCMCIA CIS:");
-                        if(dev.CIS != null) PrintHex.PrintHexArray(dev.CIS, 64);
+                        if(dev.Cis != null) PrintHex.PrintHexArray(dev.Cis, 64);
                         DicConsole.WriteLine("Press any key to continue...");
                         System.Console.ReadKey();
                         goto menu;

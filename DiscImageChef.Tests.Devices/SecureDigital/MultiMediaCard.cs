@@ -258,7 +258,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
         {
             start:
             System.Console.Clear();
-            bool sense = dev.ReadOCR(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
+            bool sense = dev.ReadOcr(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
@@ -340,7 +340,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
         {
             start:
             System.Console.Clear();
-            bool sense = dev.ReadSDStatus(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
+            bool sense = dev.ReadSdStatus(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
@@ -411,7 +411,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
         {
             start:
             System.Console.Clear();
-            bool sense = dev.ReadCID(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
+            bool sense = dev.ReadCid(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
@@ -493,7 +493,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
         {
             start:
             System.Console.Clear();
-            bool sense = dev.ReadCSD(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
+            bool sense = dev.ReadCsd(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
@@ -575,7 +575,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
         {
             start:
             System.Console.Clear();
-            bool sense = dev.ReadExtendedCSD(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
+            bool sense = dev.ReadExtendedCsd(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);

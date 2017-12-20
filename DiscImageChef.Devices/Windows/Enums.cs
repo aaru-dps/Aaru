@@ -213,11 +213,11 @@ namespace DiscImageChef.Devices.Windows
         /// <summary>
         /// FILE_READ_EA
         /// </summary>
-        ReadEA = 0x0008,
+        ReadEa = 0x0008,
         /// <summary>
         /// FILE_WRITE_EA
         /// </summary>
-        WriteEA = 0x0010,
+        WriteEa = 0x0010,
         /// <summary>
         /// FILE_EXECUTE
         /// </summary>
@@ -326,25 +326,25 @@ namespace DiscImageChef.Devices.Windows
 
     enum WindowsIoctl : uint
     {
-        IOCTL_ATA_PASS_THROUGH = 0x4D02C,
-        IOCTL_ATA_PASS_THROUGH_DIRECT = 0x4D030,
+        IoctlAtaPassThrough = 0x4D02C,
+        IoctlAtaPassThroughDirect = 0x4D030,
         /// <summary>
         /// ScsiPassThrough
         /// </summary>
-        IOCTL_SCSI_PASS_THROUGH = 0x4D004,
+        IoctlScsiPassThrough = 0x4D004,
         /// <summary>
         /// ScsiPassThroughDirect
         /// </summary>
-        IOCTL_SCSI_PASS_THROUGH_DIRECT = 0x4D014,
+        IoctlScsiPassThroughDirect = 0x4D014,
         /// <summary>
         /// ScsiGetAddress
         /// </summary>
-        IOCTL_SCSI_GET_ADDRESS = 0x41018,
-        IOCTL_STORAGE_QUERY_PROPERTY = 0x2D1400,
-        IOCTL_IDE_PASS_THROUGH = 0x4D028,
-        IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080,
-        IOCTL_SFFDISK_QUERY_DEVICE_PROTOCOL = 0x71E80,
-        IOCTL_SFFDISK_DEVICE_COMMAND = 0x79E84,
+        IoctlScsiGetAddress = 0x41018,
+        IoctlStorageQueryProperty = 0x2D1400,
+        IoctlIdePassThrough = 0x4D028,
+        IoctlStorageGetDeviceNumber = 0x2D1080,
+        IoctlSffdiskQueryDeviceProtocol = 0x71E80,
+        IoctlSffdiskDeviceCommand = 0x79E84,
     }
 
     [Flags]
@@ -369,7 +369,7 @@ namespace DiscImageChef.Devices.Windows
         /// <summary>
         /// ATA_FLAGS_USE_DMA
         /// </summary>
-        DMA = 0x10,
+        Dma = 0x10,
         /// <summary>
         /// ATA_FLAGS_NO_MULTIPLE
         /// </summary>
@@ -389,7 +389,7 @@ namespace DiscImageChef.Devices.Windows
         Trim = 8,
         WriteAggregation = 9,
         Telemetry = 10,
-        LBProvisioning = 11,
+        LbProvisioning = 11,
         Power = 12,
         Copyoffload = 13,
         Resiliency = 14
@@ -495,8 +495,8 @@ namespace DiscImageChef.Devices.Windows
 
     static class Consts
     {
-        public static Guid GUID_SFF_PROTOCOL_SD = new Guid("AD7536A8-D055-4C40-AA4D-96312DDB6B38");
-        public static Guid GUID_DEVINTERFACE_DISK =
+        public static Guid GuidSffProtocolSd = new Guid("AD7536A8-D055-4C40-AA4D-96312DDB6B38");
+        public static Guid GuidDevinterfaceDisk =
             new Guid(0x53F56307, 0xB6BF, 0x11D0, 0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B);
     }
 }

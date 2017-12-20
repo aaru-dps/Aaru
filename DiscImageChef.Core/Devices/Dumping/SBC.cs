@@ -40,24 +40,24 @@ using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
+using DiscImageChef.DiscImages;
+using DiscImageChef.Partitions;
 using Schemas;
 using Extents;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    using TrackType = ImagePlugins.TrackType;
+    using TrackType = DiscImages.TrackType;
 
-    internal static class SBC
+    internal static class Sbc
     {
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
                                   ref MediaType dskType, bool opticalDisc, ref Metadata.Resume resume,
                                   ref DumpLog dumpLog, Encoding encoding, Alcohol120 alcohol = null)
         {
-            MHDDLog mhddLog;
-            IBGLog ibgLog;
+            MhddLog mhddLog;
+            IbgLog ibgLog;
             byte[] cmdBuf = null;
             byte[] senseBuf = null;
             bool sense = false;
@@ -122,10 +122,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             if(dskType == MediaType.Unknown)
-                dskType = MediaTypeFromSCSI.Get((byte)dev.SCSIType, dev.Manufacturer, dev.Model, scsiMediumType,
+                dskType = MediaTypeFromScsi.Get((byte)dev.ScsiType, dev.Manufacturer, dev.Model, scsiMediumType,
                                                 scsiDensityCode, blocks, blockSize);
 
-            if(dskType == MediaType.Unknown && dev.IsUSB && containsFloppyPage) dskType = MediaType.FlashDrive;
+            if(dskType == MediaType.Unknown && dev.IsUsb && containsFloppyPage) dskType = MediaType.FlashDrive;
 
             DicConsole.WriteLine("Media identified as {0}", dskType);
 
@@ -133,7 +133,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
             dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
             dumpLog.WriteLine("Device reports {0} bytes per physical block.", scsiReader.LongBlockSize);
-            dumpLog.WriteLine("SCSI device type: {0}.", dev.SCSIType);
+            dumpLog.WriteLine("SCSI device type: {0}.", dev.ScsiType);
             dumpLog.WriteLine("SCSI medium type: {0}.", scsiMediumType);
             dumpLog.WriteLine("SCSI density type: {0}.", scsiDensityCode);
             dumpLog.WriteLine("SCSI floppy mode page present: {0}.", containsFloppyPage);
@@ -145,23 +145,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.BlockMedia[0] = new BlockMediaType();
 
                 // All USB flash drives report as removable, even if the media is not removable
-                if(!dev.IsRemovable || dev.IsUSB)
+                if(!dev.IsRemovable || dev.IsUsb)
                 {
-                    if(dev.IsUSB)
+                    if(dev.IsUsb)
                     {
                         dumpLog.WriteLine("Reading USB descriptors.");
                         sidecar.BlockMedia[0].USB = new USBType
                         {
-                            ProductID = dev.USBProductID,
-                            VendorID = dev.USBVendorID,
+                            ProductID = dev.UsbProductId,
+                            VendorID = dev.UsbVendorId,
                             Descriptors = new DumpType()
                             {
                                 Image = outputPrefix + ".usbdescriptors.bin",
-                                Size = dev.USBDescriptors.Length,
-                                Checksums = Checksum.GetChecksums(dev.USBDescriptors).ToArray()
+                                Size = dev.UsbDescriptors.Length,
+                                Checksums = Checksum.GetChecksums(dev.UsbDescriptors).ToArray()
                             }
                         };
-                        DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].USB.Descriptors.Image, dev.USBDescriptors);
+                        DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].USB.Descriptors.Image, dev.UsbDescriptors);
                     }
 
                     if(dev.Type == DeviceType.ATAPI)
@@ -242,9 +242,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         if(!sense && !dev.Error)
                         {
-                            if(Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.SCSIType).HasValue)
+                            if(Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
                             {
-                                decMode = Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.SCSIType);
+                                decMode = Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.ScsiType);
                                 sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
                                 {
                                     Image = outputPrefix + ".modesense10.bin",
@@ -265,9 +265,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         if(!sense && !dev.Error)
                         {
-                            if(Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.SCSIType).HasValue)
+                            if(Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
                             {
-                                decMode = Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.SCSIType);
+                                decMode = Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.ScsiType);
                                 sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
                                 {
                                     Image = outputPrefix + ".modesense.bin",
@@ -336,8 +336,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             string outputExtension = ".bin";
             if(opticalDisc && blockSize == 2048) outputExtension = ".iso";
-            mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-            ibgLog = new IBGLog(outputPrefix + ".ibg", currentProfile);
+            mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+            ibgLog = new IbgLog(outputPrefix + ".ibg", currentProfile);
             dumpFile = new DataFile(outputPrefix + outputExtension);
 
             start = DateTime.UtcNow;
@@ -356,7 +356,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             DumpHardwareType currentTry = null;
             ExtentsULong extents = null;
             ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
-                                  dev.PlatformID, ref resume, ref currentTry, ref extents);
+                                  dev.PlatformId, ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
                 throw new Exception("Could not process resume file, not continuing...");
 
@@ -483,15 +483,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         sense = dev.ModeSense10(out readBuffer, out senseBuf, false, ScsiModeSensePageControl.Current,
                                                 0x01, dev.Timeout, out duration);
-                        if(!sense) currentMode = Decoders.SCSI.Modes.DecodeMode10(readBuffer, dev.SCSIType);
+                        if(!sense) currentMode = Decoders.SCSI.Modes.DecodeMode10(readBuffer, dev.ScsiType);
                     }
-                    else currentMode = Decoders.SCSI.Modes.DecodeMode6(readBuffer, dev.SCSIType);
+                    else currentMode = Decoders.SCSI.Modes.DecodeMode6(readBuffer, dev.ScsiType);
 
                     if(currentMode.HasValue) currentModePage = currentMode.Value.Pages[0];
 
-                    if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                    if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                     {
-                        Decoders.SCSI.Modes.ModePage_01_MMC pgMMC =
+                        Decoders.SCSI.Modes.ModePage_01_MMC pgMmc =
                             new Decoders.SCSI.Modes.ModePage_01_MMC
                             {
                                 PS = false,
@@ -507,12 +507,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 {
                                     Page = 0x01,
                                     Subpage = 0x00,
-                                    PageResponse = Decoders.SCSI.Modes.EncodeModePage_01_MMC(pgMMC)
+                                    PageResponse = Decoders.SCSI.Modes.EncodeModePage_01_MMC(pgMmc)
                                 }
                             }
                         };
-                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
-                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.ScsiType);
+                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.ScsiType);
                     }
                     else
                     {
@@ -542,8 +542,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 }
                             }
                         };
-                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
-                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.ScsiType);
+                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.ScsiType);
                     }
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
@@ -564,8 +564,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Header = new Decoders.SCSI.Modes.ModeHeader(),
                         Pages = new Decoders.SCSI.Modes.ModePage[] {currentModePage.Value}
                     };
-                    md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
-                    md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+                    md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.ScsiType);
+                    md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.ScsiType);
 
                     dumpLog.WriteLine("Sending MODE SELECT to drive.");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
@@ -619,7 +619,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins(encoding);
-            ImagePlugin _imageFormat;
+            ImagePlugin imageFormat;
             FiltersList filtersList = new FiltersList();
             Filter inputFilter = filtersList.GetFilter(outputPrefix + outputExtension);
 
@@ -629,16 +629,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            _imageFormat = ImageFormat.Detect(inputFilter);
+            imageFormat = ImageFormat.Detect(inputFilter);
             PartitionType[] xmlFileSysInfo = null;
 
-            try { if(!_imageFormat.OpenImage(inputFilter)) _imageFormat = null; }
-            catch { _imageFormat = null; }
+            try { if(!imageFormat.OpenImage(inputFilter)) imageFormat = null; }
+            catch { imageFormat = null; }
 
-            if(_imageFormat != null)
+            if(imageFormat != null)
             {
                 dumpLog.WriteLine("Getting partitions.");
-                List<Partition> partitions = Partitions.GetAll(_imageFormat);
+                List<Partition> partitions = Partitions.GetAll(imageFormat);
                 Partitions.AddSchemesToStats(partitions);
                 dumpLog.WriteLine("Found {0} partitions.", partitions.Count);
 
@@ -661,22 +661,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           i, partitions[i].Start, partitions[i].End, partitions[i].Type,
                                           partitions[i].Scheme);
 
-                        foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                        foreach(Filesystem plugin in plugins.PluginsList.Values)
                         {
                             try
                             {
-                                if(_plugin.Identify(_imageFormat, partitions[i]))
+                                if(plugin.Identify(imageFormat, partitions[i]))
                                 {
-                                    _plugin.GetInformation(_imageFormat, partitions[i], out string foo);
-                                    lstFs.Add(_plugin.XmlFSType);
-                                    Statistics.AddFilesystem(_plugin.XmlFSType.Type);
-                                    dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
+                                    plugin.GetInformation(imageFormat, partitions[i], out string foo);
+                                    lstFs.Add(plugin.XmlFSType);
+                                    Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                    dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                                    if(_plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                    if(_plugin.XmlFSType.Type == "PC Engine filesystem")
+                                    if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
+                                    if(plugin.XmlFSType.Type == "PC Engine filesystem")
                                         dskType = MediaType.SuperCDROM2;
-                                    if(_plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                    if(_plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
+                                    if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
+                                    if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
                                         dskType = MediaType.GOD;
                                 }
                             }
@@ -701,21 +701,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Partition wholePart =
                         new Partition {Name = "Whole device", Length = blocks, Size = blocks * blockSize};
 
-                    foreach(Filesystem _plugin in plugins.PluginsList.Values)
+                    foreach(Filesystem plugin in plugins.PluginsList.Values)
                     {
                         try
                         {
-                            if(_plugin.Identify(_imageFormat, wholePart))
+                            if(plugin.Identify(imageFormat, wholePart))
                             {
-                                _plugin.GetInformation(_imageFormat, wholePart, out string foo);
-                                lstFs.Add(_plugin.XmlFSType);
-                                Statistics.AddFilesystem(_plugin.XmlFSType.Type);
-                                dumpLog.WriteLine("Filesystem {0} found.", _plugin.XmlFSType.Type);
+                                plugin.GetInformation(imageFormat, wholePart, out string foo);
+                                lstFs.Add(plugin.XmlFSType);
+                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                                if(_plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                if(_plugin.XmlFSType.Type == "PC Engine filesystem") dskType = MediaType.SuperCDROM2;
-                                if(_plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                if(_plugin.XmlFSType.Type == "Nintendo Gamecube filesystem") dskType = MediaType.GOD;
+                                if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
+                                if(plugin.XmlFSType.Type == "PC Engine filesystem") dskType = MediaType.SuperCDROM2;
+                                if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
+                                if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem") dskType = MediaType.GOD;
                             }
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -819,10 +819,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     format = "Raw disk image (sector by sector copy)",
                     Value = outputPrefix + ".bin"
                 };
-                if(!dev.IsRemovable || dev.IsUSB)
+                if(!dev.IsRemovable || dev.IsUsb)
                 {
                     if(dev.Type == DeviceType.ATAPI) sidecar.BlockMedia[0].Interface = "ATAPI";
-                    else if(dev.IsUSB) sidecar.BlockMedia[0].Interface = "USB";
+                    else if(dev.IsUsb) sidecar.BlockMedia[0].Interface = "USB";
                     else if(dev.IsFireWire) sidecar.BlockMedia[0].Interface = "FireWire";
                     else sidecar.BlockMedia[0].Interface = "SCSI";
                 }

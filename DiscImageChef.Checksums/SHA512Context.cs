@@ -39,16 +39,16 @@ namespace DiscImageChef.Checksums
     /// <summary>
     /// Provides a UNIX similar API to .NET SHA512.
     /// </summary>
-    public class SHA512Context
+    public class Sha512Context
     {
-        SHA512 _sha512Provider;
+        SHA512 sha512Provider;
 
         /// <summary>
         /// Initializes the SHA512 hash provider
         /// </summary>
         public void Init()
         {
-            _sha512Provider = SHA512.Create();
+            sha512Provider = SHA512.Create();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            _sha512Provider.TransformBlock(data, 0, (int)len, data, 0);
+            sha512Provider.TransformBlock(data, 0, (int)len, data, 0);
         }
 
         /// <summary>
@@ -75,8 +75,8 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            _sha512Provider.TransformFinalBlock(new byte[0], 0, 0);
-            return _sha512Provider.Hash;
+            sha512Provider.TransformFinalBlock(new byte[0], 0, 0);
+            return sha512Provider.Hash;
         }
 
         /// <summary>
@@ -84,12 +84,12 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            _sha512Provider.TransformFinalBlock(new byte[0], 0, 0);
+            sha512Provider.TransformFinalBlock(new byte[0], 0, 0);
             StringBuilder sha512Output = new StringBuilder();
 
-            for(int i = 0; i < _sha512Provider.Hash.Length; i++)
+            for(int i = 0; i < sha512Provider.Hash.Length; i++)
             {
-                sha512Output.Append(_sha512Provider.Hash[i].ToString("x2"));
+                sha512Output.Append(sha512Provider.Hash[i].ToString("x2"));
             }
 
             return sha512Output.ToString();
@@ -102,7 +102,7 @@ namespace DiscImageChef.Checksums
         public byte[] File(string filename)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            byte[] result = _sha512Provider.ComputeHash(fileStream);
+            byte[] result = sha512Provider.ComputeHash(fileStream);
             fileStream.Close();
             return result;
         }
@@ -115,7 +115,7 @@ namespace DiscImageChef.Checksums
         public string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            hash = _sha512Provider.ComputeHash(fileStream);
+            hash = sha512Provider.ComputeHash(fileStream);
             StringBuilder sha512Output = new StringBuilder();
 
             for(int i = 0; i < hash.Length; i++) { sha512Output.Append(hash[i].ToString("x2")); }
@@ -133,7 +133,7 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public string Data(byte[] data, uint len, out byte[] hash)
         {
-            hash = _sha512Provider.ComputeHash(data, 0, (int)len);
+            hash = sha512Provider.ComputeHash(data, 0, (int)len);
             StringBuilder sha512Output = new StringBuilder();
 
             for(int i = 0; i < hash.Length; i++) { sha512Output.Append(hash[i].ToString("x2")); }

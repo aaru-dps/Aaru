@@ -35,7 +35,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -45,9 +45,9 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             try
             {
-                if(imagePlugin.ImageInfo.readableSectorTags == null) return false;
+                if(imagePlugin.ImageInfo.ReadableSectorTags == null) return false;
 
-                if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag)) return false;
+                if(!imagePlugin.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag)) return false;
 
                 // LisaOS is big-endian
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -127,9 +127,9 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             try
             {
-                if(imagePlugin.ImageInfo.readableSectorTags == null) return;
+                if(imagePlugin.ImageInfo.ReadableSectorTags == null) return;
 
-                if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag)) return;
+                if(!imagePlugin.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag)) return;
 
                 // LisaOS is big-endian
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;

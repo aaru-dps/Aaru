@@ -76,9 +76,9 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="startingFeatureNumber">Starting Feature number.</param>
-        /// <param name="RT">Return type, <see cref="MmcGetConfigurationRt"/>.</param>
+        /// <param name="rt">Return type, <see cref="MmcGetConfigurationRt"/>.</param>
         public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, ushort startingFeatureNumber,
-                                     MmcGetConfigurationRt RT, uint timeout, out double duration)
+                                     MmcGetConfigurationRt rt, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
@@ -86,7 +86,7 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.GetConfiguration;
-            cdb[1] = (byte)((byte)RT & 0x03);
+            cdb[1] = (byte)((byte)rt & 0x03);
             cdb[2] = (byte)((startingFeatureNumber & 0xFF00) >> 8);
             cdb[3] = (byte)(startingFeatureNumber & 0xFF);
             cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
@@ -127,10 +127,10 @@ namespace DiscImageChef.Devices
         /// <param name="layerNumber">Medium layer for requested disc structure</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="format">Which disc structure are we requesting</param>
-        /// <param name="AGID">AGID used in medium copy protection</param>
+        /// <param name="agid">AGID used in medium copy protection</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, MmcDiscStructureMediaType mediaType,
-                                      uint address, byte layerNumber, MmcDiscStructureFormat format, byte AGID,
+                                      uint address, byte layerNumber, MmcDiscStructureFormat format, byte agid,
                                       uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
@@ -148,7 +148,7 @@ namespace DiscImageChef.Devices
             cdb[7] = (byte)format;
             cdb[8] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[9] = (byte)(buffer.Length & 0xFF);
-            cdb[10] = (byte)((AGID & 0x03) << 6);
+            cdb[10] = (byte)((agid & 0x03) << 6);
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -193,14 +193,14 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="MSF">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
+        /// <param name="msf">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
         /// <param name="track">Start TOC from this track</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadToc(out byte[] buffer, out byte[] senseBuffer, bool MSF, byte track, uint timeout,
+        public bool ReadToc(out byte[] buffer, out byte[] senseBuffer, bool msf, byte track, uint timeout,
                             out double duration)
         {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, MSF, 0, track, timeout, out duration);
+            return ReadTocPmaAtip(out buffer, out senseBuffer, msf, 0, track, timeout, out duration);
         }
 
         /// <summary>
@@ -222,13 +222,13 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="MSF">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
+        /// <param name="msf">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadSessionInfo(out byte[] buffer, out byte[] senseBuffer, bool MSF, uint timeout,
+        public bool ReadSessionInfo(out byte[] buffer, out byte[] senseBuffer, bool msf, uint timeout,
                                     out double duration)
         {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, MSF, 1, 0, timeout, out duration);
+            return ReadTocPmaAtip(out buffer, out senseBuffer, msf, 1, 0, timeout, out duration);
         }
 
         /// <summary>
@@ -291,12 +291,12 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="MSF">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
+        /// <param name="msf">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
         /// <param name="format">What structure is requested</param>
         /// <param name="trackSessionNumber">Track/Session number</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, bool MSF, byte format,
+        public bool ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, bool msf, byte format,
                                    byte trackSessionNumber, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
@@ -308,7 +308,7 @@ namespace DiscImageChef.Devices
             else tmpBuffer = new byte[1024];
 
             cdb[0] = (byte)ScsiCommands.ReadTocPmaAtip;
-            if(MSF) cdb[1] = 0x02;
+            if(msf) cdb[1] = 0x02;
             cdb[2] = (byte)(format & 0x0F);
             cdb[6] = trackSessionNumber;
             cdb[7] = (byte)((tmpBuffer.Length & 0xFF00) >> 8);
@@ -404,17 +404,17 @@ namespace DiscImageChef.Devices
         /// <param name="transferLength">How many blocks to read.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="expectedSectorType">Expected sector type.</param>
-        /// <param name="DAP">If set to <c>true</c> CD-DA should be modified by mute and interpolation</param>
+        /// <param name="dap">If set to <c>true</c> CD-DA should be modified by mute and interpolation</param>
         /// <param name="relAddr">If set to <c>true</c> address is relative to current position.</param>
         /// <param name="sync">If set to <c>true</c> we request the sync bytes for data sectors.</param>
         /// <param name="headerCodes">Header codes.</param>
         /// <param name="userData">If set to <c>true</c> we request the user data.</param>
         /// <param name="edcEcc">If set to <c>true</c> we request the EDC/ECC fields for data sectors.</param>
-        /// <param name="C2Error">C2 error options.</param>
+        /// <param name="c2Error">C2 error options.</param>
         /// <param name="subchannel">Subchannel selection.</param>
         public bool ReadCd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint transferLength,
-                           MmcSectorTypes expectedSectorType, bool DAP, bool relAddr, bool sync,
-                           MmcHeaderCodes headerCodes, bool userData, bool edcEcc, MmcErrorField C2Error,
+                           MmcSectorTypes expectedSectorType, bool dap, bool relAddr, bool sync,
+                           MmcHeaderCodes headerCodes, bool userData, bool edcEcc, MmcErrorField c2Error,
                            MmcSubchannel subchannel, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
@@ -423,7 +423,7 @@ namespace DiscImageChef.Devices
 
             cdb[0] = (byte)ScsiCommands.ReadCd;
             cdb[1] = (byte)((byte)expectedSectorType << 2);
-            if(DAP) cdb[1] += 0x02;
+            if(dap) cdb[1] += 0x02;
             if(relAddr) cdb[1] += 0x01;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
             cdb[3] = (byte)((lba & 0xFF0000) >> 16);
@@ -432,7 +432,7 @@ namespace DiscImageChef.Devices
             cdb[6] = (byte)((transferLength & 0xFF0000) >> 16);
             cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
             cdb[8] = (byte)(transferLength & 0xFF);
-            cdb[9] = (byte)((byte)C2Error << 1);
+            cdb[9] = (byte)((byte)c2Error << 1);
             cdb[9] += (byte)((byte)headerCodes << 5);
             if(sync) cdb[9] += 0x80;
             if(userData) cdb[9] += 0x10;
@@ -462,16 +462,16 @@ namespace DiscImageChef.Devices
         /// <param name="endMsf">End MM:SS:FF of read encoded as 0x00MMSSFF.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="expectedSectorType">Expected sector type.</param>
-        /// <param name="DAP">If set to <c>true</c> CD-DA should be modified by mute and interpolation</param>
+        /// <param name="dap">If set to <c>true</c> CD-DA should be modified by mute and interpolation</param>
         /// <param name="sync">If set to <c>true</c> we request the sync bytes for data sectors.</param>
         /// <param name="headerCodes">Header codes.</param>
         /// <param name="userData">If set to <c>true</c> we request the user data.</param>
         /// <param name="edcEcc">If set to <c>true</c> we request the EDC/ECC fields for data sectors.</param>
-        /// <param name="C2Error">C2 error options.</param>
+        /// <param name="c2Error">C2 error options.</param>
         /// <param name="subchannel">Subchannel selection.</param>
         public bool ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf, uint blockSize,
-                              MmcSectorTypes expectedSectorType, bool DAP, bool sync, MmcHeaderCodes headerCodes,
-                              bool userData, bool edcEcc, MmcErrorField C2Error, MmcSubchannel subchannel, uint timeout,
+                              MmcSectorTypes expectedSectorType, bool dap, bool sync, MmcHeaderCodes headerCodes,
+                              bool userData, bool edcEcc, MmcErrorField c2Error, MmcSubchannel subchannel, uint timeout,
                               out double duration)
         {
             senseBuffer = new byte[32];
@@ -480,14 +480,14 @@ namespace DiscImageChef.Devices
 
             cdb[0] = (byte)ScsiCommands.ReadCdMsf;
             cdb[1] = (byte)((byte)expectedSectorType << 2);
-            if(DAP) cdb[1] += 0x02;
+            if(dap) cdb[1] += 0x02;
             cdb[3] = (byte)((startMsf & 0xFF0000) >> 16);
             cdb[4] = (byte)((startMsf & 0xFF00) >> 8);
             cdb[5] = (byte)(startMsf & 0xFF);
             cdb[6] = (byte)((endMsf & 0xFF0000) >> 16);
             cdb[7] = (byte)((endMsf & 0xFF00) >> 8);
             cdb[8] = (byte)(endMsf & 0xFF);
-            cdb[9] = (byte)((byte)C2Error << 1);
+            cdb[9] = (byte)((byte)c2Error << 1);
             cdb[9] += (byte)((byte)headerCodes << 5);
             if(sync) cdb[9] += 0x80;
             if(userData) cdb[9] += 0x10;

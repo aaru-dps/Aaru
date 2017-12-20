@@ -35,12 +35,12 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
     // TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
-    public class XENIX : PartPlugin
+    public class XENIX : PartitionPlugin
     {
         const ushort PAMAGIC = 0x1234;
         const int MAXPARTS = 16;
@@ -51,7 +51,7 @@ namespace DiscImageChef.PartPlugins
         public XENIX()
         {
             Name = "XENIX";
-            PluginUUID = new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
+            PluginUuid = new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)

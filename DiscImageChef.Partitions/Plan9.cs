@@ -34,22 +34,22 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
     // This is the most stupid or the most intelligent partition scheme ever done, pick or take
     // At sector 1 from offset, text resides (yes, TEXT) in following format:
     // "part type start end\n"
     // One line per partition, start and end relative to offset
     // e.g.: "part nvram 10110 10112\npart fossil 10112 3661056\n"
-    public class Plan9 : PartPlugin
+    public class Plan9 : PartitionPlugin
     {
         public Plan9()
         {
             Name = "Plan9 partition table";
-            PluginUUID = new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
+            PluginUuid = new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions,
+        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin, out List<Partition> partitions,
                                             ulong sectorOffset)
         {
             partitions = new List<Partition>();

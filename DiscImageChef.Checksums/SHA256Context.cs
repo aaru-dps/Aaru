@@ -39,16 +39,16 @@ namespace DiscImageChef.Checksums
     /// <summary>
     /// Provides a UNIX similar API to .NET SHA256.
     /// </summary>
-    public class SHA256Context
+    public class Sha256Context
     {
-        SHA256 _sha256Provider;
+        SHA256 sha256Provider;
 
         /// <summary>
         /// Initializes the SHA256 hash provider
         /// </summary>
         public void Init()
         {
-            _sha256Provider = SHA256.Create();
+            sha256Provider = SHA256.Create();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            _sha256Provider.TransformBlock(data, 0, (int)len, data, 0);
+            sha256Provider.TransformBlock(data, 0, (int)len, data, 0);
         }
 
         /// <summary>
@@ -75,8 +75,8 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            _sha256Provider.TransformFinalBlock(new byte[0], 0, 0);
-            return _sha256Provider.Hash;
+            sha256Provider.TransformFinalBlock(new byte[0], 0, 0);
+            return sha256Provider.Hash;
         }
 
         /// <summary>
@@ -84,12 +84,12 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            _sha256Provider.TransformFinalBlock(new byte[0], 0, 0);
+            sha256Provider.TransformFinalBlock(new byte[0], 0, 0);
             StringBuilder sha256Output = new StringBuilder();
 
-            for(int i = 0; i < _sha256Provider.Hash.Length; i++)
+            for(int i = 0; i < sha256Provider.Hash.Length; i++)
             {
-                sha256Output.Append(_sha256Provider.Hash[i].ToString("x2"));
+                sha256Output.Append(sha256Provider.Hash[i].ToString("x2"));
             }
 
             return sha256Output.ToString();
@@ -102,7 +102,7 @@ namespace DiscImageChef.Checksums
         public byte[] File(string filename)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            byte[] result = _sha256Provider.ComputeHash(fileStream);
+            byte[] result = sha256Provider.ComputeHash(fileStream);
             fileStream.Close();
             return result;
         }
@@ -115,7 +115,7 @@ namespace DiscImageChef.Checksums
         public string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            hash = _sha256Provider.ComputeHash(fileStream);
+            hash = sha256Provider.ComputeHash(fileStream);
             StringBuilder sha256Output = new StringBuilder();
 
             for(int i = 0; i < hash.Length; i++) { sha256Output.Append(hash[i].ToString("x2")); }
@@ -133,7 +133,7 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public string Data(byte[] data, uint len, out byte[] hash)
         {
-            hash = _sha256Provider.ComputeHash(data, 0, (int)len);
+            hash = sha256Provider.ComputeHash(data, 0, (int)len);
             StringBuilder sha256Output = new StringBuilder();
 
             for(int i = 0; i < hash.Length; i++) { sha256Output.Append(hash[i].ToString("x2")); }

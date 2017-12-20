@@ -63,43 +63,43 @@ namespace DiscImageChef.Devices.Windows
 
             if(buffer == null) return -1;
 
-            ScsiPassThroughDirectAndSenseBuffer sptd_sb = new ScsiPassThroughDirectAndSenseBuffer();
-            sptd_sb.sptd = new ScsiPassThroughDirect();
-            sptd_sb.SenseBuf = new byte[32];
-            sptd_sb.sptd.Cdb = new byte[16];
-            Array.Copy(cdb, sptd_sb.sptd.Cdb, cdb.Length);
-            sptd_sb.sptd.Length = (ushort)Marshal.SizeOf(sptd_sb.sptd);
-            sptd_sb.sptd.CdbLength = (byte)cdb.Length;
-            sptd_sb.sptd.SenseInfoLength = (byte)sptd_sb.SenseBuf.Length;
-            sptd_sb.sptd.DataIn = direction;
-            sptd_sb.sptd.DataTransferLength = (uint)buffer.Length;
-            sptd_sb.sptd.TimeOutValue = timeout;
-            sptd_sb.sptd.DataBuffer = Marshal.AllocHGlobal(buffer.Length);
-            sptd_sb.sptd.SenseInfoOffset = (uint)Marshal.SizeOf(sptd_sb.sptd);
+            ScsiPassThroughDirectAndSenseBuffer sptdSb = new ScsiPassThroughDirectAndSenseBuffer();
+            sptdSb.sptd = new ScsiPassThroughDirect();
+            sptdSb.SenseBuf = new byte[32];
+            sptdSb.sptd.Cdb = new byte[16];
+            Array.Copy(cdb, sptdSb.sptd.Cdb, cdb.Length);
+            sptdSb.sptd.Length = (ushort)Marshal.SizeOf(sptdSb.sptd);
+            sptdSb.sptd.CdbLength = (byte)cdb.Length;
+            sptdSb.sptd.SenseInfoLength = (byte)sptdSb.SenseBuf.Length;
+            sptdSb.sptd.DataIn = direction;
+            sptdSb.sptd.DataTransferLength = (uint)buffer.Length;
+            sptdSb.sptd.TimeOutValue = timeout;
+            sptdSb.sptd.DataBuffer = Marshal.AllocHGlobal(buffer.Length);
+            sptdSb.sptd.SenseInfoOffset = (uint)Marshal.SizeOf(sptdSb.sptd);
 
             uint k = 0;
             int error = 0;
 
-            Marshal.Copy(buffer, 0, sptd_sb.sptd.DataBuffer, buffer.Length);
+            Marshal.Copy(buffer, 0, sptdSb.sptd.DataBuffer, buffer.Length);
 
             DateTime start = DateTime.Now;
-            bool hasError = !Extern.DeviceIoControlScsi(fd, WindowsIoctl.IOCTL_SCSI_PASS_THROUGH_DIRECT, ref sptd_sb,
-                                                        (uint)Marshal.SizeOf(sptd_sb), ref sptd_sb,
-                                                        (uint)Marshal.SizeOf(sptd_sb), ref k, IntPtr.Zero);
+            bool hasError = !Extern.DeviceIoControlScsi(fd, WindowsIoctl.IoctlScsiPassThroughDirect, ref sptdSb,
+                                                        (uint)Marshal.SizeOf(sptdSb), ref sptdSb,
+                                                        (uint)Marshal.SizeOf(sptdSb), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
             if(hasError) error = Marshal.GetLastWin32Error();
 
-            Marshal.Copy(sptd_sb.sptd.DataBuffer, buffer, 0, buffer.Length);
+            Marshal.Copy(sptdSb.sptd.DataBuffer, buffer, 0, buffer.Length);
 
-            sense |= sptd_sb.sptd.ScsiStatus != 0;
+            sense |= sptdSb.sptd.ScsiStatus != 0;
 
             senseBuffer = new byte[32];
-            Array.Copy(sptd_sb.SenseBuf, senseBuffer, 32);
+            Array.Copy(sptdSb.SenseBuf, senseBuffer, 32);
 
             duration = (end - start).TotalMilliseconds;
 
-            Marshal.FreeHGlobal(sptd_sb.sptd.DataBuffer);
+            Marshal.FreeHGlobal(sptdSb.sptd.DataBuffer);
 
             return error;
         }
@@ -116,7 +116,7 @@ namespace DiscImageChef.Devices.Windows
 
             uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughDirect)) + Marshal.SizeOf(typeof(uint)));
 
-            AtaPassThroughDirectWithBuffer aptd_buf = new AtaPassThroughDirectWithBuffer
+            AtaPassThroughDirectWithBuffer aptdBuf = new AtaPassThroughDirectWithBuffer
             {
                 aptd = new AtaPassThroughDirect
                 {
@@ -140,49 +140,49 @@ namespace DiscImageChef.Devices.Windows
             };
 
             if(protocol == AtaProtocol.PioIn || protocol == AtaProtocol.UDmaIn || protocol == AtaProtocol.Dma)
-                aptd_buf.aptd.AtaFlags = AtaFlags.DataIn;
+                aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
             else if(protocol == AtaProtocol.PioOut || protocol == AtaProtocol.UDmaOut)
-                aptd_buf.aptd.AtaFlags = AtaFlags.DataOut;
+                aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
 
             switch(protocol)
             {
                 case AtaProtocol.Dma:
                 case AtaProtocol.DmaQueued:
-                case AtaProtocol.FPDma:
+                case AtaProtocol.FpDma:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
-                    aptd_buf.aptd.AtaFlags |= AtaFlags.DMA;
+                    aptdBuf.aptd.AtaFlags |= AtaFlags.Dma;
                     break;
             }
 
             // Unknown if needed
-            aptd_buf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
+            aptdBuf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
             uint k = 0;
             int error = 0;
 
-            Array.Copy(buffer, 0, aptd_buf.dataBuffer, 0, buffer.Length);
+            Array.Copy(buffer, 0, aptdBuf.dataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd_buf,
-                                               (uint)Marshal.SizeOf(aptd_buf), ref aptd_buf,
-                                               (uint)Marshal.SizeOf(aptd_buf), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThrough, ref aptdBuf,
+                                               (uint)Marshal.SizeOf(aptdBuf), ref aptdBuf,
+                                               (uint)Marshal.SizeOf(aptdBuf), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
             if(sense) error = Marshal.GetLastWin32Error();
 
-            Array.Copy(aptd_buf.dataBuffer, 0, buffer, 0, buffer.Length);
+            Array.Copy(aptdBuf.dataBuffer, 0, buffer, 0, buffer.Length);
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.command = aptd_buf.aptd.CurrentTaskFile.Command;
-            errorRegisters.cylinderHigh = aptd_buf.aptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.cylinderLow = aptd_buf.aptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.deviceHead = aptd_buf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.error = aptd_buf.aptd.CurrentTaskFile.Error;
-            errorRegisters.sector = aptd_buf.aptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.sectorCount = aptd_buf.aptd.CurrentTaskFile.SectorCount;
-            errorRegisters.status = aptd_buf.aptd.CurrentTaskFile.Status;
+            errorRegisters.command = aptdBuf.aptd.CurrentTaskFile.Command;
+            errorRegisters.cylinderHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.cylinderLow = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.deviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.error = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.sector = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.sectorCount = aptdBuf.aptd.CurrentTaskFile.SectorCount;
+            errorRegisters.status = aptdBuf.aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
 
@@ -201,7 +201,7 @@ namespace DiscImageChef.Devices.Windows
 
             uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughDirect)) + Marshal.SizeOf(typeof(uint)));
 
-            AtaPassThroughDirectWithBuffer aptd_buf = new AtaPassThroughDirectWithBuffer
+            AtaPassThroughDirectWithBuffer aptdBuf = new AtaPassThroughDirectWithBuffer
             {
                 aptd = new AtaPassThroughDirect
                 {
@@ -225,49 +225,49 @@ namespace DiscImageChef.Devices.Windows
             };
 
             if(protocol == AtaProtocol.PioIn || protocol == AtaProtocol.UDmaIn || protocol == AtaProtocol.Dma)
-                aptd_buf.aptd.AtaFlags = AtaFlags.DataIn;
+                aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
             else if(protocol == AtaProtocol.PioOut || protocol == AtaProtocol.UDmaOut)
-                aptd_buf.aptd.AtaFlags = AtaFlags.DataOut;
+                aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
 
             switch(protocol)
             {
                 case AtaProtocol.Dma:
                 case AtaProtocol.DmaQueued:
-                case AtaProtocol.FPDma:
+                case AtaProtocol.FpDma:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
-                    aptd_buf.aptd.AtaFlags |= AtaFlags.DMA;
+                    aptdBuf.aptd.AtaFlags |= AtaFlags.Dma;
                     break;
             }
 
             // Unknown if needed
-            aptd_buf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
+            aptdBuf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
             uint k = 0;
             int error = 0;
 
-            Array.Copy(buffer, 0, aptd_buf.dataBuffer, 0, buffer.Length);
+            Array.Copy(buffer, 0, aptdBuf.dataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd_buf,
-                                               (uint)Marshal.SizeOf(aptd_buf), ref aptd_buf,
-                                               (uint)Marshal.SizeOf(aptd_buf), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThrough, ref aptdBuf,
+                                               (uint)Marshal.SizeOf(aptdBuf), ref aptdBuf,
+                                               (uint)Marshal.SizeOf(aptdBuf), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
             if(sense) error = Marshal.GetLastWin32Error();
 
-            Array.Copy(aptd_buf.dataBuffer, 0, buffer, 0, buffer.Length);
+            Array.Copy(aptdBuf.dataBuffer, 0, buffer, 0, buffer.Length);
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.command = aptd_buf.aptd.CurrentTaskFile.Command;
-            errorRegisters.lbaHigh = aptd_buf.aptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.lbaMid = aptd_buf.aptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.deviceHead = aptd_buf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.error = aptd_buf.aptd.CurrentTaskFile.Error;
-            errorRegisters.lbaLow = aptd_buf.aptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.sectorCount = aptd_buf.aptd.CurrentTaskFile.SectorCount;
-            errorRegisters.status = aptd_buf.aptd.CurrentTaskFile.Status;
+            errorRegisters.command = aptdBuf.aptd.CurrentTaskFile.Command;
+            errorRegisters.lbaHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.lbaMid = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.deviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.error = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.lbaLow = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.sectorCount = aptdBuf.aptd.CurrentTaskFile.SectorCount;
+            errorRegisters.status = aptdBuf.aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
 
@@ -286,7 +286,7 @@ namespace DiscImageChef.Devices.Windows
 
             uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughDirect)) + Marshal.SizeOf(typeof(uint)));
 
-            AtaPassThroughDirectWithBuffer aptd_buf = new AtaPassThroughDirectWithBuffer
+            AtaPassThroughDirectWithBuffer aptdBuf = new AtaPassThroughDirectWithBuffer
             {
                 aptd = new AtaPassThroughDirect
                 {
@@ -318,53 +318,53 @@ namespace DiscImageChef.Devices.Windows
             };
 
             if(protocol == AtaProtocol.PioIn || protocol == AtaProtocol.UDmaIn || protocol == AtaProtocol.Dma)
-                aptd_buf.aptd.AtaFlags = AtaFlags.DataIn;
+                aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
             else if(protocol == AtaProtocol.PioOut || protocol == AtaProtocol.UDmaOut)
-                aptd_buf.aptd.AtaFlags = AtaFlags.DataOut;
+                aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
 
             switch(protocol)
             {
                 case AtaProtocol.Dma:
                 case AtaProtocol.DmaQueued:
-                case AtaProtocol.FPDma:
+                case AtaProtocol.FpDma:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
-                    aptd_buf.aptd.AtaFlags |= AtaFlags.DMA;
+                    aptdBuf.aptd.AtaFlags |= AtaFlags.Dma;
                     break;
             }
 
             // Unknown if needed
-            aptd_buf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
+            aptdBuf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
             uint k = 0;
             int error = 0;
 
-            Array.Copy(buffer, 0, aptd_buf.dataBuffer, 0, buffer.Length);
+            Array.Copy(buffer, 0, aptdBuf.dataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd_buf,
-                                               (uint)Marshal.SizeOf(aptd_buf), ref aptd_buf,
-                                               (uint)Marshal.SizeOf(aptd_buf), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThrough, ref aptdBuf,
+                                               (uint)Marshal.SizeOf(aptdBuf), ref aptdBuf,
+                                               (uint)Marshal.SizeOf(aptdBuf), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
             if(sense) error = Marshal.GetLastWin32Error();
 
-            Array.Copy(aptd_buf.dataBuffer, 0, buffer, 0, buffer.Length);
+            Array.Copy(aptdBuf.dataBuffer, 0, buffer, 0, buffer.Length);
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.sectorCount = (ushort)((aptd_buf.aptd.PreviousTaskFile.SectorCount << 8) +
-                                                  aptd_buf.aptd.CurrentTaskFile.SectorCount);
-            errorRegisters.lbaLow = (ushort)((aptd_buf.aptd.PreviousTaskFile.SectorNumber << 8) +
-                                             aptd_buf.aptd.CurrentTaskFile.SectorNumber);
-            errorRegisters.lbaMid = (ushort)((aptd_buf.aptd.PreviousTaskFile.CylinderLow << 8) +
-                                             aptd_buf.aptd.CurrentTaskFile.CylinderLow);
-            errorRegisters.lbaHigh = (ushort)((aptd_buf.aptd.PreviousTaskFile.CylinderHigh << 8) +
-                                              aptd_buf.aptd.CurrentTaskFile.CylinderHigh);
-            errorRegisters.command = aptd_buf.aptd.CurrentTaskFile.Command;
-            errorRegisters.deviceHead = aptd_buf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.error = aptd_buf.aptd.CurrentTaskFile.Error;
-            errorRegisters.status = aptd_buf.aptd.CurrentTaskFile.Status;
+            errorRegisters.sectorCount = (ushort)((aptdBuf.aptd.PreviousTaskFile.SectorCount << 8) +
+                                                  aptdBuf.aptd.CurrentTaskFile.SectorCount);
+            errorRegisters.lbaLow = (ushort)((aptdBuf.aptd.PreviousTaskFile.SectorNumber << 8) +
+                                             aptdBuf.aptd.CurrentTaskFile.SectorNumber);
+            errorRegisters.lbaMid = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderLow << 8) +
+                                             aptdBuf.aptd.CurrentTaskFile.CylinderLow);
+            errorRegisters.lbaHigh = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderHigh << 8) +
+                                              aptdBuf.aptd.CurrentTaskFile.CylinderHigh);
+            errorRegisters.command = aptdBuf.aptd.CurrentTaskFile.Command;
+            errorRegisters.deviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.error = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.status = aptdBuf.aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
 
@@ -403,7 +403,7 @@ namespace DiscImageChef.Devices.Windows
             Array.Copy(buffer, 0, iptd.DataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IOCTL_IDE_PASS_THROUGH, ref iptd,
+            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IoctlIdePassThrough, ref iptd,
                                                (uint)Marshal.SizeOf(iptd), ref iptd, (uint)Marshal.SizeOf(iptd), ref k,
                                                IntPtr.Zero);
             DateTime end = DateTime.Now;
@@ -463,7 +463,7 @@ namespace DiscImageChef.Devices.Windows
             Array.Copy(buffer, 0, iptd.DataBuffer, 0, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IOCTL_IDE_PASS_THROUGH, ref iptd,
+            sense = !Extern.DeviceIoControlIde(fd, WindowsIoctl.IoctlIdePassThrough, ref iptd,
                                                (uint)Marshal.SizeOf(iptd), ref iptd, (uint)Marshal.SizeOf(iptd), ref k,
                                                IntPtr.Zero);
             DateTime end = DateTime.Now;
@@ -494,7 +494,7 @@ namespace DiscImageChef.Devices.Windows
             StorageDeviceNumber sdn = new StorageDeviceNumber();
             sdn.deviceNumber = -1;
             uint k = 0;
-            if(!Extern.DeviceIoControlGetDeviceNumber(deviceHandle, WindowsIoctl.IOCTL_STORAGE_GET_DEVICE_NUMBER,
+            if(!Extern.DeviceIoControlGetDeviceNumber(deviceHandle, WindowsIoctl.IoctlStorageGetDeviceNumber,
                                                       IntPtr.Zero, 0, ref sdn, (uint)Marshal.SizeOf(sdn), ref k,
                                                       IntPtr.Zero)) { return uint.MaxValue; }
 
@@ -507,7 +507,7 @@ namespace DiscImageChef.Devices.Windows
 
             if(devNumber == uint.MaxValue) return null;
 
-            SafeFileHandle hDevInfo = Extern.SetupDiGetClassDevs(ref Consts.GUID_DEVINTERFACE_DISK, IntPtr.Zero,
+            SafeFileHandle hDevInfo = Extern.SetupDiGetClassDevs(ref Consts.GuidDevinterfaceDisk, IntPtr.Zero,
                                                                  IntPtr.Zero,
                                                                  DeviceGetClassFlags.Present |
                                                                  DeviceGetClassFlags.DeviceInterface);
@@ -524,7 +524,7 @@ namespace DiscImageChef.Devices.Windows
             {
                 buffer = new byte[2048];
 
-                if(!Extern.SetupDiEnumDeviceInterfaces(hDevInfo, IntPtr.Zero, ref Consts.GUID_DEVINTERFACE_DISK, index,
+                if(!Extern.SetupDiEnumDeviceInterfaces(hDevInfo, IntPtr.Zero, ref Consts.GuidDevinterfaceDisk, index,
                                                        ref spdid)) break;
 
                 uint size = 0;
@@ -581,9 +581,9 @@ namespace DiscImageChef.Devices.Windows
             SffdiskQueryDeviceProtocolData queryData1 = new SffdiskQueryDeviceProtocolData();
             queryData1.size = (ushort)Marshal.SizeOf(queryData1);
             uint bytesReturned;
-            Extern.DeviceIoControl(fd, WindowsIoctl.IOCTL_SFFDISK_QUERY_DEVICE_PROTOCOL, IntPtr.Zero, 0, ref queryData1,
+            Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskQueryDeviceProtocol, IntPtr.Zero, 0, ref queryData1,
                                    queryData1.size, out bytesReturned, IntPtr.Zero);
-            return queryData1.protocolGuid.Equals(Consts.GUID_SFF_PROTOCOL_SD);
+            return queryData1.protocolGuid.Equals(Consts.GuidSffProtocolSd);
         }
 
         /// <summary>
@@ -617,46 +617,46 @@ namespace DiscImageChef.Devices.Windows
             commandDescriptor.commandCode = (byte)command;
             commandDescriptor.cmdClass = isApplication ? SdCommandClass.AppCmd : SdCommandClass.Standard;
             commandDescriptor.transferDirection = write ? SdTransferDirection.Write : SdTransferDirection.Read;
-            commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandADTC)
+            commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc)
                                                  ? SdTransferType.SingleBlock
                                                  : SdTransferType.CmdOnly;
             commandDescriptor.responseType = 0;
 
-            if(flags.HasFlag(MmcFlags.Response_R1) || flags.HasFlag(MmcFlags.ResponseSPI_R1))
+            if(flags.HasFlag(MmcFlags.ResponseR1) || flags.HasFlag(MmcFlags.ResponseSpiR1))
                 commandDescriptor.responseType = SdResponseType.R1;
-            if(flags.HasFlag(MmcFlags.Response_R1b) || flags.HasFlag(MmcFlags.ResponseSPI_R1b))
+            if(flags.HasFlag(MmcFlags.ResponseR1B) || flags.HasFlag(MmcFlags.ResponseSpiR1B))
                 commandDescriptor.responseType = SdResponseType.R1b;
-            if(flags.HasFlag(MmcFlags.Response_R2) || flags.HasFlag(MmcFlags.ResponseSPI_R2))
+            if(flags.HasFlag(MmcFlags.ResponseR2) || flags.HasFlag(MmcFlags.ResponseSpiR2))
                 commandDescriptor.responseType = SdResponseType.R2;
-            if(flags.HasFlag(MmcFlags.Response_R3) || flags.HasFlag(MmcFlags.ResponseSPI_R3))
+            if(flags.HasFlag(MmcFlags.ResponseR3) || flags.HasFlag(MmcFlags.ResponseSpiR3))
                 commandDescriptor.responseType = SdResponseType.R3;
-            if(flags.HasFlag(MmcFlags.Response_R4) || flags.HasFlag(MmcFlags.ResponseSPI_R4))
+            if(flags.HasFlag(MmcFlags.ResponseR4) || flags.HasFlag(MmcFlags.ResponseSpiR4))
                 commandDescriptor.responseType = SdResponseType.R4;
-            if(flags.HasFlag(MmcFlags.Response_R5) || flags.HasFlag(MmcFlags.ResponseSPI_R5))
+            if(flags.HasFlag(MmcFlags.ResponseR5) || flags.HasFlag(MmcFlags.ResponseSpiR5))
                 commandDescriptor.responseType = SdResponseType.R5;
-            if(flags.HasFlag(MmcFlags.Response_R6)) commandDescriptor.responseType = SdResponseType.R6;
+            if(flags.HasFlag(MmcFlags.ResponseR6)) commandDescriptor.responseType = SdResponseType.R6;
 
-            byte[] command_b = new byte[commandData.size + commandData.protocolArgumentSize +
+            byte[] commandB = new byte[commandData.size + commandData.protocolArgumentSize +
                                         commandData.deviceDataBufferSize];
-            IntPtr hBuf = Marshal.AllocHGlobal(command_b.Length);
+            IntPtr hBuf = Marshal.AllocHGlobal(commandB.Length);
             Marshal.StructureToPtr(commandData, hBuf, true);
             IntPtr descriptorOffset = new IntPtr(hBuf.ToInt32() + commandData.size);
             Marshal.StructureToPtr(commandDescriptor, descriptorOffset, true);
-            Marshal.Copy(hBuf, command_b, 0, command_b.Length);
+            Marshal.Copy(hBuf, commandB, 0, commandB.Length);
             Marshal.FreeHGlobal(hBuf);
 
             uint bytesReturned;
             int error = 0;
             DateTime start = DateTime.Now;
-            sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IOCTL_SFFDISK_DEVICE_COMMAND, command_b,
-                                            (uint)command_b.Length, command_b, (uint)command_b.Length,
+            sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB,
+                                            (uint)commandB.Length, commandB, (uint)commandB.Length,
                                             out bytesReturned, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
             if(sense) error = Marshal.GetLastWin32Error();
 
             buffer = new byte[blockSize * blocks];
-            Buffer.BlockCopy(command_b, command_b.Length - buffer.Length, buffer, 0, buffer.Length);
+            Buffer.BlockCopy(commandB, commandB.Length - buffer.Length, buffer, 0, buffer.Length);
 
             response = new uint[4];
             duration = (end - start).TotalMilliseconds;

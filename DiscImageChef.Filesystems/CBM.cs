@@ -54,7 +54,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = new Claunia.Encoding.PETSCII();
         }
 
-        public CBM(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public CBM(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Commodore file system";
             PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
@@ -179,18 +179,18 @@ namespace DiscImageChef.Filesystems
             public short fill3;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start > 0) return false;
 
-            if(imagePlugin.ImageInfo.sectorSize != 256) return false;
+            if(imagePlugin.ImageInfo.SectorSize != 256) return false;
 
-            if(imagePlugin.ImageInfo.sectors != 683 && imagePlugin.ImageInfo.sectors != 768 &&
-               imagePlugin.ImageInfo.sectors != 1366 && imagePlugin.ImageInfo.sectors != 3200) return false;
+            if(imagePlugin.ImageInfo.Sectors != 683 && imagePlugin.ImageInfo.Sectors != 768 &&
+               imagePlugin.ImageInfo.Sectors != 1366 && imagePlugin.ImageInfo.Sectors != 3200) return false;
 
             byte[] sector;
 
-            if(imagePlugin.ImageInfo.sectors == 3200)
+            if(imagePlugin.ImageInfo.Sectors == 3200)
             {
                 sector = imagePlugin.ReadSector(1560);
                 CommodoreHeader cbmHdr = new CommodoreHeader();
@@ -218,7 +218,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] sector;
@@ -229,10 +229,10 @@ namespace DiscImageChef.Filesystems
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "Commodore file system";
-            xmlFSType.Clusters = (long)imagePlugin.ImageInfo.sectors;
+            xmlFSType.Clusters = (long)imagePlugin.ImageInfo.Sectors;
             xmlFSType.ClusterSize = 256;
 
-            if(imagePlugin.ImageInfo.sectors == 3200)
+            if(imagePlugin.ImageInfo.Sectors == 3200)
             {
                 sector = imagePlugin.ReadSector(1560);
                 CommodoreHeader cbmHdr = new CommodoreHeader();

@@ -37,7 +37,7 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
-    static class USB
+    static class Usb
     {
         internal static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
         {
@@ -54,10 +54,10 @@ namespace DiscImageChef.Core.Devices.Report
             if(pressedKey.Key == ConsoleKey.Y)
             {
                 report.USB = new usbType();
-                report.USB.Manufacturer = dev.USBManufacturerString;
-                report.USB.Product = dev.USBProductString;
-                report.USB.ProductID = dev.USBProductID;
-                report.USB.VendorID = dev.USBVendorID;
+                report.USB.Manufacturer = dev.UsbManufacturerString;
+                report.USB.Product = dev.UsbProductString;
+                report.USB.ProductID = dev.UsbProductId;
+                report.USB.VendorID = dev.UsbVendorId;
 
                 pressedKey = new ConsoleKeyInfo();
                 while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
@@ -69,7 +69,7 @@ namespace DiscImageChef.Core.Devices.Report
 
                 report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
                 removable = report.USB.RemovableMedia;
-                if(debug) report.USB.Descriptors = dev.USBDescriptors;
+                if(debug) report.USB.Descriptors = dev.UsbDescriptors;
             }
         }
     }

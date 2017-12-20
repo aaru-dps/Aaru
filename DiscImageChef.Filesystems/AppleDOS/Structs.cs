@@ -37,7 +37,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
     public partial class AppleDOS : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VTOC
+        struct Vtoc
         {
             public byte unused1;
             public byte catalogTrack;

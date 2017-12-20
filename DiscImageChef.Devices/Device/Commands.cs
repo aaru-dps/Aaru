@@ -50,7 +50,7 @@ namespace DiscImageChef.Devices
         public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                    ScsiDirection direction, out double duration, out bool sense)
         {
-            return Command.SendScsiCommand(platformID, fd, cdb, ref buffer, out senseBuffer, timeout, direction,
+            return Command.SendScsiCommand(platformId, fd, cdb, ref buffer, out senseBuffer, timeout, direction,
                                            out duration, out sense);
         }
 
@@ -71,7 +71,7 @@ namespace DiscImageChef.Devices
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,
+            return Command.SendAtaCommand(platformId, fd, registers, out errorRegisters, protocol, transferRegister,
                                           ref buffer, timeout, transferBlocks, out duration, out sense);
         }
 
@@ -92,7 +92,7 @@ namespace DiscImageChef.Devices
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,
+            return Command.SendAtaCommand(platformId, fd, registers, out errorRegisters, protocol, transferRegister,
                                           ref buffer, timeout, transferBlocks, out duration, out sense);
         }
 
@@ -113,7 +113,7 @@ namespace DiscImageChef.Devices
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,
+            return Command.SendAtaCommand(platformId, fd, registers, out errorRegisters, protocol, transferRegister,
                                           ref buffer, timeout, transferBlocks, out duration, out sense);
         }
 
@@ -137,7 +137,7 @@ namespace DiscImageChef.Devices
                                   uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
                                   out double duration, out bool sense, uint timeout = 0)
         {
-            if(command == MmcCommands.SendCID && cachedCid != null)
+            if(command == MmcCommands.SendCid && cachedCid != null)
             {
                 System.DateTime start = System.DateTime.Now;
                 buffer = new byte[cachedCid.Length];
@@ -149,7 +149,7 @@ namespace DiscImageChef.Devices
                 return 0;
             }
 
-            if(command == MmcCommands.SendCSD && cachedCid != null)
+            if(command == MmcCommands.SendCsd && cachedCid != null)
             {
                 System.DateTime start = System.DateTime.Now;
                 buffer = new byte[cachedCsd.Length];
@@ -161,7 +161,7 @@ namespace DiscImageChef.Devices
                 return 0;
             }
 
-            if(command == (MmcCommands)SecureDigitalCommands.SendSCR && cachedScr != null)
+            if(command == (MmcCommands)SecureDigitalCommands.SendScr && cachedScr != null)
             {
                 System.DateTime start = System.DateTime.Now;
                 buffer = new byte[cachedScr.Length];
@@ -186,7 +186,7 @@ namespace DiscImageChef.Devices
                 return 0;
             }
 
-            return Command.SendMmcCommand(platformID, fd, command, write, isApplication, flags, argument, blockSize,
+            return Command.SendMmcCommand(platformId, fd, command, write, isApplication, flags, argument, blockSize,
                                           blocks, ref buffer, out response, out duration, out sense, timeout);
         }
     }

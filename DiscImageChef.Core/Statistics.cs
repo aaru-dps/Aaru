@@ -570,7 +570,7 @@ namespace DiscImageChef.Core
                 if(CurrentStats.Devices == null) CurrentStats.Devices = new List<DeviceStats>();
 
                 string deviceBus;
-                if(dev.IsUSB) deviceBus = "USB";
+                if(dev.IsUsb) deviceBus = "USB";
                 else if(dev.IsFireWire) deviceBus = "FireWire";
                 else deviceBus = dev.Type.ToString();
 

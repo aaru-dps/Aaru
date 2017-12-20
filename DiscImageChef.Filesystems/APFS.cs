@@ -57,7 +57,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public APFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public APFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple File System";
             PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
@@ -76,7 +76,7 @@ namespace DiscImageChef.Filesystems
             public ulong containerBlocks;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -97,7 +97,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();

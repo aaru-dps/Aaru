@@ -38,7 +38,7 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report.SCSI
 {
-    internal static class SSC
+    internal static class Ssc
     {
         internal static void Report(Device dev, ref DeviceReport report, bool debug)
         {
@@ -57,23 +57,23 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             sense = dev.ReadBlockLimits(out buffer, out senseBuffer, timeout, out duration);
             if(!sense)
             {
-                Decoders.SCSI.SSC.BlockLimits.BlockLimitsData? decBL = Decoders.SCSI.SSC.BlockLimits.Decode(buffer);
-                if(decBL.HasValue)
+                Decoders.SCSI.SSC.BlockLimits.BlockLimitsData? decBl = Decoders.SCSI.SSC.BlockLimits.Decode(buffer);
+                if(decBl.HasValue)
                 {
-                    if(decBL.Value.granularity > 0)
+                    if(decBl.Value.granularity > 0)
                     {
                         report.SCSI.SequentialDevice.BlockSizeGranularitySpecified = true;
-                        report.SCSI.SequentialDevice.BlockSizeGranularity = decBL.Value.granularity;
+                        report.SCSI.SequentialDevice.BlockSizeGranularity = decBl.Value.granularity;
                     }
-                    if(decBL.Value.maxBlockLen > 0)
+                    if(decBl.Value.maxBlockLen > 0)
                     {
                         report.SCSI.SequentialDevice.MaxBlockLengthSpecified = true;
-                        report.SCSI.SequentialDevice.MaxBlockLength = decBL.Value.maxBlockLen;
+                        report.SCSI.SequentialDevice.MaxBlockLength = decBl.Value.maxBlockLen;
                     }
-                    if(decBL.Value.minBlockLen > 0)
+                    if(decBl.Value.minBlockLen > 0)
                     {
                         report.SCSI.SequentialDevice.MinBlockLengthSpecified = true;
-                        report.SCSI.SequentialDevice.MinBlockLength = decBL.Value.minBlockLen;
+                        report.SCSI.SequentialDevice.MinBlockLength = decBl.Value.minBlockLen;
                     }
                 }
             }
@@ -225,7 +225,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(!sense && !dev.Error)
                         {
                             report.SCSI.SupportsModeSense10 = true;
-                            decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.SCSIType);
+                            decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.ScsiType);
                             if(debug) seqTest.ModeSense10Data = buffer;
                         }
 
@@ -234,7 +234,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(!sense && !dev.Error)
                         {
                             report.SCSI.SupportsModeSense6 = true;
-                            if(!decMode.HasValue) decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
+                            if(!decMode.HasValue) decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.ScsiType);
                             if(debug) seqTest.ModeSense6Data = buffer;
                         }
 

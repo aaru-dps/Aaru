@@ -38,7 +38,7 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
-    public static class ATA
+    public static class Ata
     {
         public static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
         {
@@ -50,11 +50,11 @@ namespace DiscImageChef.Core.Devices.Report
             uint timeout = 5;
             ConsoleKeyInfo pressedKey;
 
-            if(dev.IsUSB) USB.Report(dev, ref report, debug, ref removable);
+            if(dev.IsUsb) Usb.Report(dev, ref report, debug, ref removable);
 
             if(dev.IsFireWire) FireWire.Report(dev, ref report, debug, ref removable);
 
-            if(dev.IsPCMCIA) PCMCIA.Report(dev, ref report, debug, ref removable);
+            if(dev.IsPcmcia) Pcmcia.Report(dev, ref report, debug, ref removable);
 
             DicConsole.WriteLine("Querying ATA IDENTIFY...");
 

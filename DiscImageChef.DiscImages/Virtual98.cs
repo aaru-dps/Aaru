@@ -40,7 +40,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.DiscImages
 {
     // Info from Neko Project II emulator
     public class Virtual98 : ImagePlugin
@@ -67,33 +67,33 @@ namespace DiscImageChef.ImagePlugins
         public Virtual98()
         {
             Name = "Virtual98 Disk Image";
-            PluginUUID = new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
+            PluginUuid = new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
             ImageInfo = new ImageInfo()
             {
-                readableSectorTags = new List<SectorTagType>(),
-                readableMediaTags = new List<MediaTagType>(),
-                imageHasPartitions = false,
-                imageHasSessions = false,
-                imageVersion = null,
-                imageApplication = null,
-                imageApplicationVersion = null,
-                imageCreator = null,
-                imageComments = null,
-                mediaManufacturer = null,
-                mediaModel = null,
-                mediaSerialNumber = null,
-                mediaBarcode = null,
-                mediaPartNumber = null,
-                mediaSequence = 0,
-                lastMediaSequence = 0,
-                driveManufacturer = null,
-                driveModel = null,
-                driveSerialNumber = null,
-                driveFirmwareRevision = null
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
             };
         }
 
-        Virtual98Header v98hdr;
+        Virtual98Header v98Hdr;
         Filter nhdImageFilter;
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -103,30 +103,30 @@ namespace DiscImageChef.ImagePlugins
             // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            v98hdr = new Virtual98Header();
+            v98Hdr = new Virtual98Header();
 
-            if(stream.Length < Marshal.SizeOf(v98hdr)) return false;
+            if(stream.Length < Marshal.SizeOf(v98Hdr)) return false;
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(v98hdr)];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[Marshal.SizeOf(v98Hdr)];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-            v98hdr = (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
+            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
+            v98Hdr = (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
             handle.Free();
 
-            if(!v98hdr.signature.SequenceEqual(signature)) return false;
+            if(!v98Hdr.signature.SequenceEqual(signature)) return false;
 
             DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.signature = \"{0}\"",
-                                      StringHandlers.CToString(v98hdr.signature, shiftjis));
+                                      StringHandlers.CToString(v98Hdr.signature, shiftjis));
             DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.comment = \"{0}\"",
-                                      StringHandlers.CToString(v98hdr.comment, shiftjis));
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}", v98hdr.padding);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}", v98hdr.mbsize);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", v98hdr.sectorsize);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}", v98hdr.sectors);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}", v98hdr.surfaces);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}", v98hdr.cylinders);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}", v98hdr.totals);
+                                      StringHandlers.CToString(v98Hdr.comment, shiftjis));
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}", v98Hdr.padding);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}", v98Hdr.mbsize);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", v98Hdr.sectorsize);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}", v98Hdr.sectors);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}", v98Hdr.surfaces);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}", v98Hdr.cylinders);
+            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}", v98Hdr.totals);
 
             return true;
         }
@@ -138,30 +138,30 @@ namespace DiscImageChef.ImagePlugins
             // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            v98hdr = new Virtual98Header();
+            v98Hdr = new Virtual98Header();
 
-            if(stream.Length < Marshal.SizeOf(v98hdr)) return false;
+            if(stream.Length < Marshal.SizeOf(v98Hdr)) return false;
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(v98hdr)];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[Marshal.SizeOf(v98Hdr)];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-            v98hdr = (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
+            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
+            v98Hdr = (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
             handle.Free();
 
-            ImageInfo.mediaType = MediaType.GENERIC_HDD;
+            ImageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            ImageInfo.imageSize = (ulong)(stream.Length - 0xDC);
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectors = v98hdr.totals;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.sectorSize = v98hdr.sectorsize;
-            ImageInfo.cylinders = v98hdr.cylinders;
-            ImageInfo.heads = v98hdr.surfaces;
-            ImageInfo.sectorsPerTrack = v98hdr.sectors;
-            ImageInfo.imageComments = StringHandlers.CToString(v98hdr.comment, shiftjis);
+            ImageInfo.ImageSize = (ulong)(stream.Length - 0xDC);
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Sectors = v98Hdr.totals;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.SectorSize = v98Hdr.sectorsize;
+            ImageInfo.Cylinders = v98Hdr.cylinders;
+            ImageInfo.Heads = v98Hdr.surfaces;
+            ImageInfo.SectorsPerTrack = v98Hdr.sectors;
+            ImageInfo.ImageComments = StringHandlers.CToString(v98Hdr.comment, shiftjis);
 
             nhdImageFilter = imageFilter;
 
@@ -175,17 +175,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -195,47 +195,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -245,22 +245,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * ImageInfo.sectorSize];
+            byte[] buffer = new byte[length * ImageInfo.SectorSize];
 
             Stream stream = nhdImageFilter.GetDataForkStream();
 
             // V98 are lazy allocated
-            if((long)(0xDC + sectorAddress * ImageInfo.sectorSize) >= stream.Length) return buffer;
+            if((long)(0xDC + sectorAddress * ImageInfo.SectorSize) >= stream.Length) return buffer;
 
-            stream.Seek((long)(0xDC + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(0xDC + sectorAddress * ImageInfo.SectorSize), SeekOrigin.Begin);
 
-            int toRead = (int)(length * ImageInfo.sectorSize);
+            int toRead = (int)(length * ImageInfo.SectorSize);
 
             if(toRead + stream.Position > stream.Length) toRead = (int)(stream.Length - stream.Position);
 
@@ -410,18 +410,18 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

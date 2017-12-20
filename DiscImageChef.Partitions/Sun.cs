@@ -35,9 +35,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
-    public class SunDisklabel : PartPlugin
+    public class SunDisklabel : PartitionPlugin
     {
         /// <summary>Sun disklabel magic number</summary>
         const ushort DKL_MAGIC = 0xDABE;
@@ -103,10 +103,10 @@ namespace DiscImageChef.PartPlugins
         public SunDisklabel()
         {
             Name = "Sun Disklabel";
-            PluginUUID = new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
+            PluginUuid = new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin,
+        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
                                             out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<CommonTypes.Partition>();

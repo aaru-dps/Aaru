@@ -37,34 +37,34 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.DiscImages
 {
-    public class VDI : ImagePlugin
+    public class Vdi : ImagePlugin
     {
         #region Internal constants
-        const uint VDIMagic = 0xBEDA107F;
-        const uint VDIEmpty = 0xFFFFFFFF;
+        const uint VDI_MAGIC = 0xBEDA107F;
+        const uint VDI_EMPTY = 0xFFFFFFFF;
 
-        const string OracleVDI = "<<< Oracle VM VirtualBox Disk Image >>>\n";
+        const string ORACLE_VDI = "<<< Oracle VM VirtualBox Disk Image >>>\n";
         const string QEMUVDI = "<<< QEMU VM Virtual Disk Image >>>\n";
-        const string SunOldVDI = "<<< Sun xVM VirtualBox Disk Image >>>\n";
-        const string SunVDI = "<<< Sun VirtualBox Disk Image >>>\n";
-        const string InnotekVDI = "<<< innotek VirtualBox Disk Image >>>\n";
-        const string InnotekOldVDI = "<<< InnoTek VirtualBox Disk Image >>>\n";
+        const string SUN_OLD_VDI = "<<< Sun xVM VirtualBox Disk Image >>>\n";
+        const string SUN_VDI = "<<< Sun VirtualBox Disk Image >>>\n";
+        const string INNOTEK_VDI = "<<< innotek VirtualBox Disk Image >>>\n";
+        const string INNOTEK_OLD_VDI = "<<< InnoTek VirtualBox Disk Image >>>\n";
         #endregion
 
         #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         /// <summary>
         /// VDI disk image header, little-endian
         /// </summary>
-        struct VDIHeader
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct VdiHeader
         {
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] public string creator;
             /// <summary>
-            /// Magic, <see cref="VDIMagic"/>
+            /// Magic, <see cref="Vdi.VDI_MAGIC"/>
             /// </summary>
             public uint magic;
             /// <summary>
@@ -96,40 +96,40 @@ namespace DiscImageChef.DiscImages
         }
         #endregion
 
-        VDIHeader vHdr;
-        uint[] IBM;
+        VdiHeader vHdr;
+        uint[] ibm;
         Stream imageStream;
 
         Dictionary<ulong, byte[]> sectorCache;
 
-        const uint MaxCacheSize = 16777216;
-        uint maxCachedSectors = MaxCacheSize / 512;
+        const uint MAX_CACHE_SIZE = 16777216;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
 
-        public VDI()
+        public Vdi()
         {
             Name = "VirtualBox Disk Image";
-            PluginUUID = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+            PluginUuid = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
             ImageInfo = new ImageInfo();
-            ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableMediaTags = new List<MediaTagType>();
-            ImageInfo.imageHasPartitions = false;
-            ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = null;
-            ImageInfo.imageApplication = null;
-            ImageInfo.imageApplicationVersion = null;
-            ImageInfo.imageCreator = null;
-            ImageInfo.imageComments = null;
-            ImageInfo.mediaManufacturer = null;
-            ImageInfo.mediaModel = null;
-            ImageInfo.mediaSerialNumber = null;
-            ImageInfo.mediaBarcode = null;
-            ImageInfo.mediaPartNumber = null;
-            ImageInfo.mediaSequence = 0;
-            ImageInfo.lastMediaSequence = 0;
-            ImageInfo.driveManufacturer = null;
-            ImageInfo.driveModel = null;
-            ImageInfo.driveSerialNumber = null;
-            ImageInfo.driveFirmwareRevision = null;
+            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
+            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
+            ImageInfo.ImageHasPartitions = false;
+            ImageInfo.ImageHasSessions = false;
+            ImageInfo.ImageVersion = null;
+            ImageInfo.ImageApplication = null;
+            ImageInfo.ImageApplicationVersion = null;
+            ImageInfo.ImageCreator = null;
+            ImageInfo.ImageComments = null;
+            ImageInfo.MediaManufacturer = null;
+            ImageInfo.MediaModel = null;
+            ImageInfo.MediaSerialNumber = null;
+            ImageInfo.MediaBarcode = null;
+            ImageInfo.MediaPartNumber = null;
+            ImageInfo.MediaSequence = 0;
+            ImageInfo.LastMediaSequence = 0;
+            ImageInfo.DriveManufacturer = null;
+            ImageInfo.DriveModel = null;
+            ImageInfo.DriveSerialNumber = null;
+            ImageInfo.DriveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -139,15 +139,15 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] vHdr_b = new byte[Marshal.SizeOf(vHdr)];
-            stream.Read(vHdr_b, 0, Marshal.SizeOf(vHdr));
-            vHdr = new VDIHeader();
+            byte[] vHdrB = new byte[Marshal.SizeOf(vHdr)];
+            stream.Read(vHdrB, 0, Marshal.SizeOf(vHdr));
+            vHdr = new VdiHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
-            Marshal.Copy(vHdr_b, 0, headerPtr, Marshal.SizeOf(vHdr));
-            vHdr = (VDIHeader)Marshal.PtrToStructure(headerPtr, typeof(VDIHeader));
+            Marshal.Copy(vHdrB, 0, headerPtr, Marshal.SizeOf(vHdr));
+            vHdr = (VdiHeader)Marshal.PtrToStructure(headerPtr, typeof(VdiHeader));
             Marshal.FreeHGlobal(headerPtr);
 
-            return vHdr.magic == VDIMagic;
+            return vHdr.magic == VDI_MAGIC;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -157,12 +157,12 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] vHdr_b = new byte[Marshal.SizeOf(vHdr)];
-            stream.Read(vHdr_b, 0, Marshal.SizeOf(vHdr));
-            vHdr = new VDIHeader();
+            byte[] vHdrB = new byte[Marshal.SizeOf(vHdr)];
+            stream.Read(vHdrB, 0, Marshal.SizeOf(vHdr));
+            vHdr = new VdiHeader();
             IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
-            Marshal.Copy(vHdr_b, 0, headerPtr, Marshal.SizeOf(vHdr));
-            vHdr = (VDIHeader)Marshal.PtrToStructure(headerPtr, typeof(VDIHeader));
+            Marshal.Copy(vHdrB, 0, headerPtr, Marshal.SizeOf(vHdr));
+            vHdr = (VdiHeader)Marshal.PtrToStructure(headerPtr, typeof(VdiHeader));
             Marshal.FreeHGlobal(headerPtr);
 
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", vHdr.creator);
@@ -191,56 +191,56 @@ namespace DiscImageChef.DiscImages
 
             DicConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
             stream.Seek(vHdr.offsetBlocks, SeekOrigin.Begin);
-            IBM = new uint[vHdr.blocks];
-            byte[] IBM_b = new byte[vHdr.blocks * 4];
-            stream.Read(IBM_b, 0, IBM_b.Length);
-            for(int i = 0; i < IBM.Length; i++) IBM[i] = BitConverter.ToUInt32(IBM_b, i * 4);
+            ibm = new uint[vHdr.blocks];
+            byte[] ibmB = new byte[vHdr.blocks * 4];
+            stream.Read(ibmB, 0, ibmB.Length);
+            for(int i = 0; i < ibm.Length; i++) ibm[i] = BitConverter.ToUInt32(ibmB, i * 4);
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.sectors = vHdr.size / vHdr.sectorSize;
-            ImageInfo.imageSize = vHdr.size;
-            ImageInfo.sectorSize = vHdr.sectorSize;
-            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.mediaType = MediaType.GENERIC_HDD;
-            ImageInfo.imageComments = vHdr.description;
-            ImageInfo.imageVersion = string.Format("{0}.{1}", vHdr.majorVersion, vHdr.minorVersion);
+            ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            ImageInfo.Sectors = vHdr.size / vHdr.sectorSize;
+            ImageInfo.ImageSize = vHdr.size;
+            ImageInfo.SectorSize = vHdr.sectorSize;
+            ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            ImageInfo.MediaType = MediaType.GENERIC_HDD;
+            ImageInfo.ImageComments = vHdr.description;
+            ImageInfo.ImageVersion = string.Format("{0}.{1}", vHdr.majorVersion, vHdr.minorVersion);
 
             switch(vHdr.creator)
             {
-                case SunVDI:
-                    ImageInfo.imageApplication = "Sun VirtualBox";
+                case SUN_VDI:
+                    ImageInfo.ImageApplication = "Sun VirtualBox";
                     break;
-                case SunOldVDI:
-                    ImageInfo.imageApplication = "Sun xVM";
+                case SUN_OLD_VDI:
+                    ImageInfo.ImageApplication = "Sun xVM";
                     break;
-                case OracleVDI:
-                    ImageInfo.imageApplication = "Oracle VirtualBox";
+                case ORACLE_VDI:
+                    ImageInfo.ImageApplication = "Oracle VirtualBox";
                     break;
                 case QEMUVDI:
-                    ImageInfo.imageApplication = "QEMU";
+                    ImageInfo.ImageApplication = "QEMU";
                     break;
-                case InnotekVDI:
-                case InnotekOldVDI:
-                    ImageInfo.imageApplication = "innotek VirtualBox";
+                case INNOTEK_VDI:
+                case INNOTEK_OLD_VDI:
+                    ImageInfo.ImageApplication = "innotek VirtualBox";
                     break;
             }
 
             imageStream = stream;
 
-            ImageInfo.cylinders = vHdr.cylinders;
-            ImageInfo.heads = vHdr.heads;
-            ImageInfo.sectorsPerTrack = vHdr.spt;
+            ImageInfo.Cylinders = vHdr.cylinders;
+            ImageInfo.Heads = vHdr.heads;
+            ImageInfo.SectorsPerTrack = vHdr.spt;
 
             return true;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
@@ -251,10 +251,10 @@ namespace DiscImageChef.DiscImages
             ulong index = (sectorAddress * vHdr.sectorSize) / vHdr.blockSize;
             ulong secOff = (sectorAddress * vHdr.sectorSize) % vHdr.blockSize;
 
-            uint ibmOff = IBM[index];
+            uint ibmOff = ibm[index];
             ulong imageOff;
 
-            if(ibmOff == VDIEmpty) return new byte[vHdr.sectorSize];
+            if(ibmOff == VDI_EMPTY) return new byte[vHdr.sectorSize];
 
             imageOff = vHdr.offsetData + (ibmOff * vHdr.blockSize);
 
@@ -264,7 +264,7 @@ namespace DiscImageChef.DiscImages
             sector = new byte[vHdr.sectorSize];
             Array.Copy(cluster, (int)secOff, sector, 0, vHdr.sectorSize);
 
-            if(sectorCache.Count > maxCachedSectors) sectorCache.Clear();
+            if(sectorCache.Count > MAX_CACHED_SECTORS) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 
@@ -273,15 +273,15 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if(sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0} + {1}) than available ({2})",
-                                                                  sectorAddress, length, ImageInfo.sectors));
+                                                                  sectorAddress, length, ImageInfo.Sectors));
 
             MemoryStream ms = new MemoryStream();
 
@@ -301,17 +301,17 @@ namespace DiscImageChef.DiscImages
 
         public override ulong GetImageSize()
         {
-            return ImageInfo.imageSize;
+            return ImageInfo.ImageSize;
         }
 
         public override ulong GetSectors()
         {
-            return ImageInfo.sectors;
+            return ImageInfo.Sectors;
         }
 
         public override uint GetSectorSize()
         {
-            return ImageInfo.sectorSize;
+            return ImageInfo.SectorSize;
         }
 
         public override string GetImageFormat()
@@ -321,47 +321,47 @@ namespace DiscImageChef.DiscImages
 
         public override string GetImageVersion()
         {
-            return ImageInfo.imageVersion;
+            return ImageInfo.ImageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return ImageInfo.imageApplication;
+            return ImageInfo.ImageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return ImageInfo.imageApplicationVersion;
+            return ImageInfo.ImageApplicationVersion;
         }
 
         public override string GetImageCreator()
         {
-            return ImageInfo.imageCreator;
+            return ImageInfo.ImageCreator;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return ImageInfo.imageCreationTime;
+            return ImageInfo.ImageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return ImageInfo.imageLastModificationTime;
+            return ImageInfo.ImageLastModificationTime;
         }
 
         public override string GetImageName()
         {
-            return ImageInfo.imageName;
+            return ImageInfo.ImageName;
         }
 
         public override string GetImageComments()
         {
-            return ImageInfo.imageComments;
+            return ImageInfo.ImageComments;
         }
 
         public override MediaType GetMediaType()
         {
-            return ImageInfo.mediaType;
+            return ImageInfo.MediaType;
         }
 
         #region Unsupported features
@@ -505,18 +505,18 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
-            FailingLBAs = new List<ulong>();
-            UnknownLBAs = new List<ulong>();
-            for(ulong i = 0; i < ImageInfo.sectors; i++) UnknownLBAs.Add(i);
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+            for(ulong i = 0; i < ImageInfo.Sectors; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs,
-                                            out List<ulong> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                            out List<ulong> unknownLbas)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

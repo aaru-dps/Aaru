@@ -34,19 +34,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
-namespace DiscImageChef.PartPlugins
+namespace DiscImageChef.Partitions
 {
     // These partitions are hardwired in kernel sources for some UNIX versions predating System V.
     // They depend on exact device, indeed the kernel chooses what to use depending on the disk driver, so that's what we do.
     // Currently only DEC devices used in Ultrix are added, probably it's missing a lot of entries.
-    public class UNIX : PartPlugin
+    public class UNIX : PartitionPlugin
     {
         public UNIX()
         {
             Name = "UNIX hardwired";
-            PluginUUID = new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
+            PluginUuid = new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -56,7 +56,7 @@ namespace DiscImageChef.PartPlugins
 
             if(sectorOffset != 0) return false;
 
-            switch(imagePlugin.ImageInfo.mediaType)
+            switch(imagePlugin.ImageInfo.MediaType)
             {
                 case MediaType.RA60:
                     parts = RA60;

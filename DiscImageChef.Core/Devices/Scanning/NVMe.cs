@@ -35,9 +35,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Scanning
 {
-    public static class NVMe
+    public static class Nvme
     {
-        public static ScanResults Scan(string MHDDLogPath, string IBGLogPath, string devicePath, Device dev)
+        public static ScanResults Scan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev)
         {
             throw new NotImplementedException("NVMe devices not yet supported.");
         }

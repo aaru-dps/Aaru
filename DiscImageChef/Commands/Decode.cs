@@ -33,13 +33,13 @@
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Filters;
-using DiscImageChef.ImagePlugins;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Commands
 {
     static class Decode
     {
-        internal static void doDecode(DecodeOptions options)
+        internal static void DoDecode(DecodeOptions options)
         {
             DicConsole.DebugWriteLine("Decode command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Decode command", "--verbose={0}", options.Verbose);
@@ -68,16 +68,16 @@ namespace DiscImageChef.Commands
 
             inputFormat.OpenImage(inputFilter);
             Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
-            Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
+            Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
 
             if(options.DiskTags)
             {
-                if(inputFormat.ImageInfo.readableMediaTags.Count == 0)
+                if(inputFormat.ImageInfo.ReadableMediaTags.Count == 0)
                     DicConsole.WriteLine("There are no disk tags in chosen disc image.");
                 else
                 {
-                    foreach(MediaTagType tag in inputFormat.ImageInfo.readableMediaTags)
+                    foreach(MediaTagType tag in inputFormat.ImageInfo.ReadableMediaTags)
                     {
                         switch(tag)
                         {
@@ -245,11 +245,11 @@ namespace DiscImageChef.Commands
                     }
                 }
 
-                if(inputFormat.ImageInfo.readableSectorTags.Count == 0)
+                if(inputFormat.ImageInfo.ReadableSectorTags.Count == 0)
                     DicConsole.WriteLine("There are no sector tags in chosen disc image.");
                 else
                 {
-                    foreach(SectorTagType tag in inputFormat.ImageInfo.readableSectorTags)
+                    foreach(SectorTagType tag in inputFormat.ImageInfo.ReadableSectorTags)
                     {
                         switch(tag)
                         {

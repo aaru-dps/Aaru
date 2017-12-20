@@ -118,7 +118,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public QNX4(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public QNX4(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX4 Plugin";
             PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
@@ -126,7 +126,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start + 1 >= imagePlugin.GetSectors()) return false;
 
@@ -160,7 +160,7 @@ namespace DiscImageChef.Filesystems
             return true;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

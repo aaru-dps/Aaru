@@ -147,7 +147,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public JFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public JFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "JFS Plugin";
             PluginUUID = new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
@@ -155,7 +155,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             uint bootSectors = JFS_BootBlocksSize / imagePlugin.GetSectorSize();
             if(partition.Start + bootSectors >= partition.End) return false;
@@ -172,7 +172,7 @@ namespace DiscImageChef.Filesystems
             return jfsSb.s_magic == JFS_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";

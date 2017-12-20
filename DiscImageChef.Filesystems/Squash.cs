@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public Squash(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public Squash(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Squash filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
@@ -103,7 +103,7 @@ namespace DiscImageChef.Filesystems
         const uint Squash_MAGIC = 0x73717368;
         const uint Squash_CIGAM = 0x68737173;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -114,7 +114,7 @@ namespace DiscImageChef.Filesystems
             return magic == Squash_MAGIC || magic == Squash_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] sector = imagePlugin.ReadSector(partition.Start);
@@ -179,7 +179,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "Squash file system";
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time);
             xmlFSType.CreationDateSpecified = true;
-            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize) /
+            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize) /
                                         sqSb.block_size);
             xmlFSType.ClusterSize = (int)sqSb.block_size;
             xmlFSType.Files = sqSb.inodes;
