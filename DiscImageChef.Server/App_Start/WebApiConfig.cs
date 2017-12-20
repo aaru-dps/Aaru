@@ -30,6 +30,9 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+// This is verbatim from ASP.NET so left as is
+// ReSharper disable All
+
 using System.Web.Http;
 
 namespace DiscImageChef.Server
