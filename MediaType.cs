@@ -30,6 +30,8 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+// ReSharper disable InconsistentNaming
+// TODO: Rename contents
 namespace DiscImageChef.CommonTypes
 {
     // Media (disk, cartridge, tape, cassette, etc) types
