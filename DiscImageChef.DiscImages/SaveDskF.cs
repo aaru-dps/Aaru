@@ -221,98 +221,33 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.sectorSize = header.sectorSize;
 
             ImageInfo.mediaType = MediaType.Unknown;
-            switch(header.cylinders)
+
+            var mediaTypeMap = new[]
             {
-                case 40:
-                    switch(header.heads)
-                    {
-                        case 1:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_525_SS_DD_8;
-                                    break;
-                                case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_525_SS_DD_9;
-                                    break;
-                            }
+                new { cylinders = 40, heads = 1, sectorsPerTrack = 8, mediaType = MediaType.DOS_525_SS_DD_8},
+                new { cylinders = 40, heads = 1, sectorsPerTrack = 9, mediaType = MediaType.DOS_525_SS_DD_9},
+                new { cylinders = 40, heads = 2, sectorsPerTrack = 8, mediaType = MediaType.DOS_525_DS_DD_8},
+                new { cylinders = 40, heads = 2, sectorsPerTrack = 9, mediaType = MediaType.DOS_525_DS_DD_9},
+                new { cylinders = 70, heads = 1, sectorsPerTrack = 9, mediaType = MediaType.Apricot_35},
+                new { cylinders = 80, heads = 1, sectorsPerTrack = 8, mediaType = MediaType.DOS_35_SS_DD_8},
+                new { cylinders = 80, heads = 1, sectorsPerTrack = 9, mediaType = MediaType.DOS_35_SS_DD_9},
+                new { cylinders = 80, heads = 2, sectorsPerTrack = 8, mediaType = MediaType.DOS_35_DS_DD_8},
+                new { cylinders = 80, heads = 2, sectorsPerTrack = 9, mediaType = MediaType.DOS_35_DS_DD_9},
+                new { cylinders = 80, heads = 2, sectorsPerTrack = 15, mediaType = MediaType.DOS_525_HD},
+                new { cylinders = 80, heads = 2, sectorsPerTrack = 18, mediaType = MediaType.DOS_35_HD},
+                new { cylinders = 80, heads = 2, sectorsPerTrack = 23, mediaType = MediaType.XDF_35},
+                new { cylinders = 80, heads = 2, sectorsPerTrack = 36, mediaType = MediaType.DOS_35_ED},
+            };
 
-                            break;
-                        case 2:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_525_DS_DD_8;
-                                    break;
-                                case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_525_DS_DD_9;
-                                    break;
-                            }
-
-                            break;
-                    }
-
+            foreach (var media in mediaTypeMap)
+            {
+                if ((media.cylinders == header.cylinders) &&
+                    (media.heads == header.heads) &&
+                    (media.sectorsPerTrack == header.sectorsPerTrack))
+                {
+                    ImageInfo.mediaType = media.mediaType;
                     break;
-                case 70:
-                    switch(header.heads)
-                    {
-                        case 1:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 9:
-                                    ImageInfo.mediaType = MediaType.Apricot_35;
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-                case 80:
-                    switch(header.heads)
-                    {
-                        case 1:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_35_SS_DD_8;
-                                    break;
-                                case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_35_SS_DD_9;
-                                    break;
-                            }
-
-                            break;
-                        case 2:
-                            switch(header.sectorsPerTrack)
-                            {
-                                case 8:
-                                    ImageInfo.mediaType = MediaType.DOS_35_DS_DD_8;
-                                    break;
-                                case 9:
-                                    ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
-                                    break;
-                                case 15:
-                                    ImageInfo.mediaType = MediaType.DOS_525_HD;
-                                    break;
-                                case 18:
-                                    ImageInfo.mediaType = MediaType.DOS_35_HD;
-                                    break;
-                                case 23:
-                                    ImageInfo.mediaType = MediaType.XDF_35;
-                                    break;
-                                case 36:
-                                    ImageInfo.mediaType = MediaType.DOS_35_ED;
-                                    break;
-                            }
-
-                            break;
-                    }
-
-                    break;
-                default:
-                    ImageInfo.mediaType = MediaType.Unknown;
-                    break;
+                }
             }
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
