@@ -42,7 +42,7 @@ using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    internal static class Ssc
+    static class Ssc
     {
         internal static void Dump(Device dev, string outputPrefix, string devicePath, ref CICMMetadataType sidecar,
                                   ref Metadata.Resume resume, ref DumpLog dumpLog)

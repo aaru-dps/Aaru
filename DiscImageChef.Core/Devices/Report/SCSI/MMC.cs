@@ -39,7 +39,7 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report.SCSI
 {
-    internal static class Mmc
+    static class Mmc
     {
         internal static void Report(Device dev, ref DeviceReport report, bool debug,
                                     ref Decoders.SCSI.Modes.ModePage_2A? cdromMode, ref List<string> mediaTypes)

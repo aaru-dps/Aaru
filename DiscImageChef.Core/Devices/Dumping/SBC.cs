@@ -49,7 +49,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     using TrackType = DiscImages.TrackType;
 
-    internal static class Sbc
+    static class Sbc
     {
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,

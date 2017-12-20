@@ -137,17 +137,17 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         /// The HDCP file header after the image has been opened
         /// </summary>
-        private HdcpFileHeader fileHeader;
+        HdcpFileHeader fileHeader;
 
         /// <summary>
         /// Every track that has been read is cached here
         /// </summary>
-        private Dictionary<int, byte[]> trackCache = new Dictionary<int, byte[]>();
+        Dictionary<int, byte[]> trackCache = new Dictionary<int, byte[]>();
 
         /// <summary>
         /// The offset in the file where each track starts, or -1 if the track is not present
         /// </summary>
-        private Dictionary<int, long> trackOffset = new Dictionary<int, long>();
+        Dictionary<int, long> trackOffset = new Dictionary<int, long>();
 
         /// <summary>
         /// The ImageFilter we're reading from, after the file has been opened
@@ -156,7 +156,7 @@ namespace DiscImageChef.DiscImages
         #endregion
 
         #region Internal constants
-        private readonly MediaTypeTableEntry[] mediaTypes =
+        readonly MediaTypeTableEntry[] mediaTypes =
         {
             new MediaTypeTableEntry(80, 8, MediaType.DOS_35_DS_DD_8),
             new MediaTypeTableEntry(80, 9, MediaType.DOS_35_DS_DD_9),
@@ -382,7 +382,7 @@ namespace DiscImageChef.DiscImages
             return MediaType.Unknown;
         }
 
-        private void ReadTrackIntoCache(Stream stream, int tracknum)
+        void ReadTrackIntoCache(Stream stream, int tracknum)
         {
             byte[] trackData = new byte[ImageInfo.SectorSize * ImageInfo.SectorsPerTrack];
             byte[] blkHeader = new byte[3];

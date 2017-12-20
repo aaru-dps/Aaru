@@ -933,7 +933,7 @@ namespace DiscImageChef.DiscImages
         #endregion Unsupported features
 
         #region Private methods
-        private static uint DC42CheckSum(byte[] buffer)
+        static uint DC42CheckSum(byte[] buffer)
         {
             uint dc42Chk = 0;
             if((buffer.Length & 0x01) == 0x01) return 0xFFFFFFFF;

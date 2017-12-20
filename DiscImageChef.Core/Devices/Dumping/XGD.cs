@@ -47,7 +47,7 @@ using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    internal static class Xgd
+    static class Xgd
     {
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,

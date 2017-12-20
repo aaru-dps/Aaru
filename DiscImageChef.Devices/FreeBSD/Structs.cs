@@ -301,7 +301,7 @@ namespace DiscImageChef.Devices.FreeBSD
     [StructLayout(LayoutKind.Sequential)]
     struct NvmeCommand
     {
-        private ushort opc_fuse_rsvd1;
+        ushort opc_fuse_rsvd1;
         /// <summary>
         /// command identifier
         /// </summary>
@@ -372,7 +372,7 @@ namespace DiscImageChef.Devices.FreeBSD
     [StructLayout(LayoutKind.Sequential)]
     struct NvmeStatus
     {
-        private ushort status;
+        ushort status;
 
         /// <summary>
         /// phase tag
@@ -462,7 +462,7 @@ namespace DiscImageChef.Devices.FreeBSD
     [StructLayout(LayoutKind.Sequential)]
     struct PeriphMatchPattern
     {
-        private const int DEV_IDLEN = 16;
+        const int DEV_IDLEN = 16;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] periph_name;
         public uint unit_number;
@@ -482,9 +482,9 @@ namespace DiscImageChef.Devices.FreeBSD
     [StructLayout(LayoutKind.Sequential)]
     struct ScsiStaticInquiryPattern
     {
-        private const int SID_VENDOR_SIZE = 8;
-        private const int SID_PRODUCT_SIZE = 16;
-        private const int SID_REVISION_SIZE = 4;
+        const int SID_VENDOR_SIZE = 8;
+        const int SID_PRODUCT_SIZE = 16;
+        const int SID_REVISION_SIZE = 4;
         public byte type;
         public byte media_type;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = SID_VENDOR_SIZE + 1)] public byte[] vendor;
@@ -512,7 +512,7 @@ namespace DiscImageChef.Devices.FreeBSD
     [StructLayout(LayoutKind.Sequential)]
     struct BusMatchPattern
     {
-        private const int DEV_IDLEN = 16;
+        const int DEV_IDLEN = 16;
 
         public path_id_t path_id;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] dev_name;
@@ -622,7 +622,7 @@ namespace DiscImageChef.Devices.FreeBSD
     struct BusMatchResult
     {
         public path_id_t path_id;
-        private const int DEV_IDLEN = 16;
+        const int DEV_IDLEN = 16;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEV_IDLEN)] public byte[] dev_name;
         public uint unit_number;
         public uint bus_id;
@@ -687,9 +687,9 @@ namespace DiscImageChef.Devices.FreeBSD
 
     struct CamDevice
     {
-        private const int MAXPATHLEN = 1024;
-        private const int DEV_IDLEN = 16;
-        private const int SIM_IDLEN = 16;
+        const int MAXPATHLEN = 1024;
+        const int DEV_IDLEN = 16;
+        const int SIM_IDLEN = 16;
         /// <summary>
         /// Pathname of the device given by the user. This may be null if the user states the device name and unit number separately.
         /// </summary>

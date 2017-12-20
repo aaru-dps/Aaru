@@ -291,7 +291,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         // return a unique device number for the given device path 
-        private static int GetDeviceNumber(string devicePath)
+        static int GetDeviceNumber(string devicePath)
         {
             int ans = -1;
 

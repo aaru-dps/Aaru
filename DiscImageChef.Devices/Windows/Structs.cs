@@ -215,7 +215,7 @@ namespace DiscImageChef.Devices.Windows
         public int cbSize;
         public Guid interfaceClassGuid;
         public uint flags;
-        private IntPtr reserved;
+        IntPtr reserved;
     }
 
     [StructLayout(LayoutKind.Sequential)]

@@ -482,7 +482,7 @@ namespace DiscImageChef.Checksums
         }
 
         // Converts an ASCII null-terminated string to .NET string
-        private string CToString(byte[] cString)
+        string CToString(byte[] cString)
         {
             StringBuilder sb = new StringBuilder();
 

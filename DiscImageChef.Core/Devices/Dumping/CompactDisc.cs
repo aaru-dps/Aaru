@@ -49,7 +49,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     using Session = Decoders.CD.Session;
     using TrackType = Schemas.TrackType;
 
-    internal class CompactDisc
+    class CompactDisc
     {
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,

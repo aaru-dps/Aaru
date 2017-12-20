@@ -38,7 +38,7 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report.SCSI
 {
-    internal static class Ssc
+    static class Ssc
     {
         internal static void Report(Device dev, ref DeviceReport report, bool debug)
         {
