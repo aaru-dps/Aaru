@@ -169,25 +169,25 @@ namespace DiscImageChef.Checksums
 
         static int Min(int a, int b)
         {
-            return ((a) < (b) ? (a) : (b));
+            return a < b ? a : b;
         }
 
         static void Clear(ref int[] a, int n)
         {
             int ci;
-            for(ci = (n) - 1; ci >= 0; ci--) (a)[ci] = 0;
+            for(ci = n - 1; ci >= 0; ci--) a[ci] = 0;
         }
 
         static void Copy(ref int[] a, ref int[] b, int n)
         {
             int ci;
-            for(ci = (n) - 1; ci >= 0; ci--) (a)[ci] = (b)[ci];
+            for(ci = n - 1; ci >= 0; ci--) a[ci] = b[ci];
         }
 
         static void Copydown(ref int[] a, ref int[] b, int n)
         {
             int ci;
-            for(ci = (n) - 1; ci >= 0; ci--) (a)[ci] = (b)[ci];
+            for(ci = n - 1; ci >= 0; ci--) a[ci] = b[ci];
         }
 
         /* generate GF(2**m) from the irreducible polynomial p(X) in p[0]..p[m]
@@ -280,10 +280,10 @@ namespace DiscImageChef.Checksums
                  * (@**(B0+i-1) + x)
                  */
                 for(j = i - 1; j > 0; j--)
-                    if(gg[j] != 0) gg[j] = gg[j - 1] ^ alpha_to[Modnn((index_of[gg[j]]) + B0 + i - 1)];
+                    if(gg[j] != 0) gg[j] = gg[j - 1] ^ alpha_to[Modnn(index_of[gg[j]] + B0 + i - 1)];
                     else gg[j] = gg[j - 1];
                 /* Gg[0] can never be zero */
-                gg[0] = alpha_to[Modnn((index_of[gg[0]]) + B0 + i - 1)];
+                gg[0] = alpha_to[Modnn(index_of[gg[0]] + B0 + i - 1)];
             }
             /* convert Gg[] to index form for quicker encoding */
             for(i = 0; i <= nn - kk; i++) gg[i] = index_of[gg[i]];
@@ -485,7 +485,7 @@ namespace DiscImageChef.Checksums
                     discrR = 0;
                     for(i = 0; i < r; i++)
                     {
-                        if((lambda[i] != 0) && (s[r - i] != a0))
+                        if(lambda[i] != 0 && s[r - i] != a0)
                         {
                             discrR ^= alpha_to[Modnn(index_of[lambda[i]] + s[r - i])];
                         }
@@ -516,7 +516,7 @@ namespace DiscImageChef.Checksums
                          * lambda(x)
                          */
                             for(i = 0; i <= nn - kk; i++)
-                                b[i] = (lambda[i] == 0) ? a0 : Modnn(index_of[lambda[i]] - discrR + nn);
+                                b[i] = lambda[i] == 0 ? a0 : Modnn(index_of[lambda[i]] - discrR + nn);
                         }
                         else
                         {
@@ -586,10 +586,10 @@ namespace DiscImageChef.Checksums
                 for(i = 0; i < nn - kk; i++)
                 {
                     tmp = 0;
-                    j = (degLambda < i) ? degLambda : i;
+                    j = degLambda < i ? degLambda : i;
                     for(; j >= 0; j--)
                     {
-                        if((s[i + 1 - j] != a0) && (lambda[j] != a0)) tmp ^= alpha_to[Modnn(s[i + 1 - j] + lambda[j])];
+                        if(s[i + 1 - j] != a0 && lambda[j] != a0) tmp ^= alpha_to[Modnn(s[i + 1 - j] + lambda[j])];
                     }
 
                     if(tmp != 0) degOmega = i;
