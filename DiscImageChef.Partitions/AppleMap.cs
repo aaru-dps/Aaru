@@ -348,7 +348,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct AppleDriverDescriptorMap
+        struct AppleDriverDescriptorMap
         {
             /// <summary>Signature <see cref="DDM_MAGIC"/></summary>
             public ushort sbSig;
@@ -369,7 +369,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct AppleDriverEntry
+        struct AppleDriverEntry
         {
             /// <summary>First sector of the driver</summary>
             public uint ddBlock;
@@ -380,7 +380,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct AppleOldDevicePartitionMap
+        struct AppleOldDevicePartitionMap
         {
             /// <summary>Signature <see cref="APM_MAGIC_OLD"/></summary>
             public ushort pdSig;
@@ -389,7 +389,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct AppleMapOldPartitionEntry
+        struct AppleMapOldPartitionEntry
         {
             /// <summary>First sector of the partition</summary>
             public uint pdStart;
@@ -400,7 +400,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [Flags]
-        public enum AppleMapFlags : uint
+        enum AppleMapFlags : uint
         {
             /// <summary>Partition is valid</summary>
             Valid = 0x01,
@@ -429,7 +429,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct AppleMapPartitionEntry
+        struct AppleMapPartitionEntry
         {
             /// <summary>Signature <see cref="APM_MAGIC"/></summary>
             public ushort signature;

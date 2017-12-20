@@ -36,7 +36,7 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices
 {
-    public partial class Reader
+    partial class Reader
     {
         Device dev;
         uint timeout;
@@ -48,44 +48,44 @@ namespace DiscImageChef.Core.Devices
         uint physicalsectorsize;
         uint longBlockSize;
 
-        public string ErrorMessage
+        internal string ErrorMessage
         {
             get { return errorMessage; }
         }
-        public ulong Blocks
+        internal ulong Blocks
         {
             get { return blocks; }
         }
-        public uint BlocksToRead
+        internal uint BlocksToRead
         {
             get { return blocksToRead; }
         }
-        public uint LogicalBlockSize
+        internal uint LogicalBlockSize
         {
             get { return blockSize; }
         }
-        public uint PhysicalBlockSize
+        internal uint PhysicalBlockSize
         {
             get { return physicalsectorsize; }
         }
-        public uint LongBlockSize
+        internal uint LongBlockSize
         {
             get { return longBlockSize; }
         }
-        public bool CanReadRaw
+        internal bool CanReadRaw
         {
             get { return readRaw; }
         }
-        public bool CanSeek
+        internal bool CanSeek
         {
             get { return ataSeek || seek6 || seek10; }
         }
-        public bool CanSeekLBA
+        internal bool CanSeekLBA
         {
             get { return ataSeekLba || seek6 || seek10; }
         }
 
-        public Reader(Device dev, uint timeout, byte[] identification, bool raw = false)
+        internal Reader(Device dev, uint timeout, byte[] identification, bool raw = false)
         {
             this.dev = dev;
             this.timeout = timeout;
@@ -101,7 +101,7 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        public ulong GetDeviceBlocks()
+        internal ulong GetDeviceBlocks()
         {
             switch(dev.Type)
             {
@@ -114,7 +114,7 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        public bool FindReadCommand()
+        internal bool FindReadCommand()
         {
             switch(dev.Type)
             {
@@ -127,7 +127,7 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        public bool GetBlockSize()
+        internal bool GetBlockSize()
         {
             switch(dev.Type)
             {
@@ -140,7 +140,7 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        public bool GetBlocksToRead(uint startWithBlocks = 64)
+        internal bool GetBlocksToRead(uint startWithBlocks = 64)
         {
             switch(dev.Type)
             {
@@ -153,17 +153,17 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        public bool ReadBlock(out byte[] buffer, ulong block, out double duration)
+        internal bool ReadBlock(out byte[] buffer, ulong block, out double duration)
         {
             return ReadBlocks(out buffer, block, 1, out duration);
         }
 
-        public bool ReadBlocks(out byte[] buffer, ulong block, out double duration)
+        internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration)
         {
             return ReadBlocks(out buffer, block, blocksToRead, out duration);
         }
 
-        public bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)
+        internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)
         {
             switch(dev.Type)
             {
@@ -177,7 +177,7 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        public bool ReadCHS(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration)
+        internal bool ReadCHS(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration)
         {
             switch(dev.Type)
             {
@@ -189,7 +189,7 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        public bool Seek(ulong block, out double duration)
+        internal bool Seek(ulong block, out double duration)
         {
             switch(dev.Type)
             {
@@ -202,7 +202,7 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        public bool SeekCHS(ushort cylinder, byte head, byte sector, out double duration)
+        internal bool SeekCHS(ushort cylinder, byte head, byte sector, out double duration)
         {
             switch(dev.Type)
             {

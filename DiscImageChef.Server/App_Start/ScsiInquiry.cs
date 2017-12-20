@@ -36,9 +36,9 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Server.App_Start
 {
-    public static class ScsiInquiry
+    static class ScsiInquiry
     {
-        public static List<string> Report(scsiInquiryType inquiry)
+        internal static List<string> Report(scsiInquiryType inquiry)
         {
             List<string> scsiOneValue = new List<string>();
 

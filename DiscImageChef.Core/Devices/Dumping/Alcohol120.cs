@@ -41,7 +41,7 @@ using DiscImageChef.ImagePlugins;
 namespace DiscImageChef.Core.Devices.Dumping
 {
     // TODO: For >4.0, this class must disappear
-    public class Alcohol120
+    class Alcohol120
     {
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -158,7 +158,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         Dictionary<byte, uint> trackLengths;
         AlcoholFooter footer;
 
-        public Alcohol120(string outputPrefix)
+        internal Alcohol120(string outputPrefix)
         {
             this.outputPrefix = outputPrefix;
             header = new AlcoholHeader
@@ -178,7 +178,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             footer = new AlcoholFooter {widechar = 1};
         }
 
-        public void Close()
+        internal void Close()
         {
             if(sessions.Count == 0 || tracks.Count == 0) return;
 
@@ -317,7 +317,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             descriptorFile.Dispose();
         }
 
-        public void SetMediaType(MediaType type)
+        internal void SetMediaType(MediaType type)
         {
             switch(type)
             {
@@ -376,7 +376,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
         }
 
-        public void AddSessions(Session[] cdSessions)
+        internal void AddSessions(Session[] cdSessions)
         {
             foreach(Session cdSession in cdSessions)
             {
@@ -390,7 +390,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
         }
 
-        public void SetTrackTypes(byte point, TrackType mode, TrackSubchannelType subMode)
+        internal void SetTrackTypes(byte point, TrackType mode, TrackSubchannelType subMode)
         {
             AlcoholTrack[] trkArray = tracks.ToArray();
 
@@ -443,7 +443,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
         }
 
-        public void SetTrackSizes(byte point, int sectorSize, long startLba, long startOffset, long length)
+        internal void SetTrackSizes(byte point, int sectorSize, long startLba, long startOffset, long length)
         {
             AlcoholTrack[] trkArray = tracks.ToArray();
 
@@ -474,7 +474,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             sessions = new List<AlcoholSession>(sess);
         }
 
-        public void AddTrack(byte adrCtl, byte tno, byte point, byte min, byte sec, byte frame, byte zero, byte pmin,
+        internal void AddTrack(byte adrCtl, byte tno, byte point, byte min, byte sec, byte frame, byte zero, byte pmin,
                              byte psec, byte pframe, byte session)
         {
             AlcoholTrack trk = new AlcoholTrack
@@ -507,12 +507,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             sessions = new List<AlcoholSession>(sess);
         }
 
-        public void AddBCA(byte[] bca)
+        internal void AddBCA(byte[] bca)
         {
             this.bca = bca;
         }
 
-        public void AddPFI(byte[] pfi)
+        internal void AddPFI(byte[] pfi)
         {
             if(pfi.Length == 2052)
             {
@@ -522,7 +522,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             else this.pfi = pfi;
         }
 
-        public void AddDMI(byte[] dmi)
+        internal void AddDMI(byte[] dmi)
         {
             if(dmi.Length == 2052)
             {
@@ -532,7 +532,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             else this.dmi = dmi;
         }
 
-        public void SetExtension(string extension)
+        internal void SetExtension(string extension)
         {
             this.extension = extension;
         }

@@ -78,7 +78,7 @@ namespace DiscImageChef.ImagePlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ScpFooter
+        struct ScpFooter
         {
             public uint manufacturerOffset;
             public uint modelOffset;

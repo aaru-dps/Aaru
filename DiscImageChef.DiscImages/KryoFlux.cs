@@ -45,7 +45,7 @@ namespace DiscImageChef.ImagePlugins
     {
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct OobBlock
+        struct OobBlock
         {
             public BlockIds blockId;
             public OobTypes blockType;

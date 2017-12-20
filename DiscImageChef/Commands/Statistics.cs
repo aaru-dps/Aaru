@@ -35,9 +35,9 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Commands
 {
-    public static class Statistics
+    static class Statistics
     {
-        public static void showStats()
+        internal static void showStats()
         {
             if(Core.Statistics.AllStats == null)
             {

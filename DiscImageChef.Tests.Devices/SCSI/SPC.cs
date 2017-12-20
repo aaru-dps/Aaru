@@ -32,9 +32,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SCSI
 {
-    public static class SPC
+    static class SPC
     {
-        public static void Menu(string devPath, Device dev)
+        internal static void Menu(string devPath, Device dev)
         {
             while(true)
             {

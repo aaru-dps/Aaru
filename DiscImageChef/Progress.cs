@@ -34,46 +34,46 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef
 {
-    public static class Progress
+    static class Progress
     {
-        public static void InitProgress() { }
+        internal static void InitProgress() { }
 
-        public static void EndProgress()
+        internal static void EndProgress()
         {
             DicConsole.WriteLine();
         }
 
-        public static void UpdateProgress(string text, long current, long maximum)
+        internal static void UpdateProgress(string text, long current, long maximum)
         {
             DicConsole.Write("\r" + text);
         }
 
-        public static void InitProgress2() { }
+        internal static void InitProgress2() { }
 
-        public static void EndProgress2()
+        internal static void EndProgress2()
         {
             DicConsole.WriteLine();
         }
 
-        public static void UpdateProgress2(string text, long current, long maximum)
+        internal static void UpdateProgress2(string text, long current, long maximum)
         {
             DicConsole.Write("\r" + text);
         }
 
-        public static void InitTwoProgress() { }
+        internal static void InitTwoProgress() { }
 
-        public static void EndTwoProgress()
+        internal static void EndTwoProgress()
         {
             DicConsole.WriteLine();
         }
 
-        public static void UpdateTwoProgress(string text, long current, long maximum, string text2, long current2,
+        internal static void UpdateTwoProgress(string text, long current, long maximum, string text2, long current2,
                                              long maximum2)
         {
             DicConsole.Write("\r" + text + ": " + text2);
         }
 
-        public static void UpdateStatus(string text)
+        internal static void UpdateStatus(string text)
         {
             DicConsole.WriteLine(text);
         }

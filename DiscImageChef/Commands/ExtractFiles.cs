@@ -44,9 +44,9 @@ using DiscImageChef.ImagePlugins;
 namespace DiscImageChef.Commands
 {
     // TODO: Rewrite this, has an insane amount of repeating code ;)
-    public static class ExtractFiles
+    static class ExtractFiles
     {
-        public static void doExtractFiles(ExtractFilesOptions options)
+        internal static void doExtractFiles(ExtractFilesOptions options)
         {
             DicConsole.DebugWriteLine("Extract-Files command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Extract-Files command", "--verbose={0}", options.Verbose);

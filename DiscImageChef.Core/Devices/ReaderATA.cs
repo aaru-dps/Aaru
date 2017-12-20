@@ -37,7 +37,7 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices
 {
-    public partial class Reader
+    partial class Reader
     {
         bool ataReadLba;
         bool ataReadRetryLba;
@@ -57,24 +57,24 @@ namespace DiscImageChef.Core.Devices
 
         Identify.IdentifyDevice ataId;
 
-        public bool IsLBA
+        internal bool IsLBA
         {
             get { return lbaMode; }
         }
-        public ushort Cylinders
+        internal ushort Cylinders
         {
             get { return cylinders; }
         }
-        public byte Heads
+        internal byte Heads
         {
             get { return heads; }
         }
-        public byte Sectors
+        internal byte Sectors
         {
             get { return sectors; }
         }
 
-        public (uint, byte, byte) GetDeviceCHS()
+        (uint, byte, byte) GetDeviceCHS()
         {
             if(dev.Type != DeviceType.ATA) return (0, 0, 0);
 

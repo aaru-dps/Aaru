@@ -35,7 +35,7 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Core.Devices
 {
-    public partial class Reader
+    partial class Reader
     {
         // TODO: Raw reading
         bool read6;

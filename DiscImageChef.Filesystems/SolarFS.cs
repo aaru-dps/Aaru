@@ -178,7 +178,7 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
-        public struct SolarOSParameterBlock
+        struct SolarOSParameterBlock
         {
             /// <summary>0x00, x86 jump (3 bytes), jumps to 0x60</summary>
             public byte[] x86_jump;

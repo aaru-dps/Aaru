@@ -266,7 +266,7 @@ namespace DiscImageChef.PartPlugins
 
         /// <summary>Apricot Label.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ApricotLabel
+        struct ApricotLabel
         {
             /// <summary>Version of format which created disk</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] version;
@@ -439,7 +439,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ApricotParameterBlock
+        struct ApricotParameterBlock
         {
             /// <summary>Bytes per sector</summary>
             public ushort bps;

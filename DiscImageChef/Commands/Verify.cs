@@ -39,9 +39,9 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Commands
 {
-    public static class Verify
+    static class Verify
     {
-        public static void doVerify(VerifyOptions options)
+        internal static void doVerify(VerifyOptions options)
         {
             DicConsole.DebugWriteLine("Verify command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Verify command", "--verbose={0}", options.Verbose);

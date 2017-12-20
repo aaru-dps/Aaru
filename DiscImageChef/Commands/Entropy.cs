@@ -40,9 +40,9 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Commands
 {
-    public static class Entropy
+    static class Entropy
     {
-        public static void doEntropy(EntropyOptions options)
+        internal static void doEntropy(EntropyOptions options)
         {
             DicConsole.DebugWriteLine("Entropy command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Entropy command", "--verbose={0}", options.Verbose);

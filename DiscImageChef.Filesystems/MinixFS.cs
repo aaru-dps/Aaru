@@ -321,7 +321,7 @@ namespace DiscImageChef.Filesystems
         /// Superblock for Minix v1 and V2 filesystems
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct MinixSuperBlock
+        struct MinixSuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
             public ushort s_ninodes;
@@ -349,7 +349,7 @@ namespace DiscImageChef.Filesystems
         /// Superblock for Minix v3 filesystems
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct Minix3SuperBlock
+        struct Minix3SuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
             public uint s_ninodes;

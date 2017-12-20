@@ -137,12 +137,12 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// ext superblock magic
         /// </summary>
-        public const ushort extFSMagic = 0x137D;
+        const ushort extFSMagic = 0x137D;
 
         /// <summary>
         /// ext superblock
         /// </summary>
-        public struct extFSSuperBlock
+        struct extFSSuperBlock
         {
             /// <summary>0x000, inodes on volume</summary>
             public uint inodes;

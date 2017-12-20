@@ -38,9 +38,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Commands
 {
-    public static class DeviceInfo
+    static class DeviceInfo
     {
-        public static void doDeviceInfo(DeviceInfoOptions options)
+        internal static void doDeviceInfo(DeviceInfoOptions options)
         {
             DicConsole.DebugWriteLine("Device-Info command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}", options.Verbose);

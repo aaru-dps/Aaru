@@ -14,14 +14,14 @@
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
-//     it under the terms of the GNU Lesser General Public License as
+//     it under the terms of the GNU Lesser General internal License as
 //     published by the Free Software Foundation; either version 2.1 of the
 //     License, or (at your option) any later version.
 //
 //     This library is distributed in the hope that it will be useful, but
 //     WITHOUT ANY WARRANTY; without even the implied warranty of
 //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-//     Lesser General Public License for more details.
+//     Lesser General internal License for more details.
 //
 //     You should have received a copy of the GNU Lesser General Public
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
@@ -34,19 +34,19 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-// Copyright "Fort Hood TX", public domain, 2007
+// Copyright "Fort Hood TX", internal domain, 2007
 namespace DiscImageChef.Devices.Windows
 {
     // 
     // A place for "higher level" related functions 
     // You might not want to keep these in the USB class... your choice 
     // 
-    public partial class Usb
+    partial class Usb
     {
         // 
         // Get a list of all connected devices 
         // 
-        static public List<USBDevice> GetConnectedDevices()
+        static internal List<USBDevice> GetConnectedDevices()
         {
             List<USBDevice> DevList = new List<USBDevice>();
 
@@ -72,7 +72,7 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Find a device based upon it's DriverKeyName 
         // 
-        static public USBDevice FindDeviceByDriverKeyName(string DriverKeyName)
+        static internal USBDevice FindDeviceByDriverKeyName(string DriverKeyName)
         {
             USBDevice FoundDevice = null;
 
@@ -113,7 +113,7 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Find a device based upon it's Instance ID 
         // 
-        static public USBDevice FindDeviceByInstanceID(string InstanceID)
+        static internal USBDevice FindDeviceByInstanceID(string InstanceID)
         {
             USBDevice FoundDevice = null;
 
@@ -152,9 +152,9 @@ namespace DiscImageChef.Devices.Windows
         }
 
         const int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
-        public const string GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-        public const string GUID_DEVINTERFACE_CDROM = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
-        public const string GUID_DEVINTERFACE_FLOPPY = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GUID_DEVINTERFACE_CDROM = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GUID_DEVINTERFACE_FLOPPY = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
 
         //typedef struct _STORAGE_DEVICE_NUMBER { 
         //  DEVICE_TYPE  DeviceType; 
@@ -164,9 +164,9 @@ namespace DiscImageChef.Devices.Windows
         [StructLayout(LayoutKind.Sequential)]
         struct STORAGE_DEVICE_NUMBER
         {
-            public int DeviceType;
-            public int DeviceNumber;
-            public int PartitionNumber;
+            internal int DeviceType;
+            internal int DeviceNumber;
+            internal int PartitionNumber;
         }
 
         //CMAPI CONFIGRET WINAPI  CM_Get_Parent( 
@@ -189,7 +189,7 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Find a device based upon a Drive Letter 
         // 
-        static public USBDevice FindDriveLetter(string DriveLetter, string deviceGuid)
+        static internal USBDevice FindDriveLetter(string DriveLetter, string deviceGuid)
         {
             USBDevice FoundDevice = null;
             string InstanceID = "";
@@ -203,7 +203,7 @@ namespace DiscImageChef.Devices.Windows
             return FindDeviceNumber(DevNum, deviceGuid);
         }
 
-        static public USBDevice FindDrivePath(string DrivePath, string deviceGuid)
+        static internal USBDevice FindDrivePath(string DrivePath, string deviceGuid)
         {
             USBDevice FoundDevice = null;
             string InstanceID = "";
@@ -220,7 +220,7 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Find a device based upon a Drive Letter 
         // 
-        static public USBDevice FindDeviceNumber(int DevNum, string deviceGuid)
+        static internal USBDevice FindDeviceNumber(int DevNum, string deviceGuid)
         {
             USBDevice FoundDevice = null;
             string InstanceID = "";

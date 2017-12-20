@@ -372,7 +372,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct PDInfo
+        struct PDInfo
         {
             public uint driveid; /*identifies the device type*/
             public uint sanity; /*verifies device sanity*/
@@ -412,7 +412,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct PDInfoOld
+        struct PDInfoOld
         {
             public uint driveid; /*identifies the device type*/
             public uint sanity; /*verifies device sanity*/
@@ -473,7 +473,7 @@ namespace DiscImageChef.PartPlugins
             public int p_size; /*# of blocks in partition*/
         };
 
-        public enum pTag : ushort
+        enum pTag : ushort
         {
             /// <summary>empty</summary>
             V_UNUSED = 0x0000,
@@ -533,7 +533,7 @@ namespace DiscImageChef.PartPlugins
             V_VOMASK = 0x300 /* mask for open and valid */
         }
 
-        public static string decodeUNIXTAG(pTag type, bool isNew)
+        static string decodeUNIXTAG(pTag type, bool isNew)
         {
             switch(type)
             {

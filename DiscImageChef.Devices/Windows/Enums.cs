@@ -449,20 +449,20 @@ namespace DiscImageChef.Devices.Windows
         DeviceInterface = 0x10,
     }
 
-    public enum SdCommandClass : uint
+    enum SdCommandClass : uint
     {
         Standard,
         AppCmd
     }
 
-    public enum SdTransferDirection : uint
+    enum SdTransferDirection : uint
     {
         Unspecified,
         Read,
         Write
     }
 
-    public enum SdTransferType : uint
+    enum SdTransferType : uint
     {
         Unspecified,
         CmdOnly,
@@ -471,7 +471,7 @@ namespace DiscImageChef.Devices.Windows
         MultiBlockNoCmd12
     }
 
-    public enum SdResponseType : uint
+    enum SdResponseType : uint
     {
         Unspecified,
         None,
@@ -485,7 +485,7 @@ namespace DiscImageChef.Devices.Windows
         R6
     }
 
-    public enum SffdiskDcmd : uint
+    enum SffdiskDcmd : uint
     {
         GetVersion,
         LockChannel,

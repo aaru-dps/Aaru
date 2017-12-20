@@ -583,12 +583,12 @@ namespace DiscImageChef.PartPlugins
             return MBRTypes[type];
         }
 
-        public const ushort MBR_Magic = 0xAA55;
-        public const ushort NEC_Magic = 0xA55A;
-        public const ushort DM_Magic = 0x55AA;
+        const ushort MBR_Magic = 0xAA55;
+        const ushort NEC_Magic = 0xA55A;
+        const ushort DM_Magic = 0x55AA;
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct MasterBootRecord
+        struct MasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)] public byte[] boot_code;
@@ -600,7 +600,7 @@ namespace DiscImageChef.PartPlugins
 
         // TODO: IBM Boot Manager
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ExtendedBootRecord
+        struct ExtendedBootRecord
         {
             /// <summary>Boot code, almost always unused</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)] public byte[] boot_code;
@@ -611,7 +611,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct TimedMasterBootRecord
+        struct TimedMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)] public byte[] boot_code;
@@ -634,7 +634,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct SerializedMasterBootRecord
+        struct SerializedMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)] public byte[] boot_code;
@@ -649,7 +649,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ModernMasterBootRecord
+        struct ModernMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)] public byte[] boot_code;
@@ -676,7 +676,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct NecMasterBootRecord
+        struct NecMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 380)] public byte[] boot_code;
@@ -689,7 +689,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct DiskManagerMasterBootRecord
+        struct DiskManagerMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)] public byte[] boot_code;
@@ -702,7 +702,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct MBRPartitionEntry
+        struct MBRPartitionEntry
         {
             /// <summary>Partition status, 0x80 or 0x00, else invalid</summary>
             public byte status;

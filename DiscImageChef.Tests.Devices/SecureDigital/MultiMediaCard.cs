@@ -31,9 +31,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SecureDigital
 {
-    public static class MultiMediaCard
+    static class MultiMediaCard
     {
-        public static void Menu(string devPath, Device dev)
+        internal static void Menu(string devPath, Device dev)
         {
             while(true)
             {

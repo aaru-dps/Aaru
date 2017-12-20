@@ -44,7 +44,7 @@ namespace DiscImageChef.ImagePlugins
     {
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct DfiBlockHeader
+        struct DfiBlockHeader
         {
             public ushort cylinder;
             public ushort head;

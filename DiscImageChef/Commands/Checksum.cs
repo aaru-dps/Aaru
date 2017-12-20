@@ -40,12 +40,12 @@ using Schemas;
 
 namespace DiscImageChef.Commands
 {
-    public static class Checksum
+    static class Checksum
     {
         // How many sectors to read at once
         const uint sectorsToRead = 256;
 
-        public static void doChecksum(ChecksumOptions options)
+        internal static void doChecksum(ChecksumOptions options)
         {
             DicConsole.DebugWriteLine("Checksum command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Checksum command", "--verbose={0}", options.Verbose);

@@ -42,9 +42,9 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Commands
 {
-    public static class Ls
+    static class Ls
     {
-        public static void doLs(LsOptions options)
+        internal static void doLs(LsOptions options)
         {
             DicConsole.DebugWriteLine("Ls command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Ls command", "--verbose={0}", options.Verbose);

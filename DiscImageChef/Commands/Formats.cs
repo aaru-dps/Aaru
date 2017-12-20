@@ -40,9 +40,9 @@ using DiscImageChef.PartPlugins;
 
 namespace DiscImageChef.Commands
 {
-    public static class Formats
+    static class Formats
     {
-        public static void ListFormats(FormatsOptions FormatsOptions)
+        internal static void ListFormats(FormatsOptions FormatsOptions)
         {
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();

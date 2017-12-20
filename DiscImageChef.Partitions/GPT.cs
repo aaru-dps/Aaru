@@ -295,7 +295,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct GptHeader
+        struct GptHeader
         {
             public ulong signature;
             public uint revision;
@@ -314,7 +314,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        public struct GptEntry
+        struct GptEntry
         {
             public Guid partitionType;
             public Guid partitionId;

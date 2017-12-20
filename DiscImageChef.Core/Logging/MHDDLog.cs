@@ -37,11 +37,11 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Logging
 {
-    public class MHDDLog
+    class MHDDLog
     {
-        static FileStream mhddFs;
+        FileStream mhddFs;
 
-        public MHDDLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
+        internal MHDDLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
         {
             if(dev != null && !string.IsNullOrEmpty(outputFile))
             {
@@ -128,7 +128,7 @@ namespace DiscImageChef.Core.Logging
             }
         }
 
-        public void Write(ulong sector, double duration)
+        internal void Write(ulong sector, double duration)
         {
             if(mhddFs != null)
             {
@@ -140,7 +140,7 @@ namespace DiscImageChef.Core.Logging
             }
         }
 
-        public void Close()
+        internal void Close()
         {
             if(mhddFs != null) mhddFs.Close();
         }

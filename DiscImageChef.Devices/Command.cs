@@ -14,14 +14,14 @@
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
-//     it under the terms of the GNU Lesser General Public License as
+//     it under the terms of the GNU Lesser General internal License as
 //     published by the Free Software Foundation; either version 2.1 of the
 //     License, or (at your option) any later version.
 //
 //     This library is distributed in the hope that it will be useful, but
 //     WITHOUT ANY WARRANTY; without even the implied warranty of
 //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-//     Lesser General Public License for more details.
+//     Lesser General internal License for more details.
 //
 //     You should have received a copy of the GNU Lesser General Public
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
@@ -37,7 +37,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Devices
 {
-    public static class Command
+    static class Command
     {
         /// <summary>
         /// Sends a SCSI command
@@ -51,7 +51,7 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        public static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
+        internal static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
                                           uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
@@ -73,7 +73,7 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        public static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer,
+        internal static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer,
                                           out byte[] senseBuffer, uint timeout, ScsiDirection direction,
                                           out double duration, out bool sense)
         {
@@ -155,7 +155,7 @@ namespace DiscImageChef.Devices
             }
         }
 
-        public static int SendAtaCommand(object fd, AtaRegistersCHS registers, out AtaErrorRegistersCHS errorRegisters,
+        internal static int SendAtaCommand(object fd, AtaRegistersCHS registers, out AtaErrorRegistersCHS errorRegisters,
                                          AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                          uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
@@ -165,7 +165,7 @@ namespace DiscImageChef.Devices
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersCHS registers,
+        internal static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersCHS registers,
                                          out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
@@ -204,7 +204,7 @@ namespace DiscImageChef.Devices
             }
         }
 
-        public static int SendAtaCommand(object fd, AtaRegistersLBA28 registers,
+        internal static int SendAtaCommand(object fd, AtaRegistersLBA28 registers,
                                          out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
@@ -215,7 +215,7 @@ namespace DiscImageChef.Devices
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA28 registers,
+        internal static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA28 registers,
                                          out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
@@ -254,7 +254,7 @@ namespace DiscImageChef.Devices
             }
         }
 
-        public static int SendAtaCommand(object fd, AtaRegistersLBA48 registers,
+        internal static int SendAtaCommand(object fd, AtaRegistersLBA48 registers,
                                          out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
@@ -265,7 +265,7 @@ namespace DiscImageChef.Devices
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA48 registers,
+        internal static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA48 registers,
                                          out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
@@ -293,7 +293,7 @@ namespace DiscImageChef.Devices
             }
         }
 
-        public static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication, MmcFlags flags,
+        internal static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication, MmcFlags flags,
                                          uint argument, uint blockSize, uint blocks, ref byte[] buffer,
                                          out uint[] response, out double duration, out bool sense, uint timeout = 0)
         {
@@ -303,7 +303,7 @@ namespace DiscImageChef.Devices
                                   ref buffer, out response, out duration, out sense, timeout);
         }
 
-        public static int SendMmcCommand(Interop.PlatformID ptID, object fd, MmcCommands command, bool write,
+        internal static int SendMmcCommand(Interop.PlatformID ptID, object fd, MmcCommands command, bool write,
                                          bool isApplication, MmcFlags flags, uint argument, uint blockSize, uint blocks,
                                          ref byte[] buffer, out uint[] response, out double duration, out bool sense,
                                          uint timeout = 0)

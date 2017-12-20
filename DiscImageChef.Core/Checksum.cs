@@ -381,7 +381,7 @@ namespace DiscImageChef.Core
             return chks;
         }
 
-        public static List<ChecksumType> GetChecksums(byte[] data, EnableChecksum enabled = EnableChecksum.All)
+        internal static List<ChecksumType> GetChecksums(byte[] data, EnableChecksum enabled = EnableChecksum.All)
         {
             Adler32Context adler32ctxData = null;
             CRC16Context crc16ctxData = null;

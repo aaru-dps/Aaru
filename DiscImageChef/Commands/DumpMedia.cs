@@ -42,9 +42,9 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Commands
 {
-    public static class DumpMedia
+    static class DumpMedia
     {
-        public static void doDumpMedia(DumpMediaOptions options)
+        internal static void doDumpMedia(DumpMediaOptions options)
         {
             DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", options.Verbose);

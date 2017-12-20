@@ -36,11 +36,11 @@ using System.Text;
 
 namespace DiscImageChef.Devices.Linux
 {
-    public static class ListDevices
+    static class ListDevices
     {
         const string PATH_SYS_DEVBLOCK = "/sys/block/";
 
-        public static DeviceInfo[] GetList()
+        internal static DeviceInfo[] GetList()
         {
             string[] sysdevs = Directory.GetFileSystemEntries(PATH_SYS_DEVBLOCK, "*", SearchOption.TopDirectoryOnly);
             DeviceInfo[] devices = new DeviceInfo[sysdevs.Length];

@@ -42,8 +42,8 @@ namespace DiscImageChef.PartPlugins
 {
     public class BSD : PartPlugin
     {
-        public const uint DISKMAGIC = 0x82564557;
-        public const uint DISKCIGAM = 0x57455682;
+        const uint DISKMAGIC = 0x82564557;
+        const uint DISKCIGAM = 0x57455682;
         /// <summary>Known sector locations for BSD disklabel</summary>
         readonly ulong[] labelLocations = {0, 1, 2, 9};
         /// <summary>Known byte offsets for BSD disklabel</summary>
@@ -172,7 +172,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         /// <summary>Drive type</summary>
-        public enum dType : ushort
+        enum dType : ushort
         {
             /// <summary>SMD, XSMD</summary>
             SMD = 1,
@@ -221,7 +221,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         /// <summary>Filesystem type</summary>
-        public enum fsType : byte
+        internal enum fsType : byte
         {
             /// <summary>Unused entry</summary>
             Unused = 0,
@@ -303,7 +303,7 @@ namespace DiscImageChef.PartPlugins
         /// Drive flags
         /// </summary>
         [Flags]
-        public enum dFlags : uint
+        enum dFlags : uint
         {
             /// <summary>Removable media</summary>
             Removable = 0x01,
@@ -320,7 +320,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct DiskLabel
+        struct DiskLabel
         {
             /// <summary><see cref="DISKMAGIC"/></summary>
             public uint d_magic;
@@ -385,7 +385,7 @@ namespace DiscImageChef.PartPlugins
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct BSDPartition
+        struct BSDPartition
         {
             /// <summary>Sectors in partition</summary>
             public uint p_size;
@@ -401,7 +401,7 @@ namespace DiscImageChef.PartPlugins
             public ushort p_cpg;
         }
 
-        public static string fsTypeToString(fsType typ)
+        internal static string fsTypeToString(fsType typ)
         {
             switch(typ)
             {
@@ -438,7 +438,7 @@ namespace DiscImageChef.PartPlugins
             }
         }
 
-        public static DiskLabel GetDiskLabel(byte[] disklabel)
+        static DiskLabel GetDiskLabel(byte[] disklabel)
         {
             GCHandle handle = GCHandle.Alloc(disklabel, GCHandleType.Pinned);
             DiskLabel dl = (DiskLabel)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskLabel));
@@ -446,7 +446,7 @@ namespace DiscImageChef.PartPlugins
             return dl;
         }
 
-        public static DiskLabel SwapDiskLabel(DiskLabel disklabel)
+        static DiskLabel SwapDiskLabel(DiskLabel disklabel)
         {
             DiskLabel dl = BigEndianMarshal.SwapStructureMembersEndian(disklabel);
             for(int i = 0; i < dl.d_drivedata.Length; i++) dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);

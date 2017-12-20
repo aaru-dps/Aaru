@@ -37,9 +37,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Commands
 {
-    public static class MediaScan
+    static class MediaScan
     {
-        public static void doMediaScan(MediaScanOptions options)
+        internal static void doMediaScan(MediaScanOptions options)
         {
             DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", options.Verbose);

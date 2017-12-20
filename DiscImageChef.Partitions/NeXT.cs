@@ -221,7 +221,7 @@ namespace DiscImageChef.PartPlugins
         /// NeXT v3 disklabel, 544 bytes
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct NeXTLabel
+        struct NeXTLabel
         {
             /// <summary>Signature</summary>
             public uint dl_version;
@@ -245,7 +245,7 @@ namespace DiscImageChef.PartPlugins
         /// NeXT v1 and v2 disklabel, 7224 bytes
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct NeXTLabelOld
+        struct NeXTLabelOld
         {
             /// <summary>Signature</summary>
             public uint dl_version;
@@ -271,7 +271,7 @@ namespace DiscImageChef.PartPlugins
         /// NeXT disktab and partitions, 498 bytes
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct NeXTDiskTab
+        struct NeXTDiskTab
         {
             /// <summary>Drive name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)] public byte[] d_name;
@@ -317,7 +317,7 @@ namespace DiscImageChef.PartPlugins
         /// Partition entries, 44 bytes each
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        public struct NeXTEntry
+        struct NeXTEntry
         {
             /// <summary>Sector of start, counting from front porch</summary>
             public int p_base;

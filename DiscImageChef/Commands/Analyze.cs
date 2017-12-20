@@ -42,9 +42,9 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Commands
 {
-    public static class Analyze
+    static class Analyze
     {
-        public static void doAnalyze(AnalyzeOptions options)
+        internal static void doAnalyze(AnalyzeOptions options)
         {
             DicConsole.DebugWriteLine("Analyze command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", options.Verbose);

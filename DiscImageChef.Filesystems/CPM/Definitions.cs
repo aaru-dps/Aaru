@@ -44,7 +44,7 @@ namespace DiscImageChef.Filesystems.CPM
         /// Loads all the known CP/M disk definitions from an XML stored as an embedded resource.
         /// </summary>
         /// <returns>The definitions.</returns>
-        public bool LoadDefinitions()
+        bool LoadDefinitions()
         {
             try
             {
@@ -83,7 +83,7 @@ namespace DiscImageChef.Filesystems.CPM
     /// <summary>
     /// CP/M disk definitions
     /// </summary>
-    public class CpmDefinitions
+    class CpmDefinitions
     {
         /// <summary>
         /// List of all CP/M disk definitions
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems.CPM
     /// <summary>
     /// CP/M disk definition
     /// </summary>
-    public class CpmDefinition
+    class CpmDefinition
     {
         /// <summary>
         /// Comment and description
@@ -197,7 +197,7 @@ namespace DiscImageChef.Filesystems.CPM
     /// <summary>
     /// Side descriptions
     /// </summary>
-    public class Side
+    class Side
     {
         /// <summary>
         /// Side ID as found in each sector address mark

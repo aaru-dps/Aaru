@@ -36,9 +36,9 @@ using DiscImageChef.Core;
 
 namespace DiscImageChef.Commands
 {
-    public static class Benchmark
+    static class Benchmark
     {
-        public static void doBenchmark(BenchmarkOptions options)
+        internal static void doBenchmark(BenchmarkOptions options)
         {
             Dictionary<string, double> checksumTimes = new Dictionary<string, double>();
             Core.Benchmark.InitProgressEvent += Progress.InitProgress;

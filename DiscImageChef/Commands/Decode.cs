@@ -37,9 +37,9 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Commands
 {
-    public static class Decode
+    static class Decode
     {
-        public static void doDecode(DecodeOptions options)
+        internal static void doDecode(DecodeOptions options)
         {
             DicConsole.DebugWriteLine("Decode command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Decode command", "--verbose={0}", options.Verbose);

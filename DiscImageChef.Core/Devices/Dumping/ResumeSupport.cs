@@ -38,9 +38,9 @@ using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    public static class ResumeSupport
+    static class ResumeSupport
     {
-        public static void Process(bool isLba, bool removable, ulong blocks, string Manufacturer, string Model,
+        internal static void Process(bool isLba, bool removable, ulong blocks, string Manufacturer, string Model,
                                    string Serial, Interop.PlatformID platform, ref Resume resume,
                                    ref DumpHardwareType currentTry, ref ExtentsULong extents)
         {

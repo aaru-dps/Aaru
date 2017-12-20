@@ -28,7 +28,7 @@
 
 namespace DiscImageChef.Tests
 {
-    public static class Consts
+    static class Consts
     {
         public const string TestFilesRoot = "/mnt/DiscImageChef/tests";
     }

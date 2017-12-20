@@ -38,7 +38,7 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Logging
 {
-    public class IBGLog
+    class IBGLog
     {
         static FileStream ibgFs;
         static StringBuilder ibgSb;
@@ -54,7 +54,7 @@ namespace DiscImageChef.Core.Logging
         static ulong ibgIntSector;
         static int ibgSampleRate;
 
-        public IBGLog(string outputFile, ushort currentProfile)
+        internal IBGLog(string outputFile, ushort currentProfile)
         {
             if(!string.IsNullOrEmpty(outputFile))
             {
@@ -193,7 +193,7 @@ namespace DiscImageChef.Core.Logging
             }
         }
 
-        public void Write(ulong sector, double currentSpeed)
+        internal void Write(ulong sector, double currentSpeed)
         {
             if(ibgFs != null)
             {
@@ -222,7 +222,7 @@ namespace DiscImageChef.Core.Logging
             }
         }
 
-        public void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed,
+        internal void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed,
                           double averageSpeed, string devicePath)
         {
             if(ibgFs != null)

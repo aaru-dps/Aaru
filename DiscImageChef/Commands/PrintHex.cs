@@ -37,9 +37,9 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Commands
 {
-    public static class PrintHex
+    static class PrintHex
     {
-        public static void doPrintHex(PrintHexOptions options)
+        internal static void doPrintHex(PrintHexOptions options)
         {
             DicConsole.DebugWriteLine("PrintHex command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("PrintHex command", "--verbose={0}", options.Verbose);

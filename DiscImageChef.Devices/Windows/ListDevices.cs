@@ -39,9 +39,9 @@ using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Devices.Windows
 {
-    public static class ListDevices
+    static class ListDevices
     {
-        public static DeviceInfo[] GetList()
+        internal static DeviceInfo[] GetList()
         {
             List<string> DeviceIDs = new List<string>();
 

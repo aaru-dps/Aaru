@@ -37,9 +37,9 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
-    public static class USB
+    static class USB
     {
-        public static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
+        internal static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
         {
             if(report == null) return;
 

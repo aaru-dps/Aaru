@@ -36,9 +36,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Commands
 {
-    public static class ListDevices
+    static class ListDevices
     {
-        public static void doListDevices(ListDevicesOptions options)
+        internal static void doListDevices(ListDevicesOptions options)
         {
             DicConsole.DebugWriteLine("Media-Info command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}", options.Verbose);

@@ -36,7 +36,7 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {
-    public static class ListEncodings
+    static class ListEncodings
     {
         struct CommonEncodingInfo
         {
@@ -44,7 +44,7 @@ namespace DiscImageChef.Commands
             public string DisplayName;
         }
 
-        public static void DoList(ListEncodingsOptions EncodingOptions)
+        internal static void DoList(ListEncodingsOptions EncodingOptions)
         {
             List<CommonEncodingInfo> encodings = new List<CommonEncodingInfo>();
 

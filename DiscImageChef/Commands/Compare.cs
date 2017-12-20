@@ -40,9 +40,9 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Commands
 {
-    public static class Compare
+    static class Compare
     {
-        public static void doCompare(CompareOptions options)
+        internal static void doCompare(CompareOptions options)
         {
             DicConsole.DebugWriteLine("Compare command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Compare command", "--verbose={0}", options.Verbose);

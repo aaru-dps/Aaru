@@ -1403,7 +1403,7 @@ namespace DiscImageChef.Filesystems
         /// BIOS Parameter Block as used by Atari ST GEMDOS on FAT12 volumes.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct AtariParameterBlock
+        struct AtariParameterBlock
         {
             /// <summary>68000 BRA.S jump or x86 loop</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] jump;
@@ -1463,7 +1463,7 @@ namespace DiscImageChef.Filesystems
         /// BIOS Parameter Block as used by MSX-DOS 2.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct MSXParameterBlock
+        struct MSXParameterBlock
         {
             /// <summary>x86 loop</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
@@ -1511,7 +1511,7 @@ namespace DiscImageChef.Filesystems
 
         /// <summary>DOS 2.0 BIOS Parameter Block.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct BIOSParameterBlock2
+        struct BIOSParameterBlock2
         {
             /// <summary>x86 jump</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
@@ -1541,7 +1541,7 @@ namespace DiscImageChef.Filesystems
 
         /// <summary>DOS 3.0 BIOS Parameter Block.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct BIOSParameterBlock30
+        struct BIOSParameterBlock30
         {
             /// <summary>x86 jump</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
@@ -1577,7 +1577,7 @@ namespace DiscImageChef.Filesystems
 
         /// <summary>DOS 3.2 BIOS Parameter Block.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct BIOSParameterBlock32
+        struct BIOSParameterBlock32
         {
             /// <summary>x86 jump</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
@@ -1615,7 +1615,7 @@ namespace DiscImageChef.Filesystems
 
         /// <summary>DOS 3.31 BIOS Parameter Block.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct BIOSParameterBlock33
+        struct BIOSParameterBlock33
         {
             /// <summary>x86 jump</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
@@ -1653,7 +1653,7 @@ namespace DiscImageChef.Filesystems
 
         /// <summary>DOS 3.4 BIOS Parameter Block.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct BIOSParameterBlockShortEBPB
+        struct BIOSParameterBlockShortEBPB
         {
             /// <summary>x86 jump</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
@@ -1699,7 +1699,7 @@ namespace DiscImageChef.Filesystems
 
         /// <summary>DOS 4.0 or higher BIOS Parameter Block.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct BIOSParameterBlockEBPB
+        struct BIOSParameterBlockEBPB
         {
             /// <summary>x86 jump</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
@@ -1749,7 +1749,7 @@ namespace DiscImageChef.Filesystems
 
         /// <summary>FAT32 Parameter Block</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct FAT32ParameterBlockShort
+        struct FAT32ParameterBlockShort
         {
             /// <summary>x86 jump</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
@@ -1813,7 +1813,7 @@ namespace DiscImageChef.Filesystems
 
         /// <summary>FAT32 Parameter Block</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct FAT32ParameterBlock
+        struct FAT32ParameterBlock
         {
             /// <summary>x86 jump</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] jump;
@@ -1877,7 +1877,7 @@ namespace DiscImageChef.Filesystems
 
         /// <summary>Apricot Label.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ApricotLabel
+        struct ApricotLabel
         {
             /// <summary>Version of format which created disk</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] version;
@@ -2050,7 +2050,7 @@ namespace DiscImageChef.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ApricotParameterBlock
+        struct ApricotParameterBlock
         {
             /// <summary>Bytes per sector</summary>
             public ushort bps;
@@ -2074,13 +2074,13 @@ namespace DiscImageChef.Filesystems
             public ushort startSector;
         }
 
-        public const uint fsinfo_signature1 = 0x41615252;
-        public const uint fsinfo_signature2 = 0x61417272;
-        public const uint fsinfo_signature3 = 0xAA550000;
+        const uint fsinfo_signature1 = 0x41615252;
+        const uint fsinfo_signature2 = 0x61417272;
+        const uint fsinfo_signature3 = 0xAA550000;
 
         /// <summary>FAT32 FS Information Sector</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct FSInfoSector
+        struct FSInfoSector
         {
             /// <summary>Signature must be <see cref="fsinfo_signature1"/></summary>
             public uint signature1;
@@ -2099,7 +2099,7 @@ namespace DiscImageChef.Filesystems
         }
 
         [Flags]
-        public enum FatAttributes : byte
+        enum FatAttributes : byte
         {
             ReadOnly = 0x01,
             Hidden = 0x02,
@@ -2113,7 +2113,7 @@ namespace DiscImageChef.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct DirectoryEntry
+        struct DirectoryEntry
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] filename;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] extension;

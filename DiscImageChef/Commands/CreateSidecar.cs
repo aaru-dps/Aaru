@@ -42,9 +42,9 @@ using Schemas;
 
 namespace DiscImageChef.Commands
 {
-    public static class CreateSidecar
+    static class CreateSidecar
     {
-        public static void doSidecar(CreateSidecarOptions options)
+        internal static void doSidecar(CreateSidecarOptions options)
         {
             Sidecar.InitProgressEvent += Progress.InitProgress;
             Sidecar.UpdateProgressEvent += Progress.UpdateProgress;

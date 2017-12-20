@@ -36,9 +36,9 @@ using DiscImageChef.Settings;
 
 namespace DiscImageChef.Commands
 {
-    public static class Configure
+    static class Configure
     {
-        public static void doConfigure()
+        internal static void doConfigure()
         {
             ConsoleKeyInfo pressedKey = new ConsoleKeyInfo();
 

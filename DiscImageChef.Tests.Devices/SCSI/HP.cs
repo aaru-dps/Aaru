@@ -31,9 +31,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SCSI
 {
-    public static class HP
+    static class HP
     {
-        public static void Menu(string devPath, Device dev)
+        internal static void Menu(string devPath, Device dev)
         {
             while(true)
             {
