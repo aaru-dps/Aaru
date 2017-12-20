@@ -508,13 +508,13 @@ namespace DiscImageChef.DiscImages
             DateTime start = DateTime.Now;
             extents = new ExtentsULong();
             extentsOff = new Dictionary<ulong, ulong>();
-            bool current = (bitmap[0] & 1 << (int)(0 % 8)) != 0;
+            bool current = (bitmap[0] & (1 << (int)(0 % 8))) != 0;
             ulong blockOff = 0;
             ulong extentStart = 0;
 
             for(ulong i = 1; i <= localHeader.qwBlocksCount; i++)
             {
-                bool next = (bitmap[i / 8] & 1 << (int)(i % 8)) != 0;
+                bool next = (bitmap[i / 8] & (1 << (int)(i % 8))) != 0;
 
                 // Flux
                 if(next != current)
@@ -572,7 +572,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       string.Format("Sector address {0} not found", sectorAddress));
 
-            if((bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) == 0) return new byte[ImageInfo.SectorSize];
+            if((bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) == 0) return new byte[ImageInfo.SectorSize];
 
             byte[] sector;
 
@@ -618,7 +618,7 @@ namespace DiscImageChef.DiscImages
             bool allEmpty = true;
             for(uint i = 0; i < length; i++)
             {
-                if((bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) != 0)
+                if((bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) != 0)
                 {
                     allEmpty = false;
                     break;

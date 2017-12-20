@@ -608,7 +608,7 @@ namespace DiscImageChef.Core.Devices.Report
                                     {
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                                         physicalsectorsize =
-                                            (uint)(logicalsectorsize * (1 << ataId.PhysLogSectorSize & 0xF));
+                                            (uint)(logicalsectorsize * ((1 << ataId.PhysLogSectorSize) & 0xF));
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                                     }
                                     else physicalsectorsize = logicalsectorsize;

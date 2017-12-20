@@ -148,7 +148,7 @@ namespace DiscImageChef.Checksums
             }
 
             for(int i = 0; i < fileStream.Length; i++)
-                localhashInt = (ushort)((localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ localhashInt & 0xff]);
+                localhashInt = (ushort)((localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)]);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             hash = BigEndianBitConverter.GetBytes(localhashInt);
@@ -200,7 +200,7 @@ namespace DiscImageChef.Checksums
             }
 
             for(int i = 0; i < len; i++)
-                localhashInt = (ushort)((localhashInt >> 8) ^ localTable[data[i] ^ localhashInt & 0xff]);
+                localhashInt = (ushort)((localhashInt >> 8) ^ localTable[data[i] ^ (localhashInt & 0xff)]);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             hash = BigEndianBitConverter.GetBytes(localhashInt);

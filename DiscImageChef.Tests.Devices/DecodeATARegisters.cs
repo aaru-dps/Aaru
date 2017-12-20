@@ -72,7 +72,7 @@ namespace DiscImageChef.Tests.Devices
             sb.AppendFormat("Status: {0}", DecodeATAStatus(registers.status)).AppendLine();
             sb.AppendFormat("Error: {0}", DecodeATAStatus(registers.error)).AppendLine();
             sb.AppendFormat("Device: {0}", (registers.deviceHead >> 4) & 0x01).AppendLine();
-            sb.AppendFormat("Cylinder: {0}", registers.cylinderHigh << 8 + registers.cylinderLow).AppendLine();
+            sb.AppendFormat("Cylinder: {0}", registers.cylinderHigh << (8 + registers.cylinderLow)).AppendLine();
             sb.AppendFormat("Head: {0}", registers.deviceHead & 0xF).AppendLine();
             sb.AppendFormat("Sector: {0}", registers.sector).AppendLine();
             sb.AppendFormat("Count: {0}", registers.sectorCount).AppendLine();
