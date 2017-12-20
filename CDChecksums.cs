@@ -99,17 +99,17 @@ namespace DiscImageChef.Checksums
                 for(minor = 0; minor < minorCount; minor++)
                 {
                     byte temp;
-                    if(index < 4) { temp = address[index]; }
-                    else { temp = data[index - 4]; }
+                    if(index < 4) temp = address[index];
+                    else temp = data[index - 4];
                     index += minorInc;
-                    if(index >= size) { index -= size; }
+                    if(index >= size) index -= size;
                     eccA ^= temp;
                     eccB ^= temp;
                     eccA = eccFTable[eccA];
                 }
 
                 eccA = eccBTable[eccFTable[eccA] ^ eccB];
-                if(ecc[major] != eccA || ecc[major + majorCount] != (eccA ^ eccB)) { return false; }
+                if(ecc[major] != eccA || ecc[major + majorCount] != (eccA ^ eccB)) return false;
             }
 
             return true;
@@ -132,7 +132,6 @@ namespace DiscImageChef.Checksums
                     DicConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
                                               channel[0x00C], channel[0x00D], channel[0x00E]);
                     for(int i = 0x010; i < 0x930; i++)
-                    {
                         if(channel[i] != 0x00)
                         {
                             DicConsole.DebugWriteLine("CD checksums",
@@ -140,7 +139,6 @@ namespace DiscImageChef.Checksums
                                                       channel[0x00C], channel[0x00D], channel[0x00E]);
                             return false;
                         }
-                    }
 
                     return true;
                 }
@@ -211,11 +209,9 @@ namespace DiscImageChef.Checksums
                     {
                         if(channel[0x010] != channel[0x014] || channel[0x011] != channel[0x015] ||
                            channel[0x012] != channel[0x016] || channel[0x013] != channel[0x017])
-                        {
                             DicConsole.DebugWriteLine("CD checksums",
                                                       "Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}",
                                                       channel[0x00C], channel[0x00D], channel[0x00E]);
-                        }
 
                         /* TODO: This is not working
                         byte[] SectorForCheck = new byte[0x91C];
@@ -235,11 +231,9 @@ namespace DiscImageChef.Checksums
                     {
                         if(channel[0x010] != channel[0x014] || channel[0x011] != channel[0x015] ||
                            channel[0x012] != channel[0x016] || channel[0x013] != channel[0x017])
-                        {
                             DicConsole.DebugWriteLine("CD checksums",
                                                       "Subheader copies differ in mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}",
                                                       channel[0x00C], channel[0x00D], channel[0x00E]);
-                        }
 
                         byte[] address = new byte[4];
                         byte[] data = new byte[2060];
@@ -380,10 +374,10 @@ namespace DiscImageChef.Checksums
             }
 
             i = 0;
-            for(int j = 0; j < 24; j++) { cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F); }
-            for(int j = 0; j < 24; j++) { cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F); }
-            for(int j = 0; j < 24; j++) { cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F); }
-            for(int j = 0; j < 24; j++) { cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F); }
+            for(int j = 0; j < 24; j++) cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
+            for(int j = 0; j < 24; j++) cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
+            for(int j = 0; j < 24; j++) cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
+            for(int j = 0; j < 24; j++) cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
 
             switch(cdSubRwPack1[0])
             {
@@ -526,10 +520,7 @@ namespace DiscImageChef.Checksums
         static ushort CalculateCCITT_CRC16(byte[] buffer)
         {
             ushort crc16 = 0;
-            for(int i = 0; i < buffer.Length; i++)
-            {
-                crc16 = (ushort)(CcittCrc16Table[(crc16 >> 8) ^ buffer[i]] ^ (crc16 << 8));
-            }
+            for(int i = 0; i < buffer.Length; i++) crc16 = (ushort)(CcittCrc16Table[(crc16 >> 8) ^ buffer[i]] ^ (crc16 << 8));
 
             crc16 = (ushort)~crc16;
 

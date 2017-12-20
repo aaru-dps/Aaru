@@ -104,10 +104,7 @@ namespace DiscImageChef.Checksums
             StringBuilder crc16Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt).Length; i++)
-            {
-                crc16Output.Append(BigEndianBitConverter.GetBytes(hashInt)[i].ToString("x2"));
-            }
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt).Length; i++) crc16Output.Append(BigEndianBitConverter.GetBytes(hashInt)[i].ToString("x2"));
 
             return crc16Output.ToString();
         }
@@ -155,7 +152,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder crc16Output = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++) { crc16Output.Append(hash[i].ToString("x2")); }
+            for(int i = 0; i < hash.Length; i++) crc16Output.Append(hash[i].ToString("x2"));
 
             fileStream.Close();
 
@@ -207,7 +204,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder crc16Output = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++) { crc16Output.Append(hash[i].ToString("x2")); }
+            for(int i = 0; i < hash.Length; i++) crc16Output.Append(hash[i].ToString("x2"));
 
             return crc16Output.ToString();
         }
