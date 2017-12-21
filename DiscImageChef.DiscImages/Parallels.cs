@@ -58,10 +58,10 @@ namespace DiscImageChef.DiscImages
         #endregion
 
         #region Internal Structures
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         /// <summary>
         /// Parallels disk image header, little-endian
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ParallelsHeader
         {
             /// <summary>

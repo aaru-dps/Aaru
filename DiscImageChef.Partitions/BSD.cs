@@ -364,9 +364,7 @@ namespace DiscImageChef.Partitions
             /// <summary>Drive-specific information</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] d_drivedata;
             /// <summary>Reserved</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            /// <summary></summary>
-            public uint[] d_spare;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public uint[] d_spare;
             /// <summary><see cref="DISKMAGIC"/> again</summary>
             public uint d_magic2;
             /// <summary>XOR of data</summary>

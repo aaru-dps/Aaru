@@ -210,7 +210,7 @@ namespace DiscImageChef.Tests.Filesystems
             // Windows 95 OSR 2
             "win95osr2_dsdd8.img.lz", "win95osr2_dsdd.img.lz", "win95osr2_dshd.img.lz", "win95osr2_mf2dd.img.lz",
             "win95osr2_mf2ed.img.lz", "win95osr2_mf2hd.img.lz", "win95osr2_ssdd8.img.lz", "win95osr2_ssdd.img.lz",
-            /// Windows 95 OSR 2.1
+            // Windows 95 OSR 2.1
             "win95osr2.1_dsdd8.img.lz", "win95osr2.1_dsdd.img.lz", "win95osr2.1_dshd.img.lz",
             "win95osr2.1_mf2dd.img.lz", "win95osr2.1_mf2ed.img.lz", "win95osr2.1_mf2hd.img.lz",
             "win95osr2.1_ssdd8.img.lz", "win95osr2.1_ssdd.img.lz",
@@ -432,7 +432,7 @@ namespace DiscImageChef.Tests.Filesystems
             // Windows 95 OSR 2
             MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_ED, MediaType.DOS_35_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
-            /// Windows 95 OSR 2.1
+            // Windows 95 OSR 2.1
             MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_ED, MediaType.DOS_35_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
             // Windows 95 OSR 2.5
@@ -613,7 +613,7 @@ namespace DiscImageChef.Tests.Filesystems
             640, 720, 2400, 1440, 5760, 2880, 320, 360,
             // Windows 95 OSR 2
             640, 720, 2400, 1440, 5760, 2880, 320, 360,
-            /// Windows 95 OSR 2.1
+            // Windows 95 OSR 2.1
             640, 720, 2400, 1440, 5760, 2880, 320, 360,
             // Windows 95 OSR 2.5
             640, 720, 2400, 1440, 5760, 2880, 320, 360,
@@ -785,7 +785,7 @@ namespace DiscImageChef.Tests.Filesystems
             512, 512, 512, 512, 512, 512, 512, 512,
             // Windows 95 OSR 2
             512, 512, 512, 512, 512, 512, 512, 512,
-            /// Windows 95 OSR 2.1
+            // Windows 95 OSR 2.1
             512, 512, 512, 512, 512, 512, 512, 512,
             // Windows 95 OSR 2.5
             512, 512, 512, 512, 512, 512, 512, 512,
@@ -957,7 +957,7 @@ namespace DiscImageChef.Tests.Filesystems
             320, 360, 2400, 720, 2880, 2880, 320, 360,
             // Windows 95 OSR 2
             320, 360, 2400, 720, 2880, 2880, 320, 360,
-            /// Windows 95 OSR 2.1
+            // Windows 95 OSR 2.1
             320, 360, 2400, 720, 2880, 2880, 320, 360,
             // Windows 95 OSR 2.5
             320, 360, 2400, 720, 2880, 2880, 320, 360,
@@ -1129,7 +1129,7 @@ namespace DiscImageChef.Tests.Filesystems
             1024, 1024, 512, 1024, 1024, 512, 512, 512,
             // Windows 95 OSR 2
             1024, 1024, 512, 1024, 1024, 512, 512, 512,
-            /// Windows 95 OSR 2.1
+            // Windows 95 OSR 2.1
             1024, 1024, 512, 1024, 1024, 512, 512, 512,
             // Windows 95 OSR 2.5
             1024, 1024, 512, 1024, 1024, 512, 512, 512,
@@ -1306,7 +1306,7 @@ namespace DiscImageChef.Tests.Filesystems
             null, "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", null, "VOLUMELABEL",
             // Windows 95 OSR 2
             null, "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", null, "VOLUMELABEL",
-            /// Windows 95 OSR 2.1
+            // Windows 95 OSR 2.1
             null, "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", null, "VOLUMELABEL",
             // Windows 95 OSR 2.5
             null, "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", null, "VOLUMELABEL",
@@ -1479,7 +1479,7 @@ namespace DiscImageChef.Tests.Filesystems
             null, "3B360D0D", "24240D0D", "3C260D11", "30050D10", "275A0D11", null, "3B100D0F",
             // Windows 95 OSR 2
             null, "1C5B0D19", "11510D19", "0F1F0D15", "40200D17", "3D610D14", null, "280B0D19",
-            /// Windows 95 OSR 2.1
+            // Windows 95 OSR 2.1
             null, "1F3B0D1C", "14470D1C", "1C510DE4", "2E250DE2", "10640DE4", null, "2B3E0D1C",
             // Windows 95 OSR 2.5
             null, "18190DFB", "0A240DFB", "1E320DE7", "33230DE8", "125B0DE7", null, "21410DFB",
@@ -1651,7 +1651,7 @@ namespace DiscImageChef.Tests.Filesystems
             null, "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", null, "MSWIN4.0",
             // Windows 95 OSR 2
             null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
-            /// Windows 95 OSR 2.1
+            // Windows 95 OSR 2.1
             null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
             // Windows 95 OSR 2.5
             null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",

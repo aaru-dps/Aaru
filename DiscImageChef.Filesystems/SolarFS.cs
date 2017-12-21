@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems
         {
             if(2 + partition.Start >= partition.End) return false;
 
-            byte signature; /// <summary>0x29
+            byte signature; // 0x29
             string fs_type; // "SOL_FS  "
 
             byte[] bpb = imagePlugin.ReadSector(0 + partition.Start);

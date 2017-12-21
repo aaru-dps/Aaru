@@ -329,11 +329,10 @@ namespace DiscImageChef.Filesystems.CPM
             /// File 1 create/access timestamp
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] date1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
             /// <summary>
             /// File 1 modification timestamp
             /// </summary>
-            public byte[] date2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] date2;
             /// <summary>
             /// File 1 password mode
             /// </summary>
