@@ -53,6 +53,8 @@ namespace DiscImageChef
         /// <returns>The corresponding C# string</returns>
         /// <param name="CString">A null-terminated (aka C string) byte array in the specified encoding</param>
         /// <param name="encoding">Encoding.</param>
+        /// <param name="twoBytes">Set if encoding uses 16-bit characters.</param>
+        /// <param name="start">Start decodint at this position</param>
         public static string CToString(byte[] CString, Encoding encoding, bool twoBytes = false, int start = 0)
         {
             if(CString == null) return null;
@@ -99,6 +101,7 @@ namespace DiscImageChef
         /// <returns>The corresponding C# string</returns>
         /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
         /// <param name="encoding">Encoding.</param>
+        /// <param name="start">Start decodint at this position</param>
         public static string PascalToString(byte[] PascalString, Encoding encoding, int start = 0)
         {
             if(PascalString == null) return null;
@@ -135,6 +138,7 @@ namespace DiscImageChef
         /// <returns>The corresponding C# string</returns>
         /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
         /// <param name="encoding">Encoding.</param>
+        /// <param name="start">Start decodint at this position</param>
         public static string SpacePaddedToString(byte[] SpacePaddedString, Encoding encoding, int start = 0)
         {
             if(SpacePaddedString == null) return null;
