@@ -129,6 +129,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dskType = MediaTypeFromScsi.Get((byte)dev.ScsiType, dev.Manufacturer, dev.Model, scsiMediumType,
                                                 scsiDensityCode, blocks, blockSize);
 
+            // TODO: Solve floppy page resolve
             if(dskType == MediaType.Unknown && dev.IsUsb && containsFloppyPage) dskType = MediaType.FlashDrive;
 
             DicConsole.WriteLine("Media identified as {0}", dskType);

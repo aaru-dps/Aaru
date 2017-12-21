@@ -57,12 +57,6 @@ namespace DiscImageChef.Server.Controllers
                 DeviceReport newReport = new DeviceReport();
                 HttpRequest request = HttpContext.Current.Request;
 
-                if(request.InputStream == null)
-                {
-                    response.Content = new StringContent("notstats", Encoding.UTF8, "text/plain");
-                    return response;
-                }
-
                 XmlSerializer xs = new XmlSerializer(newReport.GetType());
                 newReport = (DeviceReport)xs.Deserialize(request.InputStream);
 

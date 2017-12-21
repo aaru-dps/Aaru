@@ -60,12 +60,6 @@ namespace DiscImageChef.Server.Controllers
                 Stats newStats = new Stats();
                 HttpRequest request = HttpContext.Current.Request;
 
-                if(request.InputStream == null)
-                {
-                    response.Content = new StringContent("notstats", Encoding.UTF8, "text/plain");
-                    return response;
-                }
-
                 XmlSerializer xs = new XmlSerializer(newStats.GetType());
                 newStats = (Stats)xs.Deserialize(request.InputStream);
 

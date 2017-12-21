@@ -298,7 +298,6 @@ namespace DiscImageChef.DiscImages
         public override bool OpenImage(Filter imageFilter)
         {
             if(imageFilter == null) return false;
-            if(imageFilter == null) return false;
 
             this.imageFilter = imageFilter;
 
