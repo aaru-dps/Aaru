@@ -1048,7 +1048,7 @@ namespace DiscImageChef.DiscImages
                 case TYPE_DIFFERENCING:
                 {
                     // Block number for BAT searching
-                    uint blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.BlockSize / 512)));
+                    uint blockNumber = (uint)Math.Floor((sectorAddress / (thisDynamic.BlockSize / 512.0)));
                     // Sector number inside of block
                     uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.BlockSize / 512));
 
@@ -1131,7 +1131,7 @@ namespace DiscImageChef.DiscImages
                     Stream thisStream;
 
                     // Block number for BAT searching
-                    uint blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.BlockSize / 512)));
+                    uint blockNumber = (uint)Math.Floor((sectorAddress / (thisDynamic.BlockSize / 512.0)));
                     // Sector number inside of block
                     uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.BlockSize / 512));
                     // How many sectors before reaching end of block

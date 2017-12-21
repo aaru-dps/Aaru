@@ -111,7 +111,7 @@ namespace DiscImageChef.Core
             end = DateTime.Now;
 
             results.FillTime = (end - start).TotalSeconds;
-            results.FillSpeed = bufferSize / 1048576 / (end - start).TotalSeconds;
+            results.FillSpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
 
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
@@ -133,7 +133,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.ReadTime = (end - start).TotalSeconds;
-            results.ReadSpeed = bufferSize / 1048576 / (end - start).TotalSeconds;
+            results.ReadSpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
 
             #region Adler32
             ctx = new Adler32Context();
@@ -163,7 +163,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion Adler32
@@ -196,7 +196,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion CRC16
@@ -229,7 +229,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion CRC32
@@ -262,7 +262,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion CRC64
@@ -295,7 +295,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion MD5
@@ -328,7 +328,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion RIPEMD160
@@ -361,7 +361,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SHA1
@@ -394,7 +394,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SHA256
@@ -427,7 +427,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SHA384
@@ -460,7 +460,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SHA512
@@ -493,7 +493,7 @@ namespace DiscImageChef.Core
                                 new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
-                                    Speed = bufferSize / 1048576 / (end - start).TotalSeconds
+                                    Speed = bufferSize / 1048576.0 / (end - start).TotalSeconds
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion SpamSum
@@ -523,7 +523,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.EntropyTime = (end - start).TotalSeconds;
-            results.EntropySpeed = bufferSize / 1048576 / (end - start).TotalSeconds;
+            results.EntropySpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
             #endregion Entropy
 
             #region Multitasking
@@ -549,10 +549,10 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.TotalTime = (end - start).TotalSeconds;
-            results.TotalSpeed = bufferSize / 1048576 / results.TotalTime;
+            results.TotalSpeed = bufferSize / 1048576.0 / results.TotalTime;
             #endregion
 
-            results.SeparateSpeed = bufferSize / 1048576 / results.SeparateTime;
+            results.SeparateSpeed = bufferSize / 1048576.0 / results.SeparateTime;
 
             return results;
         }
