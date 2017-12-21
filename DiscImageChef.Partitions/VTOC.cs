@@ -467,7 +467,7 @@ namespace DiscImageChef.Partitions
             public pFlag p_flag; /*permision flags*/
             public int p_start; /*start sector no of partition*/
             public int p_size; /*# of blocks in partition*/
-        };
+        }
 
         enum pTag : ushort
         {

@@ -122,7 +122,7 @@ namespace DiscImageChef.DiscImages
 
             public uint GmtOff;
             public uint Timezone;
-        };
+        }
 
         enum PCompression : uint
         {

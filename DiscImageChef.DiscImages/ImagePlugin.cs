@@ -437,7 +437,7 @@ namespace DiscImageChef.DiscImages
         CdMode2Form1,
         /// <summary>Data track, compact disc mode 2, form 2</summary>
         CdMode2Form2
-    };
+    }
 
     /// <summary>
     /// Track defining structure.
@@ -567,7 +567,7 @@ namespace DiscImageChef.DiscImages
         DvdCmi,
         /// <summary>Floppy address mark (contents depend on underlying floppy format)</summary>
         FloppyAddressMark
-    };
+    }
 
     /// <summary>
     /// Metadata present for each media.
@@ -694,7 +694,7 @@ namespace DiscImageChef.DiscImages
         Xbox_SecuritySector,
         /// <summary>On floppy disks, data in last cylinder usually in a different format that contains duplication or manufacturing information</summary>
         Floppy_LeadOut
-    };
+    }
 
     /// <summary>
     /// Enumeration of media types defined in CICM metadata

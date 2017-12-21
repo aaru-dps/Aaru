@@ -52,7 +52,7 @@ namespace DiscImageChef.Devices.Windows
         public IntPtr DataBuffer;
         public uint SenseInfoOffset;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] Cdb;
-    };
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     struct ScsiPassThroughDirectAndSenseBuffer

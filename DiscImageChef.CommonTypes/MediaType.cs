@@ -884,5 +884,5 @@ namespace DiscImageChef.CommonTypes
         // USB flash drives
         FlashDrive
         #endregion Generic hard disks
-    };
+    }
 }

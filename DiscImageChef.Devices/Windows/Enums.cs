@@ -491,7 +491,7 @@ namespace DiscImageChef.Devices.Windows
         LockChannel,
         UnlockChannel,
         DeviceCommand
-    };
+    }
 
     static class Consts
     {

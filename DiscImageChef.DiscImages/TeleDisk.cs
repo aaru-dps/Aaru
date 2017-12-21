@@ -1343,7 +1343,7 @@ namespace DiscImageChef.DiscImages
                           Ibufcnt,
                           Ibufndx; // input buffer counters
             public byte[] Inbuf; // input buffer
-        };
+        }
 
         Tdlzhuf tdctl;
         byte[] text_buf = new byte[N + F - 1];
