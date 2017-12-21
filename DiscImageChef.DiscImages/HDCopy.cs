@@ -110,7 +110,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             /// The length of the compressed block, in bytes. Little-endian.
             /// </summary>
-            public UInt16 length;
+            public ushort length;
 
             /// <summary>
             /// The byte value used as RLE escape sequence

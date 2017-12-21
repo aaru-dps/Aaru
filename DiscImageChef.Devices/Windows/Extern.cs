@@ -104,8 +104,8 @@ namespace DiscImageChef.Devices.Windows
         public static extern bool SetupDiGetDeviceInterfaceDetail(SafeFileHandle hDevInfo,
                                                                   ref DeviceInterfaceData deviceInterfaceData,
                                                                   IntPtr deviceInterfaceDetailData,
-                                                                  UInt32 deviceInterfaceDetailDataSize,
-                                                                  ref UInt32 requiredSize, IntPtr deviceInfoData);
+                                                                  uint deviceInterfaceDetailDataSize,
+                                                                  ref uint requiredSize, IntPtr deviceInfoData);
 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool SetupDiDestroyDeviceInfoList(SafeFileHandle hDevInfo);
