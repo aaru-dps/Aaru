@@ -108,8 +108,7 @@ namespace DiscImageChef.Commands
                 try
                 {
                     List<Track> inputTracks = inputFormat.GetTracks();
-                    if(inputTracks.Count > 0) formatHasTracks = true;
-                    else formatHasTracks = false;
+                    formatHasTracks = inputTracks.Count > 0;
                 }
                 catch { formatHasTracks = false; }
 
@@ -243,13 +242,13 @@ namespace DiscImageChef.Commands
                     if(failingLbas.Count == (int)inputFormat.GetSectors())
                         DicConsole.VerboseWriteLine("\tall sectors.");
                     else
-                        for(int i = 0; i < failingLbas.Count; i++) DicConsole.VerboseWriteLine("\t{0}", failingLbas[i]);
+                        foreach(ulong t in failingLbas) DicConsole.VerboseWriteLine("\t{0}", t);
 
                     DicConsole.WriteLine("LBAs without checksum:");
                     if(unknownLbas.Count == (int)inputFormat.GetSectors())
                         DicConsole.VerboseWriteLine("\tall sectors.");
                     else
-                        for(int i = 0; i < unknownLbas.Count; i++) DicConsole.VerboseWriteLine("\t{0}", unknownLbas[i]);
+                        foreach(ulong t in unknownLbas) DicConsole.VerboseWriteLine("\t{0}", t);
                 }
 
                 DicConsole.WriteLine("Total sectors........... {0}", inputFormat.GetSectors());

@@ -182,12 +182,8 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Media statistics");
                 DicConsole.WriteLine("================");
                 foreach(MediaStats ms in Core.Statistics.AllStats.Medias)
-                    if(ms.real)
-                        DicConsole.WriteLine("Media type {0} has been found {1} times in a real device.", ms.type,
-                                             ms.Value);
-                    else
-                        DicConsole.WriteLine("Media type {0} has been found {1} times in a media image.", ms.type,
-                                             ms.Value);
+                    DicConsole.WriteLine("Media type {0} has been found {1} times in a {2} image.", ms.type,
+                                             ms.Value, ms.real ? "real" : "media");
 
                 DicConsole.WriteLine();
                 thereAreStats = true;

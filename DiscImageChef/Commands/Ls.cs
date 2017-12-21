@@ -76,14 +76,9 @@ namespace DiscImageChef.Commands
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins(encoding);
 
-            List<string> idPlugins;
-            Filesystem plugin;
-            ImagePlugin imageFormat;
-            Errno error;
-
             try
             {
-                imageFormat = ImageFormat.Detect(inputFilter);
+                ImagePlugin imageFormat = ImageFormat.Detect(inputFilter);
 
                 if(imageFormat == null)
                 {
@@ -126,6 +121,9 @@ namespace DiscImageChef.Commands
                 List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
                 Core.Partitions.AddSchemesToStats(partitions);
 
+                List<string> idPlugins;
+                Filesystem plugin;
+                Errno error;
                 if(partitions.Count == 0) DicConsole.DebugWriteLine("Ls command", "No partitions found");
                 else
                 {

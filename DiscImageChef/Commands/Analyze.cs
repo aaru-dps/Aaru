@@ -78,15 +78,11 @@ namespace DiscImageChef.Commands
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins(encoding);
 
-            List<string> idPlugins;
-            Filesystem plugin;
-            string information;
             bool checkraw = false;
-            ImagePlugin imageFormat;
 
             try
             {
-                imageFormat = ImageFormat.Detect(inputFilter);
+                ImagePlugin imageFormat = ImageFormat.Detect(inputFilter);
 
                 if(imageFormat == null)
                 {
@@ -127,6 +123,9 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
+                List<string> idPlugins;
+                Filesystem plugin;
+                string information;
                 if(options.SearchForPartitions)
                 {
                     List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
@@ -183,13 +182,12 @@ namespace DiscImageChef.Commands
                             else
                             {
                                 plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
-                                if(plugin != null)
-                                {
-                                    DicConsole.WriteLine($"Identified by {plugin.Name}.");
-                                    plugin.GetInformation(imageFormat, partitions[i], out information);
-                                    DicConsole.Write(information);
-                                    Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                                }
+                                if(plugin == null) continue;
+
+                                DicConsole.WriteLine($"Identified by {plugin.Name}.");
+                                plugin.GetInformation(imageFormat, partitions[i], out information);
+                                DicConsole.Write(information);
+                                Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
                             }
                         }
                     }

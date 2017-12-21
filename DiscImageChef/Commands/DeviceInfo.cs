@@ -161,10 +161,7 @@ namespace DiscImageChef.Commands
             {
                 case DeviceType.ATA:
                 {
-                    AtaErrorRegistersCHS errorRegisters;
-
-                    byte[] ataBuf;
-                    bool sense = dev.AtaIdentify(out ataBuf, out errorRegisters);
+                    bool sense = dev.AtaIdentify(out byte[] ataBuf, out AtaErrorRegistersCHS errorRegisters);
 
                     if(sense)
                     {
@@ -189,8 +186,7 @@ namespace DiscImageChef.Commands
 
                     DicConsole.WriteLine(Identify.Prettify(ataBuf));
 
-                    double duration;
-                    dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out duration);
+                    dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out _);
 
                     if(errorRegisters.sector == 0xAA && errorRegisters.sectorCount == 0x55)
                     {
@@ -230,10 +226,7 @@ namespace DiscImageChef.Commands
                 }
                 case DeviceType.ATAPI:
                 {
-                    AtaErrorRegistersCHS errorRegisters;
-
-                    byte[] ataBuf;
-                    bool sense = dev.AtapiIdentify(out ataBuf, out errorRegisters);
+                    bool sense = dev.AtapiIdentify(out byte[] ataBuf, out AtaErrorRegistersCHS errorRegisters);
 
                     if(sense)
                     {
@@ -263,10 +256,7 @@ namespace DiscImageChef.Commands
                 }
                 case DeviceType.SCSI:
                 {
-                    byte[] senseBuf;
-                    byte[] inqBuf;
-
-                    bool sense = dev.ScsiInquiry(out inqBuf, out senseBuf);
+                    bool sense = dev.ScsiInquiry(out byte[] inqBuf, out byte[] senseBuf);
 
                     if(sense)
                     {
@@ -541,28 +531,26 @@ namespace DiscImageChef.Commands
                                 }
                     }
 
-                    byte[] modeBuf;
-                    double duration;
                     Modes.DecodedMode? decMode = null;
                     PeripheralDeviceTypes devType =
                         (PeripheralDeviceTypes)inq.Value.PeripheralDeviceType;
 
-                    sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current,
-                                            0x3F, 0xFF, 5, out duration);
+                    sense = dev.ModeSense10(out byte[] modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current,
+                                            0x3F, 0xFF, 5, out _);
                     if(sense || dev.Error)
                         sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true,
-                                                ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
+                                                ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
 
                     if(!sense && !dev.Error) decMode = Modes.DecodeMode10(modeBuf, devType);
 
                     if(sense || dev.Error || !decMode.HasValue)
                     {
                         sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F,
-                                               0xFF, 5, out duration);
+                                               0xFF, 5, out _);
                         if(sense || dev.Error)
                             sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current,
-                                                   0x3F, 0x00, 5, out duration);
-                        if(sense || dev.Error) sense = dev.ModeSense(out modeBuf, out senseBuf, 5, out duration);
+                                                   0x3F, 0x00, 5, out _);
+                        if(sense || dev.Error) sense = dev.ModeSense(out modeBuf, out senseBuf, 5, out _);
 
                         if(!sense && !dev.Error) decMode = Modes.DecodeMode6(modeBuf, devType);
                     }
@@ -923,8 +911,7 @@ namespace DiscImageChef.Commands
 
                     switch(devType) {
                         case PeripheralDeviceTypes.MultiMediaDevice:
-                            byte[] confBuf;
-                            sense = dev.GetConfiguration(out confBuf, out senseBuf, dev.Timeout, out duration);
+                            sense = dev.GetConfiguration(out byte[] confBuf, out senseBuf, dev.Timeout, out _);
 
                             if(!sense)
                             {
@@ -1139,7 +1126,7 @@ namespace DiscImageChef.Commands
                             // testing drives show only supported media capabilities.
                             /*
                         byte[] strBuf;
-                        sense = dev.ReadDiscStructure(out strBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CapabilityList, 0, dev.Timeout, out duration);
+                        sense = dev.ReadDiscStructure(out strBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CapabilityList, 0, dev.Timeout, out _);
 
                         if (!sense)
                         {
@@ -1158,7 +1145,7 @@ namespace DiscImageChef.Commands
                             }
                         }
 
-                        sense = dev.ReadDiscStructure(out strBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.CapabilityList, 0, dev.Timeout, out duration);
+                        sense = dev.ReadDiscStructure(out strBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.CapabilityList, 0, dev.Timeout, out _);
 
                         if (!sense)
                         {
@@ -1192,7 +1179,7 @@ namespace DiscImageChef.Commands
                                     case "DVDR   PX-712A":
                                         plxtDvd = true;
                                         plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout,
-                                                                          out duration);
+                                                                          out _);
                                         break;
                                     case "DVDR   PX-714A":
                                     case "DVDR   PX-716A":
@@ -1200,12 +1187,11 @@ namespace DiscImageChef.Commands
                                     case "DVDR   PX-755A":
                                     case "DVDR   PX-760A":
                                     {
-                                        byte[] plxtBufSmall;
                                         plxtBuf = new byte[256 * 4];
                                         for(byte i = 0; i < 4; i++)
                                         {
-                                            plxtSense = dev.PlextorReadEepromBlock(out plxtBufSmall, out senseBuf, i, 256,
-                                                                                   dev.Timeout, out duration);
+                                            plxtSense = dev.PlextorReadEepromBlock(out byte[] plxtBufSmall, out senseBuf, i, 256,
+                                                                                   dev.Timeout, out _);
                                             if(plxtSense) break;
 
                                             Array.Copy(plxtBufSmall, 0, plxtBuf, i * 256, 256);
@@ -1218,7 +1204,7 @@ namespace DiscImageChef.Commands
                                     {
                                         if(dev.Model.StartsWith("CD-R   ", StringComparison.Ordinal))
                                             plxtSense = dev.PlextorReadEepromCdr(out plxtBuf, out senseBuf, dev.Timeout,
-                                                                                 out duration);
+                                                                                 out _);
                                         break;
                                     }
                                 }
@@ -1265,10 +1251,8 @@ namespace DiscImageChef.Commands
                                     }
                                 }
 
-                                bool plxtPwrRecEnabled;
-                                ushort plxtPwrRecSpeed;
-                                plxtSense = dev.PlextorGetPoweRec(out senseBuf, out plxtPwrRecEnabled, out plxtPwrRecSpeed,
-                                                                  dev.Timeout, out duration);
+                                plxtSense = dev.PlextorGetPoweRec(out senseBuf, out bool plxtPwrRecEnabled, out ushort plxtPwrRecSpeed,
+                                                                  dev.Timeout, out _);
                                 if(!plxtSense)
                                 {
                                     DicConsole.Write("Drive supports PoweRec");
@@ -1280,10 +1264,9 @@ namespace DiscImageChef.Commands
                                             DicConsole.WriteLine(" and recommends {0} Kb/sec.", plxtPwrRecSpeed);
                                         else DicConsole.WriteLine(".");
 
-                                        ushort plxtPwrRecSelected, plxtPwrRecMax, plxtPwrRecLast;
-                                        plxtSense = dev.PlextorGetSpeeds(out senseBuf, out plxtPwrRecSelected,
-                                                                         out plxtPwrRecMax, out plxtPwrRecLast, dev.Timeout,
-                                                                         out duration);
+                                        plxtSense = dev.PlextorGetSpeeds(out senseBuf, out ushort plxtPwrRecSelected,
+                                                                         out ushort plxtPwrRecMax, out ushort plxtPwrRecLast, dev.Timeout,
+                                                                         out _);
 
                                         if(!plxtSense)
                                         {
@@ -1304,15 +1287,16 @@ namespace DiscImageChef.Commands
                                 }
 
                                 // TODO: Check it with a drive
-                                plxtSense = dev.PlextorGetSilentMode(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                plxtSense = dev.PlextorGetSilentMode(out plxtBuf, out senseBuf, dev.Timeout, out _);
                                 if(!plxtSense)
                                 {
                                     DicConsole.WriteLine("Drive supports Plextor SilentMode");
                                     if(plxtBuf[0] == 1)
                                     {
                                         DicConsole.WriteLine("Plextor SilentMode is enabled:");
-                                        if(plxtBuf[1] == 2) DicConsole.WriteLine("\tAccess time is slow");
-                                        else DicConsole.WriteLine("\tAccess time is fast");
+                                        DicConsole.WriteLine(plxtBuf[1] == 2
+                                                                 ? "\tAccess time is slow"
+                                                                 : "\tAccess time is fast");
 
                                         if(plxtBuf[2] > 0)
                                             DicConsole.WriteLine("\tCD read speed limited to {0}x", plxtBuf[2]);
@@ -1327,13 +1311,13 @@ namespace DiscImageChef.Commands
                                     }
                                 }
 
-                                plxtSense = dev.PlextorGetGigaRec(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                plxtSense = dev.PlextorGetGigaRec(out plxtBuf, out senseBuf, dev.Timeout, out _);
                                 if(!plxtSense) DicConsole.WriteLine("Drive supports Plextor GigaRec");
 
-                                plxtSense = dev.PlextorGetSecuRec(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                plxtSense = dev.PlextorGetSecuRec(out plxtBuf, out senseBuf, dev.Timeout, out _);
                                 if(!plxtSense) DicConsole.WriteLine("Drive supports Plextor SecuRec");
 
-                                plxtSense = dev.PlextorGetSpeedRead(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                plxtSense = dev.PlextorGetSpeedRead(out plxtBuf, out senseBuf, dev.Timeout, out _);
                                 if(!plxtSense)
                                 {
                                     DicConsole.Write("Drive supports Plextor SpeedRead");
@@ -1341,7 +1325,7 @@ namespace DiscImageChef.Commands
                                     else DicConsole.WriteLine();
                                 }
 
-                                plxtSense = dev.PlextorGetHiding(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                plxtSense = dev.PlextorGetHiding(out plxtBuf, out senseBuf, dev.Timeout, out _);
                                 if(!plxtSense)
                                 {
                                     DicConsole.WriteLine("Drive supports hiding CD-Rs and forcing single session");
@@ -1352,23 +1336,23 @@ namespace DiscImageChef.Commands
                                 }
 
                                 plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, false, dev.Timeout,
-                                                                  out duration);
+                                                                  out _);
                                 if(!plxtSense) DicConsole.WriteLine("Drive supports Plextor VariRec");
 
                                 if(plxtDvd)
                                 {
                                     plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, true, dev.Timeout,
-                                                                      out duration);
+                                                                      out _);
                                     if(!plxtSense) DicConsole.WriteLine("Drive supports Plextor VariRec for DVDs");
 
                                     plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, false, dev.Timeout,
-                                                                         out duration);
+                                                                         out _);
                                     if(!plxtSense) DicConsole.WriteLine("Drive supports bitsetting DVD+R book type");
                                     plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, true, dev.Timeout,
-                                                                         out duration);
+                                                                         out _);
                                     if(!plxtSense) DicConsole.WriteLine("Drive supports bitsetting DVD+R DL book type");
                                     plxtSense = dev.PlextorGetTestWriteDvdPlus(out plxtBuf, out senseBuf, dev.Timeout,
-                                                                               out duration);
+                                                                               out _);
                                     if(!plxtSense) DicConsole.WriteLine("Drive supports test writing DVD+");
                                 }
                             }
@@ -1376,8 +1360,7 @@ namespace DiscImageChef.Commands
 
                             if(inq.Value.KreonPresent)
                             {
-                                KreonFeatures krFeatures;
-                                if(!dev.KreonGetFeatureList(out senseBuf, out krFeatures, dev.Timeout, out duration))
+                                if(!dev.KreonGetFeatureList(out senseBuf, out KreonFeatures krFeatures, dev.Timeout, out _))
                                 {
                                     DicConsole.WriteLine("Drive has kreon firmware:");
                                     if(krFeatures.HasFlag(KreonFeatures.ChallengeResponse))
@@ -1404,9 +1387,8 @@ namespace DiscImageChef.Commands
                             }
                             break;
                         case PeripheralDeviceTypes.SequentialAccess:
-                            byte[] seqBuf;
 
-                            sense = dev.ReadBlockLimits(out seqBuf, out senseBuf, dev.Timeout, out duration);
+                            sense = dev.ReadBlockLimits(out byte[] seqBuf, out senseBuf, dev.Timeout, out _);
                             if(sense)
                                 DicConsole.ErrorWriteLine("READ BLOCK LIMITS:\n{0}",
                                                           Sense.PrettifySense(senseBuf));
@@ -1418,7 +1400,7 @@ namespace DiscImageChef.Commands
                                 DicConsole.WriteLine(BlockLimits.Prettify(seqBuf));
                             }
 
-                            sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, dev.Timeout, out duration);
+                            sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, dev.Timeout, out _);
                             if(sense)
                                 DicConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}",
                                                           Sense.PrettifySense(senseBuf));
@@ -1436,7 +1418,7 @@ namespace DiscImageChef.Commands
                             }
 
                             sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout,
-                                                             out duration);
+                                                             out _);
                             if(sense)
                                 DicConsole.ErrorWriteLine("REPORT DENSITY SUPPORT (MEDIUM):\n{0}",
                                                           Sense.PrettifySense(senseBuf));
@@ -1463,7 +1445,7 @@ namespace DiscImageChef.Commands
                 {
                     bool noInfo = true;
 
-                    bool sense = dev.ReadCid(out byte[] mmcBuf, out uint[] response, dev.Timeout, out double duration);
+                    bool sense = dev.ReadCid(out byte[] mmcBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1471,7 +1453,7 @@ namespace DiscImageChef.Commands
                                          mmcBuf);
                         DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCID(mmcBuf));
                     }
-                    sense = dev.ReadCsd(out mmcBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadCsd(out mmcBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1479,7 +1461,7 @@ namespace DiscImageChef.Commands
                                          mmcBuf);
                         DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCSD(mmcBuf));
                     }
-                    sense = dev.ReadOcr(out mmcBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadOcr(out mmcBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1487,7 +1469,7 @@ namespace DiscImageChef.Commands
                                          mmcBuf);
                         DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyOCR(mmcBuf));
                     }
-                    sense = dev.ReadExtendedCsd(out mmcBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadExtendedCsd(out mmcBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1503,7 +1485,7 @@ namespace DiscImageChef.Commands
                 {
                     bool noInfo = true;
 
-                    bool sense = dev.ReadCid(out byte[] sdBuf, out uint[] response, dev.Timeout, out double duration);
+                    bool sense = dev.ReadCid(out byte[] sdBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1511,7 +1493,7 @@ namespace DiscImageChef.Commands
                                          "SecureDigital CID", sdBuf);
                         DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(sdBuf));
                     }
-                    sense = dev.ReadCsd(out sdBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadCsd(out sdBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1519,7 +1501,7 @@ namespace DiscImageChef.Commands
                                          "SecureDigital CSD", sdBuf);
                         DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(sdBuf));
                     }
-                    sense = dev.ReadSdocr(out sdBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadSdocr(out sdBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
                         noInfo = false;
@@ -1527,7 +1509,7 @@ namespace DiscImageChef.Commands
                                          "SecureDigital OCR", sdBuf);
                         DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(sdBuf));
                     }
-                    sense = dev.ReadScr(out sdBuf, out response, dev.Timeout, out duration);
+                    sense = dev.ReadScr(out sdBuf, out _, dev.Timeout, out _);
                     if(!sense)
                     {
                         noInfo = false;

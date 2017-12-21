@@ -99,8 +99,7 @@ namespace DiscImageChef.Commands
 
                             if(options.DuplicatedSectors)
                             {
-                                byte[] garbage;
-                                string sectorHash = sha1CtxTrack.Data(sector, out garbage);
+                                string sectorHash = sha1CtxTrack.Data(sector, out _);
                                 if(!uniqueSectorsPerTrack.Contains(sectorHash)) uniqueSectorsPerTrack.Add(sectorHash);
                             }
 
@@ -146,8 +145,7 @@ namespace DiscImageChef.Commands
 
                 if(options.DuplicatedSectors)
                 {
-                    byte[] garbage;
-                    string sectorHash = sha1Ctx.Data(sector, out garbage);
+                    string sectorHash = sha1Ctx.Data(sector, out _);
                     if(!uniqueSectors.Contains(sectorHash)) uniqueSectors.Add(sectorHash);
                 }
 

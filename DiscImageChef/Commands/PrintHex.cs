@@ -71,7 +71,6 @@ namespace DiscImageChef.Commands
             for(ulong i = 0; i < options.Length; i++)
             {
                 DicConsole.WriteLine("Sector {0}", options.StartSector + i);
-                byte[] sector;
 
                 if(inputFormat.ImageInfo.ReadableSectorTags == null)
                 {
@@ -89,8 +88,7 @@ namespace DiscImageChef.Commands
                     }
                 }
 
-                if(options.LongSectors) sector = inputFormat.ReadSectorLong(options.StartSector + i);
-                else sector = inputFormat.ReadSector(options.StartSector + i);
+                byte[] sector = options.LongSectors ? inputFormat.ReadSectorLong(options.StartSector + i) : inputFormat.ReadSector(options.StartSector + i);
 
                 DiscImageChef.PrintHex.PrintHexArray(sector, options.WidthBytes);
             }

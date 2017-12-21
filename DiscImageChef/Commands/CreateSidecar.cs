@@ -78,8 +78,6 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
-                ImagePlugin imageFormat;
-
                 FiltersList filtersList = new FiltersList();
                 Filter inputFilter = filtersList.GetFilter(options.InputFile);
 
@@ -91,7 +89,7 @@ namespace DiscImageChef.Commands
 
                 try
                 {
-                    imageFormat = ImageFormat.Detect(inputFilter);
+                    ImagePlugin imageFormat = ImageFormat.Detect(inputFilter);
 
                     if(imageFormat == null)
                     {
