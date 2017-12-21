@@ -727,47 +727,45 @@ namespace DiscImageChef.DiscImages
                                 throw new
                                     FeatureUnsupportedImageException(string.Format("Found INDEX before a track {0}",
                                                                                    line));
-                            else
-                            {
-                                int index = int.Parse(matchIndex.Groups[1].Value);
-                                ulong offset = CdrWinMsftoLba(matchIndex.Groups[2].Value);
 
-                                if(index != 0 && index != 1 && currenttrack.Indexes.Count == 0)
-                                    throw new
-                                        FeatureUnsupportedImageException(string
-                                                                             .Format("Found INDEX {0} before INDEX 00 or INDEX 01",
-                                                                                     index));
+                            int index = int.Parse(matchIndex.Groups[1].Value);
+                            ulong offset = CdrWinMsftoLba(matchIndex.Groups[2].Value);
 
-                                if(index == 0 || index == 1 && !currenttrack.Indexes.ContainsKey(0))
-                                    if((int)(currenttrack.Sequence - 2) >= 0 && offset > 1)
-                                    {
-                                        cuetracks[currenttrack.Sequence - 2].Sectors = offset - currentfileoffsetsector;
-                                        currentfile.Offset +=
-                                            cuetracks[currenttrack.Sequence - 2].Sectors *
-                                            cuetracks[currenttrack.Sequence - 2].Bps;
-                                        DicConsole.DebugWriteLine("CDRWin plugin",
-                                                                  "Sets currentfile.offset to {0} at line 553",
-                                                                  currentfile.Offset);
-                                        DicConsole.DebugWriteLine("CDRWin plugin",
-                                                                  "cuetracks[currenttrack.sequence-2].sectors = {0}",
-                                                                  cuetracks[currenttrack.Sequence - 2].Sectors);
-                                        DicConsole.DebugWriteLine("CDRWin plugin",
-                                                                  "cuetracks[currenttrack.sequence-2].bps = {0}",
-                                                                  cuetracks[currenttrack.Sequence - 2].Bps);
-                                    }
+                            if(index != 0 && index != 1 && currenttrack.Indexes.Count == 0)
+                                throw new
+                                    FeatureUnsupportedImageException(string
+                                                                         .Format("Found INDEX {0} before INDEX 00 or INDEX 01",
+                                                                                 index));
 
-                                if((index == 0 || index == 1 && !currenttrack.Indexes.ContainsKey(0)) &&
-                                   currenttrack.Sequence == 1)
+                            if(index == 0 || index == 1 && !currenttrack.Indexes.ContainsKey(0))
+                                if((int)(currenttrack.Sequence - 2) >= 0 && offset > 1)
                                 {
+                                    cuetracks[currenttrack.Sequence - 2].Sectors = offset - currentfileoffsetsector;
+                                    currentfile.Offset +=
+                                        cuetracks[currenttrack.Sequence - 2].Sectors *
+                                        cuetracks[currenttrack.Sequence - 2].Bps;
                                     DicConsole.DebugWriteLine("CDRWin plugin",
-                                                              "Sets currentfile.offset to {0} at line 559",
-                                                              offset * currenttrack.Bps);
-                                    currentfile.Offset = offset * currenttrack.Bps;
+                                                              "Sets currentfile.offset to {0} at line 553",
+                                                              currentfile.Offset);
+                                    DicConsole.DebugWriteLine("CDRWin plugin",
+                                                              "cuetracks[currenttrack.sequence-2].sectors = {0}",
+                                                              cuetracks[currenttrack.Sequence - 2].Sectors);
+                                    DicConsole.DebugWriteLine("CDRWin plugin",
+                                                              "cuetracks[currenttrack.sequence-2].bps = {0}",
+                                                              cuetracks[currenttrack.Sequence - 2].Bps);
                                 }
 
-                                currentfileoffsetsector = offset;
-                                currenttrack.Indexes.Add(index, offset);
+                            if((index == 0 || index == 1 && !currenttrack.Indexes.ContainsKey(0)) &&
+                               currenttrack.Sequence == 1)
+                            {
+                                DicConsole.DebugWriteLine("CDRWin plugin",
+                                                          "Sets currentfile.offset to {0} at line 559",
+                                                          offset * currenttrack.Bps);
+                                currentfile.Offset = offset * currenttrack.Bps;
                             }
+
+                            currentfileoffsetsector = offset;
+                            currenttrack.Indexes.Add(index, offset);
                         }
                         else if(matchIsrc.Success)
                         {

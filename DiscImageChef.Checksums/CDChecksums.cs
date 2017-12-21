@@ -142,7 +142,8 @@ namespace DiscImageChef.Checksums
 
                     return true;
                 }
-                else if(channel[0x00F] == 0x01) // mode (1 byte)
+
+                if(channel[0x00F] == 0x01) // mode (1 byte)
                 {
                     DicConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
                                               channel[0x00C], channel[0x00D], channel[0x00E]);
@@ -200,7 +201,8 @@ namespace DiscImageChef.Checksums
 
                     return true;
                 }
-                else if(channel[0x00F] == 0x02) // mode (1 byte)
+
+                if(channel[0x00F] == 0x02) // mode (1 byte)
                 {
                     DicConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
                                               channel[0x00C], channel[0x00D], channel[0x00E]);
@@ -281,13 +283,11 @@ namespace DiscImageChef.Checksums
 
                     return true;
                 }
-                else
-                {
-                    DicConsole.DebugWriteLine("CD checksums",
-                                              "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
-                                              channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
-                    return null;
-                }
+
+                DicConsole.DebugWriteLine("CD checksums",
+                                          "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
+                                          channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
+                return null;
             }
 
             return null;

@@ -1153,7 +1153,8 @@ namespace DiscImageChef.DiscImages
 
                 throw new FeatureNotPresentImageException("Lead-out not present in disk image");
             }
-            else throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
         #endregion
 
@@ -1442,7 +1443,8 @@ namespace DiscImageChef.DiscImages
             getbuf <<= 1;
             getlen--;
             if(i < 0) return 1;
-            else return 0;
+
+            return 0;
         }
 
         int GetByte() /* get a byte */

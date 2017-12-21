@@ -921,7 +921,7 @@ namespace DiscImageChef.DiscImages
                     if(!locatorFound || parentPath == null)
                         throw new
                             FileNotFoundException("(VirtualPC plugin): Cannot find parent file for differencing disk image");
-                    else
+
                     {
                         parentImage = new Vhd();
                         Filter parentFilter =

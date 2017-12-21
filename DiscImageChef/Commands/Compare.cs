@@ -74,26 +74,22 @@ namespace DiscImageChef.Commands
                 DicConsole.ErrorWriteLine("Input file 1 format not identified, not proceeding with comparison.");
                 return;
             }
-            else
-            {
-                if(options.Verbose)
-                    DicConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
-                                                input1Format.PluginUuid);
-                else DicConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
-            }
+
+            if(options.Verbose)
+                DicConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
+                                            input1Format.PluginUuid);
+            else DicConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
 
             if(input2Format == null)
             {
                 DicConsole.ErrorWriteLine("Input file 2 format not identified, not proceeding with comparison.");
                 return;
             }
-            else
-            {
-                if(options.Verbose)
-                    DicConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
-                                                input2Format.PluginUuid);
-                else DicConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
-            }
+
+            if(options.Verbose)
+                DicConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
+                                            input2Format.PluginUuid);
+            else DicConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
 
             input1Format.OpenImage(inputFilter1);
             input2Format.OpenImage(inputFilter2);

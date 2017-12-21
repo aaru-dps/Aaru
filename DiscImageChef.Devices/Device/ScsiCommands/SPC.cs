@@ -421,8 +421,8 @@ namespace DiscImageChef.Devices
             if(prevent)
                 return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout,
                                                     out duration);
-            else
-                return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
+
+            return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
         }
 
         /// <summary>

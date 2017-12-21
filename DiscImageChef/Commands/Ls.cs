@@ -91,13 +91,11 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
                     return;
                 }
-                else
-                {
-                    if(options.Verbose)
-                        DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                    imageFormat.PluginUuid);
-                    else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
-                }
+
+                if(options.Verbose)
+                    DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
+                                                imageFormat.PluginUuid);
+                else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
                 try
                 {

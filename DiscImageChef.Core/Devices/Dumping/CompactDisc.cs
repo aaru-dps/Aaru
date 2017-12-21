@@ -365,15 +365,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             if(dumpRaw) throw new NotImplementedException("Raw CD dumping not yet implemented");
-            else
-            {
-                // TODO: Check subchannel capabilities
-                readcd = !dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false,
-                                     false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                     MmcSubchannel.Raw, dev.Timeout, out duration);
+            // TODO: Check subchannel capabilities
+            readcd = !dev.ReadCd(out readBuffer, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false,
+                                 false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                 MmcSubchannel.Raw, dev.Timeout, out duration);
 
-                if(readcd) DicConsole.WriteLine("Using MMC READ CD command.");
-            }
+            if(readcd) DicConsole.WriteLine("Using MMC READ CD command.");
 
             DumpHardwareType currentTry = null;
             ExtentsULong extents = null;
