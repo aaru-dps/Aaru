@@ -231,14 +231,11 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(tmpHeader.FmtByte == kInvalidFmtByte)
-            {
-                DicConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
+            if(tmpHeader.FmtByte != kInvalidFmtByte) return true;
 
-                return false;
-            }
+            DicConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
 
-            return true;
+            return false;
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -646,18 +643,17 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("DC42 plugin", "Calculated data checksum = 0x{0:X8}", dataChk);
             DicConsole.DebugWriteLine("DC42 plugin", "Stored data checksum = 0x{0:X8}", header.DataChecksum);
 
-            if(header.TagSize > 0)
-            {
-                DicConsole.DebugWriteLine("DC42 plugin", "Reading tags");
-                Stream tagstream = dc42ImageFilter.GetDataForkStream();
-                tagstream.Seek(tagOffset, SeekOrigin.Begin);
-                tagstream.Read(tags, 0, (int)header.TagSize);
+            if(header.TagSize <= 0) return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
 
-                DicConsole.DebugWriteLine("DC42 plugin", "Calculating tag checksum");
-                tagsChk = DC42CheckSum(tags);
-                DicConsole.DebugWriteLine("DC42 plugin", "Calculated tag checksum = 0x{0:X8}", tagsChk);
-                DicConsole.DebugWriteLine("DC42 plugin", "Stored tag checksum = 0x{0:X8}", header.TagChecksum);
-            }
+            DicConsole.DebugWriteLine("DC42 plugin", "Reading tags");
+            Stream tagstream = dc42ImageFilter.GetDataForkStream();
+            tagstream.Seek(tagOffset, SeekOrigin.Begin);
+            tagstream.Read(tags, 0, (int)header.TagSize);
+
+            DicConsole.DebugWriteLine("DC42 plugin", "Calculating tag checksum");
+            tagsChk = DC42CheckSum(tags);
+            DicConsole.DebugWriteLine("DC42 plugin", "Calculated tag checksum = 0x{0:X8}", tagsChk);
+            DicConsole.DebugWriteLine("DC42 plugin", "Stored tag checksum = 0x{0:X8}", header.TagChecksum);
 
             return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
         }

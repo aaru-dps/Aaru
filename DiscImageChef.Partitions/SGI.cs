@@ -126,12 +126,11 @@ namespace DiscImageChef.Partitions
                     Sequence = counter,
                     Scheme = Name
                 };
-                if(part.Size > 0 && dvh.partitions[i].type != SGIType.Header && dvh.partitions[i].type != SGIType.Volume
-                )
-                {
-                    partitions.Add(part);
-                    counter++;
-                }
+                if(part.Size <= 0 || dvh.partitions[i].type == SGIType.Header ||
+                   dvh.partitions[i].type == SGIType.Volume) continue;
+
+                partitions.Add(part);
+                counter++;
             }
 
             return true;

@@ -228,26 +228,25 @@ namespace DiscImageChef.Decoders.SCSI
                 }
             }
 
-            if(page.OutputPort3ChannelSelection > 0)
-            {
-                sb.Append("\tOutput port 3 has channels ");
-                if((page.OutputPort3ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
-                if((page.OutputPort3ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
-                if((page.OutputPort3ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
-                if((page.OutputPort3ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
+            if(page.OutputPort3ChannelSelection <= 0) return sb.ToString();
 
-                switch(page.OutputPort3Volume)
-                {
-                    case 0:
-                        sb.AppendLine("muted");
-                        break;
-                    case 0xFF:
-                        sb.AppendLine("at maximum volume");
-                        break;
-                    default:
-                        sb.AppendFormat("at volume {0}", page.OutputPort3Volume).AppendLine();
-                        break;
-                }
+            sb.Append("\tOutput port 3 has channels ");
+            if((page.OutputPort3ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
+            if((page.OutputPort3ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
+            if((page.OutputPort3ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
+            if((page.OutputPort3ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
+
+            switch(page.OutputPort3Volume)
+            {
+                case 0:
+                    sb.AppendLine("muted");
+                    break;
+                case 0xFF:
+                    sb.AppendLine("at maximum volume");
+                    break;
+                default:
+                    sb.AppendFormat("at volume {0}", page.OutputPort3Volume).AppendLine();
+                    break;
             }
 
             return sb.ToString();

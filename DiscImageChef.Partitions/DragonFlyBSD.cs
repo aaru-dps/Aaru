@@ -86,11 +86,10 @@ namespace DiscImageChef.Partitions
 
                 if((BSD.fsType)entry.p_fstype == BSD.fsType.Other) part.Type = entry.p_type_uuid.ToString();
                 else part.Type = BSD.fsTypeToString((BSD.fsType)entry.p_fstype);
-                if(entry.p_bsize > 0 && entry.p_boffset > 0)
-                {
-                    partitions.Add(part);
-                    counter++;
-                }
+                if(entry.p_bsize <= 0 || entry.p_boffset <= 0) continue;
+
+                partitions.Add(part);
+                counter++;
             }
 
             return true;

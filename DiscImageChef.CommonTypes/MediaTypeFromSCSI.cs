@@ -51,15 +51,14 @@ namespace DiscImageChef.CommonTypes
                     {
                         if(blocks == 173400 && blockSize == 256) return MediaType.SQ400;
 
-                        if(blockSize == 512)
-                        {
-                            if(model.ToLowerInvariant().StartsWith("syjet")) return MediaType.SyJet;
+                        if(blockSize != 512) return MediaType.Unknown;
 
-                            switch(blocks)
-                            {
-                                case 262144: return MediaType.EZ135;
-                                case 524288: return MediaType.SQ327;
-                            }
+                        if(model.ToLowerInvariant().StartsWith("syjet")) return MediaType.SyJet;
+
+                        switch(blocks)
+                        {
+                            case 262144: return MediaType.EZ135;
+                            case 524288: return MediaType.SQ327;
                         }
 
                         return MediaType.Unknown;
@@ -72,24 +71,20 @@ namespace DiscImageChef.CommonTypes
 
                     if(model.ToLowerInvariant().StartsWith("zip"))
                     {
-                        if(blockSize == 512)
-                        {
-                            if(blocks == 196608) return MediaType.ZIP100;
-                            if(blocks == 489532) return MediaType.ZIP250;
+                        if(blockSize != 512) return MediaType.Unknown;
 
-                            return MediaType.ZIP750;
-                        }
+                        if(blocks == 196608) return MediaType.ZIP100;
+                        if(blocks == 489532) return MediaType.ZIP250;
 
-                        return MediaType.Unknown;
+                        return MediaType.ZIP750;
                     }
 
                     if(model.ToLowerInvariant().StartsWith("jaz"))
                     {
-                        if(blockSize == 512)
-                        {
-                            if(blocks == 2091050) return MediaType.Jaz;
-                            if(blocks == 3915600) return MediaType.Jaz2;
-                        }
+                        if(blockSize != 512) return MediaType.Unknown;
+
+                        if(blocks == 2091050) return MediaType.Jaz;
+                        if(blocks == 3915600) return MediaType.Jaz2;
 
                         return MediaType.Unknown;
                     }
@@ -111,14 +106,11 @@ namespace DiscImageChef.CommonTypes
 
                     if(model.ToLowerInvariant().StartsWith("rdx"))
                     {
-                        if(blockSize == 512)
-                        {
-                            if(blocks == 625134256) return MediaType.RDX320;
+                        if(blockSize != 512) return MediaType.Unknown;
 
-                            return MediaType.RDX;
-                        }
+                        if(blocks == 625134256) return MediaType.RDX320;
 
-                        return MediaType.Unknown;
+                        return MediaType.RDX;
                     }
 
                     switch(mediumType)
@@ -1318,79 +1310,80 @@ namespace DiscImageChef.CommonTypes
                 // Optical device
                 case 0x07:
                 {
-                    if(mediumType == 0x01 || mediumType == 0x02 || mediumType == 0x03 || mediumType == 0x05 ||
-                       mediumType == 0x07)
-                        switch(blockSize)
+                    if(mediumType != 0x01 && mediumType != 0x02 && mediumType != 0x03 && mediumType != 0x05 &&
+                       mediumType != 0x07) return MediaType.UnknownMO;
+
+                    switch(blockSize)
+                    {
+                        case 512:
                         {
-                            case 512:
+                            switch(blocks)
                             {
-                                switch(blocks)
-                                {
-                                    case 249850: return MediaType.ECMA_154;
-                                    case 429975: return MediaType.ECMA_201_ROM;
-                                    case 446325: return MediaType.ECMA_201;
-                                    case 694929: return MediaType.ECMA_223_512;
-                                    case 904995: return MediaType.ECMA_183_512;
-                                    case 1128772:
-                                    case 1163337: return MediaType.ECMA_184_512;
-                                    case 1281856: return MediaType.PD650_WORM;
-                                    case 1298496: return MediaType.PD650;
-                                    case 1644581:
-                                    case 1647371: return MediaType.ECMA_195_512;
-                                    default: return MediaType.UnknownMO;
-                                }
+                                case 249850: return MediaType.ECMA_154;
+                                case 429975: return MediaType.ECMA_201_ROM;
+                                case 446325: return MediaType.ECMA_201;
+                                case 694929: return MediaType.ECMA_223_512;
+                                case 904995: return MediaType.ECMA_183_512;
+                                case 1128772:
+                                case 1163337: return MediaType.ECMA_184_512;
+                                case 1281856: return MediaType.PD650_WORM;
+                                case 1298496: return MediaType.PD650;
+                                case 1644581:
+                                case 1647371: return MediaType.ECMA_195_512;
+                                default: return MediaType.UnknownMO;
                             }
-                            case 1024:
-                            {
-                                switch(blocks)
-                                {
-                                    case 371371: return MediaType.ECMA_223;
-                                    case 498526: return MediaType.ECMA_183;
-                                    case 603466:
-                                    case 637041: return MediaType.ECMA_184;
-                                    case 936921:
-                                    case 948770: return MediaType.ECMA_195;
-                                    case 1244621: return MediaType.ECMA_238;
-                                    case 14476734: return MediaType.ECMA_260;
-                                    case 24445990: return MediaType.ECMA_260_Double;
-                                    default: return MediaType.UnknownMO;
-                                }
-                            }
-                            case 2048:
-                            {
-                                switch(blocks)
-                                {
-                                    case 318988:
-                                    case 320332:
-                                    case 321100: return MediaType.ECMA_239;
-                                    case 605846: return MediaType.GigaMo;
-                                    case 1063146: return MediaType.GigaMo2;
-                                    case 1128134: return MediaType.ECMA_280;
-                                    case 2043664: return MediaType.ECMA_322_2k;
-                                    case 7355716: return MediaType.ECMA_317;
-                                    default: return MediaType.UnknownMO;
-                                }
-                            }
-                            case 4096:
-                            {
-                                switch(blocks)
-                                {
-                                    case 1095840: return MediaType.ECMA_322;
-                                    default: return MediaType.UnknownMO;
-                                }
-                            }
-                            case 8192:
-                            {
-                                switch(blocks)
-                                {
-                                    case 1834348: return MediaType.UDO;
-                                    case 3668759: return MediaType.UDO2_WORM;
-                                    case 3669724: return MediaType.UDO2;
-                                    default: return MediaType.UnknownMO;
-                                }
-                            }
-                            default: return MediaType.UnknownMO;
                         }
+                        case 1024:
+                        {
+                            switch(blocks)
+                            {
+                                case 371371: return MediaType.ECMA_223;
+                                case 498526: return MediaType.ECMA_183;
+                                case 603466:
+                                case 637041: return MediaType.ECMA_184;
+                                case 936921:
+                                case 948770: return MediaType.ECMA_195;
+                                case 1244621: return MediaType.ECMA_238;
+                                case 14476734: return MediaType.ECMA_260;
+                                case 24445990: return MediaType.ECMA_260_Double;
+                                default: return MediaType.UnknownMO;
+                            }
+                        }
+                        case 2048:
+                        {
+                            switch(blocks)
+                            {
+                                case 318988:
+                                case 320332:
+                                case 321100: return MediaType.ECMA_239;
+                                case 605846: return MediaType.GigaMo;
+                                case 1063146: return MediaType.GigaMo2;
+                                case 1128134: return MediaType.ECMA_280;
+                                case 2043664: return MediaType.ECMA_322_2k;
+                                case 7355716: return MediaType.ECMA_317;
+                                default: return MediaType.UnknownMO;
+                            }
+                        }
+                        case 4096:
+                        {
+                            switch(blocks)
+                            {
+                                case 1095840: return MediaType.ECMA_322;
+                                default: return MediaType.UnknownMO;
+                            }
+                        }
+                        case 8192:
+                        {
+                            switch(blocks)
+                            {
+                                case 1834348: return MediaType.UDO;
+                                case 3668759: return MediaType.UDO2_WORM;
+                                case 3669724: return MediaType.UDO2;
+                                default: return MediaType.UnknownMO;
+                            }
+                        }
+                        default: return MediaType.UnknownMO;
+                    }
 
                     return MediaType.UnknownMO;
                 }

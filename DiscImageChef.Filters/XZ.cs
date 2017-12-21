@@ -109,24 +109,21 @@ namespace DiscImageChef.Filters
 
         public override bool Identify(string path)
         {
-            if(File.Exists(path))
-            {
-                FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-                byte[] buffer = new byte[6];
-                byte[] footer = new byte[2];
+            if(!File.Exists(path)) return false;
 
-                stream.Seek(0, SeekOrigin.Begin);
-                stream.Read(buffer, 0, 6);
-                stream.Seek(0, SeekOrigin.Begin);
-                stream.Seek(-2, SeekOrigin.End);
-                stream.Read(footer, 0, 2);
-                stream.Seek(0, SeekOrigin.Begin);
+            FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            byte[] buffer = new byte[6];
+            byte[] footer = new byte[2];
 
-                return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
-                       buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
-            }
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.Read(buffer, 0, 6);
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.Seek(-2, SeekOrigin.End);
+            stream.Read(footer, 0, 2);
+            stream.Seek(0, SeekOrigin.Begin);
 
-            return false;
+            return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
+                   buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
         }
 
         void GuessSize()

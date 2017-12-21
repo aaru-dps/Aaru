@@ -174,13 +174,12 @@ namespace DiscImageChef.Core.Devices
 
                                 testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, testSize,
                                                            timeout, out duration);
-                                if(!testSense && !dev.Error)
-                                {
-                                    readLong10 = true;
-                                    longBlockSize = testSize;
-                                    readRaw = true;
-                                    break;
-                                }
+                                if(testSense || dev.Error) continue;
+
+                                readLong10 = true;
+                                longBlockSize = testSize;
+                                readRaw = true;
+                                break;
                             }
                         else if(blockSize == 1024)
                             foreach(ushort testSize in new[]
@@ -203,13 +202,12 @@ namespace DiscImageChef.Core.Devices
 
                                 testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, testSize,
                                                            timeout, out duration);
-                                if(!testSense && !dev.Error)
-                                {
-                                    readLong10 = true;
-                                    longBlockSize = testSize;
-                                    readRaw = true;
-                                    break;
-                                }
+                                if(testSense || dev.Error) continue;
+
+                                readLong10 = true;
+                                longBlockSize = testSize;
+                                readRaw = true;
+                                break;
                             }
                         else if(blockSize == 2048)
                         {
@@ -468,14 +466,11 @@ namespace DiscImageChef.Core.Devices
                 if(!dev.Error || blocksToRead == 1) break;
             }
 
-            if(dev.Error)
-            {
-                blocksToRead = 1;
-                errorMessage = string.Format("Device error {0} trying to guess ideal transfer length.", dev.LastError);
-                return true;
-            }
+            if(!dev.Error) return false;
 
-            return false;
+            blocksToRead = 1;
+            errorMessage = string.Format("Device error {0} trying to guess ideal transfer length.", dev.LastError);
+            return true;
         }
 
         bool ScsiReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)
@@ -522,14 +517,11 @@ namespace DiscImageChef.Core.Devices
                 else return true;
             }
 
-            if(sense || dev.Error)
-            {
-                DicConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}",
-                                          Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                return true;
-            }
+            if(!sense && !dev.Error) return false;
 
-            return false;
+            DicConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}",
+                                      Decoders.SCSI.Sense.PrettifySense(senseBuf));
+            return true;
         }
 
         bool ScsiSeek(ulong block, out double duration)

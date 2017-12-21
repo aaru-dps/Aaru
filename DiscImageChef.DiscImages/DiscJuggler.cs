@@ -218,19 +218,17 @@ namespace DiscImageChef.DiscImages
                             int bLen = descriptor[position];
                             position++;
                             DicConsole.DebugWriteLine("DiscJuggler plugin", "\tc[{1}][{2}].Length = {0}", bLen, c, cb);
-                            if(bLen > 0)
-                            {
-                                byte[] textBlk = new byte[bLen];
-                                Array.Copy(descriptor, position, textBlk, 0, bLen);
-                                position += bLen;
-                                // Track title
-                                if(cb == 10)
-                                {
-                                    track.TrackDescription = Encoding.Default.GetString(textBlk, 0, bLen);
-                                    DicConsole.DebugWriteLine("DiscJuggler plugin", "\tTrack title = {0}",
-                                                              track.TrackDescription);
-                                }
-                            }
+                            if(bLen <= 0) continue;
+
+                            byte[] textBlk = new byte[bLen];
+                            Array.Copy(descriptor, position, textBlk, 0, bLen);
+                            position += bLen;
+                            // Track title
+                            if(cb != 10) continue;
+
+                            track.TrackDescription = Encoding.Default.GetString(textBlk, 0, bLen);
+                            DicConsole.DebugWriteLine("DiscJuggler plugin", "\tTrack title = {0}",
+                                                      track.TrackDescription);
                         }
                     }
 
@@ -519,17 +517,16 @@ namespace DiscImageChef.DiscImages
                     addedATrack = true;
                 }
 
-                if(addedATrack)
-                {
-                    lastSessionTrack = session.EndTrack;
-                    sessions.Add(session);
-                    DicConsole.DebugWriteLine("DiscJuggler plugin", "session.StartTrack = {0}", session.StartTrack);
-                    DicConsole.DebugWriteLine("DiscJuggler plugin", "session.StartSector = {0}", session.StartSector);
-                    DicConsole.DebugWriteLine("DiscJuggler plugin", "session.EndTrack = {0}", session.EndTrack);
-                    DicConsole.DebugWriteLine("DiscJuggler plugin", "session.EndSector = {0}", session.EndSector);
-                    DicConsole.DebugWriteLine("DiscJuggler plugin", "session.SessionSequence = {0}",
-                                              session.SessionSequence);
-                }
+                if(!addedATrack) continue;
+
+                lastSessionTrack = session.EndTrack;
+                sessions.Add(session);
+                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.StartTrack = {0}", session.StartTrack);
+                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.StartSector = {0}", session.StartSector);
+                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.EndTrack = {0}", session.EndTrack);
+                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.EndSector = {0}", session.EndSector);
+                DicConsole.DebugWriteLine("DiscJuggler plugin", "session.SessionSequence = {0}",
+                                          session.SessionSequence);
             }
 
             // Skip unknown

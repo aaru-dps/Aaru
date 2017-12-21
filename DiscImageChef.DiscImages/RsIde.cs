@@ -261,14 +261,12 @@ namespace DiscImageChef.DiscImages
         #region Unsupported features
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
-            if(ImageInfo.ReadableMediaTags.Contains(tag) && tag == MediaTagType.ATA_IDENTIFY)
-            {
-                byte[] buffer = new byte[512];
-                Array.Copy(identify, 0, buffer, 0, 512);
-                return buffer;
-            }
+            if(!ImageInfo.ReadableMediaTags.Contains(tag) || tag != MediaTagType.ATA_IDENTIFY)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            byte[] buffer = new byte[512];
+            Array.Copy(identify, 0, buffer, 0, 512);
+            return buffer;
         }
 
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)

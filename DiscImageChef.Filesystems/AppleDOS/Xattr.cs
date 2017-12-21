@@ -103,17 +103,15 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 return Errno.NoError;
             }
 
-            if(string.Compare(xattr, "com.apple.dos.tracksectorlist", StringComparison.InvariantCulture) == 0 && debug)
-            {
-                byte[] ts;
-                if(!extentCache.TryGetValue(filename, out ts)) return Errno.InvalidArgument;
+            if(string.Compare(xattr, "com.apple.dos.tracksectorlist", StringComparison.InvariantCulture) != 0 || !debug)
+                return Errno.NoSuchExtendedAttribute;
 
-                buf = new byte[ts.Length];
-                Array.Copy(ts, 0, buf, 0, buf.Length);
-                return Errno.NoError;
-            }
+            byte[] ts;
+            if(!extentCache.TryGetValue(filename, out ts)) return Errno.InvalidArgument;
 
-            return Errno.NoSuchExtendedAttribute;
+            buf = new byte[ts.Length];
+            Array.Copy(ts, 0, buf, 0, buf.Length);
+            return Errno.NoError;
         }
     }
 }

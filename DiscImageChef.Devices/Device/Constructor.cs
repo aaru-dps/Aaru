@@ -383,59 +383,58 @@ namespace DiscImageChef.Devices
                                 while(resolvedLink.Contains("usb"))
                                 {
                                     resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
-                                    if(System.IO.File.Exists(resolvedLink + "/descriptors") &&
-                                       System.IO.File.Exists(resolvedLink + "/idProduct") &&
-                                       System.IO.File.Exists(resolvedLink + "/idVendor"))
+                                    if(!System.IO.File.Exists(resolvedLink + "/descriptors") ||
+                                       !System.IO.File.Exists(resolvedLink + "/idProduct") ||
+                                       !System.IO.File.Exists(resolvedLink + "/idVendor")) continue;
+
+                                    System.IO.FileStream usbFs;
+                                    System.IO.StreamReader usbSr;
+                                    string usbTemp;
+
+                                    usbFs = new System.IO.FileStream(resolvedLink + "/descriptors",
+                                                                     System.IO.FileMode.Open,
+                                                                     System.IO.FileAccess.Read);
+                                    byte[] usbBuf = new byte[65536];
+                                    int usbCount = usbFs.Read(usbBuf, 0, 65536);
+                                    usbDescriptors = new byte[usbCount];
+                                    Array.Copy(usbBuf, 0, usbDescriptors, 0, usbCount);
+                                    usbFs.Close();
+
+                                    usbSr = new System.IO.StreamReader(resolvedLink + "/idProduct");
+                                    usbTemp = usbSr.ReadToEnd();
+                                    ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber,
+                                                    System.Globalization.CultureInfo.InvariantCulture, out usbProduct);
+                                    usbSr.Close();
+
+                                    usbSr = new System.IO.StreamReader(resolvedLink + "/idVendor");
+                                    usbTemp = usbSr.ReadToEnd();
+                                    ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber,
+                                                    System.Globalization.CultureInfo.InvariantCulture, out usbVendor);
+                                    usbSr.Close();
+
+                                    if(System.IO.File.Exists(resolvedLink + "/manufacturer"))
                                     {
-                                        System.IO.FileStream usbFs;
-                                        System.IO.StreamReader usbSr;
-                                        string usbTemp;
-
-                                        usbFs = new System.IO.FileStream(resolvedLink + "/descriptors",
-                                                                         System.IO.FileMode.Open,
-                                                                         System.IO.FileAccess.Read);
-                                        byte[] usbBuf = new byte[65536];
-                                        int usbCount = usbFs.Read(usbBuf, 0, 65536);
-                                        usbDescriptors = new byte[usbCount];
-                                        Array.Copy(usbBuf, 0, usbDescriptors, 0, usbCount);
-                                        usbFs.Close();
-
-                                        usbSr = new System.IO.StreamReader(resolvedLink + "/idProduct");
-                                        usbTemp = usbSr.ReadToEnd();
-                                        ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber,
-                                                        System.Globalization.CultureInfo.InvariantCulture, out usbProduct);
+                                        usbSr = new System.IO.StreamReader(resolvedLink + "/manufacturer");
+                                        usbManufacturerString = usbSr.ReadToEnd().Trim();
                                         usbSr.Close();
-
-                                        usbSr = new System.IO.StreamReader(resolvedLink + "/idVendor");
-                                        usbTemp = usbSr.ReadToEnd();
-                                        ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber,
-                                                        System.Globalization.CultureInfo.InvariantCulture, out usbVendor);
-                                        usbSr.Close();
-
-                                        if(System.IO.File.Exists(resolvedLink + "/manufacturer"))
-                                        {
-                                            usbSr = new System.IO.StreamReader(resolvedLink + "/manufacturer");
-                                            usbManufacturerString = usbSr.ReadToEnd().Trim();
-                                            usbSr.Close();
-                                        }
-
-                                        if(System.IO.File.Exists(resolvedLink + "/product"))
-                                        {
-                                            usbSr = new System.IO.StreamReader(resolvedLink + "/product");
-                                            usbProductString = usbSr.ReadToEnd().Trim();
-                                            usbSr.Close();
-                                        }
-
-                                        if(System.IO.File.Exists(resolvedLink + "/serial"))
-                                        {
-                                            usbSr = new System.IO.StreamReader(resolvedLink + "/serial");
-                                            usbSerialString = usbSr.ReadToEnd().Trim();
-                                            usbSr.Close();
-                                        }
-
-                                        usb = true;
-                                        break;
                                     }
+
+                                    if(System.IO.File.Exists(resolvedLink + "/product"))
+                                    {
+                                        usbSr = new System.IO.StreamReader(resolvedLink + "/product");
+                                        usbProductString = usbSr.ReadToEnd().Trim();
+                                        usbSr.Close();
+                                    }
+
+                                    if(System.IO.File.Exists(resolvedLink + "/serial"))
+                                    {
+                                        usbSr = new System.IO.StreamReader(resolvedLink + "/serial");
+                                        usbSerialString = usbSr.ReadToEnd().Trim();
+                                        usbSr.Close();
+                                    }
+
+                                    usb = true;
+                                    break;
                                 }
                         }
                     }
@@ -487,49 +486,48 @@ namespace DiscImageChef.Devices
                             while(resolvedLink.Contains("firewire"))
                             {
                                 resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
-                                if(System.IO.File.Exists(resolvedLink + "/model") &&
-                                   System.IO.File.Exists(resolvedLink + "/vendor") &&
-                                   System.IO.File.Exists(resolvedLink + "/guid"))
+                                if(!System.IO.File.Exists(resolvedLink + "/model") ||
+                                   !System.IO.File.Exists(resolvedLink + "/vendor") ||
+                                   !System.IO.File.Exists(resolvedLink + "/guid")) continue;
+
+                                System.IO.StreamReader fwSr;
+                                string fwTemp;
+
+                                fwSr = new System.IO.StreamReader(resolvedLink + "/model");
+                                fwTemp = fwSr.ReadToEnd();
+                                uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber,
+                                              System.Globalization.CultureInfo.InvariantCulture, out firewireModel);
+                                fwSr.Close();
+
+                                fwSr = new System.IO.StreamReader(resolvedLink + "/vendor");
+                                fwTemp = fwSr.ReadToEnd();
+                                uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber,
+                                              System.Globalization.CultureInfo.InvariantCulture,
+                                              out firewireVendor);
+                                fwSr.Close();
+
+                                fwSr = new System.IO.StreamReader(resolvedLink + "/guid");
+                                fwTemp = fwSr.ReadToEnd();
+                                ulong.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber,
+                                               System.Globalization.CultureInfo.InvariantCulture, out firewireGuid);
+                                fwSr.Close();
+
+                                if(System.IO.File.Exists(resolvedLink + "/model_name"))
                                 {
-                                    System.IO.StreamReader fwSr;
-                                    string fwTemp;
-
-                                    fwSr = new System.IO.StreamReader(resolvedLink + "/model");
-                                    fwTemp = fwSr.ReadToEnd();
-                                    uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber,
-                                                  System.Globalization.CultureInfo.InvariantCulture, out firewireModel);
+                                    fwSr = new System.IO.StreamReader(resolvedLink + "/model_name");
+                                    firewireModelName = fwSr.ReadToEnd().Trim();
                                     fwSr.Close();
-
-                                    fwSr = new System.IO.StreamReader(resolvedLink + "/vendor");
-                                    fwTemp = fwSr.ReadToEnd();
-                                    uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber,
-                                                  System.Globalization.CultureInfo.InvariantCulture,
-                                                  out firewireVendor);
-                                    fwSr.Close();
-
-                                    fwSr = new System.IO.StreamReader(resolvedLink + "/guid");
-                                    fwTemp = fwSr.ReadToEnd();
-                                    ulong.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber,
-                                                   System.Globalization.CultureInfo.InvariantCulture, out firewireGuid);
-                                    fwSr.Close();
-
-                                    if(System.IO.File.Exists(resolvedLink + "/model_name"))
-                                    {
-                                        fwSr = new System.IO.StreamReader(resolvedLink + "/model_name");
-                                        firewireModelName = fwSr.ReadToEnd().Trim();
-                                        fwSr.Close();
-                                    }
-
-                                    if(System.IO.File.Exists(resolvedLink + "/vendor_name"))
-                                    {
-                                        fwSr = new System.IO.StreamReader(resolvedLink + "/vendor_name");
-                                        firewireVendorName = fwSr.ReadToEnd().Trim();
-                                        fwSr.Close();
-                                    }
-
-                                    firewire = true;
-                                    break;
                                 }
+
+                                if(System.IO.File.Exists(resolvedLink + "/vendor_name"))
+                                {
+                                    fwSr = new System.IO.StreamReader(resolvedLink + "/vendor_name");
+                                    firewireVendorName = fwSr.ReadToEnd().Trim();
+                                    fwSr.Close();
+                                }
+
+                                firewire = true;
+                                break;
                             }
                     }
                 }
@@ -554,36 +552,33 @@ namespace DiscImageChef.Devices
                             while(resolvedLink.Contains("/sys/devices"))
                             {
                                 resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
-                                if(System.IO.Directory.Exists(resolvedLink + "/pcmcia_socket"))
-                                {
-                                    string[] subdirs =
-                                        System.IO.Directory.GetDirectories(resolvedLink + "/pcmcia_socket",
-                                                                           "pcmcia_socket*",
-                                                                           System.IO.SearchOption.TopDirectoryOnly);
+                                if(!System.IO.Directory.Exists(resolvedLink + "/pcmcia_socket")) continue;
 
-                                    if(subdirs.Length > 0)
-                                    {
-                                        string possibleDir =
-                                            System.IO.Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
-                                        if(System.IO.File.Exists(possibleDir + "/card_type") &&
-                                           System.IO.File.Exists(possibleDir + "/cis"))
-                                        {
-                                            System.IO.FileStream cisFs;
+                                string[] subdirs =
+                                    System.IO.Directory.GetDirectories(resolvedLink + "/pcmcia_socket",
+                                                                       "pcmcia_socket*",
+                                                                       System.IO.SearchOption.TopDirectoryOnly);
 
-                                            cisFs = new System.IO.FileStream(possibleDir + "/cis",
-                                                                             System.IO.FileMode.Open,
-                                                                             System.IO.FileAccess.Read);
-                                            byte[] cisBuf = new byte[65536];
-                                            int cisCount = cisFs.Read(cisBuf, 0, 65536);
-                                            cis = new byte[cisCount];
-                                            Array.Copy(cisBuf, 0, cis, 0, cisCount);
-                                            cisFs.Close();
+                                if(subdirs.Length <= 0) continue;
 
-                                            pcmcia = true;
-                                            break;
-                                        }
-                                    }
-                                }
+                                string possibleDir =
+                                    System.IO.Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
+                                if(!System.IO.File.Exists(possibleDir + "/card_type") ||
+                                   !System.IO.File.Exists(possibleDir + "/cis")) continue;
+
+                                System.IO.FileStream cisFs;
+
+                                cisFs = new System.IO.FileStream(possibleDir + "/cis",
+                                                                 System.IO.FileMode.Open,
+                                                                 System.IO.FileAccess.Read);
+                                byte[] cisBuf = new byte[65536];
+                                int cisCount = cisFs.Read(cisBuf, 0, 65536);
+                                cis = new byte[cisCount];
+                                Array.Copy(cisBuf, 0, cis, 0, cisCount);
+                                cisFs.Close();
+
+                                pcmcia = true;
+                                break;
                             }
                     }
                 }
@@ -678,13 +673,12 @@ namespace DiscImageChef.Devices
                 else foreach(char c in serial) if(char.IsControl(c)) serial = usbSerialString;
             }
 
-            if(firewire)
-            {
-                if(string.IsNullOrEmpty(manufacturer)) manufacturer = firewireVendorName;
-                if(string.IsNullOrEmpty(model)) model = firewireModelName;
-                if(string.IsNullOrEmpty(serial)) serial = string.Format("{0:X16}", firewireGuid);
-                else foreach(char c in serial) if(char.IsControl(c)) serial = string.Format("{0:X16}", firewireGuid);
-            }
+            if(!firewire) return;
+
+            if(string.IsNullOrEmpty(manufacturer)) manufacturer = firewireVendorName;
+            if(string.IsNullOrEmpty(model)) model = firewireModelName;
+            if(string.IsNullOrEmpty(serial)) serial = string.Format("{0:X16}", firewireGuid);
+            else foreach(char c in serial) if(char.IsControl(c)) serial = string.Format("{0:X16}", firewireGuid);
         }
 
         static int ConvertFromHexAscii(string file, out byte[] outBuf)

@@ -164,12 +164,11 @@ namespace DiscImageChef.Filesystems.CPM
                     blockMs.Write(sector, 0, sector.Length);
                     sectorsPerBlock++;
 
-                    if(sectorsPerBlock == blockSize / sector.Length)
-                    {
-                        allocationBlocks.Add(blockNo++, blockMs.ToArray());
-                        sectorsPerBlock = 0;
-                        blockMs = new MemoryStream();
-                    }
+                    if(sectorsPerBlock != blockSize / sector.Length) continue;
+
+                    allocationBlocks.Add(blockNo++, blockMs.ToArray());
+                    sectorsPerBlock = 0;
+                    blockMs = new MemoryStream();
                 }
                 // CP/M blocks are same size than physical sectors
                 else allocationBlocks.Add(blockNo++, sector);
@@ -628,14 +627,15 @@ namespace DiscImageChef.Filesystems.CPM
                     {
                         List<ushort> alBlks;
 
-                        if(extents.TryGetValue(ex, out alBlks))
-                            foreach(ushort alBlk in alBlks)
-                            {
-                                byte[] blk = new byte[blockSize];
-                                allocationBlocks.TryGetValue(alBlk, out blk);
-                                fileMs.Write(blk, 0, blk.Length);
-                                fInfo.Blocks++;
-                            }
+                        if(!extents.TryGetValue(ex, out alBlks)) continue;
+
+                        foreach(ushort alBlk in alBlks)
+                        {
+                            byte[] blk = new byte[blockSize];
+                            allocationBlocks.TryGetValue(alBlk, out blk);
+                            fileMs.Write(blk, 0, blk.Length);
+                            fInfo.Blocks++;
+                        }
                     }
 
                 // If you insist to call CP/M "extent based"

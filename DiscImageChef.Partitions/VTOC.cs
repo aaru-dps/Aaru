@@ -72,12 +72,11 @@ namespace DiscImageChef.Partitions
                 magic = BitConverter.ToUInt32(pdsector, 4);
                 DicConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})",
                                           i + sectorOffset, magic, PD_MAGIC, PD_CIGAM);
-                if(magic == PD_MAGIC || magic == PD_CIGAM)
-                {
-                    magic_found = true;
-                    pdloc = i;
-                    break;
-                }
+                if(magic != PD_MAGIC && magic != PD_CIGAM) continue;
+
+                magic_found = true;
+                pdloc = i;
+                break;
             }
 
             if(!magic_found) return false;

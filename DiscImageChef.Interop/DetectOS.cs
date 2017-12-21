@@ -195,15 +195,16 @@ namespace DiscImageChef.Interop
             switch(GetRealPlatformID())
             {
                 case PlatformID.MacOSX:
-                    if(Environment.OSVersion.Version.Major == 1)
-                    {
-                        switch(Environment.OSVersion.Version.Minor) {
-                            case 3: return "10.0";
-                            case 4: return "10.1";
-                        }
+                    if(Environment.OSVersion.Version.Major != 1)
+                        return string.Format("10.{0}.{1}", Environment.OSVersion.Version.Major - 4,
+                                             Environment.OSVersion.Version.Minor);
 
-                        goto default;
+                    switch(Environment.OSVersion.Version.Minor) {
+                        case 3: return "10.0";
+                        case 4: return "10.1";
                     }
+
+                    goto default;
 
                     return string.Format("10.{0}.{1}", Environment.OSVersion.Version.Major - 4,
                                          Environment.OSVersion.Version.Minor);
@@ -235,19 +236,16 @@ namespace DiscImageChef.Interop
                 case PlatformID.IRIX: return "IRIX";
                 case PlatformID.Linux: return "Linux";
                 case PlatformID.MacOSX:
-                    if(!string.IsNullOrEmpty(version))
-                    {
-                        string[] pieces = version.Split(new[] {'.'});
-                        if(pieces.Length >= 2 && int.TryParse(pieces[1], out int minor))
-                        {
-                            if(minor >= 12) return "macOS";
-                            if(minor >= 8) return "OS X";
+                    if(string.IsNullOrEmpty(version)) return "macOS";
 
-                            return "Mac OS X";
-                        }
-                    }
+                    string[] pieces = version.Split(new[] {'.'});
+                    if(pieces.Length < 2 || !int.TryParse(pieces[1], out int minor)) return "macOS";
 
-                    return "macOS";
+                    if(minor >= 12) return "macOS";
+                    if(minor >= 8) return "OS X";
+
+                    return "Mac OS X";
+
                 case PlatformID.Minix: return "MINIX";
                 case PlatformID.NetBSD: return "NetBSD";
                 case PlatformID.NonStop: return "NonStop OS";

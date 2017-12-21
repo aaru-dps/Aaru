@@ -1572,128 +1572,128 @@ namespace DiscImageChef.DiscImages
                 for(uint i = 1; i <= neroTracks.Count; i++)
                 {
                     NeroTrack neroTrack;
-                    if(neroTracks.TryGetValue(i, out neroTrack))
+                    if(!neroTracks.TryGetValue(i, out neroTrack)) continue;
+
+                    DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsession = {0}", currentsession);
+                    DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessionmaxtrack = {0}",
+                                              currentsessionmaxtrack);
+                    DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessioncurrenttrack = {0}",
+                                              currentsessioncurrenttrack);
+
+                    Track _track = new Track();
+                    if(neroTrack.Sequence == 1) neroTrack.Index0 = neroTrack.Index1;
+
+                    _track.Indexes = new Dictionary<int, ulong>();
+                    if(neroTrack.Index0 < neroTrack.Index1)
+                        _track.Indexes.Add(0, neroTrack.Index0 / neroTrack.SectorSize);
+                    _track.Indexes.Add(1, neroTrack.Index1 / neroTrack.SectorSize);
+                    _track.TrackDescription = StringHandlers.CToString(neroTrack.Isrc);
+                    _track.TrackEndSector = neroTrack.Length / neroTrack.SectorSize + neroTrack.StartLba - 1;
+                    _track.TrackPregap = (neroTrack.Index1 - neroTrack.Index0) / neroTrack.SectorSize;
+                    _track.TrackSequence = neroTrack.Sequence;
+                    _track.TrackSession = currentsession;
+                    _track.TrackStartSector = neroTrack.StartLba;
+                    _track.TrackType = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode);
+                    _track.TrackFile = imageFilter.GetFilename();
+                    _track.TrackFilter = imageFilter;
+                    _track.TrackFileOffset = neroTrack.Offset;
+                    _track.TrackFileType = "BINARY";
+                    _track.TrackSubchannelType = TrackSubchannelType.None;
+                    switch((DaoMode)neroTrack.Mode)
                     {
-                        DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsession = {0}", currentsession);
-                        DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessionmaxtrack = {0}",
-                                                  currentsessionmaxtrack);
-                        DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessioncurrenttrack = {0}",
-                                                  currentsessioncurrenttrack);
+                        case DaoMode.Audio:
+                            _track.TrackBytesPerSector = 2352;
+                            _track.TrackRawBytesPerSector = 2352;
+                            break;
+                        case DaoMode.AudioSub:
+                            _track.TrackBytesPerSector = 2352;
+                            _track.TrackRawBytesPerSector = 2448;
+                            _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                            break;
+                        case DaoMode.Data:
+                        case DaoMode.DataM2F1:
+                            _track.TrackBytesPerSector = 2048;
+                            _track.TrackRawBytesPerSector = 2048;
+                            break;
+                        case DaoMode.DataM2F2:
+                            _track.TrackBytesPerSector = 2336;
+                            _track.TrackRawBytesPerSector = 2336;
+                            break;
+                        case DaoMode.DataM2Raw:
+                            _track.TrackBytesPerSector = 2352;
+                            _track.TrackRawBytesPerSector = 2352;
+                            break;
+                        case DaoMode.DataM2RawSub:
+                            _track.TrackBytesPerSector = 2352;
+                            _track.TrackRawBytesPerSector = 2448;
+                            _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                            break;
+                        case DaoMode.DataRaw:
+                            _track.TrackBytesPerSector = 2048;
+                            _track.TrackRawBytesPerSector = 2352;
+                            break;
+                        case DaoMode.DataRawSub:
+                            _track.TrackBytesPerSector = 2048;
+                            _track.TrackRawBytesPerSector = 2448;
+                            _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                            break;
+                    }
 
-                        Track _track = new Track();
-                        if(neroTrack.Sequence == 1) neroTrack.Index0 = neroTrack.Index1;
+                    if(_track.TrackSubchannelType == TrackSubchannelType.RawInterleaved)
+                    {
+                        _track.TrackSubchannelFilter = imageFilter;
+                        _track.TrackSubchannelFile = imageFilter.GetFilename();
+                        _track.TrackSubchannelOffset = neroTrack.Offset;
+                    }
 
-                        _track.Indexes = new Dictionary<int, ulong>();
-                        if(neroTrack.Index0 < neroTrack.Index1)
-                            _track.Indexes.Add(0, neroTrack.Index0 / neroTrack.SectorSize);
-                        _track.Indexes.Add(1, neroTrack.Index1 / neroTrack.SectorSize);
-                        _track.TrackDescription = StringHandlers.CToString(neroTrack.Isrc);
-                        _track.TrackEndSector = neroTrack.Length / neroTrack.SectorSize + neroTrack.StartLba - 1;
-                        _track.TrackPregap = (neroTrack.Index1 - neroTrack.Index0) / neroTrack.SectorSize;
-                        _track.TrackSequence = neroTrack.Sequence;
-                        _track.TrackSession = currentsession;
-                        _track.TrackStartSector = neroTrack.StartLba;
-                        _track.TrackType = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode);
-                        _track.TrackFile = imageFilter.GetFilename();
-                        _track.TrackFilter = imageFilter;
-                        _track.TrackFileOffset = neroTrack.Offset;
-                        _track.TrackFileType = "BINARY";
-                        _track.TrackSubchannelType = TrackSubchannelType.None;
-                        switch((DaoMode)neroTrack.Mode)
-                        {
-                            case DaoMode.Audio:
-                                _track.TrackBytesPerSector = 2352;
-                                _track.TrackRawBytesPerSector = 2352;
-                                break;
-                            case DaoMode.AudioSub:
-                                _track.TrackBytesPerSector = 2352;
-                                _track.TrackRawBytesPerSector = 2448;
-                                _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                break;
-                            case DaoMode.Data:
-                            case DaoMode.DataM2F1:
-                                _track.TrackBytesPerSector = 2048;
-                                _track.TrackRawBytesPerSector = 2048;
-                                break;
-                            case DaoMode.DataM2F2:
-                                _track.TrackBytesPerSector = 2336;
-                                _track.TrackRawBytesPerSector = 2336;
-                                break;
-                            case DaoMode.DataM2Raw:
-                                _track.TrackBytesPerSector = 2352;
-                                _track.TrackRawBytesPerSector = 2352;
-                                break;
-                            case DaoMode.DataM2RawSub:
-                                _track.TrackBytesPerSector = 2352;
-                                _track.TrackRawBytesPerSector = 2448;
-                                _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                break;
-                            case DaoMode.DataRaw:
-                                _track.TrackBytesPerSector = 2048;
-                                _track.TrackRawBytesPerSector = 2352;
-                                break;
-                            case DaoMode.DataRawSub:
-                                _track.TrackBytesPerSector = 2048;
-                                _track.TrackRawBytesPerSector = 2448;
-                                _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                break;
-                        }
+                    imageTracks.Add(_track);
 
-                        if(_track.TrackSubchannelType == TrackSubchannelType.RawInterleaved)
-                        {
-                            _track.TrackSubchannelFilter = imageFilter;
-                            _track.TrackSubchannelFile = imageFilter.GetFilename();
-                            _track.TrackSubchannelOffset = neroTrack.Offset;
-                        }
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackDescription = {0}",
+                                              _track.TrackDescription);
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackEndSector = {0}",
+                                              _track.TrackEndSector);
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackPregap = {0}", _track.TrackPregap);
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSequence = {0}",
+                                              _track.TrackSequence);
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSession = {0}", _track.TrackSession);
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackStartSector = {0}",
+                                              _track.TrackStartSector);
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackType = {0}", _track.TrackType);
 
-                        imageTracks.Add(_track);
+                    if(currentsessioncurrenttrack == 1)
+                    {
+                        currentsessionstruct = new Session();
+                        currentsessionstruct.SessionSequence = currentsession;
+                        currentsessionstruct.StartSector = _track.TrackStartSector;
+                        currentsessionstruct.StartTrack = _track.TrackSequence;
+                    }
+                    currentsessioncurrenttrack++;
+                    if(currentsessioncurrenttrack > currentsessionmaxtrack)
+                    {
+                        currentsession++;
+                        neroSessions.TryGetValue(currentsession, out currentsessionmaxtrack);
+                        currentsessioncurrenttrack = 1;
+                        currentsessionstruct.EndTrack = _track.TrackSequence;
+                        currentsessionstruct.EndSector = _track.TrackEndSector;
+                        imageSessions.Add(currentsessionstruct);
+                    }
 
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackDescription = {0}",
-                                                  _track.TrackDescription);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackEndSector = {0}",
-                                                  _track.TrackEndSector);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackPregap = {0}", _track.TrackPregap);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSequence = {0}",
-                                                  _track.TrackSequence);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSession = {0}", _track.TrackSession);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackStartSector = {0}",
-                                                  _track.TrackStartSector);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackType = {0}", _track.TrackType);
+                    if(i == neroTracks.Count)
+                    {
+                        neroSessions.TryGetValue(currentsession, out currentsessionmaxtrack);
+                        currentsessioncurrenttrack = 1;
+                        currentsessionstruct.EndTrack = _track.TrackSequence;
+                        currentsessionstruct.EndSector = _track.TrackEndSector;
+                        imageSessions.Add(currentsessionstruct);
+                    }
 
-                        if(currentsessioncurrenttrack == 1)
-                        {
-                            currentsessionstruct = new Session();
-                            currentsessionstruct.SessionSequence = currentsession;
-                            currentsessionstruct.StartSector = _track.TrackStartSector;
-                            currentsessionstruct.StartTrack = _track.TrackSequence;
-                        }
-                        currentsessioncurrenttrack++;
-                        if(currentsessioncurrenttrack > currentsessionmaxtrack)
-                        {
-                            currentsession++;
-                            neroSessions.TryGetValue(currentsession, out currentsessionmaxtrack);
-                            currentsessioncurrenttrack = 1;
-                            currentsessionstruct.EndTrack = _track.TrackSequence;
-                            currentsessionstruct.EndSector = _track.TrackEndSector;
-                            imageSessions.Add(currentsessionstruct);
-                        }
+                    offsetmap.Add(_track.TrackSequence, _track.TrackStartSector);
+                    DicConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", _track.TrackSequence,
+                                              _track.TrackStartSector);
 
-                        if(i == neroTracks.Count)
-                        {
-                            neroSessions.TryGetValue(currentsession, out currentsessionmaxtrack);
-                            currentsessioncurrenttrack = 1;
-                            currentsessionstruct.EndTrack = _track.TrackSequence;
-                            currentsessionstruct.EndSector = _track.TrackEndSector;
-                            imageSessions.Add(currentsessionstruct);
-                        }
+                    Partition partition;
 
-                        offsetmap.Add(_track.TrackSequence, _track.TrackStartSector);
-                        DicConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", _track.TrackSequence,
-                                                  _track.TrackStartSector);
-
-                        Partition partition;
-
-                        /*if(_neroTrack.Index0 < _neroTrack.Index1)
+                    /*if(_neroTrack.Index0 < _neroTrack.Index1)
                         {
                             partition = new Partition();
                             partition.PartitionDescription = string.Format("Track {0} Index 0", _track.TrackSequence);
@@ -1708,20 +1708,19 @@ namespace DiscImageChef.DiscImages
                             PartitionSequence++;
                         }*/
 
-                        partition = new Partition();
-                        partition.Description = string.Format("Track {0} Index 1", _track.TrackSequence);
-                        partition.Size = neroTrack.EndOfTrack - neroTrack.Index1;
-                        partition.Name = StringHandlers.CToString(neroTrack.Isrc);
-                        partition.Length = partition.Size / neroTrack.SectorSize;
-                        partition.Sequence = partitionSequence;
-                        partition.Offset = partitionStartByte;
-                        partition.Start = neroTrack.StartLba +
-                                          (neroTrack.Index1 - neroTrack.Index0) / neroTrack.SectorSize;
-                        partition.Type = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode).ToString();
-                        imagePartitions.Add(partition);
-                        partitionSequence++;
-                        partitionStartByte += partition.Size;
-                    }
+                    partition = new Partition();
+                    partition.Description = string.Format("Track {0} Index 1", _track.TrackSequence);
+                    partition.Size = neroTrack.EndOfTrack - neroTrack.Index1;
+                    partition.Name = StringHandlers.CToString(neroTrack.Isrc);
+                    partition.Length = partition.Size / neroTrack.SectorSize;
+                    partition.Sequence = partitionSequence;
+                    partition.Offset = partitionStartByte;
+                    partition.Start = neroTrack.StartLba +
+                                      (neroTrack.Index1 - neroTrack.Index0) / neroTrack.SectorSize;
+                    partition.Type = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode).ToString();
+                    imagePartitions.Add(partition);
+                    partitionSequence++;
+                    partitionStartByte += partition.Size;
                 }
 
                 this.imageFilter = imageFilter;

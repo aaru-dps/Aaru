@@ -112,11 +112,10 @@ namespace DiscImageChef.Partitions
                 };
                 part.Offset = part.Start * (ulong)sector.Length;
                 part.Size = part.Length * (ulong)sector.Length;
-                if(entry.length > 0)
-                {
-                    partitions.Add(part);
-                    counter++;
-                }
+                if(entry.length <= 0) continue;
+
+                partitions.Add(part);
+                counter++;
             }
 
             return true;

@@ -165,24 +165,26 @@ namespace DiscImageChef.Filesystems
                 s_nfree = BitConverter.ToUInt16(sb_sector, 0x006); // 7th edition's s_nfree
                 s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0); // 7th edition's s_ninode
 
-                if(s_fsize > 0 && s_fsize < 0xFFFFFFFF && s_nfree > 0 && s_nfree < 0xFFFF && s_ninode > 0 &&
-                   s_ninode < 0xFFFF)
-                {
-                    if((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
-                    {
-                        // Byteswap
-                        s_fsize = ((s_fsize & 0xFF) << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
-                                  ((s_fsize & 0xFF000000) >> 24);
-                        s_nfree = (ushort)(s_nfree >> 8);
-                        s_ninode = (ushort)(s_ninode >> 8);
-                    }
+                if(s_fsize <= 0 || s_fsize >= 0xFFFFFFFF || s_nfree <= 0 || s_nfree >= 0xFFFF || s_ninode <= 0 ||
+                   s_ninode >= 0xFFFF) continue;
 
-                    if((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
-                        if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
-                            if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.GetSectorSize() ||
-                               s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize())
-                                return true;
+                if((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
+                {
+                    // Byteswap
+                    s_fsize = ((s_fsize & 0xFF) << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
+                              ((s_fsize & 0xFF000000) >> 24);
+                    s_nfree = (ushort)(s_nfree >> 8);
+                    s_ninode = (ushort)(s_ninode >> 8);
                 }
+
+                if((s_fsize & 0xFF000000) != 0x00 || (s_nfree & 0xFF00) != 0x00 ||
+                   (s_ninode & 0xFF00) != 0x00) continue;
+
+                if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD) continue;
+
+                if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.GetSectorSize() ||
+                   s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize())
+                    return true;
             }
 
             return false;
@@ -313,29 +315,30 @@ namespace DiscImageChef.Filesystems
                 s_nfree = BitConverter.ToUInt16(sb_sector, 0x006); // 7th edition's s_nfree
                 s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0); // 7th edition's s_ninode
 
-                if(s_fsize > 0 && s_fsize < 0xFFFFFFFF && s_nfree > 0 && s_nfree < 0xFFFF && s_ninode > 0 &&
-                   s_ninode < 0xFFFF)
-                {
-                    if((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
-                    {
-                        // Byteswap
-                        s_fsize = ((s_fsize & 0xFF) << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
-                                  ((s_fsize & 0xFF000000) >> 24);
-                        s_nfree = (ushort)(s_nfree >> 8);
-                        s_ninode = (ushort)(s_ninode >> 8);
-                    }
+                if(s_fsize <= 0 || s_fsize >= 0xFFFFFFFF || s_nfree <= 0 || s_nfree >= 0xFFFF || s_ninode <= 0 ||
+                   s_ninode >= 0xFFFF) continue;
 
-                    if((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
-                        if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
-                            if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.GetSectorSize() ||
-                               s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize())
-                            {
-                                sys7th = true;
-                                BigEndianBitConverter.IsLittleEndian = true;
-                                start = i;
-                                break;
-                            }
+                if((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
+                {
+                    // Byteswap
+                    s_fsize = ((s_fsize & 0xFF) << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
+                              ((s_fsize & 0xFF000000) >> 24);
+                    s_nfree = (ushort)(s_nfree >> 8);
+                    s_ninode = (ushort)(s_ninode >> 8);
                 }
+
+                if((s_fsize & 0xFF000000) != 0x00 || (s_nfree & 0xFF00) != 0x00 ||
+                   (s_ninode & 0xFF00) != 0x00) continue;
+
+                if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD) continue;
+
+                if(s_fsize * 1024 != (partition.End - partition.Start) * imagePlugin.GetSectorSize() &&
+                   s_fsize * 512 != (partition.End - partition.Start) * imagePlugin.GetSectorSize()) continue;
+
+                sys7th = true;
+                BigEndianBitConverter.IsLittleEndian = true;
+                start = i;
+                break;
             }
 
             if(!sys7th && !sysv && !coherent && !xenix && !xenix3) return;

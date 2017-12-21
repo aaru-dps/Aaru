@@ -385,12 +385,11 @@ namespace DiscImageChef.Filesystems
                 rootBlk.sec_type = BigEndianBitConverter.ToUInt32(RootBlockSector, RootBlockSector.Length - 4);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.sec_type = {0}", rootBlk.sec_type);
 
-                if(rootBlk.sec_type == SubTypeRoot && rootBlk.checksum == rsum)
-                {
-                    RootBlockSector = imagePlugin.ReadSectors(root_ptr, sectorsPerBlock);
-                    root_found = true;
-                    break;
-                }
+                if(rootBlk.sec_type != SubTypeRoot || rootBlk.checksum != rsum) continue;
+
+                RootBlockSector = imagePlugin.ReadSectors(root_ptr, sectorsPerBlock);
+                root_found = true;
+                break;
             }
 
             if(!root_found) return;

@@ -140,7 +140,8 @@ namespace DiscImageChef.Partitions
             {
                 uint type = table.entries[i].type & 0x00FFFFFF;
 
-                switch(type) {
+                switch(type)
+                {
                     case TypeGEMDOS:
                     case TypeBigGEMDOS:
                     case TypeLinux:
@@ -241,97 +242,17 @@ namespace DiscImageChef.Partitions
                         {
                             uint extendedType = extendedTable.entries[j].type & 0x00FFFFFF;
 
-                            if(extendedType == TypeGEMDOS || extendedType == TypeBigGEMDOS || extendedType == TypeLinux ||
-                               extendedType == TypeSwap || extendedType == TypeRAW || extendedType == TypeNetBSD ||
-                               extendedType == TypeNetBSDSwap || extendedType == TypeSysV || extendedType == TypeMac ||
-                               extendedType == TypeMinix || extendedType == TypeMinix2)
-                            {
-                                validTable = true;
-                                if(extendedTable.entries[j].start <= imagePlugin.GetSectors())
-                                {
-                                    if(extendedTable.entries[j].start + extendedTable.entries[j].length >
-                                       imagePlugin.GetSectors())
-                                        DicConsole.DebugWriteLine("Atari partition plugin",
-                                                                  "WARNING: End of partition goes beyond device size");
+                            if(extendedType != TypeGEMDOS && extendedType != TypeBigGEMDOS &&
+                               extendedType != TypeLinux && extendedType != TypeSwap && extendedType != TypeRAW &&
+                               extendedType != TypeNetBSD && extendedType != TypeNetBSDSwap &&
+                               extendedType != TypeSysV && extendedType != TypeMac && extendedType != TypeMinix &&
+                               extendedType != TypeMinix2) continue;
 
-                                    ulong sectorSize = imagePlugin.GetSectorSize();
-                                    if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
+                            validTable = true;
+                            if(extendedTable.entries[j].start > imagePlugin.GetSectors()) continue;
 
-                                    byte[] partType = new byte[3];
-                                    partType[0] = (byte)((extendedType & 0xFF0000) >> 16);
-                                    partType[1] = (byte)((extendedType & 0x00FF00) >> 8);
-                                    partType[2] = (byte)(extendedType & 0x0000FF);
-
-                                    CommonTypes.Partition part = new CommonTypes.Partition
-                                    {
-                                        Size = extendedTable.entries[j].length * sectorSize,
-                                        Length = extendedTable.entries[j].length,
-                                        Sequence = partitionSequence,
-                                        Name = "",
-                                        Offset = extendedTable.entries[j].start * sectorSize,
-                                        Start = extendedTable.entries[j].start,
-                                        Type = Encoding.ASCII.GetString(partType),
-                                        Scheme = Name
-                                    };
-                                    switch(extendedType)
-                                    {
-                                        case TypeGEMDOS:
-                                            part.Description = "Atari GEMDOS partition";
-                                            break;
-                                        case TypeBigGEMDOS:
-                                            part.Description = "Atari GEMDOS partition bigger than 32 MiB";
-                                            break;
-                                        case TypeLinux:
-                                            part.Description = "Linux partition";
-                                            break;
-                                        case TypeSwap:
-                                            part.Description = "Swap partition";
-                                            break;
-                                        case TypeRAW:
-                                            part.Description = "RAW partition";
-                                            break;
-                                        case TypeNetBSD:
-                                            part.Description = "NetBSD partition";
-                                            break;
-                                        case TypeNetBSDSwap:
-                                            part.Description = "NetBSD swap partition";
-                                            break;
-                                        case TypeSysV:
-                                            part.Description = "Atari UNIX partition";
-                                            break;
-                                        case TypeMac:
-                                            part.Description = "Macintosh partition";
-                                            break;
-                                        case TypeMinix:
-                                        case TypeMinix2:
-                                            part.Description = "MINIX partition";
-                                            break;
-                                        default:
-                                            part.Description = "Unknown partition type";
-                                            break;
-                                    }
-
-                                    partitions.Add(part);
-                                    partitionSequence++;
-                                }
-                            }
-                        }
-
-                        break;
-                }
-            }
-
-            if(validTable)
-                for(int i = 0; i < 8; i++)
-                {
-                    uint type = table.icdEntries[i].type & 0x00FFFFFF;
-
-                    if(type == TypeGEMDOS || type == TypeBigGEMDOS || type == TypeLinux || type == TypeSwap ||
-                       type == TypeRAW || type == TypeNetBSD || type == TypeNetBSDSwap || type == TypeSysV ||
-                       type == TypeMac || type == TypeMinix || type == TypeMinix2)
-                        if(table.icdEntries[i].start <= imagePlugin.GetSectors())
-                        {
-                            if(table.icdEntries[i].start + table.icdEntries[i].length > imagePlugin.GetSectors())
+                            if(extendedTable.entries[j].start + extendedTable.entries[j].length >
+                               imagePlugin.GetSectors())
                                 DicConsole.DebugWriteLine("Atari partition plugin",
                                                           "WARNING: End of partition goes beyond device size");
 
@@ -339,22 +260,22 @@ namespace DiscImageChef.Partitions
                             if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
 
                             byte[] partType = new byte[3];
-                            partType[0] = (byte)((type & 0xFF0000) >> 16);
-                            partType[1] = (byte)((type & 0x00FF00) >> 8);
-                            partType[2] = (byte)(type & 0x0000FF);
+                            partType[0] = (byte)((extendedType & 0xFF0000) >> 16);
+                            partType[1] = (byte)((extendedType & 0x00FF00) >> 8);
+                            partType[2] = (byte)(extendedType & 0x0000FF);
 
                             CommonTypes.Partition part = new CommonTypes.Partition
                             {
-                                Size = table.icdEntries[i].length * sectorSize,
-                                Length = table.icdEntries[i].length,
+                                Size = extendedTable.entries[j].length * sectorSize,
+                                Length = extendedTable.entries[j].length,
                                 Sequence = partitionSequence,
                                 Name = "",
-                                Offset = table.icdEntries[i].start * sectorSize,
-                                Start = table.icdEntries[i].start,
+                                Offset = extendedTable.entries[j].start * sectorSize,
+                                Start = extendedTable.entries[j].start,
                                 Type = Encoding.ASCII.GetString(partType),
                                 Scheme = Name
                             };
-                            switch(type)
+                            switch(extendedType)
                             {
                                 case TypeGEMDOS:
                                     part.Description = "Atari GEMDOS partition";
@@ -395,7 +316,87 @@ namespace DiscImageChef.Partitions
                             partitions.Add(part);
                             partitionSequence++;
                         }
+
+                        break;
                 }
+            }
+
+            if(!validTable) return partitions.Count > 0;
+
+            for(int i = 0; i < 8; i++)
+            {
+                uint type = table.icdEntries[i].type & 0x00FFFFFF;
+
+                if(type != TypeGEMDOS && type != TypeBigGEMDOS && type != TypeLinux && type != TypeSwap &&
+                   type != TypeRAW && type != TypeNetBSD && type != TypeNetBSDSwap && type != TypeSysV &&
+                   type != TypeMac && type != TypeMinix && type != TypeMinix2) continue;
+
+                if(table.icdEntries[i].start > imagePlugin.GetSectors()) continue;
+
+                if(table.icdEntries[i].start + table.icdEntries[i].length > imagePlugin.GetSectors())
+                    DicConsole.DebugWriteLine("Atari partition plugin",
+                                              "WARNING: End of partition goes beyond device size");
+
+                ulong sectorSize = imagePlugin.GetSectorSize();
+                if(sectorSize == 2448 || sectorSize == 2352) sectorSize = 2048;
+
+                byte[] partType = new byte[3];
+                partType[0] = (byte)((type & 0xFF0000) >> 16);
+                partType[1] = (byte)((type & 0x00FF00) >> 8);
+                partType[2] = (byte)(type & 0x0000FF);
+
+                CommonTypes.Partition part = new CommonTypes.Partition
+                {
+                    Size = table.icdEntries[i].length * sectorSize,
+                    Length = table.icdEntries[i].length,
+                    Sequence = partitionSequence,
+                    Name = "",
+                    Offset = table.icdEntries[i].start * sectorSize,
+                    Start = table.icdEntries[i].start,
+                    Type = Encoding.ASCII.GetString(partType),
+                    Scheme = Name
+                };
+                switch(type)
+                {
+                    case TypeGEMDOS:
+                        part.Description = "Atari GEMDOS partition";
+                        break;
+                    case TypeBigGEMDOS:
+                        part.Description = "Atari GEMDOS partition bigger than 32 MiB";
+                        break;
+                    case TypeLinux:
+                        part.Description = "Linux partition";
+                        break;
+                    case TypeSwap:
+                        part.Description = "Swap partition";
+                        break;
+                    case TypeRAW:
+                        part.Description = "RAW partition";
+                        break;
+                    case TypeNetBSD:
+                        part.Description = "NetBSD partition";
+                        break;
+                    case TypeNetBSDSwap:
+                        part.Description = "NetBSD swap partition";
+                        break;
+                    case TypeSysV:
+                        part.Description = "Atari UNIX partition";
+                        break;
+                    case TypeMac:
+                        part.Description = "Macintosh partition";
+                        break;
+                    case TypeMinix:
+                    case TypeMinix2:
+                        part.Description = "MINIX partition";
+                        break;
+                    default:
+                        part.Description = "Unknown partition type";
+                        break;
+                }
+
+                partitions.Add(part);
+                partitionSequence++;
+            }
 
             return partitions.Count > 0;
         }

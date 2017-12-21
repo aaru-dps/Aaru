@@ -236,37 +236,38 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(longLBA) hdr[4] += 0x01;
 
-            if(header.BlockDescriptors != null)
-                if(longLBA)
-                    for(int i = 0; i < header.BlockDescriptors.Length; i++)
-                    {
-                        byte[] temp = BitConverter.GetBytes(header.BlockDescriptors[i].Blocks);
-                        hdr[7 + i * 16 + 8] = temp[0];
-                        hdr[6 + i * 16 + 8] = temp[1];
-                        hdr[5 + i * 16 + 8] = temp[2];
-                        hdr[4 + i * 16 + 8] = temp[3];
-                        hdr[3 + i * 16 + 8] = temp[4];
-                        hdr[2 + i * 16 + 8] = temp[5];
-                        hdr[1 + i * 16 + 8] = temp[6];
-                        hdr[0 + i * 16 + 8] = temp[7];
-                        hdr[12 + i * 16 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF000000) >> 24);
-                        hdr[13 + i * 16 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF0000) >> 16);
-                        hdr[14 + i * 16 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF00) >> 8);
-                        hdr[15 + i * 16 + 8] = (byte)(header.BlockDescriptors[i].BlockLength & 0xFF);
-                    }
-                else
-                    for(int i = 0; i < header.BlockDescriptors.Length; i++)
-                    {
-                        if(deviceType != PeripheralDeviceTypes.DirectAccess)
-                            hdr[0 + i * 8 + 8] = (byte)header.BlockDescriptors[i].Density;
-                        else hdr[0 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF000000) >> 24);
-                        hdr[1 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF0000) >> 16);
-                        hdr[2 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF00) >> 8);
-                        hdr[3 + i * 8 + 8] = (byte)(header.BlockDescriptors[i].Blocks & 0xFF);
-                        hdr[5 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF0000) >> 16);
-                        hdr[6 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF00) >> 8);
-                        hdr[7 + i * 8 + 8] = (byte)(header.BlockDescriptors[i].BlockLength & 0xFF);
-                    }
+            if(header.BlockDescriptors == null) return hdr;
+
+            if(longLBA)
+                for(int i = 0; i < header.BlockDescriptors.Length; i++)
+                {
+                    byte[] temp = BitConverter.GetBytes(header.BlockDescriptors[i].Blocks);
+                    hdr[7 + i * 16 + 8] = temp[0];
+                    hdr[6 + i * 16 + 8] = temp[1];
+                    hdr[5 + i * 16 + 8] = temp[2];
+                    hdr[4 + i * 16 + 8] = temp[3];
+                    hdr[3 + i * 16 + 8] = temp[4];
+                    hdr[2 + i * 16 + 8] = temp[5];
+                    hdr[1 + i * 16 + 8] = temp[6];
+                    hdr[0 + i * 16 + 8] = temp[7];
+                    hdr[12 + i * 16 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF000000) >> 24);
+                    hdr[13 + i * 16 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF0000) >> 16);
+                    hdr[14 + i * 16 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF00) >> 8);
+                    hdr[15 + i * 16 + 8] = (byte)(header.BlockDescriptors[i].BlockLength & 0xFF);
+                }
+            else
+                for(int i = 0; i < header.BlockDescriptors.Length; i++)
+                {
+                    if(deviceType != PeripheralDeviceTypes.DirectAccess)
+                        hdr[0 + i * 8 + 8] = (byte)header.BlockDescriptors[i].Density;
+                    else hdr[0 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF000000) >> 24);
+                    hdr[1 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF0000) >> 16);
+                    hdr[2 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF00) >> 8);
+                    hdr[3 + i * 8 + 8] = (byte)(header.BlockDescriptors[i].Blocks & 0xFF);
+                    hdr[5 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF0000) >> 16);
+                    hdr[6 + i * 8 + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF00) >> 8);
+                    hdr[7 + i * 8 + 8] = (byte)(header.BlockDescriptors[i].BlockLength & 0xFF);
+                }
 
             return hdr;
         }
@@ -282,7 +283,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             Array.Copy(hdr, 0, md, 0, hdr.Length);
 
-            if(mode.Pages != null)
+            if(mode.Pages == null) return md;
+
             {
                 int offset = hdr.Length;
                 foreach(ModePage page in mode.Pages)

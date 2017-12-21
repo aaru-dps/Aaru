@@ -593,12 +593,15 @@ namespace DiscImageChef.DiscImages
                                               session.Tracks[tSeq].session);
                     DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown8 = 0x{2:X4}", ses,
                                               tSeq, session.Tracks[tSeq].unknown8);
-                    if(session.Tracks[tSeq].type != Bw5TrackType.Dvd &&
-                       session.Tracks[tSeq].type != Bw5TrackType.NotData)
+                    if(session.Tracks[tSeq].type == Bw5TrackType.Dvd ||
+                       session.Tracks[tSeq].type == Bw5TrackType.NotData) continue;
+
+                    {
                         for(int i = 0; i < session.Tracks[tSeq].unknown9.Length; i++)
                             DicConsole.DebugWriteLine("BlindWrite5 plugin",
                                                       "session[{0}].track[{1}].unknown9[{2}] = 0x{3:X8}", ses, tSeq, i,
                                                       session.Tracks[tSeq].unknown9[i]);
+                    }
                 }
 
                 bwSessions.Add(session);
@@ -795,121 +798,120 @@ namespace DiscImageChef.DiscImages
                     fullTocStream.WriteByte(trk.psec);
                     fullTocStream.WriteByte(trk.pframe);
 
-                    if(trk.point < 0xA0)
+                    if(trk.point >= 0xA0) continue;
+
+                    Track track = new Track();
+                    Partition partition = new Partition();
+
+                    trackFlags.Add(trk.point, trk.ctl);
+
+                    switch(trk.type)
                     {
-                        Track track = new Track();
-                        Partition partition = new Partition();
+                        case Bw5TrackType.Audio:
+                            track.TrackBytesPerSector = 2352;
+                            track.TrackRawBytesPerSector = 2352;
+                            if(ImageInfo.SectorSize < 2352) ImageInfo.SectorSize = 2352;
+                            break;
+                        case Bw5TrackType.Mode1:
+                        case Bw5TrackType.Mode2F1:
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            track.TrackBytesPerSector = 2048;
+                            track.TrackRawBytesPerSector = 2352;
+                            if(ImageInfo.SectorSize < 2048) ImageInfo.SectorSize = 2048;
+                            break;
+                        case Bw5TrackType.Mode2:
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            track.TrackBytesPerSector = 2336;
+                            track.TrackRawBytesPerSector = 2352;
+                            if(ImageInfo.SectorSize < 2336) ImageInfo.SectorSize = 2336;
+                            break;
+                        case Bw5TrackType.Mode2F2:
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            track.TrackBytesPerSector = 2336;
+                            track.TrackRawBytesPerSector = 2352;
+                            if(ImageInfo.SectorSize < 2324) ImageInfo.SectorSize = 2324;
+                            break;
+                        case Bw5TrackType.Dvd:
+                            track.TrackBytesPerSector = 2048;
+                            track.TrackRawBytesPerSector = 2048;
+                            if(ImageInfo.SectorSize < 2048) ImageInfo.SectorSize = 2048;
+                            isDvd = true;
+                            break;
+                    }
 
-                        trackFlags.Add(trk.point, trk.ctl);
+                    track.TrackDescription = string.Format("Track {0}", trk.point);
+                    track.TrackStartSector = (ulong)(trk.startLba + trk.pregap);
+                    track.TrackEndSector = (ulong)(trk.sectors + trk.startLba);
 
-                        switch(trk.type)
+                    foreach(DataFileCharacteristics chars in filePaths)
+                        if(trk.startLba >= chars.StartLba &&
+                           trk.startLba + trk.sectors <= chars.StartLba + chars.Sectors)
                         {
-                            case Bw5TrackType.Audio:
-                                track.TrackBytesPerSector = 2352;
-                                track.TrackRawBytesPerSector = 2352;
-                                if(ImageInfo.SectorSize < 2352) ImageInfo.SectorSize = 2352;
-                                break;
-                            case Bw5TrackType.Mode1:
-                            case Bw5TrackType.Mode2F1:
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
-                                track.TrackBytesPerSector = 2048;
-                                track.TrackRawBytesPerSector = 2352;
-                                if(ImageInfo.SectorSize < 2048) ImageInfo.SectorSize = 2048;
-                                break;
-                            case Bw5TrackType.Mode2:
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                                track.TrackBytesPerSector = 2336;
-                                track.TrackRawBytesPerSector = 2352;
-                                if(ImageInfo.SectorSize < 2336) ImageInfo.SectorSize = 2336;
-                                break;
-                            case Bw5TrackType.Mode2F2:
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
-                                track.TrackBytesPerSector = 2336;
-                                track.TrackRawBytesPerSector = 2352;
-                                if(ImageInfo.SectorSize < 2324) ImageInfo.SectorSize = 2324;
-                                break;
-                            case Bw5TrackType.Dvd:
-                                track.TrackBytesPerSector = 2048;
-                                track.TrackRawBytesPerSector = 2048;
-                                if(ImageInfo.SectorSize < 2048) ImageInfo.SectorSize = 2048;
-                                isDvd = true;
-                                break;
-                        }
-
-                        track.TrackDescription = string.Format("Track {0}", trk.point);
-                        track.TrackStartSector = (ulong)(trk.startLba + trk.pregap);
-                        track.TrackEndSector = (ulong)(trk.sectors + trk.startLba);
-
-                        foreach(DataFileCharacteristics chars in filePaths)
-                            if(trk.startLba >= chars.StartLba &&
-                               trk.startLba + trk.sectors <= chars.StartLba + chars.Sectors)
+                            track.TrackFilter = chars.FileFilter;
+                            track.TrackFile = chars.FileFilter.GetFilename();
+                            if(trk.startLba >= 0)
+                                track.TrackFileOffset = (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize);
+                            else track.TrackFileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
+                            track.TrackFileType = "BINARY";
+                            if(chars.Subchannel != TrackSubchannelType.None)
                             {
-                                track.TrackFilter = chars.FileFilter;
-                                track.TrackFile = chars.FileFilter.GetFilename();
-                                if(trk.startLba >= 0)
-                                    track.TrackFileOffset = (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize);
-                                else track.TrackFileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
-                                track.TrackFileType = "BINARY";
-                                if(chars.Subchannel != TrackSubchannelType.None)
-                                {
-                                    track.TrackSubchannelFilter = track.TrackFilter;
-                                    track.TrackSubchannelFile = track.TrackFile;
-                                    track.TrackSubchannelType = chars.Subchannel;
-                                    track.TrackSubchannelOffset = track.TrackFileOffset;
+                                track.TrackSubchannelFilter = track.TrackFilter;
+                                track.TrackSubchannelFile = track.TrackFile;
+                                track.TrackSubchannelType = chars.Subchannel;
+                                track.TrackSubchannelOffset = track.TrackFileOffset;
 
-                                    if(chars.Subchannel == TrackSubchannelType.PackedInterleaved)
-                                        if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                            ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
-                                }
-
-                                break;
+                                if(chars.Subchannel == TrackSubchannelType.PackedInterleaved)
+                                    if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                        ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                             }
 
-                        track.TrackPregap = trk.pregap;
-                        track.TrackSequence = trk.point;
-                        track.TrackType = BlindWriteTrackTypeToTrackType(trk.type);
-                        track.Indexes = new Dictionary<int, ulong>();
-                        track.Indexes.Add(1, track.TrackStartSector);
+                            break;
+                        }
 
-                        partition.Description = track.TrackDescription;
-                        partition.Size = (track.TrackEndSector - track.TrackStartSector) *
-                                         (ulong)track.TrackRawBytesPerSector;
-                        partition.Length = track.TrackEndSector - track.TrackStartSector;
-                        partition.Sequence = track.TrackSequence;
-                        partition.Offset = offsetBytes;
-                        partition.Start = track.TrackStartSector;
-                        partition.Type = track.TrackType.ToString();
+                    track.TrackPregap = trk.pregap;
+                    track.TrackSequence = trk.point;
+                    track.TrackType = BlindWriteTrackTypeToTrackType(trk.type);
+                    track.Indexes = new Dictionary<int, ulong>();
+                    track.Indexes.Add(1, track.TrackStartSector);
 
-                        offsetBytes += partition.Size;
+                    partition.Description = track.TrackDescription;
+                    partition.Size = (track.TrackEndSector - track.TrackStartSector) *
+                                     (ulong)track.TrackRawBytesPerSector;
+                    partition.Length = track.TrackEndSector - track.TrackStartSector;
+                    partition.Sequence = track.TrackSequence;
+                    partition.Offset = offsetBytes;
+                    partition.Start = track.TrackStartSector;
+                    partition.Type = track.TrackType.ToString();
 
-                        tracks.Add(track);
-                        partitions.Add(partition);
-                        offsetmap.Add(track.TrackSequence, track.TrackStartSector);
-                        ImageInfo.Sectors += partition.Length;
-                    }
+                    offsetBytes += partition.Size;
+
+                    tracks.Add(track);
+                    partitions.Add(partition);
+                    offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+                    ImageInfo.Sectors += partition.Length;
                 }
             }
 

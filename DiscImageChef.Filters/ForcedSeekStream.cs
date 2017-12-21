@@ -160,22 +160,20 @@ namespace DiscImageChef.Filters
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if(backStream.Position + count > backStream.Length)
-            {
-                SetPosition(backStream.Position + count);
-                SetPosition(backStream.Position - count);
-            }
+            if(backStream.Position + count <= backStream.Length) return backStream.Read(buffer, offset, count);
+
+            SetPosition(backStream.Position + count);
+            SetPosition(backStream.Position - count);
 
             return backStream.Read(buffer, offset, count);
         }
 
         public override int ReadByte()
         {
-            if(backStream.Position + 1 > backStream.Length)
-            {
-                SetPosition(backStream.Position + 1);
-                SetPosition(backStream.Position - 1);
-            }
+            if(backStream.Position + 1 <= backStream.Length) return backStream.ReadByte();
+
+            SetPosition(backStream.Position + 1);
+            SetPosition(backStream.Position - 1);
 
             return backStream.ReadByte();
         }

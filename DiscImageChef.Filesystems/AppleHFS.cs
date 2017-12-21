@@ -93,14 +93,13 @@ namespace DiscImageChef.Filesystems
                 foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00})
                 {
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, offset);
-                    if(drSigWord == HFS_MAGIC)
-                    {
-                        drSigWord =
-                            BigEndianBitConverter
-                                .ToUInt16(mdb_sector, offset + 0x7C); // Seek to embedded HFS+ signature
+                    if(drSigWord != HFS_MAGIC) continue;
 
-                        return drSigWord != HFSP_MAGIC;
-                    }
+                    drSigWord =
+                        BigEndianBitConverter
+                            .ToUInt16(mdb_sector, offset + 0x7C); // Seek to embedded HFS+ signature
+
+                    return drSigWord != HFSP_MAGIC;
                 }
             }
             else
@@ -108,12 +107,11 @@ namespace DiscImageChef.Filesystems
                 mdb_sector = imagePlugin.ReadSector(2 + partition.Start);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
-                if(drSigWord == HFS_MAGIC)
-                {
-                    drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
+                if(drSigWord != HFS_MAGIC) return false;
 
-                    return drSigWord != HFSP_MAGIC;
-                }
+                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
+
+                return drSigWord != HFSP_MAGIC;
             }
 
             return false;
@@ -143,15 +141,14 @@ namespace DiscImageChef.Filesystems
                 foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00})
                 {
                     drSigWord = BigEndianBitConverter.ToUInt16(tmp_sector, offset);
-                    if(drSigWord == HFS_MAGIC)
-                    {
-                        bb_sector = new byte[1024];
-                        mdb_sector = new byte[512];
-                        if(offset >= 0x400) Array.Copy(tmp_sector, offset - 0x400, bb_sector, 0, 1024);
-                        Array.Copy(tmp_sector, offset, mdb_sector, 0, 512);
-                        APMFromHDDOnCD = true;
-                        break;
-                    }
+                    if(drSigWord != HFS_MAGIC) continue;
+
+                    bb_sector = new byte[1024];
+                    mdb_sector = new byte[512];
+                    if(offset >= 0x400) Array.Copy(tmp_sector, offset - 0x400, bb_sector, 0, 1024);
+                    Array.Copy(tmp_sector, offset, mdb_sector, 0, 512);
+                    APMFromHDDOnCD = true;
+                    break;
                 }
 
                 if(!APMFromHDDOnCD) return;

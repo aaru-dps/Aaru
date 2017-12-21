@@ -446,12 +446,12 @@ namespace DiscImageChef.DiscImages
                     if(matchComment.Success)
                     {
                         // Ignore "// Track X" comments
-                        if(!matchComment.Groups["comment"].Value.StartsWith(" Track ", StringComparison.Ordinal))
-                        {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found comment \"{1}\" at line {0}", line,
-                                                      matchComment.Groups["comment"].Value.Trim());
-                            commentBuilder.AppendLine(matchComment.Groups["comment"].Value.Trim());
-                        }
+                        if(matchComment.Groups["comment"].Value.StartsWith(" Track ", StringComparison.Ordinal))
+                            continue;
+
+                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found comment \"{1}\" at line {0}", line,
+                                                  matchComment.Groups["comment"].Value.Trim());
+                        commentBuilder.AppendLine(matchComment.Groups["comment"].Value.Trim());
                     }
                     else if(matchDiskType.Success)
                     {
@@ -1241,31 +1241,31 @@ namespace DiscImageChef.DiscImages
             {
                 case CDRDAO_TRACK_TYPE_MODE1:
                 case CDRDAO_TRACK_TYPE_MODE2_FORM1:
-                    if(tag == SectorTagType.CdSectorSubchannel)
-                    {
-                        sectorOffset = 2048;
-                        sectorSize = 96;
-                        break;
-                    }
+                    if(tag != SectorTagType.CdSectorSubchannel)
+                        throw new ArgumentException("No tags in image for requested track", nameof(tag));
+
+                    sectorOffset = 2048;
+                    sectorSize = 96;
+                    break;
 
                     throw new ArgumentException("No tags in image for requested track", nameof(tag));
                 case CDRDAO_TRACK_TYPE_MODE2_FORM2:
                 case CDRDAO_TRACK_TYPE_MODE2_MIX:
-                    if(tag == SectorTagType.CdSectorSubchannel)
-                    {
-                        sectorOffset = 2336;
-                        sectorSize = 96;
-                        break;
-                    }
+                    if(tag != SectorTagType.CdSectorSubchannel)
+                        throw new ArgumentException("No tags in image for requested track", nameof(tag));
+
+                    sectorOffset = 2336;
+                    sectorSize = 96;
+                    break;
 
                     throw new ArgumentException("No tags in image for requested track", nameof(tag));
                 case CDRDAO_TRACK_TYPE_AUDIO:
-                    if(tag == SectorTagType.CdSectorSubchannel)
-                    {
-                        sectorOffset = 2352;
-                        sectorSize = 96;
-                        break;
-                    }
+                    if(tag != SectorTagType.CdSectorSubchannel)
+                        throw new ArgumentException("No tags in image for requested track", nameof(tag));
+
+                    sectorOffset = 2352;
+                    sectorSize = 96;
+                    break;
 
                     throw new ArgumentException("No tags in image for requested track", nameof(tag));
                 case CDRDAO_TRACK_TYPE_MODE1_RAW:
@@ -1328,12 +1328,12 @@ namespace DiscImageChef.DiscImages
                     break;
                 }
                 case CDRDAO_TRACK_TYPE_MODE2_RAW: // Requires reading sector
-                    if(tag == SectorTagType.CdSectorSubchannel)
-                    {
-                        sectorOffset = 2352;
-                        sectorSize = 96;
-                        break;
-                    }
+                    if(tag != SectorTagType.CdSectorSubchannel)
+                        throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
+
+                    sectorOffset = 2352;
+                    sectorSize = 96;
+                    break;
 
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");

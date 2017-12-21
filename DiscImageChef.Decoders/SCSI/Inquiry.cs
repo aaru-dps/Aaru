@@ -248,13 +248,11 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.Seagate_Copyright = new byte[48];
                 Array.Copy(SCSIInquiryResponse, 96, decoded.Seagate_Copyright, 0, 48);
             }
-            if(SCSIInquiryResponse.Length >= 148)
-            {
-                // Seagate 2
-                decoded.Seagate3Present = true;
-                decoded.Seagate_ServoPROMPartNo = new byte[4];
-                Array.Copy(SCSIInquiryResponse, 144, decoded.Seagate_ServoPROMPartNo, 0, 4);
-            }
+            if(SCSIInquiryResponse.Length < 148) return decoded;
+            // Seagate 2
+            decoded.Seagate3Present = true;
+            decoded.Seagate_ServoPROMPartNo = new byte[4];
+            Array.Copy(SCSIInquiryResponse, 144, decoded.Seagate_ServoPROMPartNo, 0, 4);
 
             return decoded;
         }
@@ -2059,13 +2057,12 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("============================================================");
                 }
 
-            if(response.VendorSpecific2 != null)
-            {
-                sb.AppendFormat("Vendor-specific bytes 96 to {0}", response.AdditionalLength + 4).AppendLine();
-                sb.AppendLine("============================================================");
-                sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific2, 60));
-                sb.AppendLine("============================================================");
-            }
+            if(response.VendorSpecific2 == null) return sb.ToString();
+
+            sb.AppendFormat("Vendor-specific bytes 96 to {0}", response.AdditionalLength + 4).AppendLine();
+            sb.AppendLine("============================================================");
+            sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific2, 60));
+            sb.AppendLine("============================================================");
 #endif
 
             return sb.ToString();

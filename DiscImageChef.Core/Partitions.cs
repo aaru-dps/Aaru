@@ -90,12 +90,12 @@ namespace DiscImageChef.Core
                 foreach(PartitionPlugin _partplugin in plugins.PartPluginsList.Values)
                 {
                     DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", _partplugin.Name, partitions[0].Start);
-                    if(_partplugin.GetInformation(image, out List<Partition> _partitions, partitions[0].Start))
-                    {
-                        DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name,
-                                                  partitions[0].Start);
-                        childs.AddRange(_partitions);
-                    }
+                    if(!_partplugin.GetInformation(image, out List<Partition> _partitions, partitions[0].Start))
+                        continue;
+
+                    DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name,
+                                              partitions[0].Start);
+                    childs.AddRange(_partitions);
                 }
 
                 checkedLocations.Add(partitions[0].Start);

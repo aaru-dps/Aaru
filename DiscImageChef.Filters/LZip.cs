@@ -106,20 +106,17 @@ namespace DiscImageChef.Filters
 
         public override bool Identify(string path)
         {
-            if(File.Exists(path))
-            {
-                FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-                byte[] buffer = new byte[5];
+            if(!File.Exists(path)) return false;
 
-                stream.Seek(0, SeekOrigin.Begin);
-                stream.Read(buffer, 0, 5);
-                stream.Seek(0, SeekOrigin.Begin);
+            FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            byte[] buffer = new byte[5];
 
-                return buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 && buffer[3] == 0x50 &&
-                       buffer[4] == 0x01;
-            }
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.Read(buffer, 0, 5);
+            stream.Seek(0, SeekOrigin.Begin);
 
-            return false;
+            return buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 && buffer[3] == 0x50 &&
+                   buffer[4] == 0x01;
         }
 
         public override void Open(byte[] buffer)

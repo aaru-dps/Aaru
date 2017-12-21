@@ -708,20 +708,21 @@ namespace DiscImageChef.Filesystems.ISO9660
                             ISOMetadata.AppendLine("\t\tImage contains ATAPI drivers");
                         if(flags.HasFlag(ElToritoFlags.SCSI)) ISOMetadata.AppendLine("\t\tImage contains SCSI drivers");
 
-                        if(flags.HasFlag(ElToritoFlags.Continued))
-                            while(true && torito_off < vd_sector.Length)
-                            {
-                                ElToritoSectionEntryExtension section_extension = new ElToritoSectionEntryExtension();
-                                ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
-                                Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
-                                section_extension =
-                                    (ElToritoSectionEntryExtension)
-                                    Marshal.PtrToStructure(ptr, typeof(ElToritoSectionEntryExtension));
-                                Marshal.FreeHGlobal(ptr);
-                                torito_off += ElToritoEntrySize;
+                        if(!flags.HasFlag(ElToritoFlags.Continued)) continue;
 
-                                if(!section_extension.extension_flags.HasFlag(ElToritoFlags.Continued)) break;
-                            }
+                        while(true && torito_off < vd_sector.Length)
+                        {
+                            ElToritoSectionEntryExtension section_extension = new ElToritoSectionEntryExtension();
+                            ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
+                            Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
+                            section_extension =
+                                (ElToritoSectionEntryExtension)
+                                Marshal.PtrToStructure(ptr, typeof(ElToritoSectionEntryExtension));
+                            Marshal.FreeHGlobal(ptr);
+                            torito_off += ElToritoEntrySize;
+
+                            if(!section_extension.extension_flags.HasFlag(ElToritoFlags.Continued)) break;
+                        }
                     }
 
                     if(section_header.header_id == ElToritoIndicator.LastHeader) break;

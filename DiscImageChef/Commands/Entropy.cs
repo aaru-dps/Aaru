@@ -72,6 +72,9 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
             Core.Statistics.AddMedia(inputFormat.ImageInfo.MediaType, false);
             Core.Statistics.AddFilter(inputFilter.Name);
+            double entropy = 0;
+            ulong[] entTable;
+            ulong sectors;
 
             if(options.SeparatedTracks)
                 try
@@ -81,11 +84,11 @@ namespace DiscImageChef.Commands
                     foreach(Track currentTrack in inputTracks)
                     {
                         Sha1Context sha1CtxTrack = new Sha1Context();
-                        ulong[] entTable = new ulong[256];
+                        entTable = new ulong[256];
                         ulong trackSize = 0;
                         List<string> uniqueSectorsPerTrack = new List<string>();
 
-                        ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                        sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
                         DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 
                         for(ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
@@ -105,7 +108,6 @@ namespace DiscImageChef.Commands
                             trackSize += (ulong)sector.LongLength;
                         }
 
-                        double entropy = 0;
                         foreach(ulong l in entTable)
                         {
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
@@ -132,56 +134,54 @@ namespace DiscImageChef.Commands
                     else DicConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
                 }
 
-            if(options.WholeDisc)
+            if(!options.WholeDisc) return;
+
+            Sha1Context sha1Ctx = new Sha1Context();
+            entTable = new ulong[256];
+            ulong diskSize = 0;
+            List<string> uniqueSectors = new List<string>();
+
+            sectors = inputFormat.GetSectors();
+            DicConsole.WriteLine("Sectors {0}", sectors);
+
+            sha1Ctx.Init();
+
+            for(ulong i = 0; i < sectors; i++)
             {
-                Sha1Context sha1Ctx = new Sha1Context();
-                ulong[] entTable = new ulong[256];
-                ulong diskSize = 0;
-                List<string> uniqueSectors = new List<string>();
-
-                ulong sectors = inputFormat.GetSectors();
-                DicConsole.WriteLine("Sectors {0}", sectors);
-
-                sha1Ctx.Init();
-
-                for(ulong i = 0; i < sectors; i++)
-                {
-                    DicConsole.Write("\rEntropying sector {0}", i + 1);
-                    byte[] sector = inputFormat.ReadSector(i);
-
-                    if(options.DuplicatedSectors)
-                    {
-                        byte[] garbage;
-                        string sectorHash = sha1Ctx.Data(sector, out garbage);
-                        if(!uniqueSectors.Contains(sectorHash)) uniqueSectors.Add(sectorHash);
-                    }
-
-                    foreach(byte b in sector) entTable[b]++;
-
-                    diskSize += (ulong)sector.LongLength;
-                }
-
-                double entropy = 0;
-                foreach(ulong l in entTable)
-                {
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                    double frequency = (double)l / (double)diskSize;
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
-                    entropy += -(frequency * Math.Log(frequency, 2));
-                }
-
-                DicConsole.WriteLine();
-
-                DicConsole.WriteLine("Entropy for disk is {0:F4}.", entropy);
+                DicConsole.Write("\rEntropying sector {0}", i + 1);
+                byte[] sector = inputFormat.ReadSector(i);
 
                 if(options.DuplicatedSectors)
+                {
+                    byte[] garbage;
+                    string sectorHash = sha1Ctx.Data(sector, out garbage);
+                    if(!uniqueSectors.Contains(sectorHash)) uniqueSectors.Add(sectorHash);
+                }
+
+                foreach(byte b in sector) entTable[b]++;
+
+                diskSize += (ulong)sector.LongLength;
+            }
+
+            foreach(ulong l in entTable)
+            {
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                    DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", uniqueSectors.Count,
-                                         (double)uniqueSectors.Count / (double)sectors);
+                double frequency = (double)l / (double)diskSize;
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
+                entropy += -(frequency * Math.Log(frequency, 2));
+            }
+
+            DicConsole.WriteLine();
+
+            DicConsole.WriteLine("Entropy for disk is {0:F4}.", entropy);
+
+            if(options.DuplicatedSectors)
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
+                DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", uniqueSectors.Count,
+                                     (double)uniqueSectors.Count / (double)sectors);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
 
-                Core.Statistics.AddCommand("entropy");
-            }
+            Core.Statistics.AddCommand("entropy");
         }
     }
 }

@@ -1369,13 +1369,12 @@ namespace DiscImageChef.Commands
             {
                 DataFile.WriteTo("Media-Info command", outputPrefix, "_mediaserialnumber.bin",
                                  "SCSI READ MEDIA SERIAL NUMBER", cmdBuf);
-                if(cmdBuf.Length >= 4)
-                {
-                    DicConsole.Write("Media Serial Number: ");
-                    for(int i = 4; i < cmdBuf.Length; i++) DicConsole.Write("{0:X2}", cmdBuf[i]);
+                if(cmdBuf.Length < 4) return;
 
-                    DicConsole.WriteLine();
-                }
+                DicConsole.Write("Media Serial Number: ");
+                for(int i = 4; i < cmdBuf.Length; i++) DicConsole.Write("{0:X2}", cmdBuf[i]);
+
+                DicConsole.WriteLine();
             }
         }
     }

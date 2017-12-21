@@ -308,12 +308,11 @@ namespace DiscImageChef.Core
                     foreach(Filesystem plugin in plugins.PluginsList.Values)
                         try
                         {
-                            if(plugin.Identify(image, partitions[i]))
-                            {
-                                plugin.GetInformation(image, partitions[i], out string foo);
-                                lstFs.Add(plugin.XmlFSType);
-                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                            }
+                            if(!plugin.Identify(image, partitions[i])) continue;
+
+                            plugin.GetInformation(image, partitions[i], out string foo);
+                            lstFs.Add(plugin.XmlFSType);
+                            Statistics.AddFilesystem(plugin.XmlFSType.Type);
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch
@@ -342,12 +341,11 @@ namespace DiscImageChef.Core
                 foreach(Filesystem plugin in plugins.PluginsList.Values)
                     try
                     {
-                        if(plugin.Identify(image, wholePart))
-                        {
-                            plugin.GetInformation(image, wholePart, out string foo);
-                            lstFs.Add(plugin.XmlFSType);
-                            Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                        }
+                        if(!plugin.Identify(image, wholePart)) continue;
+
+                        plugin.GetInformation(image, wholePart, out string foo);
+                        lstFs.Add(plugin.XmlFSType);
+                        Statistics.AddFilesystem(plugin.XmlFSType.Type);
                     }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
@@ -676,70 +674,68 @@ namespace DiscImageChef.Core
             string dfiFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                               Path.GetFileNameWithoutExtension(imagePath) + ".dfi");
 
-            if(File.Exists(dfiFilePath))
-            {
-                DiscImages.DiscFerret dfiImage = new DiscFerret();
-                Filters.ZZZNoFilter dfiFilter = new ZZZNoFilter();
-                dfiFilter.Open(dfiFilePath);
+            if(!File.Exists(dfiFilePath)) return;
 
-                if(dfiImage.IdentifyImage(dfiFilter))
+            DiscImages.DiscFerret dfiImage = new DiscFerret();
+            Filters.ZZZNoFilter dfiFilter = new ZZZNoFilter();
+            dfiFilter.Open(dfiFilePath);
+
+            if(!dfiImage.IdentifyImage(dfiFilter)) return;
+
+            try { dfiImage.OpenImage(dfiFilter); }
+            catch(NotImplementedException) { }
+
+            if(image.ImageInfo.Heads == dfiImage.ImageInfo.Heads)
+                if(dfiImage.ImageInfo.Cylinders >= image.ImageInfo.Cylinders)
                 {
-                    try { dfiImage.OpenImage(dfiFilter); }
-                    catch(NotImplementedException) { }
+                    List<BlockTrackType> dfiBlockTrackTypes = new List<BlockTrackType>();
+                    long currentSector = 0;
+                    Stream dfiStream = dfiFilter.GetDataForkStream();
 
-                    if(image.ImageInfo.Heads == dfiImage.ImageInfo.Heads)
-                        if(dfiImage.ImageInfo.Cylinders >= image.ImageInfo.Cylinders)
+                    foreach(int t in dfiImage.TrackOffsets.Keys)
+                    {
+                        BlockTrackType dfiBlockTrackType = new BlockTrackType();
+                        dfiBlockTrackType.Cylinder = t / image.ImageInfo.Heads;
+                        dfiBlockTrackType.Head = t % image.ImageInfo.Heads;
+                        dfiBlockTrackType.Image = new ImageType();
+                        dfiBlockTrackType.Image.format = dfiImage.GetImageFormat();
+                        dfiBlockTrackType.Image.Value = Path.GetFileName(dfiFilePath);
+
+                        if(dfiBlockTrackType.Cylinder < image.ImageInfo.Cylinders)
                         {
-                            List<BlockTrackType> dfiBlockTrackTypes = new List<BlockTrackType>();
-                            long currentSector = 0;
-                            Stream dfiStream = dfiFilter.GetDataForkStream();
-
-                            foreach(int t in dfiImage.TrackOffsets.Keys)
-                            {
-                                BlockTrackType dfiBlockTrackType = new BlockTrackType();
-                                dfiBlockTrackType.Cylinder = t / image.ImageInfo.Heads;
-                                dfiBlockTrackType.Head = t % image.ImageInfo.Heads;
-                                dfiBlockTrackType.Image = new ImageType();
-                                dfiBlockTrackType.Image.format = dfiImage.GetImageFormat();
-                                dfiBlockTrackType.Image.Value = Path.GetFileName(dfiFilePath);
-
-                                if(dfiBlockTrackType.Cylinder < image.ImageInfo.Cylinders)
-                                {
-                                    dfiBlockTrackType.StartSector = currentSector;
-                                    currentSector += image.ImageInfo.SectorsPerTrack;
-                                    dfiBlockTrackType.EndSector = currentSector - 1;
-                                    dfiBlockTrackType.Sectors = image.ImageInfo.SectorsPerTrack;
-                                    dfiBlockTrackType.BytesPerSector = (int)image.ImageInfo.SectorSize;
-                                    dfiBlockTrackType.Format = trkFormat;
-                                }
-
-                                if(dfiImage.TrackOffsets.TryGetValue(t, out long offset) &&
-                                   dfiImage.TrackLengths.TryGetValue(t, out long length))
-                                {
-                                    dfiBlockTrackType.Image.offset = offset;
-                                    byte[] trackContents = new byte[length];
-                                    dfiStream.Position = offset;
-                                    dfiStream.Read(trackContents, 0, trackContents.Length);
-                                    dfiBlockTrackType.Size = trackContents.Length;
-                                    dfiBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
-                                }
-
-                                dfiBlockTrackTypes.Add(dfiBlockTrackType);
-                            }
-
-                            sidecar.BlockMedia[0].Track =
-                                dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
+                            dfiBlockTrackType.StartSector = currentSector;
+                            currentSector += image.ImageInfo.SectorsPerTrack;
+                            dfiBlockTrackType.EndSector = currentSector - 1;
+                            dfiBlockTrackType.Sectors = image.ImageInfo.SectorsPerTrack;
+                            dfiBlockTrackType.BytesPerSector = (int)image.ImageInfo.SectorSize;
+                            dfiBlockTrackType.Format = trkFormat;
                         }
-                        else
-                            DicConsole
-                                .ErrorWriteLine("DiscFerret image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
-                                                dfiImage.ImageInfo.Cylinders, image.ImageInfo.Cylinders);
-                    else
-                        DicConsole
-                            .ErrorWriteLine("DiscFerret image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
-                                            dfiImage.ImageInfo.Heads, image.ImageInfo.Heads);
+
+                        if(dfiImage.TrackOffsets.TryGetValue(t, out long offset) &&
+                           dfiImage.TrackLengths.TryGetValue(t, out long length))
+                        {
+                            dfiBlockTrackType.Image.offset = offset;
+                            byte[] trackContents = new byte[length];
+                            dfiStream.Position = offset;
+                            dfiStream.Read(trackContents, 0, trackContents.Length);
+                            dfiBlockTrackType.Size = trackContents.Length;
+                            dfiBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
+                        }
+
+                        dfiBlockTrackTypes.Add(dfiBlockTrackType);
+                    }
+
+                    sidecar.BlockMedia[0].Track =
+                        dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                 }
-            }
+                else
+                    DicConsole
+                        .ErrorWriteLine("DiscFerret image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
+                                        dfiImage.ImageInfo.Cylinders, image.ImageInfo.Cylinders);
+            else
+                DicConsole
+                    .ErrorWriteLine("DiscFerret image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
+                                    dfiImage.ImageInfo.Heads, image.ImageInfo.Heads);
             #endregion
 
             // TODO: Implement support for getting CHS from SCSI mode pages

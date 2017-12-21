@@ -78,31 +78,29 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(oldtry.Software == null) throw new Exception("Found corrupt resume file, cannot continue...");
 
-                    if(oldtry.Software.Name == "DiscImageChef" &&
-                       oldtry.Software.OperatingSystem == platform.ToString() &&
-                       oldtry.Software.Version == Version.GetVersion())
-                    {
-                        if(removable && (oldtry.Manufacturer != manufacturer || oldtry.Model != model ||
-                                         oldtry.Serial != serial)) continue;
+                    if(oldtry.Software.Name != "DiscImageChef" ||
+                       oldtry.Software.OperatingSystem != platform.ToString() ||
+                       oldtry.Software.Version != Version.GetVersion()) continue;
 
-                        currentTry = oldtry;
-                        extents = ExtentsConverter.FromMetadata(currentTry.Extents);
-                        break;
-                    }
+                    if(removable && (oldtry.Manufacturer != manufacturer || oldtry.Model != model ||
+                                     oldtry.Serial != serial)) continue;
+
+                    currentTry = oldtry;
+                    extents = ExtentsConverter.FromMetadata(currentTry.Extents);
+                    break;
                 }
 
-                if(currentTry == null)
+                if(currentTry != null) return;
+
+                currentTry = new DumpHardwareType
                 {
-                    currentTry = new DumpHardwareType
-                    {
-                        Software = Version.GetSoftwareType(platform),
-                        Manufacturer = manufacturer,
-                        Model = model,
-                        Serial = serial
-                    };
-                    resume.Tries.Add(currentTry);
-                    extents = new ExtentsULong();
-                }
+                    Software = Version.GetSoftwareType(platform),
+                    Manufacturer = manufacturer,
+                    Model = model,
+                    Serial = serial
+                };
+                resume.Tries.Add(currentTry);
+                extents = new ExtentsULong();
             }
             else
             {

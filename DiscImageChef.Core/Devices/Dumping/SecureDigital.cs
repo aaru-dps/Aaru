@@ -495,13 +495,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                         foreach(Filesystem plugin in plugins.PluginsList.Values)
                             try
                             {
-                                if(plugin.Identify(imageFormat, partitions[i]))
-                                {
-                                    plugin.GetInformation(imageFormat, partitions[i], out string foo);
-                                    lstFs.Add(plugin.XmlFSType);
-                                    Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                                    dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
-                                }
+                                if(!plugin.Identify(imageFormat, partitions[i])) continue;
+
+                                plugin.GetInformation(imageFormat, partitions[i], out string foo);
+                                lstFs.Add(plugin.XmlFSType);
+                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                             catch
@@ -527,13 +526,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     foreach(Filesystem plugin in plugins.PluginsList.Values)
                         try
                         {
-                            if(plugin.Identify(imageFormat, wholePart))
-                            {
-                                plugin.GetInformation(imageFormat, wholePart, out string foo);
-                                lstFs.Add(plugin.XmlFSType);
-                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                                dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
-                            }
+                            if(!plugin.Identify(imageFormat, wholePart)) continue;
+
+                            plugin.GetInformation(imageFormat, wholePart, out string foo);
+                            lstFs.Add(plugin.XmlFSType);
+                            Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                            dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch

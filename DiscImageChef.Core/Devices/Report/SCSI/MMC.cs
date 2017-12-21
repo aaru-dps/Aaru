@@ -1333,11 +1333,10 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                         DataFile.WriteTo("SCSI Report", "leadin",
                                                          "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
                                                          mediaType + ".bin", "read results", buffer);
-                                    if(!sense)
-                                    {
-                                        mediaTest.CanReadLeadIn = true;
-                                        break;
-                                    }
+                                    if(sense) continue;
+
+                                    mediaTest.CanReadLeadIn = true;
+                                    break;
                                 }
 
                                 DicConsole.WriteLine("Trying to read CD Lead-Out...");

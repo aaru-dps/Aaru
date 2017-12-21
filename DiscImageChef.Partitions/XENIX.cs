@@ -75,25 +75,24 @@ namespace DiscImageChef.Partitions
             {
                 DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_off = {1}", i, xnxtbl.p[i].p_off);
                 DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
-                if(xnxtbl.p[i].p_size > 0)
-                {
-                    Partition part = new Partition
-                    {
-                        Start =
-                            (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.GetSectorSize() +
-                            sectorOffset,
-                        Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.GetSectorSize(),
-                        Offset =
-                            (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
-                            imagePlugin.GetSectorSize() * sectorOffset,
-                        Size = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
-                        Sequence = (ulong)i,
-                        Type = "XENIX",
-                        Scheme = Name
-                    };
+                if(xnxtbl.p[i].p_size <= 0) continue;
 
-                    if(part.End < imagePlugin.GetSectors()) partitions.Add(part);
-                }
+                Partition part = new Partition
+                {
+                    Start =
+                        (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.GetSectorSize() +
+                        sectorOffset,
+                    Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.GetSectorSize(),
+                    Offset =
+                        (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
+                        imagePlugin.GetSectorSize() * sectorOffset,
+                    Size = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
+                    Sequence = (ulong)i,
+                    Type = "XENIX",
+                    Scheme = Name
+                };
+
+                if(part.End < imagePlugin.GetSectors()) partitions.Add(part);
             }
 
             return partitions.Count > 0;

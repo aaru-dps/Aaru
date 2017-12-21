@@ -65,7 +65,8 @@ namespace DiscImageChef.Filesystems.CPM
                         for(int i = 0; i < def.sectorsPerTrack; i++) def.side1.sectorIds[i] = i + 1;
                     }
 
-                    if(def.sides == 2 && def.side2 == null)
+                    if(def.sides != 2 || def.side2 != null) continue;
+
                     {
                         def.side2 = new Side();
                         def.side2.sideId = 1;

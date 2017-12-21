@@ -828,9 +828,10 @@ namespace DiscImageChef.DiscImages
                     {
                         AlcoholTrackExtra extra;
 
-                        if(track.point == kvp.Key && alcTrackExtras.TryGetValue(track.point, out extra))
-                            if(sectorAddress - kvp.Value < extra.sectors)
-                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out extra)) continue;
+
+                        if(sectorAddress - kvp.Value < extra.sectors)
+                            return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                     }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -844,9 +845,10 @@ namespace DiscImageChef.DiscImages
                     {
                         AlcoholTrackExtra extra;
 
-                        if(track.point == kvp.Key && alcTrackExtras.TryGetValue(track.point, out extra))
-                            if(sectorAddress - kvp.Value < extra.sectors)
-                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out extra)) continue;
+
+                        if(sectorAddress - kvp.Value < extra.sectors)
+                            return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                     }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -1296,9 +1298,10 @@ namespace DiscImageChef.DiscImages
                     {
                         AlcoholTrackExtra extra;
 
-                        if(track.point == kvp.Key && alcTrackExtras.TryGetValue(track.point, out extra))
-                            if(sectorAddress - kvp.Value < extra.sectors)
-                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out extra)) continue;
+
+                        if(sectorAddress - kvp.Value < extra.sectors)
+                            return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                     }
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -1393,40 +1396,39 @@ namespace DiscImageChef.DiscImages
                     }
 
                 AlcoholTrackExtra extra;
-                if(alcTrackExtras.TryGetValue(track.point, out extra))
+                if(!alcTrackExtras.TryGetValue(track.point, out extra)) continue;
+
+                Track _track = new Track();
+
+                _track.Indexes = new Dictionary<int, ulong>();
+                _track.Indexes.Add(1, track.startLba);
+                _track.TrackStartSector = track.startLba;
+                _track.TrackEndSector = extra.sectors - 1;
+                _track.TrackPregap = extra.pregap;
+                _track.TrackSession = sessionNo;
+                _track.TrackSequence = track.point;
+                _track.TrackType = AlcoholTrackTypeToTrackType(track.mode);
+                _track.TrackFilter = alcImage;
+                _track.TrackFile = alcImage.GetFilename();
+                _track.TrackFileOffset = track.startOffset;
+                _track.TrackFileType = "BINARY";
+                _track.TrackRawBytesPerSector = track.sectorSize;
+                _track.TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(track.mode);
+                switch(track.subMode)
                 {
-                    Track _track = new Track();
-
-                    _track.Indexes = new Dictionary<int, ulong>();
-                    _track.Indexes.Add(1, track.startLba);
-                    _track.TrackStartSector = track.startLba;
-                    _track.TrackEndSector = extra.sectors - 1;
-                    _track.TrackPregap = extra.pregap;
-                    _track.TrackSession = sessionNo;
-                    _track.TrackSequence = track.point;
-                    _track.TrackType = AlcoholTrackTypeToTrackType(track.mode);
-                    _track.TrackFilter = alcImage;
-                    _track.TrackFile = alcImage.GetFilename();
-                    _track.TrackFileOffset = track.startOffset;
-                    _track.TrackFileType = "BINARY";
-                    _track.TrackRawBytesPerSector = track.sectorSize;
-                    _track.TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(track.mode);
-                    switch(track.subMode)
-                    {
-                        case AlcoholSubchannelMode.Interleaved:
-                            _track.TrackSubchannelFilter = alcImage;
-                            _track.TrackSubchannelFile = alcImage.GetFilename();
-                            _track.TrackSubchannelOffset = track.startOffset;
-                            _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                            _track.TrackRawBytesPerSector += 96;
-                            break;
-                        case AlcoholSubchannelMode.None:
-                            _track.TrackSubchannelType = TrackSubchannelType.None;
-                            break;
-                    }
-
-                    tracks.Add(_track);
+                    case AlcoholSubchannelMode.Interleaved:
+                        _track.TrackSubchannelFilter = alcImage;
+                        _track.TrackSubchannelFile = alcImage.GetFilename();
+                        _track.TrackSubchannelOffset = track.startOffset;
+                        _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                        _track.TrackRawBytesPerSector += 96;
+                        break;
+                    case AlcoholSubchannelMode.None:
+                        _track.TrackSubchannelType = TrackSubchannelType.None;
+                        break;
                 }
+
+                tracks.Add(_track);
             }
 
             return tracks;
@@ -1455,40 +1457,39 @@ namespace DiscImageChef.DiscImages
                     }
 
                 AlcoholTrackExtra extra;
-                if(alcTrackExtras.TryGetValue(track.point, out extra) && session == sessionNo)
+                if(!alcTrackExtras.TryGetValue(track.point, out extra) || session != sessionNo) continue;
+
+                Track _track = new Track();
+
+                _track.Indexes = new Dictionary<int, ulong>();
+                _track.Indexes.Add(1, track.startLba);
+                _track.TrackStartSector = track.startLba;
+                _track.TrackEndSector = extra.sectors - 1;
+                _track.TrackPregap = extra.pregap;
+                _track.TrackSession = sessionNo;
+                _track.TrackSequence = track.point;
+                _track.TrackType = AlcoholTrackTypeToTrackType(track.mode);
+                _track.TrackFilter = alcImage;
+                _track.TrackFile = alcImage.GetFilename();
+                _track.TrackFileOffset = track.startOffset;
+                _track.TrackFileType = "BINARY";
+                _track.TrackRawBytesPerSector = track.sectorSize;
+                _track.TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(track.mode);
+                switch(track.subMode)
                 {
-                    Track _track = new Track();
-
-                    _track.Indexes = new Dictionary<int, ulong>();
-                    _track.Indexes.Add(1, track.startLba);
-                    _track.TrackStartSector = track.startLba;
-                    _track.TrackEndSector = extra.sectors - 1;
-                    _track.TrackPregap = extra.pregap;
-                    _track.TrackSession = sessionNo;
-                    _track.TrackSequence = track.point;
-                    _track.TrackType = AlcoholTrackTypeToTrackType(track.mode);
-                    _track.TrackFilter = alcImage;
-                    _track.TrackFile = alcImage.GetFilename();
-                    _track.TrackFileOffset = track.startOffset;
-                    _track.TrackFileType = "BINARY";
-                    _track.TrackRawBytesPerSector = track.sectorSize;
-                    _track.TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(track.mode);
-                    switch(track.subMode)
-                    {
-                        case AlcoholSubchannelMode.Interleaved:
-                            _track.TrackSubchannelFilter = alcImage;
-                            _track.TrackSubchannelFile = alcImage.GetFilename();
-                            _track.TrackSubchannelOffset = track.startOffset;
-                            _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                            _track.TrackRawBytesPerSector += 96;
-                            break;
-                        case AlcoholSubchannelMode.None:
-                            _track.TrackSubchannelType = TrackSubchannelType.None;
-                            break;
-                    }
-
-                    tracks.Add(_track);
+                    case AlcoholSubchannelMode.Interleaved:
+                        _track.TrackSubchannelFilter = alcImage;
+                        _track.TrackSubchannelFile = alcImage.GetFilename();
+                        _track.TrackSubchannelOffset = track.startOffset;
+                        _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                        _track.TrackRawBytesPerSector += 96;
+                        break;
+                    case AlcoholSubchannelMode.None:
+                        _track.TrackSubchannelType = TrackSubchannelType.None;
+                        break;
                 }
+
+                tracks.Add(_track);
             }
 
             return tracks;

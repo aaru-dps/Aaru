@@ -237,7 +237,8 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // ECMA-330
-            if(dds.Groups == 1)
+            if(dds.Groups != 1) return dds;
+
             {
                 dds.Reserved4 = (byte)((response[7] & 0x7C) >> 2);
                 dds.Reserved = new byte[68];
@@ -291,7 +292,8 @@ namespace DiscImageChef.Decoders.DVD
                         sb.AppendFormat("Group {0} has been certified by an user", i).AppendLine();
                 }
 
-            if(decoded.Groups == 1)
+            if(decoded.Groups != 1) return sb.ToString();
+
             {
                 sb.AppendFormat("Disc has {0} zones", decoded.Zones).AppendLine();
                 sb.AppendFormat("Primary Spare Area stats at PSN {0:X}h and ends at PSN {1:X}h, inclusively",

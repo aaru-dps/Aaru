@@ -211,18 +211,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 {
                                     dumpLog.WriteLine("Requesting page {0:X2}h.", page);
                                     sense = dev.ScsiInquiry(out cmdBuf, out senseBuf, page);
-                                    if(!sense)
+                                    if(sense) continue;
+
+                                    EVPDType evpd = new EVPDType
                                     {
-                                        EVPDType evpd = new EVPDType
-                                        {
-                                            Image = string.Format("{0}.evpd_{1:X2}h.bin", outputPrefix, page),
-                                            Checksums = Checksum.GetChecksums(cmdBuf).ToArray(),
-                                            Size = cmdBuf.Length
-                                        };
-                                        evpd.Checksums = Checksum.GetChecksums(cmdBuf).ToArray();
-                                        DataFile.WriteTo("SCSI Dump", evpd.Image, cmdBuf);
-                                        evpds.Add(evpd);
-                                    }
+                                        Image = string.Format("{0}.evpd_{1:X2}h.bin", outputPrefix, page),
+                                        Checksums = Checksum.GetChecksums(cmdBuf).ToArray(),
+                                        Size = cmdBuf.Length
+                                    };
+                                    evpd.Checksums = Checksum.GetChecksums(cmdBuf).ToArray();
+                                    DataFile.WriteTo("SCSI Dump", evpd.Image, cmdBuf);
+                                    evpds.Add(evpd);
                                 }
 
                                 if(evpds.Count > 0) sidecar.BlockMedia[0].SCSI.EVPD = evpds.ToArray();
@@ -651,23 +650,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                         foreach(Filesystem plugin in plugins.PluginsList.Values)
                             try
                             {
-                                if(plugin.Identify(imageFormat, partitions[i]))
-                                {
-                                    plugin.GetInformation(imageFormat, partitions[i], out string foo);
-                                    lstFs.Add(plugin.XmlFSType);
-                                    Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                                    dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
+                                if(!plugin.Identify(imageFormat, partitions[i])) continue;
 
-                                    switch(plugin.XmlFSType.Type) {
-                                        case "Opera": dskType = MediaType.ThreeDO;
-                                            break;
-                                        case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
-                                            break;
-                                        case "Nintendo Wii filesystem": dskType = MediaType.WOD;
-                                            break;
-                                        case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
-                                            break;
-                                    }
+                                plugin.GetInformation(imageFormat, partitions[i], out string foo);
+                                lstFs.Add(plugin.XmlFSType);
+                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
+
+                                switch(plugin.XmlFSType.Type) {
+                                    case "Opera": dskType = MediaType.ThreeDO;
+                                        break;
+                                    case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                        break;
+                                    case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                        break;
+                                    case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                        break;
                                 }
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -693,23 +691,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                     foreach(Filesystem plugin in plugins.PluginsList.Values)
                         try
                         {
-                            if(plugin.Identify(imageFormat, wholePart))
-                            {
-                                plugin.GetInformation(imageFormat, wholePart, out string foo);
-                                lstFs.Add(plugin.XmlFSType);
-                                Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                                dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
+                            if(!plugin.Identify(imageFormat, wholePart)) continue;
 
-                                switch(plugin.XmlFSType.Type) {
-                                    case "Opera": dskType = MediaType.ThreeDO;
-                                        break;
-                                    case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
-                                        break;
-                                    case "Nintendo Wii filesystem": dskType = MediaType.WOD;
-                                        break;
-                                    case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
-                                        break;
-                                }
+                            plugin.GetInformation(imageFormat, wholePart, out string foo);
+                            lstFs.Add(plugin.XmlFSType);
+                            Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                            dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
+
+                            switch(plugin.XmlFSType.Type) {
+                                case "Opera": dskType = MediaType.ThreeDO;
+                                    break;
+                                case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                    break;
+                                case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                    break;
+                                case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                    break;
                             }
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body

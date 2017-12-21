@@ -173,8 +173,11 @@ namespace DiscImageChef.Devices
                 }
             }
 
-            if((command == (MmcCommands)SecureDigitalCommands.SendOperatingCondition ||
-                command == MmcCommands.SendOpCond) && cachedOcr != null)
+            if((command != (MmcCommands)SecureDigitalCommands.SendOperatingCondition &&
+                command != MmcCommands.SendOpCond) || cachedOcr == null)
+                return Command.SendMmcCommand(platformId, fd, command, write, isApplication, flags, argument, blockSize,
+                                              blocks, ref buffer, out response, out duration, out sense, timeout);
+
             {
                 System.DateTime start = System.DateTime.Now;
                 buffer = new byte[cachedOcr.Length];
@@ -185,9 +188,6 @@ namespace DiscImageChef.Devices
                 duration = (end - start).TotalMilliseconds;
                 return 0;
             }
-
-            return Command.SendMmcCommand(platformId, fd, command, write, isApplication, flags, argument, blockSize,
-                                          blocks, ref buffer, out response, out duration, out sense, timeout);
         }
     }
 }

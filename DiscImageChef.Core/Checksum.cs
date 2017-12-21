@@ -370,13 +370,12 @@ namespace DiscImageChef.Core
                 chks.Add(chk);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-            {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.spamsum;
-                chk.Value = ssctx.End();
-                chks.Add(chk);
-            }
+            if(!enabled.HasFlag(EnableChecksum.SpamSum)) return chks;
+
+            chk = new ChecksumType();
+            chk.type = ChecksumTypeType.spamsum;
+            chk.Value = ssctx.End();
+            chks.Add(chk);
 
             return chks;
         }
@@ -617,13 +616,12 @@ namespace DiscImageChef.Core
                 dataChecksums.Add(chk);
             }
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
-            {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.spamsum;
-                chk.Value = ssctxData.End();
-                dataChecksums.Add(chk);
-            }
+            if(!enabled.HasFlag(EnableChecksum.SpamSum)) return dataChecksums;
+
+            chk = new ChecksumType();
+            chk.type = ChecksumTypeType.spamsum;
+            chk.Value = ssctxData.End();
+            dataChecksums.Add(chk);
 
             return dataChecksums;
         }

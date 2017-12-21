@@ -80,12 +80,11 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("BSD plugin",
                                               "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",
                                               location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
-                    if(dl.d_magic == DISKMAGIC && dl.d_magic2 == DISKMAGIC ||
-                       dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM)
-                    {
-                        found = true;
-                        break;
-                    }
+                    if((dl.d_magic != DISKMAGIC || dl.d_magic2 != DISKMAGIC) &&
+                       (dl.d_magic != DISKCIGAM || dl.d_magic2 != DISKCIGAM)) continue;
+
+                    found = true;
+                    break;
                 }
 
                 if(found) break;
@@ -151,21 +150,19 @@ namespace DiscImageChef.Partitions
                     Sequence = counter,
                     Scheme = Name
                 };
-                if(dl.d_partitions[i].p_fstype != fsType.Unused)
-                {
-                    // Crude and dirty way to know if the disklabel is relative to its parent partition...
-                    if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset) addSectorOffset = true;
+                if(dl.d_partitions[i].p_fstype == fsType.Unused) continue;
+                // Crude and dirty way to know if the disklabel is relative to its parent partition...
+                if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset) addSectorOffset = true;
 
-                    if(addSectorOffset)
-                    {
-                        part.Start += sectorOffset;
-                        part.Offset += sectorOffset * imagePlugin.GetSectorSize();
-                    }
-                    DicConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
-                    DicConsole.DebugWriteLine("BSD plugin", "Adding it...");
-                    partitions.Add(part);
-                    counter++;
+                if(addSectorOffset)
+                {
+                    part.Start += sectorOffset;
+                    part.Offset += sectorOffset * imagePlugin.GetSectorSize();
                 }
+                DicConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
+                DicConsole.DebugWriteLine("BSD plugin", "Adding it...");
+                partitions.Add(part);
+                counter++;
             }
 
             return partitions.Count > 0;

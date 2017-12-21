@@ -259,12 +259,11 @@ namespace DiscImageChef.Filesystems
                 if(magic == ZEC_Magic || magic == ZEC_Cigam) return true;
             }
 
-            if(partition.Start + 16 < partition.End)
-            {
-                sector = imagePlugin.ReadSector(partition.Start + 16);
-                magic = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_Magic || magic == ZEC_Cigam) return true;
-            }
+            if(partition.Start + 16 >= partition.End) return false;
+
+            sector = imagePlugin.ReadSector(partition.Start + 16);
+            magic = BitConverter.ToUInt64(sector, 0x1D8);
+            if(magic == ZEC_Magic || magic == ZEC_Cigam) return true;
 
             return false;
         }

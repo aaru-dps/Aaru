@@ -234,16 +234,17 @@ namespace DiscImageChef.DiscImages
                 stream.Read(ddfMagic, 0, 0x15);
 
                 vmCHdr = new VMwareCowHeader();
-                if(stream.Length > Marshal.SizeOf(vmCHdr))
-                {
-                    stream.Seek(0, SeekOrigin.Begin);
-                    byte[] vmCHdrB = new byte[Marshal.SizeOf(vmCHdr)];
-                    stream.Read(vmCHdrB, 0, Marshal.SizeOf(vmCHdr));
-                    headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmCHdr));
-                    Marshal.Copy(vmCHdrB, 0, headerPtr, Marshal.SizeOf(vmCHdr));
-                    vmCHdr = (VMwareCowHeader)Marshal.PtrToStructure(headerPtr, typeof(VMwareCowHeader));
-                    Marshal.FreeHGlobal(headerPtr);
-                }
+                if(stream.Length <= Marshal.SizeOf(vmCHdr))
+                    return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
+                           vmCHdr.magic == VMWARE_COW_MAGIC;
+
+                stream.Seek(0, SeekOrigin.Begin);
+                byte[] vmCHdrB = new byte[Marshal.SizeOf(vmCHdr)];
+                stream.Read(vmCHdrB, 0, Marshal.SizeOf(vmCHdr));
+                headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmCHdr));
+                Marshal.Copy(vmCHdrB, 0, headerPtr, Marshal.SizeOf(vmCHdr));
+                vmCHdr = (VMwareCowHeader)Marshal.PtrToStructure(headerPtr, typeof(VMwareCowHeader));
+                Marshal.FreeHGlobal(headerPtr);
 
                 return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
                        vmCHdr.magic == VMWARE_COW_MAGIC;
@@ -522,43 +523,42 @@ namespace DiscImageChef.DiscImages
 
                 if(extent.Access == "NOACCESS") throw new Exception("Cannot access NOACCESS extents ;).");
 
-                if(extent.Type != "FLAT" && extent.Type != "ZERO" && extent.Type != "VMFS" && !cowD)
+                if(extent.Type == "FLAT" || extent.Type == "ZERO" || extent.Type == "VMFS" || cowD) continue;
+
+                Stream extentStream = extent.Filter.GetDataForkStream();
+                extentStream.Seek(0, SeekOrigin.Begin);
+
+                if(extentStream.Length < SECTOR_SIZE)
+                    throw new Exception(string.Format("Extent {0} is too small.", extent.Filename));
+
+                VMwareExtentHeader extentHdr = new VMwareExtentHeader();
+                byte[] extentHdrB = new byte[Marshal.SizeOf(extentHdr)];
+                extentStream.Read(extentHdrB, 0, Marshal.SizeOf(extentHdr));
+                IntPtr extentHdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(extentHdr));
+                Marshal.Copy(extentHdrB, 0, extentHdrPtr, Marshal.SizeOf(extentHdr));
+                extentHdr = (VMwareExtentHeader)Marshal.PtrToStructure(extentHdrPtr, typeof(VMwareExtentHeader));
+                Marshal.FreeHGlobal(extentHdrPtr);
+
+                if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
+                    throw new Exception(string.Format("{0} is not an VMware extent.", extent.Filter));
+
+                if(extentHdr.capacity < extent.Sectors)
+                    throw new
+                        Exception(string.Format("Extent contains incorrect number of sectors, {0}. {1} were expected",
+                                                extentHdr.capacity, extent.Sectors));
+
+                // TODO: Support compressed extents
+                if(extentHdr.compression != COMPRESSION_NONE)
+                    throw new ImageNotSupportedException("Compressed extents are not yet supported.");
+
+                if(!vmEHdrSet)
                 {
-                    Stream extentStream = extent.Filter.GetDataForkStream();
-                    extentStream.Seek(0, SeekOrigin.Begin);
-
-                    if(extentStream.Length < SECTOR_SIZE)
-                        throw new Exception(string.Format("Extent {0} is too small.", extent.Filename));
-
-                    VMwareExtentHeader extentHdr = new VMwareExtentHeader();
-                    byte[] extentHdrB = new byte[Marshal.SizeOf(extentHdr)];
-                    extentStream.Read(extentHdrB, 0, Marshal.SizeOf(extentHdr));
-                    IntPtr extentHdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(extentHdr));
-                    Marshal.Copy(extentHdrB, 0, extentHdrPtr, Marshal.SizeOf(extentHdr));
-                    extentHdr = (VMwareExtentHeader)Marshal.PtrToStructure(extentHdrPtr, typeof(VMwareExtentHeader));
-                    Marshal.FreeHGlobal(extentHdrPtr);
-
-                    if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
-                        throw new Exception(string.Format("{0} is not an VMware extent.", extent.Filter));
-
-                    if(extentHdr.capacity < extent.Sectors)
-                        throw new
-                            Exception(string.Format("Extent contains incorrect number of sectors, {0}. {1} were expected",
-                                                    extentHdr.capacity, extent.Sectors));
-
-                    // TODO: Support compressed extents
-                    if(extentHdr.compression != COMPRESSION_NONE)
-                        throw new ImageNotSupportedException("Compressed extents are not yet supported.");
-
-                    if(!vmEHdrSet)
-                    {
-                        vmEHdr = extentHdr;
-                        gdFilter = extent.Filter;
-                        vmEHdrSet = true;
-                    }
-
-                    oneNoFlat = true;
+                    vmEHdr = extentHdr;
+                    gdFilter = extent.Filter;
+                    vmEHdrSet = true;
                 }
+
+                oneNoFlat = true;
             }
 
             if(oneNoFlat && !vmEHdrSet && !cowD)

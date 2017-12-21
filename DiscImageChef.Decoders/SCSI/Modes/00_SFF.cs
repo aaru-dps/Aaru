@@ -110,12 +110,11 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.DVW) sb.AppendLine("\tVerifying after writing is disabled");
             if(page.DDE) sb.AppendLine("\tDrive will abort when a writing error is detected");
 
-            if(page.SLM)
-            {
-                sb.Append("\tDrive has two LUNs with rewritable being ");
-                if(page.SLM) sb.AppendLine("LUN 1");
-                else sb.AppendLine("LUN 0");
-            }
+            if(!page.SLM) return sb.ToString();
+
+            sb.Append("\tDrive has two LUNs with rewritable being ");
+            if(page.SLM) sb.AppendLine("LUN 1");
+            else sb.AppendLine("LUN 0");
 
             return sb.ToString();
         }

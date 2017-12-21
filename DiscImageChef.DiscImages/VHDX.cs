@@ -614,11 +614,10 @@ namespace DiscImageChef.DiscImages
                         {
                             parentFilter =
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), relEntry));
-                            if(parentFilter != null && parentImage.OpenImage(parentFilter))
-                            {
-                                parentWorks = true;
-                                break;
-                            }
+                            if(parentFilter == null || !parentImage.OpenImage(parentFilter)) continue;
+
+                            parentWorks = true;
+                            break;
                         }
                         catch { continue; }
                     }
@@ -634,11 +633,10 @@ namespace DiscImageChef.DiscImages
                         {
                             parentFilter =
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
-                            if(parentFilter != null && parentImage.OpenImage(parentFilter))
-                            {
-                                parentWorks = true;
-                                break;
-                            }
+                            if(parentFilter == null || !parentImage.OpenImage(parentFilter)) continue;
+
+                            parentWorks = true;
+                            break;
                         }
                         catch { continue; }
                     }

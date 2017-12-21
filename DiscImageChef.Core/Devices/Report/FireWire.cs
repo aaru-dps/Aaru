@@ -51,25 +51,24 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine();
             }
 
-            if(pressedKey.Key == ConsoleKey.Y)
+            if(pressedKey.Key != ConsoleKey.Y) return;
+
+            report.FireWire = new firewireType();
+            report.FireWire.Manufacturer = dev.FireWireVendorName;
+            report.FireWire.Product = dev.FireWireModelName;
+            report.FireWire.ProductID = dev.FireWireModel;
+            report.FireWire.VendorID = dev.FireWireVendor;
+
+            pressedKey = new ConsoleKeyInfo();
+            while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
             {
-                report.FireWire = new firewireType();
-                report.FireWire.Manufacturer = dev.FireWireVendorName;
-                report.FireWire.Product = dev.FireWireModelName;
-                report.FireWire.ProductID = dev.FireWireModel;
-                report.FireWire.VendorID = dev.FireWireVendor;
-
-                pressedKey = new ConsoleKeyInfo();
-                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
-                {
-                    DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
-                    pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
-                }
-
-                report.FireWire.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
-                removable = report.FireWire.RemovableMedia;
+                DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
+                pressedKey = System.Console.ReadKey();
+                DicConsole.WriteLine();
             }
+
+            report.FireWire.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
+            removable = report.FireWire.RemovableMedia;
         }
     }
 }

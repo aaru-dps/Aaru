@@ -63,11 +63,10 @@ namespace DiscImageChef.Core
             foreach(Type type in assembly.GetTypes())
                 try
                 {
-                    if(type.IsSubclassOf(typeof(ImagePlugin)))
-                    {
-                        ImagePlugin plugin = (ImagePlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                        RegisterImagePlugin(plugin);
-                    }
+                    if(!type.IsSubclassOf(typeof(ImagePlugin))) continue;
+
+                    ImagePlugin plugin = (ImagePlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                    RegisterImagePlugin(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
 
@@ -76,11 +75,10 @@ namespace DiscImageChef.Core
             foreach(Type type in assembly.GetTypes())
                 try
                 {
-                    if(type.IsSubclassOf(typeof(PartitionPlugin)))
-                    {
-                        PartitionPlugin plugin = (PartitionPlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                        RegisterPartPlugin(plugin);
-                    }
+                    if(!type.IsSubclassOf(typeof(PartitionPlugin))) continue;
+
+                    PartitionPlugin plugin = (PartitionPlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                    RegisterPartPlugin(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
 
@@ -89,15 +87,14 @@ namespace DiscImageChef.Core
             foreach(Type type in assembly.GetTypes())
                 try
                 {
-                    if(type.IsSubclassOf(typeof(Filesystem)))
-                    {
-                        Filesystem plugin;
-                        if(encoding != null)
-                            plugin = (Filesystem)type.GetConstructor(new Type[] {encoding.GetType()})
-                                                     .Invoke(new object[] {encoding});
-                        else plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                        RegisterPlugin(plugin);
-                    }
+                    if(!type.IsSubclassOf(typeof(Filesystem))) continue;
+
+                    Filesystem plugin;
+                    if(encoding != null)
+                        plugin = (Filesystem)type.GetConstructor(new Type[] {encoding.GetType()})
+                                                 .Invoke(new object[] {encoding});
+                    else plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                    RegisterPlugin(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
         }

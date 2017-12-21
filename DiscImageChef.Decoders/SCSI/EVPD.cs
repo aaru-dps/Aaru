@@ -2301,52 +2301,49 @@ namespace DiscImageChef.Decoders.SCSI
                 return decoded;
             }
 
-            if(pageResponse[4] == pageResponse[3] - 1)
-            {
-                List<byte> array = new List<byte>();
-                string fwRegExStr =
-                    "Firmware Rev\\s+=\\s+(?<fw>\\d+\\.\\d+)\\s+Build date\\s+=\\s+(?<date>(\\w|\\d|\\s*.)*)\\s*$";
-                string fwcRegExStr = "FW_CONF\\s+=\\s+(?<value>0x[0-9A-Fa-f]{8})\\s*$";
-                string servoRegExStr = "Servo\\s+Rev\\s+=\\s+(?<version>\\d+\\.\\d+)\\s*$";
-                Regex fwRegEx = new Regex(fwRegExStr);
-                Regex fwcRegEx = new Regex(fwcRegExStr);
-                Regex servoRegEx = new Regex(servoRegExStr);
-                Match fwMatch;
-                Match fwcMatch;
-                Match servoMatch;
+            if(pageResponse[4] != pageResponse[3] - 1) return null;
 
-                for(int pos = 5; pos < pageResponse.Length; pos++)
-                    if(pageResponse[pos] == 0x00)
+            List<byte> array = new List<byte>();
+            string fwRegExStr =
+                "Firmware Rev\\s+=\\s+(?<fw>\\d+\\.\\d+)\\s+Build date\\s+=\\s+(?<date>(\\w|\\d|\\s*.)*)\\s*$";
+            string fwcRegExStr = "FW_CONF\\s+=\\s+(?<value>0x[0-9A-Fa-f]{8})\\s*$";
+            string servoRegExStr = "Servo\\s+Rev\\s+=\\s+(?<version>\\d+\\.\\d+)\\s*$";
+            Regex fwRegEx = new Regex(fwRegExStr);
+            Regex fwcRegEx = new Regex(fwcRegExStr);
+            Regex servoRegEx = new Regex(servoRegExStr);
+            Match fwMatch;
+            Match fwcMatch;
+            Match servoMatch;
+
+            for(int pos = 5; pos < pageResponse.Length; pos++)
+                if(pageResponse[pos] == 0x00)
+                {
+                    string str = StringHandlers.CToString(array.ToArray());
+                    fwMatch = fwRegEx.Match(str);
+                    fwcMatch = fwcRegEx.Match(str);
+                    servoMatch = servoRegEx.Match(str);
+
+                    if(str.ToLowerInvariant().StartsWith("copyright", StringComparison.Ordinal))
+                        decoded.Copyright = Encoding.ASCII.GetBytes(str);
+                    else if(fwMatch.Success)
                     {
-                        string str = StringHandlers.CToString(array.ToArray());
-                        fwMatch = fwRegEx.Match(str);
-                        fwcMatch = fwcRegEx.Match(str);
-                        servoMatch = servoRegEx.Match(str);
-
-                        if(str.ToLowerInvariant().StartsWith("copyright", StringComparison.Ordinal))
-                            decoded.Copyright = Encoding.ASCII.GetBytes(str);
-                        else if(fwMatch.Success)
-                        {
-                            decoded.Component = Encoding.ASCII.GetBytes("Firmware");
-                            decoded.Version = Encoding.ASCII.GetBytes(fwMatch.Groups["fw"].Value);
-                            decoded.Date = Encoding.ASCII.GetBytes(fwMatch.Groups["date"].Value);
-                        }
-                        else if(fwcMatch.Success)
-                            decoded.Variant = Encoding.ASCII.GetBytes(fwMatch.Groups["value"].Value);
-                        else if(servoMatch.Success)
-                        {
-                            decoded.Component = Encoding.ASCII.GetBytes("Servo");
-                            decoded.Version = Encoding.ASCII.GetBytes(servoMatch.Groups["version"].Value);
-                        }
-
-                        array = new List<byte>();
+                        decoded.Component = Encoding.ASCII.GetBytes("Firmware");
+                        decoded.Version = Encoding.ASCII.GetBytes(fwMatch.Groups["fw"].Value);
+                        decoded.Date = Encoding.ASCII.GetBytes(fwMatch.Groups["date"].Value);
                     }
-                    else array.Add(pageResponse[pos]);
+                    else if(fwcMatch.Success)
+                        decoded.Variant = Encoding.ASCII.GetBytes(fwMatch.Groups["value"].Value);
+                    else if(servoMatch.Success)
+                    {
+                        decoded.Component = Encoding.ASCII.GetBytes("Servo");
+                        decoded.Version = Encoding.ASCII.GetBytes(servoMatch.Groups["version"].Value);
+                    }
 
-                return decoded;
-            }
+                    array = new List<byte>();
+                }
+                else array.Add(pageResponse[pos]);
 
-            return null;
+            return decoded;
         }
 
         public static string PrettifyPage_C0_to_C5_HP(byte[] pageResponse)

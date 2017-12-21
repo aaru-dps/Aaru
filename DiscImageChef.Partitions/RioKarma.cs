@@ -40,8 +40,8 @@ namespace DiscImageChef.Partitions
 {
     public class RioKarma : PartitionPlugin
     {
-        const ushort KarmaMagic = 0xAB56;
-        const byte EntryMagic = 0x4D;
+        const ushort KARMA_MAGIC = 0xAB56;
+        const byte ENTRY_MAGIC = 0x4D;
 
         public RioKarma()
         {
@@ -62,7 +62,7 @@ namespace DiscImageChef.Partitions
             table = (RioKarmaTable)Marshal.PtrToStructure(tablePtr, typeof(RioKarmaTable));
             Marshal.FreeHGlobal(tablePtr);
 
-            if(table.magic != KarmaMagic) return false;
+            if(table.magic != KARMA_MAGIC) return false;
 
             ulong counter = 0;
 
@@ -78,11 +78,10 @@ namespace DiscImageChef.Partitions
                     Sequence = counter,
                     Scheme = Name
                 };
-                if(entry.type == EntryMagic)
-                {
-                    partitions.Add(part);
-                    counter++;
-                }
+                if(entry.type != ENTRY_MAGIC) continue;
+
+                partitions.Add(part);
+                counter++;
             }
 
             return true;

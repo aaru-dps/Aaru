@@ -715,22 +715,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                         totalDuration += cmdDuration;
                     }
 
-                    if(!sense && !dev.Error || runningPersistent)
-                    {
-                        if(!sense && !dev.Error)
-                        {
-                            resume.BadBlocks.Remove(badSector);
-                            extents.Add(badSector);
-                            dumpLog.WriteLine("Correctly retried sector {0} in pass {1}.", badSector, pass);
-                        }
+                    if((sense || dev.Error) && !runningPersistent) continue;
 
-                        if(separateSubchannel)
-                        {
-                            dumpFile.WriteAt(readBuffer, badSector, (uint)sectorSize, 0, sectorSize);
-                            subFile.WriteAt(readBuffer, badSector, subSize, sectorSize, (int)subSize);
-                        }
-                        else dumpFile.WriteAt(readBuffer, badSector, blockSize);
+                    if(!sense && !dev.Error)
+                    {
+                        resume.BadBlocks.Remove(badSector);
+                        extents.Add(badSector);
+                        dumpLog.WriteLine("Correctly retried sector {0} in pass {1}.", badSector, pass);
                     }
+
+                    if(separateSubchannel)
+                    {
+                        dumpFile.WriteAt(readBuffer, badSector, (uint)sectorSize, 0, sectorSize);
+                        subFile.WriteAt(readBuffer, badSector, subSize, sectorSize, (int)subSize);
+                    }
+                    else dumpFile.WriteAt(readBuffer, badSector, blockSize);
                 }
 
                 if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)

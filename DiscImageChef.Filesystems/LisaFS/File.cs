@@ -208,18 +208,17 @@ namespace DiscImageChef.Filesystems.LisaFS
             {
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
 
-                if(sysTag.fileID == fileId)
-                {
-                    byte[] sector;
+                if(sysTag.fileID != fileId) continue;
 
-                    if(!tags) sector = device.ReadSector(i);
-                    else sector = device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
+                byte[] sector;
 
-                    // Relative block for $Loader starts at $Boot block
-                    if(sysTag.fileID == FILEID_LOADER_SIGNED) sysTag.relPage--;
+                if(!tags) sector = device.ReadSector(i);
+                else sector = device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
 
-                    Array.Copy(sector, 0, buf, sector.Length * sysTag.relPage, sector.Length);
-                }
+                // Relative block for $Loader starts at $Boot block
+                if(sysTag.fileID == FILEID_LOADER_SIGNED) sysTag.relPage--;
+
+                Array.Copy(sector, 0, buf, sector.Length * sysTag.relPage, sector.Length);
             }
 
             if(!tags) systemFileCache.Add(fileId, buf);
@@ -445,18 +444,17 @@ namespace DiscImageChef.Filesystems.LisaFS
                     string filename = StringHandlers.CToString(entry.filename, CurrentEncoding);
 
                     // LisaOS is case insensitive
-                    if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) == 0 &&
-                       entry.parentID == fileId)
-                    {
-                        fileId = entry.fileID;
-                        isDir = entry.fileType == 0x01;
+                    if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) != 0 ||
+                       entry.parentID != fileId) continue;
 
-                        // Not last path element, and it's not a directory
-                        if(lvl != pathElements.Length - 1 && !isDir) return Errno.NotDirectory;
+                    fileId = entry.fileID;
+                    isDir = entry.fileType == 0x01;
 
-                        // Arrived last path element
-                        if(lvl == pathElements.Length - 1) return Errno.NoError;
-                    }
+                    // Not last path element, and it's not a directory
+                    if(lvl != pathElements.Length - 1 && !isDir) return Errno.NotDirectory;
+
+                    // Arrived last path element
+                    if(lvl == pathElements.Length - 1) return Errno.NoError;
                 }
             }
 

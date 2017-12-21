@@ -278,13 +278,12 @@ namespace DiscImageChef.Filesystems
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.location = {0}",
                                           anchor.reserveVolumeDescriptorSequenceExtent.location);
 
-                if(anchor.tag.tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer &&
-                   anchor.tag.tagLocation == position &&
-                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start < partition.End)
-                {
-                    anchorFound = true;
-                    break;
-                }
+                if(anchor.tag.tagIdentifier != TagIdentifier.AnchorVolumeDescriptorPointer ||
+                   anchor.tag.tagLocation != position ||
+                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start >= partition.End) continue;
+
+                anchorFound = true;
+                break;
             }
 
             if(!anchorFound) return false;

@@ -290,18 +290,15 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static byte[] DecodeSector(RawSector sector)
         {
-            if(sector.addressField.prologue[0] == 0xD5 && sector.addressField.prologue[1] == 0xAA)
-            {
-                // Pre DOS 3.3
-                if(sector.addressField.prologue[2] == 0xB5) return Decode5and3(sector.dataField.data);
-                // DOS 3.3
-                if(sector.addressField.prologue[2] == 0x96) return Decode6and2(sector.dataField.data);
-                // Unknown
-                return null;
-            }
+            if(sector.addressField.prologue[0] != 0xD5 || sector.addressField.prologue[1] != 0xAA) return null;
+            // Pre DOS 3.3
+            if(sector.addressField.prologue[2] == 0xB5) return Decode5and3(sector.dataField.data);
+            // DOS 3.3
+            if(sector.addressField.prologue[2] == 0x96) return Decode6and2(sector.dataField.data);
+            // Unknown
+            return null;
 
             // Not Apple ][ GCR?
-            return null;
         }
 
         public static RawSector MarshalSector(byte[] data, int offset = 0)

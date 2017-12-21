@@ -53,13 +53,10 @@ namespace DiscImageChef.Filesystems.CPM
                 return Errno.NoError;
             }
 
-            if(statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out fInfo))
-            {
-                attributes = fInfo.Attributes;
-                return Errno.NoError;
-            }
+            if(!statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out fInfo)) return Errno.NoSuchFile;
 
-            return Errno.NoSuchFile;
+            attributes = fInfo.Attributes;
+            return Errno.NoError;
         }
 
         public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)

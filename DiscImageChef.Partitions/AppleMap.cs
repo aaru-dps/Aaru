@@ -243,101 +243,99 @@ namespace DiscImageChef.Partitions
                 byte[] tmp = new byte[entry_size];
                 Array.Copy(entries, i * entry_size, tmp, 0, entry_size);
                 entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
-                if(entry.signature == APM_MAGIC)
+                if(entry.signature != APM_MAGIC) continue;
+
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].reserved1 = 0x{1:X4}", i, entry.reserved1);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entries = {1}", i, entry.entries);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].start = {1}", i, entry.start);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].sectors = {1}", i, entry.sectors);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].name = \"{1}\"", i,
+                                          StringHandlers.CToString(entry.name));
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].type = \"{1}\"", i,
+                                          StringHandlers.CToString(entry.type));
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_data_block = {1}", i,
+                                          entry.first_data_block);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i,
+                                          (AppleMapFlags)entry.flags);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_boot_block = {1}", i,
+                                          entry.first_boot_block);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].boot_size = {1}", i, entry.boot_size);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address = 0x{1:X8}", i,
+                                          entry.load_address);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address2 = 0x{1:X8}", i,
+                                          entry.load_address2);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point = 0x{1:X8}", i,
+                                          entry.entry_point);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point2 = 0x{1:X8}", i,
+                                          entry.entry_point2);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
+                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].processor = \"{1}\"", i,
+                                          StringHandlers.CToString(entry.processor));
+
+                AppleMapFlags flags = (AppleMapFlags)entry.flags;
+
+                // BeOS doesn't mark its partitions as valid
+                //if(flags.HasFlag(AppleMapFlags.Valid) &&
+                if(StringHandlers.CToString(entry.type) == "Apple_partition_map" || entry.sectors <= 0) continue;
+
+                StringBuilder sb = new StringBuilder();
+
+                CommonTypes.Partition _partition = new CommonTypes.Partition
                 {
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].reserved1 = 0x{1:X4}", i, entry.reserved1);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entries = {1}", i, entry.entries);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].start = {1}", i, entry.start);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].sectors = {1}", i, entry.sectors);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].name = \"{1}\"", i,
-                                              StringHandlers.CToString(entry.name));
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].type = \"{1}\"", i,
-                                              StringHandlers.CToString(entry.type));
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_data_block = {1}", i,
-                                              entry.first_data_block);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i,
-                                              (AppleMapFlags)entry.flags);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_boot_block = {1}", i,
-                                              entry.first_boot_block);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].boot_size = {1}", i, entry.boot_size);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address = 0x{1:X8}", i,
-                                              entry.load_address);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address2 = 0x{1:X8}", i,
-                                              entry.load_address2);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point = 0x{1:X8}", i,
-                                              entry.entry_point);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point2 = 0x{1:X8}", i,
-                                              entry.entry_point2);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].processor = \"{1}\"", i,
-                                              StringHandlers.CToString(entry.processor));
+                    Sequence = sequence,
+                    Type = StringHandlers.CToString(entry.type),
+                    Name = StringHandlers.CToString(entry.name),
+                    Offset = entry.start * entry_size,
+                    Size = entry.sectors * entry_size,
+                    Start = entry.start * entry_size / sector_size + sectorOffset,
+                    Length = entry.sectors * entry_size / sector_size,
+                    Scheme = Name
+                };
+                sb.AppendLine("Partition flags:");
+                if(flags.HasFlag(AppleMapFlags.Valid)) sb.AppendLine("Partition is valid.");
+                if(flags.HasFlag(AppleMapFlags.Allocated)) sb.AppendLine("Partition entry is allocated.");
+                if(flags.HasFlag(AppleMapFlags.InUse)) sb.AppendLine("Partition is in use.");
+                if(flags.HasFlag(AppleMapFlags.Bootable)) sb.AppendLine("Partition is bootable.");
+                if(flags.HasFlag(AppleMapFlags.Readable)) sb.AppendLine("Partition is readable.");
+                if(flags.HasFlag(AppleMapFlags.Writable)) sb.AppendLine("Partition is writable.");
 
-                    AppleMapFlags flags = (AppleMapFlags)entry.flags;
+                if(flags.HasFlag(AppleMapFlags.Bootable))
+                {
+                    sb.AppendFormat("First boot sector: {0}",
+                                    entry.first_boot_block * entry_size / sector_size).AppendLine();
+                    sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();
+                    sb.AppendFormat("Boot load address: 0x{0:X8}", entry.load_address).AppendLine();
+                    sb.AppendFormat("Boot entry point: 0x{0:X8}", entry.entry_point).AppendLine();
+                    sb.AppendFormat("Boot code checksum: 0x{0:X8}", entry.checksum).AppendLine();
+                    sb.AppendFormat("Processor: {0}", StringHandlers.CToString(entry.processor)).AppendLine();
 
-                    // BeOS doesn't mark its partitions as valid
-                    //if(flags.HasFlag(AppleMapFlags.Valid) &&
-                    if(StringHandlers.CToString(entry.type) != "Apple_partition_map" && entry.sectors > 0)
-                    {
-                        StringBuilder sb = new StringBuilder();
-
-                        CommonTypes.Partition _partition = new CommonTypes.Partition
-                        {
-                            Sequence = sequence,
-                            Type = StringHandlers.CToString(entry.type),
-                            Name = StringHandlers.CToString(entry.name),
-                            Offset = entry.start * entry_size,
-                            Size = entry.sectors * entry_size,
-                            Start = entry.start * entry_size / sector_size + sectorOffset,
-                            Length = entry.sectors * entry_size / sector_size,
-                            Scheme = Name
-                        };
-                        sb.AppendLine("Partition flags:");
-                        if(flags.HasFlag(AppleMapFlags.Valid)) sb.AppendLine("Partition is valid.");
-                        if(flags.HasFlag(AppleMapFlags.Allocated)) sb.AppendLine("Partition entry is allocated.");
-                        if(flags.HasFlag(AppleMapFlags.InUse)) sb.AppendLine("Partition is in use.");
-                        if(flags.HasFlag(AppleMapFlags.Bootable)) sb.AppendLine("Partition is bootable.");
-                        if(flags.HasFlag(AppleMapFlags.Readable)) sb.AppendLine("Partition is readable.");
-                        if(flags.HasFlag(AppleMapFlags.Writable)) sb.AppendLine("Partition is writable.");
-
-                        if(flags.HasFlag(AppleMapFlags.Bootable))
-                        {
-                            sb.AppendFormat("First boot sector: {0}",
-                                            entry.first_boot_block * entry_size / sector_size).AppendLine();
-                            sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();
-                            sb.AppendFormat("Boot load address: 0x{0:X8}", entry.load_address).AppendLine();
-                            sb.AppendFormat("Boot entry point: 0x{0:X8}", entry.entry_point).AppendLine();
-                            sb.AppendFormat("Boot code checksum: 0x{0:X8}", entry.checksum).AppendLine();
-                            sb.AppendFormat("Processor: {0}", StringHandlers.CToString(entry.processor)).AppendLine();
-
-                            if(flags.HasFlag(AppleMapFlags.PicCode))
-                                sb.AppendLine("Partition's boot code is position independent.");
-                        }
-
-                        _partition.Description = sb.ToString();
-                        if(_partition.Start < imagePlugin.ImageInfo.Sectors &&
-                           _partition.End < imagePlugin.ImageInfo.Sectors)
-                        {
-                            partitions.Add(_partition);
-                            sequence++;
-                        }
-                        // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
-                        else if(_partition.Start < imagePlugin.ImageInfo.Sectors)
-                        {
-                            DicConsole.DebugWriteLine("AppleMap Plugin",
-                                                      "Cutting last partition end ({0}) to media size ({1})",
-                                                      _partition.End, imagePlugin.ImageInfo.Sectors - 1);
-                            _partition.Length = imagePlugin.ImageInfo.Sectors - _partition.Start;
-                            partitions.Add(_partition);
-                            sequence++;
-                        }
-                        else
-                            DicConsole.DebugWriteLine("AppleMap Plugin",
-                                                      "Not adding partition becaus start ({0}) is outside media size ({1})",
-                                                      _partition.Start, imagePlugin.ImageInfo.Sectors - 1);
-                    }
+                    if(flags.HasFlag(AppleMapFlags.PicCode))
+                        sb.AppendLine("Partition's boot code is position independent.");
                 }
+
+                _partition.Description = sb.ToString();
+                if(_partition.Start < imagePlugin.ImageInfo.Sectors &&
+                   _partition.End < imagePlugin.ImageInfo.Sectors)
+                {
+                    partitions.Add(_partition);
+                    sequence++;
+                }
+                // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
+                else if(_partition.Start < imagePlugin.ImageInfo.Sectors)
+                {
+                    DicConsole.DebugWriteLine("AppleMap Plugin",
+                                              "Cutting last partition end ({0}) to media size ({1})",
+                                              _partition.End, imagePlugin.ImageInfo.Sectors - 1);
+                    _partition.Length = imagePlugin.ImageInfo.Sectors - _partition.Start;
+                    partitions.Add(_partition);
+                    sequence++;
+                }
+                else
+                    DicConsole.DebugWriteLine("AppleMap Plugin",
+                                              "Not adding partition becaus start ({0}) is outside media size ({1})",
+                                              _partition.Start, imagePlugin.ImageInfo.Sectors - 1);
             }
 
             return partitions.Count > 0;

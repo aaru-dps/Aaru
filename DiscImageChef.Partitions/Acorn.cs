@@ -129,11 +129,10 @@ namespace DiscImageChef.Partitions
                             Scheme = Name
                         };
                         part.Offset = part.Start * (ulong)sector.Length;
-                        if(entry.magic == LINUX_MAGIC || entry.magic == SWAP_MAGIC)
-                        {
-                            partitions.Add(part);
-                            counter++;
-                        }
+                        if(entry.magic != LINUX_MAGIC && entry.magic != SWAP_MAGIC) continue;
+
+                        partitions.Add(part);
+                        counter++;
                     }
 
                     break;
@@ -160,11 +159,10 @@ namespace DiscImageChef.Partitions
                                 Scheme = Name
                             };
                             part.Offset = part.Start * (ulong)sector.Length;
-                            if(entry.length > 0)
-                            {
-                                partitions.Add(part);
-                                counter++;
-                            }
+                            if(entry.length <= 0) continue;
+
+                            partitions.Add(part);
+                            counter++;
                         }
 
                     break;

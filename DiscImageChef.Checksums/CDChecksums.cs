@@ -124,73 +124,73 @@ namespace DiscImageChef.Checksums
         {
             EccInit();
 
-            if(channel[0x000] == 0x00 && // sync (12 bytes)
-               channel[0x001] == 0xFF && channel[0x002] == 0xFF && channel[0x003] == 0xFF && channel[0x004] == 0xFF &&
-               channel[0x005] == 0xFF && channel[0x006] == 0xFF && channel[0x007] == 0xFF && channel[0x008] == 0xFF &&
-               channel[0x009] == 0xFF && channel[0x00A] == 0xFF && channel[0x00B] == 0x00)
+            if(channel[0x000] != 0x00 || channel[0x001] != 0xFF || channel[0x002] != 0xFF || channel[0x003] != 0xFF ||
+               channel[0x004] != 0xFF || channel[0x005] != 0xFF || channel[0x006] != 0xFF || channel[0x007] != 0xFF ||
+               channel[0x008] != 0xFF || channel[0x009] != 0xFF || channel[0x00A] != 0xFF ||
+               channel[0x00B] != 0x00) return null;
+
+            DicConsole.DebugWriteLine("CD checksums", "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
+                                      channel[0x00D], channel[0x00E]);
+
+            if(channel[0x00F] == 0x00) // mode (1 byte)
             {
-                DicConsole.DebugWriteLine("CD checksums", "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
-                                          channel[0x00D], channel[0x00E]);
-
-                if(channel[0x00F] == 0x00) // mode (1 byte)
-                {
-                    DicConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
-                                              channel[0x00C], channel[0x00D], channel[0x00E]);
-                    for(int i = 0x010; i < 0x930; i++)
-                        if(channel[i] != 0x00)
-                        {
-                            DicConsole.DebugWriteLine("CD checksums",
-                                                      "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
-                                                      channel[0x00C], channel[0x00D], channel[0x00E]);
-                            return false;
-                        }
-
-                    return true;
-                }
-
-                if(channel[0x00F] == 0x01) // mode (1 byte)
-                {
-                    DicConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
-                                              channel[0x00C], channel[0x00D], channel[0x00E]);
-
-                    if(channel[0x814] != 0x00 || // reserved (8 bytes)
-                       channel[0x815] != 0x00 || channel[0x816] != 0x00 || channel[0x817] != 0x00 ||
-                       channel[0x818] != 0x00 || channel[0x819] != 0x00 || channel[0x81A] != 0x00 ||
-                       channel[0x81B] != 0x00)
+                DicConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
+                                          channel[0x00C], channel[0x00D], channel[0x00E]);
+                for(int i = 0x010; i < 0x930; i++)
+                    if(channel[i] != 0x00)
                     {
                         DicConsole.DebugWriteLine("CD checksums",
-                                                  "Mode 1 sector with data in reserved bytes at address: {0:X2}:{1:X2}:{2:X2}",
+                                                  "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
                         return false;
                     }
 
-                    byte[] address = new byte[4];
-                    byte[] data = new byte[2060];
-                    byte[] data2 = new byte[2232];
-                    byte[] eccP = new byte[172];
-                    byte[] eccQ = new byte[104];
+                return true;
+            }
 
-                    Array.Copy(channel, 0x0C, address, 0, 4);
-                    Array.Copy(channel, 0x0C, data, 0, 2060);
-                    Array.Copy(channel, 0x0C, data2, 0, 2232);
-                    Array.Copy(channel, 0x81C, eccP, 0, 172);
-                    Array.Copy(channel, 0x8C8, eccQ, 0, 104);
+            if(channel[0x00F] == 0x01) // mode (1 byte)
+            {
+                DicConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
+                                          channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                    bool failedEccP = CheckEcc(address, data, 86, 24, 2, 86, eccP);
-                    bool failedEccQ = CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
+                if(channel[0x814] != 0x00 || // reserved (8 bytes)
+                   channel[0x815] != 0x00 || channel[0x816] != 0x00 || channel[0x817] != 0x00 ||
+                   channel[0x818] != 0x00 || channel[0x819] != 0x00 || channel[0x81A] != 0x00 ||
+                   channel[0x81B] != 0x00)
+                {
+                    DicConsole.DebugWriteLine("CD checksums",
+                                              "Mode 1 sector with data in reserved bytes at address: {0:X2}:{1:X2}:{2:X2}",
+                                              channel[0x00C], channel[0x00D], channel[0x00E]);
+                    return false;
+                }
 
-                    if(failedEccP)
-                        DicConsole.DebugWriteLine("CD checksums",
-                                                  "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
-                                                  channel[0x00C], channel[0x00D], channel[0x00E]);
-                    if(failedEccQ)
-                        DicConsole.DebugWriteLine("CD checksums",
-                                                  "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
-                                                  channel[0x00C], channel[0x00D], channel[0x00E]);
+                byte[] address = new byte[4];
+                byte[] data = new byte[2060];
+                byte[] data2 = new byte[2232];
+                byte[] eccP = new byte[172];
+                byte[] eccQ = new byte[104];
 
-                    if(failedEccP || failedEccQ) return false;
+                Array.Copy(channel, 0x0C, address, 0, 4);
+                Array.Copy(channel, 0x0C, data, 0, 2060);
+                Array.Copy(channel, 0x0C, data2, 0, 2232);
+                Array.Copy(channel, 0x81C, eccP, 0, 172);
+                Array.Copy(channel, 0x8C8, eccQ, 0, 104);
 
-                    /* TODO: This is not working
+                bool failedEccP = CheckEcc(address, data, 86, 24, 2, 86, eccP);
+                bool failedEccQ = CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
+
+                if(failedEccP)
+                    DicConsole.DebugWriteLine("CD checksums",
+                                              "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
+                                              channel[0x00C], channel[0x00D], channel[0x00E]);
+                if(failedEccQ)
+                    DicConsole.DebugWriteLine("CD checksums",
+                                              "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
+                                              channel[0x00C], channel[0x00D], channel[0x00E]);
+
+                if(failedEccP || failedEccQ) return false;
+
+                /* TODO: This is not working
                     byte[] SectorForCheck = new byte[0x810];
                     uint StoredEDC = BitConverter.ToUInt32(channel, 0x810);
                     byte[] CalculatedEDCBytes;
@@ -204,23 +204,23 @@ namespace DiscImageChef.Checksums
                         return false;
                     }*/
 
-                    return true;
-                }
+                return true;
+            }
 
-                if(channel[0x00F] == 0x02) // mode (1 byte)
+            if(channel[0x00F] == 0x02) // mode (1 byte)
+            {
+                DicConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
+                                          channel[0x00C], channel[0x00D], channel[0x00E]);
+
+                if((channel[0x012] & 0x20) == 0x20) // mode 2 form 2
                 {
-                    DicConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
-                                              channel[0x00C], channel[0x00D], channel[0x00E]);
+                    if(channel[0x010] != channel[0x014] || channel[0x011] != channel[0x015] ||
+                       channel[0x012] != channel[0x016] || channel[0x013] != channel[0x017])
+                        DicConsole.DebugWriteLine("CD checksums",
+                                                  "Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}",
+                                                  channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                    if((channel[0x012] & 0x20) == 0x20) // mode 2 form 2
-                    {
-                        if(channel[0x010] != channel[0x014] || channel[0x011] != channel[0x015] ||
-                           channel[0x012] != channel[0x016] || channel[0x013] != channel[0x017])
-                            DicConsole.DebugWriteLine("CD checksums",
-                                                      "Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}",
-                                                      channel[0x00C], channel[0x00D], channel[0x00E]);
-
-                        /* TODO: This is not working
+                    /* TODO: This is not working
                         byte[] SectorForCheck = new byte[0x91C];
                         uint StoredEDC = BitConverter.ToUInt32(channel, 0x92C);
                         byte[] CalculatedEDCBytes;
@@ -233,45 +233,45 @@ namespace DiscImageChef.Checksums
                             DicConsole.DebugWriteLine("CD checksums", "Mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}", channel[0x00C], channel[0x00D], channel[0x00E], CalculatedEDC, StoredEDC);
                             return false;
                         }*/
-                    }
-                    else
-                    {
-                        if(channel[0x010] != channel[0x014] || channel[0x011] != channel[0x015] ||
-                           channel[0x012] != channel[0x016] || channel[0x013] != channel[0x017])
-                            DicConsole.DebugWriteLine("CD checksums",
-                                                      "Subheader copies differ in mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}",
-                                                      channel[0x00C], channel[0x00D], channel[0x00E]);
+                }
+                else
+                {
+                    if(channel[0x010] != channel[0x014] || channel[0x011] != channel[0x015] ||
+                       channel[0x012] != channel[0x016] || channel[0x013] != channel[0x017])
+                        DicConsole.DebugWriteLine("CD checksums",
+                                                  "Subheader copies differ in mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}",
+                                                  channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                        byte[] address = new byte[4];
-                        byte[] data = new byte[2060];
-                        byte[] data2 = new byte[2232];
-                        byte[] eccP = new byte[172];
-                        byte[] eccQ = new byte[104];
+                    byte[] address = new byte[4];
+                    byte[] data = new byte[2060];
+                    byte[] data2 = new byte[2232];
+                    byte[] eccP = new byte[172];
+                    byte[] eccQ = new byte[104];
 
-                        address[0] = 0;
-                        address[1] = 0;
-                        address[2] = 0;
-                        address[3] = 0;
-                        Array.Copy(channel, 0x0C, data, 0, 2060);
-                        Array.Copy(channel, 0x0C, data2, 0, 2232);
-                        Array.Copy(channel, 0x80C, eccP, 0, 172);
-                        Array.Copy(channel, 0x8B8, eccQ, 0, 104);
+                    address[0] = 0;
+                    address[1] = 0;
+                    address[2] = 0;
+                    address[3] = 0;
+                    Array.Copy(channel, 0x0C, data, 0, 2060);
+                    Array.Copy(channel, 0x0C, data2, 0, 2232);
+                    Array.Copy(channel, 0x80C, eccP, 0, 172);
+                    Array.Copy(channel, 0x8B8, eccQ, 0, 104);
 
-                        bool failedEccP = CheckEcc(address, data, 86, 24, 2, 86, eccP);
-                        bool failedEccQ = CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
+                    bool failedEccP = CheckEcc(address, data, 86, 24, 2, 86, eccP);
+                    bool failedEccQ = CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
 
-                        if(failedEccP)
-                            DicConsole.DebugWriteLine("CD checksums",
-                                                      "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
-                                                      channel[0x00C], channel[0x00D], channel[0x00E]);
-                        if(failedEccQ)
-                            DicConsole.DebugWriteLine("CD checksums",
-                                                      "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
-                                                      channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
+                    if(failedEccP)
+                        DicConsole.DebugWriteLine("CD checksums",
+                                                  "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
+                                                  channel[0x00C], channel[0x00D], channel[0x00E]);
+                    if(failedEccQ)
+                        DicConsole.DebugWriteLine("CD checksums",
+                                                  "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
+                                                  channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                        if(failedEccP || failedEccQ) return false;
+                    if(failedEccP || failedEccQ) return false;
 
-                        /* TODO: This is not working
+                    /* TODO: This is not working
                         byte[] SectorForCheck = new byte[0x808];
                         uint StoredEDC = BitConverter.ToUInt32(channel, 0x818);
                         byte[] CalculatedEDCBytes;
@@ -284,17 +284,14 @@ namespace DiscImageChef.Checksums
                             DicConsole.DebugWriteLine("CD checksums", "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}", channel[0x00C], channel[0x00D], channel[0x00E], CalculatedEDC, StoredEDC);
                             return false;
                         }*/
-                    }
-
-                    return true;
                 }
 
-                DicConsole.DebugWriteLine("CD checksums",
-                                          "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
-                                          channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
-                return null;
+                return true;
             }
 
+            DicConsole.DebugWriteLine("CD checksums",
+                                      "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
+                                      channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
             return null;
         }
 
@@ -478,22 +475,20 @@ namespace DiscImageChef.Checksums
                 }
             }
 
-            if((cdTextPack4[0] & 0x80) == 0x80)
-            {
-                ushort cdTextPack4Crc = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
-                byte[] cdTextPack4ForCrc = new byte[16];
-                Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
-                ushort calculatedCdtp4Crc = CalculateCCITT_CRC16(cdTextPack4ForCrc);
-                DicConsole.DebugWriteLine("CD checksums", "Cyclic CDTP4 0x{0:X4}, Calc CDTP4 0x{1:X4}", cdTextPack4Crc,
-                                          calculatedCdtp4Crc);
+            if((cdTextPack4[0] & 0x80) != 0x80) return status;
 
-                if(cdTextPack4Crc != calculatedCdtp4Crc && cdTextPack4Crc != 0)
-                {
-                    DicConsole.DebugWriteLine("CD checksums", "CD-Text Pack 4 CRC 0x{0:X4}, expected 0x{1:X4}",
-                                              cdTextPack4Crc, calculatedCdtp4Crc);
-                    status = false;
-                }
-            }
+            ushort cdTextPack4Crc = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
+            byte[] cdTextPack4ForCrc = new byte[16];
+            Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
+            ushort calculatedCdtp4Crc = CalculateCCITT_CRC16(cdTextPack4ForCrc);
+            DicConsole.DebugWriteLine("CD checksums", "Cyclic CDTP4 0x{0:X4}, Calc CDTP4 0x{1:X4}", cdTextPack4Crc,
+                                      calculatedCdtp4Crc);
+
+            if(cdTextPack4Crc == calculatedCdtp4Crc || cdTextPack4Crc == 0) return status;
+
+            DicConsole.DebugWriteLine("CD checksums", "CD-Text Pack 4 CRC 0x{0:X4}, expected 0x{1:X4}",
+                                      cdTextPack4Crc, calculatedCdtp4Crc);
+            status = false;
 
             return status;
         }

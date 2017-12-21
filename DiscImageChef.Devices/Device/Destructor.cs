@@ -43,19 +43,20 @@ namespace DiscImageChef.Devices
         /// </summary>
         ~Device()
         {
-            if(fd != null)
-                switch(platformId)
-                {
-                    case Interop.PlatformID.Win32NT:
-                        Windows.Extern.CloseHandle((SafeFileHandle)fd);
-                        break;
-                    case Interop.PlatformID.Linux:
-                        Linux.Extern.close((int)fd);
-                        break;
-                    case Interop.PlatformID.FreeBSD:
-                        FreeBSD.Extern.cam_close_device((IntPtr)fd);
-                        break;
-                }
+            if(fd == null) return;
+
+            switch(platformId)
+            {
+                case Interop.PlatformID.Win32NT:
+                    Windows.Extern.CloseHandle((SafeFileHandle)fd);
+                    break;
+                case Interop.PlatformID.Linux:
+                    Linux.Extern.close((int)fd);
+                    break;
+                case Interop.PlatformID.FreeBSD:
+                    FreeBSD.Extern.cam_close_device((IntPtr)fd);
+                    break;
+            }
         }
     }
 }

@@ -86,43 +86,41 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"",
                                           StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
-                if(entry.dp_scyl != entry.dp_ecyl && entry.dp_ecyl > 0 &&
-                   entry.dp_scyl <= imagePlugin.ImageInfo.Cylinders &&
-                   entry.dp_ecyl <= imagePlugin.ImageInfo.Cylinders && entry.dp_shd <= imagePlugin.ImageInfo.Heads &&
-                   entry.dp_ehd <= imagePlugin.ImageInfo.Heads &&
-                   entry.dp_ssect <= imagePlugin.ImageInfo.SectorsPerTrack &&
-                   entry.dp_esect <= imagePlugin.ImageInfo.SectorsPerTrack)
+                if(entry.dp_scyl == entry.dp_ecyl || entry.dp_ecyl <= 0 ||
+                   entry.dp_scyl > imagePlugin.ImageInfo.Cylinders || entry.dp_ecyl > imagePlugin.ImageInfo.Cylinders ||
+                   entry.dp_shd > imagePlugin.ImageInfo.Heads || entry.dp_ehd > imagePlugin.ImageInfo.Heads ||
+                   entry.dp_ssect > imagePlugin.ImageInfo.SectorsPerTrack ||
+                   entry.dp_esect > imagePlugin.ImageInfo.SectorsPerTrack) continue;
+
+                Partition part = new Partition
                 {
-                    Partition part = new Partition
-                    {
-                        Start = Helpers.CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1),
-                                                  imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack),
-                        Type = DecodePC98Sid(entry.dp_sid),
-                        Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
-                        Sequence = counter,
-                        Scheme = Name
-                    };
-                    part.Offset = part.Start * imagePlugin.GetSectorSize();
-                    part.Length = Helpers.CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1),
-                                                    imagePlugin.ImageInfo.Heads,
-                                                    imagePlugin.ImageInfo.SectorsPerTrack) - part.Start;
-                    part.Size = part.Length * imagePlugin.GetSectorSize();
+                    Start = Helpers.CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1),
+                                              imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack),
+                    Type = DecodePC98Sid(entry.dp_sid),
+                    Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
+                    Sequence = counter,
+                    Scheme = Name
+                };
+                part.Offset = part.Start * imagePlugin.GetSectorSize();
+                part.Length = Helpers.CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1),
+                                                imagePlugin.ImageInfo.Heads,
+                                                imagePlugin.ImageInfo.SectorsPerTrack) - part.Start;
+                part.Size = part.Length * imagePlugin.GetSectorSize();
 
-                    DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
-                    DicConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}", part.Type);
-                    DicConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}", part.Name);
-                    DicConsole.DebugWriteLine("PC98 plugin", "part.Sequence = {0}", part.Sequence);
-                    DicConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}", part.Offset);
-                    DicConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}", part.Length);
-                    DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}", part.Type);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}", part.Name);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Sequence = {0}", part.Sequence);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}", part.Offset);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}", part.Length);
+                DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
 
-                    if(((entry.dp_mid & 0x20) == 0x20 || (entry.dp_mid & 0x44) == 0x44) &&
-                       part.Start < imagePlugin.ImageInfo.Sectors && part.End <= imagePlugin.ImageInfo.Sectors)
-                    {
-                        partitions.Add(part);
-                        counter++;
-                    }
-                }
+                if(((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44) ||
+                   part.Start >= imagePlugin.ImageInfo.Sectors ||
+                   part.End > imagePlugin.ImageInfo.Sectors) continue;
+
+                partitions.Add(part);
+                counter++;
             }
 
             return partitions.Count > 0;

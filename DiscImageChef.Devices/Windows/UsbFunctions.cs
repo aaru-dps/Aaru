@@ -86,15 +86,13 @@ namespace DiscImageChef.Devices.Windows
                 if(port.IsHub) SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
                 else
                 {
-                    if(port.IsDeviceConnected)
-                    {
-                        UsbDevice device = port.GetDevice();
-                        if(device.DeviceDriverKey == driverKeyName)
-                        {
-                            foundDevice = device;
-                            break;
-                        }
-                    }
+                    if(!port.IsDeviceConnected) continue;
+
+                    UsbDevice device = port.GetDevice();
+                    if(device.DeviceDriverKey != driverKeyName) continue;
+
+                    foundDevice = device;
+                    break;
                 }
         }
 
@@ -121,15 +119,13 @@ namespace DiscImageChef.Devices.Windows
                 if(port.IsHub) SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
                 else
                 {
-                    if(port.IsDeviceConnected)
-                    {
-                        UsbDevice device = port.GetDevice();
-                        if(device.InstanceId == instanceId)
-                        {
-                            foundDevice = device;
-                            break;
-                        }
-                    }
+                    if(!port.IsDeviceConnected) continue;
+
+                    UsbDevice device = port.GetDevice();
+                    if(device.InstanceId != instanceId) continue;
+
+                    foundDevice = device;
+                    break;
                 }
         }
 
@@ -273,24 +269,23 @@ namespace DiscImageChef.Devices.Windows
             int ans = -1;
 
             IntPtr h = CreateFile(devicePath.TrimEnd('\\'), 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
-            if(h.ToInt32() != INVALID_HANDLE_VALUE)
-            {
-                int requiredSize;
-                StorageDeviceNumber sdn = new StorageDeviceNumber();
-                int nBytes = Marshal.SizeOf(sdn);
-                IntPtr ptrSdn = Marshal.AllocHGlobal(nBytes);
+            if(h.ToInt32() == INVALID_HANDLE_VALUE) return ans;
 
-                if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out requiredSize,
-                                   IntPtr.Zero))
-                {
-                    sdn = (StorageDeviceNumber)Marshal.PtrToStructure(ptrSdn, typeof(StorageDeviceNumber));
-                    // just my way of combining the relevant parts of the 
-                    // STORAGE_DEVICE_NUMBER into a single number 
-                    ans = (sdn.DeviceType << 8) + sdn.DeviceNumber;
-                }
-                Marshal.FreeHGlobal(ptrSdn);
-                CloseHandle(h);
+            int requiredSize;
+            StorageDeviceNumber sdn = new StorageDeviceNumber();
+            int nBytes = Marshal.SizeOf(sdn);
+            IntPtr ptrSdn = Marshal.AllocHGlobal(nBytes);
+
+            if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out requiredSize,
+                               IntPtr.Zero))
+            {
+                sdn = (StorageDeviceNumber)Marshal.PtrToStructure(ptrSdn, typeof(StorageDeviceNumber));
+                // just my way of combining the relevant parts of the 
+                // STORAGE_DEVICE_NUMBER into a single number 
+                ans = (sdn.DeviceType << 8) + sdn.DeviceNumber;
             }
+            Marshal.FreeHGlobal(ptrSdn);
+            CloseHandle(h);
             return ans;
         }
     }

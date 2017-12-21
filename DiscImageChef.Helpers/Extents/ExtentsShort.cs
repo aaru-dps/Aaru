@@ -82,19 +82,18 @@ namespace Extents
                 }
 
                 // Expands existing extent end
-                if(item == backend[i].Item2 + 1)
+                if(item != backend[i].Item2 + 1) continue;
+
+                removeOne = backend[i];
+
+                if(i < backend.Count - 1 && item == backend[i + 1].Item1 - 1)
                 {
-                    removeOne = backend[i];
-
-                    if(i < backend.Count - 1 && item == backend[i + 1].Item1 - 1)
-                    {
-                        removeTwo = backend[i + 1];
-                        itemToAdd = new Tuple<short, short>(backend[i].Item1, backend[i + 1].Item2);
-                    }
-                    else itemToAdd = new Tuple<short, short>(backend[i].Item1, item);
-
-                    break;
+                    removeTwo = backend[i + 1];
+                    itemToAdd = new Tuple<short, short>(backend[i].Item1, backend[i + 1].Item2);
                 }
+                else itemToAdd = new Tuple<short, short>(backend[i].Item1, item);
+
+                break;
             }
 
             if(itemToAdd != null)
@@ -170,11 +169,10 @@ namespace Extents
                 }
 
                 // Extent is only element
-                if(item == extent.Item1 && item == extent.Item2)
-                {
-                    toRemove = extent;
-                    break;
-                }
+                if(item != extent.Item1 || item != extent.Item2) continue;
+
+                toRemove = extent;
+                break;
             }
 
             // Item not found

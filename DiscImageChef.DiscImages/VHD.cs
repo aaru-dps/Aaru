@@ -1081,28 +1081,25 @@ namespace DiscImageChef.DiscImages
                     */
 
                     // Sector has been written, read from child image
-                    if(dirty)
-                    {
-                        /* Too noisy
+                    if(!dirty) return parentImage.ReadSector(sectorAddress);
+                    /* Too noisy
                         DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is dirty", sectorAddress);
                         */
 
-                        byte[] data = new byte[512];
-                        uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
-                        thisStream = thisFilter.GetDataForkStream();
+                    byte[] data = new byte[512];
+                    uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
+                    thisStream = thisFilter.GetDataForkStream();
 
-                        thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
-                        thisStream.Read(data, 0, 512);
+                    thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
+                    thisStream.Read(data, 0, 512);
 
-                        return data;
-                    }
+                    return data;
 
                     /* Too noisy
                     DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is clean", sectorAddress);
                     */
 
                     // Read sector from parent image
-                    return parentImage.ReadSector(sectorAddress);
                 }
                 default: return ReadSectors(sectorAddress, 1);
             }
@@ -1170,15 +1167,12 @@ namespace DiscImageChef.DiscImages
                     else Array.Clear(prefix, 0, prefix.Length);
 
                     // If we needed to read from another block, join all the data
-                    if(suffix != null)
-                    {
-                        byte[] data = new byte[512 * length];
-                        Array.Copy(prefix, 0, data, 0, prefix.Length);
-                        Array.Copy(suffix, 0, data, prefix.Length, suffix.Length);
-                        return data;
-                    }
+                    if(suffix == null) return prefix;
 
-                    return prefix;
+                    byte[] data = new byte[512 * length];
+                    Array.Copy(prefix, 0, data, 0, prefix.Length);
+                    Array.Copy(suffix, 0, data, prefix.Length, suffix.Length);
+                    return data;
                 }
                 case TYPE_DIFFERENCING:
                 {

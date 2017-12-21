@@ -159,14 +159,12 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 return Errno.NoError;
             }
 
-            if(debug && device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag) &&
-               string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
-            {
-                error = ReadFile(path, out buf, false, true);
-                return error;
-            }
+            if(!debug || !device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag) ||
+               string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) != 0)
+                return Errno.NoSuchExtendedAttribute;
 
-            return Errno.NoSuchExtendedAttribute;
+            error = ReadFile(path, out buf, false, true);
+            return error;
         }
     }
 }

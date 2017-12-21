@@ -261,13 +261,14 @@ namespace DiscImageChef.Commands
                                                              stat.Inode, stat.Length, entry);
 
                                         error = fs.ListXAttr(entry, ref xattrs);
-                                        if(error == Errno.NoError)
-                                            foreach(string xattr in xattrs)
-                                            {
-                                                byte[] xattrBuf = new byte[0];
-                                                error = fs.GetXattr(entry, xattr, ref xattrBuf);
-                                                if(error == Errno.NoError) DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr, xattrBuf.Length);
-                                            }
+                                        if(error != Errno.NoError) continue;
+
+                                        foreach(string xattr in xattrs)
+                                        {
+                                            byte[] xattrBuf = new byte[0];
+                                            error = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                            if(error == Errno.NoError) DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr, xattrBuf.Length);
+                                        }
                                     }
                                     else DicConsole.WriteLine("{0}", entry);
                                 }

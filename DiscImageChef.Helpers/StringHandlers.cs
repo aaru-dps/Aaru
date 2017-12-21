@@ -145,11 +145,10 @@ namespace DiscImageChef
             {
                 if(i == start) return "";
 
-                if(SpacePaddedString[i - 1] != 0x20)
-                {
-                    len = i;
-                    break;
-                }
+                if(SpacePaddedString[i - 1] == 0x20) continue;
+
+                len = i;
+                break;
             }
 
             return len == 0 ? "" : encoding.GetString(SpacePaddedString, start, len);

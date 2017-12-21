@@ -289,164 +289,150 @@ namespace DiscImageChef.Commands
                                 if(page >= 0x01 && page <= 0x7F)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("ASCII Page {0:X2}h: {1}", page,
-                                                             Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf));
+                                    if(sense) continue;
 
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    DicConsole.WriteLine("ASCII Page {0:X2}h: {1}", page,
+                                                         Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf));
+
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0x80)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("Unit Serial Number: {0}",
-                                                             Decoders.SCSI.EVPD.DecodePage80(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("Unit Serial Number: {0}",
+                                                         Decoders.SCSI.EVPD.DecodePage80(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0x81)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_81(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_81(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0x82)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("ASCII implemented operating definitions: {0}",
-                                                             Decoders.SCSI.EVPD.DecodePage82(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("ASCII implemented operating definitions: {0}",
+                                                         Decoders.SCSI.EVPD.DecodePage82(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0x83)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_83(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_83(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0x84)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_84(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_84(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0x85)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_85(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_85(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0x86)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_86(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_86(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0x89)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_89(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_89(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xB0)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_B0(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_B0(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xB1)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("Manufacturer-assigned Serial Number: {0}",
-                                                             Decoders.SCSI.EVPD.DecodePageB1(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("Manufacturer-assigned Serial Number: {0}",
+                                                         Decoders.SCSI.EVPD.DecodePageB1(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xB2)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("TapeAlert Supported Flags Bitmap: 0x{0:X16}",
-                                                             Decoders.SCSI.EVPD.DecodePageB2(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("TapeAlert Supported Flags Bitmap: 0x{0:X16}",
+                                                         Decoders.SCSI.EVPD.DecodePageB2(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xB3)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("Automation Device Serial Number: {0}",
-                                                             Decoders.SCSI.EVPD.DecodePageB3(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("Automation Device Serial Number: {0}",
+                                                         Decoders.SCSI.EVPD.DecodePageB3(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xB4)
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("Data Transfer Device Element Address: 0x{0}",
-                                                             Decoders.SCSI.EVPD.DecodePageB4(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("Data Transfer Device Element Address: 0x{0}",
+                                                         Decoders.SCSI.EVPD.DecodePageB4(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xC0 &&
                                         StringHandlers
@@ -454,13 +440,12 @@ namespace DiscImageChef.Commands
                                         "quantum")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_Quantum(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_Quantum(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xC0 &&
                                         StringHandlers
@@ -468,13 +453,12 @@ namespace DiscImageChef.Commands
                                         "seagate")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_Seagate(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_Seagate(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xC0 &&
                                         StringHandlers
@@ -482,13 +466,12 @@ namespace DiscImageChef.Commands
                                         "ibm")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_IBM(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_IBM(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xC1 &&
                                         StringHandlers
@@ -496,13 +479,12 @@ namespace DiscImageChef.Commands
                                         "ibm")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C1_IBM(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C1_IBM(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if((page == 0xC0 || page == 0xC1) &&
                                         StringHandlers
@@ -510,14 +492,13 @@ namespace DiscImageChef.Commands
                                         "certance")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}",
-                                                             Decoders.SCSI.EVPD.PrettifyPage_C0_C1_Certance(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}",
+                                                         Decoders.SCSI.EVPD.PrettifyPage_C0_C1_Certance(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(
                                     (page == 0xC2 || page == 0xC3 || page == 0xC4 || page == 0xC5 || page == 0xC6) &&
@@ -525,16 +506,15 @@ namespace DiscImageChef.Commands
                                                   .Trim() == "certance")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}",
-                                                             Decoders
-                                                                 .SCSI.EVPD
-                                                                 .PrettifyPage_C2_C3_C4_C5_C6_Certance(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}",
+                                                         Decoders
+                                                             .SCSI.EVPD
+                                                             .PrettifyPage_C2_C3_C4_C5_C6_Certance(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if((page == 0xC0 || page == 0xC1 || page == 0xC2 || page == 0xC3 || page == 0xC4 ||
                                          page == 0xC5) &&
@@ -543,14 +523,13 @@ namespace DiscImageChef.Commands
                                         "hp")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}",
-                                                             Decoders.SCSI.EVPD.PrettifyPage_C0_to_C5_HP(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}",
+                                                         Decoders.SCSI.EVPD.PrettifyPage_C0_to_C5_HP(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else if(page == 0xDF &&
                                         StringHandlers
@@ -558,28 +537,26 @@ namespace DiscImageChef.Commands
                                         "certance")
                                 {
                                     sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if(!sense)
-                                    {
-                                        DicConsole.WriteLine("{0}",
-                                                             Decoders.SCSI.EVPD.PrettifyPage_DF_Certance(inqBuf));
-                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    if(sense) continue;
+
+                                    DicConsole.WriteLine("{0}",
+                                                         Decoders.SCSI.EVPD.PrettifyPage_DF_Certance(inqBuf));
+                                    DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                     string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                     string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                                 else
                                 {
-                                    if(page != 0x00)
-                                    {
-                                        DicConsole.DebugWriteLine("Device-Info command",
-                                                                  "Found undecoded SCSI VPD page 0x{0:X2}", page);
+                                    if(page == 0x00) continue;
 
-                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                        if(!sense)
-                                            DataFile.WriteTo("Device-Info command", options.OutputPrefix,
-                                                             string.Format("_scsi_evpd_{0:X2}h.bin", page),
-                                                             string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
-                                    }
+                                    DicConsole.DebugWriteLine("Device-Info command",
+                                                              "Found undecoded SCSI VPD page 0x{0:X2}", page);
+
+                                    sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                    if(!sense)
+                                        DataFile.WriteTo("Device-Info command", options.OutputPrefix,
+                                                         string.Format("_scsi_evpd_{0:X2}h.bin", page),
+                                                         string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                 }
                     }
 

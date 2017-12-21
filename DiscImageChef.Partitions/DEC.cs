@@ -79,11 +79,10 @@ namespace DiscImageChef.Partitions
                     Sequence = counter,
                     Scheme = Name
                 };
-                if(part.Size > 0)
-                {
-                    partitions.Add(part);
-                    counter++;
-                }
+                if(part.Size <= 0) continue;
+
+                partitions.Add(part);
+                counter++;
             }
 
             return true;

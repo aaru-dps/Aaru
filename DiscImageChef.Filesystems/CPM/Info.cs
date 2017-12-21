@@ -794,166 +794,166 @@ namespace DiscImageChef.Filesystems.CPM
                         {
                             ulong sectors = (ulong)(def.cylinders * def.sides * def.sectorsPerTrack);
 
+                            if(sectors != imagePlugin.GetSectors() || def.bytesPerSector != imagePlugin.GetSectorSize())
+                                continue;
+
                             // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector
-                            if(sectors == imagePlugin.GetSectors() && def.bytesPerSector == imagePlugin.GetSectorSize())
+                            DicConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
+                            ulong offset;
+                            if(def.sofs != 0) offset = (ulong)def.sofs;
+                            else offset = (ulong)(def.ofs * def.sectorsPerTrack);
+
+                            int dirLen = (def.drm + 1) * 32 / def.bytesPerSector;
+
+                            if(def.sides == 1)
                             {
-                                DicConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
-                                ulong offset;
-                                if(def.sofs != 0) offset = (ulong)def.sofs;
-                                else offset = (ulong)(def.ofs * def.sectorsPerTrack);
-
-                                int dirLen = (def.drm + 1) * 32 / def.bytesPerSector;
-
-                                if(def.sides == 1)
+                                sectorMask = new int[def.side1.sectorIds.Length];
+                                for(int m = 0; m < sectorMask.Length; m++)
+                                    sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
+                            }
+                            else
+                            {
+                                // Head changes after every track
+                                if(string.Compare(def.order, "SIDES",
+                                                  StringComparison.InvariantCultureIgnoreCase) == 0)
                                 {
-                                    sectorMask = new int[def.side1.sectorIds.Length];
-                                    for(int m = 0; m < sectorMask.Length; m++)
+                                    sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
+                                    for(int m = 0; m < def.side1.sectorIds.Length; m++)
                                         sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
+                                    // Skip first track (first side)
+                                    for(int m = 0; m < def.side2.sectorIds.Length; m++)
+                                        sectorMask[m + def.side1.sectorIds.Length] =
+                                            def.side2.sectorIds[m] - def.side2.sectorIds[0] +
+                                            def.side1.sectorIds.Length;
+                                }
+                                // Head changes after whole side
+                                else if(string.Compare(def.order, "CYLINDERS",
+                                                       StringComparison.InvariantCultureIgnoreCase) == 0)
+                                {
+                                    for(int m = 0; m < def.side1.sectorIds.Length; m++)
+                                        sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
+                                    // Skip first track (first side) and first track (second side)
+                                    for(int m = 0; m < def.side1.sectorIds.Length; m++)
+                                        sectorMask[m + def.side1.sectorIds.Length] =
+                                            def.side1.sectorIds[m] - def.side1.sectorIds[0] +
+                                            def.side1.sectorIds.Length + def.side2.sectorIds.Length;
+                                }
+                                // TODO: Implement COLUMBIA ordering
+                                else if(string.Compare(def.order, "COLUMBIA",
+                                                       StringComparison.InvariantCultureIgnoreCase) == 0)
+                                {
+                                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                                              "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
+                                    continue;
+                                }
+                                // TODO: Implement EAGLE ordering
+                                else if(string.Compare(def.order, "EAGLE",
+                                                       StringComparison.InvariantCultureIgnoreCase) == 0)
+                                {
+                                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                                              "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
+                                    continue;
                                 }
                                 else
                                 {
-                                    // Head changes after every track
-                                    if(string.Compare(def.order, "SIDES",
-                                                      StringComparison.InvariantCultureIgnoreCase) == 0)
-                                    {
-                                        sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
-                                        for(int m = 0; m < def.side1.sectorIds.Length; m++)
-                                            sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
-                                        // Skip first track (first side)
-                                        for(int m = 0; m < def.side2.sectorIds.Length; m++)
-                                            sectorMask[m + def.side1.sectorIds.Length] =
-                                                def.side2.sectorIds[m] - def.side2.sectorIds[0] +
-                                                def.side1.sectorIds.Length;
-                                    }
-                                    // Head changes after whole side
-                                    else if(string.Compare(def.order, "CYLINDERS",
-                                                           StringComparison.InvariantCultureIgnoreCase) == 0)
-                                    {
-                                        for(int m = 0; m < def.side1.sectorIds.Length; m++)
-                                            sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
-                                        // Skip first track (first side) and first track (second side)
-                                        for(int m = 0; m < def.side1.sectorIds.Length; m++)
-                                            sectorMask[m + def.side1.sectorIds.Length] =
-                                                def.side1.sectorIds[m] - def.side1.sectorIds[0] +
-                                                def.side1.sectorIds.Length + def.side2.sectorIds.Length;
-                                    }
-                                    // TODO: Implement COLUMBIA ordering
-                                    else if(string.Compare(def.order, "COLUMBIA",
-                                                           StringComparison.InvariantCultureIgnoreCase) == 0)
-                                    {
-                                        DicConsole.DebugWriteLine("CP/M Plugin",
-                                                                  "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
-                                        continue;
-                                    }
-                                    // TODO: Implement EAGLE ordering
-                                    else if(string.Compare(def.order, "EAGLE",
-                                                           StringComparison.InvariantCultureIgnoreCase) == 0)
-                                    {
-                                        DicConsole.DebugWriteLine("CP/M Plugin",
-                                                                  "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        DicConsole.DebugWriteLine("CP/M Plugin",
-                                                                  "Unknown order type \"{0}\", not proceeding with this definition.",
-                                                                  def.order);
-                                        continue;
-                                    }
-                                }
-
-                                // Read the directory marked by this definition
-                                MemoryStream ms = new MemoryStream();
-                                for(int p = 0; p < dirLen; p++)
-                                {
-                                    byte[] dirSector =
-                                        imagePlugin.ReadSector((ulong)((int)offset + (int)partition.Start +
-                                                                       p / sectorMask.Length * sectorMask.Length +
-                                                                       sectorMask[p % sectorMask.Length]));
-                                    ms.Write(dirSector, 0, dirSector.Length);
-                                }
-
-                                directory = ms.ToArray();
-
-                                if(def.evenOdd)
                                     DicConsole.DebugWriteLine("CP/M Plugin",
-                                                              "Definition contains EVEN-ODD field, with unknown meaning, detection may be wrong.");
-
-                                // Complement of the directory bytes if needed
-                                if(def.complement)
-                                    for(int b = 0; b < directory.Length; b++)
-                                        directory[b] = (byte)(~directory[b] & 0xFF);
-
-                                // Check the directory
-                                if(CheckDir(directory))
-                                {
-                                    DicConsole.DebugWriteLine("CP/M Plugin",
-                                                              "Definition \"{0}\" has a correct directory",
-                                                              def.comment);
-
-                                    // Build a Disc Parameter Block
-                                    workingDefinition = def;
-                                    dpb = new DiscParameterBlock();
-                                    dpb.al0 = (byte)def.al0;
-                                    dpb.al1 = (byte)def.al1;
-                                    dpb.blm = (byte)def.blm;
-                                    dpb.bsh = (byte)def.bsh;
-                                    dpb.cks = 0; // Needed?
-                                    dpb.drm = (ushort)def.drm;
-                                    dpb.dsm = (ushort)def.dsm;
-                                    dpb.exm = (byte)def.exm;
-                                    dpb.off = (ushort)def.ofs;
-                                    switch(def.bytesPerSector)
-                                    {
-                                        case 128:
-                                            dpb.psh = 0;
-                                            dpb.phm = 0;
-                                            break;
-                                        case 256:
-                                            dpb.psh = 1;
-                                            dpb.phm = 1;
-                                            break;
-                                        case 512:
-                                            dpb.psh = 2;
-                                            dpb.phm = 3;
-                                            break;
-                                        case 1024:
-                                            dpb.psh = 3;
-                                            dpb.phm = 7;
-                                            break;
-                                        case 2048:
-                                            dpb.psh = 4;
-                                            dpb.phm = 15;
-                                            break;
-                                        case 4096:
-                                            dpb.psh = 5;
-                                            dpb.phm = 31;
-                                            break;
-                                        case 8192:
-                                            dpb.psh = 6;
-                                            dpb.phm = 63;
-                                            break;
-                                        case 16384:
-                                            dpb.psh = 7;
-                                            dpb.phm = 127;
-                                            break;
-                                        case 32768:
-                                            dpb.psh = 8;
-                                            dpb.phm = 255;
-                                            break;
-                                    }
-
-                                    dpb.spt = (ushort)(def.sectorsPerTrack * def.bytesPerSector / 128);
-                                    cpmFound = true;
-                                    workingDefinition = def;
-
-                                    return true;
+                                                              "Unknown order type \"{0}\", not proceeding with this definition.",
+                                                              def.order);
+                                    continue;
                                 }
-
-                                label = null;
-                                labelCreationDate = null;
-                                labelUpdateDate = null;
                             }
+
+                            // Read the directory marked by this definition
+                            MemoryStream ms = new MemoryStream();
+                            for(int p = 0; p < dirLen; p++)
+                            {
+                                byte[] dirSector =
+                                    imagePlugin.ReadSector((ulong)((int)offset + (int)partition.Start +
+                                                                   p / sectorMask.Length * sectorMask.Length +
+                                                                   sectorMask[p % sectorMask.Length]));
+                                ms.Write(dirSector, 0, dirSector.Length);
+                            }
+
+                            directory = ms.ToArray();
+
+                            if(def.evenOdd)
+                                DicConsole.DebugWriteLine("CP/M Plugin",
+                                                          "Definition contains EVEN-ODD field, with unknown meaning, detection may be wrong.");
+
+                            // Complement of the directory bytes if needed
+                            if(def.complement)
+                                for(int b = 0; b < directory.Length; b++)
+                                    directory[b] = (byte)(~directory[b] & 0xFF);
+
+                            // Check the directory
+                            if(CheckDir(directory))
+                            {
+                                DicConsole.DebugWriteLine("CP/M Plugin",
+                                                          "Definition \"{0}\" has a correct directory",
+                                                          def.comment);
+
+                                // Build a Disc Parameter Block
+                                workingDefinition = def;
+                                dpb = new DiscParameterBlock();
+                                dpb.al0 = (byte)def.al0;
+                                dpb.al1 = (byte)def.al1;
+                                dpb.blm = (byte)def.blm;
+                                dpb.bsh = (byte)def.bsh;
+                                dpb.cks = 0; // Needed?
+                                dpb.drm = (ushort)def.drm;
+                                dpb.dsm = (ushort)def.dsm;
+                                dpb.exm = (byte)def.exm;
+                                dpb.off = (ushort)def.ofs;
+                                switch(def.bytesPerSector)
+                                {
+                                    case 128:
+                                        dpb.psh = 0;
+                                        dpb.phm = 0;
+                                        break;
+                                    case 256:
+                                        dpb.psh = 1;
+                                        dpb.phm = 1;
+                                        break;
+                                    case 512:
+                                        dpb.psh = 2;
+                                        dpb.phm = 3;
+                                        break;
+                                    case 1024:
+                                        dpb.psh = 3;
+                                        dpb.phm = 7;
+                                        break;
+                                    case 2048:
+                                        dpb.psh = 4;
+                                        dpb.phm = 15;
+                                        break;
+                                    case 4096:
+                                        dpb.psh = 5;
+                                        dpb.phm = 31;
+                                        break;
+                                    case 8192:
+                                        dpb.psh = 6;
+                                        dpb.phm = 63;
+                                        break;
+                                    case 16384:
+                                        dpb.psh = 7;
+                                        dpb.phm = 127;
+                                        break;
+                                    case 32768:
+                                        dpb.psh = 8;
+                                        dpb.phm = 255;
+                                        break;
+                                }
+
+                                dpb.spt = (ushort)(def.sectorsPerTrack * def.bytesPerSector / 128);
+                                cpmFound = true;
+                                workingDefinition = def;
+
+                                return true;
+                            }
+
+                            label = null;
+                            labelCreationDate = null;
+                            labelUpdateDate = null;
                         }
                     }
                 }

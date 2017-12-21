@@ -78,40 +78,39 @@ namespace DiscImageChef.DiscImages
         public override bool IdentifyImage(Filter imageFilter)
         {
             // Check if file is not multiple of 512
-            if(imageFilter.GetDataForkLength() % 512 != 0)
+            if(imageFilter.GetDataForkLength() % 512 == 0) return true;
+
+            extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+
+            if(extension == ".hdf" && ImageInfo.ImageSize % 256 == 0) return true;
+
+            // Check known disk sizes with sectors smaller than 512
+            switch(imageFilter.GetDataForkLength())
             {
-                extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+                #region Commodore
+                case 174848:
+                case 175531:
+                case 197376:
+                case 351062:
+                case 822400:
+                #endregion Commodore
 
-                if(extension == ".hdf" && ImageInfo.ImageSize % 256 == 0) return true;
-
-                // Check known disk sizes with sectors smaller than 512
-                switch(imageFilter.GetDataForkLength())
-                {
-                    #region Commodore
-                    case 174848:
-                    case 175531:
-                    case 197376:
-                    case 351062:
-                    case 822400:
-                    #endregion Commodore
-
-                    case 81664:
-                    case 116480:
-                    case 242944:
-                    case 256256:
-                    case 287488:
-                    case 306432:
-                    case 495872:
-                    case 988416:
-                    case 995072:
-                    case 1021696:
-                    case 1146624:
-                    case 1177344:
-                    case 1222400:
-                    case 1304320:
-                    case 1255168: return true;
-                    default: return false;
-                }
+                case 81664:
+                case 116480:
+                case 242944:
+                case 256256:
+                case 287488:
+                case 306432:
+                case 495872:
+                case 988416:
+                case 995072:
+                case 1021696:
+                case 1146624:
+                case 1177344:
+                case 1222400:
+                case 1304320:
+                case 1255168: return true;
+                default: return false;
             }
 
             return true;
@@ -761,148 +760,132 @@ namespace DiscImageChef.DiscImages
 
         public override List<Track> GetTracks()
         {
-            if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
-            {
-                Track trk = new Track();
-                trk.TrackBytesPerSector = (int)ImageInfo.SectorSize;
-                trk.TrackEndSector = ImageInfo.Sectors - 1;
-                trk.TrackFile = rawImageFilter.GetFilename();
-                trk.TrackFileOffset = 0;
-                trk.TrackFileType = "BINARY";
-                trk.TrackRawBytesPerSector = (int)ImageInfo.SectorSize;
-                trk.TrackSequence = 1;
-                trk.TrackStartSector = 0;
-                trk.TrackSubchannelType = TrackSubchannelType.None;
-                trk.TrackType = TrackType.Data;
-                trk.TrackSession = 1;
-                List<Track> lst = new List<Track>();
-                lst.Add(trk);
-                return lst;
-            }
+            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            Track trk = new Track();
+            trk.TrackBytesPerSector = (int)ImageInfo.SectorSize;
+            trk.TrackEndSector = ImageInfo.Sectors - 1;
+            trk.TrackFile = rawImageFilter.GetFilename();
+            trk.TrackFileOffset = 0;
+            trk.TrackFileType = "BINARY";
+            trk.TrackRawBytesPerSector = (int)ImageInfo.SectorSize;
+            trk.TrackSequence = 1;
+            trk.TrackStartSector = 0;
+            trk.TrackSubchannelType = TrackSubchannelType.None;
+            trk.TrackType = TrackType.Data;
+            trk.TrackSession = 1;
+            List<Track> lst = new List<Track>();
+            lst.Add(trk);
+            return lst;
         }
 
         public override List<Track> GetSessionTracks(Session session)
         {
-            if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
-            {
-                if(session.SessionSequence != 1)
-                    throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
+            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-                Track trk = new Track();
-                trk.TrackBytesPerSector = (int)ImageInfo.SectorSize;
-                trk.TrackEndSector = ImageInfo.Sectors - 1;
-                trk.TrackFilter = rawImageFilter;
-                trk.TrackFile = rawImageFilter.GetFilename();
-                trk.TrackFileOffset = 0;
-                trk.TrackFileType = "BINARY";
-                trk.TrackRawBytesPerSector = (int)ImageInfo.SectorSize;
-                trk.TrackSequence = 1;
-                trk.TrackStartSector = 0;
-                trk.TrackSubchannelType = TrackSubchannelType.None;
-                trk.TrackType = TrackType.Data;
-                trk.TrackSession = 1;
-                List<Track> lst = new List<Track>();
-                lst.Add(trk);
-                return lst;
-            }
+            if(session.SessionSequence != 1)
+                throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            Track trk = new Track();
+            trk.TrackBytesPerSector = (int)ImageInfo.SectorSize;
+            trk.TrackEndSector = ImageInfo.Sectors - 1;
+            trk.TrackFilter = rawImageFilter;
+            trk.TrackFile = rawImageFilter.GetFilename();
+            trk.TrackFileOffset = 0;
+            trk.TrackFileType = "BINARY";
+            trk.TrackRawBytesPerSector = (int)ImageInfo.SectorSize;
+            trk.TrackSequence = 1;
+            trk.TrackStartSector = 0;
+            trk.TrackSubchannelType = TrackSubchannelType.None;
+            trk.TrackType = TrackType.Data;
+            trk.TrackSession = 1;
+            List<Track> lst = new List<Track>();
+            lst.Add(trk);
+            return lst;
         }
 
         public override List<Track> GetSessionTracks(ushort session)
         {
-            if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
-            {
-                if(session != 1)
-                    throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
+            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-                Track trk = new Track();
-                trk.TrackBytesPerSector = (int)ImageInfo.SectorSize;
-                trk.TrackEndSector = ImageInfo.Sectors - 1;
-                trk.TrackFilter = rawImageFilter;
-                trk.TrackFile = rawImageFilter.GetFilename();
-                trk.TrackFileOffset = 0;
-                trk.TrackFileType = "BINARY";
-                trk.TrackRawBytesPerSector = (int)ImageInfo.SectorSize;
-                trk.TrackSequence = 1;
-                trk.TrackStartSector = 0;
-                trk.TrackSubchannelType = TrackSubchannelType.None;
-                trk.TrackType = TrackType.Data;
-                trk.TrackSession = 1;
-                List<Track> lst = new List<Track>();
-                lst.Add(trk);
-                return lst;
-            }
+            if(session != 1)
+                throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            Track trk = new Track();
+            trk.TrackBytesPerSector = (int)ImageInfo.SectorSize;
+            trk.TrackEndSector = ImageInfo.Sectors - 1;
+            trk.TrackFilter = rawImageFilter;
+            trk.TrackFile = rawImageFilter.GetFilename();
+            trk.TrackFileOffset = 0;
+            trk.TrackFileType = "BINARY";
+            trk.TrackRawBytesPerSector = (int)ImageInfo.SectorSize;
+            trk.TrackSequence = 1;
+            trk.TrackStartSector = 0;
+            trk.TrackSubchannelType = TrackSubchannelType.None;
+            trk.TrackType = TrackType.Data;
+            trk.TrackSession = 1;
+            List<Track> lst = new List<Track>();
+            lst.Add(trk);
+            return lst;
         }
 
         public override List<Session> GetSessions()
         {
-            if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
-            {
-                Session sess = new Session();
-                sess.EndSector = ImageInfo.Sectors - 1;
-                sess.EndTrack = 1;
-                sess.SessionSequence = 1;
-                sess.StartSector = 0;
-                sess.StartTrack = 1;
-                List<Session> lst = new List<Session>();
-                lst.Add(sess);
-                return lst;
-            }
+            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            Session sess = new Session();
+            sess.EndSector = ImageInfo.Sectors - 1;
+            sess.EndTrack = 1;
+            sess.SessionSequence = 1;
+            sess.StartSector = 0;
+            sess.StartTrack = 1;
+            List<Session> lst = new List<Session>();
+            lst.Add(sess);
+            return lst;
         }
 
         public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
-            if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
-            {
-                if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-                return ReadSector(sectorAddress);
-            }
+            if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ReadSector(sectorAddress);
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
-            {
-                if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-                return ReadSectors(sectorAddress, length);
-            }
+            if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ReadSectors(sectorAddress, length);
         }
 
         public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
-            if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
-            {
-                if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-                return ReadSector(sectorAddress);
-            }
+            if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ReadSector(sectorAddress);
         }
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
-            {
-                if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
+            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-                return ReadSectors(sectorAddress, length);
-            }
+            if(track != 1) throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ReadSectors(sectorAddress, length);
         }
 
         #region Private methods
@@ -1124,23 +1107,21 @@ namespace DiscImageChef.DiscImages
 
         public override List<Partition> GetPartitions()
         {
-            if(ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
-            {
-                List<Partition> parts = new List<Partition>();
-                Partition part = new Partition
-                {
-                    Start = 0,
-                    Length = ImageInfo.Sectors,
-                    Offset = 0,
-                    Sequence = 0,
-                    Type = "MODE1/2048",
-                    Size = ImageInfo.Sectors * ImageInfo.SectorSize
-                };
-                parts.Add(part);
-                return parts;
-            }
+            if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            List<Partition> parts = new List<Partition>();
+            Partition part = new Partition
+            {
+                Start = 0,
+                Length = ImageInfo.Sectors,
+                Offset = 0,
+                Sequence = 0,
+                Type = "MODE1/2048",
+                Size = ImageInfo.Sectors * ImageInfo.SectorSize
+            };
+            parts.Add(part);
+            return parts;
         }
 
         public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)

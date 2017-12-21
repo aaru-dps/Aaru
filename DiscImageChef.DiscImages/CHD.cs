@@ -1647,126 +1647,125 @@ namespace DiscImageChef.DiscImages
         {
             byte[] hunk;
 
-            if(!hunkCache.TryGetValue(hunkNo, out hunk))
+            if(hunkCache.TryGetValue(hunkNo, out hunk)) return hunk;
+
+            switch(mapVersion)
             {
-                switch(mapVersion)
-                {
-                    case 1:
-                        ulong offset = hunkTable[hunkNo] & 0x00000FFFFFFFFFFF;
-                        ulong length = hunkTable[hunkNo] >> 44;
+                case 1:
+                    ulong offset = hunkTable[hunkNo] & 0x00000FFFFFFFFFFF;
+                    ulong length = hunkTable[hunkNo] >> 44;
 
-                        byte[] compHunk = new byte[length];
-                        imageStream.Seek((long)offset, SeekOrigin.Begin);
-                        imageStream.Read(compHunk, 0, compHunk.Length);
+                    byte[] compHunk = new byte[length];
+                    imageStream.Seek((long)offset, SeekOrigin.Begin);
+                    imageStream.Read(compHunk, 0, compHunk.Length);
 
-                        if(length == sectorsPerHunk * ImageInfo.SectorSize) hunk = compHunk;
-                        else if((ChdCompression)hdrCompression > ChdCompression.Zlib)
-                            throw new ImageNotSupportedException(string.Format("Unsupported compression {0}",
-                                                                               (ChdCompression)hdrCompression));
-                        else
-                        {
-                            DeflateStream zStream =
-                                new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress);
-                            hunk = new byte[sectorsPerHunk * ImageInfo.SectorSize];
-                            int read = zStream.Read(hunk, 0, (int)(sectorsPerHunk * ImageInfo.SectorSize));
-                            if(read != sectorsPerHunk * ImageInfo.SectorSize)
-                                throw new
-                                    IOException(string
-                                                    .Format("Unable to decompress hunk correctly, got {0} bytes, expected {1}",
-                                                            read, sectorsPerHunk * ImageInfo.SectorSize));
+                    if(length == sectorsPerHunk * ImageInfo.SectorSize) hunk = compHunk;
+                    else if((ChdCompression)hdrCompression > ChdCompression.Zlib)
+                        throw new ImageNotSupportedException(string.Format("Unsupported compression {0}",
+                                                                           (ChdCompression)hdrCompression));
+                    else
+                    {
+                        DeflateStream zStream =
+                            new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress);
+                        hunk = new byte[sectorsPerHunk * ImageInfo.SectorSize];
+                        int read = zStream.Read(hunk, 0, (int)(sectorsPerHunk * ImageInfo.SectorSize));
+                        if(read != sectorsPerHunk * ImageInfo.SectorSize)
+                            throw new
+                                IOException(string
+                                                .Format("Unable to decompress hunk correctly, got {0} bytes, expected {1}",
+                                                        read, sectorsPerHunk * ImageInfo.SectorSize));
 
-                            zStream.Close();
-                            zStream = null;
-                        }
+                        zStream.Close();
+                        zStream = null;
+                    }
 
-                        break;
-                    case 3:
-                        byte[] entryBytes = new byte[16];
-                        Array.Copy(hunkMap, (int)(hunkNo * 16), entryBytes, 0, 16);
-                        ChdMapV3Entry entry = BigEndianMarshal.ByteArrayToStructureBigEndian<ChdMapV3Entry>(entryBytes);
-                        switch((Chdv3EntryFlags)(entry.flags & 0x0F))
-                        {
-                            case Chdv3EntryFlags.Invalid: throw new ArgumentException("Invalid hunk found.");
-                            case Chdv3EntryFlags.Compressed:
-                                switch((ChdCompression)hdrCompression)
-                                {
-                                    case ChdCompression.None: goto uncompressedV3;
-                                    case ChdCompression.Zlib:
-                                    case ChdCompression.ZlibPlus:
-                                        if(isHdd)
-                                        {
-                                            byte[] zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
-                                            imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
-                                            imageStream.Read(zHunk, 0, zHunk.Length);
-                                            DeflateStream zStream =
-                                                new DeflateStream(new MemoryStream(zHunk), CompressionMode.Decompress);
-                                            hunk = new byte[bytesPerHunk];
-                                            int read = zStream.Read(hunk, 0, (int)bytesPerHunk);
-                                            if(read != bytesPerHunk)
-                                                throw new
-                                                    IOException(string
-                                                                    .Format("Unable to decompress hunk correctly, got {0} bytes, expected {1}",
-                                                                            read, bytesPerHunk));
-
-                                            zStream.Close();
-                                            zStream = null;
-                                        }
-                                        // TODO: Guess wth is MAME doing with these hunks
-                                        else
+                    break;
+                case 3:
+                    byte[] entryBytes = new byte[16];
+                    Array.Copy(hunkMap, (int)(hunkNo * 16), entryBytes, 0, 16);
+                    ChdMapV3Entry entry = BigEndianMarshal.ByteArrayToStructureBigEndian<ChdMapV3Entry>(entryBytes);
+                    switch((Chdv3EntryFlags)(entry.flags & 0x0F))
+                    {
+                        case Chdv3EntryFlags.Invalid: throw new ArgumentException("Invalid hunk found.");
+                        case Chdv3EntryFlags.Compressed:
+                            switch((ChdCompression)hdrCompression)
+                            {
+                                case ChdCompression.None: goto uncompressedV3;
+                                case ChdCompression.Zlib:
+                                case ChdCompression.ZlibPlus:
+                                    if(isHdd)
+                                    {
+                                        byte[] zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
+                                        imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
+                                        imageStream.Read(zHunk, 0, zHunk.Length);
+                                        DeflateStream zStream =
+                                            new DeflateStream(new MemoryStream(zHunk), CompressionMode.Decompress);
+                                        hunk = new byte[bytesPerHunk];
+                                        int read = zStream.Read(hunk, 0, (int)bytesPerHunk);
+                                        if(read != bytesPerHunk)
                                             throw new
-                                                ImageNotSupportedException("Compressed CD/GD-ROM hunks are not yet supported");
+                                                IOException(string
+                                                                .Format("Unable to decompress hunk correctly, got {0} bytes, expected {1}",
+                                                                        read, bytesPerHunk));
 
-                                        break;
-                                    case ChdCompression.Av:
+                                        zStream.Close();
+                                        zStream = null;
+                                    }
+                                    // TODO: Guess wth is MAME doing with these hunks
+                                    else
                                         throw new
-                                            ImageNotSupportedException(string.Format("Unsupported compression {0}",
-                                                                                     (ChdCompression)hdrCompression));
-                                }
+                                            ImageNotSupportedException("Compressed CD/GD-ROM hunks are not yet supported");
 
-                                break;
-                            case Chdv3EntryFlags.Uncompressed:
-                                uncompressedV3:
-                                hunk = new byte[bytesPerHunk];
-                                imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
-                                imageStream.Read(hunk, 0, hunk.Length);
-                                break;
-                            case Chdv3EntryFlags.Mini:
-                                hunk = new byte[bytesPerHunk];
-                                byte[] mini = new byte[8];
-                                mini = BigEndianBitConverter.GetBytes(entry.offset);
-                                for(int i = 0; i < bytesPerHunk; i++) hunk[i] = mini[i % 8];
+                                    break;
+                                case ChdCompression.Av:
+                                    throw new
+                                        ImageNotSupportedException(string.Format("Unsupported compression {0}",
+                                                                                 (ChdCompression)hdrCompression));
+                            }
 
-                                break;
-                            case Chdv3EntryFlags.SelfHunk: return GetHunk(entry.offset);
-                            case Chdv3EntryFlags.ParentHunk:
-                                throw new ImageNotSupportedException("Parent images are not supported");
-                            case Chdv3EntryFlags.SecondCompressed:
-                                throw new ImageNotSupportedException("FLAC is not supported");
-                            default:
-                                throw new ImageNotSupportedException(string.Format("Hunk type {0} is not supported",
-                                                                                   entry.flags & 0xF));
-                        }
-
-                        break;
-                    case 5:
-                        if(hdrCompression == 0)
-                        {
+                            break;
+                        case Chdv3EntryFlags.Uncompressed:
+                            uncompressedV3:
                             hunk = new byte[bytesPerHunk];
-                            imageStream.Seek(hunkTableSmall[hunkNo] * bytesPerHunk, SeekOrigin.Begin);
+                            imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
                             imageStream.Read(hunk, 0, hunk.Length);
-                        }
-                        else throw new ImageNotSupportedException("Compressed v5 hunks not yet supported");
+                            break;
+                        case Chdv3EntryFlags.Mini:
+                            hunk = new byte[bytesPerHunk];
+                            byte[] mini = new byte[8];
+                            mini = BigEndianBitConverter.GetBytes(entry.offset);
+                            for(int i = 0; i < bytesPerHunk; i++) hunk[i] = mini[i % 8];
 
-                        break;
-                    default:
-                        throw new ImageNotSupportedException(string.Format("Unsupported hunk map version {0}",
-                                                                           mapVersion));
-                }
+                            break;
+                        case Chdv3EntryFlags.SelfHunk: return GetHunk(entry.offset);
+                        case Chdv3EntryFlags.ParentHunk:
+                            throw new ImageNotSupportedException("Parent images are not supported");
+                        case Chdv3EntryFlags.SecondCompressed:
+                            throw new ImageNotSupportedException("FLAC is not supported");
+                        default:
+                            throw new ImageNotSupportedException(string.Format("Hunk type {0} is not supported",
+                                                                               entry.flags & 0xF));
+                    }
 
-                if(hunkCache.Count >= maxBlockCache) hunkCache.Clear();
+                    break;
+                case 5:
+                    if(hdrCompression == 0)
+                    {
+                        hunk = new byte[bytesPerHunk];
+                        imageStream.Seek(hunkTableSmall[hunkNo] * bytesPerHunk, SeekOrigin.Begin);
+                        imageStream.Read(hunk, 0, hunk.Length);
+                    }
+                    else throw new ImageNotSupportedException("Compressed v5 hunks not yet supported");
 
-                hunkCache.Add(hunkNo, hunk);
+                    break;
+                default:
+                    throw new ImageNotSupportedException(string.Format("Unsupported hunk map version {0}",
+                                                                       mapVersion));
             }
+
+            if(hunkCache.Count >= maxBlockCache) hunkCache.Clear();
+
+            hunkCache.Add(hunkNo, hunk);
 
             return hunk;
         }

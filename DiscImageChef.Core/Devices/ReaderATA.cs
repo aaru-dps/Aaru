@@ -86,13 +86,14 @@ namespace DiscImageChef.Core.Devices
                 blocks = (ulong)(cylinders * heads * sectors);
             }
 
-            if((ataId.CurrentCylinders == 0 || ataId.CurrentHeads == 0 || ataId.CurrentSectorsPerTrack == 0) && ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0)
-            {
-                cylinders = ataId.Cylinders;
-                heads = (byte)ataId.Heads;
-                sectors = (byte)ataId.SectorsPerTrack;
-                blocks = (ulong)(cylinders * heads * sectors);
-            }
+            if((ataId.CurrentCylinders != 0 && ataId.CurrentHeads != 0 && ataId.CurrentSectorsPerTrack != 0) ||
+               ataId.Cylinders <= 0 || ataId.Heads <= 0 ||
+               ataId.SectorsPerTrack <= 0) return (cylinders, heads, sectors);
+
+            cylinders = ataId.Cylinders;
+            heads = (byte)ataId.Heads;
+            sectors = (byte)ataId.SectorsPerTrack;
+            blocks = (ulong)(cylinders * heads * sectors);
 
             return (cylinders, heads, sectors);
         }
@@ -107,11 +108,10 @@ namespace DiscImageChef.Core.Devices
                 lbaMode = true;
             }
 
-            if(ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
-            {
-                blocks = ataId.LBA48Sectors;
-                lbaMode = true;
-            }
+            if(!ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48)) return blocks;
+
+            blocks = ataId.LBA48Sectors;
+            lbaMode = true;
 
             return blocks;
         }
@@ -279,14 +279,11 @@ namespace DiscImageChef.Core.Devices
                 if(!error || blocksToRead == 1) break;
             }
 
-            if(error && lbaMode)
-            {
-                blocksToRead = 1;
-                errorMessage = string.Format("Device error {0} trying to guess ideal transfer length.", dev.LastError);
-                return true;
-            }
+            if(!error || !lbaMode) return false;
 
-            return false;
+            blocksToRead = 1;
+            errorMessage = string.Format("Device error {0} trying to guess ideal transfer length.", dev.LastError);
+            return true;
         }
 
         bool AtaReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)

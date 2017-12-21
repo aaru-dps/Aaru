@@ -88,16 +88,15 @@ namespace DiscImageChef.Filters
 
         public override bool Identify(byte[] buffer)
         {
-            if(buffer[0] == 0x42 && buffer[1] == 0x5A && buffer[2] == 0x68 && buffer[3] >= 0x31 && buffer[3] <= 0x39)
-            {
-                if(buffer.Length > 512)
-                    if(buffer[buffer.Length - 512] == 0x6B && buffer[buffer.Length - 511] == 0x6F &&
-                       buffer[buffer.Length - 510] == 0x6C && buffer[buffer.Length - 509] == 0x79) return false;
+            if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 ||
+               buffer[3] > 0x39) return false;
 
-                return true;
-            }
+            if(buffer.Length <= 512) return true;
 
-            return false;
+            if(buffer[buffer.Length - 512] == 0x6B && buffer[buffer.Length - 511] == 0x6F &&
+               buffer[buffer.Length - 510] == 0x6C && buffer[buffer.Length - 509] == 0x79) return false;
+
+            return true;
         }
 
         public override bool Identify(Stream stream)
@@ -108,52 +107,44 @@ namespace DiscImageChef.Filters
             stream.Read(buffer, 0, 4);
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(buffer[0] == 0x42 && buffer[1] == 0x5A && buffer[2] == 0x68 && buffer[3] >= 0x31 && buffer[3] <= 0x39)
-            {
-                if(stream.Length > 512)
-                {
-                    stream.Seek(-512, SeekOrigin.End);
-                    stream.Read(buffer, 0, 4);
-                    stream.Seek(0, SeekOrigin.Begin);
-                    // Check it is not an UDIF
-                    if(buffer[0] == 0x6B && buffer[1] == 0x6F && buffer[2] == 0x6C && buffer[3] == 0x79) return false;
-                }
+            if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 ||
+               buffer[3] > 0x39) return false;
 
-                return true;
-            }
+            if(stream.Length <= 512) return true;
 
-            return false;
+            stream.Seek(-512, SeekOrigin.End);
+            stream.Read(buffer, 0, 4);
+            stream.Seek(0, SeekOrigin.Begin);
+            // Check it is not an UDIF
+            if(buffer[0] == 0x6B && buffer[1] == 0x6F && buffer[2] == 0x6C && buffer[3] == 0x79) return false;
+
+            return true;
         }
 
         public override bool Identify(string path)
         {
-            if(File.Exists(path))
-            {
-                FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-                byte[] buffer = new byte[4];
+            if(!File.Exists(path)) return false;
 
-                stream.Seek(0, SeekOrigin.Begin);
-                stream.Read(buffer, 0, 4);
-                stream.Seek(0, SeekOrigin.Begin);
+            FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            byte[] buffer = new byte[4];
 
-                if(buffer[0] == 0x42 && buffer[1] == 0x5A && buffer[2] == 0x68 && buffer[3] >= 0x31 && buffer[3] <= 0x39
-                )
-                {
-                    if(stream.Length > 512)
-                    {
-                        stream.Seek(-512, SeekOrigin.End);
-                        stream.Read(buffer, 0, 4);
-                        stream.Seek(0, SeekOrigin.Begin);
-                        // Check it is not an UDIF
-                        if(buffer[0] == 0x6B && buffer[1] == 0x6F && buffer[2] == 0x6C && buffer[3] == 0x79)
-                            return false;
-                    }
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.Read(buffer, 0, 4);
+            stream.Seek(0, SeekOrigin.Begin);
 
-                    return true;
-                }
-            }
+            if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 ||
+               buffer[3] > 0x39) return false;
 
-            return false;
+            if(stream.Length <= 512) return true;
+
+            stream.Seek(-512, SeekOrigin.End);
+            stream.Read(buffer, 0, 4);
+            stream.Seek(0, SeekOrigin.Begin);
+            // Check it is not an UDIF
+            if(buffer[0] == 0x6B && buffer[1] == 0x6F && buffer[2] == 0x6C && buffer[3] == 0x79)
+                return false;
+
+            return true;
         }
 
         public override void Open(byte[] buffer)

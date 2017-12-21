@@ -304,16 +304,15 @@ namespace DiscImageChef.DiscImages
                         {
                             ccdVerMatch = ccdVerRegex.Match(_line);
 
-                            if(ccdVerMatch.Success)
-                            {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Version at line {0}", line);
+                            if(!ccdVerMatch.Success) continue;
 
-                                ImageInfo.ImageVersion = ccdVerMatch.Groups["value"].Value;
-                                if(ImageInfo.ImageVersion != "2" && ImageInfo.ImageVersion != "3")
-                                    DicConsole
-                                        .ErrorWriteLine("(CloneCD plugin): Warning! Unknown CCD image version {0}, may not work!",
-                                                        ImageInfo.ImageVersion);
-                            }
+                            DicConsole.DebugWriteLine("CloneCD plugin", "Found Version at line {0}", line);
+
+                            ImageInfo.ImageVersion = ccdVerMatch.Groups["value"].Value;
+                            if(ImageInfo.ImageVersion != "2" && ImageInfo.ImageVersion != "3")
+                                DicConsole
+                                    .ErrorWriteLine("(CloneCD plugin): Warning! Unknown CCD image version {0}, may not work!",
+                                                    ImageInfo.ImageVersion);
                         }
                         else if(inDisk)
                         {

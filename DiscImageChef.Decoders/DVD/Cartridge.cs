@@ -174,21 +174,22 @@ namespace DiscImageChef.Decoders.DVD
                     break;
             }
 
-            if(decoded.MSWI)
-                switch(decoded.RAMSWI)
-                {
-                    case 0: break;
-                    case 1:
-                        sb.AppendLine("Disc is write inhibited because it has been extracted from the cartridge");
-                        break;
-                    case 0xFF:
-                        sb.AppendLine("Disc is write inhibited for an unspecified reason");
-                        break;
-                    default:
-                        sb.AppendFormat("Disc has unknown reason {0} for write inhibition", decoded.RAMSWI)
-                          .AppendLine();
-                        break;
-                }
+            if(!decoded.MSWI) return sb.ToString();
+
+            switch(decoded.RAMSWI)
+            {
+                case 0: break;
+                case 1:
+                    sb.AppendLine("Disc is write inhibited because it has been extracted from the cartridge");
+                    break;
+                case 0xFF:
+                    sb.AppendLine("Disc is write inhibited for an unspecified reason");
+                    break;
+                default:
+                    sb.AppendFormat("Disc has unknown reason {0} for write inhibition", decoded.RAMSWI)
+                      .AppendLine();
+                    break;
+            }
 
             return sb.ToString();
         }

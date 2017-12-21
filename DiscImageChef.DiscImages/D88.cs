@@ -376,13 +376,12 @@ namespace DiscImageChef.DiscImages
                     sechdr = (SectorHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SectorHeader));
                     handle.Free();
 
-                    if(sechdr.spt != spt || sechdr.n != bps)
-                    {
-                        DicConsole.DebugWriteLine("D88 plugin",
-                                                  "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
-                                                  sechdr.spt, spt, sechdr.n, bps, i, j, sechdr.deleted_mark);
-                        allEqual = false;
-                    }
+                    if(sechdr.spt == spt && sechdr.n == bps) continue;
+
+                    DicConsole.DebugWriteLine("D88 plugin",
+                                              "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
+                                              sechdr.spt, spt, sechdr.n, bps, i, j, sechdr.deleted_mark);
+                    allEqual = false;
                 }
 
                 secB = new byte[sechdr.size_of_data];

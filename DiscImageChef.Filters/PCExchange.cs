@@ -228,17 +228,16 @@ namespace DiscImageChef.Filters
                                  Encoding.ASCII.GetString(tmpDosExt_b).Trim();
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-                if(baseFilename == macName || baseFilename == dosName || baseFilename == dosNameLow)
-                {
-                    dataFound |= File.Exists(Path.Combine(parentFolder, macName)) ||
-                                 File.Exists(Path.Combine(parentFolder, dosName)) ||
-                                 File.Exists(Path.Combine(parentFolder, dosNameLow));
+                if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
-                    rsrcFound |= File.Exists(Path.Combine(parentFolder, Resources, dosName)) ||
-                                 File.Exists(Path.Combine(parentFolder, Resources, dosNameLow));
+                dataFound |= File.Exists(Path.Combine(parentFolder, macName)) ||
+                             File.Exists(Path.Combine(parentFolder, dosName)) ||
+                             File.Exists(Path.Combine(parentFolder, dosNameLow));
 
-                    break;
-                }
+                rsrcFound |= File.Exists(Path.Combine(parentFolder, Resources, dosName)) ||
+                             File.Exists(Path.Combine(parentFolder, Resources, dosNameLow));
+
+                break;
             }
 
             finderDatStream.Close();
@@ -284,26 +283,25 @@ namespace DiscImageChef.Filters
                                  Encoding.ASCII.GetString(tmpDosExt_b).Trim();
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-                if(baseFilename == macName || baseFilename == dosName || baseFilename == dosNameLow)
-                {
-                    if(File.Exists(Path.Combine(parentFolder, macName))) dataPath = Path.Combine(parentFolder, macName);
-                    else if(File.Exists(Path.Combine(parentFolder, dosName)))
-                        dataPath = Path.Combine(parentFolder, dosName);
-                    else if(File.Exists(Path.Combine(parentFolder, dosNameLow)))
-                        dataPath = Path.Combine(parentFolder, dosNameLow);
-                    else dataPath = null;
+                if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
-                    if(File.Exists(Path.Combine(parentFolder, Resources, dosName)))
-                        rsrcPath = Path.Combine(parentFolder, Resources, dosName);
-                    else if(File.Exists(Path.Combine(parentFolder, Resources, dosNameLow)))
-                        rsrcPath = Path.Combine(parentFolder, Resources, dosNameLow);
-                    else rsrcPath = null;
+                if(File.Exists(Path.Combine(parentFolder, macName))) dataPath = Path.Combine(parentFolder, macName);
+                else if(File.Exists(Path.Combine(parentFolder, dosName)))
+                    dataPath = Path.Combine(parentFolder, dosName);
+                else if(File.Exists(Path.Combine(parentFolder, dosNameLow)))
+                    dataPath = Path.Combine(parentFolder, dosNameLow);
+                else dataPath = null;
 
-                    lastWriteTime = DateHandlers.MacToDateTime(datEntry.modificationDate);
-                    creationTime = DateHandlers.MacToDateTime(datEntry.creationDate);
+                if(File.Exists(Path.Combine(parentFolder, Resources, dosName)))
+                    rsrcPath = Path.Combine(parentFolder, Resources, dosName);
+                else if(File.Exists(Path.Combine(parentFolder, Resources, dosNameLow)))
+                    rsrcPath = Path.Combine(parentFolder, Resources, dosNameLow);
+                else rsrcPath = null;
 
-                    break;
-                }
+                lastWriteTime = DateHandlers.MacToDateTime(datEntry.modificationDate);
+                creationTime = DateHandlers.MacToDateTime(datEntry.creationDate);
+
+                break;
             }
 
             dataLen = new FileInfo(dataPath).Length;

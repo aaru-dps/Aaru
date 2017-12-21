@@ -91,19 +91,18 @@ namespace DiscImageChef.Filesystems
             if(magic == "DECFILE11A  " || magic == "DECFILE11B  ") return true;
 
             // Optical disc
-            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
-            {
-                if(hb_sector.Length < 0x400) return false;
+            if(imagePlugin.ImageInfo.XmlMediaType != DiscImages.XmlMediaType.OpticalDisc) return false;
 
-                hb_sector = imagePlugin.ReadSector(partition.Start);
+            if(hb_sector.Length < 0x400) return false;
 
-                Array.Copy(hb_sector, 0x3F0, magic_b, 0, 12);
-                magic = Encoding.ASCII.GetString(magic_b);
+            hb_sector = imagePlugin.ReadSector(partition.Start);
 
-                DicConsole.DebugWriteLine("Files-11 plugin", "unaligned magic: \"{0}\"", magic);
+            Array.Copy(hb_sector, 0x3F0, magic_b, 0, 12);
+            magic = Encoding.ASCII.GetString(magic_b);
 
-                if(magic == "DECFILE11A  " || magic == "DECFILE11B  ") return true;
-            }
+            DicConsole.DebugWriteLine("Files-11 plugin", "unaligned magic: \"{0}\"", magic);
+
+            if(magic == "DECFILE11A  " || magic == "DECFILE11B  ") return true;
 
             return false;
         }

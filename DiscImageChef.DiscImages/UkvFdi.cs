@@ -237,16 +237,17 @@ namespace DiscImageChef.DiscImages
                     }
 
                     // For empty cylinders
-                    if(sectorsOff[cyl][head].Length == 0)
-                        if(cyl + 1 == hdr.cylinders ||
-                           // Next cylinder is also empty
-                           sectorsOff[cyl + 1][head].Length == 0) emptyCyl = true;
-                        // Create empty sectors
-                        else
-                        {
-                            sectorsData[cyl][head] = new byte[spt][];
-                            for(int i = 0; i < spt; i++) sectorsData[cyl][head][i] = new byte[ImageInfo.SectorSize];
-                        }
+                    if(sectorsOff[cyl][head].Length != 0) continue;
+
+                    if(cyl + 1 == hdr.cylinders ||
+                       // Next cylinder is also empty
+                       sectorsOff[cyl + 1][head].Length == 0) emptyCyl = true;
+                    // Create empty sectors
+                    else
+                    {
+                        sectorsData[cyl][head] = new byte[spt][];
+                        for(int i = 0; i < spt; i++) sectorsData[cyl][head][i] = new byte[ImageInfo.SectorSize];
+                    }
                 }
 
                 if(emptyCyl) ImageInfo.Cylinders--;

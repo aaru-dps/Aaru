@@ -51,26 +51,25 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine();
             }
 
-            if(pressedKey.Key == ConsoleKey.Y)
+            if(pressedKey.Key != ConsoleKey.Y) return;
+
+            report.USB = new usbType();
+            report.USB.Manufacturer = dev.UsbManufacturerString;
+            report.USB.Product = dev.UsbProductString;
+            report.USB.ProductID = dev.UsbProductId;
+            report.USB.VendorID = dev.UsbVendorId;
+
+            pressedKey = new ConsoleKeyInfo();
+            while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
             {
-                report.USB = new usbType();
-                report.USB.Manufacturer = dev.UsbManufacturerString;
-                report.USB.Product = dev.UsbProductString;
-                report.USB.ProductID = dev.UsbProductId;
-                report.USB.VendorID = dev.UsbVendorId;
-
-                pressedKey = new ConsoleKeyInfo();
-                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
-                {
-                    DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
-                    pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
-                }
-
-                report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
-                removable = report.USB.RemovableMedia;
-                if(debug) report.USB.Descriptors = dev.UsbDescriptors;
+                DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
+                pressedKey = System.Console.ReadKey();
+                DicConsole.WriteLine();
             }
+
+            report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
+            removable = report.USB.RemovableMedia;
+            if(debug) report.USB.Descriptors = dev.UsbDescriptors;
         }
     }
 }

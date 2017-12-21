@@ -453,17 +453,16 @@ namespace DiscImageChef.DiscImages
                     string _line = cueStream.ReadLine();
 
                     matchTrack = regexTrack.Match(_line);
-                    if(matchTrack.Success)
-                    {
-                        uint trackSeq = uint.Parse(matchTrack.Groups[1].Value);
-                        if(trackCount + 1 != trackSeq)
-                            throw new
-                                FeatureUnsupportedImageException(string
-                                                                     .Format("Found TRACK {0} out of order in line {1}",
-                                                                             trackSeq, line));
+                    if(!matchTrack.Success) continue;
 
-                        trackCount++;
-                    }
+                    uint trackSeq = uint.Parse(matchTrack.Groups[1].Value);
+                    if(trackCount + 1 != trackSeq)
+                        throw new
+                            FeatureUnsupportedImageException(string
+                                                                 .Format("Found TRACK {0} out of order in line {1}",
+                                                                         trackSeq, line));
+
+                    trackCount++;
                 }
 
                 if(trackCount == 0) throw new FeatureUnsupportedImageException("No tracks found");

@@ -546,16 +546,15 @@ namespace DiscImageChef.DiscImages
                     teleDiskSector.Flags = (byte)stream.ReadByte();
                     teleDiskSector.Crc = (byte)stream.ReadByte();
 
-                    if((teleDiskSector.Flags & FLAGS_SECTOR_DATALESS) != FLAGS_SECTOR_DATALESS &&
-                       (teleDiskSector.Flags & FLAGS_SECTOR_SKIPPED) != FLAGS_SECTOR_SKIPPED)
-                    {
-                        stream.Read(dataSizeBytes, 0, 2);
-                        teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
-                        teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
-                        teleDiskData.DataEncoding = (byte)stream.ReadByte();
-                        data = new byte[teleDiskData.DataSize];
-                        stream.Read(data, 0, teleDiskData.DataSize);
-                    }
+                    if((teleDiskSector.Flags & FLAGS_SECTOR_DATALESS) == FLAGS_SECTOR_DATALESS ||
+                       (teleDiskSector.Flags & FLAGS_SECTOR_SKIPPED) == FLAGS_SECTOR_SKIPPED) continue;
+
+                    stream.Read(dataSizeBytes, 0, 2);
+                    teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
+                    teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
+                    teleDiskData.DataEncoding = (byte)stream.ReadByte();
+                    data = new byte[teleDiskData.DataSize];
+                    stream.Read(data, 0, teleDiskData.DataSize);
                 }
             }
 
@@ -671,21 +670,22 @@ namespace DiscImageChef.DiscImages
 
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", lba);
 
-                    if((teleDiskSector.Flags & FLAGS_SECTOR_NO_ID) != FLAGS_SECTOR_NO_ID)
-                        if(sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] != null)
-                            if((teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) == FLAGS_SECTOR_DUPLICATE)
-                                DicConsole.DebugWriteLine("TeleDisk plugin",
-                                                          "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
-                                                          teleDiskSector.SectorNumber, teleDiskSector.Cylinder, teleDiskSector.Head);
-                            else
-                                DicConsole.DebugWriteLine("TeleDisk plugin",
-                                                          "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
-                                                          teleDiskSector.SectorNumber, teleDiskSector.Cylinder, teleDiskSector.Head);
+                    if((teleDiskSector.Flags & FLAGS_SECTOR_NO_ID) == FLAGS_SECTOR_NO_ID) continue;
+
+                    if(sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] != null)
+                        if((teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) == FLAGS_SECTOR_DUPLICATE)
+                            DicConsole.DebugWriteLine("TeleDisk plugin",
+                                                      "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
+                                                      teleDiskSector.SectorNumber, teleDiskSector.Cylinder, teleDiskSector.Head);
                         else
-                        {
-                            sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] = decodedData;
-                            totalDiskSize += (uint)decodedData.Length;
-                        }
+                            DicConsole.DebugWriteLine("TeleDisk plugin",
+                                                      "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
+                                                      teleDiskSector.SectorNumber, teleDiskSector.Cylinder, teleDiskSector.Head);
+                    else
+                    {
+                        sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] = decodedData;
+                        totalDiskSize += (uint)decodedData.Length;
+                    }
                 }
             }
 
@@ -1147,14 +1147,12 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
-            if(tag == MediaTagType.Floppy_LeadOut)
-            {
-                if(leadOut != null) return leadOut;
+            if(tag != MediaTagType.Floppy_LeadOut)
+                throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-                throw new FeatureNotPresentImageException("Lead-out not present in disk image");
-            }
+            if(leadOut != null) return leadOut;
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            throw new FeatureNotPresentImageException("Lead-out not present in disk image");
         }
         #endregion
 
@@ -1538,28 +1536,26 @@ namespace DiscImageChef.DiscImages
                 k = ++freq[c];
 
                 /* swap nodes to keep the tree freq-ordered */
-                if(k > freq[l = c + 1])
-                {
-                    while(k > freq[++l]) { }
+                if(k <= freq[l = c + 1]) continue;
 
-                    ;
-                    l--;
-                    freq[c] = freq[l];
-                    freq[l] = (ushort)k;
+                while(k > freq[++l]) { }
 
-                    i = son[c];
-                    prnt[i] = (short)l;
-                    if(i < T) prnt[i + 1] = (short)l;
+                l--;
+                freq[c] = freq[l];
+                freq[l] = (ushort)k;
 
-                    j = son[l];
-                    son[l] = (short)i;
+                i = son[c];
+                prnt[i] = (short)l;
+                if(i < T) prnt[i + 1] = (short)l;
 
-                    prnt[j] = (short)c;
-                    if(j < T) prnt[j + 1] = (short)c;
-                    son[c] = (short)j;
+                j = son[l];
+                son[l] = (short)i;
 
-                    c = l;
-                }
+                prnt[j] = (short)c;
+                if(j < T) prnt[j + 1] = (short)c;
+                son[c] = (short)j;
+
+                c = l;
             }
             while((c = prnt[c]) != 0); /* do it until reaching the root */
         }

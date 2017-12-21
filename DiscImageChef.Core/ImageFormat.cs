@@ -56,11 +56,10 @@ namespace DiscImageChef.Core
                         try
                         {
                             DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
-                            if(imageplugin.IdentifyImage(imageFilter))
-                            {
-                                imageFormat = imageplugin;
-                                break;
-                            }
+                            if(!imageplugin.IdentifyImage(imageFilter)) continue;
+
+                            imageFormat = imageplugin;
+                            break;
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch { }
@@ -75,11 +74,10 @@ namespace DiscImageChef.Core
                             try
                             {
                                 DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
-                                if(imageplugin.IdentifyImage(imageFilter))
-                                {
-                                    imageFormat = imageplugin;
-                                    break;
-                                }
+                                if(!imageplugin.IdentifyImage(imageFilter)) continue;
+
+                                imageFormat = imageplugin;
+                                break;
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                             catch { }

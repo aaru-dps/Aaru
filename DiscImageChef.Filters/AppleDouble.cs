@@ -371,19 +371,17 @@ namespace DiscImageChef.Filters
             }
 
             // Check AppleDouble created by UnAr (from The Unarchiver)
-            if(File.Exists(UnArAppleDouble))
-            {
-                FileStream unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
-                if(unarStream != null && unarStream.Length > 26)
-                {
-                    byte[] unar_b = new byte[26];
-                    unarStream.Read(unar_b, 0, 26);
-                    header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unar_b);
-                    unarStream.Close();
-                    if(header.magic == AppleDoubleMagic &&
-                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
-                }
-            }
+            if(!File.Exists(UnArAppleDouble)) return false;
+
+            FileStream unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
+            if(unarStream == null || unarStream.Length <= 26) return false;
+
+            byte[] unar_b = new byte[26];
+            unarStream.Read(unar_b, 0, 26);
+            header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unar_b);
+            unarStream.Close();
+            if(header.magic == AppleDoubleMagic &&
+               (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
 
             return false;
         }

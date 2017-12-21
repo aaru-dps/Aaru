@@ -43,32 +43,33 @@ namespace DiscImageChef.Core.Devices.Report
             report.PCMCIA = new pcmciaType();
             report.PCMCIA.CIS = dev.Cis;
             Tuple[] tuples = CIS.GetTuples(dev.Cis);
-            if(tuples != null)
-                foreach(Tuple tuple in tuples)
-                    switch(tuple.Code) {
-                        case TupleCodes.CISTPL_MANFID:
-                            ManufacturerIdentificationTuple manfid = CIS.DecodeManufacturerIdentificationTuple(tuple);
+            if(tuples == null) return;
 
-                            if(manfid != null)
-                            {
-                                report.PCMCIA.ManufacturerCode = manfid.ManufacturerID;
-                                report.PCMCIA.CardCode = manfid.CardID;
-                                report.PCMCIA.ManufacturerCodeSpecified = true;
-                                report.PCMCIA.CardCodeSpecified = true;
-                            }
-                            break;
-                        case TupleCodes.CISTPL_VERS_1:
-                            Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
+            foreach(Tuple tuple in tuples)
+                switch(tuple.Code) {
+                    case TupleCodes.CISTPL_MANFID:
+                        ManufacturerIdentificationTuple manfid = CIS.DecodeManufacturerIdentificationTuple(tuple);
 
-                            if(vers != null)
-                            {
-                                report.PCMCIA.Manufacturer = vers.Manufacturer;
-                                report.PCMCIA.ProductName = vers.Product;
-                                report.PCMCIA.Compliance = string.Format("{0}.{1}", vers.MajorVersion, vers.MinorVersion);
-                                report.PCMCIA.AdditionalInformation = vers.AdditionalInformation;
-                            }
-                            break;
-                    }
+                        if(manfid != null)
+                        {
+                            report.PCMCIA.ManufacturerCode = manfid.ManufacturerID;
+                            report.PCMCIA.CardCode = manfid.CardID;
+                            report.PCMCIA.ManufacturerCodeSpecified = true;
+                            report.PCMCIA.CardCodeSpecified = true;
+                        }
+                        break;
+                    case TupleCodes.CISTPL_VERS_1:
+                        Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
+
+                        if(vers != null)
+                        {
+                            report.PCMCIA.Manufacturer = vers.Manufacturer;
+                            report.PCMCIA.ProductName = vers.Product;
+                            report.PCMCIA.Compliance = string.Format("{0}.{1}", vers.MajorVersion, vers.MinorVersion);
+                            report.PCMCIA.AdditionalInformation = vers.AdditionalInformation;
+                        }
+                        break;
+                }
         }
     }
 }

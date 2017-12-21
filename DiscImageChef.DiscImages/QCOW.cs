@@ -250,11 +250,10 @@ namespace DiscImageChef.DiscImages
             {
                 l1Mask <<= 1;
 
-                if(c < 64 - l1Shift)
-                {
-                    l1Mask += 1;
-                    c++;
-                }
+                if(c >= 64 - l1Shift) continue;
+
+                l1Mask += 1;
+                c++;
             }
 
             l2Mask = 0;

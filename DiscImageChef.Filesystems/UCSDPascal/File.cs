@@ -54,11 +54,10 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             PascalFileEntry entry;
             Errno error = GetFileEntry(path, out entry);
 
-            if(error == Errno.NoError)
-            {
-                attributes = new FileAttributes();
-                attributes = FileAttributes.File;
-            }
+            if(error != Errno.NoError) return error;
+
+            attributes = new FileAttributes();
+            attributes = FileAttributes.File;
 
             return error;
         }

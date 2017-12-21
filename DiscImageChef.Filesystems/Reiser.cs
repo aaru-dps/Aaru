@@ -191,11 +191,10 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FreeClusters = reiserSb.free_blocks;
             xmlFSType.FreeClustersSpecified = true;
             xmlFSType.Dirty = reiserSb.umount_state == 2;
-            if(reiserSb.version >= 2)
-            {
-                xmlFSType.VolumeName = CurrentEncoding.GetString(reiserSb.label);
-                xmlFSType.VolumeSerial = reiserSb.uuid.ToString();
-            }
+            if(reiserSb.version < 2) return;
+
+            xmlFSType.VolumeName = CurrentEncoding.GetString(reiserSb.label);
+            xmlFSType.VolumeSerial = reiserSb.uuid.ToString();
         }
 
         public override Errno Mount()

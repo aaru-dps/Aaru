@@ -82,12 +82,11 @@ namespace DiscImageChef.Partitions
 
                 label_sector = imagePlugin.ReadSector(i + sectorOffset);
                 magic = BigEndianBitConverter.ToUInt32(label_sector, 0x00);
-                if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
-                {
-                    magic_found = true;
-                    label_position = i + sectorOffset;
-                    break;
-                }
+                if(magic != NEXT_MAGIC1 && magic != NEXT_MAGIC2 && magic != NEXT_MAGIC3) continue;
+
+                magic_found = true;
+                label_position = i + sectorOffset;
+                break;
             }
 
             if(!magic_found) return false;
@@ -166,52 +165,51 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_type = \"{1}\"", i,
                                           StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type));
 
-                if(label.dl_dt.d_partitions[i].p_size > 0 && label.dl_dt.d_partitions[i].p_base >= 0 &&
-                   label.dl_dt.d_partitions[i].p_bsize >= 0)
+                if(label.dl_dt.d_partitions[i].p_size <= 0 || label.dl_dt.d_partitions[i].p_base < 0 ||
+                   label.dl_dt.d_partitions[i].p_bsize < 0) continue;
+
+                StringBuilder sb = new StringBuilder();
+
+                CommonTypes.Partition part = new CommonTypes.Partition
                 {
-                    StringBuilder sb = new StringBuilder();
+                    Size = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
+                    Offset =
+                        (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
+                    Type = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
+                    Sequence = (ulong)i,
+                    Name = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
+                    Length = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sector_size),
+                    Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) *
+                                    label.dl_dt.d_secsize / sector_size),
+                    Scheme = Name
+                };
 
-                    CommonTypes.Partition part = new CommonTypes.Partition
-                    {
-                        Size = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
-                        Offset =
-                            (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
-                        Type = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
-                        Sequence = (ulong)i,
-                        Name = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
-                        Length = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sector_size),
-                        Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) *
-                                        label.dl_dt.d_secsize / sector_size),
-                        Scheme = Name
-                    };
-
-                    if(part.Start + part.Length > imagePlugin.ImageInfo.Sectors)
-                    {
-                        DicConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
-                        part.Length = imagePlugin.ImageInfo.Sectors - part.Start;
-                        part.Size = part.Length * sector_size;
-                        DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
-                                                  part.Length);
-                    }
-
-                    sb.AppendFormat("{0} bytes per block", label.dl_dt.d_partitions[i].p_bsize).AppendLine();
-                    sb.AppendFormat("{0} bytes per fragment", label.dl_dt.d_partitions[i].p_fsize).AppendLine();
-                    if(label.dl_dt.d_partitions[i].p_opt == 's') sb.AppendLine("Space optimized");
-                    else if(label.dl_dt.d_partitions[i].p_opt == 't') sb.AppendLine("Time optimized");
-                    else sb.AppendFormat("Unknown optimization {0:X2}", label.dl_dt.d_partitions[i].p_opt).AppendLine();
-                    sb.AppendFormat("{0} cylinders per group", label.dl_dt.d_partitions[i].p_cpg).AppendLine();
-                    sb.AppendFormat("{0} bytes per inode", label.dl_dt.d_partitions[i].p_density).AppendLine();
-                    sb.AppendFormat("{0}% of space must be free at minimum", label.dl_dt.d_partitions[i].p_minfree)
-                      .AppendLine();
-                    if(label.dl_dt.d_partitions[i].p_newfs != 1)
-                        sb.AppendLine("Filesystem should be formatted at start");
-                    if(label.dl_dt.d_partitions[i].p_automnt == 1)
-                        sb.AppendLine("Filesystem should be automatically mounted");
-
-                    part.Description = sb.ToString();
-
-                    partitions.Add(part);
+                if(part.Start + part.Length > imagePlugin.ImageInfo.Sectors)
+                {
+                    DicConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
+                    part.Length = imagePlugin.ImageInfo.Sectors - part.Start;
+                    part.Size = part.Length * sector_size;
+                    DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
+                                              part.Length);
                 }
+
+                sb.AppendFormat("{0} bytes per block", label.dl_dt.d_partitions[i].p_bsize).AppendLine();
+                sb.AppendFormat("{0} bytes per fragment", label.dl_dt.d_partitions[i].p_fsize).AppendLine();
+                if(label.dl_dt.d_partitions[i].p_opt == 's') sb.AppendLine("Space optimized");
+                else if(label.dl_dt.d_partitions[i].p_opt == 't') sb.AppendLine("Time optimized");
+                else sb.AppendFormat("Unknown optimization {0:X2}", label.dl_dt.d_partitions[i].p_opt).AppendLine();
+                sb.AppendFormat("{0} cylinders per group", label.dl_dt.d_partitions[i].p_cpg).AppendLine();
+                sb.AppendFormat("{0} bytes per inode", label.dl_dt.d_partitions[i].p_density).AppendLine();
+                sb.AppendFormat("{0}% of space must be free at minimum", label.dl_dt.d_partitions[i].p_minfree)
+                  .AppendLine();
+                if(label.dl_dt.d_partitions[i].p_newfs != 1)
+                    sb.AppendLine("Filesystem should be formatted at start");
+                if(label.dl_dt.d_partitions[i].p_automnt == 1)
+                    sb.AppendLine("Filesystem should be automatically mounted");
+
+                part.Description = sb.ToString();
+
+                partitions.Add(part);
             }
 
             return true;

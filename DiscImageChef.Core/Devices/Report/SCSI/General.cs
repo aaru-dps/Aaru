@@ -189,13 +189,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         {
                             DicConsole.WriteLine("Querying SCSI EVPD {0:X2}h...", page);
                             sense = dev.ScsiInquiry(out buffer, out senseBuffer, page);
-                            if(!sense)
-                            {
-                                pageType evpd = new pageType();
-                                evpd.page = page;
-                                evpd.value = buffer;
-                                evpds.Add(evpd);
-                            }
+                            if(sense) continue;
+
+                            pageType evpd = new pageType();
+                            evpd.page = page;
+                            evpd.value = buffer;
+                            evpds.Add(evpd);
                         }
 
                     if(evpds.Count > 0) report.SCSI.EVPDPages = evpds.ToArray();
@@ -330,324 +329,321 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 DicConsole.WriteLine();
                             }
 
-                            if(pressedKey.Key == ConsoleKey.Y)
+                            if(pressedKey.Key != ConsoleKey.Y) continue;
+
+                            DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
+                            System.Console.ReadKey(true);
+
+                            testedMediaType mediaTest = new testedMediaType();
+                            DicConsole.Write("Please write a description of the media type and press enter: ");
+                            mediaTest.MediumTypeName = System.Console.ReadLine();
+                            DicConsole.Write("Please write the media manufacturer and press enter: ");
+                            mediaTest.Manufacturer = System.Console.ReadLine();
+                            DicConsole.Write("Please write the media model and press enter: ");
+                            mediaTest.Model = System.Console.ReadLine();
+
+                            mediaTest.ManufacturerSpecified = true;
+                            mediaTest.ModelSpecified = true;
+                            mediaTest.MediaIsRecognized = true;
+
+                            sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
+                            if(sense)
                             {
-                                DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
-                                System.Console.ReadKey(true);
+                                Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
+                                if(decSense.HasValue)
+                                    if(decSense.Value.ASC == 0x3A)
+                                    {
+                                        int leftRetries = 20;
+                                        while(leftRetries > 0)
+                                        {
+                                            DicConsole.Write("\rWaiting for drive to become ready");
+                                            System.Threading.Thread.Sleep(2000);
+                                            sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
+                                            if(!sense) break;
 
-                                testedMediaType mediaTest = new testedMediaType();
-                                DicConsole.Write("Please write a description of the media type and press enter: ");
-                                mediaTest.MediumTypeName = System.Console.ReadLine();
-                                DicConsole.Write("Please write the media manufacturer and press enter: ");
-                                mediaTest.Manufacturer = System.Console.ReadLine();
-                                DicConsole.Write("Please write the media model and press enter: ");
-                                mediaTest.Model = System.Console.ReadLine();
+                                            leftRetries--;
+                                        }
 
-                                mediaTest.ManufacturerSpecified = true;
-                                mediaTest.ModelSpecified = true;
-                                mediaTest.MediaIsRecognized = true;
+                                        mediaTest.MediaIsRecognized &= !sense;
+                                    }
+                                    else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
+                                    {
+                                        int leftRetries = 20;
+                                        while(leftRetries > 0)
+                                        {
+                                            DicConsole.Write("\rWaiting for drive to become ready");
+                                            System.Threading.Thread.Sleep(2000);
+                                            sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
+                                            if(!sense) break;
 
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                                if(sense)
+                                            leftRetries--;
+                                        }
+
+                                        mediaTest.MediaIsRecognized &= !sense;
+                                    }
+                                    else mediaTest.MediaIsRecognized = false;
+                                else mediaTest.MediaIsRecognized = false;
+                            }
+
+                            if(mediaTest.MediaIsRecognized)
+                            {
+                                mediaTest.SupportsReadCapacitySpecified = true;
+                                mediaTest.SupportsReadCapacity16Specified = true;
+
+                                DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
+                                sense = dev.ReadCapacity(out buffer, out senseBuffer, timeout, out duration);
+                                if(!sense && !dev.Error)
+                                {
+                                    mediaTest.SupportsReadCapacity = true;
+                                    mediaTest.Blocks =
+                                        (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) +
+                                                buffer[3]) + 1;
+                                    mediaTest.BlockSize =
+                                        (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
+                                    mediaTest.BlocksSpecified = true;
+                                    mediaTest.BlockSizeSpecified = true;
+                                }
+
+                                DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
+                                sense = dev.ReadCapacity16(out buffer, out buffer, timeout, out duration);
+                                if(!sense && !dev.Error)
+                                {
+                                    mediaTest.SupportsReadCapacity16 = true;
+                                    byte[] temp = new byte[8];
+                                    Array.Copy(buffer, 0, temp, 0, 8);
+                                    Array.Reverse(temp);
+                                    mediaTest.Blocks = BitConverter.ToUInt64(temp, 0) + 1;
+                                    mediaTest.BlockSize =
+                                        (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) +
+                                               buffer[11]);
+                                    mediaTest.BlocksSpecified = true;
+                                    mediaTest.BlockSizeSpecified = true;
+                                }
+
+                                decMode = null;
+
+                                DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
+                                sense = dev.ModeSense10(out buffer, out senseBuffer, false, true,
+                                                        ScsiModeSensePageControl.Current, 0x3F, 0x00, timeout,
+                                                        out duration);
+                                if(!sense && !dev.Error)
+                                {
+                                    report.SCSI.SupportsModeSense10 = true;
+                                    decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.ScsiType);
+                                    if(debug) mediaTest.ModeSense10Data = buffer;
+                                }
+
+                                DicConsole.WriteLine("Querying SCSI MODE SENSE...");
+                                sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
+                                if(!sense && !dev.Error)
+                                {
+                                    report.SCSI.SupportsModeSense6 = true;
+                                    if(!decMode.HasValue)
+                                        decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.ScsiType);
+                                    if(debug) mediaTest.ModeSense6Data = buffer;
+                                }
+
+                                if(decMode.HasValue)
+                                {
+                                    mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
+                                    mediaTest.MediumTypeSpecified = true;
+                                    if(decMode.Value.Header.BlockDescriptors != null &&
+                                       decMode.Value.Header.BlockDescriptors.Length > 0)
+                                    {
+                                        mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+                                        mediaTest.DensitySpecified = true;
+                                    }
+                                }
+
+                                mediaTest.SupportsReadSpecified = true;
+                                mediaTest.SupportsRead10Specified = true;
+                                mediaTest.SupportsRead12Specified = true;
+                                mediaTest.SupportsRead16Specified = true;
+                                mediaTest.SupportsReadLongSpecified = true;
+
+                                DicConsole.WriteLine("Trying SCSI READ (6)...");
+                                mediaTest.SupportsRead = !dev.Read6(out buffer, out senseBuffer, 0, mediaTest.BlockSize,
+                                                                    timeout, out duration);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead);
+                                if(debug)
+                                    DataFile.WriteTo("SCSI Report", "read6",
+                                                     "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
+                                                     buffer);
+
+                                DicConsole.WriteLine("Trying SCSI READ (10)...");
+                                mediaTest.SupportsRead10 =
+                                    !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+                                                mediaTest.BlockSize, 0, 1, timeout, out duration);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
+                                if(debug)
+                                    DataFile.WriteTo("SCSI Report", "read10",
+                                                     "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
+                                                     buffer);
+
+                                DicConsole.WriteLine("Trying SCSI READ (12)...");
+                                mediaTest.SupportsRead12 =
+                                    !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+                                                mediaTest.BlockSize, 0, 1, false, timeout, out duration);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
+                                if(debug)
+                                    DataFile.WriteTo("SCSI Report", "read12",
+                                                     "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
+                                                     buffer);
+
+                                DicConsole.WriteLine("Trying SCSI READ (16)...");
+                                mediaTest.SupportsRead16 =
+                                    !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
+                                                mediaTest.BlockSize, 0, 1, false, timeout, out duration);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
+                                if(debug)
+                                    DataFile.WriteTo("SCSI Report", "read16",
+                                                     "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
+                                                     buffer);
+
+                                mediaTest.LongBlockSize = mediaTest.BlockSize;
+                                DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
+                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, timeout,
+                                                       out duration);
+                                if(sense && !dev.Error)
                                 {
                                     Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
                                     if(decSense.HasValue)
-                                        if(decSense.Value.ASC == 0x3A)
+                                        if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                           decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                         {
-                                            int leftRetries = 20;
-                                            while(leftRetries > 0)
+                                            mediaTest.SupportsReadLong = true;
+                                            if(decSense.Value.InformationValid && decSense.Value.ILI)
                                             {
-                                                DicConsole.Write("\rWaiting for drive to become ready");
-                                                System.Threading.Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                                                if(!sense) break;
-
-                                                leftRetries--;
+                                                mediaTest.LongBlockSize =
+                                                    0xFFFF - (decSense.Value.Information & 0xFFFF);
+                                                mediaTest.LongBlockSizeSpecified = true;
                                             }
-
-                                            mediaTest.MediaIsRecognized &= !sense;
                                         }
-                                        else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
-                                        {
-                                            int leftRetries = 20;
-                                            while(leftRetries > 0)
-                                            {
-                                                DicConsole.Write("\rWaiting for drive to become ready");
-                                                System.Threading.Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                                                if(!sense) break;
-
-                                                leftRetries--;
-                                            }
-
-                                            mediaTest.MediaIsRecognized &= !sense;
-                                        }
-                                        else mediaTest.MediaIsRecognized = false;
-                                    else mediaTest.MediaIsRecognized = false;
                                 }
 
-                                if(mediaTest.MediaIsRecognized)
+                                if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
+                                    if(mediaTest.BlockSize == 512)
+                                        foreach(ushort testSize in new[]
+                                        {
+                                            // Long sector sizes for floppies
+                                            514,
+                                            // Long sector sizes for SuperDisk
+                                            536, 558,
+                                            // Long sector sizes for 512-byte magneto-opticals
+                                            600, 610, 630
+                                        })
+                                        {
+                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                                   testSize, timeout, out duration);
+                                            if(sense || dev.Error) continue;
+
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize = testSize;
+                                            mediaTest.LongBlockSizeSpecified = true;
+                                            break;
+                                        }
+                                    else if(mediaTest.BlockSize == 1024)
+                                        foreach(ushort testSize in new[]
+                                        {
+                                            // Long sector sizes for floppies
+                                            1026,
+                                            // Long sector sizes for 1024-byte magneto-opticals
+                                            1200
+                                        })
+                                        {
+                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                                   testSize, timeout, out duration);
+                                            if(sense || dev.Error) continue;
+
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize = testSize;
+                                            mediaTest.LongBlockSizeSpecified = true;
+                                            break;
+                                        }
+                                    else if(mediaTest.BlockSize == 2048)
+                                    {
+                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380,
+                                                               timeout, out duration);
+                                        if(!sense && !dev.Error)
+                                        {
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize = 2380;
+                                            mediaTest.LongBlockSizeSpecified = true;
+                                        }
+                                    }
+                                    else if(mediaTest.BlockSize == 4096)
+                                    {
+                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760,
+                                                               timeout, out duration);
+                                        if(!sense && !dev.Error)
+                                        {
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize = 4760;
+                                            mediaTest.LongBlockSizeSpecified = true;
+                                        }
+                                    }
+                                    else if(mediaTest.BlockSize == 8192)
+                                    {
+                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424,
+                                                               timeout, out duration);
+                                        if(!sense && !dev.Error)
+                                        {
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize = 9424;
+                                            mediaTest.LongBlockSizeSpecified = true;
+                                        }
+                                    }
+
+                                if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
                                 {
-                                    mediaTest.SupportsReadCapacitySpecified = true;
-                                    mediaTest.SupportsReadCapacity16Specified = true;
-
-                                    DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
-                                    sense = dev.ReadCapacity(out buffer, out senseBuffer, timeout, out duration);
-                                    if(!sense && !dev.Error)
+                                    pressedKey = new ConsoleKeyInfo();
+                                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                     {
-                                        mediaTest.SupportsReadCapacity = true;
-                                        mediaTest.Blocks =
-                                            (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) +
-                                                    buffer[3]) + 1;
-                                        mediaTest.BlockSize =
-                                            (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
-                                        mediaTest.BlocksSpecified = true;
-                                        mediaTest.BlockSizeSpecified = true;
+                                        DicConsole
+                                            .Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+                                        pressedKey = System.Console.ReadKey();
+                                        DicConsole.WriteLine();
                                     }
 
-                                    DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
-                                    sense = dev.ReadCapacity16(out buffer, out buffer, timeout, out duration);
-                                    if(!sense && !dev.Error)
+                                    if(pressedKey.Key == ConsoleKey.Y)
                                     {
-                                        mediaTest.SupportsReadCapacity16 = true;
-                                        byte[] temp = new byte[8];
-                                        Array.Copy(buffer, 0, temp, 0, 8);
-                                        Array.Reverse(temp);
-                                        mediaTest.Blocks = BitConverter.ToUInt64(temp, 0) + 1;
-                                        mediaTest.BlockSize =
-                                            (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) +
-                                                   buffer[11]);
-                                        mediaTest.BlocksSpecified = true;
-                                        mediaTest.BlockSizeSpecified = true;
-                                    }
-
-                                    decMode = null;
-
-                                    DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
-                                    sense = dev.ModeSense10(out buffer, out senseBuffer, false, true,
-                                                            ScsiModeSensePageControl.Current, 0x3F, 0x00, timeout,
-                                                            out duration);
-                                    if(!sense && !dev.Error)
-                                    {
-                                        report.SCSI.SupportsModeSense10 = true;
-                                        decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.ScsiType);
-                                        if(debug) mediaTest.ModeSense10Data = buffer;
-                                    }
-
-                                    DicConsole.WriteLine("Querying SCSI MODE SENSE...");
-                                    sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
-                                    if(!sense && !dev.Error)
-                                    {
-                                        report.SCSI.SupportsModeSense6 = true;
-                                        if(!decMode.HasValue)
-                                            decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.ScsiType);
-                                        if(debug) mediaTest.ModeSense6Data = buffer;
-                                    }
-
-                                    if(decMode.HasValue)
-                                    {
-                                        mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
-                                        mediaTest.MediumTypeSpecified = true;
-                                        if(decMode.Value.Header.BlockDescriptors != null &&
-                                           decMode.Value.Header.BlockDescriptors.Length > 0)
+                                        for(ushort i = (ushort)mediaTest.BlockSize; i <= ushort.MaxValue; i++)
                                         {
-                                            mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-                                            mediaTest.DensitySpecified = true;
-                                        }
-                                    }
-
-                                    mediaTest.SupportsReadSpecified = true;
-                                    mediaTest.SupportsRead10Specified = true;
-                                    mediaTest.SupportsRead12Specified = true;
-                                    mediaTest.SupportsRead16Specified = true;
-                                    mediaTest.SupportsReadLongSpecified = true;
-
-                                    DicConsole.WriteLine("Trying SCSI READ (6)...");
-                                    mediaTest.SupportsRead = !dev.Read6(out buffer, out senseBuffer, 0, mediaTest.BlockSize,
-                                                                        timeout, out duration);
-                                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead);
-                                    if(debug)
-                                        DataFile.WriteTo("SCSI Report", "read6",
-                                                         "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
-                                                         buffer);
-
-                                    DicConsole.WriteLine("Trying SCSI READ (10)...");
-                                    mediaTest.SupportsRead10 =
-                                        !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                                    mediaTest.BlockSize, 0, 1, timeout, out duration);
-                                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
-                                    if(debug)
-                                        DataFile.WriteTo("SCSI Report", "read10",
-                                                         "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
-                                                         buffer);
-
-                                    DicConsole.WriteLine("Trying SCSI READ (12)...");
-                                    mediaTest.SupportsRead12 =
-                                        !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                                    mediaTest.BlockSize, 0, 1, false, timeout, out duration);
-                                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
-                                    if(debug)
-                                        DataFile.WriteTo("SCSI Report", "read12",
-                                                         "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
-                                                         buffer);
-
-                                    DicConsole.WriteLine("Trying SCSI READ (16)...");
-                                    mediaTest.SupportsRead16 =
-                                        !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
-                                                    mediaTest.BlockSize, 0, 1, false, timeout, out duration);
-                                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
-                                    if(debug)
-                                        DataFile.WriteTo("SCSI Report", "read16",
-                                                         "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
-                                                         buffer);
-
-                                    mediaTest.LongBlockSize = mediaTest.BlockSize;
-                                    DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
-                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, timeout,
-                                                           out duration);
-                                    if(sense && !dev.Error)
-                                    {
-                                        Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
-                                        if(decSense.HasValue)
-                                            if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
-                                               decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
-                                            {
-                                                mediaTest.SupportsReadLong = true;
-                                                if(decSense.Value.InformationValid && decSense.Value.ILI)
-                                                {
-                                                    mediaTest.LongBlockSize =
-                                                        0xFFFF - (decSense.Value.Information & 0xFFFF);
-                                                    mediaTest.LongBlockSizeSpecified = true;
-                                                }
-                                            }
-                                    }
-
-                                    if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
-                                        if(mediaTest.BlockSize == 512)
-                                            foreach(ushort testSize in new[]
-                                            {
-                                                // Long sector sizes for floppies
-                                                514,
-                                                // Long sector sizes for SuperDisk
-                                                536, 558,
-                                                // Long sector sizes for 512-byte magneto-opticals
-                                                600, 610, 630
-                                            })
-                                            {
-                                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                       testSize, timeout, out duration);
-                                                if(!sense && !dev.Error)
-                                                {
-                                                    mediaTest.SupportsReadLong = true;
-                                                    mediaTest.LongBlockSize = testSize;
-                                                    mediaTest.LongBlockSizeSpecified = true;
-                                                    break;
-                                                }
-                                            }
-                                        else if(mediaTest.BlockSize == 1024)
-                                            foreach(ushort testSize in new[]
-                                            {
-                                                // Long sector sizes for floppies
-                                                1026,
-                                                // Long sector sizes for 1024-byte magneto-opticals
-                                                1200
-                                            })
-                                            {
-                                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                       testSize, timeout, out duration);
-                                                if(!sense && !dev.Error)
-                                                {
-                                                    mediaTest.SupportsReadLong = true;
-                                                    mediaTest.LongBlockSize = testSize;
-                                                    mediaTest.LongBlockSizeSpecified = true;
-                                                    break;
-                                                }
-                                            }
-                                        else if(mediaTest.BlockSize == 2048)
-                                        {
-                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380,
+                                            DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
+                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
                                                                    timeout, out duration);
-                                            if(!sense && !dev.Error)
+                                            if(!sense)
                                             {
-                                                mediaTest.SupportsReadLong = true;
-                                                mediaTest.LongBlockSize = 2380;
+                                                mediaTest.LongBlockSize = i;
                                                 mediaTest.LongBlockSizeSpecified = true;
-                                            }
-                                        }
-                                        else if(mediaTest.BlockSize == 4096)
-                                        {
-                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760,
-                                                                   timeout, out duration);
-                                            if(!sense && !dev.Error)
-                                            {
-                                                mediaTest.SupportsReadLong = true;
-                                                mediaTest.LongBlockSize = 4760;
-                                                mediaTest.LongBlockSizeSpecified = true;
-                                            }
-                                        }
-                                        else if(mediaTest.BlockSize == 8192)
-                                        {
-                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424,
-                                                                   timeout, out duration);
-                                            if(!sense && !dev.Error)
-                                            {
-                                                mediaTest.SupportsReadLong = true;
-                                                mediaTest.LongBlockSize = 9424;
-                                                mediaTest.LongBlockSizeSpecified = true;
-                                            }
-                                        }
-
-                                    if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
-                                    {
-                                        pressedKey = new ConsoleKeyInfo();
-                                        while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
-                                        {
-                                            DicConsole
-                                                .Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
-                                            pressedKey = System.Console.ReadKey();
-                                            DicConsole.WriteLine();
-                                        }
-
-                                        if(pressedKey.Key == ConsoleKey.Y)
-                                        {
-                                            for(ushort i = (ushort)mediaTest.BlockSize; i <= ushort.MaxValue; i++)
-                                            {
-                                                DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
-                                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
-                                                                       timeout, out duration);
-                                                if(!sense)
-                                                {
-                                                    mediaTest.LongBlockSize = i;
-                                                    mediaTest.LongBlockSizeSpecified = true;
-                                                    break;
-                                                }
-
-                                                if(i == ushort.MaxValue) break;
+                                                break;
                                             }
 
-                                            DicConsole.WriteLine();
+                                            if(i == ushort.MaxValue) break;
                                         }
+
+                                        DicConsole.WriteLine();
                                     }
-
-                                    if(debug && mediaTest.SupportsReadLong && mediaTest.LongBlockSizeSpecified &&
-                                       mediaTest.LongBlockSize != mediaTest.BlockSize)
-                                    {
-                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                               (ushort)mediaTest.LongBlockSize, timeout, out duration);
-                                        if(!sense)
-                                            DataFile.WriteTo("SCSI Report", "readlong10",
-                                                             "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
-                                                             buffer);
-                                    }
-
-                                    mediaTest.CanReadMediaSerialSpecified = true;
-                                    DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
-                                    mediaTest.CanReadMediaSerial =
-                                        !dev.ReadMediaSerialNumber(out buffer, out senseBuffer, timeout, out duration);
                                 }
 
-                                mediaTests.Add(mediaTest);
+                                if(debug && mediaTest.SupportsReadLong && mediaTest.LongBlockSizeSpecified &&
+                                   mediaTest.LongBlockSize != mediaTest.BlockSize)
+                                {
+                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                           (ushort)mediaTest.LongBlockSize, timeout, out duration);
+                                    if(!sense)
+                                        DataFile.WriteTo("SCSI Report", "readlong10",
+                                                         "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
+                                                         buffer);
+                                }
+
+                                mediaTest.CanReadMediaSerialSpecified = true;
+                                DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
+                                mediaTest.CanReadMediaSerial =
+                                    !dev.ReadMediaSerialNumber(out buffer, out senseBuffer, timeout, out duration);
                             }
+
+                            mediaTests.Add(mediaTest);
                         }
 
                         report.SCSI.RemovableMedias = mediaTests.ToArray();
@@ -807,13 +803,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 {
                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout,
                                                            out duration);
-                                    if(!sense && !dev.Error)
-                                    {
-                                        report.SCSI.ReadCapabilities.SupportsReadLong = true;
-                                        report.SCSI.ReadCapabilities.LongBlockSize = testSize;
-                                        report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
-                                        break;
-                                    }
+                                    if(sense || dev.Error) continue;
+
+                                    report.SCSI.ReadCapabilities.SupportsReadLong = true;
+                                    report.SCSI.ReadCapabilities.LongBlockSize = testSize;
+                                    report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                    break;
                                 }
                             else if(report.SCSI.ReadCapabilities.BlockSize == 1024)
                                 foreach(ushort testSize in new[]
@@ -826,13 +821,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 {
                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout,
                                                            out duration);
-                                    if(!sense && !dev.Error)
-                                    {
-                                        report.SCSI.ReadCapabilities.SupportsReadLong = true;
-                                        report.SCSI.ReadCapabilities.LongBlockSize = testSize;
-                                        report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
-                                        break;
-                                    }
+                                    if(sense || dev.Error) continue;
+
+                                    report.SCSI.ReadCapabilities.SupportsReadLong = true;
+                                    report.SCSI.ReadCapabilities.LongBlockSize = testSize;
+                                    report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                    break;
                                 }
                             else if(report.SCSI.ReadCapabilities.BlockSize == 2048)
                             {

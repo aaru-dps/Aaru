@@ -162,33 +162,32 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Partition description:");
                             DicConsole.WriteLine(partitions[i].Description);
 
-                            if(options.SearchForFilesystems)
+                            if(!options.SearchForFilesystems) continue;
+
+                            DicConsole.WriteLine("Identifying filesystem on partition");
+
+                            Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                            if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
+                            else if(idPlugins.Count > 1)
                             {
-                                DicConsole.WriteLine("Identifying filesystem on partition");
+                                DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
 
-                                Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
-                                if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
-                                else if(idPlugins.Count > 1)
-                                {
-                                    DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
-
-                                    foreach(string pluginName in idPlugins)
-                                        if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
-                                        {
-                                            DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
-                                            plugin.GetInformation(imageFormat, partitions[i], out information);
-                                            DicConsole.Write(information);
-                                            Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                                        }
-                                }
-                                else
-                                {
-                                    plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
-                                    DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
-                                    plugin.GetInformation(imageFormat, partitions[i], out information);
-                                    DicConsole.Write(information);
-                                    Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
-                                }
+                                foreach(string pluginName in idPlugins)
+                                    if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                                    {
+                                        DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
+                                        plugin.GetInformation(imageFormat, partitions[i], out information);
+                                        DicConsole.Write(information);
+                                        Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                    }
+                            }
+                            else
+                            {
+                                plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+                                DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
+                                plugin.GetInformation(imageFormat, partitions[i], out information);
+                                DicConsole.Write(information);
+                                Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
                             }
                         }
                     }

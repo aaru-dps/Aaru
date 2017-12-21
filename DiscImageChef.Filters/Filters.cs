@@ -49,11 +49,10 @@ namespace DiscImageChef.Filters
             foreach(Type type in assembly.GetTypes())
                 try
                 {
-                    if(type.IsSubclassOf(typeof(Filter)))
-                    {
-                        Filter filter = (Filter)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                        if(!filtersList.ContainsKey(filter.Name.ToLower())) filtersList.Add(filter.Name.ToLower(), filter);
-                    }
+                    if(!type.IsSubclassOf(typeof(Filter))) continue;
+
+                    Filter filter = (Filter)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                    if(!filtersList.ContainsKey(filter.Name.ToLower())) filtersList.Add(filter.Name.ToLower(), filter);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
         }
@@ -65,23 +64,21 @@ namespace DiscImageChef.Filters
             foreach(Filter filter in filtersList.Values)
                 if(filter.UUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 {
-                    if(filter.Identify(path))
-                    {
-                        Filter foundFilter =
-                            (Filter)filter.GetType().GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                        foundFilter.Open(path);
+                    if(!filter.Identify(path)) continue;
 
-                        if(foundFilter.IsOpened()) return foundFilter;
-                    }
+                    Filter foundFilter =
+                        (Filter)filter.GetType().GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                    foundFilter.Open(path);
+
+                    if(foundFilter.IsOpened()) return foundFilter;
                 }
                 else noFilter = filter;
 
-            if(noFilter.Identify(path))
-            {
-                noFilter.Open(path);
+            if(!noFilter.Identify(path)) return noFilter;
 
-                if(noFilter.IsOpened()) return noFilter;
-            }
+            noFilter.Open(path);
+
+            if(noFilter.IsOpened()) return noFilter;
 
             return noFilter;
         }

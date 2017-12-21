@@ -145,19 +145,18 @@ namespace DiscImageChef.Filesystems.LisaFS
                 {
                     ExtentFile ext;
                     error = ReadExtentsFile(entV2.fileID, out ext);
-                    if(error == Errno.NoError)
-                    {
-                        CatalogEntry entV3 = new CatalogEntry();
-                        entV3.fileID = entV2.fileID;
-                        entV3.filename = new byte[32];
-                        Array.Copy(entV2.filename, 0, entV3.filename, 0, entV2.filenameLen);
-                        entV3.fileType = entV2.fileType;
-                        entV3.length = (int)srecords[entV2.fileID].filesize;
-                        entV3.dtc = ext.dtc;
-                        entV3.dtm = ext.dtm;
+                    if(error != Errno.NoError) continue;
 
-                        catalogCache.Add(entV3);
-                    }
+                    CatalogEntry entV3 = new CatalogEntry();
+                    entV3.fileID = entV2.fileID;
+                    entV3.filename = new byte[32];
+                    Array.Copy(entV2.filename, 0, entV3.filename, 0, entV2.filenameLen);
+                    entV3.fileType = entV2.fileType;
+                    entV3.length = (int)srecords[entV2.fileID].filesize;
+                    entV3.dtc = ext.dtc;
+                    entV3.dtm = ext.dtm;
+
+                    catalogCache.Add(entV3);
                 }
 
                 return Errno.NoError;
@@ -173,11 +172,10 @@ namespace DiscImageChef.Filesystems.LisaFS
                 LisaTag.PriamTag catTag;
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out catTag);
 
-                if(catTag.fileID == FILEID_CATALOG && catTag.relPage == 0)
-                {
-                    firstCatalogBlock = device.ReadSectors(i, 4);
-                    break;
-                }
+                if(catTag.fileID != FILEID_CATALOG || catTag.relPage != 0) continue;
+
+                firstCatalogBlock = device.ReadSectors(i, 4);
+                break;
             }
 
             // Catalog not found

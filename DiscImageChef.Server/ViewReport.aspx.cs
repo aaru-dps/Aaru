@@ -584,11 +584,10 @@ namespace DiscImageChef.Server
 
                     number = Convert.ToUInt16(_line.Substring(1, 4), 16);
 
-                    if(number == product)
-                    {
-                        productDescription = _line.Substring(7);
-                        return;
-                    }
+                    if(number != product) continue;
+
+                    productDescription = _line.Substring(7);
+                    return;
                 }
                 else
                 {
@@ -598,11 +597,10 @@ namespace DiscImageChef.Server
                     try { number = Convert.ToUInt16(_line.Substring(0, 4), 16); }
                     catch(FormatException) { continue; }
 
-                    if(number == vendor)
-                    {
-                        vendorDescription = _line.Substring(6);
-                        inManufacturer = true;
-                    }
+                    if(number != vendor) continue;
+
+                    vendorDescription = _line.Substring(6);
+                    inManufacturer = true;
                 }
             }
         }
