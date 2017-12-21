@@ -157,7 +157,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
             aborted = false;
-            System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
+            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 

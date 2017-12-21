@@ -87,7 +87,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             ulong errored = 0;
             DataFile dumpFile;
             bool aborted = false;
-            System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
+            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             dumpLog.WriteLine("Initializing reader.");
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);

@@ -82,7 +82,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             ulong errored = 0;
             DataFile dumpFile;
             bool aborted = false;
-            System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
+            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             // We discarded all discs that falsify a TOC before requesting a real TOC
             // No TOC, no CD (or an empty one)

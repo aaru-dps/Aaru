@@ -77,7 +77,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             Checksum dataChk;
             DataFile dumpFile;
             bool aborted = false;
-            System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
+            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             dumpLog.WriteLine("Reading Xbox Security Sector.");
             sense = dev.KreonExtractSs(out byte[] ssBuf, out byte[] senseBuf, dev.Timeout, out double duration);

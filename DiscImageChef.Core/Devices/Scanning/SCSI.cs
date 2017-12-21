@@ -236,7 +236,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             results.UnreadableSectors = new List<ulong>();
 
             aborted = false;
-            System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
+            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             bool readcd = false;
 

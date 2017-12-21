@@ -116,7 +116,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 byte seekSc;
 
                 aborted = false;
-                System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
+                System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
                 if(ataReader.IsLba)
                 {

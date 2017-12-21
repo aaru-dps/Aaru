@@ -173,7 +173,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Checksum dataChk;
 
                     aborted = false;
-                    System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
+                    System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
                     DataFile dumpFile;
 

@@ -410,7 +410,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             partitionChk = new Checksum();
 
             aborted = false;
-            System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
+            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             while(currentPartition < totalPartitions)
             {
