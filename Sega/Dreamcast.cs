@@ -175,7 +175,6 @@ namespace DiscImageChef.Decoders.Sega
 
             IPBinInformation.AppendLine("Regions supported:");
             foreach(byte region in ipbin.region_codes)
-            {
                 switch((char)region)
                 {
                     case 'J':
@@ -192,7 +191,6 @@ namespace DiscImageChef.Decoders.Sega
                         IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
                         break;
                 }
-            }
 
             int iPeripherals = int.Parse(Encoding.ASCII.GetString(ipbin.peripherals), NumberStyles.HexNumber);
 

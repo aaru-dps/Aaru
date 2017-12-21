@@ -610,15 +610,12 @@ namespace DiscImageChef.Decoders.SCSI
                            descriptor.CodeSet == IdentificationCodeSet.UTF8)
                             sb.AppendFormat("\tSCSI name string identifier: {0}", descriptor.ASCII).AppendLine();
                         else
-                        {
                             sb.AppendFormat("\tSCSI name string identifier (hex): {0}",
                                             PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                        }
                         break;
                     case IdentificationTypes.ProtocolSpecific:
                     {
                         if(descriptor.PIV)
-                        {
                             switch(descriptor.ProtocolIdentifier)
                             {
                                 case ProtocolIdentifiers.ADT:
@@ -704,7 +701,6 @@ namespace DiscImageChef.Decoders.SCSI
                                         .AppendLine();
                                     break;
                             }
-                        }
                     }
 
                         break;
@@ -1211,7 +1207,6 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(page.PeripheralDeviceType == PeripheralDeviceTypes.DirectAccess ||
                page.PeripheralDeviceType == PeripheralDeviceTypes.SCSIZonedBlockDevice)
-            {
                 switch(page.SPT)
                 {
                     case 0:
@@ -1240,7 +1235,6 @@ namespace DiscImageChef.Decoders.SCSI
                           .AppendLine();
                         break;
                 }
-            }
             else if(page.PeripheralDeviceType == PeripheralDeviceTypes.SequentialAccess && page.SPT == 1)
                 sb.AppendLine("Logical unit supports logical block protection");
 
@@ -2302,7 +2296,6 @@ namespace DiscImageChef.Decoders.SCSI
                 Match servoMatch;
 
                 for(int pos = 5; pos < pageResponse.Length; pos++)
-                {
                     if(pageResponse[pos] == 0x00)
                     {
                         string str = StringHandlers.CToString(array.ToArray());
@@ -2329,7 +2322,6 @@ namespace DiscImageChef.Decoders.SCSI
                         array = new List<byte>();
                     }
                     else array.Add(pageResponse[pos]);
-                }
 
                 return decoded;
             }

@@ -279,7 +279,6 @@ namespace DiscImageChef.Decoders.DVD
             sb.AppendFormat("DDS has been updated {0} times", decoded.UpdateCount).AppendLine();
 
             if(decoded.Groups == 24)
-            {
                 for(int i = 0; i < decoded.GroupCertificationFlags.Length; i++)
                 {
                     if(decoded.GroupCertificationFlags[i].InProcess)
@@ -291,7 +290,6 @@ namespace DiscImageChef.Decoders.DVD
                     if(decoded.GroupCertificationFlags[i].UserCertification)
                         sb.AppendFormat("Group {0} has been certified by an user", i).AppendLine();
                 }
-            }
 
             if(decoded.Groups == 1)
             {

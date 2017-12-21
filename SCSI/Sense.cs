@@ -335,7 +335,6 @@ namespace DiscImageChef.Decoders.SCSI
 
             int offset = 8;
             while(offset < sense.Length)
-            {
                 if(offset + 2 < sense.Length)
                 {
                     byte descType = sense[offset];
@@ -349,7 +348,6 @@ namespace DiscImageChef.Decoders.SCSI
                     offset += descLen;
                 }
                 else break;
-            }
 
             return decoded;
         }
@@ -401,7 +399,6 @@ namespace DiscImageChef.Decoders.SCSI
             if(decoded.AdditionalLength < 10) return sb.ToString();
 
             if(decoded.SKSV)
-            {
                 switch(decoded.SenseKey)
                 {
                     case SenseKeys.IllegalRequest:
@@ -428,7 +425,6 @@ namespace DiscImageChef.Decoders.SCSI
                         sb.AppendFormat("Actual retry count is {0}", decoded.SenseKeySpecific & 0xFFFF).AppendLine();
                         break;
                 }
-            }
 
             return sb.ToString();
         }
@@ -447,14 +443,12 @@ namespace DiscImageChef.Decoders.SCSI
             if(decoded.Descriptors == null || decoded.Descriptors.Count == 0) return sb.ToString();
 
             foreach(KeyValuePair<byte, byte[]> kvp in decoded.Descriptors)
-            {
                 switch(kvp.Key)
                 {
                     case 0x00:
                         sb.AppendLine(PrettifyDescriptor00(kvp.Value));
                         break;
                 }
-            }
 
             return sb.ToString();
         }

@@ -426,14 +426,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if(decoded.DAC_V) sb.AppendFormat("Disc application code: {0}", decoded.DiscApplicationCode).AppendLine();
 
             if(decoded.OPCTables != null)
-            {
                 foreach(OPCTable table in decoded.OPCTables)
-                {
                     sb.AppendFormat("OPC values for {0}Kbit/sec.: {1}, {2}, {3}, {4}, {5}, {6}", table.Speed,
                                     table.OPCValues[0], table.OPCValues[1], table.OPCValues[2], table.OPCValues[3],
                                     table.OPCValues[4], table.OPCValues[5]).AppendLine();
-                }
-            }
 
             return sb.ToString();
         }

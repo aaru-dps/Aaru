@@ -223,10 +223,8 @@ namespace DiscImageChef.Decoders.MMC
             double unit;
 
             if((csd.HPIFeatures & 0x01) == 0x01)
-            {
                 if((csd.HPIFeatures & 0x02) == 0x02) sb.AppendLine("\tDevice implements HPI using CMD12");
                 else sb.AppendLine("\tDevice implements HPI using CMD13");
-            }
 
             if((csd.BackgroundOperationsSupport & 0x01) == 0x01)
                 sb.AppendLine("\tDevice supports background operations");

@@ -421,7 +421,6 @@ namespace DiscImageChef.Decoders.Xbox
             }
 
             if(decoded.DataAreaStartPSN > 0)
-            {
                 if(decoded.DataAreaEndPSN > 0)
                 {
                     sb.AppendFormat("Data area starts at PSN {0:X}h", decoded.DataAreaStartPSN).AppendLine();
@@ -430,7 +429,6 @@ namespace DiscImageChef.Decoders.Xbox
                         sb.AppendFormat("Layer 0 ends at PSN {0:X}h", decoded.Layer0EndPSN).AppendLine();
                 }
                 else sb.AppendLine("Disc is empty");
-            }
             else sb.AppendLine("Disc is empty");
 
             sb.AppendLine("Challenges:");
