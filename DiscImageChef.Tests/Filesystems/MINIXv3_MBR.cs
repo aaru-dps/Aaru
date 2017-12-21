@@ -39,17 +39,17 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class MINIXv3_MBR
     {
-        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz",};
+        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz"};
 
-        readonly ulong[] sectors = {4194304,};
+        readonly ulong[] sectors = {4194304};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {523151,};
+        readonly long[] clusters = {523151};
 
-        readonly int[] clustersize = {4096,};
+        readonly int[] clustersize = {4096};
 
-        readonly string[] types = {"Minix v3",};
+        readonly string[] types = {"Minix v3"};
 
         [Test]
         public void Test()

@@ -39,21 +39,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class ReFS_MBR
     {
-        readonly string[] testfiles = {"win10.vdi.lz",};
+        readonly string[] testfiles = {"win10.vdi.lz"};
 
-        readonly ulong[] sectors = {67108864,};
+        readonly ulong[] sectors = {67108864};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {8388096,};
+        readonly long[] clusters = {8388096};
 
-        readonly int[] clustersize = {4096,};
+        readonly int[] clustersize = {4096};
 
-        readonly string[] volumename = {null,};
+        readonly string[] volumename = {null};
 
-        readonly string[] volumeserial = {"UNKNOWN",};
+        readonly string[] volumeserial = {"UNKNOWN"};
 
-        readonly string[] oemid = {null,};
+        readonly string[] oemid = {null};
 
         [Test]
         public void Test()

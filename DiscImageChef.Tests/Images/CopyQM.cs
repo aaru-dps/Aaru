@@ -41,25 +41,25 @@ namespace DiscImageChef.Tests.Images
         readonly string[] testfiles =
         {
             "mf2dd.cqm.lz", "mf2dd_fdformat_800.cqm.lz", "mf2dd_freedos.cqm.lz", "mf2hd_blind.cqm.lz", "mf2hd.cqm.lz",
-            "mf2hd_fdformat_168.cqm.lz", "mf2hd_freedos.cqm.lz",
+            "mf2hd_fdformat_168.cqm.lz", "mf2hd_freedos.cqm.lz"
         };
 
-        readonly ulong[] sectors = {1440, 1600, 1600, 2880, 2880, 3360, 3360,};
+        readonly ulong[] sectors = {1440, 1600, 1600, 2880, 2880, 3360, 3360};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512};
 
         // TODO: Add "unknown" media types
         readonly MediaType[] mediatypes =
         {
             MediaType.DOS_35_DS_DD_9, MediaType.Unknown, MediaType.Unknown, MediaType.DOS_35_HD, MediaType.DOS_35_HD,
-            MediaType.DMF, MediaType.DMF,
+            MediaType.DMF, MediaType.DMF
         };
 
         readonly string[] md5s =
         {
             "de3f85896f771b7e5bc4c9e3926d64e4", "c533488a21098a62c85f1649abda2803", "1ff7649b679ba22ff20d39ff717dbec8",
             "b4a602f67903c46eef62addb0780aa56", "b4a602f67903c46eef62addb0780aa56", "03c2af6a8ebf4bd6f530335de34ae5dd",
-            "1a9f2eeb3cbeeb057b9a9a5c6e9b0cc6",
+            "1a9f2eeb3cbeeb057b9a9a5c6e9b0cc6"
         };
 
         [Test]

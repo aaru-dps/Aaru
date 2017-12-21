@@ -45,17 +45,17 @@ namespace DiscImageChef.Tests.Images
             "md1dd_belelung.dcf.lz", "md1dd_fat.dcf.lz", "md2dd8_all.dcf.lz", "md2dd8_belelung.dcf.lz",
             "md2dd8_fat.dcf.lz", "md2dd_all.dcf.lz", "md2dd_belelung.dcf.lz", "md2dd_fat.dcf.lz", "md2hd_all.dcf.lz",
             "md2hd_belelung.dcf.lz", "md2hd_fat.dcf.lz", "mf2dd_all.dcf.lz", "mf2dd_belelung.dcf.lz",
-            "mf2dd_fat.dcf.lz", "mf2hd_all.dcf.lz", "mf2hd_belelung.dcf.lz", "mf2hd_fat.dcf.lz",
+            "mf2dd_fat.dcf.lz", "mf2hd_all.dcf.lz", "mf2hd_belelung.dcf.lz", "mf2hd_fat.dcf.lz"
         };
 
         readonly ulong[] sectors =
         {
             320, 320, 320, 360, 360, 360, 640, 640, 640, 720, 720, 720, 2400, 2400, 2400, 1440, 1440, 1440, 2880, 2880,
-            2880,
+            2880
         };
 
         readonly uint[] sectorsize =
-            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,};
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
 
         readonly MediaType[] mediatypes =
         {
@@ -64,7 +64,7 @@ namespace DiscImageChef.Tests.Images
             MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_DS_DD_9,
             MediaType.DOS_525_HD, MediaType.DOS_525_HD, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_35_HD,
-            MediaType.DOS_35_HD,
+            MediaType.DOS_35_HD
         };
 
         readonly string[] md5s =
@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Images
             "d2a33090ec03bfb536e7356deacf4bbc", "d2a33090ec03bfb536e7356deacf4bbc", "d2a33090ec03bfb536e7356deacf4bbc",
             "181f3bc62f0b90f74af9d8027ebf7512", "181f3bc62f0b90f74af9d8027ebf7512", "181f3bc62f0b90f74af9d8027ebf7512",
             "783559ee5e774515d5e7d2feab9c333e", "783559ee5e774515d5e7d2feab9c333e", "783559ee5e774515d5e7d2feab9c333e",
-            "91f3fde8d56a536cdda4c6758e5dbc93", "91f3fde8d56a536cdda4c6758e5dbc93", "91f3fde8d56a536cdda4c6758e5dbc93",
+            "91f3fde8d56a536cdda4c6758e5dbc93", "91f3fde8d56a536cdda4c6758e5dbc93", "91f3fde8d56a536cdda4c6758e5dbc93"
         };
 
         [Test]

@@ -39,19 +39,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class exFAT_GPT
     {
-        readonly string[] testfiles = {"macosx_10.11.vdi.lz",};
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz"};
 
-        readonly ulong[] sectors = {262144,};
+        readonly ulong[] sectors = {262144};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {32208,};
+        readonly long[] clusters = {32208};
 
-        readonly int[] clustersize = {4096,};
+        readonly int[] clustersize = {4096};
 
-        readonly string[] volumename = {null,};
+        readonly string[] volumename = {null};
 
-        readonly string[] volumeserial = {"595ACC39",};
+        readonly string[] volumeserial = {"595ACC39"};
 
         [Test]
         public void Test()

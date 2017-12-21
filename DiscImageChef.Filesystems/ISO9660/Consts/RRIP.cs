@@ -107,7 +107,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             Backup = 1 << 4,
             Expiration = 1 << 5,
             Effective = 1 << 6,
-            LongFormat = 1 << 7,
+            LongFormat = 1 << 7
         }
     }
 }

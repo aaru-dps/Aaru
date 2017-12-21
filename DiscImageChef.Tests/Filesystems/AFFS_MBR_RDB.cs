@@ -39,19 +39,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class AFFS_MBR_RDB
     {
-        readonly string[] testfiles = {"aros.vdi.lz", "aros_intl.vdi.lz",};
+        readonly string[] testfiles = {"aros.vdi.lz", "aros_intl.vdi.lz"};
 
-        readonly ulong[] sectors = {409600, 409600,};
+        readonly ulong[] sectors = {409600, 409600};
 
-        readonly uint[] sectorsize = {512, 512,};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {406224, 406224,};
+        readonly long[] clusters = {406224, 406224};
 
-        readonly int[] clustersize = {512, 512,};
+        readonly int[] clustersize = {512, 512};
 
-        readonly string[] volumename = {"Volume label", "Volume label",};
+        readonly string[] volumename = {"Volume label", "Volume label"};
 
-        readonly string[] volumeserial = {"A58348CE", "A5833CD0",};
+        readonly string[] volumeserial = {"A58348CE", "A5833CD0"};
 
         [Test]
         public void Test()

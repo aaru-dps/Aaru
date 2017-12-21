@@ -37,11 +37,11 @@ namespace DiscImageChef.Tests.Devices
     [TestFixture]
     public class LS120
     {
-        readonly string[] testfiles = {"ls120.bin.lz", "mf2dd.bin.lz", "mf2hd.bin.lz",};
+        readonly string[] testfiles = {"ls120.bin.lz", "mf2dd.bin.lz", "mf2hd.bin.lz"};
 
-        readonly MediaType[] mediatypes = {MediaType.LS120, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,};
+        readonly MediaType[] mediatypes = {MediaType.LS120, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD};
 
-        readonly ulong[] sectors = {246528, 1440, 2880,};
+        readonly ulong[] sectors = {246528, 1440, 2880};
 
         readonly uint[] sectorsize = {512, 512, 512};
 

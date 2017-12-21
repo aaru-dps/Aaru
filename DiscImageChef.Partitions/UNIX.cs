@@ -213,7 +213,7 @@ namespace DiscImageChef.Partitions
                 Size = 512000,
                 Offset = 204378112,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RA80 =
@@ -283,7 +283,7 @@ namespace DiscImageChef.Partitions
                 Size = 512000,
                 Offset = 120940544,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RA81 =
@@ -386,7 +386,7 @@ namespace DiscImageChef.Partitions
                 Size = 512000,
                 Offset = 455716864,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RC25 =
@@ -467,7 +467,7 @@ namespace DiscImageChef.Partitions
                 Size = 50800,
                 Offset = 26009600,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RD31 =
@@ -526,7 +526,7 @@ namespace DiscImageChef.Partitions
                 Size = 16384,
                 Offset = 21262336,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RD32 =
@@ -596,7 +596,7 @@ namespace DiscImageChef.Partitions
                 Size = 16384,
                 Offset = 42584064,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RD51 =
@@ -655,7 +655,7 @@ namespace DiscImageChef.Partitions
                 Size = 16384,
                 Offset = 11042816,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RD52 =
@@ -725,7 +725,7 @@ namespace DiscImageChef.Partitions
                 Size = 16384,
                 Offset = 30949376,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RD53 =
@@ -795,7 +795,7 @@ namespace DiscImageChef.Partitions
                 Size = 16384,
                 Offset = 70983680,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RD54 =
@@ -865,7 +865,7 @@ namespace DiscImageChef.Partitions
                 Size = 16384,
                 Offset = 159318016,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RK06 =
@@ -924,7 +924,7 @@ namespace DiscImageChef.Partitions
                 Size = 22528,
                 Offset = 13865984,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RK07 =
@@ -983,7 +983,7 @@ namespace DiscImageChef.Partitions
                 Size = 22528,
                 Offset = 27517952,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RP02 =
@@ -1031,7 +1031,7 @@ namespace DiscImageChef.Partitions
                 Size = 14540800,
                 Offset = 5939200,
                 Sequence = 2
-            },
+            }
         };
 
         readonly Partition[] RP03 =
@@ -1079,7 +1079,7 @@ namespace DiscImageChef.Partitions
                 Size = 35020800,
                 Offset = 5939200,
                 Sequence = 2
-            },
+            }
         };
 
         readonly Partition[] RP04 =
@@ -1149,7 +1149,7 @@ namespace DiscImageChef.Partitions
                 Size = 22528,
                 Offset = 87938048,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RP06 =
@@ -1241,7 +1241,7 @@ namespace DiscImageChef.Partitions
                 Size = 22528,
                 Offset = 174400512,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RM02 =
@@ -1344,7 +1344,7 @@ namespace DiscImageChef.Partitions
                 Size = 32768,
                 Offset = 67387392,
                 Sequence = 8
-            },
+            }
         };
 
         readonly Partition[] RM05 =
@@ -1447,7 +1447,7 @@ namespace DiscImageChef.Partitions
                 Size = 32768,
                 Offset = 215711744,
                 Sequence = 8
-            },
+            }
         };
     }
 }

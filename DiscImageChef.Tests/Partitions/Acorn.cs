@@ -38,7 +38,7 @@ namespace DiscImageChef.Tests.Partitions
     [TestFixture]
     public class Acorn
     {
-        readonly string[] testfiles = {"linux_ics.vdi.lz",};
+        readonly string[] testfiles = {"linux_ics.vdi.lz"};
 
         readonly Partition[][] wanted =
         {
@@ -89,8 +89,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 84400,
                     Sequence = 3,
                     Start = 253522
-                },
-            },
+                }
+            }
         };
 
         [Test]

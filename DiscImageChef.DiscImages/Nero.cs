@@ -826,7 +826,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             /// Any DVD, old
             /// </summary>
-            NeroMtypDvdAnyOld = NeroMtypDvdM | NeroMtypDvdP | NeroMtypDvdRam,
+            NeroMtypDvdAnyOld = NeroMtypDvdM | NeroMtypDvdP | NeroMtypDvdRam
         }
         #endregion
 

@@ -47,7 +47,7 @@ namespace DiscImageChef.Tests.Partitions
             "msdos_6.22.vdi.lz", "multiuserdos_7.22r04.vdi.lz", "novelldos_7.00.vdi.lz", "opendos_7.01.vdi.lz",
             "parted.vdi.lz", "pcdos_2000.vdi.lz", "pcdos_2.00.vdi.lz", "pcdos_2.10.vdi.lz", "pcdos_3.00.vdi.lz",
             "pcdos_3.10.vdi.lz", "pcdos_3.30.vdi.lz", "pcdos_4.00.vdi.lz", "pcdos_5.00.vdi.lz", "pcdos_6.10.vdi.lz",
-            "win95.vdi.lz", "win96osr25.vdi.lz", "winnt_3.10.vdi.lz",
+            "win95.vdi.lz", "win96osr25.vdi.lz", "winnt_3.10.vdi.lz"
         };
 
         readonly Partition[][] wanted =
@@ -90,7 +90,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 303408,
                     Sequence = 3,
                     Start = 352800
-                },
+                }
             },
             // Darwin 1.4.1
             new[]
@@ -112,7 +112,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 204624,
                     Sequence = 1,
                     Start = 818496
-                },
+                }
             },
             // Darwin 6.0.2
             new[]
@@ -152,7 +152,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 488880,
                     Sequence = 3,
                     Start = 532224
-                },
+                }
             },
             // Darwin 8.0.1
             new[]
@@ -192,7 +192,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 347937,
                     Sequence = 3,
                     Start = 676063
-                },
+                }
             },
             // DR-DOS 3.40
             new[]
@@ -232,7 +232,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 365841,
                     Sequence = 3,
                     Start = 656271
-                },
+                }
             },
             // DR-DOS 3.41
             new[]
@@ -272,7 +272,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 668241,
                     Sequence = 3,
                     Start = 353871
-                },
+                }
             },
             // DR-DOS 5.00
             new[]
@@ -321,7 +321,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 254961,
                     Sequence = 4,
                     Start = 767151
-                },
+                }
             },
             // DR-DOS 6.00
             new[]
@@ -370,7 +370,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 567441,
                     Sequence = 4,
                     Start = 454671
-                },
+                }
             },
             // DR-DOS 7.02
             new[]
@@ -419,7 +419,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 209601,
                     Sequence = 4,
                     Start = 812511
-                },
+                }
             },
             // DR-DOS 7.03
             new[]
@@ -468,7 +468,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 152145,
                     Sequence = 4,
                     Start = 869967
-                },
+                }
             },
             // DR-DOS 8.0
             new[]
@@ -517,7 +517,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 115857,
                     Sequence = 4,
                     Start = 906255
-                },
+                }
             },
             // Linux
             new[]
@@ -566,7 +566,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 49152,
                     Sequence = 4,
                     Start = 212992
-                },
+                }
             },
             // Mac OS X 10.3
             new[]
@@ -624,7 +624,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 204752,
                     Sequence = 5,
                     Start = 819248
-                },
+                }
             },
             // Mac OS X 10.4
             new[]
@@ -682,7 +682,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 204622,
                     Sequence = 5,
                     Start = 819378
-                },
+                }
             },
             // MS-DOS 3.30A
             new[]
@@ -830,7 +830,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 39249,
                     Sequence = 15,
                     Start = 982863
-                },
+                }
             },
             // MS-DOS 5.00
             new[]
@@ -951,7 +951,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 13041,
                     Sequence = 12,
                     Start = 1009071
-                },
+                }
             },
             // MS-DOS 6.00
             new[]
@@ -1036,7 +1036,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 41265,
                     Sequence = 8,
                     Start = 980847
-                },
+                }
             },
             // MS-DOS 6.20
             new[]
@@ -1094,7 +1094,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 16065,
                     Sequence = 5,
                     Start = 1006047
-                },
+                }
             },
             // MS-DOS 6.21
             new[]
@@ -1161,7 +1161,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 19089,
                     Sequence = 6,
                     Start = 1003023
-                },
+                }
             },
             // MS-DOS 6.22
             new[]
@@ -1210,7 +1210,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 37233,
                     Sequence = 4,
                     Start = 984879
-                },
+                }
             },
             // Multiuser DOS 7.22 release 04
             new[]
@@ -1259,7 +1259,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 565425,
                     Sequence = 4,
                     Start = 456687
-                },
+                }
             },
             // Novell DOS 7.0
             new[]
@@ -1308,7 +1308,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 117873,
                     Sequence = 4,
                     Start = 904239
-                },
+                }
             },
             // OpenDOS 7.01
             new[]
@@ -1357,7 +1357,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 466641,
                     Sequence = 4,
                     Start = 555471
-                },
+                }
             },
             // Parted
             new[]
@@ -1388,7 +1388,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 129024,
                     Sequence = 2,
                     Start = 133120
-                },
+                }
             },
             // PC-DOS 2000
             new[]
@@ -1437,7 +1437,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 57393,
                     Sequence = 4,
                     Start = 964719
-                },
+                }
             },
             // PC-DOS 2.00
             new[]
@@ -1450,7 +1450,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 1022111,
                     Sequence = 0,
                     Start = 1
-                },
+                }
             },
             // PC-DOS 2.10
             new[]
@@ -1463,7 +1463,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 1022111,
                     Sequence = 0,
                     Start = 1
-                },
+                }
             },
             // PC-DOS 3.00
             new[]
@@ -1476,7 +1476,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 66465,
                     Sequence = 0,
                     Start = 63
-                },
+                }
             },
             // PC-DOS 3.10
             new[]
@@ -1489,7 +1489,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 66465,
                     Sequence = 0,
                     Start = 63
-                },
+                }
             },
             // PC-DOS 3.30
             new[]
@@ -1637,7 +1637,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 39249,
                     Sequence = 15,
                     Start = 982863
-                },
+                }
             },
             // PC-DOS 4.00
             new[]
@@ -1686,7 +1686,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 237825,
                     Sequence = 4,
                     Start = 784287
-                },
+                }
             },
             // PC-DOS 5.00
             new[]
@@ -1735,7 +1735,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 257985,
                     Sequence = 4,
                     Start = 764127
-                },
+                }
             },
             // PC-DOS 6.10
             new[]
@@ -1784,7 +1784,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 319473,
                     Sequence = 4,
                     Start = 702639
-                },
+                }
             },
             // Windows 95
             new[]
@@ -1833,7 +1833,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 17073,
                     Sequence = 4,
                     Start = 1006047
-                },
+                }
             },
             // Windows 95 OSR 2.5
             new[]
@@ -1891,7 +1891,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 17073,
                     Sequence = 5,
                     Start = 1006047
-                },
+                }
             },
             // Windows NT 3.10
             new[]
@@ -1949,8 +1949,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 60480,
                     Sequence = 5,
                     Start = 962640
-                },
-            },
+                }
+            }
         };
 
         [Test]

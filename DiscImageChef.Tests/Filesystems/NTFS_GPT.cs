@@ -39,21 +39,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class NTFS_GPT
     {
-        readonly string[] testfiles = {"haiku_hrev51259.vdi.lz",};
+        readonly string[] testfiles = {"haiku_hrev51259.vdi.lz"};
 
-        readonly ulong[] sectors = {2097152,};
+        readonly ulong[] sectors = {2097152};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {261887,};
+        readonly long[] clusters = {261887};
 
-        readonly int[] clustersize = {4096,};
+        readonly int[] clustersize = {4096};
 
-        readonly string[] volumename = {null, null, null, null, null, null, null, null,};
+        readonly string[] volumename = {null, null, null, null, null, null, null, null};
 
-        readonly string[] volumeserial = {"106DA7693F7F6B3F",};
+        readonly string[] volumeserial = {"106DA7693F7F6B3F"};
 
-        readonly string[] oemid = {null,};
+        readonly string[] oemid = {null};
 
         [Test]
         public void Test()

@@ -38,19 +38,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class ZFS
     {
-        readonly string[] testfiles = {"netbsd_7.1.vdi.lz",};
+        readonly string[] testfiles = {"netbsd_7.1.vdi.lz"};
 
-        readonly ulong[] sectors = {33554432,};
+        readonly ulong[] sectors = {33554432};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {0,};
+        readonly long[] clusters = {0};
 
-        readonly int[] clustersize = {0,};
+        readonly int[] clustersize = {0};
 
-        readonly string[] volumename = {"NetBSD 7.1",};
+        readonly string[] volumename = {"NetBSD 7.1"};
 
-        readonly string[] volumeserial = {"2639895335654686206",};
+        readonly string[] volumeserial = {"2639895335654686206"};
 
         [Test]
         public void Test()

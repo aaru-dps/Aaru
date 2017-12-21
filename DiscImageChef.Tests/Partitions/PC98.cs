@@ -39,7 +39,7 @@ namespace DiscImageChef.Tests.Partitions
     public class PC98
     {
         readonly string[] testfiles =
-            {"msdos330.thd.lz", "msdos330_alt.thd.lz", "msdos500_epson.thd.lz", "msdos500.thd.lz", "msdos620.thd.lz",};
+            {"msdos330.thd.lz", "msdos330_alt.thd.lz", "msdos500_epson.thd.lz", "msdos500.thd.lz", "msdos620.thd.lz"};
 
         readonly Partition[][] wanted =
         {
@@ -117,7 +117,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 245256,
                     Sequence = 7,
                     Start = 752664
-                },
+                }
             },
             // NEC MS-DOS 3.30 (80Mb HDD)
             new[]
@@ -148,7 +148,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 94776,
                     Sequence = 2,
                     Start = 218064
-                },
+                }
             },
             // Epson MS-DOS 3.30
             new[]
@@ -224,7 +224,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 118799,
                     Sequence = 7,
                     Start = 887304
-                },
+                }
             },
             // NEC MS-DOS 5.00
             new[]
@@ -300,7 +300,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 139128,
                     Sequence = 7,
                     Start = 869352
-                },
+                }
             },
             // NEC MS-DOS 6.20
             new[]
@@ -367,8 +367,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 315216,
                     Sequence = 6,
                     Start = 697224
-                },
-            },
+                }
+            }
         };
 
         [Test]

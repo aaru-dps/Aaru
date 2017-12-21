@@ -41,13 +41,13 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles = {"linux_r3.5.vdi.lz", "linux_r3.6.vdi.lz"};
 
-        readonly ulong[] sectors = {262144, 262144,};
+        readonly ulong[] sectors = {262144, 262144};
 
-        readonly uint[] sectorsize = {512, 512,};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {32512, 32512,};
+        readonly long[] clusters = {32512, 32512};
 
-        readonly int[] clustersize = {4096, 4096,};
+        readonly int[] clustersize = {4096, 4096};
 
         readonly string[] reiserversion = {"Reiser 3.5 filesystem", "Reiser 3.6 filesystem"};
 

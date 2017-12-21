@@ -41,17 +41,17 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles = {"uae.vdi.lz", "aros.vdi.lz", "amigaos_4.0.vdi.lz", "amigaos_4.0_sfs2.vdi.lz"};
 
-        readonly ulong[] sectors = {1024128, 409600, 1024128, 1024128,};
+        readonly ulong[] sectors = {1024128, 409600, 1024128, 1024128};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512};
 
-        readonly long[] clusters = {127000, 407232, 511040, 511040,};
+        readonly long[] clusters = {127000, 407232, 511040, 511040};
 
-        readonly int[] clustersize = {2048, 512, 1024, 1024,};
+        readonly int[] clustersize = {2048, 512, 1024, 1024};
 
-        readonly string[] volumename = {null, null, null, null,};
+        readonly string[] volumename = {null, null, null, null};
 
-        readonly string[] volumeserial = {null, null, null, null,};
+        readonly string[] volumeserial = {null, null, null, null};
 
         [Test]
         public void Test()

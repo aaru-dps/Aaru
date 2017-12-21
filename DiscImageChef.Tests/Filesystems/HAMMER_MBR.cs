@@ -39,20 +39,20 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class HAMMER_MBR
     {
-        readonly string[] testfiles = {"dflybsd_3.6.1.vdi.lz", "dflybsd_4.0.5.vdi.lz",};
+        readonly string[] testfiles = {"dflybsd_3.6.1.vdi.lz", "dflybsd_4.0.5.vdi.lz"};
 
-        readonly ulong[] sectors = {104857600, 104857600,};
+        readonly ulong[] sectors = {104857600, 104857600};
 
-        readonly uint[] sectorsize = {512, 512,};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {6310, 6310,};
+        readonly long[] clusters = {6310, 6310};
 
-        readonly int[] clustersize = {8388608, 8388608,};
+        readonly int[] clustersize = {8388608, 8388608};
 
-        readonly string[] volumename = {"Volume label", "Volume label",};
+        readonly string[] volumename = {"Volume label", "Volume label"};
 
         readonly string[] volumeserial =
-            {"f8e1a8bb-626d-11e7-94b5-0900274691e4", "ff4dc664-6276-11e7-983f-090027c41b46",};
+            {"f8e1a8bb-626d-11e7-94b5-0900274691e4", "ff4dc664-6276-11e7-983f-090027c41b46"};
 
         [Test]
         public void Test()

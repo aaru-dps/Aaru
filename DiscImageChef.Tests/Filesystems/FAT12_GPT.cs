@@ -39,21 +39,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class FAT12_GPT
     {
-        readonly string[] testfiles = {"macosx_10.11.vdi.lz",};
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz"};
 
-        readonly ulong[] sectors = {16384,};
+        readonly ulong[] sectors = {16384};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {4076,};
+        readonly long[] clusters = {4076};
 
-        readonly int[] clustersize = {2048,};
+        readonly int[] clustersize = {2048};
 
-        readonly string[] volumename = {"VOLUMELABEL",};
+        readonly string[] volumename = {"VOLUMELABEL"};
 
-        readonly string[] volumeserial = {"66901F1B",};
+        readonly string[] volumeserial = {"66901F1B"};
 
-        readonly string[] oemid = {"BSD  4.4",};
+        readonly string[] oemid = {"BSD  4.4"};
 
         [Test]
         public void Test()

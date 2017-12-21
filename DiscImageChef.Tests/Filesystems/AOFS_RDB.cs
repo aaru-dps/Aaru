@@ -40,19 +40,19 @@ namespace DiscImageChef.Tests.Filesystems
     public class AOFS_RDB
     {
         readonly string[] testfiles =
-            {"amigaos_3.9.vdi.lz", "amigaos_3.9_intl.vdi.lz", "aros.vdi.lz", "aros_intl.vdi.lz",};
+            {"amigaos_3.9.vdi.lz", "amigaos_3.9_intl.vdi.lz", "aros.vdi.lz", "aros_intl.vdi.lz"};
 
-        readonly ulong[] sectors = {1024128, 1024128, 409600, 409600,};
+        readonly ulong[] sectors = {1024128, 1024128, 409600, 409600};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512};
 
-        readonly long[] clusters = {510032, 510032, 407232, 407232,};
+        readonly long[] clusters = {510032, 510032, 407232, 407232};
 
-        readonly int[] clustersize = {1024, 1024, 512, 512,};
+        readonly int[] clustersize = {1024, 1024, 512, 512};
 
-        readonly string[] volumename = {"Volume label", "Volume label", "Volume label", "Volume label",};
+        readonly string[] volumename = {"Volume label", "Volume label", "Volume label", "Volume label"};
 
-        readonly string[] volumeserial = {"A56D13BB", "A56D0415", "A582F3A0", "A5830B06",};
+        readonly string[] volumeserial = {"A56D13BB", "A56D0415", "A582F3A0", "A5830B06"};
 
         [Test]
         public void Test()

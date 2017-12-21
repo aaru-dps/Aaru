@@ -38,7 +38,7 @@ namespace DiscImageChef.Tests.Partitions
     [TestFixture]
     public class SGI
     {
-        readonly string[] testfiles = {"linux.vdi.lz", "parted.vdi.lz",};
+        readonly string[] testfiles = {"linux.vdi.lz", "parted.vdi.lz"};
 
         readonly Partition[][] wanted =
         {
@@ -170,7 +170,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 64260,
                     Sequence = 13,
                     Start = 947835
-                },
+                }
             },
             // GNU Parted
             new[]
@@ -210,8 +210,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 36864,
                     Sequence = 3,
                     Start = 196608
-                },
-            },
+                }
+            }
         };
 
         [Test]

@@ -39,15 +39,15 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class QNX4_MBR
     {
-        readonly string[] testfiles = {"qnx_4.24.vdi.lz",};
+        readonly string[] testfiles = {"qnx_4.24.vdi.lz"};
 
-        readonly ulong[] sectors = {1024000,};
+        readonly ulong[] sectors = {1024000};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {1023104,};
+        readonly long[] clusters = {1023104};
 
-        readonly int[] clustersize = {512,};
+        readonly int[] clustersize = {512};
 
         [Test]
         public void Test()

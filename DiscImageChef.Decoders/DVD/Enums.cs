@@ -156,7 +156,7 @@ namespace DiscImageChef.Decoders.DVD
         /// <summary>
         /// 0.353 μm/bit
         /// </summary>
-        ThreeFive = 0x08,
+        ThreeFive = 0x08
     }
 
     public enum TrackDensityField : byte

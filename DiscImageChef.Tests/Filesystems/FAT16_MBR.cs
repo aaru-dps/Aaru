@@ -53,7 +53,7 @@ namespace DiscImageChef.Tests.Filesystems
             "winnt_3.10.vdi.lz", "winnt_3.50.vdi.lz", "winnt_3.51.vdi.lz", "winnt_4.00.vdi.lz", "winvista.vdi.lz",
             "beos_r4.5.vdi.lz", "linux.vdi.lz", "amigaos_3.9.vdi.lz", "aros.vdi.lz", "freebsd_6.1.vdi.lz",
             "freebsd_7.0.vdi.lz", "freebsd_8.2.vdi.lz", "macos_7.5.3.vdi.lz", "macos_7.5.vdi.lz", "macos_7.6.vdi.lz",
-            "macos_8.0.vdi.lz",
+            "macos_8.0.vdi.lz"
         };
 
         readonly ulong[] sectors =
@@ -63,14 +63,14 @@ namespace DiscImageChef.Tests.Filesystems
             1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000,
             1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000,
             1024000, 1024000, 1024000, 262144, 1024128, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000,
-            1024000,
+            1024000
         };
 
         readonly uint[] sectorsize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
+            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
         readonly long[] clusters =
@@ -79,7 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
             63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941,
             63941, 63941, 63941, 63941, 63882, 63992, 63864, 63252, 63941, 63941, 63941, 63941, 63998, 63998, 63998,
             63941, 63998, 63998, 63941, 63616, 63996, 65024, 63941, 63882, 63998, 63998, 31999, 63941, 63941, 63941,
-            63941,
+            63941
         };
 
         readonly int[] clustersize =
@@ -87,7 +87,7 @@ namespace DiscImageChef.Tests.Filesystems
             8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,
             8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,
             8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 2048, 8192, 8192,
-            8192, 8192, 16384, 8192, 8192, 8192, 8192,
+            8192, 8192, 16384, 8192, 8192, 8192, 8192
         };
 
         readonly string[] volumename =
@@ -100,7 +100,7 @@ namespace DiscImageChef.Tests.Filesystems
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
             "VOLUMELABEL", "VOLUMELABEL", "VolumeLabel", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
+            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL"
         };
 
         readonly string[] volumeserial =
@@ -111,7 +111,7 @@ namespace DiscImageChef.Tests.Filesystems
             "E6C63414", "1C069414", "1C059414", "1BE5B814", "3EF71EF4", "DAF97911", "305637BD", "275B0DE4", "09650DFC",
             "38270D18", "2E620D0C", "0B4F0EED", "0E122464", "3B5F0F02", "C84CB6F2", "D0E9AD4E", "C039A2EC", "501F9FA6",
             "9AAA4216", "00000000", "A132D985", "374D3BD1", "52BEA34A", "3CF10E0D", "C6C30E0D", "44770E0D", "27761816",
-            "27761816", "27761816", "27761816",
+            "27761816", "27761816", "27761816"
         };
 
         readonly string[] oemid =
@@ -122,7 +122,7 @@ namespace DiscImageChef.Tests.Filesystems
             "IBM 10.2", "IBM 10.2", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 4.50", "BSD  4.4",
             "MSDOS5.0", "MSDOS5.0", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.0", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1",
             "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "BeOS    ", "mkfs.fat", "CDP  5.0", "MSWIN4.1",
-            "BSD  4.4", "BSD  4.4", "BSD4.4  ", "PCX 2.0 ", "PCX 2.0 ", "PCX 2.0 ", "PCX 2.0 ",
+            "BSD  4.4", "BSD  4.4", "BSD4.4  ", "PCX 2.0 ", "PCX 2.0 ", "PCX 2.0 ", "PCX 2.0 "
         };
 
         [Test]

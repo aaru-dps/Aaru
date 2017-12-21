@@ -48,33 +48,33 @@ namespace DiscImageChef.Tests.Filesystems
             "macosx_10.4.vdi.lz", "rhapsody_dr1.vdi.lz", "d2_driver.vdi.lz", "hdt_1.8.vdi.lz", "macos_4.2.vdi.lz",
             "macos_4.3.vdi.lz", "macos_6.0.2.vdi.lz", "macos_6.0.3.vdi.lz", "macos_6.0.4.vdi.lz", "macos_6.0.5.vdi.lz",
             "macos_6.0.8.vdi.lz", "macos_6.0.vdi.lz", "macos_7.0.vdi.lz", "macos_7.1.1.vdi.lz", "parted.vdi.lz",
-            "silverlining_2.2.1.vdi.lz", "speedtools_3.6.vdi.lz", "vcpformatter_2.1.1.vdi.lz",
+            "silverlining_2.2.1.vdi.lz", "speedtools_3.6.vdi.lz", "vcpformatter_2.1.1.vdi.lz"
         };
 
         readonly ulong[] sectors =
         {
             1024128, 409600, 409600, 409600, 409600, 41820, 41820, 81648, 1024000, 1024000, 1024000, 1024000, 1024000,
             1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 409600, 51200, 51200, 41820, 41820, 54840,
-            54840, 54840, 54840, 54840, 41820, 54840, 54840, 262144, 51200, 51200, 54840,
+            54840, 54840, 54840, 54840, 41820, 54840, 54840, 262144, 51200, 51200, 54840
         };
 
         readonly uint[] sectorsize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
+            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
         readonly long[] clusters =
         {
             64003, 51189, 51189, 58502, 58502, 41788, 38950, 39991, 63954, 63990, 63954, 63954, 63954, 63922, 63922,
             63922, 63922, 63884, 63883, 63883, 58506, 50926, 50094, 38950, 38950, 38950, 38950, 7673, 38950, 38950,
-            38950, 38950, 38950, 46071, 50382, 49135, 54643,
+            38950, 38950, 38950, 46071, 50382, 49135, 54643
         };
 
         readonly int[] clustersize =
         {
             8192, 4096, 4096, 3584, 3584, 512, 512, 1024, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,
-            8192, 8192, 3584, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 1024, 512, 512, 512,
+            8192, 8192, 3584, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 1024, 512, 512, 512
         };
 
         readonly string[] volumename =
@@ -84,14 +84,14 @@ namespace DiscImageChef.Tests.Filesystems
             "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
             "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
             "Volume label", "Volume label", "Volume label", "Test disk", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Untitled", "Untitled  #1", "24 MB Disk", "Volume label",
+            "Volume label", "Volume label", "Untitled", "Untitled  #1", "24 MB Disk", "Volume label"
         };
 
         readonly string[] volumeserial =
         {
             null, null, null, null, "AAFE1382AF5AA898", null, null, null, null, null, null, null, null, null, null,
             null, null, "5A7C38B0CAF279C4", "FB49083EBD150509", "632C0B1DB46FD188", null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null
         };
 
         [Test]

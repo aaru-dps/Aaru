@@ -38,23 +38,23 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class Locus
     {
-        readonly string[] testfiles = {"mf2dd.img.lz", "mf2hd.img.lz",};
+        readonly string[] testfiles = {"mf2dd.img.lz", "mf2hd.img.lz"};
 
-        readonly MediaType[] mediatypes = {MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,};
+        readonly MediaType[] mediatypes = {MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD};
 
-        readonly ulong[] sectors = {1440, 2880,};
+        readonly ulong[] sectors = {1440, 2880};
 
-        readonly uint[] sectorsize = {512, 512,};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {180, 360,};
+        readonly long[] clusters = {180, 360};
 
-        readonly int[] clustersize = {4096, 4096,};
+        readonly int[] clustersize = {4096, 4096};
 
-        readonly string[] volumename = {"Label", "Label",};
+        readonly string[] volumename = {"Label", "Label"};
 
-        readonly string[] volumeserial = {null, null,};
+        readonly string[] volumeserial = {null, null};
 
-        readonly string[] oemid = {null, null,};
+        readonly string[] oemid = {null, null};
 
         [Test]
         public void Test()

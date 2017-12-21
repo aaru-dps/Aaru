@@ -39,19 +39,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class XFS_MBR
     {
-        readonly string[] testfiles = {"linux.vdi.lz",};
+        readonly string[] testfiles = {"linux.vdi.lz"};
 
-        readonly ulong[] sectors = {1048576,};
+        readonly ulong[] sectors = {1048576};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {130816,};
+        readonly long[] clusters = {130816};
 
-        readonly int[] clustersize = {4096,};
+        readonly int[] clustersize = {4096};
 
-        readonly string[] volumename = {"Volume label",};
+        readonly string[] volumename = {"Volume label"};
 
-        readonly string[] volumeserial = {"230075b7-9834-b44e-a257-982a058311d8",};
+        readonly string[] volumeserial = {"230075b7-9834-b44e-a257-982a058311d8"};
 
         [Test]
         public void Test()

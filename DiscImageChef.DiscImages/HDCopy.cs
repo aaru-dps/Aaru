@@ -163,7 +163,7 @@ namespace DiscImageChef.DiscImages
             new MediaTypeTableEntry(80, 18, MediaType.DOS_35_HD), new MediaTypeTableEntry(80, 36, MediaType.DOS_35_ED),
             new MediaTypeTableEntry(40, 8, MediaType.DOS_525_DS_DD_8),
             new MediaTypeTableEntry(40, 9, MediaType.DOS_525_DS_DD_9),
-            new MediaTypeTableEntry(80, 15, MediaType.DOS_525_HD),
+            new MediaTypeTableEntry(80, 15, MediaType.DOS_525_HD)
         };
         #endregion
 

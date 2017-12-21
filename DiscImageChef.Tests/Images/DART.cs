@@ -41,24 +41,24 @@ namespace DiscImageChef.Tests.Images
         readonly string[] testfiles =
         {
             "mf1dd_hfs_best.dart.lz", "mf1dd_hfs_fast.dart.lz", "mf1dd_mfs_best.dart.lz", "mf1dd_mfs_fast.dart.lz",
-            "mf2dd_hfs_best.dart.lz", "mf2dd_hfs_fast.dart.lz", "mf2dd_mfs_best.dart.lz", "mf2dd_mfs_fast.dart.lz",
+            "mf2dd_hfs_best.dart.lz", "mf2dd_hfs_fast.dart.lz", "mf2dd_mfs_best.dart.lz", "mf2dd_mfs_fast.dart.lz"
         };
 
-        readonly ulong[] sectors = {800, 800, 800, 800, 1600, 1600, 1600, 1600,};
+        readonly ulong[] sectors = {800, 800, 800, 800, 1600, 1600, 1600, 1600};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512};
 
         readonly MediaType[] mediatypes =
         {
             MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS,
-            MediaType.AppleSonyDS, MediaType.AppleSonyDS, MediaType.AppleSonyDS, MediaType.AppleSonyDS,
+            MediaType.AppleSonyDS, MediaType.AppleSonyDS, MediaType.AppleSonyDS, MediaType.AppleSonyDS
         };
 
         readonly string[] md5s =
         {
             "eae3a95671d077deb702b3549a769f56", "eae3a95671d077deb702b3549a769f56", "c5d92544c3e78b7f0a9b4baaa9a64eec",
             "c5d92544c3e78b7f0a9b4baaa9a64eec", "a99744348a70b62b57bce2dec9132ced", "a99744348a70b62b57bce2dec9132ced",
-            "93e71b9ecdb39d3ec9245b4f451856d4", "93e71b9ecdb39d3ec9245b4f451856d4",
+            "93e71b9ecdb39d3ec9245b4f451856d4", "93e71b9ecdb39d3ec9245b4f451856d4"
         };
 
         [Test]

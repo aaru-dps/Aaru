@@ -37,13 +37,13 @@ namespace DiscImageChef.Tests.Devices
     [TestFixture]
     public class IomegaJaz
     {
-        readonly string[] testfiles = {"jaz1.bin.lz",};
+        readonly string[] testfiles = {"jaz1.bin.lz"};
 
-        readonly MediaType[] mediatypes = {MediaType.Jaz,};
+        readonly MediaType[] mediatypes = {MediaType.Jaz};
 
-        readonly ulong[] sectors = {2091050,};
+        readonly ulong[] sectors = {2091050};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
         [Test]
         public void Test()

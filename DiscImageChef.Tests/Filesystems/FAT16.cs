@@ -43,7 +43,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.30A
             "msdos_3.30A_mf2ed.img.lz",
             // MS-DOS 3.31
-            "msdos_3.31_mf2ed.img.lz",
+            "msdos_3.31_mf2ed.img.lz"
         };
 
         readonly MediaType[] mediatypes =
@@ -51,7 +51,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.30A
             MediaType.DOS_35_ED,
             // MS-DOS 3.31
-            MediaType.DOS_35_ED,
+            MediaType.DOS_35_ED
         };
 
         readonly ulong[] sectors =
@@ -59,7 +59,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.30A
             5760,
             // MS-DOS 3.31
-            5760,
+            5760
         };
 
         readonly uint[] sectorsize =
@@ -67,7 +67,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.30A
             512,
             // MS-DOS 3.31
-            512,
+            512
         };
 
         readonly long[] clusters =
@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.30A
             5760,
             // MS-DOS 3.31
-            5760,
+            5760
         };
 
         readonly int[] clustersize =
@@ -83,7 +83,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.30A
             512,
             // MS-DOS 3.31
-            512,
+            512
         };
 
         readonly string[] volumename =
@@ -91,7 +91,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.30A
             null,
             // MS-DOS 3.31
-            null,
+            null
         };
 
         readonly string[] volumeserial =
@@ -99,7 +99,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.30A
             null,
             // MS-DOS 3.31
-            null,
+            null
         };
 
         readonly string[] oemid =
@@ -107,7 +107,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.30A
             "MSDOS3.3",
             // MS-DOS 3.31
-            "IBM  3.3",
+            "IBM  3.3"
         };
 
         [Test]

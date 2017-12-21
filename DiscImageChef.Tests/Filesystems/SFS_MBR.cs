@@ -39,19 +39,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class SFS_MBR
     {
-        readonly string[] testfiles = {"aros.vdi.lz",};
+        readonly string[] testfiles = {"aros.vdi.lz"};
 
-        readonly ulong[] sectors = {409600,};
+        readonly ulong[] sectors = {409600};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {408240,};
+        readonly long[] clusters = {408240};
 
-        readonly int[] clustersize = {512,};
+        readonly int[] clustersize = {512};
 
-        readonly string[] volumename = {null,};
+        readonly string[] volumename = {null};
 
-        readonly string[] volumeserial = {null,};
+        readonly string[] volumeserial = {null};
 
         [Test]
         public void Test()

@@ -38,23 +38,23 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class BeFS
     {
-        readonly string[] testfiles = {"beos_r3.1.img.lz", "beos_r4.5.img.lz",};
+        readonly string[] testfiles = {"beos_r3.1.img.lz", "beos_r4.5.img.lz"};
 
-        readonly MediaType[] mediatypes = {MediaType.DOS_35_HD, MediaType.DOS_35_HD,};
+        readonly MediaType[] mediatypes = {MediaType.DOS_35_HD, MediaType.DOS_35_HD};
 
-        readonly ulong[] sectors = {2880, 2880,};
+        readonly ulong[] sectors = {2880, 2880};
 
-        readonly uint[] sectorsize = {512, 512,};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {1440, 1440,};
+        readonly long[] clusters = {1440, 1440};
 
-        readonly int[] clustersize = {1024, 1024,};
+        readonly int[] clustersize = {1024, 1024};
 
-        readonly string[] volumename = {"Volume label", "Volume label",};
+        readonly string[] volumename = {"Volume label", "Volume label"};
 
-        readonly string[] volumeserial = {null, null,};
+        readonly string[] volumeserial = {null, null};
 
-        readonly string[] oemid = {null, null,};
+        readonly string[] oemid = {null, null};
 
         [Test]
         public void Test()

@@ -38,21 +38,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class AOFS
     {
-        readonly string[] testfiles = {"amigaos_3.9.adf.lz", "amigaos_3.9_intl.adf.lz",};
+        readonly string[] testfiles = {"amigaos_3.9.adf.lz", "amigaos_3.9_intl.adf.lz"};
 
-        readonly MediaType[] mediatypes = {MediaType.CBM_AMIGA_35_DD, MediaType.CBM_AMIGA_35_DD,};
+        readonly MediaType[] mediatypes = {MediaType.CBM_AMIGA_35_DD, MediaType.CBM_AMIGA_35_DD};
 
-        readonly ulong[] sectors = {1760, 1760,};
+        readonly ulong[] sectors = {1760, 1760};
 
-        readonly uint[] sectorsize = {512, 512,};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {1760, 1760,};
+        readonly long[] clusters = {1760, 1760};
 
-        readonly int[] clustersize = {512, 512,};
+        readonly int[] clustersize = {512, 512};
 
-        readonly string[] volumename = {"Volume label", "Volume label",};
+        readonly string[] volumename = {"Volume label", "Volume label"};
 
-        readonly string[] volumeserial = {"A5D9FE71", "A5D9F14F",};
+        readonly string[] volumeserial = {"A5D9FE71", "A5D9F14F"};
 
         [Test]
         public void Test()

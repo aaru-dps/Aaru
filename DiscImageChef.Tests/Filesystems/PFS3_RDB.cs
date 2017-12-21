@@ -39,21 +39,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class PFS3_RDB
     {
-        readonly string[] testfiles = {"uae.vdi.lz",};
+        readonly string[] testfiles = {"uae.vdi.lz"};
 
-        readonly ulong[] sectors = {1024128,};
+        readonly ulong[] sectors = {1024128};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {1023552,};
+        readonly long[] clusters = {1023552};
 
-        readonly int[] clustersize = {512,};
+        readonly int[] clustersize = {512};
 
-        readonly string[] volumename = {"PFS",};
+        readonly string[] volumename = {"PFS"};
 
-        readonly string[] volumeserial = {null,};
+        readonly string[] volumeserial = {null};
 
-        readonly string[] oemid = {null,};
+        readonly string[] oemid = {null};
 
         [Test]
         public void Test()

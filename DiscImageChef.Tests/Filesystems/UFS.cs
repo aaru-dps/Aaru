@@ -42,28 +42,28 @@ namespace DiscImageChef.Tests.Filesystems
         {
             "amix_mf2dd.adf.lz", "netbsd_1.6_mf2hd.img.lz", "att_unix_svr4v2.1_dsdd.img.lz",
             "att_unix_svr4v2.1_dshd.img.lz", "att_unix_svr4v2.1_mf2dd.img.lz", "att_unix_svr4v2.1_mf2hd.img.lz",
-            "solaris_2.4_mf2dd.img.lz", "solaris_2.4_mf2hd.img.lz",
+            "solaris_2.4_mf2dd.img.lz", "solaris_2.4_mf2hd.img.lz"
         };
 
         readonly MediaType[] mediatypes =
         {
             MediaType.CBM_AMIGA_35_DD, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD,
-            MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,
+            MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
 
-        readonly ulong[] sectors = {1760, 2880, 720, 2400, 1440, 2880, 1440, 2880,};
+        readonly ulong[] sectors = {1760, 2880, 720, 2400, 1440, 2880, 1440, 2880};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {880, 2880, 360, 1200, 720, 1440, 711, 1422,};
+        readonly long[] clusters = {880, 2880, 360, 1200, 720, 1440, 711, 1422};
 
-        readonly int[] clustersize = {1024, 512, 1024, 1024, 1024, 1024, 1024, 1024,};
+        readonly int[] clustersize = {1024, 512, 1024, 1024, 1024, 1024, 1024, 1024};
 
-        readonly string[] volumename = {null, null, null, null, null, null, null, null,};
+        readonly string[] volumename = {null, null, null, null, null, null, null, null};
 
-        readonly string[] volumeserial = {null, null, null, null, null, null, null, null,};
+        readonly string[] volumeserial = {null, null, null, null, null, null, null, null};
 
-        readonly string[] type = {"UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS",};
+        readonly string[] type = {"UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS"};
 
         [Test]
         public void Test()

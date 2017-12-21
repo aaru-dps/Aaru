@@ -134,7 +134,7 @@ namespace DiscImageChef.Devices.Windows
                         Features = registers.feature,
                         SectorCount = registers.sectorCount,
                         SectorNumber = registers.sector
-                    },
+                    }
                 },
                 dataBuffer = new byte[64 * 512]
             };
@@ -219,7 +219,7 @@ namespace DiscImageChef.Devices.Windows
                         Features = registers.feature,
                         SectorCount = registers.sectorCount,
                         SectorNumber = registers.lbaLow
-                    },
+                    }
                 },
                 dataBuffer = new byte[64 * 512]
             };
@@ -312,7 +312,7 @@ namespace DiscImageChef.Devices.Windows
                         Features = (byte)(registers.feature & 0xFF),
                         SectorCount = (byte)(registers.sectorCount & 0xFF),
                         SectorNumber = (byte)(registers.lbaLow & 0xFF)
-                    },
+                    }
                 },
                 dataBuffer = new byte[64 * 512]
             };
@@ -394,7 +394,7 @@ namespace DiscImageChef.Devices.Windows
                     SectorNumber = registers.sector
                 },
                 DataBufferSize = 512,
-                DataBuffer = new byte[512],
+                DataBuffer = new byte[512]
             };
 
             uint k = 0;
@@ -454,7 +454,7 @@ namespace DiscImageChef.Devices.Windows
                     SectorNumber = registers.lbaLow
                 },
                 DataBufferSize = 512,
-                DataBuffer = new byte[512],
+                DataBuffer = new byte[512]
             };
 
             uint k = 0;

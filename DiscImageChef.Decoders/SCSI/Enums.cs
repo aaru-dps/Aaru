@@ -225,7 +225,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Supports ST and DT
         /// </summary>
-        STandDT = 0x03,
+        STandDT = 0x03
     }
 
     public enum TGPSValues : byte

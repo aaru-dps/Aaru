@@ -41,21 +41,21 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
         {
             "minix_3.1.2a_dsdd.img.lz", "minix_3.1.2a_dshd.img.lz", "minix_3.1.2a_mf2dd.img.lz",
-            "minix_3.1.2a_mf2hd.img.lz",
+            "minix_3.1.2a_mf2hd.img.lz"
         };
 
         readonly MediaType[] mediatypes =
-            {MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,};
+            {MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD};
 
-        readonly ulong[] sectors = {720, 2400, 1440, 2880,};
+        readonly ulong[] sectors = {720, 2400, 1440, 2880};
 
         readonly uint[] sectorsize = {512, 512, 512, 512};
 
-        readonly long[] clusters = {90, 300, 180, 360,};
+        readonly long[] clusters = {90, 300, 180, 360};
 
-        readonly int[] clustersize = {4096, 4096, 4096, 4096,};
+        readonly int[] clustersize = {4096, 4096, 4096, 4096};
 
-        readonly string[] types = {"Minix v3", "Minix v3", "Minix v3", "Minix v3",};
+        readonly string[] types = {"Minix v3", "Minix v3", "Minix v3", "Minix v3"};
 
         [Test]
         public void Test()

@@ -49,17 +49,17 @@ namespace DiscImageChef.Tests.Images
             // Made with DiskImages.framework
             "macosx/DC42/DOS_1440.img.lz", "macosx/DC42/DOS_720.img.lz", "macosx/DC42/HFS_1440.img.lz",
             "macosx/DC42/HFS_800.img.lz", "macosx/DC42/ProDOS_1440.img.lz", "macosx/DC42/ProDOS_800.img.lz",
-            "macosx/DC42/UFS_1440.img.lz", "macosx/DC42/UFS_720.img.lz", "macosx/DC42/UFS_800.img.lz",
+            "macosx/DC42/UFS_1440.img.lz", "macosx/DC42/UFS_720.img.lz", "macosx/DC42/UFS_800.img.lz"
         };
 
         readonly ulong[] sectors =
         {
             800, 800, 1600, 1600, 2880, 1600, 2880, 1440, 2880, 1600, 2880, 1440, 2880, 1600, 2880, 1600, 2880, 1440,
-            1600,
+            1600
         };
 
         readonly uint[] sectorsize =
-            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,};
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
 
         readonly MediaType[] mediatypes =
         {
@@ -67,7 +67,7 @@ namespace DiscImageChef.Tests.Images
             MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD,
-            MediaType.DOS_35_DS_DD_9, MediaType.AppleSonyDS,
+            MediaType.DOS_35_DS_DD_9, MediaType.AppleSonyDS
         };
 
         readonly string[] md5s =
@@ -78,7 +78,7 @@ namespace DiscImageChef.Tests.Images
             "a72da7aedadbe194c22a3d71c62e4766", "ff419213080574056ebd9adf7bab3d32", "c2be571406cf6353269faa59a4a8c0a4",
             "3160038ca028ccf52ad7863790072145", "5e255c4bc0f6a26ecd27845b37e65aaa", "7975e8cf7579a6848d6fb4e546d1f682",
             "a72da7aedadbe194c22a3d71c62e4766", "b37823c7a90d1917f719ba5927b23da8", "4942032f7bf1d115237ea1764424828b",
-            "85574aebeef03eb355bf8541955d06ea",
+            "85574aebeef03eb355bf8541955d06ea"
         };
 
         [Test]

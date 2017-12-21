@@ -38,7 +38,7 @@ namespace DiscImageChef.Tests.Partitions
     [TestFixture]
     public class VTOC
     {
-        readonly string[] testfiles = {"att_unix_vtoc.vdi.lz",};
+        readonly string[] testfiles = {"att_unix_vtoc.vdi.lz"};
 
         readonly Partition[][] wanted =
         {
@@ -188,8 +188,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 84672,
                     Sequence = 15,
                     Start = 937818
-                },
-            },
+                }
+            }
         };
 
         [Test]

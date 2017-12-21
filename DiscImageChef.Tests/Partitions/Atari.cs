@@ -38,7 +38,7 @@ namespace DiscImageChef.Tests.Partitions
     [TestFixture]
     public class Atari
     {
-        readonly string[] testfiles = {"linux_ahdi.vdi.lz", "linux_icd.vdi.lz", "tos_1.04.vdi.lz",};
+        readonly string[] testfiles = {"linux_ahdi.vdi.lz", "linux_icd.vdi.lz", "tos_1.04.vdi.lz"};
 
         readonly Partition[][] wanted =
         {
@@ -154,7 +154,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 151550,
                     Sequence = 9,
                     Start = 872450
-                },
+                }
             },
             // Linux (ICD)
             new[]
@@ -257,7 +257,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 204800,
                     Sequence = 8,
                     Start = 806913
-                },
+                }
             },
             // TOS 1.04
             new[]
@@ -305,8 +305,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 14334,
                     Sequence = 3,
                     Start = 43010
-                },
-            },
+                }
+            }
         };
 
         [Test]

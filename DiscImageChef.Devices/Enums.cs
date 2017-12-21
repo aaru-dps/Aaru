@@ -3724,7 +3724,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Reads the SD Configuration Register SCR (ADTC, R1)
         /// </summary>
-        SendScr = 51,
+        SendScr = 51
     }
 
     [Flags]

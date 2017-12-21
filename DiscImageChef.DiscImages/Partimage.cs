@@ -134,7 +134,7 @@ namespace DiscImageChef.DiscImages
 
         enum PEncryption : uint
         {
-            None = 0,
+            None = 0
         }
 
         /// <summary>

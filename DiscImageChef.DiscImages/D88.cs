@@ -52,13 +52,13 @@ namespace DiscImageChef.DiscImages
         {
             D2 = 0x00,
             Dd2 = 0x10,
-            Hd2 = 0x20,
+            Hd2 = 0x20
         }
 
         enum DensityType : byte
         {
             Mfm = 0x00,
-            Fm = 0x40,
+            Fm = 0x40
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace DiscImageChef.DiscImages
             /// Data mark not found
             /// データマークなし
             /// </summary>
-            DataMarkNotFound = 0xF0,
+            DataMarkNotFound = 0xF0
         }
         #endregion
 

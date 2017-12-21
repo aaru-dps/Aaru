@@ -42,24 +42,24 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux_ext2.vdi.lz", "linux_ext3.vdi.lz", "linux_ext4.vdi.lz", "netbsd_7.1.vdi.lz", "netbsd_7.1_r0.vdi.lz",
+            "linux_ext2.vdi.lz", "linux_ext3.vdi.lz", "linux_ext4.vdi.lz", "netbsd_7.1.vdi.lz", "netbsd_7.1_r0.vdi.lz"
         };
 
-        readonly ulong[] sectors = {262144, 262144, 262144, 8388608, 2097152,};
+        readonly ulong[] sectors = {262144, 262144, 262144, 8388608, 2097152};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {130048, 130048, 130048, 1046567, 260135,};
+        readonly long[] clusters = {130048, 130048, 130048, 1046567, 260135};
 
-        readonly int[] clustersize = {1024, 1024, 1024, 4096, 4096,};
+        readonly int[] clustersize = {1024, 1024, 1024, 4096, 4096};
 
-        readonly string[] volumename = {"VolumeLabel", "VolumeLabel", "VolumeLabel", "Volume label", "Volume label",};
+        readonly string[] volumename = {"VolumeLabel", "VolumeLabel", "VolumeLabel", "Volume label", "Volume label"};
 
         readonly string[] volumeserial =
         {
             "8e3992cf-7d98-e44a-b753-0591a35913eb", "1b411516-5415-4b42-95e6-1a247056a960",
             "b2f8f305-770f-ad47-abe4-f0484aa319e9", "e72aee05-627b-11e7-a573-0800272a08ec",
-            "072756f2-627c-11e7-a573-0800272a08ec",
+            "072756f2-627c-11e7-a573-0800272a08ec"
         };
 
         readonly string[] extversion = {"ext2", "ext3", "ext4", "ext2", "ext2"};

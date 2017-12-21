@@ -271,7 +271,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             "msdos_pc98_5.00_md2dd.img.lz", "msdos_pc98_5.00_md2hd.img.lz",
             // NEC MS-DOS 6.20 for PC-98
-            "msdos_pc98_6.20_md2dd.img.lz", "msdos_pc98_6.20_md2hd.img.lz",
+            "msdos_pc98_6.20_md2dd.img.lz", "msdos_pc98_6.20_md2hd.img.lz"
         };
 
         readonly MediaType[] mediatypes =
@@ -490,7 +490,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             MediaType.DOS_35_DS_DD_9, MediaType.NEC_525_HD,
             // NEC MS-DOS 6.20 for PC-98
-            MediaType.DOS_35_DS_DD_9, MediaType.NEC_525_HD,
+            MediaType.DOS_35_DS_DD_9, MediaType.NEC_525_HD
         };
 
         readonly ulong[] sectors =
@@ -662,7 +662,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             1440, 1232,
             // NEC MS-DOS 6.20 for PC-98
-            1440, 1232,
+            1440, 1232
         };
 
         readonly uint[] sectorsize =
@@ -834,7 +834,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             512, 1024,
             // NEC MS-DOS 6.20 for PC-98
-            512, 1024,
+            512, 1024
         };
 
         readonly long[] clusters =
@@ -1006,7 +1006,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             640, 1232,
             // NEC MS-DOS 6.20 for PC-98
-            640, 1232,
+            640, 1232
         };
 
         readonly int[] clustersize =
@@ -1178,7 +1178,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             1024, 1024,
             // NEC MS-DOS 6.20 for PC-98
-            1024, 1024,
+            1024, 1024
         };
 
         readonly string[] volumename =
@@ -1356,7 +1356,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             "NO NAME    ", "NO NAME    ",
             // NEC MS-DOS 6.20 for PC-98
-            "NO NAME    ", "NO NAME    ",
+            "NO NAME    ", "NO NAME    "
         };
 
         readonly string[] volumeserial =
@@ -1528,7 +1528,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             "1002120E", "41021209",
             // NEC MS-DOS 6.20 for PC-98
-            "3D021418", "16021409",
+            "3D021418", "16021409"
         };
 
         readonly string[] oemid =
@@ -1700,7 +1700,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             "NEC  5.0", "NEC  5.0",
             // NEC MS-DOS 6.20 for PC-98
-            "NEC  5.0", "NEC  5.0",
+            "NEC  5.0", "NEC  5.0"
         };
 
         [Test]

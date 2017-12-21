@@ -59,7 +59,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             GroupRead = 0x100,
             GroupExecute = 0x400,
             OtherRead = 0x1000,
-            OtherExecute = 0x4000,
+            OtherExecute = 0x4000
         }
 
         enum RecordFormat : byte
@@ -74,7 +74,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             LFCR = 0,
             ISO1539 = 1,
-            ControlContained = 2,
+            ControlContained = 2
         }
     }
 }

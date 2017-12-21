@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             OtherDelete = 1 << 4,
             OtherExec = 1 << 5,
             OtherWrite = 1 << 6,
-            OtherRead = 1 << 7,
+            OtherRead = 1 << 7
         }
 
         [Flags]
@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             Archive = 1 << 4,
             Reentrant = 1 << 5,
             Script = 1 << 6,
-            Reserved = 1 << 7,
+            Reserved = 1 << 7
         }
     }
 }

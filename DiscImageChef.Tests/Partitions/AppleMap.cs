@@ -45,7 +45,7 @@ namespace DiscImageChef.Tests.Partitions
             "macos_4.3.vdi.lz", "macos_6.0.2.vdi.lz", "macos_6.0.3.vdi.lz", "macos_6.0.4.vdi.lz", "macos_6.0.5.vdi.lz",
             "macos_6.0.7.vdi.lz", "macos_6.0.8.vdi.lz", "macos_6.0.vdi.lz", "macos_7.0.vdi.lz", "macos_7.1.1.vdi.lz",
             "macos_7.5.vdi.lz", "parted.vdi.lz", "silverlining_2.2.1.vdi.lz", "speedtools_3.6.vdi.lz",
-            "vcpformatter_2.1.1.vdi.lz",
+            "vcpformatter_2.1.1.vdi.lz"
         };
 
         readonly Partition[][] wanted =
@@ -96,7 +96,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 50944,
                     Sequence = 3,
                     Start = 256
-                },
+                }
             },
             // HDT 1.8 Encryption Level 1
             new[]
@@ -133,7 +133,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 50112,
                     Sequence = 2,
                     Start = 1088
-                },
+                }
             },
             // HDT 1.8 Encryption Level 2
             new[]
@@ -170,7 +170,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 50112,
                     Sequence = 2,
                     Start = 1088
-                },
+                }
             },
             // HDT 1.8 with password
             new[]
@@ -207,7 +207,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 50112,
                     Sequence = 2,
                     Start = 1088
-                },
+                }
             },
             // HDT 1.8
             new[]
@@ -244,7 +244,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 50112,
                     Sequence = 2,
                     Start = 1088
-                },
+                }
             },
             // Linux
             new[]
@@ -325,7 +325,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 14718,
                     Sequence = 6,
                     Start = 247426
-                },
+                }
             },
             // Mac OS 1.1
             new[]
@@ -351,7 +351,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 41804,
                     Sequence = 1,
                     Start = 16
-                },
+                }
             },
             // Mac OS 2.0
             new[]
@@ -377,7 +377,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 38965,
                     Sequence = 1,
                     Start = 16
-                },
+                }
             },
             // Mac OS 4.2
             new[]
@@ -403,7 +403,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 38965,
                     Sequence = 1,
                     Start = 16
-                },
+                }
             },
             // Mac OS 4.3
             new[]
@@ -429,7 +429,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 38965,
                     Sequence = 1,
                     Start = 16
-                },
+                }
             },
             // Mac OS 6.0.2
             new[]
@@ -598,7 +598,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 11162,
                     Sequence = 14,
                     Start = 43678
-                },
+                }
             },
             // Mac OS 6.0.3
             new[]
@@ -734,7 +734,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 3044,
                     Sequence = 11,
                     Start = 51796
-                },
+                }
             },
             // Mac OS 6.0.4
             new[]
@@ -870,7 +870,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 3238,
                     Sequence = 11,
                     Start = 51602
-                },
+                }
             },
             // Mac OS 6.0.5
             new[]
@@ -1039,7 +1039,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 6683,
                     Sequence = 14,
                     Start = 48157
-                },
+                }
             },
             // Mac OS 6.0.7
             new[]
@@ -1197,7 +1197,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 4400,
                     Sequence = 13,
                     Start = 50440
-                },
+                }
             },
             // Mac OS 6.0.8
             new[]
@@ -1366,7 +1366,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 4085,
                     Sequence = 14,
                     Start = 50755
-                },
+                }
             },
             // Mac OS 6.0
             new[]
@@ -1502,7 +1502,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 8,
                     Sequence = 11,
                     Start = 41812
-                },
+                }
             },
             // Mac OS 7.0
             new[]
@@ -1616,7 +1616,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 10278,
                     Sequence = 9,
                     Start = 44562
-                },
+                }
             },
             // Mac OS 7.1.1
             new[]
@@ -1741,7 +1741,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 7806,
                     Sequence = 10,
                     Start = 47034
-                },
+                }
             },
             // Mac OS 7.5
             new[]
@@ -1778,7 +1778,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 54744,
                     Sequence = 2,
                     Start = 96
-                },
+                }
             },
             // GNU Parted
             new[]
@@ -1815,7 +1815,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 165888,
                     Sequence = 2,
                     Start = 96256
-                },
+                }
             },
             // Silverlining 2.2.1
             new[]
@@ -1885,7 +1885,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 464,
                     Sequence = 5,
                     Start = 50720
-                },
+                }
             },
             // Hard Disk Speed Tools 3.6
             new[]
@@ -1933,7 +1933,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 1882,
                     Sequence = 3,
                     Start = 49316
-                },
+                }
             },
             // VCP Formatter 2.1.1
             new[]
@@ -1993,8 +1993,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 2,
                     Sequence = 4,
                     Start = 54838
-                },
-            },
+                }
+            }
         };
 
         [Test]

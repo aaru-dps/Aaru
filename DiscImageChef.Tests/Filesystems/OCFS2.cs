@@ -34,19 +34,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class OCFS2
     {
-        readonly string[] testfiles = {"linux.vdi.lz",};
+        readonly string[] testfiles = {"linux.vdi.lz"};
 
-        readonly ulong[] sectors = {104857600,};
+        readonly ulong[] sectors = {104857600};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {104856192,};
+        readonly long[] clusters = {104856192};
 
-        readonly int[] clustersize = {512,};
+        readonly int[] clustersize = {512};
 
-        readonly string[] volumename = {"Volume label",};
+        readonly string[] volumename = {"Volume label"};
 
-        readonly string[] volumeserial = {"UNKNOWN",};
+        readonly string[] volumeserial = {"UNKNOWN"};
 
         [Test]
         public void Test()

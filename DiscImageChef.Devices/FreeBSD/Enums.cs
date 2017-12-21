@@ -274,7 +274,7 @@ namespace DiscImageChef.Devices.FreeBSD
         PeriphMatchTarget = 0x002,
         PeriphMatchLun = 0x004,
         PeriphMatchName = 0x008,
-        PeriphMatchUnit = 0x010,
+        PeriphMatchUnit = 0x010
         //  PERIPH_MATCH_ANY = 0x01f
     }
 
@@ -286,7 +286,7 @@ namespace DiscImageChef.Devices.FreeBSD
         DevMatchTarget = 0x002,
         DevMatchLun = 0x004,
         DevMatchInquiry = 0x008,
-        DevMatchDevid = 0x010,
+        DevMatchDevid = 0x010
         //  DEV_MATCH_ANY = 0x00f
     }
 
@@ -297,7 +297,7 @@ namespace DiscImageChef.Devices.FreeBSD
         BusMatchPath = 0x001,
         BusMatchName = 0x002,
         BusMatchUnit = 0x004,
-        BusMatchBusId = 0x008,
+        BusMatchBusId = 0x008
         //  BUS_MATCH_ANY = 0x00f
     }
 
@@ -346,7 +346,7 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>
         /// MMC, SD, SDIO
         /// </summary>
-        ProtoMmcsd,
+        ProtoMmcsd
     }
 
     [Flags]
@@ -357,7 +357,7 @@ namespace DiscImageChef.Devices.FreeBSD
         CardFeatureSdio = 0x1 << 2,
         CardFeatureSd20 = 0x1 << 3,
         CardFeatureMmc = 0x1 << 4,
-        CardFeature18V = 0x1 << 5,
+        CardFeature18V = 0x1 << 5
     }
 
     enum CamGenerations : uint
@@ -365,7 +365,7 @@ namespace DiscImageChef.Devices.FreeBSD
         CamBusGeneration = 0x00,
         CamTargetGeneration = 0x01,
         CamDevGeneration = 0x02,
-        CamPeriphGeneration = 0x03,
+        CamPeriphGeneration = 0x03
     }
 
     [Flags]
@@ -384,7 +384,7 @@ namespace DiscImageChef.Devices.FreeBSD
 
     enum FreebsdIoctl : uint
     {
-        Camiocommand = 0xC4D81802,
+        Camiocommand = 0xC4D81802
     }
 
     [Flags]

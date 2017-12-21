@@ -48,7 +48,7 @@ namespace DiscImageChef.Tests.Images
             "msdos33d_md2hd.d88.lz", "msdos50_epson_md2dd.d88.lz", "msdos50_epson_md2hd.d88.lz", "msdos50_md2dd.d88.lz",
             "msdos50_md2hd.d88.lz", "msdos62_md2dd.d88.lz", "msdos62_md2hd.d88.lz",
             "R-Type (1988)(Irem)(Disk 1 of 2).d88.lz", "Towns System Software v1.1L30 (1992)(Fujitsu)(JP).d88.lz",
-            "Visual Instrument Player (198x)(Kamiya)(JP)(Disk 1 of 2).d88.lz",
+            "Visual Instrument Player (198x)(Kamiya)(JP)(Disk 1 of 2).d88.lz"
         };
 
         readonly ulong[] sectors =
@@ -58,7 +58,7 @@ namespace DiscImageChef.Tests.Images
         };
 
         readonly uint[] sectorsize =
-            {256, 256, 256, 256, 256, 256, 256, 128, 512, 1024, 512, 1024, 512, 1024, 512, 1024, 1024, 1024, 256,};
+            {256, 256, 256, 256, 256, 256, 256, 128, 512, 1024, 512, 1024, 512, 1024, 512, 1024, 1024, 1024, 256};
 
         // TODO: Add "unknown" media types
         readonly MediaType[] mediatypes =
@@ -66,7 +66,7 @@ namespace DiscImageChef.Tests.Images
             MediaType.NEC_525_SS, MediaType.NEC_525_SS, MediaType.NEC_525_SS, MediaType.Unknown, MediaType.Unknown,
             MediaType.NEC_525_SS, MediaType.NEC_525_SS, MediaType.Unknown, MediaType.Unknown, MediaType.NEC_525_HD,
             MediaType.Unknown, MediaType.NEC_525_HD, MediaType.Unknown, MediaType.NEC_525_HD, MediaType.Unknown,
-            MediaType.NEC_525_HD, MediaType.Unknown, MediaType.NEC_525_HD, MediaType.NEC_525_SS,
+            MediaType.NEC_525_HD, MediaType.Unknown, MediaType.NEC_525_HD, MediaType.NEC_525_SS
         };
 
         readonly string[] md5s =
@@ -77,7 +77,7 @@ namespace DiscImageChef.Tests.Images
             "106068dbdf13803979c7bbb63612f43d", "be916f25847b9cfc9776d88cc150ae7e", "ccc7f98e216db35c2b7a08634a9f3e20",
             "7a3332e82b0fe8c5673a2615f6c0b9a2", "62f5be96a8b8ccab9ee4aebf557cfcf7", "07fb4c225d4b5a2e2a1046ae66fc153c",
             "1f73980e45a384bed331eaa33c9ef65b", "9d675e5147b55cee0b2bc05476eef825", "bb48546ced9c61462e1c89dca4987143",
-            "c7df67f4e66dad658fe856d3c8b36c7a",
+            "c7df67f4e66dad658fe856d3c8b36c7a"
         };
 
         [Test]

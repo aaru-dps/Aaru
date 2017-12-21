@@ -162,7 +162,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             /// If set, image has footer
             /// </summary>
-            HasFooter = 0x20,
+            HasFooter = 0x20
         }
         #endregion Internal Constants
 

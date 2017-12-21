@@ -41,19 +41,19 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles = {"scoopenserver_5.0.7hw.vdi.lz"};
 
-        readonly ulong[] sectors = {1024000,};
+        readonly ulong[] sectors = {1024000};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {510048,};
+        readonly long[] clusters = {510048};
 
-        readonly int[] clustersize = {1024,};
+        readonly int[] clustersize = {1024};
 
-        readonly string[] volumename = {"Volume label",};
+        readonly string[] volumename = {"Volume label"};
 
-        readonly string[] volumeserial = {null,};
+        readonly string[] volumeserial = {null};
 
-        readonly string[] type = {"DTFS",};
+        readonly string[] type = {"DTFS"};
 
         [Test]
         public void Test()

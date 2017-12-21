@@ -50,37 +50,37 @@ namespace DiscImageChef.Tests.Filesystems
             "toast_3.5.7_iso9660_ver_joliet_apple.iso.lz", "toast_3.5.7_iso9660_ver_joliet.iso.lz",
             "toast_3.5.7_iso9660.iso.lz",
             // Toast 4.1.3
-            "toast_4.1.3_iso9660_hfs.iso.lz",
+            "toast_4.1.3_iso9660_hfs.iso.lz"
         };
 
         readonly MediaType[] mediatypes =
         {
             MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
             MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD, MediaType.CD, MediaType.CD,
+            MediaType.CD, MediaType.CD, MediaType.CD
         };
 
         readonly ulong[] sectors =
-            {946, 946, 300, 1880, 300, 951, 300, 946, 300, 946, 946, 300, 300, 951, 300, 300, 1882,};
+            {946, 946, 300, 1880, 300, 951, 300, 946, 300, 946, 946, 300, 300, 951, 300, 300, 1882};
 
         readonly uint[] sectorsize =
-            {2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,};
+            {2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048};
 
         readonly long[] clusters =
-            {946, 946, 300, 1880, 300, 951, 300, 946, 300, 946, 946, 300, 300, 951, 300, 300, 1882,};
+            {946, 946, 300, 1880, 300, 951, 300, 946, 300, 946, 946, 300, 300, 951, 300, 300, 1882};
 
         readonly int[] clustersize =
-            {2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,};
+            {2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048};
 
         readonly string[] volumename =
         {
             "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "Disk utils", "Disk utils",
             "Disk utils", "Disk utils", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "Disk utils",
-            "Disk utils", "DISK_UTILS", "DISK_UTILS",
+            "Disk utils", "DISK_UTILS", "DISK_UTILS"
         };
 
         readonly string[] volumeserial =
-            {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,};
+            {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null};
 
         readonly string[] sysid =
         {
@@ -89,7 +89,7 @@ namespace DiscImageChef.Tests.Filesystems
             "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
             "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
             "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002"
         };
 
         readonly string[] appid =
@@ -110,7 +110,7 @@ namespace DiscImageChef.Tests.Filesystems
             "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
             "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
             "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY"
         };
 
         [Test]

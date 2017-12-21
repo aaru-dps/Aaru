@@ -39,19 +39,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class BeFS_GPT
     {
-        readonly string[] testfiles = {"haiku_hrev51259.vdi.lz",};
+        readonly string[] testfiles = {"haiku_hrev51259.vdi.lz"};
 
-        readonly ulong[] sectors = {8388608,};
+        readonly ulong[] sectors = {8388608};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {2096640,};
+        readonly long[] clusters = {2096640};
 
         readonly int[] clustersize = {2048};
 
-        readonly string[] volumename = {"Volume label",};
+        readonly string[] volumename = {"Volume label"};
 
-        readonly string[] volumeserial = {null, null,};
+        readonly string[] volumeserial = {null, null};
 
         [Test]
         public void Test()

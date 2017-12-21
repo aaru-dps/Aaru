@@ -78,7 +78,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 94208,
                     Sequence = 2,
                     Start = 120832
-                },
+                }
             },
             // NetBSD 1.6
             new[]
@@ -148,7 +148,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 202624,
                     Sequence = 5,
                     Start = 3991680
-                },
+                }
             },
             // NetBSD 6.1.5
             new[]
@@ -264,7 +264,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 906208,
                     Sequence = 9,
                     Start = 3288096
-                },
+                }
             },
             // NetBSD 7.1
             new[]
@@ -380,8 +380,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 906192,
                     Sequence = 9,
                     Start = 3288096
-                },
-            },
+                }
+            }
         };
 
         [Test]

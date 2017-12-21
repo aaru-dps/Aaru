@@ -39,21 +39,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class XENIX_MBR
     {
-        readonly string[] testfiles = {"xenix_2.3.2d.vdi.lz", "xenix_2.3.4h.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz",};
+        readonly string[] testfiles = {"xenix_2.3.2d.vdi.lz", "xenix_2.3.4h.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz"};
 
-        readonly ulong[] sectors = {40960, 40960, 2097152,};
+        readonly ulong[] sectors = {40960, 40960, 2097152};
 
-        readonly uint[] sectorsize = {512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512};
 
-        readonly long[] clusters = {0, 0, 0, 19624, 19624, 19624,};
+        readonly long[] clusters = {0, 0, 0, 19624, 19624, 19624};
 
-        readonly int[] clustersize = {1024, 1024, 1024,};
+        readonly int[] clustersize = {1024, 1024, 1024};
 
-        readonly string[] volumename = {"", "", "",};
+        readonly string[] volumename = {"", "", ""};
 
-        readonly string[] volumeserial = {null, null, null,};
+        readonly string[] volumeserial = {null, null, null};
 
-        readonly string[] type = {"XENIX fs", "XENIX fs", "XENIX fs",};
+        readonly string[] type = {"XENIX fs", "XENIX fs", "XENIX fs"};
 
         [Test]
         public void Test()

@@ -39,19 +39,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class HFSX_GPT
     {
-        readonly string[] testfiles = {"macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz",};
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz"};
 
-        readonly ulong[] sectors = {819200, 1228800,};
+        readonly ulong[] sectors = {819200, 1228800};
 
         readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {102390, 153590,};
+        readonly long[] clusters = {102390, 153590};
 
-        readonly int[] clustersize = {4096, 4096,};
+        readonly int[] clustersize = {4096, 4096};
 
-        readonly string[] volumename = {null, null,};
+        readonly string[] volumename = {null, null};
 
-        readonly string[] volumeserial = {"328343989312AE9F", "FB98504073464C5C",};
+        readonly string[] volumeserial = {"328343989312AE9F", "FB98504073464C5C"};
 
         readonly string[] oemid = {"10.0", "HFSJ"};
 

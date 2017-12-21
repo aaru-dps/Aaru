@@ -137,7 +137,7 @@ namespace DiscImageChef.Filesystems
                 Dirty = false,
                 Type = "HAMMER",
                 VolumeName = StringHandlers.CToString(hammer_sb.vol_label, CurrentEncoding),
-                VolumeSerial = hammer_sb.vol_fsid.ToString(),
+                VolumeSerial = hammer_sb.vol_fsid.ToString()
             };
 
             if(hammer_sb.vol_no == hammer_sb.vol_rootvol)

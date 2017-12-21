@@ -97,7 +97,7 @@ namespace DiscImageChef.Partitions
         public enum SunFlags : ushort
         {
             NoMount = 0x0001,
-            ReadOnly = 0x0010,
+            ReadOnly = 0x0010
         }
 
         public SunDisklabel()

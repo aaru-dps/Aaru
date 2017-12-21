@@ -136,7 +136,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             Mode1 = 0xAA,
             Mode2 = 0xAB,
             Mode2F1 = 0xAC,
-            Mode2F2 = 0xAD,
+            Mode2F2 = 0xAD
         }
 
         enum AlcoholSubchannelMode : byte

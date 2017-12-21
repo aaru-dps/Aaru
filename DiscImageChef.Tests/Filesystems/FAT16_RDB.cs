@@ -39,21 +39,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class FAT16_RDB
     {
-        readonly string[] testfiles = {"amigaos_3.9.vdi.lz",};
+        readonly string[] testfiles = {"amigaos_3.9.vdi.lz"};
 
         readonly ulong[] sectors = {1024128};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
         readonly long[] clusters = {63689};
 
-        readonly int[] clustersize = {8192,};
+        readonly int[] clustersize = {8192};
 
         readonly string[] volumename = {"VOLUMELABEL"};
 
-        readonly string[] volumeserial = {"374D40D1",};
+        readonly string[] volumeserial = {"374D40D1"};
 
-        readonly string[] oemid = {"CDP  5.0",};
+        readonly string[] oemid = {"CDP  5.0"};
 
         [Test]
         public void Test()

@@ -42,13 +42,13 @@ namespace DiscImageChef.Filesystems.ISO9660
         enum CdiVolumeFlags : byte
         {
             // Escapes are not ISO 2375 but ISO 2022
-            NotISO2375 = 1,
+            NotISO2375 = 1
         }
 
         [Flags]
         enum CdiFileFlags : byte
         {
-            Hidden = 0x01,
+            Hidden = 0x01
         }
 
         [Flags]
@@ -61,7 +61,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             OtherRead = 1 << 8,
             OtherExecute = 1 << 10,
             DigitalAudio = 1 << 14,
-            Directory = 1 << 15,
+            Directory = 1 << 15
         }
     }
 }

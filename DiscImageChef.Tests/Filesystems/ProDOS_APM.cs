@@ -42,24 +42,24 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
         {
             "macos_7.5.3.vdi.lz", "macos_7.6.vdi.lz", "macos_8.0.vdi.lz", "macos_8.1.vdi.lz", "macos_9.0.4.vdi.lz",
-            "macos_9.1.vdi.lz", "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz",
+            "macos_9.1.vdi.lz", "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz"
         };
 
-        readonly ulong[] sectors = {49152, 49152, 49152, 49152, 49152, 49152, 49152, 49152,};
+        readonly ulong[] sectors = {49152, 49152, 49152, 49152, 49152, 49152, 49152, 49152};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {48438, 48438, 48438, 48438, 46326, 46326, 46326, 46326,};
+        readonly long[] clusters = {48438, 48438, 48438, 48438, 46326, 46326, 46326, 46326};
 
-        readonly int[] clustersize = {512, 512, 512, 512, 512, 512, 512, 512,};
+        readonly int[] clustersize = {512, 512, 512, 512, 512, 512, 512, 512};
 
         readonly string[] volumename =
         {
             "VOLUME.LABEL", "VOLUME.LABEL", "VOLUME.LABEL", "VOLUME.LABEL", "VOLUME.LABEL", "VOLUME.LABEL",
-            "VOLUME.LABEL", "VOLUME.LABEL",
+            "VOLUME.LABEL", "VOLUME.LABEL"
         };
 
-        readonly string[] volumeserial = {null, null, null, null, null, null, null, null,};
+        readonly string[] volumeserial = {null, null, null, null, null, null, null, null};
 
         [Test]
         public void Test()

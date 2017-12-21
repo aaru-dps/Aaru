@@ -98,7 +98,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Software = Version.GetSoftwareType(platform),
                         Manufacturer = manufacturer,
                         Model = model,
-                        Serial = serial,
+                        Serial = serial
                     };
                     resume.Tries.Add(currentTry);
                     extents = new ExtentsULong();

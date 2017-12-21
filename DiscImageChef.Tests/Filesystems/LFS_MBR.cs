@@ -34,19 +34,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class LFS_MBR
     {
-        readonly string[] testfiles = {"netbsd_1.6.vdi.lz",};
+        readonly string[] testfiles = {"netbsd_1.6.vdi.lz"};
 
-        readonly ulong[] sectors = {409600,};
+        readonly ulong[] sectors = {409600};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
         readonly long[] clusters = {409600};
 
-        readonly int[] clustersize = {512,};
+        readonly int[] clustersize = {512};
 
-        readonly string[] volumename = {null,};
+        readonly string[] volumename = {null};
 
-        readonly string[] volumeserial = {null,};
+        readonly string[] volumeserial = {null};
 
         [Test]
         public void Test()

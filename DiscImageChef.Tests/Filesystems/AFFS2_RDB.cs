@@ -39,19 +39,19 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class AFFS2_RDB
     {
-        readonly string[] testfiles = {"amigaos_4.0.vdi.lz",};
+        readonly string[] testfiles = {"amigaos_4.0.vdi.lz"};
 
-        readonly ulong[] sectors = {1024128,};
+        readonly ulong[] sectors = {1024128};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {511040,};
+        readonly long[] clusters = {511040};
 
-        readonly int[] clustersize = {1024,};
+        readonly int[] clustersize = {1024};
 
-        readonly string[] volumename = {"Volume label",};
+        readonly string[] volumename = {"Volume label"};
 
-        readonly string[] volumeserial = {"611D85E5",};
+        readonly string[] volumeserial = {"611D85E5"};
 
         [Test]
         public void Test()

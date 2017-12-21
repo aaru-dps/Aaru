@@ -41,7 +41,7 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
         {
             "macos_0.1_mf1dd.img.lz", "macos_0.5_mf1dd.img.lz", "macos_1.1_mf1dd.img.lz", "macos_2.0_mf1dd.img.lz",
-            "macos_6.0.7_mf1dd.img.lz",
+            "macos_6.0.7_mf1dd.img.lz"
         };
 
         readonly MediaType[] mediatypes =
@@ -50,18 +50,18 @@ namespace DiscImageChef.Tests.Filesystems
             MediaType.AppleSonySS
         };
 
-        readonly ulong[] sectors = {800, 800, 800, 800, 800,};
+        readonly ulong[] sectors = {800, 800, 800, 800, 800};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {391, 391, 391, 391, 391,};
+        readonly long[] clusters = {391, 391, 391, 391, 391};
 
-        readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024,};
+        readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024};
 
         readonly string[] volumename =
-            {"Volume label", "Volume label", "Volume label", "Volume label", "Volume label",};
+            {"Volume label", "Volume label", "Volume label", "Volume label", "Volume label"};
 
-        readonly string[] volumeserial = {null, null, null, null, null, null, null,};
+        readonly string[] volumeserial = {null, null, null, null, null, null, null};
 
         [Test]
         public void Test()

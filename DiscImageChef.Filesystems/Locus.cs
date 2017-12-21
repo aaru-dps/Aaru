@@ -354,7 +354,7 @@ namespace DiscImageChef.Filesystems
                 ModificationDateSpecified = true,
                 Dirty = !LocusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN) || LocusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY),
                 FreeClusters = LocusSb.s_tfree,
-                FreeClustersSpecified = true,
+                FreeClustersSpecified = true
             };
         }
 

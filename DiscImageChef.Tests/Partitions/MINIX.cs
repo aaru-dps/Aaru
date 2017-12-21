@@ -38,7 +38,7 @@ namespace DiscImageChef.Tests.Partitions
     [TestFixture]
     public class MINIX
     {
-        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz",};
+        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz"};
 
         readonly Partition[][] wanted =
         {
@@ -88,8 +88,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 512064,
                     Sequence = 3,
                     Start = 1584576
-                },
-            },
+                }
+            }
         };
 
         [Test]

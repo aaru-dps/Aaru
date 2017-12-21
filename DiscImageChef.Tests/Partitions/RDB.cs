@@ -38,7 +38,7 @@ namespace DiscImageChef.Tests.Partitions
     [TestFixture]
     public class RDB
     {
-        readonly string[] testfiles = {"amigaos_3.9.vdi.lz", "amigaos_4.0.vdi.lz", "parted.vdi.lz",};
+        readonly string[] testfiles = {"amigaos_3.9.vdi.lz", "amigaos_4.0.vdi.lz", "parted.vdi.lz"};
 
         readonly Partition[][] wanted =
         {
@@ -110,7 +110,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 166624,
                     Sequence = 5,
                     Start = 857504
-                },
+                }
             },
             // AmigaOS 4.0
             new[]
@@ -180,7 +180,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 221760,
                     Sequence = 5,
                     Start = 802368
-                },
+                }
             },
             // Parted
             new[]
@@ -217,8 +217,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 176715,
                     Sequence = 2,
                     Start = 80325
-                },
-            },
+                }
+            }
         };
 
         [Test]

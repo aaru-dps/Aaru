@@ -491,7 +491,7 @@ namespace DiscImageChef.Filesystems
                         Bootable = oldMap1.boot != 0, // Or not?
                         Clusters = (long)(bytes / imagePlugin.ImageInfo.SectorSize),
                         ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
-                        Type = "Acorn Advanced Disc Filing System",
+                        Type = "Acorn Advanced Disc Filing System"
                     };
 
                     if(ArrayHelpers.ArrayIsNullOrEmpty(namebytes))

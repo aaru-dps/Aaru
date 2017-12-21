@@ -71,7 +71,7 @@ namespace DiscImageChef.DiscImages
         {
             None = 0,
             Q16 = 2,
-            Linear = 4,
+            Linear = 4
         }
         #endregion Internal enumerations
 

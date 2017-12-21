@@ -43,7 +43,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             "ecs.vdi.lz", "msos2_1.21.vdi.lz", "msos2_1.30.1.vdi.lz", "os2_1.20.vdi.lz", "os2_1.30.vdi.lz",
             "os2_6.307.vdi.lz", "os2_6.514.vdi.lz", "os2_6.617.vdi.lz", "os2_8.162.vdi.lz", "os2_9.023.vdi.lz",
-            "winnt_3.10.vdi.lz", "winnt_3.50.vdi.lz",
+            "winnt_3.10.vdi.lz", "winnt_3.50.vdi.lz"
         };
 
         readonly ulong[] sectors =
@@ -52,26 +52,26 @@ namespace DiscImageChef.Tests.Filesystems
         readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
 
         readonly long[] clusters =
-            {261072, 1023056, 1023056, 1023056, 1023056, 1023056, 262016, 262016, 262016, 262016, 262016, 262112,};
+            {261072, 1023056, 1023056, 1023056, 1023056, 1023056, 262016, 262016, 262016, 262016, 262016, 262112};
 
-        readonly int[] clustersize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,};
+        readonly int[] clustersize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
 
         readonly string[] volumename =
         {
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
+            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL"
         };
 
         readonly string[] volumeserial =
         {
             "2BBBD814", "AC0DDC15", "ABEB2C15", "6C4EE015", "6C406015", "6C49B015", "2BCEB414", "2C157414", "2BF55414",
-            "2BE31414", "E851CB14", "A4EDC29C",
+            "2BE31414", "E851CB14", "A4EDC29C"
         };
 
         readonly string[] oemid =
         {
             "IBM 4.50", "OS2 10.1", "OS2 10.0", "OS2 10.0", "OS2 10.0", "OS2 20.0", "OS2 20.0", "OS2 20.1", "OS2 20.0",
-            "OS2 20.0", "MSDOS5.0", "MSDOS5.0",
+            "OS2 20.0", "MSDOS5.0", "MSDOS5.0"
         };
 
         [Test]

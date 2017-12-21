@@ -44,22 +44,22 @@ namespace DiscImageChef.Tests.Filesystems
             "nextstep_3.3_mf2dd.img.lz", "nextstep_3.3_mf2hd.img.lz", "openstep_4.0_mf2dd.img.lz",
             "openstep_4.0_mf2hd.img.lz", "openstep_4.2_mf2dd.img.lz", "openstep_4.2_mf2hd.img.lz",
             "rhapsody_dr1_mf2dd.img.lz", "rhapsody_dr1_mf2hd.img.lz", "rhapsody_dr2_mf2dd.img.lz",
-            "rhapsody_dr2_mf2hd.img.lz",
+            "rhapsody_dr2_mf2hd.img.lz"
         };
 
-        readonly ulong[] sectors = {1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880,};
+        readonly ulong[] sectors = {1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {624, 1344, 624, 1344, 624, 1344, 624, 1344, 624, 1344,};
+        readonly long[] clusters = {624, 1344, 624, 1344, 624, 1344, 624, 1344, 624, 1344};
 
-        readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024,};
+        readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024};
 
-        readonly string[] volumename = {null, null, null, null, null, null, null, null, null, null,};
+        readonly string[] volumename = {null, null, null, null, null, null, null, null, null, null};
 
-        readonly string[] volumeserial = {null, null, null, null, null, null, null, null, null, null,};
+        readonly string[] volumeserial = {null, null, null, null, null, null, null, null, null, null};
 
-        readonly string[] type = {"UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS",};
+        readonly string[] type = {"UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS"};
 
         [Test]
         public void Test()

@@ -39,21 +39,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class FAT32_APM
     {
-        readonly string[] testfiles = {"macosx_10.11.vdi.lz",};
+        readonly string[] testfiles = {"macosx_10.11.vdi.lz"};
 
-        readonly ulong[] sectors = {4194304,};
+        readonly ulong[] sectors = {4194304};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {524278,};
+        readonly long[] clusters = {524278};
 
-        readonly int[] clustersize = {4096,};
+        readonly int[] clustersize = {4096};
 
-        readonly string[] volumename = {"VOLUMELABEL",};
+        readonly string[] volumename = {"VOLUMELABEL"};
 
-        readonly string[] volumeserial = {"35BD1F0A",};
+        readonly string[] volumeserial = {"35BD1F0A"};
 
-        readonly string[] oemid = {"BSD  4.4",};
+        readonly string[] oemid = {"BSD  4.4"};
 
         [Test]
         public void Test()

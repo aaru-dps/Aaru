@@ -39,21 +39,21 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class UFS_RDB
     {
-        readonly string[] testfiles = {"amix.vdi.lz",};
+        readonly string[] testfiles = {"amix.vdi.lz"};
 
-        readonly ulong[] sectors = {1024128,};
+        readonly ulong[] sectors = {1024128};
 
-        readonly uint[] sectorsize = {512,};
+        readonly uint[] sectorsize = {512};
 
-        readonly long[] clusters = {511424,};
+        readonly long[] clusters = {511424};
 
-        readonly int[] clustersize = {1024,};
+        readonly int[] clustersize = {1024};
 
-        readonly string[] volumename = {null,};
+        readonly string[] volumename = {null};
 
-        readonly string[] volumeserial = {null,};
+        readonly string[] volumeserial = {null};
 
-        readonly string[] type = {"UFS",};
+        readonly string[] type = {"UFS"};
 
         [Test]
         public void Test()

@@ -42,17 +42,17 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
             {"beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz", "haiku_hrev51259.vdi.lz", "syllable_0.6.7.vdi.lz"};
 
-        readonly ulong[] sectors = {1572864, 1572864, 8388608, 2097152,};
+        readonly ulong[] sectors = {1572864, 1572864, 8388608, 2097152};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512};
 
-        readonly long[] clusters = {786400, 785232, 2096640, 524272,};
+        readonly long[] clusters = {786400, 785232, 2096640, 524272};
 
-        readonly int[] clustersize = {1024, 1024, 2048, 2048,};
+        readonly int[] clustersize = {1024, 1024, 2048, 2048};
 
-        readonly string[] volumename = {"Volume label", "Volume label", "Volume label", "Volume label",};
+        readonly string[] volumename = {"Volume label", "Volume label", "Volume label", "Volume label"};
 
-        readonly string[] volumeserial = {null, null, null, null,};
+        readonly string[] volumeserial = {null, null, null, null};
 
         [Test]
         public void Test()

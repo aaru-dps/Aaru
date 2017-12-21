@@ -59,7 +59,7 @@ namespace DiscImageChef.DiscImages
             CrcOk1024 = 0x08,
             CrcOk2048 = 0x10,
             CrcOk4096 = 0x20,
-            Deleted = 0x80,
+            Deleted = 0x80
         }
         #endregion
 

@@ -421,7 +421,7 @@ namespace DiscImageChef.Partitions
             /// <summary>Unknown, seen in the wild</summary>
             Unknown2 = 0x40000000,
             /// <summary>Reserved, not seen in the wild</summary>
-            Reserved = 0xBFFFFC00,
+            Reserved = 0xBFFFFC00
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

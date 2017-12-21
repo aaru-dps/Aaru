@@ -38,7 +38,7 @@ namespace DiscImageChef.Tests.Partitions
     [TestFixture]
     public class GPT
     {
-        readonly string[] testfiles = {"linux.vdi.lz", "parted.vdi.lz",};
+        readonly string[] testfiles = {"linux.vdi.lz", "parted.vdi.lz"};
 
         readonly Partition[][] wanted =
         {
@@ -110,7 +110,7 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 55263,
                     Sequence = 5,
                     Start = 206848
-                },
+                }
             },
             // Parted
             new[]
@@ -147,8 +147,8 @@ namespace DiscImageChef.Tests.Partitions
                     Length = 71680,
                     Sequence = 2,
                     Start = 188416
-                },
-            },
+                }
+            }
         };
 
         [Test]

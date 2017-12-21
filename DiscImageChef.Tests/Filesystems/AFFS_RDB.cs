@@ -45,22 +45,22 @@ namespace DiscImageChef.Tests.Filesystems
             "amigaos_4.0_intl.vdi.lz", "amigaos_4.0_cache.vdi.lz"
         };
 
-        readonly ulong[] sectors = {1024128, 1024128, 409600, 409600, 1024128, 1024128, 1024128,};
+        readonly ulong[] sectors = {1024128, 1024128, 409600, 409600, 1024128, 1024128, 1024128};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512,};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {510032, 510032, 407232, 407232, 511040, 511040, 511040,};
+        readonly long[] clusters = {510032, 510032, 407232, 407232, 511040, 511040, 511040};
 
-        readonly int[] clustersize = {1024, 1024, 512, 512, 1024, 1024, 1024,};
+        readonly int[] clustersize = {1024, 1024, 512, 512, 1024, 1024, 1024};
 
         readonly string[] volumename =
         {
             "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label",
+            "Volume label"
         };
 
         readonly string[] volumeserial =
-            {"A56D0F5C", "A56D049C", "A58307A9", "A58304BE", "A56CC7EE", "A56CDDC4", "A56CC133",};
+            {"A56D0F5C", "A56D049C", "A58307A9", "A58304BE", "A56CC7EE", "A56CDDC4", "A56CC133"};
 
         [Test]
         public void Test()

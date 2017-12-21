@@ -176,7 +176,7 @@ namespace DiscImageChef.Devices.Windows
         /// <summary>
         /// FILE_FLAG_WRITE_THROUGH
         /// </summary>
-        WriteThrough = 0x80000000,
+        WriteThrough = 0x80000000
     }
 
     [Flags]
@@ -344,7 +344,7 @@ namespace DiscImageChef.Devices.Windows
         IoctlIdePassThrough = 0x4D028,
         IoctlStorageGetDeviceNumber = 0x2D1080,
         IoctlSffdiskQueryDeviceProtocol = 0x71E80,
-        IoctlSffdiskDeviceCommand = 0x79E84,
+        IoctlSffdiskDeviceCommand = 0x79E84
     }
 
     [Flags]
@@ -421,7 +421,7 @@ namespace DiscImageChef.Devices.Windows
         MultiMediaCard = 0xD,
         Virtual = 0xE,
         FileBackedVirtual = 0xF,
-        NVMe = 0x11,
+        NVMe = 0x11
     }
 
     [Flags]
@@ -446,7 +446,7 @@ namespace DiscImageChef.Devices.Windows
         /// <summary>
         /// DIGCF_DEVICEINTERFACE
         /// </summary>
-        DeviceInterface = 0x10,
+        DeviceInterface = 0x10
     }
 
     enum SdCommandClass : uint

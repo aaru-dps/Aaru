@@ -189,7 +189,7 @@ namespace DiscImageChef.Partitions
             Xvm = 0x0D,
             LinuxSwap = 0x82,
             Linux = 0x83,
-            LinuxRAID = 0xFD,
+            LinuxRAID = 0xFD
         }
 
         static string TypeToString(SGIType typ)
