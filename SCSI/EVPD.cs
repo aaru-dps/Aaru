@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -1249,7 +1250,7 @@ namespace DiscImageChef.Decoders.SCSI
                             sb.AppendLine("Logical unit supports types 1, 2 and 3 protection");
                             break;
                         default:
-                            sb.AppendFormat("Logical unit supports unknown protection defined by code {0}", (byte)page.SPT)
+                            sb.AppendFormat("Logical unit supports unknown protection defined by code {0}", page.SPT)
                               .AppendLine();
                             break;
                     }
@@ -1422,11 +1423,11 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            ATA.Identify.IdentifyDevice? id = ATA.Identify.Decode(page.IdentifyData);
+            Identify.IdentifyDevice? id = Identify.Decode(page.IdentifyData);
             if(id.HasValue)
             {
                 sb.AppendLine("\tATA IDENTIFY information follows:");
-                sb.AppendFormat("{0}", ATA.Identify.Prettify(id)).AppendLine();
+                sb.AppendFormat("{0}", Identify.Prettify(id)).AppendLine();
             }
             else sb.AppendLine("\tCould not decode ATA IDENTIFY information");
 
