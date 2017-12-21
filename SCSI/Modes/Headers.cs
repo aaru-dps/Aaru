@@ -89,7 +89,7 @@ namespace DiscImageChef.Decoders.SCSI
                     return "a combination of write-once and erasable optical";
                 */
                 case MediumTypes.DOW: return "a direct-overwrite optical";
-                default: return string.Format("Unknown medium type 0x{0:X2}", (byte)type);
+                default: return $"Unknown medium type 0x{(byte)type:X2}";
             }
         }
 
@@ -131,8 +131,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     density = "15916 flux transitions per radian";
                                     break;
                                 default:
-                                    density = string.Format("with unknown density code 0x{0:X2}",
-                                                            (byte)descriptor.Density);
+                                    density = $"with unknown density code 0x{(byte)descriptor.Density:X2}";
                                     break;
                             }
 
@@ -360,7 +359,7 @@ namespace DiscImageChef.Decoders.SCSI
                             medium = "Exatape 75m";
                             break;
                         default:
-                            medium = string.Format("unknown medium type 0x{0:X2}", (byte)header.Value.MediumType);
+                            medium = $"unknown medium type 0x{(byte)header.Value.MediumType:X2}";
                             break;
                     }
 
@@ -519,8 +518,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DDS-4";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -543,8 +541,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "LTO Ultrium-5 WORM";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -558,8 +555,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "LTO Ultrium";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -573,8 +569,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "LTO Ultrium-2";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -591,8 +586,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DDS-3";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -609,8 +603,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DDS-4";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -624,8 +617,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DAT-72";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -640,8 +632,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "LTO Ultrium-3";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -655,8 +646,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DDS cleaning cartridge";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -671,8 +661,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "LTO Ultrium-4";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -687,8 +676,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "LTO Ultrium-5";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -703,8 +691,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "LTO Ultrium-6";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -719,8 +706,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "LTO Ultrium-7";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -743,8 +729,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "LTO Ultrium-5 in CD emulation mode";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -779,8 +764,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "VXA-1";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -824,8 +808,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "VXA-3";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -864,8 +847,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DLTtape III compressed";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -898,8 +880,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DLTtape IIIxt compressed";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -954,8 +935,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DLTtape IV at 98250 bpi compressed";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -995,8 +975,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "Super DLTtape I at 133000 bpi compressed";
                                             break;*/
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1010,8 +989,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "Super DLTtape II";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1029,8 +1007,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "VStape I compressed";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1044,8 +1021,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DLTtape S4";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1068,8 +1044,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "EXB-8500 compressed";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1095,8 +1070,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "Mammoth";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1122,8 +1096,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "Mammoth";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1149,8 +1122,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "Mammoth";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1173,8 +1145,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "Mammoth-2";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1188,8 +1159,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DC-2900SL";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1203,8 +1173,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "DC-9250";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1218,8 +1187,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLR-32";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1233,8 +1201,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "MRL1-26GBSL";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1248,8 +1215,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-50";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1263,8 +1229,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-50 SL";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1278,8 +1243,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLR-32 SL";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1293,8 +1257,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLR-5";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1308,8 +1271,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLR-5 SL";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1323,8 +1285,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-7";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1338,8 +1299,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-7 SL";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1353,8 +1313,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-24";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1368,8 +1327,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-24 SL";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1383,8 +1341,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-140";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1398,8 +1355,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-40";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1413,8 +1369,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-60 or SLRtape-75";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1428,8 +1383,7 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLRtape-100";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
@@ -1443,15 +1397,14 @@ namespace DiscImageChef.Decoders.SCSI
                                             density = "SLR40, SLR60 or SLR100";
                                             break;
                                         default:
-                                            density = string.Format("unknown density code 0x{0:X2}",
-                                                                    (byte)descriptor.Density);
+                                            density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                             break;
                                     }
                                 }
 
                                     break;
                                 default:
-                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
+                                    density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                     break;
                             }
 
@@ -1594,7 +1547,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     density = "ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks";
                                     break;
                                 default:
-                                    density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
+                                    density = $"unknown density code 0x{(byte)descriptor.Density:X2}";
                                     break;
                             }
 
@@ -1790,7 +1743,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     density = "LTO Ultrium-5";
                                     break;
                                 default:
-                                    density = string.Format("with unknown density code 0x{0:X2}", descriptor.Density);
+                                    density = $"with unknown density code 0x{descriptor.Density:X2}";
                                     break;
                             }
 

@@ -371,9 +371,8 @@ namespace DiscImageChef.Decoders.SCSI
             if(!sense.HasValue) return null;
 
             return sense.Value.AddressValid
-                       ? string.Format("Error class {0} type {1} happened on block {2}\n", sense.Value.ErrorClass,
-                                       sense.Value.ErrorType, sense.Value.LBA)
-                       : string.Format("Error class {0} type {1}\n", sense.Value.ErrorClass, sense.Value.ErrorType);
+                       ? $"Error class {sense.Value.ErrorClass} type {sense.Value.ErrorType} happened on block {sense.Value.LBA}\n"
+                       : $"Error class {sense.Value.ErrorClass} type {sense.Value.ErrorType}\n";
         }
 
         public static string PrettifySense(FixedSense? sense)
@@ -596,7 +595,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyDescriptor00(ulong information)
         {
-            return string.Format("On logical block {0}\n", information);
+            return $"On logical block {information}\n";
         }
 
         public static string PrettifyDescriptor00(byte[] descriptor)
@@ -1444,7 +1443,7 @@ namespace DiscImageChef.Decoders.SCSI
                     switch(ASCQ)
                     {
                         case 0x00: return "RAM FAILURE";
-                        default: return string.Format("DIAGNOSTIC FAILURE ON COMPONENT {0:X2}h", ASCQ);
+                        default: return $"DIAGNOSTIC FAILURE ON COMPONENT {ASCQ:X2}h";
                     }
                 case 0x41:
                     switch(ASCQ)
@@ -1560,7 +1559,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
 
                     break;
-                case 0x4E: return string.Format("OVERLAPPED COMMANDS ATTEMPTED FOR TASK TAG {0:X2}h", ASCQ);
+                case 0x4E: return $"OVERLAPPED COMMANDS ATTEMPTED FOR TASK TAG {ASCQ:X2}h";
                 case 0x50:
                     switch(ASCQ)
                     {
@@ -1929,7 +1928,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
 
                     break;
-                case 0x70: return string.Format("DECOMPRESSION EXCEPTION SHORT ALGORITHM ID OF {0:X2}h", ASCQ);
+                case 0x70: return $"DECOMPRESSION EXCEPTION SHORT ALGORITHM ID OF {ASCQ:X2}h";
                 case 0x71:
                     switch(ASCQ)
                     {
@@ -2005,11 +2004,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return ASC >= 0x80
                        ? ASCQ >= 0x80
-                             ? string.Format("VENDOR-SPECIFIC ASC {0:X2}h WITH VENDOR-SPECIFIC ASCQ {1:X2}h", ASC, ASCQ)
-                             : string.Format("VENDOR-SPECIFIC ASC {0:X2}h WITH ASCQ {1:X2}h", ASC, ASCQ)
+                             ? $"VENDOR-SPECIFIC ASC {ASC:X2}h WITH VENDOR-SPECIFIC ASCQ {ASCQ:X2}h"
+                             : $"VENDOR-SPECIFIC ASC {ASC:X2}h WITH ASCQ {ASCQ:X2}h"
                        : ASCQ >= 0x80
-                           ? string.Format("ASC {0:X2}h WITH VENDOR-SPECIFIC ASCQ {1:X2}h", ASC, ASCQ)
-                           : string.Format("ASC {0:X2}h WITH ASCQ {1:X2}h", ASC, ASCQ);
+                           ? $"ASC {ASC:X2}h WITH VENDOR-SPECIFIC ASCQ {ASCQ:X2}h"
+                           : $"ASC {ASC:X2}h WITH ASCQ {ASCQ:X2}h";
         }
     }
 }

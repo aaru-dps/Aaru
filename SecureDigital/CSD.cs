@@ -327,7 +327,7 @@ namespace DiscImageChef.Decoders.SecureDigital
             sb.AppendFormat("\tDevice's transfer speed: {0}{1}", result, unit).AppendLine();
 
             unit = "";
-            for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1) if((csd.Classes & mask) == mask) unit += string.Format(" {0}", cl);
+            for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1) if((csd.Classes & mask) == mask) unit += $" {cl}";
 
             sb.AppendFormat("\tDevice support command classes {0}", unit).AppendLine();
             sb.AppendFormat("\tRead block length is {0} bytes", Math.Pow(2, csd.ReadBlockLength)).AppendLine();

@@ -319,7 +319,7 @@ namespace DiscImageChef.Decoders.Xbox
                     sizeString = "120mm";
                     break;
                 default:
-                    sizeString = string.Format("unknown size identifier {0}", decoded.DiscSize);
+                    sizeString = $"unknown size identifier {decoded.DiscSize}";
                     break;
             }
 
