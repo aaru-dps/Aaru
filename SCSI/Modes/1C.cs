@@ -184,10 +184,8 @@ namespace DiscImageChef.Decoders.SCSI
                 if(page.LogErr) sb.AppendLine("\tDrive shall log informational exception conditions");
 
                 if(page.IntervalTimer > 0)
-                {
                     if(page.IntervalTimer == 0xFFFFFFFF) sb.AppendLine("\tTimer interval is vendor-specific");
                     else sb.AppendFormat("\tTimer interval is {0} ms", page.IntervalTimer * 100).AppendLine();
-                }
 
                 if(page.ReportCount > 0)
                     sb.AppendFormat("\tInformational exception conditions will be reported a maximum of {0} times",

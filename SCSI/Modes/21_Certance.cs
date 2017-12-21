@@ -108,7 +108,6 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(page.FirmwareTestControl == page.FirmwareTestControl2)
-            {
                 switch(page.FirmwareTestControl)
                 {
                     case 0:
@@ -124,7 +123,6 @@ namespace DiscImageChef.Decoders.SCSI
                         sb.AppendFormat("\tUnknown factory test code {0}", page.FirmwareTestControl).AppendLine();
                         break;
                 }
-            }
 
             switch(page.ExtendedPOSTMode)
             {

@@ -55,7 +55,6 @@ namespace DiscImageChef.Decoders.SCSI
             bool longLBA = (modeResponse[4] & 0x01) == 0x01;
 
             if(blockDescLength > 0)
-            {
                 if(longLBA)
                 {
                     header.BlockDescriptors = new BlockDescriptor[blockDescLength / 16];
@@ -86,9 +85,7 @@ namespace DiscImageChef.Decoders.SCSI
                     {
                         header.BlockDescriptors[i] = new BlockDescriptor();
                         if(deviceType != PeripheralDeviceTypes.DirectAccess)
-                        {
                             header.BlockDescriptors[i].Density = (DensityType)modeResponse[0 + i * 8 + 8];
-                        }
                         else
                         {
                             header.BlockDescriptors[i].Density = DensityType.Default;
@@ -102,7 +99,6 @@ namespace DiscImageChef.Decoders.SCSI
                         header.BlockDescriptors[i].BlockLength += modeResponse[7 + i * 8 + 8];
                     }
                 }
-            }
 
             if(deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
             {

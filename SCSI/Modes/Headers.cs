@@ -115,7 +115,6 @@ namespace DiscImageChef.Decoders.SCSI
                     if(header.Value.DPOFUA) sb.AppendLine("\tDrive supports DPO and FUA bits");
 
                     if(header.Value.BlockDescriptors != null)
-                    {
                         foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                         {
                             string density = "";
@@ -138,25 +137,20 @@ namespace DiscImageChef.Decoders.SCSI
                             }
 
                             if(density != "")
-                            {
                                 if(descriptor.Blocks == 0)
                                     sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density,
                                                     descriptor.BlockLength).AppendLine();
                                 else
                                     sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks,
                                                     density, descriptor.BlockLength).AppendLine();
-                            }
                             else
-                            {
                                 if(descriptor.Blocks == 0)
                                     sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
                                       .AppendLine();
                                 else
                                     sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
                                                     descriptor.BlockLength).AppendLine();
-                            }
                         }
-                    }
 
                     break;
                 }
@@ -373,7 +367,6 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendFormat("\tMedium is {0}", medium).AppendLine();
 
                     if(header.Value.BlockDescriptors != null)
-                    {
                         foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                         {
                             string density = "";
@@ -1463,9 +1456,7 @@ namespace DiscImageChef.Decoders.SCSI
                             }
 
                             if(density != "")
-                            {
                                 if(descriptor.Blocks == 0)
-                                {
                                     if(descriptor.BlockLength == 0)
                                         sb
                                             .AppendFormat("\tAll remaining blocks conform to {0} and have a variable length",
@@ -1473,9 +1464,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     else
                                         sb.AppendFormat("\tAll remaining blocks conform to {0} and are {1} bytes each",
                                                         density, descriptor.BlockLength).AppendLine();
-                                }
                                 else
-                                {
                                     if(descriptor.BlockLength == 0)
                                         sb.AppendFormat("\t{0} blocks conform to {1} and have a variable length",
                                                         descriptor.Blocks, density).AppendLine();
@@ -1483,30 +1472,21 @@ namespace DiscImageChef.Decoders.SCSI
                                         sb.AppendFormat("\t{0} blocks conform to {1} and are {2} bytes each",
                                                         descriptor.Blocks, density, descriptor.BlockLength)
                                           .AppendLine();
-                                }
-                            }
                             else
-                            {
                                 if(descriptor.Blocks == 0)
-                                {
                                     if(descriptor.BlockLength == 0)
                                         sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
                                     else
                                         sb.AppendFormat("\tAll remaining blocks are {0} bytes each",
                                                         descriptor.BlockLength).AppendLine();
-                                }
                                 else
-                                {
                                     if(descriptor.BlockLength == 0)
                                         sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks)
                                           .AppendLine();
                                     else
                                         sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
                                                         descriptor.BlockLength).AppendLine();
-                                }
-                            }
                         }
-                    }
 
                     break;
                 }
@@ -1575,7 +1555,6 @@ namespace DiscImageChef.Decoders.SCSI
                     if(header.Value.DPOFUA) sb.AppendLine("\tDrive supports DPO and FUA bits");
 
                     if(header.Value.BlockDescriptors != null)
-                    {
                         foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                         {
                             string density = "";
@@ -1620,18 +1599,14 @@ namespace DiscImageChef.Decoders.SCSI
                             }
 
                             if(density != "")
-                            {
                                 if(descriptor.Blocks == 0)
-                                {
                                     if(descriptor.BlockLength == 0)
                                         sb.AppendFormat("\tAll remaining blocks are {0} and have a variable length",
                                                         density).AppendLine();
                                     else
                                         sb.AppendFormat("\tAll remaining blocks are {0} and are {1} bytes each",
                                                         density, descriptor.BlockLength).AppendLine();
-                                }
                                 else
-                                {
                                     if(descriptor.BlockLength == 0)
                                         sb.AppendFormat("\t{0} blocks are {1} and have a variable length",
                                                         descriptor.Blocks, density).AppendLine();
@@ -1639,30 +1614,21 @@ namespace DiscImageChef.Decoders.SCSI
                                         sb.AppendFormat("\t{0} blocks are {1} and are {2} bytes each",
                                                         descriptor.Blocks, density, descriptor.BlockLength)
                                           .AppendLine();
-                                }
-                            }
                             else
-                            {
                                 if(descriptor.Blocks == 0)
-                                {
                                     if(descriptor.BlockLength == 0)
                                         sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
                                     else
                                         sb.AppendFormat("\tAll remaining blocks are {0} bytes each",
                                                         descriptor.BlockLength).AppendLine();
-                                }
                                 else
-                                {
                                     if(descriptor.BlockLength == 0)
                                         sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks)
                                           .AppendLine();
                                     else
                                         sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
                                                         descriptor.BlockLength).AppendLine();
-                                }
-                            }
                         }
-                    }
 
                     break;
                 }
@@ -1793,7 +1759,6 @@ namespace DiscImageChef.Decoders.SCSI
                     if(header.Value.DPOFUA) sb.AppendLine("\tDrive supports DPO and FUA bits");
 
                     if(header.Value.BlockDescriptors != null)
-                    {
                         foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                         {
                             string density = "";
@@ -1830,25 +1795,20 @@ namespace DiscImageChef.Decoders.SCSI
                             }
 
                             if(density != "")
-                            {
                                 if(descriptor.Blocks == 0)
                                     sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density,
                                                     descriptor.BlockLength).AppendLine();
                                 else
                                     sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks,
                                                     density, descriptor.BlockLength).AppendLine();
-                            }
                             else
-                            {
                                 if(descriptor.Blocks == 0)
                                     sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength)
                                       .AppendLine();
                                 else
                                     sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks,
                                                     descriptor.BlockLength).AppendLine();
-                            }
                         }
-                    }
 
                     break;
                 }

@@ -338,13 +338,11 @@ namespace DiscImageChef.Decoders.SCSI
                                 page.ReadyAENHoldOffPeriod).AppendLine();
 
             if(page.BusyTimeoutPeriod > 0)
-            {
                 if(page.BusyTimeoutPeriod == 0xFFFF)
                     sb.AppendLine("\tThere is no limit on the maximum time that is allowed to remain busy");
                 else
                     sb.AppendFormat("\tA maximum of {0} ms are allowed to remain busy", page.BusyTimeoutPeriod * 100)
                       .AppendLine();
-            }
 
             if(page.ExtendedSelfTestCompletionTime > 0)
                 sb.AppendFormat("\t{0} seconds to complete extended self-test", page.ExtendedSelfTestCompletionTime);

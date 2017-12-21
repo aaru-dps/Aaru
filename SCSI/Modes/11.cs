@@ -247,16 +247,12 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendFormat("\tMedium has defined {0} partitions", page.PartitionSizes.Length).AppendLine();
 
             for(int i = 0; i < page.PartitionSizes.Length; i++)
-            {
                 if(page.PartitionSizes[i] == 0)
-                {
                     if(page.PartitionSizes.Length == 1)
                         sb.AppendLine("\tDevice recognizes one single partition spanning whole medium");
                     else sb.AppendFormat("\tPartition {0} runs for rest of medium", i).AppendLine();
-                }
                 else
                     sb.AppendFormat("\tPartition {0} is {1} {2} long", i, page.PartitionSizes[i], measure).AppendLine();
-            }
 
             return sb.ToString();
         }

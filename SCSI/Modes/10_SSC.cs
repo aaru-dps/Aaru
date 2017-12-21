@@ -315,10 +315,8 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.PRMWP) sb.AppendLine("\tPermanent write protect is enabled");
 
             if(page.BAML)
-            {
                 if(page.BAM) sb.AppendLine("\tDrive operates using explicit address mode");
                 else sb.AppendLine("\tDrive operates using implicit address mode");
-            }
 
             switch(page.RewindOnReset)
             {
