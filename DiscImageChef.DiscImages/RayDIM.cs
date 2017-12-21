@@ -107,7 +107,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            RayHdr header = new RayHdr();
+            RayHdr header;
             IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
             header = (RayHdr)Marshal.PtrToStructure(ftrPtr, typeof(RayHdr));
@@ -141,7 +141,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            RayHdr header = new RayHdr();
+            RayHdr header;
             IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
             header = (RayHdr)Marshal.PtrToStructure(ftrPtr, typeof(RayHdr));

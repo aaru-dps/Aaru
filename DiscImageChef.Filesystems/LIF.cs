@@ -90,7 +90,7 @@ namespace DiscImageChef.Filesystems
         {
             if(imagePlugin.GetSectorSize() < 256) return false;
 
-            LIF_SystemBlock LIFSb = new LIF_SystemBlock();
+            LIF_SystemBlock LIFSb;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             LIFSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
@@ -106,7 +106,7 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.GetSectorSize() < 256) return;
 
-            LIF_SystemBlock LIFSb = new LIF_SystemBlock();
+            LIF_SystemBlock LIFSb;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             LIFSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);

@@ -135,7 +135,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return false;
 
-            QNX4_Superblock qnxSb = new QNX4_Superblock();
+            QNX4_Superblock qnxSb;
             IntPtr sbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, sbPtr, 512);
             qnxSb = (QNX4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(QNX4_Superblock));
@@ -169,7 +169,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return;
 
-            QNX4_Superblock qnxSb = new QNX4_Superblock();
+            QNX4_Superblock qnxSb;
             IntPtr sbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, sbPtr, 512);
             qnxSb = (QNX4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(QNX4_Superblock));

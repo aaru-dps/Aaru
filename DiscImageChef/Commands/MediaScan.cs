@@ -60,7 +60,7 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
-            ScanResults results = new ScanResults();
+            ScanResults results;
 
             switch(dev.Type)
             {

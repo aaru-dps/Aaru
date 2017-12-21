@@ -102,8 +102,8 @@ namespace DiscImageChef.Server
 
                 if(report.USB != null)
                 {
-                    string usbVendorDescription = null;
-                    string usbProductDescription = null;
+                    string usbVendorDescription;
+                    string usbProductDescription;
                     GetUsbDescriptions(report.USB.VendorID, report.USB.ProductID, out usbVendorDescription,
                                        out usbProductDescription);
 
@@ -544,7 +544,7 @@ namespace DiscImageChef.Server
                     TestedMedia.Report(testedMedia, ata, ref mediaOneValue);
                     if(mediaOneValue.Count > 0)
                     {
-                        sscMedia = true;
+                        divTestedMedia.Visible = true;
                         repTestedMedia.DataSource = mediaOneValue;
                         repTestedMedia.DataBind();
                     }

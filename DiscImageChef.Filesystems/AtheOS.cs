@@ -102,7 +102,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            AtheosSuperBlock afs_sb = new AtheosSuperBlock();
+            AtheosSuperBlock afs_sb;
 
             ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.GetSectorSize();
             uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.GetSectorSize();

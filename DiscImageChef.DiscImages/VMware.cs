@@ -775,7 +775,7 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            byte[] grain = new byte[SECTOR_SIZE * grainSize];
+            byte[] grain;
 
             if(!grainCache.TryGetValue(grainOff, out grain))
             {

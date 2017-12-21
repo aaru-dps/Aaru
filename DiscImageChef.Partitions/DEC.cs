@@ -59,7 +59,7 @@ namespace DiscImageChef.Partitions
             byte[] sector = imagePlugin.ReadSector(31 + sectorOffset);
             if(sector.Length < 512) return false;
 
-            DECLabel table = new DECLabel();
+            DECLabel table;
             IntPtr tablePtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, tablePtr, 512);
             table = (DECLabel)Marshal.PtrToStructure(tablePtr, typeof(DECLabel));

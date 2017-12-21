@@ -182,7 +182,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 if(debug) tsListMs.Write(tsSectorB, 0, tsSectorB.Length);
 
                 // Read the track/sector list sector
-                TrackSectorList tsSector = new TrackSectorList();
+                TrackSectorList tsSector;
                 IntPtr tsPtr = Marshal.AllocHGlobal(256);
                 Marshal.Copy(tsSectorB, 0, tsPtr, 256);
                 tsSector = (TrackSectorList)Marshal.PtrToStructure(tsPtr, typeof(TrackSectorList));

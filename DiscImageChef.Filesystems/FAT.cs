@@ -249,7 +249,6 @@ namespace DiscImageChef.Filesystems
                 { rootMs.Write(tmp, 0, tmp.Length); }
 
                 byte[] root_dir = rootMs.ToArray();
-                rootMs = null;
                 bool valid_root_dir = true;
 
                 // Iterate all root directory
@@ -612,7 +611,6 @@ namespace DiscImageChef.Filesystems
                 { rootMs.Write(tmp, 0, tmp.Length); }
 
                 byte[] root_dir = rootMs.ToArray();
-                rootMs = null;
                 bool valid_root_dir = true;
 
                 // Iterate all root directory
@@ -1313,7 +1311,6 @@ namespace DiscImageChef.Filesystems
                     { rootMs.Write(tmp, 0, tmp.Length); }
 
                     root_directory = rootMs.ToArray();
-                    rootMs = null;
                 }
 
                 for(int i = 0; i < root_directory.Length; i += 32)

@@ -52,7 +52,7 @@ namespace DiscImageChef.Partitions
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
-            Partition[] parts = new Partition[0];
+            Partition[] parts;
 
             if(sectorOffset != 0) return false;
 

@@ -50,8 +50,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel,
                                 ref Resume resume, ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)
         {
-            byte[] senseBuf = null;
-            bool sense = false;
+            byte[] senseBuf;
+            bool sense;
             MediaType dskType = MediaType.Unknown;
             int resets = 0;
 

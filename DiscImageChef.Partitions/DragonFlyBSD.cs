@@ -59,7 +59,7 @@ namespace DiscImageChef.Partitions
             byte[] sectors = imagePlugin.ReadSectors(sectorOffset, nSectors);
             if(sectors.Length < 2048) return false;
 
-            Disklabel64 disklabel = new Disklabel64();
+            Disklabel64 disklabel;
             IntPtr labelPtr = Marshal.AllocHGlobal(2048);
             Marshal.Copy(sectors, 0, labelPtr, 2048);
             disklabel = (Disklabel64)Marshal.PtrToStructure(labelPtr, typeof(Disklabel64));

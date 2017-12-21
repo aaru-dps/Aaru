@@ -203,7 +203,7 @@ namespace DiscImageChef.Filesystems
             uint s_fsize;
             bool xenix = false;
             bool sysv = false;
-            bool sysvr4 = false;
+            bool sysvr4;
             bool sys7th = false;
             bool coherent = false;
             bool xenix3 = false;
@@ -500,8 +500,7 @@ namespace DiscImageChef.Filesystems
 
                 sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002 + offset);
 
-                if(sysv_sb.s_fsize * bs > 0 && sysv_sb.s_fsize * bs == partition.Size) sysvr4 = false;
-                else sysvr4 = true;
+                sysvr4 = sysv_sb.s_fsize * bs <= 0 || sysv_sb.s_fsize * bs != partition.Size;
 
                 if(sysvr4)
                 {

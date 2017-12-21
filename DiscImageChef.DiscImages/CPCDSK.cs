@@ -239,7 +239,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            CpcDiskInfo header = new CpcDiskInfo();
+            CpcDiskInfo header;
             IntPtr headerPtr = Marshal.AllocHGlobal(256);
             Marshal.Copy(headerB, 0, headerPtr, 256);
             header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
@@ -261,7 +261,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            CpcDiskInfo header = new CpcDiskInfo();
+            CpcDiskInfo header;
             IntPtr headerPtr = Marshal.AllocHGlobal(256);
             Marshal.Copy(headerB, 0, headerPtr, 256);
             header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
@@ -309,7 +309,7 @@ namespace DiscImageChef.DiscImages
 
                     byte[] trackB = new byte[256];
                     stream.Read(trackB, 0, 256);
-                    CpcTrackInfo trackInfo = new CpcTrackInfo();
+                    CpcTrackInfo trackInfo;
                     IntPtr trackPtr = Marshal.AllocHGlobal(256);
                     Marshal.Copy(trackB, 0, trackPtr, 256);
                     trackInfo = (CpcTrackInfo)Marshal.PtrToStructure(trackPtr, typeof(CpcTrackInfo));

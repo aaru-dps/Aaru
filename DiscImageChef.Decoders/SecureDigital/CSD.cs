@@ -77,7 +77,7 @@ namespace DiscImageChef.Decoders.SecureDigital
             if(response.Length != 4) return null;
 
             byte[] data = new byte[16];
-            byte[] tmp = new byte[4];
+            byte[] tmp;
 
             tmp = BitConverter.GetBytes(response[0]);
             Array.Copy(tmp, 0, data, 0, 4);
@@ -142,7 +142,7 @@ namespace DiscImageChef.Decoders.SecureDigital
 
             double unitFactor = 0;
             double multiplier = 0;
-            double result = 0;
+            double result;
             string unit = "";
 
             StringBuilder sb = new StringBuilder();

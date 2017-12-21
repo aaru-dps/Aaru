@@ -98,13 +98,9 @@ namespace DiscImageChef.Filesystems
             StringBuilder sb = new StringBuilder();
 
             ext2FSSuperBlock supblk = new ext2FSSuperBlock();
-            byte[] forstrings;
             bool new_ext2 = false;
             bool ext3 = false;
             bool ext4 = false;
-
-            byte[] guid_a = new byte[16];
-            byte[] guid_b = new byte[16];
 
             int sb_size_in_bytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
             uint sb_size_in_sectors = (uint)(sb_size_in_bytes / imagePlugin.GetSectorSize());

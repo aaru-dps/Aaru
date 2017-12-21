@@ -62,10 +62,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             MhddLog mhddLog;
             IbgLog ibgLog;
             bool sense = false;
-            ulong blocks = 0;
+            ulong blocks;
             // TODO: Check subchannel support
-            uint blockSize = 0;
-            uint subSize = 0;
+            uint blockSize;
+            uint subSize;
             byte[] tmpBuf;
             FullTOC.CDFullTOC? toc = null;
             DateTime start;
@@ -76,11 +76,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             double maxSpeed = double.MinValue;
             double minSpeed = double.MaxValue;
             Checksum dataChk;
-            bool readcd = false;
+            bool readcd;
             byte[] readBuffer;
             uint blocksToRead = 64;
             ulong errored = 0;
-            DataFile dumpFile = null;
+            DataFile dumpFile;
             bool aborted = false;
             System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
 
@@ -386,8 +386,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 dumpFile = new DataFile(outputPrefix + ".leadin.bin");
                 dataChk = new Checksum();
-
-                start = DateTime.UtcNow;
 
                 readBuffer = null;
 
@@ -700,7 +698,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    double cmdDuration = 0;
+                    double cmdDuration;
 
                     DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1,
                                      forward ? "forward" : "reverse",
@@ -742,8 +740,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 Modes.DecodedMode? currentMode = null;
                 Modes.ModePage? currentModePage = null;
-                byte[] md6 = null;
-                byte[] md10 = null;
+                byte[] md6;
+                byte[] md10;
 
                 if(!runningPersistent && persistent)
                 {

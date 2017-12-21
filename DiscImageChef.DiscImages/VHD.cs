@@ -787,7 +787,7 @@ namespace DiscImageChef.DiscImages
                 uint batSectorCount = (uint)Math.Ceiling((double)thisDynamic.MaxTableEntries * 4 / 512);
 
                 byte[] batSectorBytes = new byte[512];
-                BatSector batSector = new BatSector();
+                BatSector batSector;
 
                 // Unsafe and fast code. It takes 4 ms to fill a 30720 entries BAT
                 for(int i = 0; i < batSectorCount; i++)

@@ -149,7 +149,6 @@ namespace DiscImageChef.Partitions
             if(magic == VTOC_SANE || magic == VTOC_ENAS)
             {
                 magic_found = true;
-                useOld = false;
                 DicConsole.DebugWriteLine("VTOC plugin", "New VTOC found at {0}", pdloc + sectorOffset + 1);
                 if(magic == VTOC_SANE)
                 {
@@ -225,7 +224,6 @@ namespace DiscImageChef.Partitions
                 if(magic == VTOC_SANE || magic == VTOC_ENAS)
                 {
                     magic_found = true;
-                    useOld = false;
                     DicConsole.DebugWriteLine("VTOC plugin", "New VTOC found.");
                     if(magic == VTOC_SANE)
                     {

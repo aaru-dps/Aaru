@@ -115,8 +115,7 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            ODSHomeBlock homeblock = new ODSHomeBlock();
-            byte[] temp_string = new byte[12];
+            ODSHomeBlock homeblock;
             homeblock.min_class = new byte[20];
             homeblock.max_class = new byte[20];
 

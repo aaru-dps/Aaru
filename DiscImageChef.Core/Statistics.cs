@@ -192,7 +192,7 @@ namespace DiscImageChef.Core
 
                         FileStream fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
                         XmlSerializer xs = new XmlSerializer(stats.GetType());
-                        stats = (Stats)xs.Deserialize(fs);
+                        xs.Deserialize(fs); // Just to test validity of stats file
                         fs.Seek(0, SeekOrigin.Begin);
 
                         WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");

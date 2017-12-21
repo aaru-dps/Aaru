@@ -67,7 +67,6 @@ namespace DiscImageChef.Commands
                 catch(ArgumentException)
                 {
                     DicConsole.ErrorWriteLine("Specified encoding is not supported.");
-                    encoding = null;
                     return;
                 }
 

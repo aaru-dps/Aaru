@@ -55,7 +55,7 @@ namespace DiscImageChef.Partitions
             partitions = new List<Partition>();
 
             byte[] sector;
-            ulong sectsPerUnit = 0;
+            ulong sectsPerUnit;
 
             DicConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.GetSectorSize());
 

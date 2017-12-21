@@ -55,14 +55,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   ref MediaType dskType, bool separateSubchannel, ref Resume resume,
                                   ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)
         {
-            byte[] cmdBuf = null;
-            byte[] senseBuf = null;
-            bool sense = false;
+            byte[] cmdBuf;
+            byte[] senseBuf;
+            bool sense;
             double duration;
             ulong blocks = 0;
             byte[] tmpBuf;
             bool compactDisc = true;
-            ushort currentProfile = 0x0001;
             bool isXbox = false;
             Alcohol120 alcohol = new Alcohol120(outputPrefix);
 
@@ -76,7 +75,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(!sense)
             {
                 Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
-                currentProfile = ftr.CurrentProfile;
                 dumpLog.WriteLine("Device reports current profile is 0x{0:X4}", ftr.CurrentProfile);
 
                 switch(ftr.CurrentProfile)

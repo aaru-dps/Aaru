@@ -78,7 +78,7 @@ namespace DiscImageChef.Filesystems
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
-            FATX_Superblock fatxSb = new FATX_Superblock();
+            FATX_Superblock fatxSb;
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
             fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
@@ -92,7 +92,7 @@ namespace DiscImageChef.Filesystems
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
 
-            FATX_Superblock fatxSb = new FATX_Superblock();
+            FATX_Superblock fatxSb;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 

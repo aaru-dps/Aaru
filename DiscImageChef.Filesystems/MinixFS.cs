@@ -160,7 +160,7 @@ namespace DiscImageChef.Filesystems
 
             xmlFSType = new FileSystemType();
 
-            bool littleEndian = true;
+            bool littleEndian;
 
             if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM || magic == MINIX2_MAGIC || magic == MINIX2_CIGAM ||
                magic == MINIX_MAGIC || magic == MINIX_CIGAM)
@@ -247,7 +247,7 @@ namespace DiscImageChef.Filesystems
 
             if(minix3)
             {
-                Minix3SuperBlock mnx_sb = new Minix3SuperBlock();
+                Minix3SuperBlock mnx_sb;
 
                 if(littleEndian)
                 {
@@ -285,7 +285,7 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                MinixSuperBlock mnx_sb = new MinixSuperBlock();
+                MinixSuperBlock mnx_sb;
 
                 if(littleEndian)
                 {

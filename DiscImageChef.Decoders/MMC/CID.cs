@@ -56,7 +56,7 @@ namespace DiscImageChef.Decoders.MMC
             if(response.Length != 4) return null;
 
             byte[] data = new byte[16];
-            byte[] tmp = new byte[4];
+            byte[] tmp;
 
             tmp = BitConverter.GetBytes(response[0]);
             Array.Copy(tmp, 0, data, 0, 4);
@@ -85,7 +85,6 @@ namespace DiscImageChef.Decoders.MMC
             Array.Copy(response, 3, tmp, 0, 6);
             cid.ProductName = StringHandlers.CToString(tmp);
             cid.ProductRevision = response[9];
-            tmp = new byte[4];
             cid.ProductSerialNumber = BitConverter.ToUInt32(response, 10);
             cid.ManufacturingDate = response[14];
             cid.CRC = (byte)((response[15] & 0xFE) >> 1);

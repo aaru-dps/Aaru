@@ -48,7 +48,7 @@ namespace DiscImageChef.Devices.Linux
 
             StreamReader sr;
             IntPtr udev = IntPtr.Zero;
-            IntPtr udevDev = IntPtr.Zero;
+            IntPtr udevDev;
 
             try
             {

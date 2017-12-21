@@ -97,7 +97,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 if(debug) catalogMs.Write(catSectorB, 0, catSectorB.Length);
 
                 // Read the catalog sector
-                CatalogSector catSector = new CatalogSector();
+                CatalogSector catSector;
                 IntPtr catPtr = Marshal.AllocHGlobal(256);
                 Marshal.Copy(catSectorB, 0, catPtr, 256);
                 catSector = (CatalogSector)Marshal.PtrToStructure(catPtr, typeof(CatalogSector));

@@ -62,14 +62,14 @@ namespace DiscImageChef.Core.Devices.Dumping
         {
             MhddLog mhddLog;
             IbgLog ibgLog;
-            byte[] cmdBuf = null;
-            byte[] senseBuf = null;
-            bool sense = false;
+            byte[] cmdBuf;
+            byte[] senseBuf;
+            bool sense;
             double duration;
-            ulong blocks = 0;
-            uint blockSize = 0;
-            uint logicalBlockSize = 0;
-            uint physicalBlockSize = 0;
+            ulong blocks;
+            uint blockSize;
+            uint logicalBlockSize;
+            uint physicalBlockSize;
             byte scsiMediumType = 0;
             byte scsiDensityCode = 0;
             bool containsFloppyPage = false;
@@ -85,7 +85,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[] readBuffer;
             uint blocksToRead = 64;
             ulong errored = 0;
-            DataFile dumpFile = null;
+            DataFile dumpFile;
             bool aborted = false;
             System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
 
@@ -331,8 +331,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             start = DateTime.UtcNow;
 
-            readBuffer = null;
-
             if(alcohol != null && !dumpRaw)
             {
                 alcohol.AddSessions(new[] {new Session {StartTrack = 1, EndTrack = 1, SessionSequence = 1}});
@@ -461,8 +459,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 Modes.DecodedMode? currentMode = null;
                 Modes.ModePage? currentModePage = null;
-                byte[] md6 = null;
-                byte[] md10 = null;
+                byte[] md6;
+                byte[] md10;
 
                 if(!runningPersistent && persistent)
                 {

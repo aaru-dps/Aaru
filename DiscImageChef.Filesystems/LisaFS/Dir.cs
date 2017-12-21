@@ -113,6 +113,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             {
                 byte[] buf;
                 error = ReadFile((short)FILEID_CATALOG, out buf);
+                if(error != Errno.NoError) return error;
 
                 int offset = 0;
                 List<CatalogEntryV2> catalogV2 = new List<CatalogEntryV2>();
@@ -296,7 +297,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             stat = new FileEntryInfo();
             stat.Attributes = new FileAttributes();
-            DateTime tmp = new DateTime();
+            DateTime tmp;
 
             directoryDTCCache.TryGetValue(dirId, out tmp);
             stat.CreationTime = tmp;

@@ -254,6 +254,8 @@ namespace DiscImageChef.Commands
                                                      tag);
                                 break;
                         }
+
+                // TODO: Not implemented
             }
 
             Core.Statistics.AddCommand("decode");

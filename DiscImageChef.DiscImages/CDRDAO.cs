@@ -407,7 +407,7 @@ namespace DiscImageChef.DiscImages
                 }
 
                 tocStream = new StreamReader(this.imageFilter.GetDataForkStream());
-                FiltersList filtersList = new FiltersList();
+                FiltersList filtersList;
                 line = 0;
 
                 tocStream.BaseStream.Position = 0;
@@ -416,7 +416,7 @@ namespace DiscImageChef.DiscImages
                     line++;
                     _line = tocStream.ReadLine();
 
-                    matchComment = regexComment.Match(_line ?? throw new ());
+                    matchComment = regexComment.Match(_line ?? throw new InvalidOperationException());
                     matchDiskType = regexDiskType.Match(_line);
                     matchMcn = regexMcn.Match(_line);
                     matchTrack = regexTrack.Match(_line);
@@ -889,7 +889,6 @@ namespace DiscImageChef.DiscImages
                     }
 
                     partitions.Add(partition);
-                    partition = new Partition();
                 }
 
                 // Print partition map

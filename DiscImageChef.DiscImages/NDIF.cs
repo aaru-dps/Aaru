@@ -515,7 +515,6 @@ namespace DiscImageChef.DiscImages
                     int realSize = decStream.Read(tmpBuffer, 0, (int)buffersize);
                     buffer = new byte[realSize];
                     Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
-                    tmpBuffer = null;
 
                     if(currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
                     {

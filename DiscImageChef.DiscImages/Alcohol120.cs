@@ -206,7 +206,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
-            AlcoholHeader header = new AlcoholHeader();
+            AlcoholHeader header;
             IntPtr hdrPtr = Marshal.AllocHGlobal(88);
             Marshal.Copy(hdr, 0, hdrPtr, 88);
             header = (AlcoholHeader)Marshal.PtrToStructure(hdrPtr, typeof(AlcoholHeader));
@@ -224,7 +224,7 @@ namespace DiscImageChef.DiscImages
             isDvd = false;
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
-            AlcoholHeader header = new AlcoholHeader();
+            AlcoholHeader header;
             IntPtr hdrPtr = Marshal.AllocHGlobal(88);
             Marshal.Copy(hdr, 0, hdrPtr, 88);
             header = (AlcoholHeader)Marshal.PtrToStructure(hdrPtr, typeof(AlcoholHeader));
@@ -263,7 +263,7 @@ namespace DiscImageChef.DiscImages
             {
                 byte[] sesHdr = new byte[24];
                 stream.Read(sesHdr, 0, 24);
-                AlcoholSession session = new AlcoholSession();
+                AlcoholSession session;
                 IntPtr sesPtr = Marshal.AllocHGlobal(24);
                 Marshal.Copy(sesHdr, 0, sesPtr, 24);
                 session = (AlcoholSession)Marshal.PtrToStructure(sesPtr, typeof(AlcoholSession));
@@ -304,7 +304,6 @@ namespace DiscImageChef.DiscImages
 
                     trkHdr = new byte[80];
                     stream.Read(trkHdr, 0, 80);
-                    track = new AlcoholTrack();
                     trkPtr = Marshal.AllocHGlobal(80);
                     Marshal.Copy(trkHdr, 0, trkPtr, 80);
                     track = (AlcoholTrack)Marshal.PtrToStructure(trkPtr, typeof(AlcoholTrack));
@@ -370,7 +369,7 @@ namespace DiscImageChef.DiscImages
                     byte[] extHdr = new byte[8];
                     stream.Seek(track.extraOffset, SeekOrigin.Begin);
                     stream.Read(extHdr, 0, 8);
-                    AlcoholTrackExtra extra = new AlcoholTrackExtra();
+                    AlcoholTrackExtra extra;
                     IntPtr extPtr = Marshal.AllocHGlobal(8);
                     Marshal.Copy(extHdr, 0, extPtr, 8);
                     extra = (AlcoholTrackExtra)Marshal.PtrToStructure(extPtr, typeof(AlcoholTrackExtra));
@@ -1348,7 +1347,7 @@ namespace DiscImageChef.DiscImages
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            byte[] buffer = new byte[sector_size * length];
+            byte[] buffer;
 
             imageStream = alcImage.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);

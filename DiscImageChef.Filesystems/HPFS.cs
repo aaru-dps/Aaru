@@ -90,12 +90,9 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            HPFS_BIOSParameterBlock hpfs_bpb = new HPFS_BIOSParameterBlock();
-            HPFS_SuperBlock hpfs_sb = new HPFS_SuperBlock();
-            HPFS_SpareBlock hpfs_sp = new HPFS_SpareBlock();
-
-            byte[] oem_name = new byte[8];
-            byte[] volume_name = new byte[11];
+            HPFS_BIOSParameterBlock hpfs_bpb;
+            HPFS_SuperBlock hpfs_sb;
+            HPFS_SpareBlock hpfs_sp;
 
             byte[] hpfs_bpb_sector =
                 imagePlugin.ReadSector(0 + partition.Start); // Seek to BIOS parameter block, on logical sector 0

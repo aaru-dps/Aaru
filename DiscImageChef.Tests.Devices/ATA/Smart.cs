@@ -457,8 +457,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                         DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
                         return;
                     case 1:
-                        DicConsole.Write("What logical block address?: ");
-                        strDev = System.Console.ReadLine();
                         DicConsole.Write("Log address?: ");
                         strDev = System.Console.ReadLine();
                         if(!byte.TryParse(strDev, out address))

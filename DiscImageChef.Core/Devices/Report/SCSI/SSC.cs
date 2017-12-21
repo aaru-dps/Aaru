@@ -53,7 +53,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             bool sense;
             uint timeout = 5;
             ConsoleKeyInfo pressedKey;
-            Modes.DecodedMode? decMode = null;
+            Modes.DecodedMode? decMode;
 
             report.SCSI.SequentialDevice = new sscType();
             DicConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
@@ -175,7 +175,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                 seqTest.MediaIsRecognized = true;
 
-                sense = dev.Load(out senseBuffer, timeout, out duration);
+                dev.Load(out senseBuffer, timeout, out duration);
                 sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
                 if(sense)
                 {

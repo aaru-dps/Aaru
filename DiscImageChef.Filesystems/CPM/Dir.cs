@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                 for(int off = 0; off < directory.Length; off += 32)
                 {
-                    DirectoryEntry entry = new DirectoryEntry();
+                    DirectoryEntry entry;
                     IntPtr dirPtr = Marshal.AllocHGlobal(32);
                     Marshal.Copy(directory, off, dirPtr, 32);
                     entry = (DirectoryEntry)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry));

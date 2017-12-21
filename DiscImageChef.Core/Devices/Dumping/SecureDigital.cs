@@ -83,7 +83,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint blocksToRead = 128;
             uint blockSize = 512;
             ulong blocks = 0;
-            byte[] cid = null;
+            byte[] cid;
             byte[] csd = null;
             byte[] ocr = null;
             byte[] ecsd = null;

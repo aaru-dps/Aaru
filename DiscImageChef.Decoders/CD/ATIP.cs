@@ -428,7 +428,7 @@ namespace DiscImageChef.Decoders.CD
 
             int type = response.LeadInStartFrame % 10;
             int frm = response.LeadInStartFrame - type;
-            string manufacturer = "";
+            string manufacturer;
 
             if(response.DiscType) sb.AppendLine("Disc uses phase change");
             else

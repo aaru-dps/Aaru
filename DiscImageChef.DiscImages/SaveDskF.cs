@@ -198,7 +198,7 @@ namespace DiscImageChef.DiscImages
             calculatedChk = 0;
             stream.Seek(0, SeekOrigin.Begin);
 
-            int b = 0;
+            int b;
             do
             {
                 b = stream.ReadByte();

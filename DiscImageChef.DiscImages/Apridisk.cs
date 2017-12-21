@@ -148,7 +148,7 @@ namespace DiscImageChef.DiscImages
             // Count cylinders
             while(stream.Position < stream.Length)
             {
-                ApridiskRecord record = new ApridiskRecord();
+                ApridiskRecord record;
                 byte[] rec_b = new byte[recordSize];
                 stream.Read(rec_b, 0, recordSize);
 
@@ -241,7 +241,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(signature.Length, SeekOrigin.Begin);
             while(stream.Position < stream.Length)
             {
-                ApridiskRecord record = new ApridiskRecord();
+                ApridiskRecord record;
                 byte[] rec_b = new byte[recordSize];
                 stream.Read(rec_b, 0, recordSize);
 
@@ -322,7 +322,7 @@ namespace DiscImageChef.DiscImages
         {
             int readp = 0;
             ushort blklen;
-            uint u_len = 0;
+            uint u_len;
             int c_len = compressed.Length;
             MemoryStream buffer = new MemoryStream();
 

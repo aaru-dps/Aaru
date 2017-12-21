@@ -103,29 +103,27 @@ namespace DiscImageChef.Filesystems
 
             byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partition.Start);
 
-            NTFS_BootBlock ntfs_bb = new NTFS_BootBlock();
+            NTFS_BootBlock ntfs_bb;
             IntPtr bpbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(ntfs_bpb, 0, bpbPtr, 512);
             ntfs_bb = (NTFS_BootBlock)Marshal.PtrToStructure(bpbPtr, typeof(NTFS_BootBlock));
             Marshal.FreeHGlobal(bpbPtr);
 
-            byte[] oem_name = new byte[8];
-
             sb.AppendFormat("{0} bytes per sector", ntfs_bb.bps).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfs_bb.spc, ntfs_bb.spc * ntfs_bb.bps).AppendLine();
-            //			sb.AppendFormat("{0} reserved sectors", ntfs_bb.rsectors).AppendLine();
-            //			sb.AppendFormat("{0} FATs", ntfs_bb.fats_no).AppendLine();
-            //			sb.AppendFormat("{0} entries in the root folder", ntfs_bb.root_ent).AppendLine();
-            //			sb.AppendFormat("{0} sectors on volume (small)", ntfs_bb.sml_sectors).AppendLine();
+            //          sb.AppendFormat("{0} reserved sectors", ntfs_bb.rsectors).AppendLine();
+            //          sb.AppendFormat("{0} FATs", ntfs_bb.fats_no).AppendLine();
+            //          sb.AppendFormat("{0} entries in the root folder", ntfs_bb.root_ent).AppendLine();
+            //          sb.AppendFormat("{0} sectors on volume (small)", ntfs_bb.sml_sectors).AppendLine();
             sb.AppendFormat("Media descriptor: 0x{0:X2}", ntfs_bb.media).AppendLine();
-            //			sb.AppendFormat("{0} sectors per FAT", ntfs_bb.spfat).AppendLine();
+            //          sb.AppendFormat("{0} sectors per FAT", ntfs_bb.spfat).AppendLine();
             sb.AppendFormat("{0} sectors per track", ntfs_bb.sptrk).AppendLine();
             sb.AppendFormat("{0} heads", ntfs_bb.heads).AppendLine();
             sb.AppendFormat("{0} hidden sectors before filesystem", ntfs_bb.hsectors).AppendLine();
-            //			sb.AppendFormat("{0} sectors on volume (big)", ntfs_bb.big_sectors).AppendLine();
+            //          sb.AppendFormat("{0} sectors on volume (big)", ntfs_bb.big_sectors).AppendLine();
             sb.AppendFormat("BIOS drive number: 0x{0:X2}", ntfs_bb.drive_no).AppendLine();
-            //			sb.AppendFormat("NT flags: 0x{0:X2}", ntfs_bb.nt_flags).AppendLine();
-            //			sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
+            //          sb.AppendFormat("NT flags: 0x{0:X2}", ntfs_bb.nt_flags).AppendLine();
+            //          sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", ntfs_bb.sectors, ntfs_bb.sectors * ntfs_bb.bps)
               .AppendLine();
             sb.AppendFormat("Cluster where $MFT starts: {0}", ntfs_bb.mft_lsn).AppendLine();
@@ -141,7 +139,7 @@ namespace DiscImageChef.Filesystems
             else sb.AppendFormat("{0} bytes per Index block", 1 << -ntfs_bb.index_blk_cts).AppendLine();
 
             sb.AppendFormat("Volume serial number: {0:X16}", ntfs_bb.serial_no).AppendLine();
-            //			sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
+            //          sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
 
             xmlFSType = new FileSystemType();
 

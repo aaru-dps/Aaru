@@ -354,7 +354,7 @@ namespace DiscImageChef.DiscImages
             if(header.Signature == TD_ADV_COMP_MAGIC)
             {
                 int rd;
-                byte[] obuf = new byte[BUFSZ];
+                byte[] obuf;
                 inStream.Seek(12, SeekOrigin.Begin);
                 stream.Seek(12, SeekOrigin.Begin);
                 init_Decode();
@@ -369,7 +369,6 @@ namespace DiscImageChef.DiscImages
                 inStream.Read(copybuf, 0, copybuf.Length);
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Write(copybuf, 0, copybuf.Length);
-                copybuf = null;
             }
 
             stream.Seek(12, SeekOrigin.Begin);

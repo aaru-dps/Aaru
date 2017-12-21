@@ -126,8 +126,8 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            HFS_MasterDirectoryBlock MDB = new HFS_MasterDirectoryBlock();
-            HFS_BootBlock BB = new HFS_BootBlock();
+            HFS_MasterDirectoryBlock MDB;
+            HFS_BootBlock BB;
 
             byte[] bb_sector = null;
             byte[] mdb_sector = null;

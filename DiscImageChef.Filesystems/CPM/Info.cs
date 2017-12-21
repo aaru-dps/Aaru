@@ -188,7 +188,7 @@ namespace DiscImageChef.Filesystems.CPM
                     if(sig1 == 0x4D2F5043 && sig2 == 0x004B5344 && sig3 == sig1) amsSbOffset = 0x80;
 
                     // Read the superblock
-                    AmstradSuperBlock amsSb = new AmstradSuperBlock();
+                    AmstradSuperBlock amsSb;
                     IntPtr amsPtr = Marshal.AllocHGlobal(16);
                     Marshal.Copy(sector, amsSbOffset, amsPtr, 16);
                     amsSb = (AmstradSuperBlock)Marshal.PtrToStructure(amsPtr, typeof(AmstradSuperBlock));
@@ -992,7 +992,7 @@ namespace DiscImageChef.Filesystems.CPM
                   .AppendLine();
 
             int interleaveSide1;
-            int interleaveSide2 = 1;
+            int interleaveSide2;
 
             if(workingDefinition.side1.sectorIds.Length >= 2)
             {

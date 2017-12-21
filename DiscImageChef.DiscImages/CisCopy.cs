@@ -121,7 +121,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
 
             DiskType type = (DiskType)stream.ReadByte();
-            byte tracks = 0;
+            byte tracks;
 
             switch(type)
             {
@@ -192,7 +192,7 @@ namespace DiscImageChef.DiscImages
             MemoryStream decodedImage;
 
             DiskType type = (DiskType)stream.ReadByte();
-            byte tracks = 0;
+            byte tracks;
 
             switch(type)
             {

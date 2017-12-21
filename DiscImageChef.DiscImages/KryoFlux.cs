@@ -233,7 +233,6 @@ namespace DiscImageChef.DiscImages
                     else
                     {
                         DicConsole.DebugWriteLine("KryoFlux plugin", "Arrived end of disk at cylinder {0}", cylinder);
-                        step = 2;
                         break;
                     }
 

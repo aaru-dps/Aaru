@@ -1245,7 +1245,7 @@ namespace DiscImageChef.DiscImages
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            byte[] buffer = new byte[sectorSize * length];
+            byte[] buffer;
 
             imageStream = _track.TrackFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);

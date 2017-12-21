@@ -467,7 +467,7 @@ namespace DiscImageChef.Decoders.SCSI
 
                 if(descriptor.PIV)
                 {
-                    string protocol = "";
+                    string protocol;
                     switch(descriptor.ProtocolIdentifier)
                     {
                         case ProtocolIdentifiers.ADT:

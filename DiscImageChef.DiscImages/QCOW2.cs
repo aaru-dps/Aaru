@@ -396,8 +396,8 @@ namespace DiscImageChef.DiscImages
                 {
                     if((offset & QCOW_COMPRESSED) == QCOW_COMPRESSED)
                     {
-                        ulong compSizeMask = 0;
-                        ulong offMask = 0;
+                        ulong compSizeMask;
+                        ulong offMask;
 
                         compSizeMask = (ulong)(1 << (int)(qHdr.cluster_bits - 8)) - 1;
                         byte countbits = (byte)(qHdr.cluster_bits - 8);

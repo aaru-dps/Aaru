@@ -219,7 +219,7 @@ namespace DiscImageChef.Filesystems.CPM
                 if((directory[dOff] & 0x7F) < 0x10)
                     if(allocationBlocks.Count > 256)
                     {
-                        DirectoryEntry16 entry = new DirectoryEntry16();
+                        DirectoryEntry16 entry;
                         dirPtr = Marshal.AllocHGlobal(32);
                         Marshal.Copy(directory, dOff, dirPtr, 32);
                         entry = (DirectoryEntry16)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry16));
@@ -313,7 +313,7 @@ namespace DiscImageChef.Filesystems.CPM
                     }
                     else
                     {
-                        DirectoryEntry entry = new DirectoryEntry();
+                        DirectoryEntry entry;
                         dirPtr = Marshal.AllocHGlobal(32);
                         Marshal.Copy(directory, dOff, dirPtr, 32);
                         entry = (DirectoryEntry)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry));
@@ -408,7 +408,7 @@ namespace DiscImageChef.Filesystems.CPM
                 // A password entry (or a file entry in PDOS, but this does not handle that case)
                 else if((directory[dOff] & 0x7F) >= 0x10 && (directory[dOff] & 0x7F) < 0x20)
                 {
-                    PasswordEntry entry = new PasswordEntry();
+                    PasswordEntry entry;
                     dirPtr = Marshal.AllocHGlobal(32);
                     Marshal.Copy(directory, dOff, dirPtr, 32);
                     entry = (PasswordEntry)Marshal.PtrToStructure(dirPtr, typeof(PasswordEntry));
@@ -617,7 +617,7 @@ namespace DiscImageChef.Filesystems.CPM
             foreach(string filename in dirList)
             {
                 MemoryStream fileMs = new MemoryStream();
-                FileEntryInfo fInfo = new FileEntryInfo();
+                FileEntryInfo fInfo;
 
                 if(statCache.TryGetValue(filename, out fInfo)) statCache.Remove(filename);
 
@@ -633,7 +633,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                         foreach(ushort alBlk in alBlks)
                         {
-                            byte[] blk = new byte[blockSize];
+                            byte[] blk;
                             allocationBlocks.TryGetValue(alBlk, out blk);
                             fileMs.Write(blk, 0, blk.Length);
                             fInfo.Blocks++;

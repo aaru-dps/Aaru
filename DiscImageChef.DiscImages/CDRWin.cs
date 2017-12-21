@@ -331,11 +331,9 @@ namespace DiscImageChef.DiscImages
                 }
 
                 cueStream = new StreamReader(this.imageFilter.GetDataForkStream());
-                int line = 0;
 
                 while(cueStream.Peek() >= 0)
                 {
-                    line++;
                     string _line = cueStream.ReadLine();
 
                     Regex sr = new Regex(SESSION_REGEX);
@@ -1179,7 +1177,6 @@ namespace DiscImageChef.DiscImages
                     }
 
                     partitions.Add(partition);
-                    partition = new Partition();
                 }
 
                 // Print offset map

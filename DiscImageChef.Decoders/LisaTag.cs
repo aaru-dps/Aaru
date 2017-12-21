@@ -293,7 +293,7 @@ namespace DiscImageChef.Decoders
         {
             if(tag == null) return null;
 
-            PriamTag pmTag = new PriamTag();
+            PriamTag pmTag;
 
             switch(tag.Length)
             {

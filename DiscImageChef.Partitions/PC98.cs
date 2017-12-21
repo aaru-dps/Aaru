@@ -61,7 +61,7 @@ namespace DiscImageChef.Partitions
             byte[] sector = imagePlugin.ReadSector(1);
             if(bootSector[bootSector.Length - 2] != 0x55 || bootSector[bootSector.Length - 1] != 0xAA) return false;
 
-            PC98Table table = new PC98Table();
+            PC98Table table;
             IntPtr tablePtr = Marshal.AllocHGlobal(256);
             Marshal.Copy(sector, 0, tablePtr, 256);
             table = (PC98Table)Marshal.PtrToStructure(tablePtr, typeof(PC98Table));

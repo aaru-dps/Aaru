@@ -47,7 +47,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(partition.Start > 0 || imagePlugin.ImageInfo.SectorSize != 256) return false;
 
-            int spt = 0;
+            int spt;
             if(imagePlugin.ImageInfo.Sectors == 455) spt = 13;
             else spt = 16;
 
@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             information = "";
             StringBuilder sb = new StringBuilder();
 
-            int spt = 0;
+            int spt;
             if(imagePlugin.ImageInfo.Sectors == 455) spt = 13;
             else spt = 16;
 

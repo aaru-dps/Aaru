@@ -56,7 +56,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             bool sense;
             uint timeout = 5;
             ConsoleKeyInfo pressedKey;
-            Modes.DecodedMode? decMode = null;
+            Modes.DecodedMode? decMode;
 
             report.SCSI.MultiMediaDevice = new mmcType();
 

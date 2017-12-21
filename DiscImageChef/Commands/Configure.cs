@@ -42,7 +42,6 @@ namespace DiscImageChef.Commands
         {
             ConsoleKeyInfo pressedKey = new ConsoleKeyInfo();
 
-            pressedKey = new ConsoleKeyInfo();
             while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
             {
                 DicConsole.Write("Do you want to save device reports globally? (Y/N): ");

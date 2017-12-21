@@ -53,7 +53,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             ushort currentProfile = 0x0001;
             AtaErrorRegistersCHS errorChs;
             uint timeout = 5;
-            double duration = 0;
+            double duration;
 
             sense = dev.AtaIdentify(out cmdBuf, out errorChs);
             if(!sense && Identify.Decode(cmdBuf).HasValue)
@@ -108,14 +108,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                 results.SeekTotal = 0;
                 const int SEEK_TIMES = 1000;
 
-                double seekCur = 0;
+                double seekCur;
 
                 Random rnd = new Random();
 
-                uint seekPos = (uint)rnd.Next((int)results.Blocks);
-                ushort seekCy = (ushort)rnd.Next(cylinders);
-                byte seekHd = (byte)rnd.Next(heads);
-                byte seekSc = (byte)rnd.Next(sectors);
+                uint seekPos;
+                ushort seekCy;
+                byte seekHd;
+                byte seekSc;
 
                 aborted = false;
                 System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };

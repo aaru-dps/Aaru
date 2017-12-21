@@ -121,7 +121,7 @@ namespace DiscImageChef.Filesystems
                                             out string information)
         {
             byte[] RootBlockSector = imagePlugin.ReadSector(partition.Start);
-            RootBlock rootBlock = new RootBlock();
+            RootBlock rootBlock;
             rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(RootBlockSector);
 
             StringBuilder sbInformation = new StringBuilder();

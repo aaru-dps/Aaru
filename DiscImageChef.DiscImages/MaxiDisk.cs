@@ -113,7 +113,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            HdkHeader tmp_header = new HdkHeader();
+            HdkHeader tmp_header;
             IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
             tmp_header = (HdkHeader)Marshal.PtrToStructure(ftrPtr, typeof(HdkHeader));
@@ -159,7 +159,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            HdkHeader tmp_header = new HdkHeader();
+            HdkHeader tmp_header;
             IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
             tmp_header = (HdkHeader)Marshal.PtrToStructure(ftrPtr, typeof(HdkHeader));

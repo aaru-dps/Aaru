@@ -210,7 +210,7 @@ namespace DiscImageChef.Devices.Windows
             IntPtr h = SetupDiGetClassDevs(ref diskGuid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
             if(h.ToInt32() != INVALID_HANDLE_VALUE)
             {
-                bool success = true;
+                bool success;
                 int i = 0;
                 do
                 {

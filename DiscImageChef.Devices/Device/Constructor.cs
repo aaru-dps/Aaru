@@ -134,7 +134,7 @@ namespace DiscImageChef.Devices
             if(Error) throw new SystemException(string.Format("Error {0} trying device.", LastError));
 
             bool scsiSense = true;
-            string ntDevicePath = null;
+            string ntDevicePath;
 
             // Windows is answering SCSI INQUIRY for all device types so it needs to be detected first
             switch(PlatformId) {
@@ -240,7 +240,7 @@ namespace DiscImageChef.Devices
                     if(Windows.Command.IsSdhci((SafeFileHandle)FileHandle))
                     {
                         byte[] sdBuffer = new byte[16];
-                        bool sense = false;
+                        bool sense;
 
                         LastError = Windows.Command.SendMmcCommand((SafeFileHandle)FileHandle, MmcCommands.SendCsd, false, false,
                                                                    MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 |
@@ -254,7 +254,6 @@ namespace DiscImageChef.Devices
                         }
 
                         sdBuffer = new byte[16];
-                        sense = false;
 
                         LastError = Windows.Command.SendMmcCommand((SafeFileHandle)FileHandle, MmcCommands.SendCid, false, false,
                                                                    MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 |
@@ -268,7 +267,6 @@ namespace DiscImageChef.Devices
                         }
 
                         sdBuffer = new byte[8];
-                        sense = false;
 
                         LastError = Windows.Command.SendMmcCommand((SafeFileHandle)FileHandle,
                                                                    (MmcCommands)SecureDigitalCommands.SendScr, false, true,
@@ -285,7 +283,6 @@ namespace DiscImageChef.Devices
                         if(cachedScr != null)
                         {
                             sdBuffer = new byte[4];
-                            sense = false;
 
                             LastError = Windows.Command.SendMmcCommand((SafeFileHandle)FileHandle,
                                                                        (MmcCommands)SecureDigitalCommands
@@ -303,7 +300,6 @@ namespace DiscImageChef.Devices
                         else
                         {
                             sdBuffer = new byte[4];
-                            sense = false;
 
                             LastError = Windows.Command.SendMmcCommand((SafeFileHandle)FileHandle, MmcCommands.SendOpCond, false,
                                                                        true,

@@ -62,8 +62,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         {
             MhddLog mhddLog;
             IbgLog ibgLog;
-            bool sense = false;
-            ulong blocks = 0;
+            bool sense;
+            ulong blocks;
             uint blockSize = 2048;
             uint blocksToRead = 64;
             ulong errored = 0;
@@ -75,7 +75,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             double maxSpeed = double.MinValue;
             double minSpeed = double.MaxValue;
             Checksum dataChk;
-            DataFile dumpFile = null;
+            DataFile dumpFile;
             bool aborted = false;
             System.Console.CancelKeyPress += (sender, e) => { e.Cancel = aborted = true; };
 
@@ -331,8 +331,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpFile = new DataFile(outputPrefix + ".iso");
 
             start = DateTime.UtcNow;
-
-            readBuffer = null;
 
             double cmdDuration = 0;
             uint saveBlocksToRead = blocksToRead;
@@ -630,8 +628,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    cmdDuration = 0;
-
                     DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1,
                                      forward ? "forward" : "reverse",
                                      runningPersistent ? "recovering partial data, " : "");
@@ -661,8 +657,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 Modes.DecodedMode? currentMode = null;
                 Modes.ModePage? currentModePage = null;
-                byte[] md6 = null;
-                byte[] md10 = null;
+                byte[] md6;
+                byte[] md10;
 
                 if(!runningPersistent && persistent)
                 {

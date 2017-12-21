@@ -122,7 +122,7 @@ namespace DiscImageChef.Partitions
                 return true;
             }
 
-            uint temp = 0;
+            uint temp;
 
             if(imagePlugin.ImageInfo.Sectors > (ulong)(MemoryUnitDataOff / imagePlugin.ImageInfo.SectorSize))
             {

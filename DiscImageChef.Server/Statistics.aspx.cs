@@ -227,7 +227,7 @@ namespace DiscImageChef.Server
                     devices = new List<DeviceItem>();
                     foreach(DeviceStats device in statistics.Devices)
                     {
-                        string url = null;
+                        string url;
                         string xmlFile;
                         if(!string.IsNullOrWhiteSpace(device.Manufacturer) &&
                            !string.IsNullOrWhiteSpace(device.Model) && !string.IsNullOrWhiteSpace(device.Revision))

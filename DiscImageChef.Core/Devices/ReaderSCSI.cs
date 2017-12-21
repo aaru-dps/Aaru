@@ -441,25 +441,25 @@ namespace DiscImageChef.Core.Devices
             {
                 if(read16)
                 {
-                    sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, LogicalBlockSize, 0,
+                    dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, LogicalBlockSize, 0,
                                        BlocksToRead, false, timeout, out duration);
                     if(dev.Error) BlocksToRead /= 2;
                 }
                 else if(read12)
                 {
-                    sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, 0, LogicalBlockSize, 0,
+                    dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, 0, LogicalBlockSize, 0,
                                        BlocksToRead, false, timeout, out duration);
                     if(dev.Error) BlocksToRead /= 2;
                 }
                 else if(read10)
                 {
-                    sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, LogicalBlockSize, 0,
+                    dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, LogicalBlockSize, 0,
                                        (ushort)BlocksToRead, timeout, out duration);
                     if(dev.Error) BlocksToRead /= 2;
                 }
                 else if(read6)
                 {
-                    sense = dev.Read6(out readBuffer, out senseBuf, 0, LogicalBlockSize, (byte)BlocksToRead, timeout,
+                    dev.Read6(out readBuffer, out senseBuf, 0, LogicalBlockSize, (byte)BlocksToRead, timeout,
                                       out duration);
                     if(dev.Error) BlocksToRead /= 2;
                 }
@@ -522,7 +522,7 @@ namespace DiscImageChef.Core.Devices
 
             DicConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}",
                                       Sense.PrettifySense(senseBuf));
-            return true;
+            return sense;
         }
 
         bool ScsiSeek(ulong block, out double duration)

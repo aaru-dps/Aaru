@@ -76,7 +76,7 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.GetSectorSize() < 512) return false;
 
-            MicroDOSBlock0 block0 = new MicroDOSBlock0();
+            MicroDOSBlock0 block0;
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
@@ -93,7 +93,7 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            MicroDOSBlock0 block0 = new MicroDOSBlock0();
+            MicroDOSBlock0 block0;
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 

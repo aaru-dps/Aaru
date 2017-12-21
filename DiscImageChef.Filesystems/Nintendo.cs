@@ -100,9 +100,10 @@ namespace DiscImageChef.Filesystems
             uint magicGC = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
-            if(magicGC == 0xC2339F3D) wii = false;
-            else if(magicWii == 0x5D1C9EA3) wii = true;
-            else return;
+            if(magicWii == 0x5D1C9EA3)
+                wii = true;
+            else if(magicGC != 0xC2339F3D)
+                return;
 
             fields.discType = Encoding.ASCII.GetString(header, 0, 1);
             fields.gameCode = Encoding.ASCII.GetString(header, 1, 2);

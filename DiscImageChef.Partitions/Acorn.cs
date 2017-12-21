@@ -72,7 +72,7 @@ namespace DiscImageChef.Partitions
 
             if(sector.Length < 512) return false;
 
-            AcornBootBlock bootBlock = new AcornBootBlock();
+            AcornBootBlock bootBlock;
             IntPtr bbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, bbPtr, 512);
             bootBlock = (AcornBootBlock)Marshal.PtrToStructure(bbPtr, typeof(AcornBootBlock));
@@ -112,7 +112,7 @@ namespace DiscImageChef.Partitions
             switch(bootBlock.flags & TYPE_MASK) {
                 case TYPE_LINUX:
                 {
-                    LinuxTable table = new LinuxTable();
+                    LinuxTable table;
                     IntPtr tablePtr = Marshal.AllocHGlobal(512);
                     Marshal.Copy(map, 0, tablePtr, 512);
                     table = (LinuxTable)Marshal.PtrToStructure(tablePtr, typeof(LinuxTable));
@@ -140,7 +140,7 @@ namespace DiscImageChef.Partitions
                 case TYPE_RISCIX_MFM:
                 case TYPE_RISCIX_SCSI:
                 {
-                    RiscIxTable table = new RiscIxTable();
+                    RiscIxTable table;
                     IntPtr tablePtr = Marshal.AllocHGlobal(512);
                     Marshal.Copy(map, 0, tablePtr, 512);
                     table = (RiscIxTable)Marshal.PtrToStructure(tablePtr, typeof(RiscIxTable));

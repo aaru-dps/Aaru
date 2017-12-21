@@ -847,7 +847,6 @@ namespace DiscImageChef.DiscImages
             }
 
             bool partialBlock;
-            partialBlock = !((blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_FULLY_PRESENT);
             partialBlock = (blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_PARTIALLY_PRESENT;
 
             if(partialBlock && hasParent && !CheckBitmap(sectorAddress)) return parentImage.ReadSector(sectorAddress);

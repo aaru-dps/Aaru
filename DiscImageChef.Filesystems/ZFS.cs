@@ -337,7 +337,7 @@ namespace DiscImageChef.Filesystems
 
             if(nvlist == null || nvlist.Length < 16) return false;
 
-            int offset = 0;
+            int offset;
             if(!xdr) return false;
 
             BigEndianBitConverter.IsLittleEndian = littleEndian;

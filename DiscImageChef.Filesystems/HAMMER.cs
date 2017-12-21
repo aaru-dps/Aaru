@@ -97,7 +97,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            HammerSuperBlock hammer_sb = new HammerSuperBlock();
+            HammerSuperBlock hammer_sb;
 
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
 

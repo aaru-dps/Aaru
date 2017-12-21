@@ -59,7 +59,7 @@ namespace DiscImageChef.Decoders.SecureDigital
             if(response.Length != 2) return null;
 
             byte[] data = new byte[8];
-            byte[] tmp = new byte[4];
+            byte[] tmp;
 
             tmp = BitConverter.GetBytes(response[0]);
             Array.Copy(tmp, 0, data, 0, 4);

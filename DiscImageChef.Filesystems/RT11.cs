@@ -89,7 +89,7 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            RT11HomeBlock homeblock = new RT11HomeBlock();
+            RT11HomeBlock homeblock;
 
             byte[] hb_sector = imagePlugin.ReadSector(1 + partition.Start);
 

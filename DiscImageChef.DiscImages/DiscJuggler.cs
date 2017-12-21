@@ -174,7 +174,6 @@ namespace DiscImageChef.DiscImages
                 // Read track
                 for(byte t = 0; t < maxT; t++)
                 {
-                    addedATrack = false;
                     DicConsole.DebugWriteLine("DiscJuggler plugin", "t = {0}", t);
                     Track track = new Track();
 

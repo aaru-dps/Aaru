@@ -616,7 +616,7 @@ namespace DiscImageChef.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] buffer = new byte[8];
+            byte[] buffer;
             byte[] magic = new byte[8];
             stream.Read(magic, 0, 8);
             if(!chdTag.SequenceEqual(magic)) return false;
@@ -665,7 +665,7 @@ namespace DiscImageChef.DiscImages
                     uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
 
                     byte[] hunkSectorBytes = new byte[512];
-                    HunkSector hunkSector = new HunkSector();
+                    HunkSector hunkSector;
 
                     for(int i = 0; i < hunkSectorCount; i++)
                     {
@@ -738,7 +738,7 @@ namespace DiscImageChef.DiscImages
                     uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV2.totalhunks * 8 / 512);
 
                     byte[] hunkSectorBytes = new byte[512];
-                    HunkSector hunkSector = new HunkSector();
+                    HunkSector hunkSector;
 
                     for(int i = 0; i < hunkSectorCount; i++)
                     {
@@ -915,7 +915,7 @@ namespace DiscImageChef.DiscImages
                         uint hunkSectorCount = (uint)Math.Ceiling((double)hunkTableSmall.Length * 4 / 512);
 
                         byte[] hunkSectorBytes = new byte[512];
-                        HunkSectorSmall hunkSector = new HunkSectorSmall();
+                        HunkSectorSmall hunkSector;
 
                         stream.Seek((long)hdrV5.mapoffset, SeekOrigin.Begin);
 
@@ -1640,7 +1640,7 @@ namespace DiscImageChef.DiscImages
 
         ulong GetAbsoluteSector(ulong relativeSector, uint track)
         {
-            Track _track = new Track();
+            Track _track;
             tracks.TryGetValue(track, out _track);
             return _track.TrackStartSector + relativeSector;
         }
@@ -1678,7 +1678,6 @@ namespace DiscImageChef.DiscImages
                                                         read, sectorsPerHunk * ImageInfo.SectorSize));
 
                         zStream.Close();
-                        zStream = null;
                     }
 
                     break;
@@ -1711,7 +1710,6 @@ namespace DiscImageChef.DiscImages
                                                                         read, bytesPerHunk));
 
                                         zStream.Close();
-                                        zStream = null;
                                     }
                                     // TODO: Guess wth is MAME doing with these hunks
                                     else
@@ -1734,7 +1732,7 @@ namespace DiscImageChef.DiscImages
                             break;
                         case Chdv3EntryFlags.Mini:
                             hunk = new byte[bytesPerHunk];
-                            byte[] mini = new byte[8];
+                            byte[] mini;
                             mini = BigEndianBitConverter.GetBytes(entry.offset);
                             for(int i = 0; i < bytesPerHunk; i++) hunk[i] = mini[i % 8];
 

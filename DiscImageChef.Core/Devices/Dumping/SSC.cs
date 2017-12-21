@@ -55,9 +55,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             bool aborted;
             MhddLog mhddLog;
             IbgLog ibgLog;
-            bool sense = false;
+            bool sense;
             ulong blocks = 0;
-            uint blockSize = 0;
+            uint blockSize;
             MediaType dskType = MediaType.Unknown;
             DateTime start;
             DateTime end;
@@ -66,7 +66,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             double currentSpeed = 0;
             double maxSpeed = double.MinValue;
             double minSpeed = double.MaxValue;
-            List<ulong> unreadableSectors = new List<ulong>();
             Checksum dataChk;
 
             dev.RequestSense(out byte[] senseBuf, dev.Timeout, out double duration);
@@ -372,8 +371,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             Checksum fileChk;
             List<TapePartitionType> partitions = new List<TapePartitionType>();
             List<TapeFileType> files = new List<TapeFileType>();
-            TapeFileType currentTapeFile = new TapeFileType();
-            TapePartitionType currentTapePartition = new TapePartitionType();
+            TapeFileType currentTapeFile;
+            TapePartitionType currentTapePartition;
 
             DicConsole.WriteLine();
             DataFile dumpFile = new DataFile(outputPrefix + ".bin");

@@ -154,7 +154,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                 {
                     case 0:
                     {
-                        bvd = new BootRecord();
                         IntPtr ptr = Marshal.AllocHGlobal(2048);
                         Marshal.Copy(vd_sector, hs_off, ptr, 2048 - hs_off);
                         bvd = (BootRecord)Marshal.PtrToStructure(ptr, typeof(BootRecord));
@@ -165,7 +164,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                         if(CurrentEncoding.GetString(bvd.Value.system_id).Substring(0, 23) == "EL TORITO SPECIFICATION")
                         {
                             BootSpec = "El Torito";
-                            torito = new ElToritoBootRecord();
                             ptr = Marshal.AllocHGlobal(2048);
                             Marshal.Copy(vd_sector, hs_off, ptr, 2048 - hs_off);
                             torito = (ElToritoBootRecord)Marshal.PtrToStructure(ptr, typeof(ElToritoBootRecord));
@@ -178,7 +176,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                     {
                         if(HighSierra)
                         {
-                            hsvd = new HighSierraPrimaryVolumeDescriptor();
                             IntPtr ptr = Marshal.AllocHGlobal(2048);
                             Marshal.Copy(vd_sector, 0, ptr, 2048);
                             hsvd =
@@ -192,7 +189,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                                     .ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vd_sector);
                         else
                         {
-                            pvd = new PrimaryVolumeDescriptor();
                             IntPtr ptr = Marshal.AllocHGlobal(2048);
                             Marshal.Copy(vd_sector, 0, ptr, 2048);
                             pvd = (PrimaryVolumeDescriptor)Marshal.PtrToStructure(ptr, typeof(PrimaryVolumeDescriptor));
@@ -202,7 +198,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     }
                     case 2:
                     {
-                        PrimaryVolumeDescriptor svd = new PrimaryVolumeDescriptor();
+                        PrimaryVolumeDescriptor svd;
                         IntPtr ptr = Marshal.AllocHGlobal(2048);
                         Marshal.Copy(vd_sector, 0, ptr, 2048);
                         svd = (PrimaryVolumeDescriptor)Marshal.PtrToStructure(ptr, typeof(PrimaryVolumeDescriptor));
@@ -565,7 +561,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 if(vd_sector[torito_off] != 1) goto exit_torito;
 
-                ElToritoValidationEntry valentry = new ElToritoValidationEntry();
+                ElToritoValidationEntry valentry;
                 IntPtr ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
                 Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
                 valentry = (ElToritoValidationEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoValidationEntry));
@@ -575,7 +571,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 torito_off += ElToritoEntrySize;
 
-                ElToritoInitialEntry initial_entry = new ElToritoInitialEntry();
+                ElToritoInitialEntry initial_entry;
                 ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
                 Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
                 initial_entry = (ElToritoInitialEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoInitialEntry));
@@ -637,7 +633,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 while(torito_off < vd_sector.Length && (vd_sector[torito_off] == (byte)ElToritoIndicator.Header ||
                                                         vd_sector[torito_off] == (byte)ElToritoIndicator.LastHeader))
                 {
-                    ElToritoSectionHeaderEntry section_header = new ElToritoSectionHeaderEntry();
+                    ElToritoSectionHeaderEntry section_header;
                     ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
                     Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
                     section_header =
@@ -652,7 +648,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     for(int entry_counter = 1; entry_counter <= section_header.entries && torito_off < vd_sector.Length;
                         entry_counter++)
                     {
-                        ElToritoSectionEntry section_entry = new ElToritoSectionEntry();
+                        ElToritoSectionEntry section_entry;
                         ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
                         Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
                         section_entry = (ElToritoSectionEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoSectionEntry));
@@ -716,7 +712,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         while(true && torito_off < vd_sector.Length)
                         {
-                            ElToritoSectionEntryExtension section_extension = new ElToritoSectionEntryExtension();
+                            ElToritoSectionEntryExtension section_extension;
                             ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
                             Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
                             section_extension =

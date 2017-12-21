@@ -153,7 +153,7 @@ namespace DiscImageChef.Filesystems
         {
             ulong hdrSector = HeaderPos / imagePlugin.GetSectorSize();
 
-            FossilHeader hdr = new FossilHeader();
+            FossilHeader hdr;
 
             if(partition.Start + hdrSector > imagePlugin.GetSectors()) return false;
 
@@ -174,7 +174,7 @@ namespace DiscImageChef.Filesystems
 
             ulong hdrSector = HeaderPos / imagePlugin.GetSectorSize();
 
-            FossilHeader hdr = new FossilHeader();
+            FossilHeader hdr;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
             hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);

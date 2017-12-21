@@ -590,7 +590,7 @@ namespace DiscImageChef.Core.Devices.Report
                                 mediaTest.NominalRotationRateSpecified = true;
                             }
 
-                        uint logicalsectorsize = 0;
+                        uint logicalsectorsize;
                         uint physicalsectorsize;
                         if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
                            (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
@@ -682,7 +682,7 @@ namespace DiscImageChef.Core.Devices.Report
 
                         byte[] readBuf;
                         ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
-                        bool sense = true;
+                        bool sense;
 
                         DicConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
                         sense = dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);
@@ -961,7 +961,7 @@ namespace DiscImageChef.Core.Devices.Report
                         report.ATA.ReadCapabilities.NominalRotationRateSpecified = true;
                     }
 
-                uint logicalsectorsize = 0;
+                uint logicalsectorsize;
                 uint physicalsectorsize;
                 if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 && (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
                 {
@@ -1052,7 +1052,7 @@ namespace DiscImageChef.Core.Devices.Report
 
                 byte[] readBuf;
                 ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
-                bool sense = true;
+                bool sense;
 
                 DicConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
                 sense = dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);

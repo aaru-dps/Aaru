@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
 
-            bool littleEndian = true;
+            bool littleEndian;
 
             besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
             if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // Magic is at offset
