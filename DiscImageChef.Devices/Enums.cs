@@ -2813,11 +2813,11 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Allows medium removal from data transport but prevents it from medium changer
         /// </summary>
-        [Obsolete] PreventChanger = 0x02,
+        PreventChanger = 0x02,
         /// <summary>
         /// Prevents medium removal from both data transport and medium changer
         /// </summary>
-        [Obsolete] PreventAll = 0x03
+        PreventAll = 0x03
     }
 
     public enum MmcGetConfigurationRt : byte
