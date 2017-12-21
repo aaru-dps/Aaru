@@ -103,8 +103,7 @@ namespace DiscImageChef.Checksums
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
         {
-            byte[] hash;
-            File(filename, out hash);
+            File(filename, out byte[] hash);
             return hash;
         }
 
@@ -135,7 +134,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder adlerOutput = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++) adlerOutput.Append(hash[i].ToString("x2"));
+            foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
 
             fileStream.Close();
 
@@ -169,7 +168,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder adlerOutput = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++) adlerOutput.Append(hash[i].ToString("x2"));
+            foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
 
             return adlerOutput.ToString();
         }

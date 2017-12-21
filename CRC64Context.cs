@@ -114,8 +114,7 @@ namespace DiscImageChef.Checksums
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
         {
-            byte[] localHash;
-            File(filename, out localHash);
+            File(filename, out byte[] localHash);
             return localHash;
         }
 
@@ -127,12 +126,11 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            ulong[] localTable;
             ulong localhashInt;
 
             localhashInt = CRC64_SEED;
 
-            localTable = new ulong[256];
+            ulong[] localTable = new ulong[256];
             for(int i = 0; i < 256; i++)
             {
                 ulong entry = (ulong)i;
@@ -152,7 +150,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder crc64Output = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++) crc64Output.Append(hash[i].ToString("x2"));
+            foreach(byte h in hash) crc64Output.Append(h.ToString("x2"));
 
             fileStream.Close();
 
@@ -180,12 +178,11 @@ namespace DiscImageChef.Checksums
         /// <param name="seed">CRC seed</param>
         public static string Data(byte[] data, uint len, out byte[] hash, ulong polynomial, ulong seed)
         {
-            ulong[] localTable;
             ulong localhashInt;
 
             localhashInt = seed;
 
-            localTable = new ulong[256];
+            ulong[] localTable = new ulong[256];
             for(int i = 0; i < 256; i++)
             {
                 ulong entry = (ulong)i;
@@ -204,7 +201,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder crc64Output = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++) crc64Output.Append(hash[i].ToString("x2"));
+            foreach(byte h in hash) crc64Output.Append(h.ToString("x2"));
 
             return crc64Output.ToString();
         }

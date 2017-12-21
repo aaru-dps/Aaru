@@ -87,7 +87,7 @@ namespace DiscImageChef.Checksums
             ripemd160Provider.TransformFinalBlock(new byte[0], 0, 0);
             StringBuilder ripemd160Output = new StringBuilder();
 
-            for(int i = 0; i < ripemd160Provider.Hash.Length; i++) ripemd160Output.Append(ripemd160Provider.Hash[i].ToString("x2"));
+            foreach(byte h in ripemd160Provider.Hash) ripemd160Output.Append(h.ToString("x2"));
 
             return ripemd160Output.ToString();
         }
@@ -115,7 +115,7 @@ namespace DiscImageChef.Checksums
             hash = ripemd160Provider.ComputeHash(fileStream);
             StringBuilder ripemd160Output = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++) ripemd160Output.Append(hash[i].ToString("x2"));
+            foreach(byte h in hash) ripemd160Output.Append(h.ToString("x2"));
 
             fileStream.Close();
 
@@ -133,7 +133,7 @@ namespace DiscImageChef.Checksums
             hash = ripemd160Provider.ComputeHash(data, 0, (int)len);
             StringBuilder ripemd160Output = new StringBuilder();
 
-            for(int i = 0; i < hash.Length; i++) ripemd160Output.Append(hash[i].ToString("x2"));
+            foreach(byte h in hash) ripemd160Output.Append(h.ToString("x2"));
 
             return ripemd160Output.ToString();
         }
