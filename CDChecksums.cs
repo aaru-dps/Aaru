@@ -485,9 +485,8 @@ namespace DiscImageChef.Checksums
 
             DicConsole.DebugWriteLine("CD checksums", "CD-Text Pack 4 CRC 0x{0:X4}, expected 0x{1:X4}",
                                       cdTextPack4Crc, calculatedCdtp4Crc);
-            status = false;
 
-            return status;
+            return false;
         }
 
         static readonly ushort[] CcittCrc16Table =
