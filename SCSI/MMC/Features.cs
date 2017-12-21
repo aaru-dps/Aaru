@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+// ReSharper disable MemberCanBePrivate.Global
+
 namespace DiscImageChef.Decoders.SCSI.MMC
 {
     /// <summary>
@@ -2212,9 +2214,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-                decoded.PhysicalInterfaceStandard =
-                    (PhysicalInterfaces)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+            decoded.PhysicalInterfaceStandard =
+                (PhysicalInterfaces)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
 
             if(decoded.Version >= 1 && feature.Length >= 12) decoded.DBE |= (feature[8] & 0x01) == 0x01;
 
@@ -2241,7 +2242,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.Async |= (feature[4] & 0x01) == 0x01;
+            decoded.Async |= (feature[4] & 0x01) == 0x01;
 
             if(decoded.Version >= 1) decoded.OCEvent |= (feature[4] & 0x02) == 0x02;
 
@@ -2266,13 +2267,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.LoadingMechanismType = (byte)((feature[4] & 0xE0) >> 5);
-                decoded.Eject |= (feature[4] & 0x08) == 0x08;
-                decoded.PreventJumper |= (feature[4] & 0x04) == 0x04;
-                decoded.Lock |= (feature[4] & 0x01) == 0x01;
-            }
+            decoded.LoadingMechanismType = (byte)((feature[4] & 0xE0) >> 5);
+            decoded.Eject |= (feature[4] & 0x08) == 0x08;
+            decoded.PreventJumper |= (feature[4] & 0x04) == 0x04;
+            decoded.Lock |= (feature[4] & 0x01) == 0x01;
 
             if(decoded.Version < 2) return decoded;
 
@@ -2300,11 +2298,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.SPWP |= (feature[4] & 0x02) == 0x02;
-                decoded.SSWPP |= (feature[4] & 0x01) == 0x01;
-            }
+            decoded.SPWP |= (feature[4] & 0x02) == 0x02;
+            decoded.SSWPP |= (feature[4] & 0x01) == 0x01;
 
             if(decoded.Version >= 1) decoded.WDCB |= (feature[4] & 0x04) == 0x04;
 
@@ -2331,10 +2326,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version < 0) return decoded;
-
-            decoded.LogicalBlockSize =
-                (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+            decoded.LogicalBlockSize = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
             decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
             decoded.PP |= (feature[10] & 0x01) == 0x01;
 
@@ -2578,10 +2570,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version < 0) return decoded;
-
-            decoded.LogicalBlockSize =
-                (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+            decoded.LogicalBlockSize = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
             decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
             decoded.PP |= (feature[10] & 0x01) == 0x01;
 
@@ -2648,7 +2637,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.Write |= (feature[4] & 0x01) == 0x01;
+            decoded.Write |= (feature[4] & 0x01) == 0x01;
 
             if(decoded.Version < 1) return decoded;
 
@@ -2676,8 +2665,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version < 0) return decoded;
-
             decoded.DRTDM |= (feature[4] & 0x01) == 0x01;
             decoded.DBICacheZones = feature[5];
             decoded.Entries = (ushort)((feature[6] << 8) + feature[7]);
@@ -2703,11 +2690,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.Write |= (feature[4] & 0x01) == 0x01;
-                decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
-            }
+            decoded.Write |= (feature[4] & 0x01) == 0x01;
+            decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
 
             if(decoded.Version >= 1) decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
 
@@ -2732,7 +2716,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.Write |= (feature[4] & 0x01) == 0x01;
+            decoded.Write |= (feature[4] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -2754,8 +2738,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Current |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
-
-            if(decoded.Version < 0) return decoded;
 
             decoded.DSDG |= (feature[4] & 0x08) == 0x08;
             decoded.DSDR |= (feature[4] & 0x04) == 0x04;
@@ -2783,13 +2765,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
-                decoded.CDRW |= (feature[4] & 0x02) == 0x02;
-                decoded.RWSubchannel |= (feature[4] & 0x01) == 0x01;
-                decoded.DataTypeSupported = (ushort)((feature[6] << 8) + feature[7]);
-            }
+            decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
+            decoded.CDRW |= (feature[4] & 0x02) == 0x02;
+            decoded.RWSubchannel |= (feature[4] & 0x01) == 0x01;
+            decoded.DataTypeSupported = (ushort)((feature[6] << 8) + feature[7]);
 
             if(decoded.Version < 2) return decoded;
 
@@ -2818,16 +2797,13 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.SAO |= (feature[4] & 0x20) == 0x20;
-                decoded.RAWMS |= (feature[4] & 0x10) == 0x10;
-                decoded.RAW |= (feature[4] & 0x08) == 0x08;
-                decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
-                decoded.CDRW |= (feature[4] & 0x02) == 0x02;
-                decoded.RW |= (feature[4] & 0x01) == 0x01;
-                decoded.MaxCueSheet = (uint)((feature[5] << 16) + (feature[6] << 8) + feature[7]);
-            }
+            decoded.SAO |= (feature[4] & 0x20) == 0x20;
+            decoded.RAWMS |= (feature[4] & 0x10) == 0x10;
+            decoded.RAW |= (feature[4] & 0x08) == 0x08;
+            decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
+            decoded.CDRW |= (feature[4] & 0x02) == 0x02;
+            decoded.RW |= (feature[4] & 0x01) == 0x01;
+            decoded.MaxCueSheet = (uint)((feature[5] << 16) + (feature[6] << 8) + feature[7]);
 
             if(decoded.Version >= 1) decoded.BUF |= (feature[4] & 0x40) == 0x40;
 
@@ -2852,11 +2828,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.BUF |= (feature[4] & 0x40) == 0x40;
-                decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
-            }
+            decoded.BUF |= (feature[4] & 0x40) == 0x40;
+            decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
 
             if(decoded.Version >= 1) decoded.DVDRW |= (feature[4] & 0x02) == 0x02;
 
@@ -2904,7 +2877,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
+            decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
 
             return decoded;
         }
@@ -2926,8 +2899,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Current |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
-
-            if(decoded.Version < 0) return decoded;
 
             decoded.Intermediate |= (feature[4] & 0x02) == 0x02;
             decoded.Blank |= (feature[4] & 0x01) == 0x01;
@@ -3000,7 +2971,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.SubtypeSupport = feature[5];
+            decoded.SubtypeSupport = feature[5];
 
             return decoded;
         }
@@ -3044,8 +3015,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version < 0) return decoded;
-
             decoded.Write |= (feature[4] & 0x01) == 0x01;
             decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
             decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
@@ -3071,7 +3040,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.Write |= (feature[4] & 0x01) == 0x01;
+            decoded.Write |= (feature[4] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -3094,12 +3063,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.OldRE |= (feature[9] & 0x01) == 0x01;
-                decoded.OldR |= (feature[17] & 0x01) == 0x01;
-                decoded.OldROM |= (feature[25] & 0x01) == 0x01;
-            }
+            decoded.OldRE |= (feature[9] & 0x01) == 0x01;
+            decoded.OldR |= (feature[17] & 0x01) == 0x01;
+            decoded.OldROM |= (feature[25] & 0x01) == 0x01;
 
             if(decoded.Version < 1) return decoded;
 
@@ -3130,12 +3096,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.SVNR |= (feature[4] & 0x01) == 0x01;
-                decoded.OldRE |= (feature[9] & 0x01) == 0x01;
-                decoded.OldR |= (feature[17] & 0x01) == 0x01;
-            }
+            decoded.SVNR |= (feature[4] & 0x01) == 0x01;
+            decoded.OldRE |= (feature[9] & 0x01) == 0x01;
+            decoded.OldR |= (feature[17] & 0x01) == 0x01;
 
             if(decoded.Version < 1) return decoded;
 
@@ -3185,8 +3148,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version < 0) return decoded;
-
             decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
             decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
 
@@ -3210,8 +3171,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Current |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
-
-            if(decoded.Version < 0) return decoded;
 
             decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
             decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
@@ -3237,7 +3196,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.RI |= (feature[4] & 0x01) == 0x01;
+            decoded.RI |= (feature[4] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -3281,7 +3240,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.PP |= (feature[4] & 0x01) == 0x01;
+            decoded.PP |= (feature[4] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -3303,8 +3262,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Current |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
-
-            if(decoded.Version < 0) return decoded;
 
             decoded.SCC |= (feature[4] & 0x10) == 0x10;
             decoded.SDP |= (feature[4] & 0x04) == 0x04;
@@ -3330,8 +3287,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Current |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
-
-            if(decoded.Version < 0) return decoded;
 
             decoded.Scan |= (feature[4] & 0x04) == 0x04;
             decoded.SCM |= (feature[4] & 0x02) == 0x02;
@@ -3408,7 +3363,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.CSSVersion = feature[7];
+            decoded.CSSVersion = feature[7];
 
             return decoded;
         }
@@ -3466,8 +3421,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version < 0) return decoded;
-
             byte[] serial = new byte[feature.Length];
             Array.Copy(feature, 4, serial, 0, feature.Length - 4);
             decoded.Serial = StringHandlers.CToString(serial).Trim();
@@ -3514,8 +3467,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version < 0) return decoded;
-
             decoded.DCBs = new uint[feature[3] / 4];
             for(int i = 0; i < decoded.DCBs.Length; i++)
                 decoded.DCBs[i] = (uint)((feature[0 + 4 + i * 4] << 24) + (feature[1 + 4 + i * 4] << 16) +
@@ -3542,7 +3493,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.CPRMVersion = feature[7];
+            decoded.CPRMVersion = feature[7];
 
             return decoded;
         }
@@ -3564,8 +3515,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Current |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
-
-            if(decoded.Version < 0) return decoded;
 
             decoded.Century = (ushort)((feature[4] << 8) + feature[5]);
             decoded.Year = (ushort)((feature[6] << 8) + feature[7]);
@@ -3596,13 +3545,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.BNG |= (feature[4] & 0x01) == 0x01;
-                decoded.BindNonceBlocks = feature[5];
-                decoded.AGIDs = (byte)(feature[6] & 0x0F);
-                decoded.AACSVersion = feature[7];
-            }
+            decoded.BNG |= (feature[4] & 0x01) == 0x01;
+            decoded.BindNonceBlocks = feature[5];
+            decoded.AGIDs = (byte)(feature[6] & 0x0F);
+            decoded.AACSVersion = feature[7];
 
             if(decoded.Version < 2) return decoded;
 
@@ -3632,7 +3578,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0) decoded.MaxScrambleExtent = feature[4];
+            decoded.MaxScrambleExtent = feature[4];
 
             return decoded;
         }
@@ -3696,8 +3642,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Current |= (feature[2] & 0x01) == 0x01;
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
-
-            if(decoded.Version < 0) return decoded;
 
             decoded.PSAU |= (feature[4] & 0x80) == 0x80;
             decoded.LOSPB |= (feature[4] & 0x40) == 0x40;

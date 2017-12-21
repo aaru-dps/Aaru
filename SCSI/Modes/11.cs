@@ -192,9 +192,9 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("\tDevice may erase any or all partitions on MODE SELECT for partitioning");
             else if(page.CLEAR && !page.ADDP)
                 sb.AppendLine("\tDevice shall erase all partitions on MODE SELECT for partitioning");
-            else if(!page.CLEAR && page.ADDP)
+            else if(!page.CLEAR)
                 sb.AppendLine("\tDevice shall not erase any partition on MODE SELECT for partitioning");
-            else if(page.CLEAR && page.ADDP)
+            else
                 sb.AppendLine("\tDevice shall erase all partitions differing on size on MODE SELECT for partitioning");
 
             string measure;
