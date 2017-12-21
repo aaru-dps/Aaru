@@ -52,7 +52,7 @@ namespace DiscImageChef.Core
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
             {
                 AllStats = new Stats();
-                CurrentStats = new Stats()
+                CurrentStats = new Stats
                 {
                     OperatingSystems =
                         new List<OsStats>
@@ -74,7 +74,7 @@ namespace DiscImageChef.Core
             else if(Settings.Settings.Current.Stats != null)
             {
                 AllStats = new Stats();
-                CurrentStats = new Stats()
+                CurrentStats = new Stats
                 {
                     OperatingSystems =
                         new List<OsStats>

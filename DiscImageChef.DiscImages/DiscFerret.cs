@@ -74,7 +74,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "DiscFerret";
             PluginUuid = new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

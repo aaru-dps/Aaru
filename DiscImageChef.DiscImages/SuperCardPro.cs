@@ -177,7 +177,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "SuperCardPro";
             PluginUuid = new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

@@ -107,7 +107,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "IBM SaveDskF";
             PluginUuid = new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

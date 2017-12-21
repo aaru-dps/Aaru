@@ -259,7 +259,7 @@ namespace DiscImageChef.Server
                         if(!File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Reports",
                                                      xmlFile))) url = null;
 
-                        devices.Add(new DeviceItem()
+                        devices.Add(new DeviceItem
                         {
                             Manufacturer = device.Manufacturer,
                             Model = device.Model,

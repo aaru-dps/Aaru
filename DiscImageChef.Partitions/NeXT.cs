@@ -171,7 +171,7 @@ namespace DiscImageChef.Partitions
                 {
                     StringBuilder sb = new StringBuilder();
 
-                    CommonTypes.Partition part = new CommonTypes.Partition()
+                    CommonTypes.Partition part = new CommonTypes.Partition
                     {
                         Size = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
                         Offset =

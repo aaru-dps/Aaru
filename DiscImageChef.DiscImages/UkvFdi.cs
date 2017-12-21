@@ -88,7 +88,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Spectrum Floppy Disk Image";
             PluginUuid = new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

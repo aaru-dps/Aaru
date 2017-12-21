@@ -68,7 +68,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Virtual98 Disk Image";
             PluginUuid = new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

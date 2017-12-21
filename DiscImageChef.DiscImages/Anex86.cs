@@ -61,7 +61,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Anex86 Disk Image";
             PluginUuid = new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

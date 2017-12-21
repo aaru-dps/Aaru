@@ -94,7 +94,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "ACT Apricot Disk Image";
             PluginUuid = new Guid("43408CF3-6DB3-449F-A779-2B0E497C5B14");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

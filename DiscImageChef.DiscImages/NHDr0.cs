@@ -69,7 +69,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "T98-Next NHD r0 Disk Image";
             PluginUuid = new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

@@ -113,7 +113,7 @@ namespace DiscImageChef.Partitions
 
                         if(ddm.sbMap[i].ddSize == 0) continue;
 
-                        CommonTypes.Partition part = new CommonTypes.Partition()
+                        CommonTypes.Partition part = new CommonTypes.Partition
                         {
                             Size = (ulong)(ddm.sbMap[i].ddSize * 512),
                             Length = (ulong)(ddm.sbMap[i].ddSize * 512 / sector_size),

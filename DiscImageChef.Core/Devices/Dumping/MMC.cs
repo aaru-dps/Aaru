@@ -563,7 +563,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].DI = new DumpType()
+                        sidecar.OpticalDisc[0].DI = new DumpType
                         {
                             Image = outputPrefix + ".di.bin",
                             Size = tmpBuf.Length,

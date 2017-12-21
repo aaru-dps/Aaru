@@ -154,7 +154,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             ProductID = dev.UsbProductId,
                             VendorID = dev.UsbVendorId,
-                            Descriptors = new DumpType()
+                            Descriptors = new DumpType
                             {
                                 Image = outputPrefix + ".usbdescriptors.bin",
                                 Size = dev.UsbDescriptors.Length,
@@ -333,7 +333,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(alcohol != null && !dumpRaw)
             {
-                alcohol.AddSessions(new[] {new Session() {StartTrack = 1, EndTrack = 1, SessionSequence = 1}});
+                alcohol.AddSessions(new[] {new Session {StartTrack = 1, EndTrack = 1, SessionSequence = 1}});
                 alcohol.AddTrack(20, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1);
                 alcohol.SetExtension(outputExtension);
                 alcohol.SetTrackSizes(1, (int)blockSize, 0, 0, (long)blocks);
@@ -503,7 +503,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else
                     {
-                        Decoders.SCSI.Modes.ModePage_01 pg = new Decoders.SCSI.Modes.ModePage_01()
+                        Decoders.SCSI.Modes.ModePage_01 pg = new Decoders.SCSI.Modes.ModePage_01
                         {
                             PS = false,
                             AWRE = false,
@@ -516,7 +516,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             DCR = false,
                             ReadRetryCount = 255
                         };
-                        Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode()
+                        Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode
                         {
                             Header = new Decoders.SCSI.Modes.ModeHeader(),
                             Pages = new Decoders.SCSI.Modes.ModePage[]

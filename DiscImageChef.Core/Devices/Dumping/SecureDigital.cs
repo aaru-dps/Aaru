@@ -75,7 +75,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             double duration;
 
             CICMMetadataType sidecar =
-                new CICMMetadataType() {BlockMedia = new BlockMediaType[] {new BlockMediaType()}};
+                new CICMMetadataType {BlockMedia = new BlockMediaType[] {new BlockMediaType()}};
 
             uint blocksToRead = 128;
             uint blockSize = 512;

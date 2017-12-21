@@ -159,7 +159,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("Adler32",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -192,7 +192,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("CRC16",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -225,7 +225,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("CRC32",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -258,7 +258,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("CRC64",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -291,7 +291,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("MD5",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -324,7 +324,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("RIPEMD160",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -357,7 +357,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SHA1",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -390,7 +390,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SHA256",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -423,7 +423,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SHA384",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -456,7 +456,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SHA512",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds
@@ -489,7 +489,7 @@ namespace DiscImageChef.Core
             if(mem < results.MinMemory) results.MinMemory = mem;
 
             results.Entries.Add("SpamSum",
-                                new BenchmarkEntry()
+                                new BenchmarkEntry
                                 {
                                     TimeSpan = (end - start).TotalSeconds,
                                     Speed = bufferSize / 1048576 / (end - start).TotalSeconds

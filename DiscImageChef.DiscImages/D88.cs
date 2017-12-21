@@ -203,7 +203,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "D88 Disk Image";
             PluginUuid = new Guid("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

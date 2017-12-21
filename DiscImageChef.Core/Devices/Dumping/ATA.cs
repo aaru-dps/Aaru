@@ -82,7 +82,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Decoders.ATA.Identify.IdentifyDevice ataId = Decoders.ATA.Identify.Decode(cmdBuf).Value;
 
                 CICMMetadataType sidecar =
-                    new CICMMetadataType() {BlockMedia = new BlockMediaType[] {new BlockMediaType()}};
+                    new CICMMetadataType {BlockMedia = new BlockMediaType[] {new BlockMediaType()}};
 
                 if(dev.IsUsb)
                 {

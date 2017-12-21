@@ -93,15 +93,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             byte[] tmpBuf = new byte[ssBuf.Length - 4];
             Array.Copy(ssBuf, 4, tmpBuf, 0, ssBuf.Length - 4);
-            sidecar.OpticalDisc[0].Xbox = new XboxType()
+            sidecar.OpticalDisc[0].Xbox = new XboxType
             {
                 SecuritySectors = new XboxSecuritySectorsType[]
                 {
-                    new XboxSecuritySectorsType()
+                    new XboxSecuritySectorsType
                     {
                         RequestNumber = 0,
                         RequestVersion = 1,
-                        SecuritySectors = new DumpType()
+                        SecuritySectors = new DumpType
                         {
                             Image = outputPrefix + ".ss.bin",
                             Size = tmpBuf.Length,
@@ -935,14 +935,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Checksums = sidecar.OpticalDisc[0].Checksums,
                 EndSector = (long)(blocks - 1),
                 Image =
-                    new ImageType()
+                    new ImageType
                     {
                         format = "BINARY",
                         offset = 0,
                         offsetSpecified = true,
                         Value = sidecar.OpticalDisc[0].Image.Value
                     },
-                Sequence = new TrackSequenceType() {Session = 1, TrackNumber = 1},
+                Sequence = new TrackSequenceType {Session = 1, TrackNumber = 1},
                 Size = (long)(totalSize * blockSize),
                 StartSector = 0
             };

@@ -47,7 +47,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "RS-IDE Hard Disk Image";
             PluginUuid = new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),

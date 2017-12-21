@@ -103,7 +103,7 @@ namespace DiscImageChef.DiscImages
         {
             Name = "KryoFlux STREAM";
             PluginUuid = new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
-            ImageInfo = new ImageInfo()
+            ImageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags = new List<MediaTagType>(),
