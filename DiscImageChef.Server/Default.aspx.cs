@@ -32,24 +32,27 @@
 
 using System;
 using System.IO;
+using System.Reflection;
+using System.Web.Hosting;
+using System.Web.UI;
 using Velyo.AspNet.Markdown;
 
 namespace DiscImageChef.Server
 {
-    public partial class Default : System.Web.UI.Page
+    public partial class Default : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
             MarkdownContent mkdown = new MarkdownContent();
             StreamReader sr =
-                new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "docs", "README.md"));
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~"), "docs", "README.md"));
             string mdcontent = sr.ReadToEnd();
             sr.Close();
 
             mkdown.Content = mdcontent.Replace(".md)", ".aspx)");
             body.Controls.Add(mkdown);
 
-            lblVersion.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            lblVersion.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
     }
 }

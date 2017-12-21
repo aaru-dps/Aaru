@@ -36,8 +36,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using DiscImageChef.Helpers;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -60,7 +64,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public FAT(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public FAT(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Microsoft File Allocation Table";
             PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
@@ -68,7 +72,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -111,7 +115,7 @@ namespace DiscImageChef.Filesystems
             Array.Copy(bpb_sector, 0x052, fat32_id, 0, 8);
             huge_sectors = BitConverter.ToUInt64(bpb_sector, 0x052);
             fat_id = fat_sector[0];
-            int bits_in_bps = Helpers.CountBits.Count(bps);
+            int bits_in_bps = CountBits.Count(bps);
             if(imagePlugin.ImageInfo.SectorSize >= 512) bootable = BitConverter.ToUInt16(bpb_sector, 0x1FE);
 
             bool correct_spc = spc == 1 || spc == 2 || spc == 4 || spc == 8 || spc == 16 || spc == 32 || spc == 64;
@@ -155,7 +159,7 @@ namespace DiscImageChef.Filesystems
             ushort apricot_fat_sectors = BitConverter.ToUInt16(bpb_sector, 0x5B);
             bool apricot_correct_spc = apricot_spc == 1 || apricot_spc == 2 || apricot_spc == 4 || apricot_spc == 8 ||
                                        apricot_spc == 16 || apricot_spc == 32 || apricot_spc == 64;
-            int bits_in_apricot_bps = Helpers.CountBits.Count(apricot_bps);
+            int bits_in_apricot_bps = CountBits.Count(apricot_bps);
             byte apricot_partitions = bpb_sector[0x0C];
 
             DicConsole.DebugWriteLine("FAT plugin", "apricot_bps = {0}", apricot_bps);
@@ -169,7 +173,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("FAT plugin", "apricot_fat_sectors = {0}", apricot_fat_sectors);
 
             // This is to support FAT partitions on hybrid ISO/USB images
-            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 sectors /= 4;
                 big_sectors /= 4;
@@ -326,13 +330,13 @@ namespace DiscImageChef.Filesystems
             return fat_id == fat2_sector[0];
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
 
             bool useAtariBPB = false;
             bool useMSXBPB = false;
@@ -383,17 +387,17 @@ namespace DiscImageChef.Filesystems
 
                 Marshal.FreeHGlobal(bpbPtr);
 
-                int bits_in_bps_atari = Helpers.CountBits.Count(atariBPB.bps);
-                int bits_in_bps_msx = Helpers.CountBits.Count(msxBPB.bps);
-                int bits_in_bps_dos20 = Helpers.CountBits.Count(dos2BPB.bps);
-                int bits_in_bps_dos30 = Helpers.CountBits.Count(dos30BPB.bps);
-                int bits_in_bps_dos32 = Helpers.CountBits.Count(dos32BPB.bps);
-                int bits_in_bps_dos33 = Helpers.CountBits.Count(dos33BPB.bps);
-                int bits_in_bps_dos34 = Helpers.CountBits.Count(shortEBPB.bps);
-                int bits_in_bps_dos40 = Helpers.CountBits.Count(EBPB.bps);
-                int bits_in_bps_fat32_short = Helpers.CountBits.Count(shortFat32BPB.bps);
-                int bits_in_bps_fat32 = Helpers.CountBits.Count(Fat32BPB.bps);
-                int bits_in_bps_apricot = Helpers.CountBits.Count(ApricotBPB.mainBPB.bps);
+                int bits_in_bps_atari = CountBits.Count(atariBPB.bps);
+                int bits_in_bps_msx = CountBits.Count(msxBPB.bps);
+                int bits_in_bps_dos20 = CountBits.Count(dos2BPB.bps);
+                int bits_in_bps_dos30 = CountBits.Count(dos30BPB.bps);
+                int bits_in_bps_dos32 = CountBits.Count(dos32BPB.bps);
+                int bits_in_bps_dos33 = CountBits.Count(dos33BPB.bps);
+                int bits_in_bps_dos34 = CountBits.Count(shortEBPB.bps);
+                int bits_in_bps_dos40 = CountBits.Count(EBPB.bps);
+                int bits_in_bps_fat32_short = CountBits.Count(shortFat32BPB.bps);
+                int bits_in_bps_fat32 = CountBits.Count(Fat32BPB.bps);
+                int bits_in_bps_apricot = CountBits.Count(ApricotBPB.mainBPB.bps);
 
                 bool correct_spc_atari = atariBPB.spc == 1 || atariBPB.spc == 2 || atariBPB.spc == 4 ||
                                          atariBPB.spc == 8 || atariBPB.spc == 16 || atariBPB.spc == 32 ||
@@ -429,7 +433,7 @@ namespace DiscImageChef.Filesystems
                                            ApricotBPB.mainBPB.spc == 64;
 
                 // This is to support FAT partitions on hybrid ISO/USB images
-                if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+                if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
                     atariBPB.sectors /= 4;
                     msxBPB.sectors /= 4;
@@ -581,7 +585,7 @@ namespace DiscImageChef.Filesystems
             ulong root_directory_sector = 0;
             string extraInfo = null;
             string bootChk = null;
-            Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
+            Sha1Context sha1Ctx = new Sha1Context();
             sha1Ctx.Init();
             byte[] chkTmp;
 
@@ -822,7 +826,7 @@ namespace DiscImageChef.Filesystems
                 isFAT32 = true;
 
                 // This is to support FAT partitions on hybrid ISO/USB images
-                if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+                if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
                     Fat32BPB.bps *= 4;
                     Fat32BPB.spc /= 4;
@@ -1134,7 +1138,7 @@ namespace DiscImageChef.Filesystems
             if(!isFAT32)
             {
                 // This is to support FAT partitions on hybrid ISO/USB images
-                if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+                if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
                     fakeBPB.bps *= 4;
                     fakeBPB.spc /= 4;
@@ -1156,7 +1160,7 @@ namespace DiscImageChef.Filesystems
 
                     if(fakeBPB.sectors == 0)
                         clusters = fakeBPB.spc == 0 ? fakeBPB.big_sectors : fakeBPB.big_sectors / fakeBPB.spc;
-                    else clusters = fakeBPB.spc == 0 ? (ulong)fakeBPB.sectors : (ulong)fakeBPB.sectors / fakeBPB.spc;
+                    else clusters = fakeBPB.spc == 0 ? fakeBPB.sectors : (ulong)fakeBPB.sectors / fakeBPB.spc;
 
                     if(clusters < 4089) isFAT12 = true;
                     else isFAT16 = true;
@@ -1297,7 +1301,7 @@ namespace DiscImageChef.Filesystems
             if(extraInfo != null) sb.Append(extraInfo);
 
             if(root_directory_sector + partition.Start < partition.End &&
-               imagePlugin.ImageInfo.XmlMediaType != DiscImages.XmlMediaType.OpticalDisc)
+               imagePlugin.ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
             {
                 byte[] root_directory =
                     imagePlugin.ReadSectors(root_directory_sector + partition.Start, sectors_for_root_directory);

@@ -54,10 +54,10 @@ namespace DiscImageChef.Devices.Linux
         internal static extern int ioctlMmc(int fd, LinuxIoctl request, ref MmcIocCmd value);
 
         [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
-        internal static extern int readlink(string path, System.IntPtr buf, int bufsize);
+        internal static extern int readlink(string path, IntPtr buf, int bufsize);
 
         [DllImport("libc", CharSet = CharSet.Ansi, EntryPoint = "readlink", SetLastError = true)]
-        internal static extern long readlink64(string path, System.IntPtr buf, long bufsize);
+        internal static extern long readlink64(string path, IntPtr buf, long bufsize);
 
         [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
         internal static extern IntPtr udev_new();

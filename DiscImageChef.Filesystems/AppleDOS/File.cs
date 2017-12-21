@@ -43,7 +43,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             byte[] file;
@@ -108,7 +108,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
@@ -160,7 +160,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
         Errno CacheFile(string path)
         {
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();

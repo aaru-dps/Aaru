@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.Interop;
+using PlatformID = DiscImageChef.Interop.PlatformID;
 
 namespace DiscImageChef.Devices
 {
@@ -48,14 +50,14 @@ namespace DiscImageChef.Devices
     {
         public static DeviceInfo[] ListDevices()
         {
-            switch(Interop.DetectOS.GetRealPlatformID())
+            switch(DetectOS.GetRealPlatformID())
             {
-                case Interop.PlatformID.Win32NT: return Windows.ListDevices.GetList();
-                case Interop.PlatformID.Linux: return Linux.ListDevices.GetList();
-                case Interop.PlatformID.FreeBSD: return FreeBSD.ListDevices.GetList();
+                case PlatformID.Win32NT: return Windows.ListDevices.GetList();
+                case PlatformID.Linux: return Linux.ListDevices.GetList();
+                case PlatformID.FreeBSD: return FreeBSD.ListDevices.GetList();
                 default:
                     throw new InvalidOperationException(string.Format("Platform {0} not yet supported.",
-                                                                      Interop.DetectOS.GetRealPlatformID()));
+                                                                      DetectOS.GetRealPlatformID()));
             }
         }
     }

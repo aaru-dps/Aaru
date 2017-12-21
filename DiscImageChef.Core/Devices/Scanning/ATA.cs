@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
+using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Scanning
@@ -50,14 +51,14 @@ namespace DiscImageChef.Core.Devices.Scanning
             bool sense;
             results.Blocks = 0;
             ushort currentProfile = 0x0001;
-            Decoders.ATA.AtaErrorRegistersCHS errorChs;
+            AtaErrorRegistersCHS errorChs;
             uint timeout = 5;
             double duration = 0;
 
             sense = dev.AtaIdentify(out cmdBuf, out errorChs);
-            if(!sense && Decoders.ATA.Identify.Decode(cmdBuf).HasValue)
+            if(!sense && Identify.Decode(cmdBuf).HasValue)
             {
-                Decoders.ATA.Identify.IdentifyDevice ataId = Decoders.ATA.Identify.Decode(cmdBuf).Value;
+                Identify.IdentifyDevice ataId = Identify.Decode(cmdBuf).Value;
 
                 // Initializate reader
                 Reader ataReader = new Reader(dev, timeout, cmdBuf);
@@ -167,7 +168,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                         }
 
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-                        currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (duration / (double)1000);
+                        currentSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                         GC.Collect();
                     }
@@ -177,7 +178,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     mhddLog.Close();
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
                     ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (double)blockSize * (double)(results.Blocks + 1) / 1024 /
+                                 blockSize * (double)(results.Blocks + 1) / 1024 /
                                  (results.ProcessingTime / 1000), devicePath);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
 
@@ -252,7 +253,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                                 }
 
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-                                currentSpeed = (double)blockSize / (double)1048576 / (duration / (double)1000);
+                                currentSpeed = blockSize / (double)1048576 / (duration / 1000);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                                 GC.Collect();
 
@@ -266,7 +267,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     mhddLog.Close();
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
                     ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (double)blockSize * (double)(results.Blocks + 1) / 1024 /
+                                 blockSize * (double)(results.Blocks + 1) / 1024 /
                                  (results.ProcessingTime / 1000), devicePath);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
 
@@ -299,7 +300,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 results.ProcessingTime /= 1000;
                 results.TotalTime = (end - start).TotalSeconds;
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-                results.AvgSpeed = (double)blockSize * (double)(results.Blocks + 1) / 1048576 /
+                results.AvgSpeed = blockSize * (double)(results.Blocks + 1) / 1048576 /
                                    results.ProcessingTime;
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                 results.SeekTimes = SEEK_TIMES;

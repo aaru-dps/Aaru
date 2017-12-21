@@ -34,7 +34,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
@@ -49,10 +51,10 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
         }
 
-        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
-                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin,
+                                            out List<Partition> partitions, ulong sectorOffset)
         {
-            partitions = new List<CommonTypes.Partition>();
+            partitions = new List<Partition>();
 
             if(sectorOffset + 2 >= imagePlugin.GetSectors()) return false;
 
@@ -65,7 +67,7 @@ namespace DiscImageChef.Partitions
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
 
             if(signature != GptMagic)
-                if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+                if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
                     hdrBytes = imagePlugin.ReadSector(sectorOffset);
                     signature = BitConverter.ToUInt64(hdrBytes, 512);
@@ -162,7 +164,7 @@ namespace DiscImageChef.Partitions
                 if(entry.startLBA / divisor > imagePlugin.GetSectors() ||
                    entry.endLBA / divisor > imagePlugin.GetSectors()) return false;
 
-                CommonTypes.Partition part = new CommonTypes.Partition
+                Partition part = new Partition
                 {
                     Description = string.Format("ID: {0}", entry.partitionId),
                     Size = (entry.endLBA - entry.startLBA + 1) * sectorSize,

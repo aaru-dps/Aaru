@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -57,7 +59,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public HPFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public HPFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "OS/2 High Performance File System";
             PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
@@ -65,7 +67,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(16 + partition.Start >= partition.End) return false;
 
@@ -81,7 +83,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -199,7 +201,7 @@ namespace DiscImageChef.Filesystems
             if((hpfs_sp.flags2 & 0x40) == 0x40) sb.AppendLine("Unknown flag 0x40 on flags2 is active");
             if((hpfs_sp.flags2 & 0x80) == 0x80) sb.AppendLine("Unknown flag 0x80 on flags2 is active");
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
 
             // Theoretically everything from BPB to SB is boot code, should I hash everything or only the sector loaded by BIOS itself?
             if(hpfs_bpb.jump[0] == 0xEB && hpfs_bpb.jump[1] > 0x3C && hpfs_bpb.jump[1] < 0x80 &&

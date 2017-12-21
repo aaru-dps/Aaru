@@ -32,6 +32,7 @@
 
 using System;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
 
 namespace DiscImageChef.Core.Devices
 {
@@ -93,13 +94,13 @@ namespace DiscImageChef.Core.Devices
             }
 
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-            if(!read16 && Blocks > (long)0xFFFFFFFF + (long)1)
+            if(!read16 && Blocks > 0xFFFFFFFF + (long)1)
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
             {
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
                 ErrorMessage =
                     string.Format("Device only supports SCSI READ (10) but has more than {0} blocks ({1} blocks total)",
-                                  (long)0xFFFFFFFF + (long)1, Blocks);
+                                  0xFFFFFFFF + (long)1, Blocks);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
                 return true;
             }
@@ -107,10 +108,10 @@ namespace DiscImageChef.Core.Devices
             if(CanReadRaw)
             {
                 bool testSense;
-                Decoders.SCSI.FixedSense? decSense;
+                FixedSense? decSense;
                 CanReadRaw = false;
 
-                if(dev.ScsiType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                 {
                     /*testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 0xFFFF, timeout, out duration);
                     if (testSense && !dev.Error)
@@ -135,9 +136,9 @@ namespace DiscImageChef.Core.Devices
                                                out duration);
                     if(testSense && !dev.Error)
                     {
-                        decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                        decSense = Sense.DecodeFixed(senseBuf);
                         if(decSense.HasValue)
-                            if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
+                            if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
                                decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                             {
                                 CanReadRaw = true;
@@ -282,9 +283,9 @@ namespace DiscImageChef.Core.Devices
                                                           out duration);
                         if(testSense)
                         {
-                            decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                            decSense = Sense.DecodeFixed(senseBuf);
                             if(decSense.HasValue)
-                                if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
                                    decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                 {
                                     CanReadRaw = true;
@@ -302,9 +303,9 @@ namespace DiscImageChef.Core.Devices
                                                                      out duration);
                                     if(testSense)
                                     {
-                                        decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                                        decSense = Sense.DecodeFixed(senseBuf);
                                         if(decSense.HasValue)
-                                            if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                            if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
                                                decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                             {
                                                 CanReadRaw = true;
@@ -404,10 +405,10 @@ namespace DiscImageChef.Core.Devices
                 sense = dev.ReadCapacity16(out cmdBuf, out senseBuf, timeout, out duration);
 
                 if(sense && Blocks == 0)
-                    if(dev.ScsiType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                    if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                     {
                         ErrorMessage = string.Format("Unable to get media capacity\n" + "{0}",
-                                                     Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                                     Sense.PrettifySense(senseBuf));
 
                         return true;
                     }
@@ -520,7 +521,7 @@ namespace DiscImageChef.Core.Devices
             if(!sense && !dev.Error) return false;
 
             DicConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}",
-                                      Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                      Sense.PrettifySense(senseBuf));
             return true;
         }
 

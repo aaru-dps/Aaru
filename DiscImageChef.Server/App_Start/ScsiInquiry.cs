@@ -42,7 +42,7 @@ namespace DiscImageChef.Server.App_Start
         {
             List<string> scsiOneValue = new List<string>();
 
-            switch((PeripheralQualifiers)inquiry.PeripheralQualifier)
+            switch(inquiry.PeripheralQualifier)
             {
                 case PeripheralQualifiers.Supported:
                     scsiOneValue.Add("Device is connected and supported.");
@@ -62,7 +62,7 @@ namespace DiscImageChef.Server.App_Start
                     break;
             }
 
-            switch((PeripheralDeviceTypes)inquiry.PeripheralDeviceType)
+            switch(inquiry.PeripheralDeviceType)
             {
                 case PeripheralDeviceTypes.DirectAccess: //0x00,
                     scsiOneValue.Add("Direct-access device");
@@ -227,7 +227,7 @@ namespace DiscImageChef.Server.App_Start
             if(inquiry.IUS) scsiOneValue.Add("Device supports information unit transfers");
             if(inquiry.SoftReset) scsiOneValue.Add("Device implements RESET as a soft reset");
 
-            switch((TGPSValues)inquiry.AsymmetricalLUNAccess)
+            switch(inquiry.AsymmetricalLUNAccess)
             {
                 case TGPSValues.NotSupported:
                     scsiOneValue.Add("Device does not support assymetrical access");
@@ -247,7 +247,7 @@ namespace DiscImageChef.Server.App_Start
                     break;
             }
 
-            switch((SPIClocking)inquiry.SPIClocking)
+            switch(inquiry.SPIClocking)
             {
                 case SPIClocking.ST:
                     scsiOneValue.Add("Device supports only ST clocking");

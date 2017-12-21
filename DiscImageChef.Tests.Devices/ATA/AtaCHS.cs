@@ -258,7 +258,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             count = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -412,7 +411,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             blockSize = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -566,7 +564,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             count = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -720,7 +717,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             count = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -862,7 +858,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             sector = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;

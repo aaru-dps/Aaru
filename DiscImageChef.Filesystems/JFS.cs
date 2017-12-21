@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -147,7 +149,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public JFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public JFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "JFS Plugin";
             PluginUUID = new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
@@ -155,7 +157,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             uint bootSectors = JFS_BootBlocksSize / imagePlugin.GetSectorSize();
             if(partition.Start + bootSectors >= partition.End) return false;
@@ -172,7 +174,7 @@ namespace DiscImageChef.Filesystems
             return jfsSb.s_magic == JFS_Magic;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -226,7 +228,7 @@ namespace DiscImageChef.Filesystems
             else sb.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(jfsSb.s_label)).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", jfsSb.s_uuid).AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "JFS filesystem";
             xmlFSType.Clusters = (long)jfsSb.s_size;
             xmlFSType.ClusterSize = (int)jfsSb.s_bsize;
@@ -239,7 +241,6 @@ namespace DiscImageChef.Filesystems
             if(jfsSb.s_state != 0) xmlFSType.Dirty = true;
 
             information = sb.ToString();
-            return;
         }
 
         public override Errno Mount()

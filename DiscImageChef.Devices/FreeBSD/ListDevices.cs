@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Decoders.SCSI;
 using static DiscImageChef.Devices.FreeBSD.Extern;
 
 namespace DiscImageChef.Devices.FreeBSD
@@ -96,7 +98,7 @@ namespace DiscImageChef.Devices.FreeBSD
                             atadTneid[aIndex + 1] = cgd.ident_data[aIndex];
                         }
 
-                        Decoders.ATA.Identify.IdentifyDevice? idt = Decoders.ATA.Identify.Decode(atadTneid);
+                        Identify.IdentifyDevice? idt = Identify.Decode(atadTneid);
                         if(idt.HasValue)
                         {
                             string[] separated = idt.Value.Model.Split(' ');
@@ -121,7 +123,7 @@ namespace DiscImageChef.Devices.FreeBSD
                     }
                     case CamProto.ProtoScsi:
                     {
-                        Decoders.SCSI.Inquiry.SCSIInquiry? inq = Decoders.SCSI.Inquiry.Decode(cgd.inq_data);
+                        Inquiry.SCSIInquiry? inq = Inquiry.Decode(cgd.inq_data);
                         if(inq.HasValue)
                         {
                             deviceInfo.Vendor = StringHandlers.CToString(inq.Value.VendorIdentification).Trim();

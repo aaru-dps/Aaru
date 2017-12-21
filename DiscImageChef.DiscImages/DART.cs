@@ -40,7 +40,7 @@ using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
+using Version = Resources.Version;
 
 namespace DiscImageChef.DiscImages
 {
@@ -295,7 +295,7 @@ namespace DiscImageChef.DiscImages
 
                             if(vers != null)
                             {
-                                Resources.Version version = new Resources.Version(vers);
+                                Version version = new Version(vers);
 
                                 string major;
                                 string minor;
@@ -309,13 +309,13 @@ namespace DiscImageChef.DiscImages
                                     release = string.Format(".{0}", version.MinorVersion % 10);
                                 switch(version.DevStage)
                                 {
-                                    case Resources.Version.DevelopmentStage.Alpha:
+                                    case Version.DevelopmentStage.Alpha:
                                         dev = "a";
                                         break;
-                                    case Resources.Version.DevelopmentStage.Beta:
+                                    case Version.DevelopmentStage.Beta:
                                         dev = "b";
                                         break;
-                                    case Resources.Version.DevelopmentStage.PreAlpha:
+                                    case Version.DevelopmentStage.PreAlpha:
                                         dev = "d";
                                         break;
                                 }

@@ -33,8 +33,8 @@
 using System;
 using System.Linq;
 using DiscImageChef.Console;
-using DiscImageChef.Filters;
 using DiscImageChef.DiscImages;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.Core
 {

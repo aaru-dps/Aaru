@@ -107,11 +107,11 @@ namespace DiscImageChef.Decoders.SecureDigital
                 sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 1.10");
             else if(scr.Spec == 2 && scr.Spec3 == false && scr.Spec4 == false && scr.SpecX == 0)
                 sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 2.00");
-            else if(scr.Spec == 2 && scr.Spec3 == true && scr.Spec4 == false && scr.SpecX == 0)
+            else if(scr.Spec == 2 && scr.Spec3 && scr.Spec4 == false && scr.SpecX == 0)
                 sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 3.0x");
-            else if(scr.Spec == 2 && scr.Spec3 == true && scr.Spec4 == true && scr.SpecX == 0)
+            else if(scr.Spec == 2 && scr.Spec3 && scr.Spec4 && scr.SpecX == 0)
                 sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 4.xx");
-            else if(scr.Spec == 2 && scr.Spec3 == true && scr.SpecX == 1)
+            else if(scr.Spec == 2 && scr.Spec3 && scr.SpecX == 1)
                 sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 5.xx");
             else
                 sb

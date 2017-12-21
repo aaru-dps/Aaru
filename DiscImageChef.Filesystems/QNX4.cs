@@ -36,6 +36,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -118,7 +120,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public QNX4(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public QNX4(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX4 Plugin";
             PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
@@ -126,7 +128,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start + 1 >= imagePlugin.GetSectors()) return false;
 
@@ -160,7 +162,7 @@ namespace DiscImageChef.Filesystems
             return true;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -251,7 +253,7 @@ namespace DiscImageChef.Filesystems
             information = string.Format("QNX4 filesystem\nCreated on {0}\n",
                                         DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime));
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Type = "QNX4 filesystem",
                 Clusters = (long)partition.Length,

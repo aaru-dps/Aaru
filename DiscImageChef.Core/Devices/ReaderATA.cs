@@ -192,7 +192,7 @@ namespace DiscImageChef.Core.Devices
                 if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
                 {
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                    PhysicalBlockSize = LogicalBlockSize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
+                    PhysicalBlockSize = LogicalBlockSize * (uint)Math.Pow(2, ataId.PhysLogSectorSize & 0xF);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                 }
                 else PhysicalBlockSize = LogicalBlockSize;

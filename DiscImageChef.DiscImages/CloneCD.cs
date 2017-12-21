@@ -35,11 +35,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.DiscImages
 {
@@ -85,7 +85,7 @@ namespace DiscImageChef.DiscImages
         byte[] fulltoc;
         bool scrambled;
         string catalog;
-        List<DiscImages.Session> sessions;
+        List<Session> sessions;
         List<Partition> partitions;
         List<Track> tracks;
         Stream dataStream;
@@ -347,7 +347,7 @@ namespace DiscImageChef.DiscImages
                             else if(cdtEntMatch.Success)
                             {
                                 DicConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entry at line {0}", line);
-                                string[] bytes = cdtEntMatch.Groups["value"].Value.Split(new char[] {' '},
+                                string[] bytes = cdtEntMatch.Groups["value"].Value.Split(new[] {' '},
                                                                                           StringSplitOptions
                                                                                               .RemoveEmptyEntries);
                                 foreach(string byt in bytes) cdtMs.WriteByte(Convert.ToByte(byt, 16));
@@ -739,8 +739,8 @@ namespace DiscImageChef.DiscImages
                 if(subFilter != null && !ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                     ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
-                sessions = new List<DiscImages.Session>();
-                DiscImages.Session currentSession = new DiscImages.Session();
+                sessions = new List<Session>();
+                Session currentSession = new Session();
                 currentSession.EndTrack = uint.MinValue;
                 currentSession.StartTrack = uint.MaxValue;
                 currentSession.SessionSequence = 1;
@@ -766,7 +766,7 @@ namespace DiscImageChef.DiscImages
                     else
                     {
                         sessions.Add(currentSession);
-                        currentSession = new DiscImages.Session();
+                        currentSession = new Session();
                         currentSession.EndTrack = uint.MinValue;
                         currentSession.StartTrack = uint.MaxValue;
                         currentSession.SessionSequence = track.TrackSession;
@@ -1404,7 +1404,7 @@ namespace DiscImageChef.DiscImages
             return tracks;
         }
 
-        public override List<Track> GetSessionTracks(DiscImages.Session session)
+        public override List<Track> GetSessionTracks(Session session)
         {
             if(sessions.Contains(session)) return GetSessionTracks(session.SessionSequence);
 
@@ -1413,10 +1413,10 @@ namespace DiscImageChef.DiscImages
 
         public override List<Track> GetSessionTracks(ushort session)
         {
-            return this.tracks.Where(_track => _track.TrackSession == session).ToList();
+            return tracks.Where(_track => _track.TrackSession == session).ToList();
         }
 
-        public override List<DiscImages.Session> GetSessions()
+        public override List<Session> GetSessions()
         {
             return sessions;
         }
@@ -1424,13 +1424,13 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
@@ -1445,7 +1445,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
@@ -1476,7 +1476,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {

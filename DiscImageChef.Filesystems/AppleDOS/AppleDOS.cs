@@ -32,9 +32,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
@@ -77,7 +78,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         {
             Name = "Apple DOS File System";
             PluginUUID = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
-            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            CurrentEncoding = new LisaRoman();
         }
 
         public AppleDOS(Encoding encoding)
@@ -85,7 +86,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             Name = "Apple DOS File System";
             PluginUUID = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
             // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            CurrentEncoding = new LisaRoman();
         }
 
         public AppleDOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
@@ -95,7 +96,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             Name = "Apple DOS File System";
             PluginUUID = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
             // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            CurrentEncoding = new LisaRoman();
         }
     }
 }

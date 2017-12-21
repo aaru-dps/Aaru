@@ -39,7 +39,6 @@ using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.DiscImages
 {

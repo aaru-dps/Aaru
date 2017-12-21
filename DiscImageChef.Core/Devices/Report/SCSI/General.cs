@@ -34,7 +34,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using DiscImageChef.Metadata;
 
@@ -79,9 +81,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
             report.SCSI = new scsiType();
 
-            if(!sense && Decoders.SCSI.Inquiry.Decode(buffer).HasValue)
+            if(!sense && Inquiry.Decode(buffer).HasValue)
             {
-                Decoders.SCSI.Inquiry.SCSIInquiry inq = Decoders.SCSI.Inquiry.Decode(buffer).Value;
+                Inquiry.SCSIInquiry inq = Inquiry.Decode(buffer).Value;
 
                 List<ushort> versionDescriptors = new List<ushort>();
                 report.SCSI.Inquiry = new scsiInquiryType();
@@ -140,11 +142,11 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         report.SCSI.Inquiry.VersionDescriptors = versionDescriptors.ToArray();
                 }
 
-                report.SCSI.Inquiry.PeripheralQualifier = (Decoders.SCSI.PeripheralQualifiers)inq.PeripheralQualifier;
+                report.SCSI.Inquiry.PeripheralQualifier = (PeripheralQualifiers)inq.PeripheralQualifier;
                 report.SCSI.Inquiry.PeripheralDeviceType =
-                    (Decoders.SCSI.PeripheralDeviceTypes)inq.PeripheralDeviceType;
-                report.SCSI.Inquiry.AsymmetricalLUNAccess = (Decoders.SCSI.TGPSValues)inq.TPGS;
-                report.SCSI.Inquiry.SPIClocking = (Decoders.SCSI.SPIClocking)inq.Clocking;
+                    (PeripheralDeviceTypes)inq.PeripheralDeviceType;
+                report.SCSI.Inquiry.AsymmetricalLUNAccess = (TGPSValues)inq.TPGS;
+                report.SCSI.Inquiry.SPIClocking = (SPIClocking)inq.Clocking;
 
                 report.SCSI.Inquiry.AccessControlCoordinator = inq.ACC;
                 report.SCSI.Inquiry.ACKRequests = inq.ACKREQQ;
@@ -181,7 +183,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
             if(!sense)
             {
-                byte[] evpdPages = Decoders.SCSI.EVPD.DecodePage00(buffer);
+                byte[] evpdPages = EVPD.DecodePage00(buffer);
                 if(evpdPages != null && evpdPages.Length > 0)
                 {
                     List<pageType> evpds = new List<pageType>();
@@ -203,11 +205,11 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             if(removable)
             {
                 switch(dev.ScsiType) {
-                    case Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice:
+                    case PeripheralDeviceTypes.MultiMediaDevice:
                         dev.AllowMediumRemoval(out senseBuffer, timeout, out duration);
                         dev.EjectTray(out senseBuffer, timeout, out duration);
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess:
+                    case PeripheralDeviceTypes.SequentialAccess:
                         dev.SpcAllowMediumRemoval(out senseBuffer, timeout, out duration);
                         DicConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
                         dev.Unload(out senseBuffer, timeout, out duration);
@@ -217,8 +219,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 System.Console.ReadKey(true);
             }
 
-            Decoders.SCSI.Modes.DecodedMode? decMode = null;
-            Decoders.SCSI.PeripheralDeviceTypes devType = dev.ScsiType;
+            Modes.DecodedMode? decMode = null;
+            PeripheralDeviceTypes devType = dev.ScsiType;
 
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (10)...");
             sense = dev.ModeSense10(out byte[] mode10Buffer, out senseBuffer, false, true,
@@ -232,14 +234,14 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 {
                     report.SCSI.SupportsModeSense10 = true;
                     report.SCSI.SupportsModeSubpages = false;
-                    decMode = Decoders.SCSI.Modes.DecodeMode10(mode10Buffer, devType);
+                    decMode = Modes.DecodeMode10(mode10Buffer, devType);
                 }
             }
             else
             {
                 report.SCSI.SupportsModeSense10 = true;
                 report.SCSI.SupportsModeSubpages = true;
-                decMode = Decoders.SCSI.Modes.DecodeMode10(mode10Buffer, devType);
+                decMode = Modes.DecodeMode10(mode10Buffer, devType);
             }
 
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (6)...");
@@ -259,11 +261,11 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             else report.SCSI.SupportsModeSubpages = true;
 
             if(!sense && !dev.Error && !decMode.HasValue)
-                decMode = Decoders.SCSI.Modes.DecodeMode6(mode6Buffer, devType);
+                decMode = Modes.DecodeMode6(mode6Buffer, devType);
 
             report.SCSI.SupportsModeSense6 |= !sense && !dev.Error;
 
-            Decoders.SCSI.Modes.ModePage_2A? cdromMode = null;
+            Modes.ModePage_2A? cdromMode = null;
 
             if(debug && report.SCSI.SupportsModeSense6) report.SCSI.ModeSense6Data = mode6Buffer;
             if(debug && report.SCSI.SupportsModeSense10) report.SCSI.ModeSense10Data = mode10Buffer;
@@ -290,7 +292,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 if(decMode.Value.Pages != null)
                 {
                     List<modePageType> modePages = new List<modePageType>();
-                    foreach(Decoders.SCSI.Modes.ModePage page in decMode.Value.Pages)
+                    foreach(Modes.ModePage page in decMode.Value.Pages)
                     {
                         modePageType modePage = new modePageType();
                         modePage.page = page.Page;
@@ -298,7 +300,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         modePage.value = page.PageResponse;
                         modePages.Add(modePage);
 
-                        if(modePage.page == 0x2A && modePage.subpage == 0x00) cdromMode = Decoders.SCSI.Modes.DecodeModePage_2A(page.PageResponse);
+                        if(modePage.page == 0x2A && modePage.subpage == 0x00) cdromMode = Modes.DecodeModePage_2A(page.PageResponse);
                     }
 
                     if(modePages.Count > 0) report.SCSI.ModeSense.ModePages = modePages.ToArray();
@@ -308,9 +310,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             List<string> mediaTypes = new List<string>();
 
             switch(dev.ScsiType) {
-                case Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice: Mmc.Report(dev, ref report, debug, ref cdromMode, ref mediaTypes);
+                case PeripheralDeviceTypes.MultiMediaDevice: Mmc.Report(dev, ref report, debug, ref cdromMode, ref mediaTypes);
                     break;
-                case Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess: Ssc.Report(dev, ref report, debug);
+                case PeripheralDeviceTypes.SequentialAccess: Ssc.Report(dev, ref report, debug);
                     break;
                 default:
                     if(removable)
@@ -348,7 +350,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
                             if(sense)
                             {
-                                Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
+                                FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
                                 if(decSense.HasValue)
                                     if(decSense.Value.ASC == 0x3A)
                                     {
@@ -356,7 +358,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                         while(leftRetries > 0)
                                         {
                                             DicConsole.Write("\rWaiting for drive to become ready");
-                                            System.Threading.Thread.Sleep(2000);
+                                            Thread.Sleep(2000);
                                             sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
                                             if(!sense) break;
 
@@ -371,7 +373,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                         while(leftRetries > 0)
                                         {
                                             DicConsole.Write("\rWaiting for drive to become ready");
-                                            System.Threading.Thread.Sleep(2000);
+                                            Thread.Sleep(2000);
                                             sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
                                             if(!sense) break;
 
@@ -428,7 +430,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 if(!sense && !dev.Error)
                                 {
                                     report.SCSI.SupportsModeSense10 = true;
-                                    decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.ScsiType);
+                                    decMode = Modes.DecodeMode10(buffer, dev.ScsiType);
                                     if(debug) mediaTest.ModeSense10Data = buffer;
                                 }
 
@@ -438,7 +440,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 {
                                     report.SCSI.SupportsModeSense6 = true;
                                     if(!decMode.HasValue)
-                                        decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.ScsiType);
+                                        decMode = Modes.DecodeMode6(buffer, dev.ScsiType);
                                     if(debug) mediaTest.ModeSense6Data = buffer;
                                 }
 
@@ -505,9 +507,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                        out duration);
                                 if(sense && !dev.Error)
                                 {
-                                    Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
+                                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
                                     if(decSense.HasValue)
-                                        if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                        if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
                                            decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                         {
                                             mediaTest.SupportsReadLong = true;
@@ -692,7 +694,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(!sense && !dev.Error)
                         {
                             report.SCSI.SupportsModeSense10 = true;
-                            decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.ScsiType);
+                            decMode = Modes.DecodeMode10(buffer, dev.ScsiType);
                             if(debug) report.SCSI.ReadCapabilities.ModeSense10Data = buffer;
                         }
 
@@ -701,7 +703,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(!sense && !dev.Error)
                         {
                             report.SCSI.SupportsModeSense6 = true;
-                            if(!decMode.HasValue) decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.ScsiType);
+                            if(!decMode.HasValue) decMode = Modes.DecodeMode6(buffer, dev.ScsiType);
                             if(debug) report.SCSI.ReadCapabilities.ModeSense6Data = buffer;
                         }
 
@@ -772,9 +774,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, timeout, out duration);
                         if(sense && !dev.Error)
                         {
-                            Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
+                            FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
                             if(decSense.HasValue)
-                                if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
                                    decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                 {
                                     report.SCSI.ReadCapabilities.SupportsReadLong = true;

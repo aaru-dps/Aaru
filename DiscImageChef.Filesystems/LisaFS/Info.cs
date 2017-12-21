@@ -36,6 +36,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
 using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -349,7 +350,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     information = sb.ToString();
 
-                    xmlFSType = new Schemas.FileSystemType();
+                    xmlFSType = new FileSystemType();
                     if(DateTime.Compare(info_mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
                     {
                         xmlFSType.BackupDate = info_mddf.dtvb;
@@ -373,13 +374,10 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     return;
                 }
-
-                return;
             }
             catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine("Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
-                return;
             }
         }
     }

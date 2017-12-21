@@ -33,7 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.Checksums;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
@@ -58,10 +61,10 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
         }
 
-        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
-                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin,
+                                            out List<Partition> partitions, ulong sectorOffset)
         {
-            partitions = new List<CommonTypes.Partition>();
+            partitions = new List<Partition>();
 
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -99,7 +102,7 @@ namespace DiscImageChef.Partitions
             table.badLength = BigEndianBitConverter.ToUInt32(sector, 506);
             table.checksum = BigEndianBitConverter.ToUInt16(sector, 510);
 
-            Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
+            Sha1Context sha1Ctx = new Sha1Context();
             sha1Ctx.Init();
             sha1Ctx.Update(table.boot);
             DicConsole.DebugWriteLine("Atari partition plugin", "Boot code SHA1: {0}", sha1Ctx.End());
@@ -169,7 +172,7 @@ namespace DiscImageChef.Partitions
                             partType[1] = (byte)((type & 0x00FF00) >> 8);
                             partType[2] = (byte)(type & 0x0000FF);
 
-                            CommonTypes.Partition part = new CommonTypes.Partition
+                            Partition part = new Partition
                             {
                                 Size = table.entries[i].length * sectorSize,
                                 Length = table.entries[i].length,
@@ -264,7 +267,7 @@ namespace DiscImageChef.Partitions
                             partType[1] = (byte)((extendedType & 0x00FF00) >> 8);
                             partType[2] = (byte)(extendedType & 0x0000FF);
 
-                            CommonTypes.Partition part = new CommonTypes.Partition
+                            Partition part = new Partition
                             {
                                 Size = extendedTable.entries[j].length * sectorSize,
                                 Length = extendedTable.entries[j].length,
@@ -345,7 +348,7 @@ namespace DiscImageChef.Partitions
                 partType[1] = (byte)((type & 0x00FF00) >> 8);
                 partType[2] = (byte)(type & 0x0000FF);
 
-                CommonTypes.Partition part = new CommonTypes.Partition
+                Partition part = new Partition
                 {
                     Size = table.icdEntries[i].length * sectorSize,
                     Length = table.icdEntries[i].length,

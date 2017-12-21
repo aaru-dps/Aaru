@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
 
 namespace DiscImageChef.Decoders.ATA
 {
@@ -2220,69 +2221,69 @@ namespace DiscImageChef.Decoders.ATA
             if(atapi)
             {
                 // Bits 12 to 8, SCSI Peripheral Device Type
-                switch((SCSI.PeripheralDeviceTypes)(((ushort)ATAID.GeneralConfiguration & 0x1F00) >> 8))
+                switch((PeripheralDeviceTypes)(((ushort)ATAID.GeneralConfiguration & 0x1F00) >> 8))
                 {
-                    case SCSI.PeripheralDeviceTypes.DirectAccess: //0x00,
+                    case PeripheralDeviceTypes.DirectAccess: //0x00,
                         sb.AppendLine("ATAPI Direct-access device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.SequentialAccess: //0x01,
+                    case PeripheralDeviceTypes.SequentialAccess: //0x01,
                         sb.AppendLine("ATAPI Sequential-access device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.PrinterDevice: //0x02,
+                    case PeripheralDeviceTypes.PrinterDevice: //0x02,
                         sb.AppendLine("ATAPI Printer device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.ProcessorDevice: //0x03,
+                    case PeripheralDeviceTypes.ProcessorDevice: //0x03,
                         sb.AppendLine("ATAPI Processor device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.WriteOnceDevice: //0x04,
+                    case PeripheralDeviceTypes.WriteOnceDevice: //0x04,
                         sb.AppendLine("ATAPI Write-once device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.MultiMediaDevice: //0x05,
+                    case PeripheralDeviceTypes.MultiMediaDevice: //0x05,
                         sb.AppendLine("ATAPI CD-ROM/DVD/etc device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.ScannerDevice: //0x06,
+                    case PeripheralDeviceTypes.ScannerDevice: //0x06,
                         sb.AppendLine("ATAPI Scanner device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.OpticalDevice: //0x07,
+                    case PeripheralDeviceTypes.OpticalDevice: //0x07,
                         sb.AppendLine("ATAPI Optical memory device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.MediumChangerDevice: //0x08,
+                    case PeripheralDeviceTypes.MediumChangerDevice: //0x08,
                         sb.AppendLine("ATAPI Medium change device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.CommsDevice: //0x09,
+                    case PeripheralDeviceTypes.CommsDevice: //0x09,
                         sb.AppendLine("ATAPI Communications device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.PrePressDevice1: //0x0A,
+                    case PeripheralDeviceTypes.PrePressDevice1: //0x0A,
                         sb.AppendLine("ATAPI Graphics arts pre-press device (defined in ASC IT8)");
                         break;
-                    case SCSI.PeripheralDeviceTypes.PrePressDevice2: //0x0B,
+                    case PeripheralDeviceTypes.PrePressDevice2: //0x0B,
                         sb.AppendLine("ATAPI Graphics arts pre-press device (defined in ASC IT8)");
                         break;
-                    case SCSI.PeripheralDeviceTypes.ArrayControllerDevice: //0x0C,
+                    case PeripheralDeviceTypes.ArrayControllerDevice: //0x0C,
                         sb.AppendLine("ATAPI Array controller device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.EnclosureServiceDevice: //0x0D,
+                    case PeripheralDeviceTypes.EnclosureServiceDevice: //0x0D,
                         sb.AppendLine("ATAPI Enclosure services device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.SimplifiedDevice: //0x0E,
+                    case PeripheralDeviceTypes.SimplifiedDevice: //0x0E,
                         sb.AppendLine("ATAPI Simplified direct-access device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.OCRWDevice: //0x0F,
+                    case PeripheralDeviceTypes.OCRWDevice: //0x0F,
                         sb.AppendLine("ATAPI Optical card reader/writer device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.BridgingExpander: //0x10,
+                    case PeripheralDeviceTypes.BridgingExpander: //0x10,
                         sb.AppendLine("ATAPI Bridging Expanders");
                         break;
-                    case SCSI.PeripheralDeviceTypes.ObjectDevice: //0x11,
+                    case PeripheralDeviceTypes.ObjectDevice: //0x11,
                         sb.AppendLine("ATAPI Object-based Storage Device");
                         break;
-                    case SCSI.PeripheralDeviceTypes.ADCDevice: //0x12,
+                    case PeripheralDeviceTypes.ADCDevice: //0x12,
                         sb.AppendLine("ATAPI Automation/Drive Interface");
                         break;
-                    case SCSI.PeripheralDeviceTypes.WellKnownDevice: //0x1E,
+                    case PeripheralDeviceTypes.WellKnownDevice: //0x1E,
                         sb.AppendLine("ATAPI Well known logical unit");
                         break;
-                    case SCSI.PeripheralDeviceTypes.UnknownDevice: //0x1F
+                    case PeripheralDeviceTypes.UnknownDevice: //0x1F
                         sb.AppendLine("ATAPI Unknown or no device type");
                         break;
                     default:
@@ -2388,7 +2389,7 @@ namespace DiscImageChef.Decoders.ATA
                     {
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
                         physicalsectorsize =
-                            logicalsectorsize * (uint)Math.Pow(2, (double)(ATAID.PhysLogSectorSize & 0xF));
+                            logicalsectorsize * (uint)Math.Pow(2, ATAID.PhysLogSectorSize & 0xF);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
                     }
                     else physicalsectorsize = logicalsectorsize;

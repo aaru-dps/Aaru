@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -55,7 +57,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public Cram(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public Cram(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Cram filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
@@ -93,7 +95,7 @@ namespace DiscImageChef.Filesystems
         const uint Cram_MAGIC = 0x28CD3D45;
         const uint Cram_CIGAM = 0x453DCD28;
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -104,7 +106,7 @@ namespace DiscImageChef.Filesystems
             return magic == Cram_MAGIC || magic == Cram_CIGAM;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] sector = imagePlugin.ReadSector(partition.Start);
@@ -140,7 +142,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.VolumeName = StringHandlers.CToString(crSb.name, CurrentEncoding);
             xmlFSType.Type = "Cram file system";
             xmlFSType.Clusters = crSb.blocks;

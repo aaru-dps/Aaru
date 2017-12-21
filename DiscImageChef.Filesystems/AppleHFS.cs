@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -70,7 +72,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public AppleHFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AppleHFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple Hierarchical File System";
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
@@ -78,7 +80,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -117,7 +119,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -273,7 +275,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             if(MDB.drVolBkUp > 0)
             {
                 xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
@@ -301,11 +303,9 @@ namespace DiscImageChef.Filesystems
             xmlFSType.VolumeName = StringHandlers.PascalToString(MDB.drVN, CurrentEncoding);
             if(MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
                 xmlFSType.VolumeSerial = string.Format("{0:X8}{1:X8}", MDB.drFndrInfo6, MDB.drFndrInfo7);
-
-            return;
         }
 
-        static byte[] Read2048SectorAs512(DiscImages.ImagePlugin imagePlugin, ulong LBA)
+        static byte[] Read2048SectorAs512(ImagePlugin imagePlugin, ulong LBA)
         {
             ulong LBA2k = LBA / 4;
             int Remainder = (int)(LBA % 4);

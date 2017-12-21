@@ -33,13 +33,15 @@
 using System;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS : Filesystem
     {
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             ushort drSigWord;
 
@@ -54,7 +56,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return drSigWord == MFS_MAGIC;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -173,7 +175,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             information = sb.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             if(MDB.drLsBkUp > 0)
             {
                 xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drLsBkUp);
@@ -193,8 +195,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
             xmlFSType.FreeClustersSpecified = true;
             xmlFSType.Type = "MFS";
             xmlFSType.VolumeName = MDB.drVN;
-
-            return;
         }
     }
 }

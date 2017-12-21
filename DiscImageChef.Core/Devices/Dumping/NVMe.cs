@@ -32,15 +32,16 @@
 
 using System;
 using System.Text;
-using DiscImageChef.Devices;
 using DiscImageChef.Core.Logging;
+using DiscImageChef.Devices;
+using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
     public static class NvMe
     {
         public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
-                                bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume,
+                                bool dumpRaw, bool persistent, bool stopOnError, ref Resume resume,
                                 ref DumpLog dumpLog, Encoding encoding)
         {
             throw new NotImplementedException("NVMe devices not yet supported.");

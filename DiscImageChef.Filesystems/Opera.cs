@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -55,7 +57,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.ASCII;
         }
 
-        public OperaFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public OperaFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Opera Filesystem Plugin";
             PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
@@ -63,7 +65,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.ASCII;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -82,7 +84,7 @@ namespace DiscImageChef.Filesystems
             return Encoding.ASCII.GetString(sync_bytes) == "ZZZZZ";
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -135,7 +137,7 @@ namespace DiscImageChef.Filesystems
 
             information = SuperBlockMetadata.ToString();
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Type = "Opera",
                 VolumeName = StringHandlers.CToString(sb.volume_label, CurrentEncoding),

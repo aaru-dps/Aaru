@@ -174,7 +174,6 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             blockSize = 512;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -693,7 +692,6 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             blockSize = 512;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;

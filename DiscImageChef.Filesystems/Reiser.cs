@@ -36,6 +36,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -103,7 +105,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public Reiser(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public Reiser(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Reiser Filesystem Plugin";
             PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
@@ -111,7 +113,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -137,7 +139,7 @@ namespace DiscImageChef.Filesystems
                    ReiserJr_Magic.SequenceEqual(reiserSb.magic);
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -182,7 +184,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             if(Reiser35_Magic.SequenceEqual(reiserSb.magic)) xmlFSType.Type = "Reiser 3.5 filesystem";
             else if(Reiser36_Magic.SequenceEqual(reiserSb.magic)) xmlFSType.Type = "Reiser 3.6 filesystem";
             else if(ReiserJr_Magic.SequenceEqual(reiserSb.magic)) xmlFSType.Type = "Reiser Jr. filesystem";

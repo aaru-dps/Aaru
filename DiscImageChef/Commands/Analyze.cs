@@ -36,9 +36,9 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Commands
 {

@@ -153,7 +153,7 @@ namespace DiscImageChef.DiscImages
         /// <summary>
         /// The ImageFilter we're reading from, after the file has been opened
         /// </summary>
-        Filter hdcpImageFilter = null;
+        Filter hdcpImageFilter;
         #endregion
 
         #region Internal constants

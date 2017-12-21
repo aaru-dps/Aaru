@@ -31,10 +31,15 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Threading;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Http;
 using System.Xml.Serialization;
 using DiscImageChef.Metadata;
@@ -48,7 +53,7 @@ namespace DiscImageChef.Server.Controllers
         public HttpResponseMessage UploadStats()
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.StatusCode = System.Net.HttpStatusCode.OK;
+            response.StatusCode = HttpStatusCode.OK;
 
             try
             {
@@ -57,7 +62,7 @@ namespace DiscImageChef.Server.Controllers
 
                 if(request.InputStream == null)
                 {
-                    response.Content = new StringContent("notstats", System.Text.Encoding.UTF8, "text/plain");
+                    response.Content = new StringContent("notstats", Encoding.UTF8, "text/plain");
                     return response;
                 }
 
@@ -66,17 +71,17 @@ namespace DiscImageChef.Server.Controllers
 
                 if(newStats == null)
                 {
-                    response.Content = new StringContent("notstats", System.Text.Encoding.UTF8, "text/plain");
+                    response.Content = new StringContent("notstats", Encoding.UTF8, "text/plain");
                     return response;
                 }
 
                 FileStream fs =
-                    WaitForFile(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Statistics", "Statistics.xml"),
+                    WaitForFile(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics", "Statistics.xml"),
                                 FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
                 if(fs == null)
                 {
-                    response.Content = new StringContent("retry", System.Text.Encoding.UTF8, "text/plain");
+                    response.Content = new StringContent("retry", Encoding.UTF8, "text/plain");
                     return response;
                 }
 
@@ -139,7 +144,7 @@ namespace DiscImageChef.Server.Controllers
                 {
                     if(oldStats.OperatingSystems == null)
                         oldStats.OperatingSystems =
-                            new System.Collections.Generic.List<OsStats> {new OsStats {name = "Linux", Value = 1}};
+                            new List<OsStats> {new OsStats {name = "Linux", Value = 1}};
                     else
                     {
                         OsStats removeNvs = null;
@@ -194,7 +199,7 @@ namespace DiscImageChef.Server.Controllers
                 {
                     if(oldStats.Versions == null)
                         oldStats.Versions =
-                            new System.Collections.Generic.List<NameValueStats>
+                            new List<NameValueStats>
                             {
                                 new NameValueStats {name = "previous", Value = 1}
                             };
@@ -418,13 +423,13 @@ namespace DiscImageChef.Server.Controllers
                 Random rng = new Random();
                 string filename = string.Format("BackupStats_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow,
                                                 rng.Next());
-                while(File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Statistics",
+                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics",
                                                filename)))
                     filename = string.Format("BackupStats_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
 
                 FileStream backup =
                     new
-                        FileStream(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Statistics", filename),
+                        FileStream(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics", filename),
                                    FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
                 fs.Seek(0, SeekOrigin.Begin);
                 fs.CopyTo(backup);
@@ -435,13 +440,13 @@ namespace DiscImageChef.Server.Controllers
                 fs.SetLength(fs.Position);
                 fs.Close();
 
-                response.Content = new StringContent("ok", System.Text.Encoding.UTF8, "text/plain");
+                response.Content = new StringContent("ok", Encoding.UTF8, "text/plain");
                 return response;
             }
             catch(Exception ex)
             {
 #if DEBUG
-                System.Console.WriteLine("{0} {1}", ex.Message, ex.InnerException);
+                Console.WriteLine("{0} {1}", ex.Message, ex.InnerException);
                 throw;
 #else
                 response.Content = new StringContent("error", System.Text.Encoding.UTF8, "text/plain");
@@ -463,7 +468,7 @@ namespace DiscImageChef.Server.Controllers
                 catch(IOException)
                 {
                     if(fs != null) fs.Dispose();
-                    System.Threading.Thread.Sleep(50);
+                    Thread.Sleep(50);
                 }
             }
 

@@ -32,6 +32,7 @@
 
 using System;
 using DiscImageChef.Console;
+using PlatformID = DiscImageChef.Interop.PlatformID;
 
 namespace DiscImageChef.Devices
 {
@@ -367,7 +368,7 @@ namespace DiscImageChef.Devices
             if(sense) return true;
 
 #pragma warning disable IDE0004 // Cast is necessary or an invalid bitshift happens
-            ushort modeLength = (ushort)(((int)buffer[0] << 8) + buffer[1] + 2);
+            ushort modeLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
 #pragma warning restore IDE0004 // Cast is necessary or an invalid bitshift happens
             buffer = new byte[modeLength];
             cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
@@ -598,7 +599,7 @@ namespace DiscImageChef.Devices
             if(sense) return true;
 
 #pragma warning disable IDE0004 // Cast is necessary or an invalid bitshift happens
-            uint strctLength = (uint)(((int)buffer[0] << 24) + ((int)buffer[1] << 16) + ((int)buffer[2] << 8) +
+            uint strctLength = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) +
                                       buffer[3] + 4);
 #pragma warning restore IDE0004 // Cast is necessary or an invalid bitshift happens
             buffer = new byte[strctLength];
@@ -738,10 +739,10 @@ namespace DiscImageChef.Devices
             // Prevent overflows
             if(buffer.Length > 255)
             {
-                if(PlatformId != Interop.PlatformID.Win32NT && PlatformId != Interop.PlatformID.Win32S &&
-                   PlatformId != Interop.PlatformID.Win32Windows && PlatformId != Interop.PlatformID.WinCE &&
-                   PlatformId != Interop.PlatformID.WindowsPhone &&
-                   PlatformId != Interop.PlatformID.Xbox) LastError = 75;
+                if(PlatformId != PlatformID.Win32NT && PlatformId != PlatformID.Win32S &&
+                   PlatformId != PlatformID.Win32Windows && PlatformId != PlatformID.WinCE &&
+                   PlatformId != PlatformID.WindowsPhone &&
+                   PlatformId != PlatformID.Xbox) LastError = 75;
                 else LastError = 111;
                 Error = true;
                 duration = 0;
@@ -781,10 +782,10 @@ namespace DiscImageChef.Devices
             // Prevent overflows
             if(buffer.Length > 65535)
             {
-                if(PlatformId != Interop.PlatformID.Win32NT && PlatformId != Interop.PlatformID.Win32S &&
-                   PlatformId != Interop.PlatformID.Win32Windows && PlatformId != Interop.PlatformID.WinCE &&
-                   PlatformId != Interop.PlatformID.WindowsPhone &&
-                   PlatformId != Interop.PlatformID.Xbox) LastError = 75;
+                if(PlatformId != PlatformID.Win32NT && PlatformId != PlatformID.Win32S &&
+                   PlatformId != PlatformID.Win32Windows && PlatformId != PlatformID.WinCE &&
+                   PlatformId != PlatformID.WindowsPhone &&
+                   PlatformId != PlatformID.Xbox) LastError = 75;
                 else LastError = 111;
                 Error = true;
                 duration = 0;

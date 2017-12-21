@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.DiscImages;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Partitions
 {
@@ -50,12 +51,12 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
         }
 
-        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
-                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin,
+                                            out List<Partition> partitions, ulong sectorOffset)
         {
             ulong counter = 0;
 
-            partitions = new List<CommonTypes.Partition>();
+            partitions = new List<Partition>();
 
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -63,7 +64,7 @@ namespace DiscImageChef.Partitions
             // Divider of sector size in MBR between real sector size
             ulong divider = 1;
 
-            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 sectorSize = 512;
                 divider = 4;
@@ -149,9 +150,9 @@ namespace DiscImageChef.Partitions
                          entry.end_head != 0 || entry.end_sector != 0;
                 if(entry.lba_start == 0 && entry.lba_sectors == 0 && valid)
                 {
-                    lba_start = Helpers.CHS.ToLBA(start_cylinder, entry.start_head, start_sector,
+                    lba_start = CHS.ToLBA(start_cylinder, entry.start_head, start_sector,
                                                   imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack);
-                    lba_sectors = Helpers.CHS.ToLBA(end_cylinder, entry.end_head, entry.end_sector,
+                    lba_sectors = CHS.ToLBA(end_cylinder, entry.end_head, entry.end_sector,
                                                     imagePlugin.ImageInfo.Heads,
                                                     imagePlugin.ImageInfo.SectorsPerTrack) - lba_start;
                 }
@@ -195,7 +196,7 @@ namespace DiscImageChef.Partitions
 
                 if(valid && !minix)
                 {
-                    CommonTypes.Partition part = new CommonTypes.Partition();
+                    Partition part = new Partition();
                     if((lba_start > 0 || imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc) &&
                        lba_sectors > 0)
                     {
@@ -274,10 +275,10 @@ namespace DiscImageChef.Partitions
                                      ebr_entry.end_head != 0 || ebr_entry.end_sector != 0;
                         if(ebr_entry.lba_start == 0 && ebr_entry.lba_sectors == 0 && ext_valid)
                         {
-                            ext_start = Helpers.CHS.ToLBA(start_cylinder, ebr_entry.start_head, start_sector,
+                            ext_start = CHS.ToLBA(start_cylinder, ebr_entry.start_head, start_sector,
                                                           imagePlugin.ImageInfo.Heads,
                                                           imagePlugin.ImageInfo.SectorsPerTrack);
-                            ext_sectors = Helpers.CHS.ToLBA(end_cylinder, ebr_entry.end_head, ebr_entry.end_sector,
+                            ext_sectors = CHS.ToLBA(end_cylinder, ebr_entry.end_head, ebr_entry.end_sector,
                                                             imagePlugin.ImageInfo.Heads,
                                                             imagePlugin.ImageInfo.SectorsPerTrack) - ext_start;
                         }
@@ -392,9 +393,9 @@ namespace DiscImageChef.Partitions
                              mnx_entry.end_head != 0 || mnx_entry.end_sector != 0;
                 if(mnx_entry.lba_start == 0 && mnx_entry.lba_sectors == 0 && mnx_valid)
                 {
-                    mnx_start = Helpers.CHS.ToLBA(start_cylinder, mnx_entry.start_head, start_sector,
+                    mnx_start = CHS.ToLBA(start_cylinder, mnx_entry.start_head, start_sector,
                                                   imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack);
-                    mnx_sectors = Helpers.CHS.ToLBA(end_cylinder, mnx_entry.end_head, mnx_entry.end_sector,
+                    mnx_sectors = CHS.ToLBA(end_cylinder, mnx_entry.end_head, mnx_entry.end_sector,
                                                     imagePlugin.ImageInfo.Heads,
                                                     imagePlugin.ImageInfo.SectorsPerTrack) - mnx_start;
                 }
@@ -408,7 +409,7 @@ namespace DiscImageChef.Partitions
 
                 if(!mnx_valid) continue;
 
-                CommonTypes.Partition part = new CommonTypes.Partition();
+                Partition part = new Partition();
                 if(mnx_start > 0 && mnx_sectors > 0)
                 {
                     part.Start = mnx_start + sectorOffset;

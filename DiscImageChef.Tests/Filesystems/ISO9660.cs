@@ -28,9 +28,9 @@
 
 using System.IO;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems

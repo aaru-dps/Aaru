@@ -33,6 +33,7 @@
 using System;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
@@ -101,7 +102,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             }
 
             // Create XML metadata for mounted filesystem
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Bootable = true;
             xmlFSType.Clusters = (long)device.ImageInfo.Sectors;
             xmlFSType.ClusterSize = vtoc.bytesPerSector;

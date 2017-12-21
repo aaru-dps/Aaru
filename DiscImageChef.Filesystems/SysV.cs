@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -74,7 +76,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public SysVfs(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public SysVfs(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNIX System V filesystem";
             PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
@@ -82,7 +84,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -186,7 +188,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -339,7 +341,7 @@ namespace DiscImageChef.Filesystems
 
             if(!sys7th && !sysv && !coherent && !xenix && !xenix3) return;
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
 
             if(xenix || xenix3)
             {

@@ -35,8 +35,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using DiscImageChef.Console;
-using DiscImageChef.Filesystems;
 using DiscImageChef.DiscImages;
+using DiscImageChef.Filesystems;
 using DiscImageChef.Partitions;
 
 namespace DiscImageChef.Core
@@ -91,7 +91,7 @@ namespace DiscImageChef.Core
 
                     Filesystem plugin;
                     if(encoding != null)
-                        plugin = (Filesystem)type.GetConstructor(new Type[] {encoding.GetType()})
+                        plugin = (Filesystem)type.GetConstructor(new[] {encoding.GetType()})
                                                  .Invoke(new object[] {encoding});
                     else plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                     RegisterPlugin(plugin);

@@ -32,8 +32,11 @@
 
 using System;
 using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Devices.FreeBSD;
+using DiscImageChef.Devices.Windows;
 using DiscImageChef.Interop;
 using Microsoft.Win32.SafeHandles;
+using PlatformID = DiscImageChef.Interop.PlatformID;
 
 namespace DiscImageChef.Devices
 {
@@ -54,7 +57,7 @@ namespace DiscImageChef.Devices
         internal static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
                                           uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
-            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
             return SendScsiCommand(ptId, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration,
                                    out sense);
@@ -73,33 +76,33 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        internal static int SendScsiCommand(Interop.PlatformID ptId, object fd, byte[] cdb, ref byte[] buffer,
+        internal static int SendScsiCommand(PlatformID ptId, object fd, byte[] cdb, ref byte[] buffer,
                                           out byte[] senseBuffer, uint timeout, ScsiDirection direction,
                                           out double duration, out bool sense)
         {
             switch(ptId)
             {
-                case Interop.PlatformID.Win32NT:
+                case PlatformID.Win32NT:
                 {
-                    Windows.ScsiIoctlDirection dir;
+                    ScsiIoctlDirection dir;
 
                     switch(direction)
                     {
                         case ScsiDirection.In:
-                            dir = Windows.ScsiIoctlDirection.In;
+                            dir = ScsiIoctlDirection.In;
                             break;
                         case ScsiDirection.Out:
-                            dir = Windows.ScsiIoctlDirection.Out;
+                            dir = ScsiIoctlDirection.Out;
                             break;
                         default:
-                            dir = Windows.ScsiIoctlDirection.Unspecified;
+                            dir = ScsiIoctlDirection.Unspecified;
                             break;
                     }
 
                     return Windows.Command.SendScsiCommand((SafeFileHandle)fd, cdb, ref buffer, out senseBuffer,
                                                            timeout, dir, out duration, out sense);
                 }
-                case Interop.PlatformID.Linux:
+                case PlatformID.Linux:
                 {
                     Linux.ScsiIoctlDirection dir;
 
@@ -125,23 +128,23 @@ namespace DiscImageChef.Devices
                     return Linux.Command.SendScsiCommand((int)fd, cdb, ref buffer, out senseBuffer, timeout, dir,
                                                          out duration, out sense);
                 }
-                case Interop.PlatformID.FreeBSD:
+                case PlatformID.FreeBSD:
                 {
-                    FreeBSD.CcbFlags flags = 0;
+                    CcbFlags flags = 0;
 
                     switch(direction)
                     {
                         case ScsiDirection.In:
-                            flags = FreeBSD.CcbFlags.CamDirIn;
+                            flags = CcbFlags.CamDirIn;
                             break;
                         case ScsiDirection.Out:
-                            flags = FreeBSD.CcbFlags.CamDirOut;
+                            flags = CcbFlags.CamDirOut;
                             break;
                         case ScsiDirection.Bidirectional:
-                            flags = FreeBSD.CcbFlags.CamDirBoth;
+                            flags = CcbFlags.CamDirBoth;
                             break;
                         case ScsiDirection.None:
-                            flags = FreeBSD.CcbFlags.CamDirNone;
+                            flags = CcbFlags.CamDirNone;
                             break;
                     }
 
@@ -159,20 +162,20 @@ namespace DiscImageChef.Devices
                                          AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                          uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
             return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        internal static int SendAtaCommand(Interop.PlatformID ptId, object fd, AtaRegistersCHS registers,
+        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersCHS registers,
                                          out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
             switch(ptId)
             {
-                case Interop.PlatformID.Win32NT:
+                case PlatformID.Win32NT:
                 {
                     if(Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
                        (Environment.OSVersion.ServicePack == "Service Pack 1" ||
@@ -187,13 +190,13 @@ namespace DiscImageChef.Devices
                     return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                case Interop.PlatformID.Linux:
+                case PlatformID.Linux:
                 {
                     return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
                                                         transferRegister, ref buffer, timeout, transferBlocks,
                                                         out duration, out sense);
                 }
-                case Interop.PlatformID.FreeBSD:
+                case PlatformID.FreeBSD:
                 {
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
@@ -207,20 +210,20 @@ namespace DiscImageChef.Devices
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
-            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
             return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        internal static int SendAtaCommand(Interop.PlatformID ptId, object fd, AtaRegistersLBA28 registers,
+        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLBA28 registers,
                                          out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
             switch(ptId)
             {
-                case Interop.PlatformID.Win32NT:
+                case PlatformID.Win32NT:
                 {
                     if(Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
                        (Environment.OSVersion.ServicePack == "Service Pack 1" ||
@@ -235,13 +238,13 @@ namespace DiscImageChef.Devices
                     return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                case Interop.PlatformID.Linux:
+                case PlatformID.Linux:
                 {
                     return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
                                                         transferRegister, ref buffer, timeout, transferBlocks,
                                                         out duration, out sense);
                 }
-                case Interop.PlatformID.FreeBSD:
+                case PlatformID.FreeBSD:
                 {
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
@@ -255,32 +258,32 @@ namespace DiscImageChef.Devices
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
-            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
             return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        internal static int SendAtaCommand(Interop.PlatformID ptId, object fd, AtaRegistersLBA48 registers,
+        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLBA48 registers,
                                          out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
             switch(ptId)
             {
-                case Interop.PlatformID.Win32NT:
+                case PlatformID.Win32NT:
                 {
                     // No check for Windows version. A 48-bit ATA disk simply does not work on earlier systems
                     return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                case Interop.PlatformID.Linux:
+                case PlatformID.Linux:
                 {
                     return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
                                                         transferRegister, ref buffer, timeout, transferBlocks,
                                                         out duration, out sense);
                 }
-                case Interop.PlatformID.FreeBSD:
+                case PlatformID.FreeBSD:
                 {
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
@@ -293,26 +296,26 @@ namespace DiscImageChef.Devices
                                          uint argument, uint blockSize, uint blocks, ref byte[] buffer,
                                          out uint[] response, out double duration, out bool sense, uint timeout = 0)
         {
-            Interop.PlatformID ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
             return SendMmcCommand(ptId, (int)fd, command, write, isApplication, flags, argument, blockSize, blocks,
                                   ref buffer, out response, out duration, out sense, timeout);
         }
 
-        internal static int SendMmcCommand(Interop.PlatformID ptId, object fd, MmcCommands command, bool write,
+        internal static int SendMmcCommand(PlatformID ptId, object fd, MmcCommands command, bool write,
                                          bool isApplication, MmcFlags flags, uint argument, uint blockSize, uint blocks,
                                          ref byte[] buffer, out uint[] response, out double duration, out bool sense,
                                          uint timeout = 0)
         {
             switch(ptId)
             {
-                case Interop.PlatformID.Win32NT:
+                case PlatformID.Win32NT:
                 {
                     return Windows.Command.SendMmcCommand((SafeFileHandle)fd, command, write, isApplication, flags,
                                                           argument, blockSize, blocks, ref buffer, out response,
                                                           out duration, out sense, timeout);
                 }
-                case Interop.PlatformID.Linux:
+                case PlatformID.Linux:
                 {
                     return Linux.Command.SendMmcCommand((int)fd, command, write, isApplication, flags, argument,
                                                         blockSize, blocks, ref buffer, out response, out duration,

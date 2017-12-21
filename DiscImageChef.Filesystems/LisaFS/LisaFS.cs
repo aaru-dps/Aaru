@@ -32,9 +32,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -72,14 +73,14 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             Name = "Apple Lisa File System";
             PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
-            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            CurrentEncoding = new LisaRoman();
         }
 
         public LisaFS(Encoding encoding)
         {
             Name = "Apple Lisa File System";
             PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
-            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            CurrentEncoding = new LisaRoman();
         }
 
         public LisaFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
@@ -87,7 +88,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             device = imagePlugin;
             Name = "Apple Lisa File System";
             PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
-            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            CurrentEncoding = new LisaRoman();
         }
     }
 }

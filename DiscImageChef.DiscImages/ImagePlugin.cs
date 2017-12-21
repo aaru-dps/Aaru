@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filters;
 
@@ -48,8 +49,6 @@ namespace DiscImageChef.DiscImages
         public Guid PluginUuid;
         /// <summary>Image information</summary>
         public ImageInfo ImageInfo;
-
-        protected ImagePlugin() { }
 
         // Basic image handling functions
 
@@ -744,8 +743,8 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
-        protected FeatureSupportedButNotImplementedImageException(System.Runtime.Serialization.SerializationInfo info,
-                                                                  System.Runtime.Serialization.StreamingContext context)
+        protected FeatureSupportedButNotImplementedImageException(SerializationInfo info,
+                                                                  StreamingContext context)
         {
             if(info == null) throw new ArgumentNullException(nameof(info));
         }
@@ -775,8 +774,8 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
-        protected FeatureUnsupportedImageException(System.Runtime.Serialization.SerializationInfo info,
-                                                   System.Runtime.Serialization.StreamingContext context)
+        protected FeatureUnsupportedImageException(SerializationInfo info,
+                                                   StreamingContext context)
         {
             if(info == null) throw new ArgumentNullException(nameof(info));
         }
@@ -806,8 +805,8 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
-        protected FeatureNotPresentImageException(System.Runtime.Serialization.SerializationInfo info,
-                                                  System.Runtime.Serialization.StreamingContext context)
+        protected FeatureNotPresentImageException(SerializationInfo info,
+                                                  StreamingContext context)
         {
             if(info == null) throw new ArgumentNullException(nameof(info));
         }
@@ -837,8 +836,8 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
-        protected FeaturedNotSupportedByDiscImageException(System.Runtime.Serialization.SerializationInfo info,
-                                                           System.Runtime.Serialization.StreamingContext context)
+        protected FeaturedNotSupportedByDiscImageException(SerializationInfo info,
+                                                           StreamingContext context)
         {
             if(info == null) throw new ArgumentNullException(nameof(info));
         }
@@ -868,8 +867,8 @@ namespace DiscImageChef.DiscImages
         /// </summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
-        protected ImageNotSupportedException(System.Runtime.Serialization.SerializationInfo info,
-                                             System.Runtime.Serialization.StreamingContext context)
+        protected ImageNotSupportedException(SerializationInfo info,
+                                             StreamingContext context)
         {
             if(info == null) throw new ArgumentNullException(nameof(info));
         }

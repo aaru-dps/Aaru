@@ -33,7 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
@@ -106,10 +109,10 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
         }
 
-        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
-                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin,
+                                            out List<Partition> partitions, ulong sectorOffset)
         {
-            partitions = new List<CommonTypes.Partition>();
+            partitions = new List<Partition>();
 
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -189,7 +192,7 @@ namespace DiscImageChef.Partitions
                 for(int i = 0; i < NDKMAP; i++)
                     if(dkl.dkl_map[i].dkl_cylno > 0 && dkl.dkl_map[i].dkl_nblk > 0)
                     {
-                        CommonTypes.Partition part = new CommonTypes.Partition
+                        Partition part = new Partition
                         {
                             Size = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
                             Length = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.GetSectorSize()),
@@ -254,7 +257,7 @@ namespace DiscImageChef.Partitions
                     if(dkl8.dkl_map[i].dkl_nblk > 0 && dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
                        dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunWholeDisk)
                     {
-                        CommonTypes.Partition part = new CommonTypes.Partition
+                        Partition part = new Partition
                         {
                             Description = SunFlagsToString(dkl8.dkl_vtoc.v_part[i].p_flag),
                             Size = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
@@ -322,7 +325,7 @@ namespace DiscImageChef.Partitions
                     if(dkl16.dkl_vtoc.v_part[i].p_size > 0 && dkl16.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
                        dkl16.dkl_vtoc.v_part[i].p_tag != SunTag.SunWholeDisk)
                     {
-                        CommonTypes.Partition part = new CommonTypes.Partition
+                        Partition part = new Partition
                         {
                             Description = SunFlagsToString(dkl16.dkl_vtoc.v_part[i].p_flag),
                             Size = (ulong)dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz,
@@ -406,7 +409,7 @@ namespace DiscImageChef.Partitions
 
         public static string SunFlagsToString(SunFlags flags)
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            StringBuilder sb = new StringBuilder();
             if(flags.HasFlag(SunFlags.NoMount)) sb.AppendLine("Unmountable");
             if(flags.HasFlag(SunFlags.ReadOnly)) sb.AppendLine("Read-only");
             return sb.ToString();

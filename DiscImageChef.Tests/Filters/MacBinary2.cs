@@ -58,14 +58,14 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckFilterId()
         {
-            Filter filter = new DiscImageChef.Filters.MacBinary();
+            Filter filter = new MacBinary();
             Assert.AreEqual(true, filter.Identify(location));
         }
 
         [Test]
         public void Test()
         {
-            Filter filter = new DiscImageChef.Filters.MacBinary();
+            Filter filter = new MacBinary();
             filter.Open(location);
             Assert.AreEqual(true, filter.IsOpened());
             Assert.AreEqual(737280, filter.GetDataForkLength());
@@ -79,7 +79,7 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckContents()
         {
-            Filter filter = new DiscImageChef.Filters.MacBinary();
+            Filter filter = new MacBinary();
             filter.Open(location);
             Stream str = filter.GetDataForkStream();
             byte[] data = new byte[737280];
@@ -96,7 +96,7 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckResource()
         {
-            Filter filter = new DiscImageChef.Filters.MacBinary();
+            Filter filter = new MacBinary();
             filter.Open(location);
             Stream str = filter.GetResourceForkStream();
             byte[] data = new byte[286];

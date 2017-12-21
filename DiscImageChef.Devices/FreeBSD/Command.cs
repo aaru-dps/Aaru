@@ -452,8 +452,8 @@ namespace DiscImageChef.Devices.FreeBSD
             errorRegisters = new AtaErrorRegistersLBA48();
 
             // 48-bit ATA CAM commands can crash FreeBSD < 9.2-RELEASE
-            if(System.Environment.Version.Major == 9 && System.Environment.Version.Minor < 2 ||
-               System.Environment.Version.Major < 9) return -1;
+            if(Environment.Version.Major == 9 && Environment.Version.Minor < 2 ||
+               Environment.Version.Major < 9) return -1;
 
             if(buffer == null) return -1;
 

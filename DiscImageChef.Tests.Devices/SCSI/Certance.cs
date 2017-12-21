@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SCSI
@@ -87,7 +88,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                  senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("PARK decoded sense:");
-            DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print sense buffer.");
@@ -143,7 +144,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                  senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("UNPARK decoded sense:");
-            DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print sense buffer.");

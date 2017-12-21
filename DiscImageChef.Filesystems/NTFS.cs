@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -56,14 +58,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.Unicode;
         }
 
-        public NTFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public NTFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "New Technology File System (NTFS)";
             PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
             CurrentEncoding = Encoding.Unicode;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -92,7 +94,7 @@ namespace DiscImageChef.Filesystems
             return signature == 0xAA55;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -141,7 +143,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume serial number: {0:X16}", ntfs_bb.serial_no).AppendLine();
             //			sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
 
             if(ntfs_bb.jump[0] == 0xEB && ntfs_bb.jump[1] > 0x4E && ntfs_bb.jump[1] < 0x80 &&
                ntfs_bb.signature2 == 0xAA55)

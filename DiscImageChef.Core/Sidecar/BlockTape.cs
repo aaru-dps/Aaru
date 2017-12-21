@@ -48,8 +48,8 @@ namespace DiscImageChef.Core
                     {
                         Image = new ImageType {format = "Directory", offsetSpecified = false, Value = folderName},
                         Sequence = new SequenceType {MediaTitle = folderName, MediaSequence = 1, TotalMedia = 1},
-                        PhysicalBlockSize = (int)blockSize,
-                        LogicalBlockSize = (int)blockSize,
+                        PhysicalBlockSize = blockSize,
+                        LogicalBlockSize = blockSize,
                         TapeInformation = new[]
                         {
                             new TapePartitionType

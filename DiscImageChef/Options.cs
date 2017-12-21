@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using CommandLine;
+
 // ReSharper disable MemberCanBeInternal
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 

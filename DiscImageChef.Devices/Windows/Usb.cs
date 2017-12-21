@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -486,7 +487,7 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Return a list of USB Host Controllers
         // 
-        static internal System.Collections.ObjectModel.ReadOnlyCollection<UsbController> GetHostControllers()
+        static internal ReadOnlyCollection<UsbController> GetHostControllers()
         {
             List<UsbController> hostList = new List<UsbController>();
             Guid hostGuid = new Guid(GUID_DEVINTERFACE_HUBCONTROLLER);
@@ -495,7 +496,7 @@ namespace DiscImageChef.Devices.Windows
             // devices that match the interface GUID of a Hub Controller
             IntPtr h = SetupDiGetClassDevs(ref hostGuid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
             if(h.ToInt32() == INVALID_HANDLE_VALUE)
-                return new System.Collections.ObjectModel.ReadOnlyCollection<UsbController>(hostList);
+                return new ReadOnlyCollection<UsbController>(hostList);
 
             IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
             bool success;
@@ -547,7 +548,7 @@ namespace DiscImageChef.Devices.Windows
             SetupDiDestroyDeviceInfoList(h);
 
             // convert it into a Collection
-            return new System.Collections.ObjectModel.ReadOnlyCollection<UsbController>(hostList);
+            return new ReadOnlyCollection<UsbController>(hostList);
         }
 
         // 
@@ -732,7 +733,7 @@ namespace DiscImageChef.Devices.Windows
             }
 
             // return a list of the down stream ports
-            internal System.Collections.ObjectModel.ReadOnlyCollection<UsbPort> GetPorts()
+            internal ReadOnlyCollection<UsbPort> GetPorts()
             {
                 List<UsbPort> portList = new List<UsbPort>();
 
@@ -740,7 +741,7 @@ namespace DiscImageChef.Devices.Windows
                 IntPtr h = CreateFile(HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
                                       IntPtr.Zero);
                 if(h.ToInt32() == INVALID_HANDLE_VALUE)
-                    return new System.Collections.ObjectModel.ReadOnlyCollection<UsbPort>(portList);
+                    return new ReadOnlyCollection<UsbPort>(portList);
 
                 int nBytes = Marshal.SizeOf(typeof(UsbNodeConnectionInformationEx));
                 IntPtr ptrNodeConnection = Marshal.AllocHGlobal(nBytes);
@@ -783,7 +784,7 @@ namespace DiscImageChef.Devices.Windows
                 Marshal.FreeHGlobal(ptrNodeConnection);
                 CloseHandle(h);
                 // convert it into a Collection
-                return new System.Collections.ObjectModel.ReadOnlyCollection<UsbPort>(portList);
+                return new ReadOnlyCollection<UsbPort>(portList);
             }
         }
 
@@ -956,7 +957,7 @@ namespace DiscImageChef.Devices.Windows
                 // build a request for configuration descriptor
                 UsbDescriptorRequest dcrRequest = new UsbDescriptorRequest();
                 dcrRequest.ConnectionIndex = PortPortNumber;
-                dcrRequest.SetupPacket.wValue = (short)(USB_CONFIGURATION_DESCRIPTOR_TYPE << 8);
+                dcrRequest.SetupPacket.wValue = USB_CONFIGURATION_DESCRIPTOR_TYPE << 8;
                 dcrRequest.SetupPacket.wLength = (short)(nBytes - Marshal.SizeOf(dcrRequest));
                 dcrRequest.SetupPacket.wIndex = 0;
                 // Geez, I wish C# had a Marshal.MemSet() method

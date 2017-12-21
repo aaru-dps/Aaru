@@ -35,10 +35,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.DiscImages
 {
@@ -848,7 +848,7 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
                     byte flag;
-                    if(trackFlags.TryGetValue(track, out flag)) return new byte[] {flag};
+                    if(trackFlags.TryGetValue(track, out flag)) return new[] {flag};
 
                     throw new ArgumentException("Unsupported tag requested", nameof(tag));
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -1224,13 +1224,13 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
@@ -1245,7 +1245,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
@@ -1276,7 +1276,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {

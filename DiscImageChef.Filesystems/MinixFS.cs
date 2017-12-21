@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -78,7 +80,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public MinixFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public MinixFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Minix Filesystem";
             PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
@@ -86,12 +88,12 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             uint sector = 2;
             uint offset = 0;
 
-            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 sector = 0;
                 offset = 0x400;
@@ -124,7 +126,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -134,7 +136,7 @@ namespace DiscImageChef.Filesystems
             uint sector = 2;
             uint offset = 0;
 
-            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 sector = 0;
                 offset = 0x400;
@@ -156,7 +158,7 @@ namespace DiscImageChef.Filesystems
 
             magic = BitConverter.ToUInt16(minix_sb_sector, 0x018);
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
 
             bool littleEndian = true;
 

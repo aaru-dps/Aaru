@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
 using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -289,7 +290,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     }
 
                     // Create XML metadata for mounted filesystem
-                    xmlFSType = new Schemas.FileSystemType();
+                    xmlFSType = new FileSystemType();
                     if(DateTime.Compare(mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
                     {
                         xmlFSType.BackupDate = mddf.dtvb;

@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -57,7 +59,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public APFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public APFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple File System";
             PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
@@ -76,7 +78,7 @@ namespace DiscImageChef.Filesystems
             public ulong containerBlocks;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -97,11 +99,11 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             information = "";
 
             if(partition.Start >= partition.End) return;
@@ -128,7 +130,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Bootable = false;
             xmlFSType.Clusters = (long)nxSb.containerBlocks;
             xmlFSType.ClusterSize = (int)nxSb.blockSize;

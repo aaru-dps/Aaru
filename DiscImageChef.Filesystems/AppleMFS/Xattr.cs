@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
@@ -43,7 +44,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             xattrs = new List<string>();
@@ -54,7 +55,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                 {
-                    if(device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag))
+                    if(device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                         xattrs.Add("com.apple.macintosh.tags");
 
                     return Errno.NoError;
@@ -70,13 +71,13 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(entry.flRLgLen > 0)
             {
                 xattrs.Add("com.apple.ResourceFork");
-                if(debug && device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag))
+                if(debug && device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                     xattrs.Add("com.apple.ResourceFork.tags");
             }
 
             if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds)) xattrs.Add("com.apple.FinderInfo");
 
-            if(debug && device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag) &&
+            if(debug && device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
                entry.flLgLen > 0) xattrs.Add("com.apple.macintosh.tags");
 
             xattrs.Sort();
@@ -88,7 +89,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
@@ -96,7 +97,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
-                    if(device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag) &&
+                    if(device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
                        string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
                     {
                         if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
@@ -159,7 +160,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 return Errno.NoError;
             }
 
-            if(!debug || !device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag) ||
+            if(!debug || !device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) ||
                string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) != 0)
                 return Errno.NoSuchExtendedAttribute;
 

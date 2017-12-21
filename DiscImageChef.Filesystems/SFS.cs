@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -55,7 +57,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public SFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public SFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "SmartFileSystem";
             PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
@@ -102,7 +104,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>Identifier for SFS v2</summary>
         const uint SFS2_MAGIC = 0x53465302;
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -115,7 +117,7 @@ namespace DiscImageChef.Filesystems
             return magic == SFS_MAGIC || magic == SFS2_MAGIC;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] RootBlockSector = imagePlugin.ReadSector(partition.Start);
@@ -149,7 +151,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendLine("Volume moves deleted files to a recycled folder");
             information = sbInformation.ToString();
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 CreationDate = DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
                 CreationDateSpecified = true,

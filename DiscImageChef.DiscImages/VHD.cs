@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
@@ -494,7 +495,7 @@ namespace DiscImageChef.DiscImages
             thisDateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             thisDateTime = thisDateTime.AddSeconds(thisFooter.Timestamp);
 
-            Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
+            Sha1Context sha1Ctx = new Sha1Context();
             sha1Ctx.Init();
             sha1Ctx.Update(thisFooter.Reserved);
 
@@ -720,7 +721,7 @@ namespace DiscImageChef.DiscImages
                 parentDateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 parentDateTime = parentDateTime.AddSeconds(thisDynamic.ParentTimestamp);
 
-                sha1Ctx = new Checksums.Sha1Context();
+                sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 sha1Ctx.Update(thisDynamic.Reserved2);
 

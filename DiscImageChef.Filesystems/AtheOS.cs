@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -63,7 +65,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public AtheOS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AtheOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "AtheOS Filesystem";
             PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
@@ -71,7 +73,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.GetSectorSize();
             uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.GetSectorSize();
@@ -93,7 +95,7 @@ namespace DiscImageChef.Filesystems
             return magic == AFS_MAGIC1;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -153,7 +155,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Clusters = afs_sb.num_blocks,
                 ClusterSize = (int)afs_sb.block_size,

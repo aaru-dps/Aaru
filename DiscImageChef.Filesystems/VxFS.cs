@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -55,7 +57,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public VxFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public VxFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Veritas filesystem";
             PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
@@ -212,7 +214,7 @@ namespace DiscImageChef.Filesystems
         const uint VxFS_MAGIC = 0xA501FCF5;
         const uint VxFS_Base = 0x400;
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.SectorSize;
 
@@ -225,7 +227,7 @@ namespace DiscImageChef.Filesystems
             return magic == VxFS_MAGIC;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.SectorSize;
@@ -257,7 +259,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "Veritas file system";
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime);
             xmlFSType.CreationDateSpecified = true;

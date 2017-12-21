@@ -274,7 +274,7 @@ namespace DiscImageChef.Core.Logging
             ibgHeader.AppendLine("HRPC=True");
             ibgHeader.AppendLine();
             ibgHeader.AppendLine("[START_VERIFY_GRAPH_VALUES]");
-            ibgHeader.Append(ibgSb.ToString());
+            ibgHeader.Append(ibgSb);
             ibgHeader.AppendLine("[END_VERIFY_GRAPH_VALUES]");
             ibgHeader.AppendLine();
             ibgHeader.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");

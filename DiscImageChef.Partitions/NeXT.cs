@@ -35,7 +35,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
 
 // Information learnt from XNU source and testing against real disks
 namespace DiscImageChef.Partitions
@@ -59,8 +61,8 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
-        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
-                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin,
+                                            out List<Partition> partitions, ulong sectorOffset)
         {
             bool magic_found = false;
             byte[] label_sector;
@@ -71,7 +73,7 @@ namespace DiscImageChef.Partitions
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448) sector_size = 2048;
             else sector_size = imagePlugin.GetSectorSize();
 
-            partitions = new List<CommonTypes.Partition>();
+            partitions = new List<Partition>();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -168,7 +170,7 @@ namespace DiscImageChef.Partitions
 
                 StringBuilder sb = new StringBuilder();
 
-                CommonTypes.Partition part = new CommonTypes.Partition
+                Partition part = new Partition
                 {
                     Size = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
                     Offset =

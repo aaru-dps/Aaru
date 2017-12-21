@@ -35,13 +35,14 @@ using System.Collections.Generic;
 using DiscImageChef.Metadata;
 using Extents;
 using Schemas;
+using PlatformID = DiscImageChef.Interop.PlatformID;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
     static class ResumeSupport
     {
         internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
-                                   string serial, Interop.PlatformID platform, ref Resume resume,
+                                   string serial, PlatformID platform, ref Resume resume,
                                    ref DumpHardwareType currentTry, ref ExtentsULong extents)
         {
             if(resume != null)

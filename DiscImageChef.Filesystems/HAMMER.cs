@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 using hammer_crc_t = System.UInt32;
 using hammer_off_t = System.UInt64;
 using hammer_tid_t = System.UInt64;
@@ -63,7 +65,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public HAMMER(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public HAMMER(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "HAMMER Filesystem";
             PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
@@ -71,7 +73,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
 
@@ -88,7 +90,7 @@ namespace DiscImageChef.Filesystems
             return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -130,7 +132,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("First volume buffer starts at {0}", hammer_sb.vol_buf_beg).AppendLine();
             sb.AppendFormat("Volume ends at {0}", hammer_sb.vol_buf_end).AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Clusters = (long)(partition.Size / HAMMER_BIGBLOCK_SIZE),
                 ClusterSize = HAMMER_BIGBLOCK_SIZE,

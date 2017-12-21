@@ -26,7 +26,9 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SCSI
@@ -120,7 +122,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              FujitsuDisplayModes.Idle, FujitsuDisplayModes.Ready);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out mode))
+                        if(!Enum.TryParse(strDev, true, out mode))
                         {
                             DicConsole.WriteLine("Not a correct display mode. Press any key to continue...");
                             mode = FujitsuDisplayModes.Ready;
@@ -151,7 +153,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                  senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("DISPLAY decoded sense:");
-            DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print sense buffer.");

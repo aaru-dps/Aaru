@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SCSI
@@ -172,7 +173,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                 DicConsole.WriteLine("Not a numbr. Press any key to continue...");
                                 bps = 512;
                                 System.Console.ReadKey();
-                                continue;
                             }
                         }
 
@@ -244,7 +244,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ LONG decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -311,7 +311,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a numbr. Press any key to continue...");
                             address = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -382,7 +381,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ SECTOR LOCATION decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();

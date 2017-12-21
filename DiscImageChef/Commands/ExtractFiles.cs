@@ -37,9 +37,9 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Commands
 {
@@ -163,9 +163,9 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
                                     Filesystem fs = (Filesystem)plugin
-                                        .GetType().GetConstructor(new Type[]
+                                        .GetType().GetConstructor(new[]
                                         {
-                                            typeof(ImagePlugin), typeof(Partition), typeof(System.Text.Encoding)
+                                            typeof(ImagePlugin), typeof(Partition), typeof(Encoding)
                                         }).Invoke(new object[] {imageFormat, partitions[i], null});
 
                                     error = fs.Mount(options.Debug);
@@ -311,9 +311,9 @@ namespace DiscImageChef.Commands
                             plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
                             DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
                             Filesystem fs = (Filesystem)plugin
-                                .GetType().GetConstructor(new Type[]
+                                .GetType().GetConstructor(new[]
                                 {
-                                    typeof(ImagePlugin), typeof(Partition), typeof(System.Text.Encoding)
+                                    typeof(ImagePlugin), typeof(Partition), typeof(Encoding)
                                 }).Invoke(new object[] {imageFormat, partitions[i], null});
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
@@ -453,9 +453,9 @@ namespace DiscImageChef.Commands
                         {
                             DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
                             Filesystem fs = (Filesystem)plugin
-                                .GetType().GetConstructor(new Type[]
+                                .GetType().GetConstructor(new[]
                                 {
-                                    typeof(ImagePlugin), typeof(Partition), typeof(System.Text.Encoding)
+                                    typeof(ImagePlugin), typeof(Partition), typeof(Encoding)
                                 }).Invoke(new object[] {imageFormat, wholePart, null});
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
@@ -580,9 +580,9 @@ namespace DiscImageChef.Commands
                     plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
                     DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
                     Filesystem fs = (Filesystem)plugin
-                        .GetType().GetConstructor(new Type[]
+                        .GetType().GetConstructor(new[]
                         {
-                            typeof(ImagePlugin), typeof(Partition), typeof(System.Text.Encoding)
+                            typeof(ImagePlugin), typeof(Partition), typeof(Encoding)
                         }).Invoke(new object[] {imageFormat, wholePart, null});
                     error = fs.Mount(options.Debug);
                     if(error == Errno.NoError)

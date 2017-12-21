@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -81,7 +83,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public AcornADFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AcornADFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Acorn Advanced Disc Filing System";
             PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
@@ -259,7 +261,7 @@ namespace DiscImageChef.Filesystems
         }
 
         // TODO: BBC Master hard disks are untested...
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -430,11 +432,11 @@ namespace DiscImageChef.Filesystems
         // TODO: Find root directory on volumes with DiscRecord
         // TODO: Support big directories (ADFS-G?)
         // TODO: Find the real freemap on volumes with DiscRecord, as DiscRecord's discid may be empty but this one isn't
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             information = "";
 
             ulong sbSector;
@@ -486,7 +488,7 @@ namespace DiscImageChef.Filesystems
                         namebytes[i * 2 + 1] = oldMap1.name[i];
                     }
 
-                    xmlFSType = new Schemas.FileSystemType
+                    xmlFSType = new FileSystemType
                     {
                         Bootable = oldMap1.boot != 0, // Or not?
                         Clusters = (long)(bytes / imagePlugin.ImageInfo.SectorSize),
@@ -646,7 +648,7 @@ namespace DiscImageChef.Filesystems
 
             if(bytes > imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) return;
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
 
             sbInformation.AppendLine("Acorn Advanced Disc Filing System");
             sbInformation.AppendLine();

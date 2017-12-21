@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 // Commit count
 using commitcnt_t = System.Int32;
 // Disk address
@@ -205,7 +207,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public Locus(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public Locus(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Locus Filesystem Plugin";
             PluginUUID = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
@@ -213,7 +215,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -243,7 +245,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -343,7 +345,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Type = "Locus filesystem",
                 ClusterSize = blockSize,

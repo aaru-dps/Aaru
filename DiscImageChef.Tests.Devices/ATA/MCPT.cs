@@ -109,7 +109,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             feature = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;

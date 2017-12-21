@@ -33,13 +33,15 @@
 using System;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin : Filesystem
     {
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
 
@@ -83,7 +85,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return true;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
@@ -141,7 +143,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             information = sbInformation.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, 2));
             xmlFSType.Clusters = volEntry.blocks;
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
@@ -149,8 +151,6 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             xmlFSType.FilesSpecified = true;
             xmlFSType.Type = "UCSD Pascal";
             xmlFSType.VolumeName = StringHandlers.PascalToString(volEntry.volumeName, CurrentEncoding);
-
-            return;
         }
     }
 }

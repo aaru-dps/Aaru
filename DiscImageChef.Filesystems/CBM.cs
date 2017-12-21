@@ -34,7 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems
 {
@@ -44,21 +48,21 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Commodore file system";
             PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
-            CurrentEncoding = new Claunia.Encoding.PETSCII();
+            CurrentEncoding = new PETSCII();
         }
 
         public CBM(Encoding encoding)
         {
             Name = "Commodore file system";
             PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
-            CurrentEncoding = new Claunia.Encoding.PETSCII();
+            CurrentEncoding = new PETSCII();
         }
 
-        public CBM(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public CBM(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Commodore file system";
             PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
-            CurrentEncoding = new Claunia.Encoding.PETSCII();
+            CurrentEncoding = new PETSCII();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -179,7 +183,7 @@ namespace DiscImageChef.Filesystems
             public short fill3;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start > 0) return false;
 
@@ -218,7 +222,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] sector;
@@ -227,7 +231,7 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendLine("Commodore file system");
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "Commodore file system";
             xmlFSType.Clusters = (long)imagePlugin.ImageInfo.Sectors;
             xmlFSType.ClusterSize = 256;
@@ -244,11 +248,11 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmHdr.directoryTrack,
                                            cbmHdr.directorySector).AppendLine();
                 sbInformation.AppendFormat("Disk DOS Version: {0}",
-                                           Encoding.ASCII.GetString(new byte[] {cbmHdr.diskDosVersion})).AppendLine();
-                sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new byte[] {cbmHdr.dosVersion}))
+                                           Encoding.ASCII.GetString(new[] {cbmHdr.diskDosVersion})).AppendLine();
+                sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new[] {cbmHdr.dosVersion}))
                              .AppendLine();
                 sbInformation
-                    .AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new byte[] {cbmHdr.diskVersion}))
+                    .AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new[] {cbmHdr.diskVersion}))
                     .AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmHdr.diskId).AppendLine();
                 sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, CurrentEncoding))
@@ -271,7 +275,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Disk DOS type: {0}",
                                            Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType)))
                              .AppendLine();
-                sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new byte[] {cbmBam.dosVersion}))
+                sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new[] {cbmBam.dosVersion}))
                              .AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmBam.diskId).AppendLine();
                 sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, CurrentEncoding))

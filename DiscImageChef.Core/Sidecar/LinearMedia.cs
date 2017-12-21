@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.DiscImages;
@@ -40,7 +41,7 @@ namespace DiscImageChef.Core
     public static partial class Sidecar
     {
         // TODO: Complete it
-        static void LinearMedia(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi,
+        static void LinearMedia(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi,
                                 PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
             sidecar.LinearMedia = new[]

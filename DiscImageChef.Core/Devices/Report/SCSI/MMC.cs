@@ -33,7 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Threading;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
 using DiscImageChef.Metadata;
 
@@ -42,7 +46,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
     static class Mmc
     {
         internal static void Report(Device dev, ref DeviceReport report, bool debug,
-                                    ref Decoders.SCSI.Modes.ModePage_2A? cdromMode, ref List<string> mediaTypes)
+                                    ref Modes.ModePage_2A? cdromMode, ref List<string> mediaTypes)
         {
             if(report == null) return;
 
@@ -52,7 +56,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             bool sense;
             uint timeout = 5;
             ConsoleKeyInfo pressedKey;
-            Decoders.SCSI.Modes.DecodedMode? decMode = null;
+            Modes.DecodedMode? decMode = null;
 
             report.SCSI.MultiMediaDevice = new mmcType();
 
@@ -163,17 +167,17 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
             if(!sense)
             {
-                Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(buffer);
+                Features.SeparatedFeatures ftr = Features.Separate(buffer);
                 if(ftr.Descriptors != null && ftr.Descriptors.Length > 0)
                 {
                     report.SCSI.MultiMediaDevice.Features = new mmcFeaturesType();
-                    foreach(Decoders.SCSI.MMC.Features.FeatureDescriptor desc in ftr.Descriptors)
+                    foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
                         switch(desc.Code)
                         {
                             case 0x0001:
                             {
-                                Decoders.SCSI.MMC.Feature_0001? ftr0001 =
-                                    Decoders.SCSI.MMC.Features.Decode_0001(desc.Data);
+                                Feature_0001? ftr0001 =
+                                    Features.Decode_0001(desc.Data);
                                 if(ftr0001.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandard =
@@ -186,7 +190,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                         report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandardNumberSpecified =
                                             true;
                                         report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandard =
-                                            Decoders.SCSI.MMC.PhysicalInterfaces.Unspecified;
+                                            PhysicalInterfaces.Unspecified;
                                     }
                                     report.SCSI.MultiMediaDevice.Features.SupportsDeviceBusyEvent = ftr0001.Value.DBE;
                                 }
@@ -194,8 +198,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 break;
                             case 0x0003:
                             {
-                                Decoders.SCSI.MMC.Feature_0003? ftr0003 =
-                                    Decoders.SCSI.MMC.Features.Decode_0003(desc.Data);
+                                Feature_0003? ftr0003 =
+                                    Features.Decode_0003(desc.Data);
                                 if(ftr0003.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.LoadingMechanismType =
@@ -211,8 +215,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 break;
                             case 0x0004:
                             {
-                                Decoders.SCSI.MMC.Feature_0004? ftr0004 =
-                                    Decoders.SCSI.MMC.Features.Decode_0004(desc.Data);
+                                Feature_0004? ftr0004 =
+                                    Features.Decode_0004(desc.Data);
                                 if(ftr0004.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.SupportsWriteProtectPAC = ftr0004.Value.DWP;
@@ -224,8 +228,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 break;
                             case 0x0010:
                             {
-                                Decoders.SCSI.MMC.Feature_0010? ftr0010 =
-                                    Decoders.SCSI.MMC.Features.Decode_0010(desc.Data);
+                                Feature_0010? ftr0010 =
+                                    Features.Decode_0010(desc.Data);
                                 if(ftr0010.HasValue)
                                 {
                                     if(ftr0010.Value.LogicalBlockSize > 0)
@@ -250,8 +254,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x001E:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanReadCD = true;
-                                Decoders.SCSI.MMC.Feature_001E? ftr001E =
-                                    Decoders.SCSI.MMC.Features.Decode_001E(desc.Data);
+                                Feature_001E? ftr001E =
+                                    Features.Decode_001E(desc.Data);
                                 if(ftr001E.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.SupportsDAP = ftr001E.Value.DAP;
@@ -263,8 +267,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x001F:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanReadDVD = true;
-                                Decoders.SCSI.MMC.Feature_001F? ftr001F =
-                                    Decoders.SCSI.MMC.Features.Decode_001F(desc.Data);
+                                Feature_001F? ftr001F =
+                                    Features.Decode_001F(desc.Data);
                                 if(ftr001F.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.DVDMultiRead = ftr001F.Value.MULTI110;
@@ -279,8 +283,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0023:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanFormat = true;
-                                Decoders.SCSI.MMC.Feature_0023? ftr0023 =
-                                    Decoders.SCSI.MMC.Features.Decode_0023(desc.Data);
+                                Feature_0023? ftr0023 =
+                                    Features.Decode_0023(desc.Data);
                                 if(ftr0023.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.CanFormatBDREWithoutSpare =
@@ -302,8 +306,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0028:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanReadCDMRW = true;
-                                Decoders.SCSI.MMC.Feature_0028? ftr0028 =
-                                    Decoders.SCSI.MMC.Features.Decode_0028(desc.Data);
+                                Feature_0028? ftr0028 =
+                                    Features.Decode_0028(desc.Data);
                                 if(ftr0028.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW = ftr0028.Value.DVDPRead;
@@ -315,24 +319,24 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x002A:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW = true;
-                                Decoders.SCSI.MMC.Feature_002A? ftr002A =
-                                    Decoders.SCSI.MMC.Features.Decode_002A(desc.Data);
+                                Feature_002A? ftr002A =
+                                    Features.Decode_002A(desc.Data);
                                 if(ftr002A.HasValue) report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusRW = ftr002A.Value.Write;
                             }
                                 break;
                             case 0x002B:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR = true;
-                                Decoders.SCSI.MMC.Feature_002B? ftr002B =
-                                    Decoders.SCSI.MMC.Features.Decode_002B(desc.Data);
+                                Feature_002B? ftr002B =
+                                    Features.Decode_002B(desc.Data);
                                 if(ftr002B.HasValue) report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusR = ftr002B.Value.Write;
                             }
                                 break;
                             case 0x002D:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanWriteCDTAO = true;
-                                Decoders.SCSI.MMC.Feature_002D? ftr002D =
-                                    Decoders.SCSI.MMC.Features.Decode_002D(desc.Data);
+                                Feature_002D? ftr002D =
+                                    Features.Decode_002D(desc.Data);
                                 if(ftr002D.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.BufferUnderrunFreeInTAO = ftr002D.Value.BUF;
@@ -350,8 +354,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x002E:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanWriteCDSAO = true;
-                                Decoders.SCSI.MMC.Feature_002E? ftr002E =
-                                    Decoders.SCSI.MMC.Features.Decode_002E(desc.Data);
+                                Feature_002E? ftr002E =
+                                    Features.Decode_002E(desc.Data);
                                 if(ftr002E.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.BufferUnderrunFreeInSAO = ftr002E.Value.BUF;
@@ -366,8 +370,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x002F:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanWriteDVDR = true;
-                                Decoders.SCSI.MMC.Feature_002F? ftr002F =
-                                    Decoders.SCSI.MMC.Features.Decode_002F(desc.Data);
+                                Feature_002F? ftr002F =
+                                    Features.Decode_002F(desc.Data);
                                 if(ftr002F.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.BufferUnderrunFreeInDVD = ftr002F.Value.BUF;
@@ -383,8 +387,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0031:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanWriteDDCDR = true;
-                                Decoders.SCSI.MMC.Feature_0031? ftr0031 =
-                                    Decoders.SCSI.MMC.Features.Decode_0031(desc.Data);
+                                Feature_0031? ftr0031 =
+                                    Features.Decode_0031(desc.Data);
                                 if(ftr0031.HasValue)
                                     report.SCSI.MultiMediaDevice.Features.CanTestWriteDDCDR = ftr0031.Value.TestWrite;
                             }
@@ -401,8 +405,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x003A:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL = true;
-                                Decoders.SCSI.MMC.Feature_003A? ftr003A =
-                                    Decoders.SCSI.MMC.Features.Decode_003A(desc.Data);
+                                Feature_003A? ftr003A =
+                                    Features.Decode_003A(desc.Data);
                                 if(ftr003A.HasValue)
                                     report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusRWDL = ftr003A.Value.Write;
                             }
@@ -410,8 +414,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x003B:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRDL = true;
-                                Decoders.SCSI.MMC.Feature_003B? ftr003B =
-                                    Decoders.SCSI.MMC.Features.Decode_003B(desc.Data);
+                                Feature_003B? ftr003B =
+                                    Features.Decode_003B(desc.Data);
                                 if(ftr003B.HasValue)
                                     report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusRDL = ftr003B.Value.Write;
                             }
@@ -419,8 +423,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0040:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanReadBD = true;
-                                Decoders.SCSI.MMC.Feature_0040? ftr0040 =
-                                    Decoders.SCSI.MMC.Features.Decode_0040(desc.Data);
+                                Feature_0040? ftr0040 =
+                                    Features.Decode_0040(desc.Data);
                                 if(ftr0040.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.CanReadBluBCA = ftr0040.Value.BCA;
@@ -437,8 +441,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0041:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanWriteBD = true;
-                                Decoders.SCSI.MMC.Feature_0041? ftr0041 =
-                                    Decoders.SCSI.MMC.Features.Decode_0041(desc.Data);
+                                Feature_0041? ftr0041 =
+                                    Features.Decode_0041(desc.Data);
                                 if(ftr0041.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.CanWriteBDRE2 = ftr0041.Value.RE2;
@@ -452,8 +456,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0050:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanReadHDDVD = true;
-                                Decoders.SCSI.MMC.Feature_0050? ftr0050 =
-                                    Decoders.SCSI.MMC.Features.Decode_0050(desc.Data);
+                                Feature_0050? ftr0050 =
+                                    Features.Decode_0050(desc.Data);
                                 if(ftr0050.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR = ftr0050.Value.HDDVDR;
@@ -464,8 +468,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0051:
                             {
                                 // TODO: Write HD DVD-RW
-                                Decoders.SCSI.MMC.Feature_0051? ftr0051 =
-                                    Decoders.SCSI.MMC.Features.Decode_0051(desc.Data);
+                                Feature_0051? ftr0051 =
+                                    Features.Decode_0051(desc.Data);
                                 if(ftr0051.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.CanWriteHDDVDR = ftr0051.Value.HDDVDR;
@@ -482,8 +486,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0102:
                             {
                                 report.SCSI.MultiMediaDevice.Features.EmbeddedChanger = true;
-                                Decoders.SCSI.MMC.Feature_0102? ftr0102 =
-                                    Decoders.SCSI.MMC.Features.Decode_0102(desc.Data);
+                                Feature_0102? ftr0102 =
+                                    Features.Decode_0102(desc.Data);
                                 if(ftr0102.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.ChangerIsSideChangeCapable =
@@ -498,8 +502,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0103:
                             {
                                 report.SCSI.MultiMediaDevice.Features.CanPlayCDAudio = true;
-                                Decoders.SCSI.MMC.Feature_0103? ftr0103 =
-                                    Decoders.SCSI.MMC.Features.Decode_0103(desc.Data);
+                                Feature_0103? ftr0103 =
+                                    Features.Decode_0103(desc.Data);
                                 if(ftr0103.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.CanAudioScan = ftr0103.Value.Scan;
@@ -519,8 +523,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x0106:
                             {
                                 report.SCSI.MultiMediaDevice.Features.SupportsCSS = true;
-                                Decoders.SCSI.MMC.Feature_0106? ftr0106 =
-                                    Decoders.SCSI.MMC.Features.Decode_0106(desc.Data);
+                                Feature_0106? ftr0106 =
+                                    Features.Decode_0106(desc.Data);
                                 if(ftr0106.HasValue)
                                     if(ftr0106.Value.CSSVersion > 0)
                                     {
@@ -538,8 +542,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x010B:
                             {
                                 report.SCSI.MultiMediaDevice.Features.SupportsCPRM = true;
-                                Decoders.SCSI.MMC.Feature_010B? ftr010B =
-                                    Decoders.SCSI.MMC.Features.Decode_010B(desc.Data);
+                                Feature_010B? ftr010B =
+                                    Features.Decode_010B(desc.Data);
                                 if(ftr010B.HasValue)
                                     if(ftr010B.Value.CPRMVersion > 0)
                                     {
@@ -550,8 +554,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 break;
                             case 0x010C:
                             {
-                                Decoders.SCSI.MMC.Feature_010C? ftr010C =
-                                    Decoders.SCSI.MMC.Features.Decode_010C(desc.Data);
+                                Feature_010C? ftr010C =
+                                    Features.Decode_010C(desc.Data);
                                 if(ftr010C.HasValue)
                                 {
                                     string syear, smonth, sday, shour, sminute, ssecond;
@@ -562,27 +566,27 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     temp[1] = (byte)(ftr010C.Value.Century & 0xFF);
                                     temp[2] = (byte)((ftr010C.Value.Year & 0xFF00) >> 8);
                                     temp[3] = (byte)(ftr010C.Value.Year & 0xFF);
-                                    syear = System.Text.Encoding.ASCII.GetString(temp);
+                                    syear = Encoding.ASCII.GetString(temp);
                                     temp = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Month & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Month & 0xFF);
-                                    smonth = System.Text.Encoding.ASCII.GetString(temp);
+                                    smonth = Encoding.ASCII.GetString(temp);
                                     temp = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Day & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Day & 0xFF);
-                                    sday = System.Text.Encoding.ASCII.GetString(temp);
+                                    sday = Encoding.ASCII.GetString(temp);
                                     temp = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Hour & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Hour & 0xFF);
-                                    shour = System.Text.Encoding.ASCII.GetString(temp);
+                                    shour = Encoding.ASCII.GetString(temp);
                                     temp = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Minute & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Minute & 0xFF);
-                                    sminute = System.Text.Encoding.ASCII.GetString(temp);
+                                    sminute = Encoding.ASCII.GetString(temp);
                                     temp = new byte[2];
                                     temp[0] = (byte)((ftr010C.Value.Second & 0xFF00) >> 8);
                                     temp[1] = (byte)(ftr010C.Value.Second & 0xFF);
-                                    ssecond = System.Text.Encoding.ASCII.GetString(temp);
+                                    ssecond = Encoding.ASCII.GetString(temp);
 
                                     try
                                     {
@@ -602,8 +606,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             case 0x010D:
                             {
                                 report.SCSI.MultiMediaDevice.Features.SupportsAACS = true;
-                                Decoders.SCSI.MMC.Feature_010D? ftr010D =
-                                    Decoders.SCSI.MMC.Features.Decode_010D(desc.Data);
+                                Feature_010D? ftr010D =
+                                    Features.Decode_010D(desc.Data);
                                 if(ftr010D.HasValue)
                                 {
                                     report.SCSI.MultiMediaDevice.Features.CanReadDriveAACSCertificate =
@@ -755,7 +759,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
                     if(sense)
                     {
-                        Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
+                        FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
                         if(decSense.HasValue)
                             if(decSense.Value.ASC == 0x3A)
                             {
@@ -763,7 +767,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 while(leftRetries > 0)
                                 {
                                     DicConsole.Write("\rWaiting for drive to become ready");
-                                    System.Threading.Thread.Sleep(2000);
+                                    Thread.Sleep(2000);
                                     sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
                                     if(!sense) break;
 
@@ -778,7 +782,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 while(leftRetries > 0)
                                 {
                                     DicConsole.Write("\rWaiting for drive to become ready");
-                                    System.Threading.Thread.Sleep(2000);
+                                    Thread.Sleep(2000);
                                     sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
                                     if(!sense) break;
 
@@ -794,7 +798,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 while(leftRetries > 0)
                                 {
                                     DicConsole.Write("\rWaiting for drive to become ready");
-                                    System.Threading.Thread.Sleep(2000);
+                                    Thread.Sleep(2000);
                                     sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
                                     if(!sense) break;
 
@@ -848,7 +852,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(!sense && !dev.Error)
                         {
                             report.SCSI.SupportsModeSense10 = true;
-                            decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.ScsiType);
+                            decMode = Modes.DecodeMode10(buffer, dev.ScsiType);
                             if(debug) mediaTest.ModeSense10Data = buffer;
                         }
                         DicConsole.WriteLine("Querying SCSI MODE SENSE...");
@@ -856,7 +860,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         if(!sense && !dev.Error)
                         {
                             report.SCSI.SupportsModeSense6 = true;
-                            if(!decMode.HasValue) decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.ScsiType);
+                            if(!decMode.HasValue) decMode = Modes.DecodeMode6(buffer, dev.ScsiType);
                             if(debug) mediaTest.ModeSense6Data = buffer;
                         }
 
@@ -1818,9 +1822,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                out duration);
                         if(sense && !dev.Error)
                         {
-                            Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
+                            FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
                             if(decSense.HasValue)
-                                if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
                                    decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                 {
                                     mediaTest.SupportsReadLong = true;

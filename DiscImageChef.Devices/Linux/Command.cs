@@ -33,7 +33,9 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Interop;
 
 namespace DiscImageChef.Devices.Linux
 {
@@ -382,7 +384,7 @@ namespace DiscImageChef.Devices.Linux
             IntPtr buf = Marshal.AllocHGlobal(4096);
             int resultSize;
 
-            if(Interop.DetectOS.Is64Bit())
+            if(DetectOS.Is64Bit())
             {
                 long result64 = Extern.readlink64(path, buf, 4096);
                 if(result64 <= 0) return null;
@@ -400,7 +402,7 @@ namespace DiscImageChef.Devices.Linux
             byte[] resultString = new byte[resultSize];
             Marshal.Copy(buf, resultString, 0, resultSize);
             Marshal.FreeHGlobal(buf);
-            return System.Text.Encoding.ASCII.GetString(resultString);
+            return Encoding.ASCII.GetString(resultString);
         }
     }
 }

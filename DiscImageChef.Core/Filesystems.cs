@@ -33,7 +33,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.Filesystems;
 using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Core

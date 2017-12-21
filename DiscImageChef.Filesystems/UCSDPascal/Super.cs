@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
@@ -93,7 +94,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             bootBlocks = device.ReadSectors(0, 2);
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks);
             xmlFSType.Clusters = mountedVolEntry.blocks;
             xmlFSType.ClusterSize = (int)device.GetSectorSize();

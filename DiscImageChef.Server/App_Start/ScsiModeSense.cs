@@ -223,7 +223,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x10:
                     {
                         if(page.subpage == 0)
-                            if(deviceType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                            if(deviceType == PeripheralDeviceTypes.SequentialAccess)
                                 modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                               Modes.PrettifyModePage_10_SSC(page.value));
                             else

@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -139,7 +141,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public Fossil(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public Fossil(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Fossil Filesystem Plugin";
             PluginUUID = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
@@ -147,7 +149,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             ulong hdrSector = HeaderPos / imagePlugin.GetSectorSize();
 
@@ -164,7 +166,7 @@ namespace DiscImageChef.Filesystems
             return hdr.magic == Fossil_HdrMagic;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -192,7 +194,7 @@ namespace DiscImageChef.Filesystems
 
             ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.GetSectorSize()) + partition.Start;
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Type = "Fossil filesystem",
                 ClusterSize = hdr.blockSize,

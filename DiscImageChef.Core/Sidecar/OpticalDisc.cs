@@ -30,18 +30,24 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.Filesystems;
+using DiscImageChef.Decoders.CD;
+using DiscImageChef.Decoders.DVD;
 using DiscImageChef.DiscImages;
+using DiscImageChef.Filesystems;
 using Schemas;
+using DMI = DiscImageChef.Decoders.Xbox.DMI;
+using Session = DiscImageChef.DiscImages.Session;
+using TrackType = Schemas.TrackType;
 
 namespace DiscImageChef.Core
 {
     public static partial class Sidecar
     {
-        static void OpticalDisc(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi,
+        static void OpticalDisc(ImagePlugin image, Guid filterId, string imagePath, FileInfo fi,
                                 PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
             sidecar.OpticalDisc = new[]
@@ -83,8 +89,8 @@ namespace DiscImageChef.Core
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_ATIP)).ToArray(),
                             Size = image.ReadDiskTag(MediaTagType.CD_ATIP).Length
                         };
-                        Decoders.CD.ATIP.CDATIP?
-                            atip = Decoders.CD.ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
+                        ATIP.CDATIP?
+                            atip = ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
                         if(atip.HasValue)
                             if(atip.Value.DDCD) dskType = atip.Value.DiscType ? MediaType.DDCDRW : MediaType.DDCDR;
                             else dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
@@ -109,18 +115,18 @@ namespace DiscImageChef.Core
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_CMI)).ToArray(),
                             Size = image.ReadDiskTag(MediaTagType.DVD_CMI).Length
                         };
-                        Decoders.DVD.CSS_CPRM.LeadInCopyright? cmi =
-                            Decoders.DVD.CSS_CPRM.DecodeLeadInCopyright(image.ReadDiskTag(MediaTagType.DVD_CMI));
+                        CSS_CPRM.LeadInCopyright? cmi =
+                            CSS_CPRM.DecodeLeadInCopyright(image.ReadDiskTag(MediaTagType.DVD_CMI));
                         if(cmi.HasValue)
                             switch(cmi.Value.CopyrightType)
                             {
-                                case Decoders.DVD.CopyrightType.AACS:
+                                case CopyrightType.AACS:
                                     sidecar.OpticalDisc[0].CopyProtection = "AACS";
                                     break;
-                                case Decoders.DVD.CopyrightType.CSS:
+                                case CopyrightType.CSS:
                                     sidecar.OpticalDisc[0].CopyProtection = "CSS";
                                     break;
-                                case Decoders.DVD.CopyrightType.CPRM:
+                                case CopyrightType.CPRM:
                                     sidecar.OpticalDisc[0].CopyProtection = "CPRM";
                                     break;
                             }
@@ -132,12 +138,12 @@ namespace DiscImageChef.Core
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_DMI)).ToArray(),
                             Size = image.ReadDiskTag(MediaTagType.DVD_DMI).Length
                         };
-                        if(Decoders.Xbox.DMI.IsXbox(image.ReadDiskTag(MediaTagType.DVD_DMI)))
+                        if(DMI.IsXbox(image.ReadDiskTag(MediaTagType.DVD_DMI)))
                         {
                             dskType = MediaType.XGD;
                             sidecar.OpticalDisc[0].Dimensions = new DimensionsType {Diameter = 120};
                         }
-                        else if(Decoders.Xbox.DMI.IsXbox360(image.ReadDiskTag(MediaTagType.DVD_DMI)))
+                        else if(DMI.IsXbox360(image.ReadDiskTag(MediaTagType.DVD_DMI)))
                         {
                             dskType = MediaType.XGD2;
                             sidecar.OpticalDisc[0].Dimensions = new DimensionsType {Diameter = 120};
@@ -149,53 +155,53 @@ namespace DiscImageChef.Core
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_PFI)).ToArray(),
                             Size = image.ReadDiskTag(MediaTagType.DVD_PFI).Length
                         };
-                        Decoders.DVD.PFI.PhysicalFormatInformation? pfi =
-                            Decoders.DVD.PFI.Decode(image.ReadDiskTag(MediaTagType.DVD_PFI));
+                        PFI.PhysicalFormatInformation? pfi =
+                            PFI.Decode(image.ReadDiskTag(MediaTagType.DVD_PFI));
                         if(pfi.HasValue)
                             if(dskType != MediaType.XGD && dskType != MediaType.XGD2 && dskType != MediaType.XGD3)
                             {
                                 switch(pfi.Value.DiskCategory)
                                 {
-                                    case Decoders.DVD.DiskCategory.DVDPR:
+                                    case DiskCategory.DVDPR:
                                         dskType = MediaType.DVDPR;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDPRDL:
+                                    case DiskCategory.DVDPRDL:
                                         dskType = MediaType.DVDPRDL;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDPRW:
+                                    case DiskCategory.DVDPRW:
                                         dskType = MediaType.DVDPRW;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDPRWDL:
+                                    case DiskCategory.DVDPRWDL:
                                         dskType = MediaType.DVDPRWDL;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDR:
+                                    case DiskCategory.DVDR:
                                         dskType = MediaType.DVDR;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDRAM:
+                                    case DiskCategory.DVDRAM:
                                         dskType = MediaType.DVDRAM;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDROM:
+                                    case DiskCategory.DVDROM:
                                         dskType = MediaType.DVDROM;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDRW:
+                                    case DiskCategory.DVDRW:
                                         dskType = MediaType.DVDRW;
                                         break;
-                                    case Decoders.DVD.DiskCategory.HDDVDR:
+                                    case DiskCategory.HDDVDR:
                                         dskType = MediaType.HDDVDR;
                                         break;
-                                    case Decoders.DVD.DiskCategory.HDDVDRAM:
+                                    case DiskCategory.HDDVDRAM:
                                         dskType = MediaType.HDDVDRAM;
                                         break;
-                                    case Decoders.DVD.DiskCategory.HDDVDROM:
+                                    case DiskCategory.HDDVDROM:
                                         dskType = MediaType.HDDVDROM;
                                         break;
-                                    case Decoders.DVD.DiskCategory.HDDVDRW:
+                                    case DiskCategory.HDDVDRW:
                                         dskType = MediaType.HDDVDRW;
                                         break;
-                                    case Decoders.DVD.DiskCategory.Nintendo:
+                                    case DiskCategory.Nintendo:
                                         dskType = MediaType.GOD;
                                         break;
-                                    case Decoders.DVD.DiskCategory.UMD:
+                                    case DiskCategory.UMD:
                                         dskType = MediaType.UMD;
                                         break;
                                 }
@@ -203,15 +209,15 @@ namespace DiscImageChef.Core
                                 if(dskType == MediaType.DVDR && pfi.Value.PartVersion == 6) dskType = MediaType.DVDRDL;
                                 if(dskType == MediaType.DVDRW && pfi.Value.PartVersion == 3)
                                     dskType = MediaType.DVDRWDL;
-                                if(dskType == MediaType.GOD && pfi.Value.DiscSize == Decoders.DVD.DVDSize.OneTwenty)
+                                if(dskType == MediaType.GOD && pfi.Value.DiscSize == DVDSize.OneTwenty)
                                     dskType = MediaType.WOD;
 
                                 sidecar.OpticalDisc[0].Dimensions = new DimensionsType();
                                 if(dskType == MediaType.UMD) sidecar.OpticalDisc[0].Dimensions.Diameter = 60;
                                 else switch(pfi.Value.DiscSize) {
-                                    case Decoders.DVD.DVDSize.Eighty: sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
+                                    case DVDSize.Eighty: sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
                                         break;
-                                    case Decoders.DVD.DVDSize.OneTwenty: sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
+                                    case DVDSize.OneTwenty: sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
                                         break;
                                 }
                             }
@@ -234,18 +240,18 @@ namespace DiscImageChef.Core
             catch { sidecar.OpticalDisc[0].Sessions = 1; }
 
             List<Track> tracks = image.GetTracks();
-            List<Schemas.TrackType> trksLst = null;
+            List<TrackType> trksLst = null;
             if(tracks != null)
             {
                 sidecar.OpticalDisc[0].Tracks = new int[1];
                 sidecar.OpticalDisc[0].Tracks[0] = tracks.Count;
-                trksLst = new List<Schemas.TrackType>();
+                trksLst = new List<TrackType>();
             }
 
             InitProgress();
             foreach(Track trk in tracks)
             {
-                Schemas.TrackType xmlTrk = new Schemas.TrackType();
+                TrackType xmlTrk = new TrackType();
                 switch(trk.TrackType)
                 {
                     case DiscImages.TrackType.Audio:
@@ -321,11 +327,11 @@ namespace DiscImageChef.Core
                 ulong doneSectors = 0;
 
                 // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
-                if(image.PluginUuid == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
+                if(image.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
                    // Only if filter is none...
-                   (filterId == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") ||
+                   (filterId == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") ||
                     // ...or AppleDouble
-                    filterId == new System.Guid("1b2165ee-c9df-4b21-bbbb-9e5892b2df4d"))) xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
+                    filterId == new Guid("1b2165ee-c9df-4b21-bbbb-9e5892b2df4d"))) xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
                 else
                 {
                     UpdateProgress("Track {0} of {1}", trk.TrackSequence, tracks.Count);

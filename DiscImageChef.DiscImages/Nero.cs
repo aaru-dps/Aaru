@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
@@ -931,11 +933,11 @@ namespace DiscImageChef.DiscImages
 
                 DicConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", imageStream.Length);
                 DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8} (\"{1}\")", footerV1.ChunkId,
-                                          System.Text.Encoding.ASCII
+                                          Encoding.ASCII
                                                 .GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkId)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8} (\"{1}\")", footerV2.ChunkId,
-                                          System.Text.Encoding.ASCII
+                                          Encoding.ASCII
                                                 .GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkId)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
@@ -974,7 +976,7 @@ namespace DiscImageChef.DiscImages
                     chunkLength = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 4);
 
                     DicConsole.DebugWriteLine("Nero plugin", "ChunkID = 0x{0:X8} (\"{1}\")", chunkId,
-                                              System.Text.Encoding.ASCII
+                                              Encoding.ASCII
                                                     .GetString(BigEndianBitConverter.GetBytes(chunkId)));
                     DicConsole.DebugWriteLine("Nero plugin", "ChunkLength = {0}", chunkLength);
 
@@ -1517,7 +1519,7 @@ namespace DiscImageChef.DiscImages
                         default:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Unknown chunk ID \"{0}\", skipping...",
-                                                      System.Text.Encoding.ASCII.GetString(BigEndianBitConverter
+                                                      Encoding.ASCII.GetString(BigEndianBitConverter
                                                                                                .GetBytes(chunkId)));
                             imageStream.Seek(chunkLength, SeekOrigin.Current);
                             break;
@@ -2343,13 +2345,13 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
@@ -2364,7 +2366,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
@@ -2395,7 +2397,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {

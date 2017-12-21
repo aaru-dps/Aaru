@@ -28,6 +28,7 @@
 
 using System;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SCSI
@@ -179,7 +180,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("INQUIRY decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -234,7 +235,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             page = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -305,7 +305,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("INQUIRY decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -401,7 +401,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             subpage = 0xFF;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -464,7 +463,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("MODE SENSE (6) decoded response:");
                     if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.SCSI.Modes.PrettifyModeHeader6(buffer, dev.ScsiType));
+                        DicConsole.WriteLine("{0}", Modes.PrettifyModeHeader6(buffer, dev.ScsiType));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -484,7 +483,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("MODE SENSE (6) decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -592,7 +591,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             subpage = 0xFF;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -655,7 +653,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("MODE SENSE (10) decoded response:");
                     if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.SCSI.Modes.PrettifyModeHeader10(buffer, dev.ScsiType));
+                        DicConsole.WriteLine("{0}", Modes.PrettifyModeHeader10(buffer, dev.ScsiType));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -675,7 +673,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("MODE SENSE (10) decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -735,7 +733,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             mode = ScsiPreventAllowMode.Allow;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -754,7 +751,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("PREVENT ALLOW MEDIUM REMOVAL decoded sense:");
-            DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Send command again.");
@@ -850,7 +847,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             address = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -921,7 +917,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CAPACITY (10) decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -989,7 +985,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             address = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -1060,7 +1055,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CAPACITY (16) decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -1140,7 +1135,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ MEDIA SERIAL NUMBER decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -1195,7 +1190,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             descriptor = false;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -1216,7 +1210,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                  senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("REQUEST SENSE decoded sense:");
-            DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print sense buffer.");
@@ -1274,7 +1268,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                  senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("TEST UNIT READY decoded sense:");
-            DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print sense buffer.");

@@ -33,6 +33,7 @@
 using System;
 using System.IO;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
@@ -45,7 +46,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             uint fileID;
@@ -81,7 +82,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             uint fileID;
@@ -151,7 +152,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
@@ -236,7 +237,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             uint fileID;
@@ -277,7 +278,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 if(tags)
                     sectors =
                         device.ReadSectorsTag((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart,
-                                              (uint)sectorsPerBlock, DiscImages.SectorTagType.AppleSectorTag);
+                                              (uint)sectorsPerBlock, SectorTagType.AppleSectorTag);
                 else
                     sectors =
                         device.ReadSectors((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart,

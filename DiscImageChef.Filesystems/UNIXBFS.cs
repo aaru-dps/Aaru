@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -58,7 +60,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public BFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public BFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNIX Boot filesystem";
             PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
@@ -66,7 +68,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -77,7 +79,7 @@ namespace DiscImageChef.Filesystems
             return magic == BFS_MAGIC;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -116,7 +118,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Filesystem name: {0}", bfs_sb.s_fsname).AppendLine();
             sb.AppendFormat("Volume name: {0}", bfs_sb.s_volume).AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "BFS";
             xmlFSType.VolumeName = bfs_sb.s_volume;
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();

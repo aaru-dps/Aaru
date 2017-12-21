@@ -40,10 +40,11 @@ using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
-using SharpCompress.Compressors;
+using Ionic.Zlib;
 using SharpCompress.Compressors.ADC;
 using SharpCompress.Compressors.BZip2;
+using CompressionMode = SharpCompress.Compressors.CompressionMode;
+using Version = Resources.Version;
 
 namespace DiscImageChef.DiscImages
 {
@@ -359,7 +360,7 @@ namespace DiscImageChef.DiscImages
 
             if(vers != null)
             {
-                Resources.Version version = new Resources.Version(vers);
+                Version version = new Version(vers);
 
                 string major;
                 string minor;
@@ -372,13 +373,13 @@ namespace DiscImageChef.DiscImages
                 if(version.MinorVersion % 10 > 0) release = string.Format(".{0}", version.MinorVersion % 10);
                 switch(version.DevStage)
                 {
-                    case Resources.Version.DevelopmentStage.Alpha:
+                    case Version.DevelopmentStage.Alpha:
                         dev = "a";
                         break;
-                    case Resources.Version.DevelopmentStage.Beta:
+                    case Version.DevelopmentStage.Beta:
                         dev = "b";
                         break;
-                    case Resources.Version.DevelopmentStage.PreAlpha:
+                    case Version.DevelopmentStage.PreAlpha:
                         dev = "d";
                         break;
                 }
@@ -549,7 +550,7 @@ namespace DiscImageChef.DiscImages
                     switch(currentChunk.type) {
                         case CHUNK_TYPE_ADC: decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
                             break;
-                        case CHUNK_TYPE_ZLIB: decStream = new Ionic.Zlib.ZlibStream(cmpMs, Ionic.Zlib.CompressionMode.Decompress);
+                        case CHUNK_TYPE_ZLIB: decStream = new ZlibStream(cmpMs, Ionic.Zlib.CompressionMode.Decompress);
                             break;
                         case CHUNK_TYPE_BZIP: decStream = new BZip2Stream(cmpMs, CompressionMode.Decompress);
                             break;
@@ -578,7 +579,7 @@ namespace DiscImageChef.DiscImages
                         currentChunkCacheSize += (uint)realSize;
 #if DEBUG
                     }
-                    catch(Ionic.Zlib.ZlibException)
+                    catch(ZlibException)
                     {
                         DicConsole.WriteLine("zlib exception on chunk starting at sector {0}", currentChunk.sector);
                         throw;

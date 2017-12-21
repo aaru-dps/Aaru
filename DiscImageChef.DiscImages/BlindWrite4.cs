@@ -37,6 +37,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
@@ -562,14 +563,14 @@ namespace DiscImageChef.DiscImages
                     if(dataFilter != null) break;
 
                     dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                    header.DataFile.Split(new char[] {'\\'},
+                                                                    header.DataFile.Split(new[] {'\\'},
                                                                                           StringSplitOptions
                                                                                               .RemoveEmptyEntries)
                                                                           .Last()));
                     if(dataFilter != null) break;
 
                     dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                    header.DataFile.Split(new char[] {'\\'},
+                                                                    header.DataFile.Split(new[] {'\\'},
                                                                                           StringSplitOptions
                                                                                               .RemoveEmptyEntries)
                                                                           .Last()
@@ -577,7 +578,7 @@ namespace DiscImageChef.DiscImages
                     if(dataFilter != null) break;
 
                     dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                    header.DataFile.Split(new char[] {'\\'},
+                                                                    header.DataFile.Split(new[] {'\\'},
                                                                                           StringSplitOptions
                                                                                               .RemoveEmptyEntries)
                                                                           .Last()
@@ -609,21 +610,21 @@ namespace DiscImageChef.DiscImages
                     if(subFilter != null) break;
 
                     subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   header.SubchannelFile.Split(new char[] {'\\'},
+                                                                   header.SubchannelFile.Split(new[] {'\\'},
                                                                                                StringSplitOptions
                                                                                                    .RemoveEmptyEntries)
                                                                          .Last()));
                     if(subFilter != null) break;
 
                     subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   header.SubchannelFile.Split(new char[] {'\\'},
+                                                                   header.SubchannelFile.Split(new[] {'\\'},
                                                                                                StringSplitOptions
                                                                                                    .RemoveEmptyEntries)
                                                                          .Last().ToLower(CultureInfo.CurrentCulture)));
                     if(subFilter != null) break;
 
                     subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   header.SubchannelFile.Split(new char[] {'\\'},
+                                                                   header.SubchannelFile.Split(new[] {'\\'},
                                                                                                StringSplitOptions
                                                                                                    .RemoveEmptyEntries)
                                                                          .Last().ToUpper(CultureInfo.CurrentCulture)));
@@ -669,7 +670,7 @@ namespace DiscImageChef.DiscImages
 
                             track.TrackFilter =
                                 filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   bwTrack.filename.Split(new char[] {'\\'},
+                                                                   bwTrack.filename.Split(new[] {'\\'},
                                                                                           StringSplitOptions
                                                                                               .RemoveEmptyEntries)
                                                                           .Last()));
@@ -677,7 +678,7 @@ namespace DiscImageChef.DiscImages
 
                             track.TrackFilter =
                                 filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   bwTrack.filename.Split(new char[] {'\\'},
+                                                                   bwTrack.filename.Split(new[] {'\\'},
                                                                                           StringSplitOptions
                                                                                               .RemoveEmptyEntries)
                                                                           .Last()
@@ -686,7 +687,7 @@ namespace DiscImageChef.DiscImages
 
                             track.TrackFilter =
                                 filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   bwTrack.filename.Split(new char[] {'\\'},
+                                                                   bwTrack.filename.Split(new[] {'\\'},
                                                                                           StringSplitOptions
                                                                                               .RemoveEmptyEntries)
                                                                           .Last()
@@ -1061,7 +1062,7 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
                     byte flag;
-                    if(trackFlags.TryGetValue(track, out flag)) return new byte[] {flag};
+                    if(trackFlags.TryGetValue(track, out flag)) return new[] {flag};
 
                     throw new ArgumentException("Unsupported tag requested", nameof(tag));
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -1295,7 +1296,7 @@ namespace DiscImageChef.DiscImages
 
         public override List<Track> GetSessionTracks(ushort session)
         {
-            return this.tracks.Where(_track => _track.TrackSession == session).ToList();
+            return tracks.Where(_track => _track.TrackSession == session).ToList();
         }
 
         public override List<Session> GetSessions()
@@ -1306,13 +1307,13 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
@@ -1327,7 +1328,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
@@ -1358,7 +1359,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {

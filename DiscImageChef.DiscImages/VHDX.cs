@@ -620,7 +620,7 @@ namespace DiscImageChef.DiscImages
                             parentWorks = true;
                             break;
                         }
-                        catch { continue; }
+                        catch { }
                     }
                     else if(string.Compare(entryType, VOLUME_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(entryType, ABSOLUTE_WIN32_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0)
@@ -639,7 +639,7 @@ namespace DiscImageChef.DiscImages
                             parentWorks = true;
                             break;
                         }
-                        catch { continue; }
+                        catch { }
                     }
                 }
 

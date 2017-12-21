@@ -30,11 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.IO;
-using System.Text;
-using DiscImageChef;
-using System.Collections.Generic;
+
 
 // Information from http://www.thoukydides.webspace.virginmedia.com/software/psifs/sis.html
 // TODO: Implement support for disc images

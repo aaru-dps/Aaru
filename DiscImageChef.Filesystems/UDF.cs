@@ -38,6 +38,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -231,7 +232,7 @@ namespace DiscImageChef.Filesystems
             public ushort maximumWriteUDF;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             // UDF needs at least that
             if(partition.End - partition.Start < 256) return false;
@@ -317,7 +318,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] sector;
@@ -423,12 +424,12 @@ namespace DiscImageChef.Filesystems
                 .AppendLine();
             sbInformation.AppendFormat("Volume conforms to {0}",
                                        CurrentEncoding
-                                           .GetString(lvd.domainIdentifier.identifier).TrimEnd(new char[] {'\u0000'}))
+                                           .GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000'))
                          .AppendLine();
             sbInformation.AppendFormat("Volume was last written by: {0}",
                                        CurrentEncoding
                                            .GetString(pvd.implementationIdentifier.identifier)
-                                           .TrimEnd(new char[] {'\u0000'})).AppendLine();
+                                           .TrimEnd('\u0000')).AppendLine();
             sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be read",
                                        Convert.ToInt32(string.Format("{0}", (lvidiu.minimumReadUDF & 0xFF00) >> 8), 10),
                                        Convert.ToInt32(string.Format("{0}", lvidiu.minimumReadUDF & 0xFF), 10))
@@ -444,13 +445,13 @@ namespace DiscImageChef.Filesystems
                                        Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10))
                          .AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = string.Format("UDF v{0}.{1:X2}",
                                            Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8),
                                                            10),
                                            Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10));
             xmlFSType.ApplicationIdentifier = CurrentEncoding
-                .GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] {'\u0000'});
+                .GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000');
             xmlFSType.ClusterSize = (int)lvd.logicalBlockSize;
             xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
                                         (ulong)xmlFSType.ClusterSize);
@@ -461,7 +462,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.VolumeName = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier);
             xmlFSType.VolumeSetIdentifier = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier);
             xmlFSType.SystemIdentifier = CurrentEncoding
-                .GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] {'\u0000'});
+                .GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000');
 
             information = sbInformation.ToString();
         }

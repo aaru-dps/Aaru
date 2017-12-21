@@ -68,7 +68,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 PartitionPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions, 0), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.BTRFS();
+                Filesystem fs = new BTRFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x83")

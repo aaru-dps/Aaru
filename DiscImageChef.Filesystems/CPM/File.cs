@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.CPM
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             FileEntryInfo fInfo;
@@ -79,7 +79,7 @@ namespace DiscImageChef.Filesystems.CPM
 
             if(offset < 0) return Errno.InvalidArgument;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             byte[] file;
@@ -106,7 +106,7 @@ namespace DiscImageChef.Filesystems.CPM
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(string.IsNullOrEmpty(path) || string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0)

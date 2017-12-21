@@ -34,24 +34,28 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
+using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Devices;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Partitions;
-using Schemas;
+using DiscImageChef.Metadata;
 using Extents;
+using Schemas;
+using MediaType = DiscImageChef.Metadata.MediaType;
+using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
     public class Ata
     {
         public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
-                                bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume,
+                                bool dumpRaw, bool persistent, bool stopOnError, ref Resume resume,
                                 ref DumpLog dumpLog, Encoding encoding)
         {
             bool aborted;
@@ -76,13 +80,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             double duration;
 
             dumpLog.WriteLine("Requesting ATA IDENTIFY DEVICE.");
-            sense = dev.AtaIdentify(out byte[] cmdBuf, out Decoders.ATA.AtaErrorRegistersCHS errorChs);
-            if(!sense && Decoders.ATA.Identify.Decode(cmdBuf).HasValue)
+            sense = dev.AtaIdentify(out byte[] cmdBuf, out AtaErrorRegistersCHS errorChs);
+            if(!sense && Identify.Decode(cmdBuf).HasValue)
             {
-                Decoders.ATA.Identify.IdentifyDevice ataId = Decoders.ATA.Identify.Decode(cmdBuf).Value;
+                Identify.IdentifyDevice ataId = Identify.Decode(cmdBuf).Value;
 
                 CICMMetadataType sidecar =
-                    new CICMMetadataType {BlockMedia = new BlockMediaType[] {new BlockMediaType()}};
+                    new CICMMetadataType {BlockMedia = new[] {new BlockMediaType()}};
 
                 if(dev.IsUsb)
                 {
@@ -115,9 +119,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     };
                     DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].PCMCIA.CIS.Image, dev.Cis);
                     dumpLog.WriteLine("Decoding PCMCIA CIS.");
-                    Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.Cis);
+                    Tuple[] tuples = CIS.GetTuples(dev.Cis);
                     if(tuples != null)
-                        foreach(Decoders.PCMCIA.Tuple tuple in tuples)
+                        foreach(Tuple tuple in tuples)
                             switch(tuple.Code) {
                                 case TupleCodes.CISTPL_MANFID:
                                     ManufacturerIdentificationTuple manfid =
@@ -213,8 +217,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dumpLog.WriteLine("Device reports {0} bytes per physical block.", physicalsectorsize);
 
                 bool removable = false || !dev.IsCompactFlash &&
-                                 ataId.GeneralConfiguration.HasFlag(Decoders.ATA.Identify
-                                                                            .GeneralConfigurationBit
+                                 ataId.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit
                                                                             .Removable);
                 DumpHardwareType currentTry = null;
                 ExtentsULong extents = null;
@@ -239,7 +242,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         if(aborted)
                         {
-                            currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                            currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                             dumpLog.WriteLine("Aborted!");
                             break;
                         }
@@ -275,7 +278,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
 
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                        currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (duration / (double)1000);
+                        currentSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                         GC.Collect();
                         resume.NextBlock = i + blocksToRead;
@@ -286,7 +289,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     mhddLog.Close();
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
+                                 blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
                                  devicePath);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                     dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
@@ -306,7 +309,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             if(aborted)
                             {
-                                currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                                currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                                 dumpLog.WriteLine("Aborted!");
                                 break;
                             }
@@ -342,7 +345,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     #endregion Error handling LBA
 
-                    currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                 }
                 else
                 {
@@ -361,7 +364,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 if(aborted)
                                 {
-                                    currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                                     dumpLog.WriteLine("Aborted!");
                                     break;
                                 }
@@ -397,7 +400,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 }
 
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                                currentSpeed = (double)blockSize / (double)1048576 / (duration / (double)1000);
+                                currentSpeed = blockSize / (double)1048576 / (duration / 1000);
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                                 GC.Collect();
 
@@ -411,7 +414,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     mhddLog.Close();
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
+                                 blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
                                  devicePath);
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
@@ -445,7 +448,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                     totalChkDuration += chkDuration;
 
-                    currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (chkDuration / (double)1000);
+                    currentSpeed = (double)blockSize * blocksToRead / 1048576 / (chkDuration / 1000);
                 }
 
                 DicConsole.WriteLine();
@@ -560,10 +563,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.BlockMedia[0].Checksums = dataChk.End().ToArray();
                 string xmlDskTyp, xmlDskSubTyp;
                 if(dev.IsCompactFlash)
-                    Metadata.MediaType.MediaTypeToString(MediaType.CompactFlash, out xmlDskTyp, out xmlDskSubTyp);
+                    MediaType.MediaTypeToString(CommonTypes.MediaType.CompactFlash, out xmlDskTyp, out xmlDskSubTyp);
                 else if(dev.IsPcmcia)
-                    Metadata.MediaType.MediaTypeToString(MediaType.PCCardTypeI, out xmlDskTyp, out xmlDskSubTyp);
-                else Metadata.MediaType.MediaTypeToString(MediaType.GENERIC_HDD, out xmlDskTyp, out xmlDskSubTyp);
+                    MediaType.MediaTypeToString(CommonTypes.MediaType.PCCardTypeI, out xmlDskTyp, out xmlDskSubTyp);
+                else MediaType.MediaTypeToString(CommonTypes.MediaType.GENERIC_HDD, out xmlDskTyp, out xmlDskSubTyp);
                 sidecar.BlockMedia[0].DiskType = xmlDskTyp;
                 sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
                 // TODO: Implement device firmware revision
@@ -609,13 +612,13 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
-                    System.Xml.Serialization.XmlSerializer xmlSer =
-                        new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+                    XmlSerializer xmlSer =
+                        new XmlSerializer(typeof(CICMMetadataType));
                     xmlSer.Serialize(xmlFs, sidecar);
                     xmlFs.Close();
                 }
 
-                Statistics.AddMedia(MediaType.GENERIC_HDD, true);
+                Statistics.AddMedia(CommonTypes.MediaType.GENERIC_HDD, true);
             }
             else DicConsole.ErrorWriteLine("Unable to communicate with ATA device.");
         }

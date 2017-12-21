@@ -33,6 +33,7 @@
 using System;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
@@ -54,7 +55,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             else CurrentEncoding = encoding;
         }
 
-        public ISO9660(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public ISO9660(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "ISO9660 Filesystem";
             PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");

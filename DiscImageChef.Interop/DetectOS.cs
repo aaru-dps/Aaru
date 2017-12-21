@@ -238,7 +238,7 @@ namespace DiscImageChef.Interop
                 case PlatformID.MacOSX:
                     if(string.IsNullOrEmpty(version)) return "macOS";
 
-                    string[] pieces = version.Split(new[] {'.'});
+                    string[] pieces = version.Split('.');
                     if(pieces.Length < 2 || !int.TryParse(pieces[1], out int minor)) return "macOS";
 
                     if(minor >= 12) return "macOS";

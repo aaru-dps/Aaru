@@ -36,6 +36,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -57,7 +59,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("koi8-r");
         }
 
-        public AODOS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AODOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Alexander Osipov DOS file system";
             PluginUUID = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
@@ -99,7 +101,7 @@ namespace DiscImageChef.Filesystems
 
         readonly byte[] AODOSIdentifier = {0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20};
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             // Does AO-DOS support hard disks?
             if(partition.Start > 0) return false;
@@ -122,7 +124,7 @@ namespace DiscImageChef.Filesystems
             return bb.identifier.SequenceEqual(AODOSIdentifier);
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             byte[] sector;
@@ -138,7 +140,7 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendLine("Alexander Osipov DOS file system");
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Type = "Alexander Osipov DOS file system",
                 Clusters = (long)imagePlugin.ImageInfo.Sectors,

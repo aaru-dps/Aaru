@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -57,7 +59,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public extFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public extFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Linux extended Filesystem";
             PluginUUID = new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
@@ -65,7 +67,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -83,7 +85,7 @@ namespace DiscImageChef.Filesystems
             return magic == extFSMagic;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -124,7 +126,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Log zone size: {0}", ext_sb.logzonesize);
             sb.AppendFormat("Max zone size: {0}", ext_sb.maxsize);
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "ext";
             xmlFSType.FreeClusters = ext_sb.freecountblk;
             xmlFSType.FreeClustersSpecified = true;

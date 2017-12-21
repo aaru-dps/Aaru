@@ -205,7 +205,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 }
 
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-                currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (duration / (double)1000);
+                currentSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                 GC.Collect();
             }
@@ -215,7 +215,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             mhddLog.Close();
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
             ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (double)blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
+                         blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                          devicePath);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
 
@@ -227,7 +227,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
 
-                dev.Read(out cmdBuf, out response, (uint)seekPos, blockSize, blocksToRead, byteAddressed, timeout,
+                dev.Read(out cmdBuf, out response, seekPos, blockSize, blocksToRead, byteAddressed, timeout,
                          out seekCur);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
@@ -244,7 +244,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             results.ProcessingTime /= 1000;
             results.TotalTime = (end - start).TotalSeconds;
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-            results.AvgSpeed = (double)blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
+            results.AvgSpeed = blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
             results.SeekTimes = SEEK_TIMES;
 

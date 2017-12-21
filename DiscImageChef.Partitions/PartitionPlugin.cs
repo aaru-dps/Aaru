@@ -33,6 +33,8 @@
 
 using System;
 using System.Collections.Generic;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
@@ -46,8 +48,6 @@ namespace DiscImageChef.Partitions
         /// <summary>Plugin UUID.</summary>
         public Guid PluginUuid;
 
-        protected PartitionPlugin() { }
-
         /// <summary>
         /// Interprets a partitioning scheme.
         /// </summary>
@@ -55,7 +55,7 @@ namespace DiscImageChef.Partitions
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partitions">Returns list of partitions.</param>
         /// <param name="sectorOffset">At which sector to start searching for the partition scheme.</param>
-        public abstract bool GetInformation(DiscImages.ImagePlugin imagePlugin,
-                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset);
+        public abstract bool GetInformation(ImagePlugin imagePlugin,
+                                            out List<Partition> partitions, ulong sectorOffset);
     }
 }

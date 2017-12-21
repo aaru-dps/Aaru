@@ -309,7 +309,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             subcommand = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -467,7 +466,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             address = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;

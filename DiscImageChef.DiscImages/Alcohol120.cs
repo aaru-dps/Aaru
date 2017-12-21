@@ -36,9 +36,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.CD;
+using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Filters;
+using DMI = DiscImageChef.Decoders.Xbox.DMI;
 
 namespace DiscImageChef.DiscImages
 {
@@ -461,7 +465,7 @@ namespace DiscImageChef.DiscImages
                     dmi[0] = 0x08;
                     dmi[1] = 0x02;
 
-                    Decoders.DVD.PFI.PhysicalFormatInformation? pfi0 = Decoders.DVD.PFI.Decode(pfi);
+                    PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(pfi);
 
                     // All discs I tested the disk category and part version (as well as the start PSN for DVD-RAM) where modified by Alcohol
                     // So much for archival value
@@ -469,56 +473,56 @@ namespace DiscImageChef.DiscImages
                     {
                         switch(pfi0.Value.DiskCategory)
                         {
-                            case Decoders.DVD.DiskCategory.DVDPR:
+                            case DiskCategory.DVDPR:
                                 ImageInfo.MediaType = MediaType.DVDPR;
                                 break;
-                            case Decoders.DVD.DiskCategory.DVDPRDL:
+                            case DiskCategory.DVDPRDL:
                                 ImageInfo.MediaType = MediaType.DVDPRDL;
                                 break;
-                            case Decoders.DVD.DiskCategory.DVDPRW:
+                            case DiskCategory.DVDPRW:
                                 ImageInfo.MediaType = MediaType.DVDPRW;
                                 break;
-                            case Decoders.DVD.DiskCategory.DVDPRWDL:
+                            case DiskCategory.DVDPRWDL:
                                 ImageInfo.MediaType = MediaType.DVDPRWDL;
                                 break;
-                            case Decoders.DVD.DiskCategory.DVDR:
+                            case DiskCategory.DVDR:
                                 if(pfi0.Value.PartVersion == 6) ImageInfo.MediaType = MediaType.DVDRDL;
                                 else ImageInfo.MediaType = MediaType.DVDR;
                                 break;
-                            case Decoders.DVD.DiskCategory.DVDRAM:
+                            case DiskCategory.DVDRAM:
                                 ImageInfo.MediaType = MediaType.DVDRAM;
                                 break;
                             default:
                                 ImageInfo.MediaType = MediaType.DVDROM;
                                 break;
-                            case Decoders.DVD.DiskCategory.DVDRW:
+                            case DiskCategory.DVDRW:
                                 if(pfi0.Value.PartVersion == 3) ImageInfo.MediaType = MediaType.DVDRWDL;
                                 else ImageInfo.MediaType = MediaType.DVDRW;
                                 break;
-                            case Decoders.DVD.DiskCategory.HDDVDR:
+                            case DiskCategory.HDDVDR:
                                 ImageInfo.MediaType = MediaType.HDDVDR;
                                 break;
-                            case Decoders.DVD.DiskCategory.HDDVDRAM:
+                            case DiskCategory.HDDVDRAM:
                                 ImageInfo.MediaType = MediaType.HDDVDRAM;
                                 break;
-                            case Decoders.DVD.DiskCategory.HDDVDROM:
+                            case DiskCategory.HDDVDROM:
                                 ImageInfo.MediaType = MediaType.HDDVDROM;
                                 break;
-                            case Decoders.DVD.DiskCategory.HDDVDRW:
+                            case DiskCategory.HDDVDRW:
                                 ImageInfo.MediaType = MediaType.HDDVDRW;
                                 break;
-                            case Decoders.DVD.DiskCategory.Nintendo:
-                                if(pfi0.Value.DiscSize == Decoders.DVD.DVDSize.Eighty)
+                            case DiskCategory.Nintendo:
+                                if(pfi0.Value.DiscSize == DVDSize.Eighty)
                                     ImageInfo.MediaType = MediaType.GOD;
                                 else ImageInfo.MediaType = MediaType.WOD;
                                 break;
-                            case Decoders.DVD.DiskCategory.UMD:
+                            case DiskCategory.UMD:
                                 ImageInfo.MediaType = MediaType.UMD;
                                 break;
                         }
 
-                        if(Decoders.Xbox.DMI.IsXbox(dmi)) ImageInfo.MediaType = MediaType.XGD;
-                        else if(Decoders.Xbox.DMI.IsXbox360(dmi)) ImageInfo.MediaType = MediaType.XGD2;
+                        if(DMI.IsXbox(dmi)) ImageInfo.MediaType = MediaType.XGD;
+                        else if(DMI.IsXbox360(dmi)) ImageInfo.MediaType = MediaType.XGD2;
 
                         ImageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
                         ImageInfo.ReadableMediaTags.Add(MediaTagType.DVD_DMI);
@@ -725,7 +729,7 @@ namespace DiscImageChef.DiscImages
                 fullToc[2] = firstSession;
                 fullToc[3] = lastSession;
 
-                Decoders.CD.FullTOC.CDFullTOC? decodedFullToc = Decoders.CD.FullTOC.Decode(fullToc);
+                FullTOC.CDFullTOC? decodedFullToc = FullTOC.Decode(fullToc);
 
                 if(!decodedFullToc.HasValue)
                 {
@@ -984,7 +988,7 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdSectorSubchannel:
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
-                case SectorTagType.CdTrackFlags: return new byte[] {(byte)(_track.adrCtl & 0x0F)};
+                case SectorTagType.CdTrackFlags: return new[] {(byte)(_track.adrCtl & 0x0F)};
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
@@ -1490,13 +1494,13 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
@@ -1511,7 +1515,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
@@ -1542,7 +1546,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {

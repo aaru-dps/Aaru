@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -46,14 +48,14 @@ namespace DiscImageChef.Filesystems
         public string Name;
         /// <summary>Plugin UUID.</summary>
         public Guid PluginUUID;
-        internal Schemas.FileSystemType xmlFSType;
+        internal FileSystemType xmlFSType;
         public Encoding CurrentEncoding;
 
         /// <summary>
         /// Information about the filesystem as expected by CICM Metadata XML
         /// </summary>
         /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
-        public Schemas.FileSystemType XmlFSType
+        public FileSystemType XmlFSType
         {
             get { return xmlFSType; }
         }
@@ -69,7 +71,7 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin">Image plugin.</param>
         /// <param name="partition">Partition.</param>
         /// <param name="encoding">Which encoding to use for this filesystem.</param>
-        protected Filesystem(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding) { }
+        protected Filesystem(ImagePlugin imagePlugin, Partition partition, Encoding encoding) { }
 
         /// <summary>
         /// Identifies the filesystem in the specified LBA
@@ -77,7 +79,7 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partition">Partition.</param>
         /// <returns><c>true</c>, if the filesystem is recognized, <c>false</c> otherwise.</returns>
-        public abstract bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition);
+        public abstract bool Identify(ImagePlugin imagePlugin, Partition partition);
 
         /// <summary>
         /// Gets information about the identified filesystem.
@@ -85,7 +87,7 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partition">Partition.</param>
         /// <param name="information">Filesystem information.</param>
-        public abstract void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public abstract void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information);
 
         /// <summary>

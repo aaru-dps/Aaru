@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.DiscImages;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Partitions
 {
@@ -94,7 +95,7 @@ namespace DiscImageChef.Partitions
 
                 Partition part = new Partition
                 {
-                    Start = Helpers.CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1),
+                    Start = CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1),
                                               imagePlugin.ImageInfo.Heads, imagePlugin.ImageInfo.SectorsPerTrack),
                     Type = DecodePC98Sid(entry.dp_sid),
                     Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
@@ -102,7 +103,7 @@ namespace DiscImageChef.Partitions
                     Scheme = Name
                 };
                 part.Offset = part.Start * imagePlugin.GetSectorSize();
-                part.Length = Helpers.CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1),
+                part.Length = CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1),
                                                 imagePlugin.ImageInfo.Heads,
                                                 imagePlugin.ImageInfo.SectorsPerTrack) - part.Start;
                 part.Size = part.Length * imagePlugin.GetSectorSize();

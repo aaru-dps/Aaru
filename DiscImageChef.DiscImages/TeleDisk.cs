@@ -38,6 +38,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
@@ -419,7 +420,7 @@ namespace DiscImageChef.DiscImages
                 // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
                     if(commentBlock[i] == 0x00) commentBlock[i] = 0x0A;
 
-                ImageInfo.ImageComments = System.Text.Encoding.ASCII.GetString(commentBlock);
+                ImageInfo.ImageComments = Encoding.ASCII.GetString(commentBlock);
 
                 DicConsole.DebugWriteLine("TeleDisk plugin", "Comment");
                 DicConsole.DebugWriteLine("TeleDisk plugin", "{0}", ImageInfo.ImageComments);
@@ -1454,7 +1455,7 @@ namespace DiscImageChef.DiscImages
             getbuf <<= 8;
             getlen -= 8;
             i = (ushort)(i >> 8);
-            return (int)i;
+            return i;
         }
 
         /* initialize freq tree */

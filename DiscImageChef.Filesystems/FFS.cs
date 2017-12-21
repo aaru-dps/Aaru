@@ -37,6 +37,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 using time_t = System.Int32;
 using ufs_daddr_t = System.Int32;
 
@@ -60,7 +62,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public FFSPlugin(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public FFSPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
             PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
@@ -68,7 +70,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -99,7 +101,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -148,7 +150,7 @@ namespace DiscImageChef.Filesystems
                 return;
             }
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
 
             switch(magic)
             {
@@ -335,7 +337,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_old_size,
                                        (long)ufs_sb.fs_old_size * ufs_sb.fs_fsize).AppendLine();
             xmlFSType.Clusters = ufs_sb.fs_old_size;
-            xmlFSType.ClusterSize = (int)ufs_sb.fs_fsize;
+            xmlFSType.ClusterSize = ufs_sb.fs_fsize;
             sbInformation.AppendFormat("{0} data blocks in volume ({1} bytes)", ufs_sb.fs_old_dsize,
                                        (long)ufs_sb.fs_old_dsize * ufs_sb.fs_fsize).AppendLine();
             sbInformation.AppendFormat("{0} cylinder groups in volume", ufs_sb.fs_ncg).AppendLine();
@@ -419,7 +421,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("{0} directories", ufs_sb.fs_cstotal.cs_ndir).AppendLine();
                 sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_cstotal.cs_nbfree,
                                            ufs_sb.fs_cstotal.cs_nbfree * ufs_sb.fs_fsize).AppendLine();
-                xmlFSType.FreeClusters = (long)ufs_sb.fs_cstotal.cs_nbfree;
+                xmlFSType.FreeClusters = ufs_sb.fs_cstotal.cs_nbfree;
                 xmlFSType.FreeClustersSpecified = true;
                 sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_cstotal.cs_nifree).AppendLine();
                 sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_cstotal.cs_nffree).AppendLine();
@@ -430,7 +432,7 @@ namespace DiscImageChef.Filesystems
                 xmlFSType.ModificationDateSpecified = true;
                 sbInformation.AppendFormat("{0} blocks ({1} bytes)", ufs_sb.fs_size, ufs_sb.fs_size * ufs_sb.fs_fsize)
                              .AppendLine();
-                xmlFSType.Clusters = (long)ufs_sb.fs_size;
+                xmlFSType.Clusters = ufs_sb.fs_size;
                 sbInformation
                     .AppendFormat("{0} data blocks ({1} bytes)", ufs_sb.fs_dsize, ufs_sb.fs_dsize * ufs_sb.fs_fsize)
                     .AppendLine();

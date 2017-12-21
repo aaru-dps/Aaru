@@ -34,6 +34,7 @@ using System;
 using System.Xml.Serialization;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Decoders.SCSI.MMC;
 
 namespace DiscImageChef.Metadata
 {
@@ -649,7 +650,7 @@ namespace DiscImageChef.Metadata
         public bool Locked { get; set; }
         public uint LogicalBlockSize { get; set; }
         public bool MultiRead { get; set; }
-        public Decoders.SCSI.MMC.PhysicalInterfaces PhysicalInterfaceStandard { get; set; }
+        public PhysicalInterfaces PhysicalInterfaceStandard { get; set; }
         public uint PhysicalInterfaceStandardNumber { get; set; }
         public bool PreventJumper { get; set; }
         public bool SupportsAACS { get; set; }

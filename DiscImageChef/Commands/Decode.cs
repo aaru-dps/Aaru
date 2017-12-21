@@ -32,8 +32,12 @@
 
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.Filters;
+using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Decoders.CD;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.DiscImages;
+using DiscImageChef.Filters;
+using Session = DiscImageChef.Decoders.CD.Session;
 
 namespace DiscImageChef.Commands
 {
@@ -88,7 +92,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("SCSI INQUIRY command response:");
                                     DicConsole
                                         .WriteLine("================================================================================");
-                                    DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inquiry));
+                                    DicConsole.WriteLine(Inquiry.Prettify(inquiry));
                                     DicConsole
                                         .WriteLine("================================================================================");
                                 }
@@ -104,7 +108,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("ATA IDENTIFY DEVICE command response:");
                                     DicConsole
                                         .WriteLine("================================================================================");
-                                    DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(identify));
+                                    DicConsole.WriteLine(Identify.Prettify(identify));
                                     DicConsole
                                         .WriteLine("================================================================================");
                                 }
@@ -121,7 +125,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");
                                     DicConsole
                                         .WriteLine("================================================================================");
-                                    DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(identify));
+                                    DicConsole.WriteLine(Identify.Prettify(identify));
                                     DicConsole
                                         .WriteLine("================================================================================");
                                 }
@@ -136,7 +140,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("CD ATIP:");
                                     DicConsole
                                         .WriteLine("================================================================================");
-                                    DicConsole.WriteLine(Decoders.CD.ATIP.Prettify(atip));
+                                    DicConsole.WriteLine(ATIP.Prettify(atip));
                                     DicConsole
                                         .WriteLine("================================================================================");
                                 }
@@ -151,7 +155,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("CD full TOC:");
                                     DicConsole
                                         .WriteLine("================================================================================");
-                                    DicConsole.WriteLine(Decoders.CD.FullTOC.Prettify(fulltoc));
+                                    DicConsole.WriteLine(FullTOC.Prettify(fulltoc));
                                     DicConsole
                                         .WriteLine("================================================================================");
                                 }
@@ -166,7 +170,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("CD PMA:");
                                     DicConsole
                                         .WriteLine("================================================================================");
-                                    DicConsole.WriteLine(Decoders.CD.PMA.Prettify(pma));
+                                    DicConsole.WriteLine(PMA.Prettify(pma));
                                     DicConsole
                                         .WriteLine("================================================================================");
                                 }
@@ -182,7 +186,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("CD session information:");
                                     DicConsole
                                         .WriteLine("================================================================================");
-                                    DicConsole.WriteLine(Decoders.CD.Session.Prettify(sessioninfo));
+                                    DicConsole.WriteLine(Session.Prettify(sessioninfo));
                                     DicConsole
                                         .WriteLine("================================================================================");
                                 }
@@ -197,7 +201,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("CD-TEXT:");
                                     DicConsole
                                         .WriteLine("================================================================================");
-                                    DicConsole.WriteLine(Decoders.CD.CDTextOnLeadIn.Prettify(cdtext));
+                                    DicConsole.WriteLine(CDTextOnLeadIn.Prettify(cdtext));
                                     DicConsole
                                         .WriteLine("================================================================================");
                                 }
@@ -212,7 +216,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("CD TOC:");
                                     DicConsole
                                         .WriteLine("================================================================================");
-                                    DicConsole.WriteLine(Decoders.CD.TOC.Prettify(toc));
+                                    DicConsole.WriteLine(TOC.Prettify(toc));
                                     DicConsole
                                         .WriteLine("================================================================================");
                                 }

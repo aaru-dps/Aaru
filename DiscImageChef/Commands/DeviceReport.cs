@@ -32,8 +32,11 @@
 
 using System;
 using System.IO;
+using System.Xml.Serialization;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.Core.Devices.Report;
+using DiscImageChef.Core.Devices.Report.SCSI;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Commands
@@ -73,26 +76,26 @@ namespace DiscImageChef.Commands
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    Core.Devices.Report.Ata.Report(dev, ref report, options.Debug, ref removable);
+                    Ata.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    Core.Devices.Report.SecureDigital.Report(dev, ref report, options.Debug, ref removable);
+                    SecureDigital.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 case DeviceType.NVMe:
-                    Core.Devices.Report.Nvme.Report(dev, ref report, options.Debug, ref removable);
+                    Nvme.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    Core.Devices.Report.SCSI.General.Report(dev, ref report, options.Debug, ref removable);
+                    General.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 default: throw new NotSupportedException("Unknown device type.");
             }
 
             FileStream xmlFs = new FileStream(xmlFile, FileMode.Create);
 
-            System.Xml.Serialization.XmlSerializer xmlSer =
-                new System.Xml.Serialization.XmlSerializer(typeof(Metadata.DeviceReport));
+            XmlSerializer xmlSer =
+                new XmlSerializer(typeof(Metadata.DeviceReport));
             xmlSer.Serialize(xmlFs, report);
             xmlFs.Close();
             Core.Statistics.AddCommand("device-report");

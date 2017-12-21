@@ -49,7 +49,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             PascalFileEntry entry;
@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             byte[] file;
@@ -106,7 +106,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)

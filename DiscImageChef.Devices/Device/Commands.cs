@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices
@@ -140,34 +141,34 @@ namespace DiscImageChef.Devices
             switch(command) {
                 case MmcCommands.SendCid when cachedCid != null:
                 {
-                    System.DateTime start = System.DateTime.Now;
+                    DateTime start = DateTime.Now;
                     buffer = new byte[cachedCid.Length];
-                    System.Array.Copy(cachedCid, buffer, buffer.Length);
+                    Array.Copy(cachedCid, buffer, buffer.Length);
                     response = new uint[4];
                     sense = false;
-                    System.DateTime end = System.DateTime.Now;
+                    DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
                     return 0;
                 }
                 case MmcCommands.SendCsd when cachedCid != null:
                 {
-                    System.DateTime start = System.DateTime.Now;
+                    DateTime start = DateTime.Now;
                     buffer = new byte[cachedCsd.Length];
-                    System.Array.Copy(cachedCsd, buffer, buffer.Length);
+                    Array.Copy(cachedCsd, buffer, buffer.Length);
                     response = new uint[4];
                     sense = false;
-                    System.DateTime end = System.DateTime.Now;
+                    DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
                     return 0;
                 }
                 case (MmcCommands)SecureDigitalCommands.SendScr when cachedScr != null:
                 {
-                    System.DateTime start = System.DateTime.Now;
+                    DateTime start = DateTime.Now;
                     buffer = new byte[cachedScr.Length];
-                    System.Array.Copy(cachedScr, buffer, buffer.Length);
+                    Array.Copy(cachedScr, buffer, buffer.Length);
                     response = new uint[4];
                     sense = false;
-                    System.DateTime end = System.DateTime.Now;
+                    DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
                     return 0;
                 }
@@ -179,12 +180,12 @@ namespace DiscImageChef.Devices
                                               blocks, ref buffer, out response, out duration, out sense, timeout);
 
             {
-                System.DateTime start = System.DateTime.Now;
+                DateTime start = DateTime.Now;
                 buffer = new byte[cachedOcr.Length];
-                System.Array.Copy(cachedOcr, buffer, buffer.Length);
+                Array.Copy(cachedOcr, buffer, buffer.Length);
                 response = new uint[4];
                 sense = false;
-                System.DateTime end = System.DateTime.Now;
+                DateTime end = DateTime.Now;
                 duration = (end - start).TotalMilliseconds;
                 return 0;
             }

@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 using ufs_daddr_t = System.Int32;
 
 namespace DiscImageChef.Filesystems
@@ -221,7 +223,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public dump(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public dump(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "dump(8) Plugin";
             PluginUUID = new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
@@ -229,7 +231,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -270,7 +272,7 @@ namespace DiscImageChef.Filesystems
                    newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -338,7 +340,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            xmlFSType = new Schemas.FileSystemType {ClusterSize = 1024, Clusters = (long)(partition.Size / 1024)};
+            xmlFSType = new FileSystemType {ClusterSize = 1024, Clusters = (long)(partition.Size / 1024)};
 
             if(useOld)
             {

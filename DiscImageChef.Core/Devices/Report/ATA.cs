@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Devices;
 using DiscImageChef.Metadata;
 
@@ -44,7 +45,7 @@ namespace DiscImageChef.Core.Devices.Report
         {
             if(report == null) return;
 
-            Decoders.ATA.AtaErrorRegistersCHS errorRegs;
+            AtaErrorRegistersCHS errorRegs;
             byte[] buffer;
             double duration;
             uint timeout = 5;
@@ -60,9 +61,9 @@ namespace DiscImageChef.Core.Devices.Report
 
             dev.AtaIdentify(out buffer, out errorRegs, timeout, out duration);
 
-            if(!Decoders.ATA.Identify.Decode(buffer).HasValue) return;
+            if(!Identify.Decode(buffer).HasValue) return;
 
-            Decoders.ATA.Identify.IdentifyDevice ataId = Decoders.ATA.Identify.Decode(buffer).Value;
+            Identify.IdentifyDevice ataId = Identify.Decode(buffer).Value;
 
             if((ushort)ataId.GeneralConfiguration == 0x848A)
             {
@@ -71,7 +72,7 @@ namespace DiscImageChef.Core.Devices.Report
                 removable = false;
             }
             else if(!removable &&
-                    ataId.GeneralConfiguration.HasFlag(Decoders.ATA.Identify.GeneralConfigurationBit.Removable))
+                    ataId.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.Removable))
             {
                 pressedKey = new ConsoleKeyInfo();
                 while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
@@ -90,7 +91,7 @@ namespace DiscImageChef.Core.Devices.Report
                 System.Console.ReadKey(true);
                 DicConsole.WriteLine("Querying ATA IDENTIFY...");
                 dev.AtaIdentify(out buffer, out errorRegs, timeout, out duration);
-                ataId = Decoders.ATA.Identify.Decode(buffer).Value;
+                ataId = Identify.Decode(buffer).Value;
             }
 
             report.ATA = new ataType();
@@ -520,9 +521,9 @@ namespace DiscImageChef.Core.Devices.Report
                     DicConsole.WriteLine("Querying ATA IDENTIFY...");
                     dev.AtaIdentify(out buffer, out errorRegs, timeout, out duration);
 
-                    if(Decoders.ATA.Identify.Decode(buffer).HasValue)
+                    if(Identify.Decode(buffer).HasValue)
                     {
-                        ataId = Decoders.ATA.Identify.Decode(buffer).Value;
+                        ataId = Identify.Decode(buffer).Value;
 
                         if(ataId.UnformattedBPT != 0)
                         {
@@ -559,7 +560,7 @@ namespace DiscImageChef.Core.Devices.Report
                             mediaTest.BlocksSpecified = true;
                         }
 
-                        if(ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport))
+                        if(ataId.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
                         {
                             mediaTest.LBASectors = ataId.LBASectors;
                             mediaTest.LBASectorsSpecified = true;
@@ -567,7 +568,7 @@ namespace DiscImageChef.Core.Devices.Report
                             mediaTest.BlocksSpecified = true;
                         }
 
-                        if(ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48))
+                        if(ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
                         {
                             mediaTest.LBA48Sectors = ataId.LBA48Sectors;
                             mediaTest.LBA48SectorsSpecified = true;
@@ -643,9 +644,9 @@ namespace DiscImageChef.Core.Devices.Report
                             mediaTest.LongBlockSizeSpecified = true;
                         }
 
-                        if(ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeSet) &&
-                           !ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeClear) &&
-                           ataId.EnabledCommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MediaSerial))
+                        if(ataId.CommandSet3.HasFlag(Identify.CommandSetBit3.MustBeSet) &&
+                           !ataId.CommandSet3.HasFlag(Identify.CommandSetBit3.MustBeClear) &&
+                           ataId.EnabledCommandSet3.HasFlag(Identify.CommandSetBit3.MediaSerial))
                         {
                             mediaTest.CanReadMediaSerial = true;
                             mediaTest.CanReadMediaSerialSpecified = true;
@@ -675,9 +676,9 @@ namespace DiscImageChef.Core.Devices.Report
                         mediaTest.SupportsReadLongRetrySpecified = true;
                         mediaTest.SupportsSeekSpecified = true;
 
-                        Decoders.ATA.AtaErrorRegistersCHS errorChs;
-                        Decoders.ATA.AtaErrorRegistersLBA28 errorLba;
-                        Decoders.ATA.AtaErrorRegistersLBA48 errorLba48;
+                        AtaErrorRegistersCHS errorChs;
+                        AtaErrorRegistersLBA28 errorLba;
+                        AtaErrorRegistersLBA48 errorLba48;
 
                         byte[] readBuf;
                         ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
@@ -930,7 +931,7 @@ namespace DiscImageChef.Core.Devices.Report
                     report.ATA.ReadCapabilities.BlocksSpecified = true;
                 }
 
-                if(ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport))
+                if(ataId.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
                 {
                     report.ATA.ReadCapabilities.LBASectors = ataId.LBASectors;
                     report.ATA.ReadCapabilities.LBASectorsSpecified = true;
@@ -938,7 +939,7 @@ namespace DiscImageChef.Core.Devices.Report
                     report.ATA.ReadCapabilities.BlocksSpecified = true;
                 }
 
-                if(ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48))
+                if(ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
                 {
                     report.ATA.ReadCapabilities.LBA48Sectors = ataId.LBA48Sectors;
                     report.ATA.ReadCapabilities.LBA48SectorsSpecified = true;
@@ -974,7 +975,7 @@ namespace DiscImageChef.Core.Devices.Report
                     {
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                         physicalsectorsize = logicalsectorsize *
-                                             (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
+                                             (uint)Math.Pow(2, ataId.PhysLogSectorSize & 0xF);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                     }
                     else physicalsectorsize = logicalsectorsize;
@@ -1013,9 +1014,9 @@ namespace DiscImageChef.Core.Devices.Report
                     report.ATA.ReadCapabilities.LongBlockSizeSpecified = true;
                 }
 
-                if(ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeSet) &&
-                   !ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeClear) &&
-                   ataId.EnabledCommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MediaSerial))
+                if(ataId.CommandSet3.HasFlag(Identify.CommandSetBit3.MustBeSet) &&
+                   !ataId.CommandSet3.HasFlag(Identify.CommandSetBit3.MustBeClear) &&
+                   ataId.EnabledCommandSet3.HasFlag(Identify.CommandSetBit3.MediaSerial))
                 {
                     report.ATA.ReadCapabilities.CanReadMediaSerial = true;
                     report.ATA.ReadCapabilities.CanReadMediaSerialSpecified = true;
@@ -1045,9 +1046,9 @@ namespace DiscImageChef.Core.Devices.Report
                 report.ATA.ReadCapabilities.SupportsReadLongRetrySpecified = true;
                 report.ATA.ReadCapabilities.SupportsSeekSpecified = true;
 
-                Decoders.ATA.AtaErrorRegistersCHS errorChs;
-                Decoders.ATA.AtaErrorRegistersLBA28 errorLba;
-                Decoders.ATA.AtaErrorRegistersLBA48 errorLba48;
+                AtaErrorRegistersCHS errorChs;
+                AtaErrorRegistersLBA28 errorLba;
+                AtaErrorRegistersLBA48 errorLba48;
 
                 byte[] readBuf;
                 ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);

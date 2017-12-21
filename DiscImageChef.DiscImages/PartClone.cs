@@ -38,7 +38,6 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 using Extents;
 
 namespace DiscImageChef.DiscImages

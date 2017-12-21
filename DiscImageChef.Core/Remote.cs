@@ -33,12 +33,14 @@
 using System.IO;
 using System.Net;
 using System.Threading;
+using System.Xml.Serialization;
+using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core
 {
     public static class Remote
     {
-        public static void SubmitReport(Metadata.DeviceReport report)
+        public static void SubmitReport(DeviceReport report)
         {
             Thread submitThread = new Thread(() =>
             {
@@ -51,8 +53,8 @@ namespace DiscImageChef.Core
 #endif
 
                     MemoryStream xmlStream = new MemoryStream();
-                    System.Xml.Serialization.XmlSerializer xmlSer =
-                        new System.Xml.Serialization.XmlSerializer(typeof(Metadata.DeviceReport));
+                    XmlSerializer xmlSer =
+                        new XmlSerializer(typeof(DeviceReport));
                     xmlSer.Serialize(xmlStream, report);
                     xmlStream.Seek(0, SeekOrigin.Begin);
                     WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreport");
@@ -79,7 +81,6 @@ namespace DiscImageChef.Core
                 catch(WebException)
                 {
                     // Can't connect to the server, do nothing
-                    return;
                 }
                 // ReSharper disable once RedundantCatchClause
                 catch

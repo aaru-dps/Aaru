@@ -34,8 +34,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
@@ -891,10 +893,10 @@ namespace DiscImageChef.Partitions
             public byte[] LoadData;
         }
 
-        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
-                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin,
+                                            out List<Partition> partitions, ulong sectorOffset)
         {
-            partitions = new List<CommonTypes.Partition>();
+            partitions = new List<Partition>();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             ulong rdbBlock = 0;
             bool foundRdb = false;
@@ -1323,7 +1325,7 @@ namespace DiscImageChef.Partitions
 
                 nextBlock = fshd.Dnode.SeglistPtr;
                 bool thereAreLoadSegments = false;
-                Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
+                Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 while(nextBlock != 0xFFFFFFFF)
                 {
@@ -1371,7 +1373,7 @@ namespace DiscImageChef.Partitions
             }
 
             ulong sequence = 0;
-            foreach(Partition entry in partitionEntries.Select(rdbEntry => new CommonTypes.Partition
+            foreach(Partition entry in partitionEntries.Select(rdbEntry => new Partition
             {
                 Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
                 Name = rdbEntry.DriveName,

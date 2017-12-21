@@ -39,6 +39,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.CPM
 {
@@ -671,7 +672,7 @@ namespace DiscImageChef.Filesystems.CPM
             cpmStat.Type = "CP/M filesystem";
 
             // Generate XML info
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Clusters = cpmStat.Blocks;
             xmlFSType.ClusterSize = blockSize;
             if(labelCreationDate != null)

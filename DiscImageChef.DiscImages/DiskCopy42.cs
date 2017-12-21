@@ -39,6 +39,7 @@ using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using Version = Resources.Version;
 
 namespace DiscImageChef.DiscImages
 {
@@ -406,8 +407,8 @@ namespace DiscImageChef.DiscImages
                 tagstream.Seek(tagOffset, SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.TagSize);
 
-                ushort mfsMagic = BigEndianBitConverter.ToUInt16(data, (int)(data.Length / 2 + 0x400));
-                ushort mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, (int)(data.Length / 2 + 0x412));
+                ushort mfsMagic = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x400);
+                ushort mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x412);
 
                 // Detect a Macintosh Twiggy
                 if(mfsMagic == 0xD2D7 && mfsAllBlocks == 422)
@@ -463,7 +464,7 @@ namespace DiscImageChef.DiscImages
 
                             if(vers != null)
                             {
-                                Resources.Version version = new Resources.Version(vers);
+                                Version version = new Version(vers);
 
                                 string major;
                                 string minor;
@@ -477,13 +478,13 @@ namespace DiscImageChef.DiscImages
                                     release = string.Format(".{0}", version.MinorVersion % 10);
                                 switch(version.DevStage)
                                 {
-                                    case Resources.Version.DevelopmentStage.Alpha:
+                                    case Version.DevelopmentStage.Alpha:
                                         dev = "a";
                                         break;
-                                    case Resources.Version.DevelopmentStage.Beta:
+                                    case Version.DevelopmentStage.Beta:
                                         dev = "b";
                                         break;
-                                    case Resources.Version.DevelopmentStage.PreAlpha:
+                                    case Version.DevelopmentStage.PreAlpha:
                                         dev = "d";
                                         break;
                                 }

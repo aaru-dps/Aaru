@@ -26,7 +26,11 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.CD;
+using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SCSI
@@ -137,7 +141,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcGetConfigurationRt.Single);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out rt))
+                        if(!Enum.TryParse(strDev, true, out rt))
                         {
                             DicConsole.WriteLine("Not a correct object type. Press any key to continue...");
                             rt = MmcGetConfigurationRt.All;
@@ -152,7 +156,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             startingFeatureNumber = 1;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -216,246 +219,246 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     DicConsole.WriteLine("GET CONFIGURATION decoded buffer:");
                     if(buffer != null)
                     {
-                        Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(buffer);
+                        Features.SeparatedFeatures ftr = Features.Separate(buffer);
                         DicConsole.WriteLine("GET CONFIGURATION length is {0} bytes", ftr.DataLength);
                         DicConsole.WriteLine("GET CONFIGURATION current profile is {0:X4}h", ftr.CurrentProfile);
                         if(ftr.Descriptors != null)
-                            foreach(Decoders.SCSI.MMC.Features.FeatureDescriptor desc in ftr.Descriptors)
+                            foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
                             {
                                 DicConsole.WriteLine("Feature {0:X4}h", desc.Code);
 
                                 switch(desc.Code)
                                 {
                                     case 0x0000:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0000(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0000(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0001:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0001(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0001(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0002:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0002(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0002(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0003:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0003(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0003(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0004:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0004(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0004(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0010:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0010(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0010(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x001D:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_001D(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_001D(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x001E:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_001E(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_001E(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x001F:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_001F(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_001F(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0020:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0020(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0020(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0021:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0021(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0021(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0022:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0022(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0022(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0023:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0023(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0023(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0024:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0024(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0024(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0025:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0025(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0025(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0026:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0026(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0026(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0027:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0027(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0027(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0028:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0028(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0028(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0029:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0029(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0029(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x002A:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_002A(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_002A(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x002B:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_002B(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_002B(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x002C:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_002C(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_002C(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x002D:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_002D(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_002D(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x002E:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_002E(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_002E(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x002F:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_002F(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_002F(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0030:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0030(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0030(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0031:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0031(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0031(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0032:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0032(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0032(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0033:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0033(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0033(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0035:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0035(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0035(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0037:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0037(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0037(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0038:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0038(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0038(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x003A:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_003A(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_003A(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x003B:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_003B(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_003B(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0040:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0040(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0040(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0041:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0041(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0041(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0042:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0042(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0042(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0050:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0050(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0050(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0051:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0051(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0051(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0080:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0080(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0080(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0100:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0100(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0100(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0101:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0101(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0101(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0102:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0102(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0102(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0103:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0103(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0103(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0104:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0104(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0104(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0105:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0105(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0105(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0106:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0106(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0106(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0107:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0107(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0107(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0108:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0108(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0108(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0109:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0109(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0109(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x010A:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_010A(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_010A(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x010B:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_010B(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_010B(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x010C:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_010C(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_010C(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x010D:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_010D(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_010D(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x010E:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_010E(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_010E(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0110:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0110(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0110(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0113:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0113(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0113(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     case 0x0142:
-                                        DicConsole.Write("{0}", Decoders.SCSI.MMC.Features.Prettify_0142(desc.Data));
+                                        DicConsole.Write("{0}", Features.Prettify_0142(desc.Data));
                                         PrintHex.PrintHexArray(desc.Data, 64);
                                         break;
                                     default:
@@ -485,7 +488,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("GET CONFIGURATION decoded sense:");
-                    if(senseBuffer != null) DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    if(senseBuffer != null) DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -553,7 +556,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a boolean. Press any key to continue...");
                             persistent = false;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -575,7 +577,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                  senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("PREVENT ALLOW MEDIUM REMOVAL decoded sense:");
-            DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print sense buffer.");
@@ -709,7 +711,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out sectorType))
+                        if(!Enum.TryParse(strDev, true, out sectorType))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             sectorType = MmcSectorTypes.AllTypes;
@@ -743,7 +745,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcHeaderCodes.AllHeaders);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out header))
+                        if(!Enum.TryParse(strDev, true, out header))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             header = MmcHeaderCodes.None;
@@ -776,7 +778,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcErrorField.C2Pointers, MmcErrorField.C2PointersAndBlock);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out c2))
+                        if(!Enum.TryParse(strDev, true, out c2))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             c2 = MmcErrorField.None;
@@ -789,7 +791,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcSubchannel.Q16, MmcSubchannel.Rw);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out subchan))
+                        if(!Enum.TryParse(strDev, true, out subchan))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             subchan = MmcSubchannel.None;
@@ -804,7 +806,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             blockSize = 2352;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -876,7 +877,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -1015,7 +1016,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out sectorType))
+                        if(!Enum.TryParse(strDev, true, out sectorType))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             sectorType = MmcSectorTypes.AllTypes;
@@ -1049,7 +1050,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcHeaderCodes.AllHeaders);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out header))
+                        if(!Enum.TryParse(strDev, true, out header))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             header = MmcHeaderCodes.None;
@@ -1082,7 +1083,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcErrorField.C2Pointers, MmcErrorField.C2PointersAndBlock);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out c2))
+                        if(!Enum.TryParse(strDev, true, out c2))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             c2 = MmcErrorField.None;
@@ -1095,7 +1096,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcSubchannel.Q16, MmcSubchannel.Rw);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out subchan))
+                        if(!Enum.TryParse(strDev, true, out subchan))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             subchan = MmcSubchannel.None;
@@ -1110,7 +1111,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             blockSize = 2352;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -1184,7 +1184,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD MSF decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -1240,12 +1240,11 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcDiscInformationDataTypes.PowResources);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out info))
+                        if(!Enum.TryParse(strDev, true, out info))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             info = MmcDiscInformationDataTypes.DiscInformation;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -1307,7 +1306,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ DISC INFORMATION decoded response:");
-                    DicConsole.Write("{0}", Decoders.SCSI.MMC.DiscInformation.Prettify(buffer));
+                    DicConsole.Write("{0}", DiscInformation.Prettify(buffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -1327,7 +1326,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ DISC INFORMATION decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -1389,7 +1388,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcDiscStructureMediaType.Bd);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out mediaType))
+                        if(!Enum.TryParse(strDev, true, out mediaType))
                         {
                             DicConsole.WriteLine("Not a correct media type. Press any key to continue...");
                             mediaType = MmcDiscStructureMediaType.Dvd;
@@ -1449,7 +1448,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              MmcDiscStructureFormat.CapabilityList);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out format))
+                        if(!Enum.TryParse(strDev, true, out format))
                         {
                             DicConsole.WriteLine("Not a correct media type. Press any key to continue...");
                             format = MmcDiscStructureFormat.CapabilityList;
@@ -1484,7 +1483,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             agid = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -1566,7 +1564,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ DISC STRUCTURE decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -1646,7 +1644,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             session = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -1712,27 +1709,27 @@ namespace DiscImageChef.Tests.Devices.SCSI
                         switch(format)
                         {
                             case 0:
-                                DicConsole.Write("{0}", Decoders.CD.TOC.Prettify(buffer));
+                                DicConsole.Write("{0}", TOC.Prettify(buffer));
                                 PrintHex.PrintHexArray(buffer, 64);
                                 break;
                             case 1:
-                                DicConsole.Write("{0}", Decoders.CD.Session.Prettify(buffer));
+                                DicConsole.Write("{0}", Session.Prettify(buffer));
                                 PrintHex.PrintHexArray(buffer, 64);
                                 break;
                             case 2:
-                                DicConsole.Write("{0}", Decoders.CD.FullTOC.Prettify(buffer));
+                                DicConsole.Write("{0}", FullTOC.Prettify(buffer));
                                 PrintHex.PrintHexArray(buffer, 64);
                                 break;
                             case 3:
-                                DicConsole.Write("{0}", Decoders.CD.PMA.Prettify(buffer));
+                                DicConsole.Write("{0}", PMA.Prettify(buffer));
                                 PrintHex.PrintHexArray(buffer, 64);
                                 break;
                             case 4:
-                                DicConsole.Write("{0}", Decoders.CD.ATIP.Prettify(buffer));
+                                DicConsole.Write("{0}", ATIP.Prettify(buffer));
                                 PrintHex.PrintHexArray(buffer, 64);
                                 break;
                             case 5:
-                                DicConsole.Write("{0}", Decoders.CD.CDTextOnLeadIn.Prettify(buffer));
+                                DicConsole.Write("{0}", CDTextOnLeadIn.Prettify(buffer));
                                 PrintHex.PrintHexArray(buffer, 64);
                                 break;
                         }
@@ -1756,7 +1753,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ TOC/PMA/ATIP decoded sense:");
-                    if(senseBuffer != null) DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    if(senseBuffer != null) DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -1872,7 +1869,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             powerConditions = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -1894,7 +1890,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                  senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("START STOP UNIT decoded sense:");
-            DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print sense buffer.");

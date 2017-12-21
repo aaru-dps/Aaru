@@ -8,13 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+
 namespace DiscImageChef.Server {
     
     
     public partial class Default {
         
-        protected System.Web.UI.HtmlControls.HtmlGenericControl body;
+        protected HtmlGenericControl body;
         
-        protected System.Web.UI.WebControls.Label lblVersion;
+        protected Label lblVersion;
     }
 }

@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
@@ -92,13 +93,11 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             information = sb.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Bootable = true;
             xmlFSType.Clusters = (long)imagePlugin.ImageInfo.Sectors;
             xmlFSType.ClusterSize = (int)imagePlugin.ImageInfo.SectorSize;
             xmlFSType.Type = "Apple DOS";
-
-            return;
         }
     }
 }

@@ -8,91 +8,94 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+
 namespace DiscImageChef.Server {
 	
 	
 	public partial class Statistics {
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl body;
+		protected HtmlGenericControl body;
 		
-		protected System.Web.UI.WebControls.Label lblVersion;
+		protected Label lblVersion;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl content;
+		protected HtmlGenericControl content;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divOperatingSystems;
+		protected HtmlGenericControl divOperatingSystems;
 		
-		protected System.Web.UI.WebControls.Repeater repOperatingSystems;
+		protected Repeater repOperatingSystems;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divVersions;
+		protected HtmlGenericControl divVersions;
 		
-		protected System.Web.UI.WebControls.Repeater repVersions;
+		protected Repeater repVersions;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divCommands;
+		protected HtmlGenericControl divCommands;
 		
-		protected System.Web.UI.WebControls.Label lblAnalyze;
+		protected Label lblAnalyze;
 		
-		protected System.Web.UI.WebControls.Label lblBenchmark;
+		protected Label lblBenchmark;
 		
-		protected System.Web.UI.WebControls.Label lblChecksum;
+		protected Label lblChecksum;
 		
-		protected System.Web.UI.WebControls.Label lblCompare;
+		protected Label lblCompare;
 		
-		protected System.Web.UI.WebControls.Label lblCreateSidecar;
+		protected Label lblCreateSidecar;
 		
-		protected System.Web.UI.WebControls.Label lblDecode;
+		protected Label lblDecode;
 		
-		protected System.Web.UI.WebControls.Label lblDeviceInfo;
+		protected Label lblDeviceInfo;
 		
-		protected System.Web.UI.WebControls.Label lblDeviceReport;
+		protected Label lblDeviceReport;
 		
-		protected System.Web.UI.WebControls.Label lblDumpMedia;
+		protected Label lblDumpMedia;
 		
-		protected System.Web.UI.WebControls.Label lblEntropy;
+		protected Label lblEntropy;
 		
-		protected System.Web.UI.WebControls.Label lblExtractFiles;
+		protected Label lblExtractFiles;
 		
-		protected System.Web.UI.WebControls.Label lblFormats;
+		protected Label lblFormats;
 		
-		protected System.Web.UI.WebControls.Label lblListDevices;
+		protected Label lblListDevices;
 		
-		protected System.Web.UI.WebControls.Label lblListEncodings;
+		protected Label lblListEncodings;
 		
-		protected System.Web.UI.WebControls.Label lblLs;
+		protected Label lblLs;
 		
-		protected System.Web.UI.WebControls.Label lblMediaInfo;
+		protected Label lblMediaInfo;
 		
-		protected System.Web.UI.WebControls.Label lblMediaScan;
+		protected Label lblMediaScan;
 		
-		protected System.Web.UI.WebControls.Label lblPrintHex;
+		protected Label lblPrintHex;
 		
-		protected System.Web.UI.WebControls.Label lblVerify;
+		protected Label lblVerify;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divFilters;
+		protected HtmlGenericControl divFilters;
 		
-		protected System.Web.UI.WebControls.Repeater repFilters;
+		protected Repeater repFilters;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divMediaImages;
+		protected HtmlGenericControl divMediaImages;
 		
-		protected System.Web.UI.WebControls.Repeater repMediaImages;
+		protected Repeater repMediaImages;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divPartitions;
+		protected HtmlGenericControl divPartitions;
 		
-		protected System.Web.UI.WebControls.Repeater repPartitions;
+		protected Repeater repPartitions;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divFilesystems;
+		protected HtmlGenericControl divFilesystems;
 		
-		protected System.Web.UI.WebControls.Repeater repFilesystems;
+		protected Repeater repFilesystems;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divVirtualMedia;
+		protected HtmlGenericControl divVirtualMedia;
 		
-		protected System.Web.UI.WebControls.Repeater repVirtualMedia;
+		protected Repeater repVirtualMedia;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divRealMedia;
+		protected HtmlGenericControl divRealMedia;
 		
-		protected System.Web.UI.WebControls.Repeater repRealMedia;
+		protected Repeater repRealMedia;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divDevices;
+		protected HtmlGenericControl divDevices;
 		
-		protected System.Web.UI.WebControls.Repeater repDevices;
+		protected Repeater repDevices;
 	}
 }

@@ -40,8 +40,6 @@ namespace DiscImageChef.Filters
         public string Name;
         public Guid UUID;
 
-        protected Filter() { }
-
         /// <summary>
         /// Closes all opened streams.
         /// </summary>

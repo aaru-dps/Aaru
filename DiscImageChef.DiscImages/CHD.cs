@@ -37,8 +37,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Filters;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
@@ -1468,7 +1470,7 @@ namespace DiscImageChef.DiscImages
                             break;
                         // "IDNT"
                         case HARD_DISK_IDENT_METADATA:
-                            Decoders.ATA.Identify.IdentifyDevice? idnt = Decoders.ATA.Identify.Decode(meta);
+                            Identify.IdentifyDevice? idnt = Identify.Decode(meta);
                             if(idnt.HasValue)
                             {
                                 ImageInfo.MediaManufacturer = idnt.Value.MediaManufacturer;
@@ -1775,7 +1777,7 @@ namespace DiscImageChef.DiscImages
             if(isHdd) return null;
 
             byte[] buffer = ReadSectorLong(sectorAddress);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySector(ulong sectorAddress, uint track)
@@ -1800,7 +1802,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
@@ -1833,7 +1835,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
@@ -1857,7 +1859,7 @@ namespace DiscImageChef.DiscImages
             byte[] calculated;
             if(mapVersion >= 3)
             {
-                Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
+                Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 for(uint i = 0; i < totalHunks; i++) sha1Ctx.Update(GetHunk(i));
 
@@ -1865,7 +1867,7 @@ namespace DiscImageChef.DiscImages
             }
             else
             {
-                Checksums.Md5Context md5Ctx = new Checksums.Md5Context();
+                Md5Context md5Ctx = new Md5Context();
                 md5Ctx.Init();
                 for(uint i = 0; i < totalHunks; i++) md5Ctx.Update(GetHunk(i));
 

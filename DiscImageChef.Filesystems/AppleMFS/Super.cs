@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
@@ -105,14 +107,14 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 offset += 12;
             }
 
-            if(device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag))
+            if(device.ImageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
             {
-                mdbTags = device.ReadSectorTag(2 + partitionStart, DiscImages.SectorTagType.AppleSectorTag);
-                bootTags = device.ReadSectorTag(0 + partitionStart, DiscImages.SectorTagType.AppleSectorTag);
+                mdbTags = device.ReadSectorTag(2 + partitionStart, SectorTagType.AppleSectorTag);
+                bootTags = device.ReadSectorTag(0 + partitionStart, SectorTagType.AppleSectorTag);
                 directoryTags = device.ReadSectorsTag(volMDB.drDirSt + partitionStart, volMDB.drBlLen,
-                                                      DiscImages.SectorTagType.AppleSectorTag);
+                                                      SectorTagType.AppleSectorTag);
                 bitmapTags = device.ReadSectorsTag(partitionStart + 2, (uint)sectorsInWholeMDB,
-                                                   DiscImages.SectorTagType.AppleSectorTag);
+                                                   SectorTagType.AppleSectorTag);
             }
 
             sectorsPerBlock = (int)(volMDB.drAlBlkSiz / device.ImageInfo.SectorSize);
@@ -125,7 +127,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(bbSig != MFSBB_MAGIC) bootBlocks = null;
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             if(volMDB.drLsBkUp > 0)
             {
                 xmlFSType.BackupDate = DateHandlers.MacToDateTime(volMDB.drLsBkUp);

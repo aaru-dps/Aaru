@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SCSI
@@ -120,7 +121,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a boolean. Press any key to continue...");
                             drive1 = false;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -191,7 +191,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ/RESET USAGE COUNTER decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -271,7 +271,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ DATA BUFFER decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -338,7 +338,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             threshold = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -361,7 +360,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                  senseBuffer == null ? "null" : senseBuffer.Length.ToString());
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("SET ERROR THRESHOLD decoded sense:");
-            DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print sense buffer.");
@@ -456,7 +455,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             lba = 0;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -527,7 +525,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("TRANSLATE decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();

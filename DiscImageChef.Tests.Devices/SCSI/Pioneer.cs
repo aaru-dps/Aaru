@@ -26,7 +26,9 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.SCSI
@@ -140,7 +142,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              PioneerSubchannel.Q16, PioneerSubchannel.All, PioneerSubchannel.Only);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out subchan))
+                        if(!Enum.TryParse(strDev, true, out subchan))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             subchan = PioneerSubchannel.None;
@@ -232,7 +234,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD-DA decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -356,7 +358,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                              PioneerSubchannel.Q16, PioneerSubchannel.All, PioneerSubchannel.Only);
                         DicConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
-                        if(!System.Enum.TryParse(strDev, true, out subchan))
+                        if(!Enum.TryParse(strDev, true, out subchan))
                         {
                             DicConsole.WriteLine("Not a correct page control. Press any key to continue...");
                             subchan = PioneerSubchannel.None;
@@ -450,7 +452,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD-DA MSF decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -542,7 +544,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                             DicConsole.WriteLine("Not a number. Press any key to continue...");
                             wholeSector = false;
                             System.Console.ReadKey();
-                            continue;
                         }
 
                         break;
@@ -613,7 +614,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ CD-XA decoded sense:");
-                    DicConsole.Write("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuffer));
+                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();

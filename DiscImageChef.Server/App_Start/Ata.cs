@@ -360,69 +360,69 @@ namespace DiscImageChef.Server.App_Start
             if(atapi && ataReport.GeneralConfigurationSpecified)
             {
                 // Bits 12 to 8, SCSI Peripheral Device Type
-                switch((Decoders.SCSI.PeripheralDeviceTypes)(((ushort)ataReport.GeneralConfiguration & 0x1F00) >> 8))
+                switch((PeripheralDeviceTypes)(((ushort)ataReport.GeneralConfiguration & 0x1F00) >> 8))
                 {
-                    case Decoders.SCSI.PeripheralDeviceTypes.DirectAccess: //0x00,
+                    case PeripheralDeviceTypes.DirectAccess: //0x00,
                         ataOneValue.Add("ATAPI Direct-access device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess: //0x01,
+                    case PeripheralDeviceTypes.SequentialAccess: //0x01,
                         ataOneValue.Add("ATAPI Sequential-access device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.PrinterDevice: //0x02,
+                    case PeripheralDeviceTypes.PrinterDevice: //0x02,
                         ataOneValue.Add("ATAPI Printer device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.ProcessorDevice: //0x03,
+                    case PeripheralDeviceTypes.ProcessorDevice: //0x03,
                         ataOneValue.Add("ATAPI Processor device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice: //0x04,
+                    case PeripheralDeviceTypes.WriteOnceDevice: //0x04,
                         ataOneValue.Add("ATAPI Write-once device");
                         break;
                     case PeripheralDeviceTypes.MultiMediaDevice: //0x05,
                         ataOneValue.Add("ATAPI CD-ROM/DVD/etc device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.ScannerDevice: //0x06,
+                    case PeripheralDeviceTypes.ScannerDevice: //0x06,
                         ataOneValue.Add("ATAPI Scanner device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice: //0x07,
+                    case PeripheralDeviceTypes.OpticalDevice: //0x07,
                         ataOneValue.Add("ATAPI Optical memory device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.MediumChangerDevice: //0x08,
+                    case PeripheralDeviceTypes.MediumChangerDevice: //0x08,
                         ataOneValue.Add("ATAPI Medium change device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.CommsDevice: //0x09,
+                    case PeripheralDeviceTypes.CommsDevice: //0x09,
                         ataOneValue.Add("ATAPI Communications device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.PrePressDevice1: //0x0A,
+                    case PeripheralDeviceTypes.PrePressDevice1: //0x0A,
                         ataOneValue.Add("ATAPI Graphics arts pre-press device (defined in ASC IT8)");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.PrePressDevice2: //0x0B,
+                    case PeripheralDeviceTypes.PrePressDevice2: //0x0B,
                         ataOneValue.Add("ATAPI Graphics arts pre-press device (defined in ASC IT8)");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.ArrayControllerDevice: //0x0C,
+                    case PeripheralDeviceTypes.ArrayControllerDevice: //0x0C,
                         ataOneValue.Add("ATAPI Array controller device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.EnclosureServiceDevice: //0x0D,
+                    case PeripheralDeviceTypes.EnclosureServiceDevice: //0x0D,
                         ataOneValue.Add("ATAPI Enclosure services device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice: //0x0E,
+                    case PeripheralDeviceTypes.SimplifiedDevice: //0x0E,
                         ataOneValue.Add("ATAPI Simplified direct-access device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice: //0x0F,
+                    case PeripheralDeviceTypes.OCRWDevice: //0x0F,
                         ataOneValue.Add("ATAPI Optical card reader/writer device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.BridgingExpander: //0x10,
+                    case PeripheralDeviceTypes.BridgingExpander: //0x10,
                         ataOneValue.Add("ATAPI Bridging Expanders");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.ObjectDevice: //0x11,
+                    case PeripheralDeviceTypes.ObjectDevice: //0x11,
                         ataOneValue.Add("ATAPI Object-based Storage Device");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.ADCDevice: //0x12,
+                    case PeripheralDeviceTypes.ADCDevice: //0x12,
                         ataOneValue.Add("ATAPI Automation/Drive Interface");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.WellKnownDevice: //0x1E,
+                    case PeripheralDeviceTypes.WellKnownDevice: //0x1E,
                         ataOneValue.Add("ATAPI Well known logical unit");
                         break;
-                    case Decoders.SCSI.PeripheralDeviceTypes.UnknownDevice: //0x1F
+                    case PeripheralDeviceTypes.UnknownDevice: //0x1F
                         ataOneValue.Add("ATAPI Unknown or no device type");
                         break;
                     default:
@@ -818,25 +818,25 @@ namespace DiscImageChef.Server.App_Start
             {
                 if(!ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear))
                 {
-                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen1Speed)) ataOneValue.Add(string.Format("SATA 1.5Gb/s is supported"));
-                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen2Speed)) ataOneValue.Add(string.Format("SATA 3.0Gb/s is supported"));
-                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen3Speed)) ataOneValue.Add(string.Format("SATA 6.0Gb/s is supported"));
+                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen1Speed)) ataOneValue.Add("SATA 1.5Gb/s is supported");
+                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen2Speed)) ataOneValue.Add("SATA 3.0Gb/s is supported");
+                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Gen3Speed)) ataOneValue.Add("SATA 6.0Gb/s is supported");
                     if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.PowerReceipt))
                         ataOneValue
-                            .Add(string.Format("Receipt of host initiated power management requests is supported"));
-                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.PHYEventCounter)) ataOneValue.Add(string.Format("PHY Event counters are supported"));
+                            .Add("Receipt of host initiated power management requests is supported");
+                    if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.PHYEventCounter)) ataOneValue.Add("PHY Event counters are supported");
                     if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.HostSlumbTrans))
                         ataOneValue
-                            .Add(string.Format("Supports host automatic partial to slumber transitions is supported"));
+                            .Add("Supports host automatic partial to slumber transitions is supported");
                     if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.DevSlumbTrans))
                         ataOneValue
-                            .Add(string.Format("Supports device automatic partial to slumber transitions is supported"));
+                            .Add("Supports device automatic partial to slumber transitions is supported");
                     if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQ))
                     {
-                        ataOneValue.Add(string.Format("NCQ is supported"));
+                        ataOneValue.Add("NCQ is supported");
 
-                        if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQPriority)) ataOneValue.Add(string.Format("NCQ priority is supported"));
-                        if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.UnloadNCQ)) ataOneValue.Add(string.Format("Unload is supported with outstanding NCQ commands"));
+                        if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQPriority)) ataOneValue.Add("NCQ priority is supported");
+                        if(ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.UnloadNCQ)) ataOneValue.Add("Unload is supported with outstanding NCQ commands");
                     }
                 }
 
@@ -847,16 +847,16 @@ namespace DiscImageChef.Server.App_Start
                        !ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.Clear) &&
                        ataReport.SATACapabilities.HasFlag(SATACapabilitiesBit.NCQ))
                     {
-                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQMgmt)) ataOneValue.Add(string.Format("NCQ queue management is supported"));
-                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQStream)) ataOneValue.Add(string.Format("NCQ streaming is supported"));
+                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQMgmt)) ataOneValue.Add("NCQ queue management is supported");
+                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.NCQStream)) ataOneValue.Add("NCQ streaming is supported");
                     }
 
                     if(ataReport.SATACapabilities2Specified && atapi)
                     {
-                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.HostEnvDetect)) ataOneValue.Add(string.Format("ATAPI device supports host environment detection"));
+                        if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.HostEnvDetect)) ataOneValue.Add("ATAPI device supports host environment detection");
                         if(ataReport.SATACapabilities2.HasFlag(SATACapabilitiesBit2.DevAttSlimline))
                             ataOneValue
-                                .Add(string.Format("ATAPI device supports attention on slimline connected devices"));
+                                .Add("ATAPI device supports attention on slimline connected devices");
                     }
                 }
             }

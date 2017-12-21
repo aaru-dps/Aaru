@@ -81,7 +81,7 @@ namespace DiscImageChef.Devices
             if(sense) return true;
 
 #pragma warning disable IDE0004 // Cast is necessary or an invalid bitshift happens
-            uint attrLen = (uint)(((int)buffer[0] << 24) + ((int)buffer[1] << 16) + ((int)buffer[2] << 8) + buffer[3] +
+            uint attrLen = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3] +
                                   4);
 #pragma warning restore IDE0004 // Cast is necessary or an invalid bitshift happens
             buffer = new byte[attrLen];

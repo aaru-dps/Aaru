@@ -34,8 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
+using Encoding = System.Text.Encoding;
 
 namespace DiscImageChef.Filesystems
 {
@@ -84,7 +88,7 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Apple ProDOS filesystem";
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
-            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            CurrentEncoding = new LisaRoman();
         }
 
         public ProDOSPlugin(Encoding encoding)
@@ -92,18 +96,18 @@ namespace DiscImageChef.Filesystems
             Name = "Apple ProDOS filesystem";
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
             // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            CurrentEncoding = new LisaRoman();
         }
 
-        public ProDOSPlugin(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public ProDOSPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple ProDOS filesystem";
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
             // TODO: Until Apple ][ encoding is implemented
-            CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            CurrentEncoding = new LisaRoman();
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Length < 3) return false;
 
@@ -153,7 +157,7 @@ namespace DiscImageChef.Filesystems
             return total_blocks <= partition.End - partition.Start + 1;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
@@ -288,7 +292,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
             if(dateCorrect)
             {
@@ -301,8 +305,6 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ClusterSize = (int)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
                                           (ulong)xmlFSType.Clusters);
             xmlFSType.Type = "ProDOS";
-
-            return;
         }
 
         public override Errno Mount()

@@ -33,9 +33,9 @@
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Partitions;
 
 namespace DiscImageChef.Commands

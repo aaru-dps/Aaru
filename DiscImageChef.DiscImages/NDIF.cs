@@ -40,9 +40,9 @@ using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.ADC;
+using Version = Resources.Version;
 
 namespace DiscImageChef.DiscImages
 {
@@ -374,7 +374,7 @@ namespace DiscImageChef.DiscImages
                 {
                     byte[] vers = versRsrc.GetResource(versRsrc.GetIds()[0]);
 
-                    Resources.Version version = new Resources.Version(vers);
+                    Version version = new Version(vers);
 
                     string major;
                     string minor;
@@ -387,13 +387,13 @@ namespace DiscImageChef.DiscImages
                     if(version.MinorVersion % 10 > 0) release = string.Format(".{0}", version.MinorVersion % 10);
                     switch(version.DevStage)
                     {
-                        case Resources.Version.DevelopmentStage.Alpha:
+                        case Version.DevelopmentStage.Alpha:
                             dev = "a";
                             break;
-                        case Resources.Version.DevelopmentStage.Beta:
+                        case Version.DevelopmentStage.Beta:
                             dev = "b";
                             break;
-                        case Resources.Version.DevelopmentStage.PreAlpha:
+                        case Version.DevelopmentStage.PreAlpha:
                             dev = "d";
                             break;
                     }

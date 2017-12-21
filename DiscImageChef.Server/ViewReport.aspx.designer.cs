@@ -8,115 +8,118 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+
 namespace DiscImageChef.Server {
 	
 	
 	public partial class ViewReport {
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl content;
+		protected HtmlGenericControl content;
 		
-		protected System.Web.UI.WebControls.Label lblManufacturer;
+		protected Label lblManufacturer;
 		
-		protected System.Web.UI.WebControls.Label lblModel;
+		protected Label lblModel;
 		
-		protected System.Web.UI.WebControls.Label lblRevision;
+		protected Label lblRevision;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divUsb;
+		protected HtmlGenericControl divUsb;
 		
-		protected System.Web.UI.WebControls.Label lblUsbManufacturer;
+		protected Label lblUsbManufacturer;
 		
-		protected System.Web.UI.WebControls.Label lblUsbProduct;
+		protected Label lblUsbProduct;
 		
-		protected System.Web.UI.WebControls.Label lblUsbVendor;
+		protected Label lblUsbVendor;
 		
-		protected System.Web.UI.WebControls.Label lblUsbVendorDescription;
+		protected Label lblUsbVendorDescription;
 		
-		protected System.Web.UI.WebControls.Label lblUsbProductId;
+		protected Label lblUsbProductId;
 		
-		protected System.Web.UI.WebControls.Label lblUsbProductDescription;
+		protected Label lblUsbProductDescription;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divFirewire;
+		protected HtmlGenericControl divFirewire;
 		
-		protected System.Web.UI.WebControls.Label lblFirewireManufacturer;
+		protected Label lblFirewireManufacturer;
 		
-		protected System.Web.UI.WebControls.Label lblFirewireProduct;
+		protected Label lblFirewireProduct;
 		
-		protected System.Web.UI.WebControls.Label lblFirewireVendor;
+		protected Label lblFirewireVendor;
 		
-		protected System.Web.UI.WebControls.Label lblFirewireProductId;
+		protected Label lblFirewireProductId;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divPcmcia;
+		protected HtmlGenericControl divPcmcia;
 		
-		protected System.Web.UI.WebControls.Label lblPcmciaManufacturer;
+		protected Label lblPcmciaManufacturer;
 		
-		protected System.Web.UI.WebControls.Label lblPcmciaProduct;
+		protected Label lblPcmciaProduct;
 		
-		protected System.Web.UI.WebControls.Label lblPcmciaManufacturerCode;
+		protected Label lblPcmciaManufacturerCode;
 		
-		protected System.Web.UI.WebControls.Label lblPcmciaCardCode;
+		protected Label lblPcmciaCardCode;
 		
-		protected System.Web.UI.WebControls.Label lblPcmciaCompliance;
+		protected Label lblPcmciaCompliance;
 		
-		protected System.Web.UI.WebControls.Repeater repPcmciaTuples;
+		protected Repeater repPcmciaTuples;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divAta;
+		protected HtmlGenericControl divAta;
 		
-		protected System.Web.UI.WebControls.Label lblAtapi;
+		protected Label lblAtapi;
 		
-		protected System.Web.UI.WebControls.Label lblAtaDeviceType;
+		protected Label lblAtaDeviceType;
 		
-		protected System.Web.UI.WebControls.Repeater repAtaTwo;
+		protected Repeater repAtaTwo;
 		
-		protected System.Web.UI.WebControls.Repeater repAtaOne;
+		protected Repeater repAtaOne;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divScsi;
+		protected HtmlGenericControl divScsi;
 		
-		protected System.Web.UI.WebControls.Label lblScsiVendor;
+		protected Label lblScsiVendor;
 		
-		protected System.Web.UI.WebControls.Label lblScsiProduct;
+		protected Label lblScsiProduct;
 		
-		protected System.Web.UI.WebControls.Label lblScsiRevision;
+		protected Label lblScsiRevision;
 		
-		protected System.Web.UI.WebControls.Repeater repScsi;
+		protected Repeater repScsi;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divScsiModeSense;
+		protected HtmlGenericControl divScsiModeSense;
 		
-		protected System.Web.UI.WebControls.Repeater repModeSense;
+		protected Repeater repModeSense;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divScsiEvpd;
+		protected HtmlGenericControl divScsiEvpd;
 		
-		protected System.Web.UI.WebControls.Repeater repEvpd;
+		protected Repeater repEvpd;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divScsiMmcMode;
+		protected HtmlGenericControl divScsiMmcMode;
 		
-		protected System.Web.UI.WebControls.Repeater repScsiMmcMode;
+		protected Repeater repScsiMmcMode;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divScsiMmcFeatures;
+		protected HtmlGenericControl divScsiMmcFeatures;
 		
-		protected System.Web.UI.WebControls.Repeater repScsiMmcFeatures;
+		protected Repeater repScsiMmcFeatures;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divScsiSsc;
+		protected HtmlGenericControl divScsiSsc;
 		
-		protected System.Web.UI.WebControls.Label lblScsiSscGranularity;
+		protected Label lblScsiSscGranularity;
 		
-		protected System.Web.UI.WebControls.Label lblScsiSscMaxBlock;
+		protected Label lblScsiSscMaxBlock;
 		
-		protected System.Web.UI.WebControls.Label lblScsiSscMinBlock;
+		protected Label lblScsiSscMinBlock;
 		
-		protected System.Web.UI.WebControls.Repeater repScsiSscDensities;
+		protected Repeater repScsiSscDensities;
 		
-		protected System.Web.UI.WebControls.Repeater repScsiSscMedias;
+		protected Repeater repScsiSscMedias;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divTestedMedia;
+		protected HtmlGenericControl divTestedMedia;
 		
-		protected System.Web.UI.WebControls.Repeater repTestedMedia;
+		protected Repeater repTestedMedia;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divMMC;
+		protected HtmlGenericControl divMMC;
 		
-		protected System.Web.UI.WebControls.Repeater repMMC;
+		protected Repeater repMMC;
 		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divSD;
+		protected HtmlGenericControl divSD;
 		
-		protected System.Web.UI.WebControls.Repeater repSD;
+		protected Repeater repSD;
 	}
 }

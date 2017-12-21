@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using DiscImageChef.Console;
+using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices
 {
@@ -37,7 +38,7 @@ namespace DiscImageChef.Tests.Devices
             DicConsole.WriteLine("Going to open {0}. Press any key to continue...", devPath);
             System.Console.ReadKey();
 
-            DiscImageChef.Devices.Device dev = new DiscImageChef.Devices.Device(devPath);
+            Device dev = new Device(devPath);
 
             while(true)
             {

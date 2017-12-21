@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -55,7 +57,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public VMfs(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public VMfs(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "VMware filesystem";
             PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
@@ -93,7 +95,7 @@ namespace DiscImageChef.Filesystems
         const uint VMfs_MAGIC = 0xC001D00D;
         const uint VMfs_Base = 0x00100000;
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -108,7 +110,7 @@ namespace DiscImageChef.Filesystems
             return magic == VMfs_MAGIC;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.SectorSize;
@@ -142,7 +144,7 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "VMware file system";
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(ctimeSecs, ctimeNanoSecs);
             xmlFSType.CreationDateSpecified = true;

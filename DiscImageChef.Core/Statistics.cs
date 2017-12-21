@@ -37,7 +37,10 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Xml.Serialization;
+using DiscImageChef.Devices;
+using DiscImageChef.Interop;
 using DiscImageChef.Metadata;
+using MediaType = DiscImageChef.CommonTypes.MediaType;
 
 namespace DiscImageChef.Core
 {
@@ -60,9 +63,9 @@ namespace DiscImageChef.Core
                         {
                             new OsStats
                             {
-                                name = Interop.DetectOS.GetRealPlatformID().ToString(),
+                                name = DetectOS.GetRealPlatformID().ToString(),
                                 Value = 1,
-                                version = Interop.DetectOS.GetVersion()
+                                version = DetectOS.GetVersion()
                             }
                         },
                     Versions = new List<NameValueStats> {new NameValueStats {name = Version.GetVersion(), Value = 1}}
@@ -82,9 +85,9 @@ namespace DiscImageChef.Core
                         {
                             new OsStats
                             {
-                                name = Interop.DetectOS.GetRealPlatformID().ToString(),
+                                name = DetectOS.GetRealPlatformID().ToString(),
                                 Value = 1,
-                                version = Interop.DetectOS.GetVersion()
+                                version = DetectOS.GetVersion()
                             }
                         },
                     Versions = new List<NameValueStats> {new NameValueStats {name = Version.GetVersion(), Value = 1}}
@@ -106,8 +109,8 @@ namespace DiscImageChef.Core
                 long count = 0;
 
                 OsStats old = null;
-                foreach(OsStats nvs in AllStats.OperatingSystems.Where(nvs => nvs.name == Interop.DetectOS.GetRealPlatformID().ToString() &&
-                                                                              nvs.version == Interop.DetectOS.GetVersion())) {
+                foreach(OsStats nvs in AllStats.OperatingSystems.Where(nvs => nvs.name == DetectOS.GetRealPlatformID().ToString() &&
+                                                                              nvs.version == DetectOS.GetVersion())) {
                     count = nvs.Value + 1;
                     old = nvs;
                     break;
@@ -118,9 +121,9 @@ namespace DiscImageChef.Core
                 count++;
                 AllStats.OperatingSystems.Add(new OsStats
                 {
-                    name = Interop.DetectOS.GetRealPlatformID().ToString(),
+                    name = DetectOS.GetRealPlatformID().ToString(),
                     Value = count,
-                    version = Interop.DetectOS.GetVersion()
+                    version = DetectOS.GetVersion()
                 });
             }
             else if(CurrentStats != null) AllStats.OperatingSystems = CurrentStats.OperatingSystems;
@@ -483,7 +486,7 @@ namespace DiscImageChef.Core
             CurrentStats.MediaImages.Add(nw);
         }
 
-        public static void AddDevice(DiscImageChef.Devices.Device dev)
+        public static void AddDevice(Device dev)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.DeviceStats) return;
 
@@ -520,7 +523,7 @@ namespace DiscImageChef.Core
             CurrentStats.Devices.Add(nw);
         }
 
-        public static void AddMedia(CommonTypes.MediaType type, bool real)
+        public static void AddMedia(MediaType type, bool real)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaStats) return;
 

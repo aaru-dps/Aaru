@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -111,15 +112,15 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
-            decodedVD.SystemIdentifier = Encoding.ASCII.GetString(pvd.system_id).TrimEnd().Trim(new[] {'\0'});
-            decodedVD.VolumeIdentifier = Encoding.ASCII.GetString(pvd.volume_id).TrimEnd().Trim(new[] {'\0'});
-            decodedVD.VolumeSetIdentifier = Encoding.ASCII.GetString(pvd.volume_set_id).TrimEnd().Trim(new[] {'\0'});
-            decodedVD.PublisherIdentifier = Encoding.ASCII.GetString(pvd.publisher_id).TrimEnd().Trim(new[] {'\0'});
-            decodedVD.DataPreparerIdentifier = Encoding.ASCII.GetString(pvd.preparer_id).TrimEnd().Trim(new[] {'\0'});
+            decodedVD.SystemIdentifier = Encoding.ASCII.GetString(pvd.system_id).TrimEnd().Trim('\0');
+            decodedVD.VolumeIdentifier = Encoding.ASCII.GetString(pvd.volume_id).TrimEnd().Trim('\0');
+            decodedVD.VolumeSetIdentifier = Encoding.ASCII.GetString(pvd.volume_set_id).TrimEnd().Trim('\0');
+            decodedVD.PublisherIdentifier = Encoding.ASCII.GetString(pvd.publisher_id).TrimEnd().Trim('\0');
+            decodedVD.DataPreparerIdentifier = Encoding.ASCII.GetString(pvd.preparer_id).TrimEnd().Trim('\0');
             decodedVD.ApplicationIdentifier =
-                Encoding.ASCII.GetString(pvd.application_data).TrimEnd().Trim(new[] {'\0'});
+                Encoding.ASCII.GetString(pvd.application_data).TrimEnd().Trim('\0');
             if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00)
-                decodedVD.CreationTime = System.DateTime.MinValue;
+                decodedVD.CreationTime = DateTime.MinValue;
             else decodedVD.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
 
             if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00) decodedVD.HasModificationTime = false;

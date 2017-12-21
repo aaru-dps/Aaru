@@ -35,8 +35,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -57,7 +60,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public AmigaDOSPlugin(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AmigaDOSPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Amiga DOS filesystem";
             PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
@@ -209,7 +212,7 @@ namespace DiscImageChef.Filesystems
         public const uint TypeHeader = 2;
         public const uint SubTypeRoot = 1;
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
@@ -304,11 +307,11 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             information = null;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -437,7 +440,7 @@ namespace DiscImageChef.Filesystems
 
             if(bootBlk.checksum == bsum)
             {
-                Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
+                Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 sha1Ctx.Update(bootBlk.bootCode);
                 sbInformation.AppendLine("Volume is bootable");

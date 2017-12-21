@@ -136,19 +136,19 @@ namespace DiscImageChef.Devices.Windows
 
                 if(descriptor.VendorIdOffset > 0)
                     info.Vendor =
-                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: (int)descriptor.VendorIdOffset);
+                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.VendorIdOffset);
                 if(descriptor.ProductIdOffset > 0)
                     info.Model =
-                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: (int)descriptor.ProductIdOffset);
+                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.ProductIdOffset);
                 // TODO: Get serial number of SCSI and USB devices, probably also FireWire (untested)
                 if(descriptor.SerialNumberOffset > 0)
                 {
                     info.Serial =
                         StringHandlers.CToString(descriptorB, Encoding.ASCII,
-                                                 start: (int)descriptor.SerialNumberOffset);
+                                                 start: descriptor.SerialNumberOffset);
 
                     // fix any serial numbers that are returned as hex-strings
-                    if(Array.TrueForAll(info.Serial.ToCharArray(), (char c) => "0123456789abcdef".IndexOf(c) >= 0)
+                    if(Array.TrueForAll(info.Serial.ToCharArray(), c => "0123456789abcdef".IndexOf(c) >= 0)
                         && info.Serial.Length == 40) info.Serial = HexStringToString(info.Serial).Trim();
                 }
 

@@ -176,7 +176,7 @@ namespace DiscImageChef
 
                 if(unicode == 0) break;
 
-                temp += Encoding.Unicode.GetString(System.BitConverter.GetBytes(unicode));
+                temp += Encoding.Unicode.GetString(BitConverter.GetBytes(unicode));
             }
 
             return temp;

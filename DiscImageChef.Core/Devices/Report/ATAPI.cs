@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Devices;
 using DiscImageChef.Metadata;
 
@@ -48,12 +49,12 @@ namespace DiscImageChef.Core.Devices.Report
 
             DicConsole.WriteLine("Querying ATAPI IDENTIFY...");
 
-            Decoders.ATA.AtaErrorRegistersCHS errorRegs;
+            AtaErrorRegistersCHS errorRegs;
             dev.AtapiIdentify(out buffer, out errorRegs, timeout, out duration);
 
-            if(!Decoders.ATA.Identify.Decode(buffer).HasValue) return;
+            if(!Identify.Decode(buffer).HasValue) return;
 
-            Decoders.ATA.Identify.IdentifyDevice atapiId = Decoders.ATA.Identify.Decode(buffer).Value;
+            Identify.IdentifyDevice atapiId = Identify.Decode(buffer).Value;
 
             report.ATAPI = new ataType();
 

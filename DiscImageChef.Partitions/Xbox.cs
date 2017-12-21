@@ -146,7 +146,7 @@ namespace DiscImageChef.Partitions
                     {
                         Description = "Data volume",
                         Size =
-                            (ulong)imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize - MemoryUnitDataOff,
+                            imagePlugin.ImageInfo.Sectors * imagePlugin.ImageInfo.SectorSize - MemoryUnitDataOff,
                         Length = imagePlugin.ImageInfo.Sectors - sysCachePart.Length,
                         Sequence = 2,
                         Offset = MemoryUnitDataOff,

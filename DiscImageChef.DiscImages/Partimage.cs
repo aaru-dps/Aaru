@@ -38,7 +38,6 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
 using Extents;
 
 namespace DiscImageChef.DiscImages
@@ -508,7 +507,7 @@ namespace DiscImageChef.DiscImages
             DateTime start = DateTime.Now;
             extents = new ExtentsULong();
             extentsOff = new Dictionary<ulong, ulong>();
-            bool current = (bitmap[0] & (1 << (int)(0 % 8))) != 0;
+            bool current = (bitmap[0] & (1 << 0 % 8)) != 0;
             ulong blockOff = 0;
             ulong extentStart = 0;
 

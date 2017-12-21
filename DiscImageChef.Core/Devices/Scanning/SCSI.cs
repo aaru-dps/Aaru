@@ -32,8 +32,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
+using DiscImageChef.Decoders.CD;
+using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Scanning
@@ -59,7 +63,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
                 if(sense)
                 {
-                    Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                    FixedSense? decSense = Sense.DecodeFixed(senseBuf);
                     if(decSense.HasValue)
                         if(decSense.Value.ASC == 0x3A)
                         {
@@ -67,7 +71,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             while(leftRetries > 0)
                             {
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
-                                System.Threading.Thread.Sleep(2000);
+                                Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
                                 if(!sense) break;
 
@@ -86,7 +90,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             while(leftRetries > 0)
                             {
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
-                                System.Threading.Thread.Sleep(2000);
+                                Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
                                 if(!sense) break;
 
@@ -96,7 +100,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             if(sense)
                             {
                                 DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                          Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                                          Sense.PrettifySense(senseBuf));
                                 return results;
                             }
                         }
@@ -107,7 +111,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             while(leftRetries > 0)
                             {
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
-                                System.Threading.Thread.Sleep(2000);
+                                Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
                                 if(!sense) break;
 
@@ -117,14 +121,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                             if(sense)
                             {
                                 DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                          Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                                          Sense.PrettifySense(senseBuf));
                                 return results;
                             }
                         }
                         else
                         {
                             DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                      Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                                      Sense.PrettifySense(senseBuf));
                             return results;
                         }
                     else
@@ -138,12 +142,12 @@ namespace DiscImageChef.Core.Devices.Scanning
             Reader scsiReader = null;
 
             switch(dev.ScsiType) {
-                case Decoders.SCSI.PeripheralDeviceTypes.DirectAccess:
-                case Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice:
-                case Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice:
-                case Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice:
-                case Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice:
-                case Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice:
+                case PeripheralDeviceTypes.DirectAccess:
+                case PeripheralDeviceTypes.MultiMediaDevice:
+                case PeripheralDeviceTypes.OCRWDevice:
+                case PeripheralDeviceTypes.OpticalDevice:
+                case PeripheralDeviceTypes.SimplifiedDevice:
+                case PeripheralDeviceTypes.WriteOnceDevice:
                     scsiReader = new Reader(dev, dev.Timeout, null, false);
                     results.Blocks = scsiReader.GetDeviceBlocks();
                     if(scsiReader.FindReadCommand())
@@ -163,7 +167,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                     }
                     break;
-                case Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess:
+                case PeripheralDeviceTypes.SequentialAccess:
                     DicConsole.WriteLine("Scanning will never be supported on SCSI Streaming Devices.");
                     DicConsole.WriteLine("It has no sense to do it, and it will put too much strain on the tape.");
                     return results;
@@ -176,15 +180,15 @@ namespace DiscImageChef.Core.Devices.Scanning
             }
 
             bool compactDisc = true;
-            Decoders.CD.FullTOC.CDFullTOC? toc = null;
+            FullTOC.CDFullTOC? toc = null;
 
-            if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+            if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
             {
                 sense = dev.GetConfiguration(out cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current, dev.Timeout,
                                              out duration);
                 if(!sense)
                 {
-                    Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(cmdBuf);
+                    Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
 
                     currentProfile = ftr.CurrentProfile;
 
@@ -209,7 +213,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     // We discarded all discs that falsify a TOC before requesting a real TOC
                     // No TOC, no CD (or an empty one)
                     bool tocSense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out duration);
-                    if(!tocSense) toc = Decoders.CD.FullTOC.Decode(cmdBuf);
+                    if(!tocSense) toc = FullTOC.Decode(cmdBuf);
                 }
             }
             else compactDisc = false;
@@ -316,9 +320,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                     else
                     {
                         DicConsole.DebugWriteLine("Media-Scan", "READ CD error:\n{0}",
-                                                  Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                                  Sense.PrettifySense(senseBuf));
 
-                        Decoders.SCSI.FixedSense? senseDecoded = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                        FixedSense? senseDecoded = Sense.DecodeFixed(senseBuf);
                         if(senseDecoded.HasValue)
                         {
                             // TODO: This error happens when changing from track type afaik. Need to solve that more cleanly
@@ -350,7 +354,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     }
 
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-                    currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (cmdDuration / (double)1000);
+                    currentSpeed = (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                     GC.Collect();
                 }
@@ -360,7 +364,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 mhddLog.Close();
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
                 ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                             (double)blockSize * (double)(results.Blocks + 1) / 1024 /
+                             blockSize * (double)(results.Blocks + 1) / 1024 /
                              (results.ProcessingTime / 1000), devicePath);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
             }
@@ -415,7 +419,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     }
 
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-                    currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (cmdDuration / (double)1000);
+                    currentSpeed = (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                 }
 
@@ -424,7 +428,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 mhddLog.Close();
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
                 ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                             (double)blockSize * (double)(results.Blocks + 1) / 1024 /
+                             blockSize * (double)(results.Blocks + 1) / 1024 /
                              (results.ProcessingTime / 1000), devicePath);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
             }
@@ -465,7 +469,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             results.ProcessingTime /= 1000;
             results.TotalTime = (end - start).TotalSeconds;
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-            results.AvgSpeed = (double)blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
+            results.AvgSpeed = blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
             results.SeekTimes = SEEK_TIMES;
 

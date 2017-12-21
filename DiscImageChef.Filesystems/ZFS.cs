@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -237,7 +239,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public ZFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public ZFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "ZFS Filesystem Plugin";
             PluginUUID = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
@@ -245,7 +247,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -268,7 +270,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -308,7 +310,7 @@ namespace DiscImageChef.Filesystems
 
             NVS_Item tmpObj;
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "ZFS filesystem";
             if(decodedNvList.TryGetValue("name", out tmpObj)) xmlFSType.VolumeName = (string)tmpObj.value;
             if(decodedNvList.TryGetValue("guid", out tmpObj))

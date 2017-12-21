@@ -35,10 +35,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.Filters;
 using DiscImageChef.DiscImages;
+using DiscImageChef.Filters;
 using Schemas;
 
 namespace DiscImageChef.Commands
@@ -135,8 +136,8 @@ namespace DiscImageChef.Commands
                             FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
                                        FileMode.CreateNew);
 
-                    System.Xml.Serialization.XmlSerializer xmlSer =
-                        new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+                    XmlSerializer xmlSer =
+                        new XmlSerializer(typeof(CICMMetadataType));
                     xmlSer.Serialize(xmlFs, sidecar);
                     xmlFs.Close();
 
@@ -171,8 +172,8 @@ namespace DiscImageChef.Commands
                         FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
                                    FileMode.CreateNew);
 
-                System.Xml.Serialization.XmlSerializer xmlSer =
-                    new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+                XmlSerializer xmlSer =
+                    new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
 
@@ -181,7 +182,6 @@ namespace DiscImageChef.Commands
             else
             {
                 DicConsole.ErrorWriteLine("The specified input file cannot be found.");
-                return;
             }
         }
     }

@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Text;
 
 namespace DiscImageChef.Filesystems.ISO9660
@@ -41,19 +42,19 @@ namespace DiscImageChef.Filesystems.ISO9660
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
             decodedVD.SystemIdentifier =
-                Encoding.BigEndianUnicode.GetString(jolietvd.system_id).TrimEnd().Trim(new[] {'\u0000'});
+                Encoding.BigEndianUnicode.GetString(jolietvd.system_id).TrimEnd().Trim('\u0000');
             decodedVD.VolumeIdentifier =
-                Encoding.BigEndianUnicode.GetString(jolietvd.volume_id).TrimEnd().Trim(new[] {'\u0000'});
+                Encoding.BigEndianUnicode.GetString(jolietvd.volume_id).TrimEnd().Trim('\u0000');
             decodedVD.VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.volume_set_id).TrimEnd()
-                                                    .Trim(new[] {'\u0000'});
+                                                    .Trim('\u0000');
             decodedVD.PublisherIdentifier =
-                Encoding.BigEndianUnicode.GetString(jolietvd.publisher_id).TrimEnd().Trim(new[] {'\u0000'});
+                Encoding.BigEndianUnicode.GetString(jolietvd.publisher_id).TrimEnd().Trim('\u0000');
             decodedVD.DataPreparerIdentifier =
-                Encoding.BigEndianUnicode.GetString(jolietvd.preparer_id).TrimEnd().Trim(new[] {'\u0000'});
+                Encoding.BigEndianUnicode.GetString(jolietvd.preparer_id).TrimEnd().Trim('\u0000');
             decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.application_id).TrimEnd()
-                                                      .Trim(new[] {'\u0000'});
+                                                      .Trim('\u0000');
             if(jolietvd.creation_date[0] < 0x31 || jolietvd.creation_date[0] > 0x39)
-                decodedVD.CreationTime = System.DateTime.MinValue;
+                decodedVD.CreationTime = DateTime.MinValue;
             else decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(jolietvd.creation_date);
 
             if(jolietvd.modification_date[0] < 0x31 || jolietvd.modification_date[0] > 0x39) decodedVD.HasModificationTime = false;

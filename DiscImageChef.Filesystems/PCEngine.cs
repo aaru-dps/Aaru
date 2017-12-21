@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -54,7 +56,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public PCEnginePlugin(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public PCEnginePlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "PC Engine CD Plugin";
             PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
@@ -62,7 +64,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -74,11 +76,11 @@ namespace DiscImageChef.Filesystems
             return Encoding.ASCII.GetString(system_descriptor) == "PC Engine CD-ROM SYSTEM";
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "PC Engine filesystem";
             xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.GetSectorSize() * 2048);
             xmlFSType.ClusterSize = 2048;

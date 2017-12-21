@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -57,7 +59,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public RT11(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public RT11(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "RT-11 file system";
             PluginUUID = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
@@ -65,7 +67,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(1 + partition.Start >= partition.End) return false;
 
@@ -81,7 +83,7 @@ namespace DiscImageChef.Filesystems
             return magic == "DECRT11A    ";
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -120,7 +122,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] bootBlock = imagePlugin.ReadSector(0);
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Type = "RT-11",
                 ClusterSize = homeblock.cluster * 512,

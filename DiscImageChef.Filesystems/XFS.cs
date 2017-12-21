@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -119,7 +121,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public XFS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public XFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "XFS Filesystem Plugin";
             PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
@@ -127,12 +129,12 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
             // Misaligned
-            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 XFS_Superblock xfsSb = new XFS_Superblock();
 
@@ -178,7 +180,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -187,7 +189,7 @@ namespace DiscImageChef.Filesystems
             XFS_Superblock xfsSb = new XFS_Superblock();
 
             // Misaligned
-            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
+            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 uint sbSize = (uint)((Marshal.SizeOf(xfsSb) + 0x400) / imagePlugin.GetSectorSize());
                 if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.GetSectorSize() != 0) sbSize++;
@@ -245,7 +247,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "XFS filesystem";
             xmlFSType.ClusterSize = (int)xfsSb.blocksize;
             xmlFSType.Clusters = (long)xfsSb.dblocks;

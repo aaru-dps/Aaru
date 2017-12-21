@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Text;
 using DiscImageChef.Console;
 
 namespace DiscImageChef
@@ -43,7 +44,7 @@ namespace DiscImageChef
 
         public static string ByteArrayToHexArrayString(byte[] array, int width)
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             int counter = 0;
             int subcounter = 0;

@@ -38,6 +38,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.CPM
 {
@@ -1045,7 +1046,7 @@ namespace DiscImageChef.Filesystems.CPM
             if(labelUpdateDate != null)
                 sb.AppendFormat("Volume updated on {0}", DateHandlers.CPMToDateTime(labelUpdateDate)).AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Bootable |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
             xmlFSType.ClusterSize = 128 << dpb.bsh;
             if(dpb.dsm > 0) xmlFSType.Clusters = dpb.dsm;

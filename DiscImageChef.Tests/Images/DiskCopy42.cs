@@ -29,8 +29,8 @@
 using System.IO;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.Filters;
 using DiscImageChef.DiscImages;
+using DiscImageChef.Filters;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Images
@@ -89,7 +89,7 @@ namespace DiscImageChef.Tests.Images
                 string location = Path.Combine(Consts.TestFilesRoot, "images", "", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new DiscImageChef.DiscImages.DiskCopy42();
+                ImagePlugin image = new DiscImages.DiskCopy42();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);

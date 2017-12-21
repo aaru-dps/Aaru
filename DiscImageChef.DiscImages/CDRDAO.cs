@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
@@ -583,7 +584,7 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found INDEX \"{1}\" at line {0}", line,
                                                   matchIndex.Groups["address"].Value);
 
-                        string[] lengthString = matchFile.Groups["length"].Value.Split(new char[] {':'});
+                        string[] lengthString = matchFile.Groups["length"].Value.Split(':');
                         ulong nextIndexPos = ulong.Parse(lengthString[0]) * 60 * 75 +
                                              ulong.Parse(lengthString[1]) * 75 + ulong.Parse(lengthString[2]);
                         currenttrack.Indexes.Add(nextindex,
@@ -597,7 +598,7 @@ namespace DiscImageChef.DiscImages
                         currenttrack.Indexes.Add(0, currenttrack.StartSector);
                         if(matchPregap.Groups["address"].Value != "")
                         {
-                            string[] lengthString = matchPregap.Groups["address"].Value.Split(new char[] {':'});
+                            string[] lengthString = matchPregap.Groups["address"].Value.Split(':');
                             currenttrack.Pregap = ulong.Parse(lengthString[0]) * 60 * 75 +
                                                   ulong.Parse(lengthString[1]) * 75 + ulong.Parse(lengthString[2]);
                         }
@@ -608,7 +609,7 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("CDRDAO plugin", "Found PREGAP \"{1}\" at line {0}", line,
                                                   matchZeroPregap.Groups["length"].Value);
                         currenttrack.Indexes.Add(0, currenttrack.StartSector);
-                        string[] lengthString = matchZeroPregap.Groups["length"].Value.Split(new char[] {':'});
+                        string[] lengthString = matchZeroPregap.Groups["length"].Value.Split(':');
                         currenttrack.Pregap = ulong.Parse(lengthString[0]) * 60 * 75 +
                                               ulong.Parse(lengthString[1]) * 75 + ulong.Parse(lengthString[2]);
                     }
@@ -640,7 +641,7 @@ namespace DiscImageChef.DiscImages
 
                         if(matchAudioFile.Groups["start"].Value != "")
                         {
-                            string[] startString = matchAudioFile.Groups["start"].Value.Split(new char[] {':'});
+                            string[] startString = matchAudioFile.Groups["start"].Value.Split(':');
                             startSectors = ulong.Parse(startString[0]) * 60 * 75 + ulong.Parse(startString[1]) * 75 +
                                            ulong.Parse(startString[2]);
                         }
@@ -649,7 +650,7 @@ namespace DiscImageChef.DiscImages
 
                         if(matchAudioFile.Groups["length"].Value != "")
                         {
-                            string[] lengthString = matchAudioFile.Groups["length"].Value.Split(new char[] {':'});
+                            string[] lengthString = matchAudioFile.Groups["length"].Value.Split(':');
                             currenttrack.Sectors = ulong.Parse(lengthString[0]) * 60 * 75 +
                                                    ulong.Parse(lengthString[1]) * 75 + ulong.Parse(lengthString[2]);
                         }
@@ -677,7 +678,7 @@ namespace DiscImageChef.DiscImages
                         currenttrack.Trackfile.Sequence = currentTrackNumber;
                         if(matchFile.Groups["length"].Value != "")
                         {
-                            string[] lengthString = matchFile.Groups["length"].Value.Split(new char[] {':'});
+                            string[] lengthString = matchFile.Groups["length"].Value.Split(':');
                             currenttrack.Sectors = ulong.Parse(lengthString[0]) * 60 * 75 +
                                                    ulong.Parse(lengthString[1]) * 75 + ulong.Parse(lengthString[2]);
                         }
@@ -1560,13 +1561,13 @@ namespace DiscImageChef.DiscImages
         public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
-            return Checksums.CdChecksums.CheckCdSector(buffer);
+            return CdChecksums.CheckCdSector(buffer);
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
@@ -1581,7 +1582,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {
@@ -1612,7 +1613,7 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = Checksums.CdChecksums.CheckCdSector(sector);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
                 switch(sectorStatus)
                 {

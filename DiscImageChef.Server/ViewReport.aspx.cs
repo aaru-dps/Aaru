@@ -35,14 +35,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Web;
+using System.Web.Hosting;
+using System.Web.UI;
 using System.Xml.Serialization;
+using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Metadata;
 using DiscImageChef.Server.App_Start;
+using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Server
 {
-    public partial class ViewReport : System.Web.UI.Page
+    public partial class ViewReport : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -78,7 +82,7 @@ namespace DiscImageChef.Server
                 else if(!string.IsNullOrWhiteSpace(model)) xmlFile = model + ".xml";
 
                 if(xmlFile == null ||
-                   !File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Reports", xmlFile)))
+                   !File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Reports", xmlFile)))
                 {
                     content.InnerHtml = "<b>Could not find the specified report</b>";
                     return;
@@ -91,7 +95,7 @@ namespace DiscImageChef.Server
                 DeviceReport report = new DeviceReport();
                 XmlSerializer xs = new XmlSerializer(report.GetType());
                 StreamReader sr =
-                    new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Reports",
+                    new StreamReader(Path.Combine(HostingEnvironment.MapPath("~"), "Reports",
                                                   xmlFile));
                 report = (DeviceReport)xs.Deserialize(sr);
                 sr.Close();
@@ -132,23 +136,23 @@ namespace DiscImageChef.Server
                     lblPcmciaManufacturerCode.Text = string.Format("0x{0:x4}", report.PCMCIA.ManufacturerCode);
                     lblPcmciaCardCode.Text = string.Format("0x{0:x4}", report.PCMCIA.CardCode);
                     lblPcmciaCompliance.Text = HttpUtility.HtmlEncode(report.PCMCIA.Compliance);
-                    Decoders.PCMCIA.Tuple[] tuples = Decoders.PCMCIA.CIS.GetTuples(report.PCMCIA.CIS);
+                    Tuple[] tuples = CIS.GetTuples(report.PCMCIA.CIS);
                     if(tuples != null)
                     {
                         Dictionary<string, string> decodedTuples = new Dictionary<string, string>();
-                        foreach(Decoders.PCMCIA.Tuple tuple in tuples)
+                        foreach(Tuple tuple in tuples)
                             switch(tuple.Code)
                             {
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_NULL:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_END:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_MANFID:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_VERS_1: break;
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICEGEO:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICEGEO_A:
-                                    Decoders.PCMCIA.DeviceGeometryTuple geom =
-                                        Decoders.PCMCIA.CIS.DecodeDeviceGeometryTuple(tuple.Data);
+                                case TupleCodes.CISTPL_NULL:
+                                case TupleCodes.CISTPL_END:
+                                case TupleCodes.CISTPL_MANFID:
+                                case TupleCodes.CISTPL_VERS_1: break;
+                                case TupleCodes.CISTPL_DEVICEGEO:
+                                case TupleCodes.CISTPL_DEVICEGEO_A:
+                                    DeviceGeometryTuple geom =
+                                        CIS.DecodeDeviceGeometryTuple(tuple.Data);
                                     if(geom != null && geom.Geometries != null)
-                                        foreach(Decoders.PCMCIA.DeviceGeometry geometry in geom.Geometries)
+                                        foreach(DeviceGeometry geometry in geom.Geometries)
                                         {
                                             decodedTuples.Add("Device width",
                                                               string.Format("{0} bits",
@@ -173,40 +177,40 @@ namespace DiscImageChef.Server
                                         }
 
                                     break;
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_ALTSTR:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_BAR:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_BATTERY:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_BYTEORDER:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_CFTABLE_ENTRY:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_CFTABLE_ENTRY_CB:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_CHECKSUM:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_CONFIG:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_CONFIG_CB:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_DATE:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICE:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICE_A:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICE_OA:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICE_OC:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_EXTDEVIC:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_FORMAT:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_FORMAT_A:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_FUNCE:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_FUNCID:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_GEOMETRY:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_INDIRECT:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_JEDEC_A:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_JEDEC_C:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_LINKTARGET:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_LONGLINK_A:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_LONGLINK_C:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_LONGLINK_CB:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_LONGLINK_MFC:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_NO_LINK:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_ORG:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_PWR_MGMNT:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_SPCL:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_SWIL:
-                                case Decoders.PCMCIA.TupleCodes.CISTPL_VERS_2:
+                                case TupleCodes.CISTPL_ALTSTR:
+                                case TupleCodes.CISTPL_BAR:
+                                case TupleCodes.CISTPL_BATTERY:
+                                case TupleCodes.CISTPL_BYTEORDER:
+                                case TupleCodes.CISTPL_CFTABLE_ENTRY:
+                                case TupleCodes.CISTPL_CFTABLE_ENTRY_CB:
+                                case TupleCodes.CISTPL_CHECKSUM:
+                                case TupleCodes.CISTPL_CONFIG:
+                                case TupleCodes.CISTPL_CONFIG_CB:
+                                case TupleCodes.CISTPL_DATE:
+                                case TupleCodes.CISTPL_DEVICE:
+                                case TupleCodes.CISTPL_DEVICE_A:
+                                case TupleCodes.CISTPL_DEVICE_OA:
+                                case TupleCodes.CISTPL_DEVICE_OC:
+                                case TupleCodes.CISTPL_EXTDEVIC:
+                                case TupleCodes.CISTPL_FORMAT:
+                                case TupleCodes.CISTPL_FORMAT_A:
+                                case TupleCodes.CISTPL_FUNCE:
+                                case TupleCodes.CISTPL_FUNCID:
+                                case TupleCodes.CISTPL_GEOMETRY:
+                                case TupleCodes.CISTPL_INDIRECT:
+                                case TupleCodes.CISTPL_JEDEC_A:
+                                case TupleCodes.CISTPL_JEDEC_C:
+                                case TupleCodes.CISTPL_LINKTARGET:
+                                case TupleCodes.CISTPL_LONGLINK_A:
+                                case TupleCodes.CISTPL_LONGLINK_C:
+                                case TupleCodes.CISTPL_LONGLINK_CB:
+                                case TupleCodes.CISTPL_LONGLINK_MFC:
+                                case TupleCodes.CISTPL_NO_LINK:
+                                case TupleCodes.CISTPL_ORG:
+                                case TupleCodes.CISTPL_PWR_MGMNT:
+                                case TupleCodes.CISTPL_SPCL:
+                                case TupleCodes.CISTPL_SWIL:
+                                case TupleCodes.CISTPL_VERS_2:
                                     decodedTuples.Add("Undecoded tuple ID", tuple.Code.ToString());
                                     break;
                                 default:
@@ -563,10 +567,10 @@ namespace DiscImageChef.Server
             vendorDescription = null;
             productDescription = null;
 
-            if(!File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "usb.ids"))) return;
+            if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "usb.ids"))) return;
 
             StreamReader tocStream =
-                new StreamReader(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "usb.ids"));
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~"), "usb.ids"));
             string _line;
             bool inManufacturer = false;
             ushort number;
@@ -589,19 +593,16 @@ namespace DiscImageChef.Server
                     productDescription = _line.Substring(7);
                     return;
                 }
-                else
-                {
-                    // Skip products
-                    if(_line[0] == '\t') continue;
+                // Skip products
+                if(_line[0] == '\t') continue;
 
-                    try { number = Convert.ToUInt16(_line.Substring(0, 4), 16); }
-                    catch(FormatException) { continue; }
+                try { number = Convert.ToUInt16(_line.Substring(0, 4), 16); }
+                catch(FormatException) { continue; }
 
-                    if(number != vendor) continue;
+                if(number != vendor) continue;
 
-                    vendorDescription = _line.Substring(6);
-                    inManufacturer = true;
-                }
+                vendorDescription = _line.Substring(6);
+                inManufacturer = true;
             }
         }
     }

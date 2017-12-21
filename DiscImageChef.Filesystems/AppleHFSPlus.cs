@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -68,14 +70,14 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.BigEndianUnicode;
         }
 
-        public AppleHFSPlus(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public AppleHFSPlus(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple HFS+ filesystem";
             PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
             CurrentEncoding = Encoding.BigEndianUnicode;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -123,7 +125,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -245,7 +247,7 @@ namespace DiscImageChef.Filesystems
                         sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7)
                           .AppendLine();
 
-                    xmlFSType = new Schemas.FileSystemType();
+                    xmlFSType = new FileSystemType();
                     if(HPVH.backupDate > 0)
                     {
                         xmlFSType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);

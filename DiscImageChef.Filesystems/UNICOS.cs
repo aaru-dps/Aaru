@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 // UNICOS is ILP64 so let's think everything is 64-bit
 using blkno_t = System.Int64;
 using daddr_t = System.Int64;
@@ -147,7 +149,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public UNICOS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public UNICOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNICOS Filesystem Plugin";
             PluginUUID = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
@@ -155,7 +157,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
@@ -175,7 +177,7 @@ namespace DiscImageChef.Filesystems
             return unicosSb.s_magic == UNICOS_Magic;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -211,7 +213,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Type = "UNICOS filesystem",
                 ClusterSize = 4096,

@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -65,7 +67,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public ODS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public ODS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Files-11 On-Disk Structure";
             PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
@@ -73,7 +75,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
@@ -91,7 +93,7 @@ namespace DiscImageChef.Filesystems
             if(magic == "DECFILE11A  " || magic == "DECFILE11B  ") return true;
 
             // Optical disc
-            if(imagePlugin.ImageInfo.XmlMediaType != DiscImages.XmlMediaType.OpticalDisc) return false;
+            if(imagePlugin.ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc) return false;
 
             if(hb_sector.Length < 0x400) return false;
 
@@ -107,7 +109,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -125,7 +127,7 @@ namespace DiscImageChef.Filesystems
             handle.Free();
 
             // Optical disc
-            if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc &&
+            if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc &&
                StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
                StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
             {
@@ -242,7 +244,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("File protection: 0x{0:X4}", homeblock.fileprot).AppendLine();
             sb.AppendFormat("Record protection: 0x{0:X4}", homeblock.recprot).AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Type = "FILES-11",
                 ClusterSize = homeblock.cluster * 512,

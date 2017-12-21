@@ -36,6 +36,7 @@ using System.Xml.Serialization;
 using Claunia.PropertyList;
 using DiscImageChef.Interop;
 using Microsoft.Win32;
+using PlatformID = DiscImageChef.Interop.PlatformID;
 
 namespace DiscImageChef.Settings
 {
@@ -78,14 +79,14 @@ namespace DiscImageChef.Settings
         public static void LoadSettings()
         {
             Current = new DicSettings();
-            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+            PlatformID ptID = DetectOS.GetRealPlatformID();
 
             try
             {
                 switch(ptID)
                 {
-                    case Interop.PlatformID.MacOSX:
-                    case Interop.PlatformID.iOS:
+                    case PlatformID.MacOSX:
+                    case PlatformID.iOS:
                     {
                         string appSupportPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
@@ -102,11 +103,11 @@ namespace DiscImageChef.Settings
                         if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                     }
                         break;
-                    case Interop.PlatformID.Win32NT:
-                    case Interop.PlatformID.Win32S:
-                    case Interop.PlatformID.Win32Windows:
-                    case Interop.PlatformID.WinCE:
-                    case Interop.PlatformID.WindowsPhone:
+                    case PlatformID.Win32NT:
+                    case PlatformID.Win32S:
+                    case PlatformID.Win32Windows:
+                    case PlatformID.WinCE:
+                    case PlatformID.WindowsPhone:
                     {
                         string appSupportPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -151,8 +152,8 @@ namespace DiscImageChef.Settings
             {
                 switch(ptID)
                 {
-                    case Interop.PlatformID.MacOSX:
-                    case Interop.PlatformID.iOS:
+                    case PlatformID.MacOSX:
+                    case PlatformID.iOS:
                     {
                         string preferencesPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
@@ -235,11 +236,11 @@ namespace DiscImageChef.Settings
                         }
                     }
                         break;
-                    case Interop.PlatformID.Win32NT:
-                    case Interop.PlatformID.Win32S:
-                    case Interop.PlatformID.Win32Windows:
-                    case Interop.PlatformID.WinCE:
-                    case Interop.PlatformID.WindowsPhone:
+                    case PlatformID.Win32NT:
+                    case PlatformID.Win32S:
+                    case PlatformID.Win32Windows:
+                    case PlatformID.WinCE:
+                    case PlatformID.WindowsPhone:
                     {
                         RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE").OpenSubKey("Claunia.com");
                         if(parentKey == null)
@@ -313,12 +314,12 @@ namespace DiscImageChef.Settings
         {
             try
             {
-                Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+                PlatformID ptID = DetectOS.GetRealPlatformID();
 
                 switch(ptID)
                 {
-                    case Interop.PlatformID.MacOSX:
-                    case Interop.PlatformID.iOS:
+                    case PlatformID.MacOSX:
+                    case PlatformID.iOS:
                     {
                         NSDictionary root = new NSDictionary();
                         root.Add("SaveReportsGlobally", Current.SaveReportsGlobally);
@@ -350,11 +351,11 @@ namespace DiscImageChef.Settings
                         fs.Close();
                     }
                         break;
-                    case Interop.PlatformID.Win32NT:
-                    case Interop.PlatformID.Win32S:
-                    case Interop.PlatformID.Win32Windows:
-                    case Interop.PlatformID.WinCE:
-                    case Interop.PlatformID.WindowsPhone:
+                    case PlatformID.Win32NT:
+                    case PlatformID.Win32S:
+                    case PlatformID.Win32Windows:
+                    case PlatformID.WinCE:
+                    case PlatformID.WindowsPhone:
                     {
                         RegistryKey parentKey =
                             Registry.CurrentUser.OpenSubKey("SOFTWARE", true).CreateSubKey("Claunia.com");

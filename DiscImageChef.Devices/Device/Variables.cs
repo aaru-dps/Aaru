@@ -30,6 +30,9 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Interop;
+
 namespace DiscImageChef.Devices
 {
     public partial class Device
@@ -51,7 +54,7 @@ namespace DiscImageChef.Devices
         /// Gets the Platform ID for this device
         /// </summary>
         /// <value>The Platform ID</value>
-        public Interop.PlatformID PlatformId { get; }
+        public PlatformID PlatformId { get; }
 
         /// <summary>
         /// Gets the file handle representing this device
@@ -111,7 +114,7 @@ namespace DiscImageChef.Devices
         /// Gets the device's SCSI peripheral device type
         /// </summary>
         /// <value>The SCSI peripheral device type.</value>
-        public Decoders.SCSI.PeripheralDeviceTypes ScsiType { get; }
+        public PeripheralDeviceTypes ScsiType { get; }
 
         /// <summary>
         /// Gets a value indicating whether this device's media is removable.

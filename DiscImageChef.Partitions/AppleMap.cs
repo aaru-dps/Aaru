@@ -34,7 +34,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
@@ -57,15 +59,15 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
         }
 
-        public override bool GetInformation(DiscImages.ImagePlugin imagePlugin,
-                                            out List<CommonTypes.Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin,
+                                            out List<Partition> partitions, ulong sectorOffset)
         {
             uint sector_size;
 
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448) sector_size = 2048;
             else sector_size = imagePlugin.GetSectorSize();
 
-            partitions = new List<CommonTypes.Partition>();
+            partitions = new List<Partition>();
 
             if(sectorOffset + 2 >= imagePlugin.GetSectors()) return false;
 
@@ -113,7 +115,7 @@ namespace DiscImageChef.Partitions
 
                         if(ddm.sbMap[i].ddSize == 0) continue;
 
-                        CommonTypes.Partition part = new CommonTypes.Partition
+                        Partition part = new Partition
                         {
                             Size = (ulong)(ddm.sbMap[i].ddSize * 512),
                             Length = (ulong)(ddm.sbMap[i].ddSize * 512 / sector_size),
@@ -158,7 +160,7 @@ namespace DiscImageChef.Partitions
                         continue;
                     }
 
-                    CommonTypes.Partition part = new CommonTypes.Partition
+                    Partition part = new Partition
                     {
                         Size = old_entry.pdStart * ddm.sbBlockSize,
                         Length = old_entry.pdStart * ddm.sbBlockSize / sector_size,
@@ -282,7 +284,7 @@ namespace DiscImageChef.Partitions
 
                 StringBuilder sb = new StringBuilder();
 
-                CommonTypes.Partition _partition = new CommonTypes.Partition
+                Partition _partition = new Partition
                 {
                     Sequence = sequence,
                     Type = StringHandlers.CToString(entry.type),

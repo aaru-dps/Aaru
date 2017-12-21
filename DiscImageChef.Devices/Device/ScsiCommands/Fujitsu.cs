@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Text;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Devices
@@ -51,12 +52,12 @@ namespace DiscImageChef.Devices
 
             if(!string.IsNullOrWhiteSpace(firstHalf))
             {
-                tmp = System.Text.Encoding.ASCII.GetBytes(firstHalf);
+                tmp = Encoding.ASCII.GetBytes(firstHalf);
                 Array.Copy(tmp, 0, firstHalfBytes, 0, 8);
             }
             if(!string.IsNullOrWhiteSpace(secondHalf))
             {
-                tmp = System.Text.Encoding.ASCII.GetBytes(secondHalf);
+                tmp = Encoding.ASCII.GetBytes(secondHalf);
                 Array.Copy(tmp, 0, secondHalfBytes, 0, 8);
             }
 

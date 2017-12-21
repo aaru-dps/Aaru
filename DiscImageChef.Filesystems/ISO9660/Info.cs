@@ -34,14 +34,18 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.Sega;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660 : Filesystem
     {
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             byte VDType;
 
@@ -75,7 +79,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                    CurrentEncoding.GetString(VDMagic) == CdiMagic;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -221,7 +225,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
             DecodedVolumeDescriptor decodedJolietVD = new DecodedVolumeDescriptor();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
 
             if(pvd == null && hsvd == null && fsvd == null)
             {
@@ -466,9 +470,9 @@ namespace DiscImageChef.Filesystems.ISO9660
             }
 
             byte[] ipbin_sector = imagePlugin.ReadSector(0 + partition.Start);
-            Decoders.Sega.CD.IPBin? SegaCD = Decoders.Sega.CD.DecodeIPBin(ipbin_sector);
-            Decoders.Sega.Saturn.IPBin? Saturn = Decoders.Sega.Saturn.DecodeIPBin(ipbin_sector);
-            Decoders.Sega.Dreamcast.IPBin? Dreamcast = Decoders.Sega.Dreamcast.DecodeIPBin(ipbin_sector);
+            CD.IPBin? SegaCD = CD.DecodeIPBin(ipbin_sector);
+            Saturn.IPBin? Saturn = Decoders.Sega.Saturn.DecodeIPBin(ipbin_sector);
+            Dreamcast.IPBin? Dreamcast = Decoders.Sega.Dreamcast.DecodeIPBin(ipbin_sector);
 
             string fsFormat;
             if(HighSierra) fsFormat = "High Sierra Format";
@@ -488,7 +492,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(SegaCD != null)
             {
                 ISOMetadata.AppendLine("This is a SegaCD / MegaCD disc.");
-                ISOMetadata.AppendLine(Decoders.Sega.CD.Prettify(SegaCD));
+                ISOMetadata.AppendLine(CD.Prettify(SegaCD));
             }
             if(Saturn != null)
             {
@@ -553,7 +557,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(torito != null)
             {
                 vd_sector = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start);
-                Checksums.Sha1Context sha1Ctx = new Checksums.Sha1Context();
+                Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
                 byte[] boot_image;
 
@@ -730,7 +734,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             }
 
             exit_torito:
-            if(refareas.Count > 0) ISOMetadata.Append(suspInformation.ToString());
+            if(refareas.Count > 0) ISOMetadata.Append(suspInformation);
 
             xmlFSType.Type = fsFormat;
 

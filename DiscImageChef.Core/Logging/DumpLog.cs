@@ -34,6 +34,8 @@ using System;
 using System.IO;
 using System.Reflection;
 using DiscImageChef.Devices;
+using DiscImageChef.Interop;
+using PlatformID = DiscImageChef.Interop.PlatformID;
 
 namespace DiscImageChef.Core.Logging
 {
@@ -49,12 +51,12 @@ namespace DiscImageChef.Core.Logging
 
             logSw.WriteLine("Start logging at {0}", DateTime.Now);
 
-            Interop.PlatformID platId = Interop.DetectOS.GetRealPlatformID();
-            string platVer = Interop.DetectOS.GetVersion();
+            PlatformID platId = DetectOS.GetRealPlatformID();
+            string platVer = DetectOS.GetVersion();
             Type monoRunType = Type.GetType("Mono.Runtime");
 
             logSw.WriteLine("################# System information #################");
-            logSw.WriteLine("{0} {1} ({2}-bit)", Interop.DetectOS.GetPlatformName(platId, platVer), platVer,
+            logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
                             Environment.Is64BitOperatingSystem ? 64 : 32);
             if(monoRunType != null)
             {

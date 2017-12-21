@@ -48,7 +48,7 @@ namespace DiscImageChef.Filesystems.CPM
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return Errno.NoSuchFile;
@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems.CPM
         {
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return Errno.NoSuchFile;

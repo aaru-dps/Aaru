@@ -32,8 +32,11 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Http;
 using System.Xml.Serialization;
 using DiscImageChef.Metadata;
@@ -47,7 +50,7 @@ namespace DiscImageChef.Server.Controllers
         public HttpResponseMessage UploadReport()
         {
             HttpResponseMessage response = new HttpResponseMessage();
-            response.StatusCode = System.Net.HttpStatusCode.OK;
+            response.StatusCode = HttpStatusCode.OK;
 
             try
             {
@@ -56,7 +59,7 @@ namespace DiscImageChef.Server.Controllers
 
                 if(request.InputStream == null)
                 {
-                    response.Content = new StringContent("notstats", System.Text.Encoding.UTF8, "text/plain");
+                    response.Content = new StringContent("notstats", Encoding.UTF8, "text/plain");
                     return response;
                 }
 
@@ -65,21 +68,21 @@ namespace DiscImageChef.Server.Controllers
 
                 if(newReport == null)
                 {
-                    response.Content = new StringContent("notstats", System.Text.Encoding.UTF8, "text/plain");
+                    response.Content = new StringContent("notstats", Encoding.UTF8, "text/plain");
                     return response;
                 }
 
                 Random rng = new Random();
                 string filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
-                while(File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Upload", filename))) filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
+                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Upload", filename))) filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
 
                 FileStream newFile =
-                    new FileStream(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Upload", filename),
+                    new FileStream(Path.Combine(HostingEnvironment.MapPath("~"), "Upload", filename),
                                    FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
                 xs.Serialize(newFile, newReport);
                 newFile.Close();
 
-                response.Content = new StringContent("ok", System.Text.Encoding.UTF8, "text/plain");
+                response.Content = new StringContent("ok", Encoding.UTF8, "text/plain");
                 return response;
             }
             // ReSharper disable once RedundantCatchClause

@@ -34,23 +34,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.MMC;
 using DiscImageChef.Devices;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
-using DiscImageChef.DiscImages;
+using DiscImageChef.Metadata;
 using Extents;
 using Schemas;
+using MediaType = DiscImageChef.Metadata.MediaType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
     public class SecureDigital
     {
         public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
-                                bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume,
+                                bool dumpRaw, bool persistent, bool stopOnError, ref Resume resume,
                                 ref DumpLog dumpLog, Encoding encoding)
         {
             bool aborted;
@@ -75,7 +78,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             double duration;
 
             CICMMetadataType sidecar =
-                new CICMMetadataType {BlockMedia = new BlockMediaType[] {new BlockMediaType()}};
+                new CICMMetadataType {BlockMedia = new[] {new BlockMediaType()}};
 
             uint blocksToRead = 128;
             uint blockSize = 512;
@@ -305,7 +308,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 if(aborted)
                 {
-                    currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                     dumpLog.WriteLine("Aborted!");
                     break;
                 }
@@ -342,7 +345,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (duration / (double)1000);
+                currentSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                 GC.Collect();
                 resume.NextBlock = i + blocksToRead;
@@ -353,7 +356,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             mhddLog.Close();
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), devicePath);
+                         blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), devicePath);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
@@ -372,7 +375,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     if(aborted)
                     {
-                        currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                         dumpLog.WriteLine("Aborted!");
                         break;
                     }
@@ -409,7 +412,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
             #endregion Error handling
 
-            currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
+            currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             dataChk = new Checksum();
             dumpFile.Seek(0, SeekOrigin.Begin);
@@ -437,7 +440,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                 totalChkDuration += chkDuration;
 
-                currentSpeed = (double)blockSize * blocksToRead / (double)1048576 / (chkDuration / (double)1000);
+                currentSpeed = (double)blockSize * blocksToRead / 1048576 / (chkDuration / 1000);
             }
 
             DicConsole.WriteLine();
@@ -548,12 +551,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             string xmlDskTyp = null, xmlDskSubTyp = null;
             switch(dev.Type) {
                 case DeviceType.MMC:
-                    Metadata.MediaType.MediaTypeToString(MediaType.MMC, out xmlDskTyp, out xmlDskSubTyp);
-                    sidecar.BlockMedia[0].Dimensions = Metadata.Dimensions.DimensionsFromMediaType(MediaType.MMC);
+                    MediaType.MediaTypeToString(CommonTypes.MediaType.MMC, out xmlDskTyp, out xmlDskSubTyp);
+                    sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(CommonTypes.MediaType.MMC);
                     break;
                 case DeviceType.SecureDigital:
-                    Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital, out xmlDskTyp, out xmlDskSubTyp);
-                    sidecar.BlockMedia[0].Dimensions = Metadata.Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
+                    MediaType.MediaTypeToString(CommonTypes.MediaType.SecureDigital, out xmlDskTyp, out xmlDskSubTyp);
+                    sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(CommonTypes.MediaType.SecureDigital);
                     break;
             }
             sidecar.BlockMedia[0].DiskType = xmlDskTyp;
@@ -597,16 +600,16 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
-                System.Xml.Serialization.XmlSerializer xmlSer =
-                    new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+                XmlSerializer xmlSer =
+                    new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
             }
 
             switch(dev.Type) {
-                case DeviceType.MMC: Statistics.AddMedia(MediaType.MMC, true);
+                case DeviceType.MMC: Statistics.AddMedia(CommonTypes.MediaType.MMC, true);
                     break;
-                case DeviceType.SecureDigital: Statistics.AddMedia(MediaType.SecureDigital, true);
+                case DeviceType.SecureDigital: Statistics.AddMedia(CommonTypes.MediaType.SecureDigital, true);
                     break;
             }
         }

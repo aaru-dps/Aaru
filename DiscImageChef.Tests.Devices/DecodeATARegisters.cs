@@ -105,7 +105,7 @@ namespace DiscImageChef.Tests.Devices
             sb.AppendFormat("Error: {0}", DecodeATAStatus(registers.error)).AppendLine();
             sb.AppendFormat("Device: {0}", (registers.deviceHead >> 4) & 0x01).AppendLine();
             sb.AppendFormat("LBA: {0}",
-                            (ulong)(registers.deviceHead & 0xF) * (ulong)0x100000000000 +
+                            (ulong)(registers.deviceHead & 0xF) * 0x100000000000 +
                             registers.lbaHigh * (ulong)0x100000000L + (ulong)(registers.lbaMid << 16) +
                             registers.lbaLow);
             sb.AppendFormat("Count: {0}", registers.sectorCount).AppendLine();

@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -60,7 +62,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public MicroDOS(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public MicroDOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "MicroDOS file system";
             PluginUUID = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
@@ -68,7 +70,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(1 + partition.Start >= partition.End) return false;
 
@@ -85,7 +87,7 @@ namespace DiscImageChef.Filesystems
             return block0.label == magic && block0.mklabel == magic2;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -106,7 +108,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume contains {0} files", block0.files).AppendLine();
             sb.AppendFormat("First used block is {0}", block0.firstUsedBlock).AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType
+            xmlFSType = new FileSystemType
             {
                 Type = "MicroDOS",
                 ClusterSize = 512,

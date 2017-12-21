@@ -383,7 +383,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new char[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length == 0)
             {

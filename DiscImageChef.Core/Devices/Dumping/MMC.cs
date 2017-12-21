@@ -32,11 +32,19 @@
 
 using System;
 using System.Text;
-using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.Devices;
 using DiscImageChef.Core.Logging;
+using DiscImageChef.Decoders.Bluray;
+using DiscImageChef.Decoders.DVD;
+using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Decoders.SCSI.MMC;
+using DiscImageChef.Devices;
+using DiscImageChef.Metadata;
 using Schemas;
+using DDS = DiscImageChef.Decoders.DVD.DDS;
+using DMI = DiscImageChef.Decoders.Xbox.DMI;
+using MediaType = DiscImageChef.CommonTypes.MediaType;
+using Spare = DiscImageChef.Decoders.DVD.Spare;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -44,7 +52,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     {
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
-                                  ref MediaType dskType, bool separateSubchannel, ref Metadata.Resume resume,
+                                  ref MediaType dskType, bool separateSubchannel, ref Resume resume,
                                   ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)
         {
             byte[] cmdBuf = null;
@@ -67,7 +75,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                          out duration);
             if(!sense)
             {
-                Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(cmdBuf);
+                Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
                 currentProfile = ftr.CurrentProfile;
                 dumpLog.WriteLine("Device reports current profile is 0x{0:X4}", ftr.CurrentProfile);
 
@@ -186,9 +194,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
                     if(!sense)
                     {
-                        Decoders.DVD.PFI.PhysicalFormatInformation? nintendoPfi = Decoders.DVD.PFI.Decode(cmdBuf);
+                        PFI.PhysicalFormatInformation? nintendoPfi = PFI.Decode(cmdBuf);
                         if(nintendoPfi != null)
-                            if(nintendoPfi.Value.DiskCategory == Decoders.DVD.DiskCategory.Nintendo &&
+                            if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
                                nintendoPfi.Value.PartVersion == 15)
                             {
                                 dumpLog.WriteLine("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
@@ -221,7 +229,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!sense)
                     {
                         alcohol.AddPfi(cmdBuf);
-                        if(Decoders.DVD.PFI.Decode(cmdBuf).HasValue)
+                        if(PFI.Decode(cmdBuf).HasValue)
                         {
                             tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
@@ -233,56 +241,56 @@ namespace DiscImageChef.Core.Devices.Dumping
                             };
                             DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PFI.Image, tmpBuf);
 
-                            Decoders.DVD.PFI.PhysicalFormatInformation decPfi = Decoders.DVD.PFI.Decode(cmdBuf).Value;
-                            DicConsole.WriteLine("PFI:\n{0}", Decoders.DVD.PFI.Prettify(decPfi));
+                            PFI.PhysicalFormatInformation decPfi = PFI.Decode(cmdBuf).Value;
+                            DicConsole.WriteLine("PFI:\n{0}", PFI.Prettify(decPfi));
 
                             // False book types
                             if(dskType == MediaType.DVDROM)
                                 switch(decPfi.DiskCategory)
                                 {
-                                    case Decoders.DVD.DiskCategory.DVDPR:
+                                    case DiskCategory.DVDPR:
                                         dskType = MediaType.DVDPR;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDPRDL:
+                                    case DiskCategory.DVDPRDL:
                                         dskType = MediaType.DVDPRDL;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDPRW:
+                                    case DiskCategory.DVDPRW:
                                         dskType = MediaType.DVDPRW;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDPRWDL:
+                                    case DiskCategory.DVDPRWDL:
                                         dskType = MediaType.DVDPRWDL;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDR:
+                                    case DiskCategory.DVDR:
                                         if(decPfi.PartVersion == 6) dskType = MediaType.DVDRDL;
                                         else dskType = MediaType.DVDR;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDRAM:
+                                    case DiskCategory.DVDRAM:
                                         dskType = MediaType.DVDRAM;
                                         break;
                                     default:
                                         dskType = MediaType.DVDROM;
                                         break;
-                                    case Decoders.DVD.DiskCategory.DVDRW:
+                                    case DiskCategory.DVDRW:
                                         if(decPfi.PartVersion == 3) dskType = MediaType.DVDRWDL;
                                         else dskType = MediaType.DVDRW;
                                         break;
-                                    case Decoders.DVD.DiskCategory.HDDVDR:
+                                    case DiskCategory.HDDVDR:
                                         dskType = MediaType.HDDVDR;
                                         break;
-                                    case Decoders.DVD.DiskCategory.HDDVDRAM:
+                                    case DiskCategory.HDDVDRAM:
                                         dskType = MediaType.HDDVDRAM;
                                         break;
-                                    case Decoders.DVD.DiskCategory.HDDVDROM:
+                                    case DiskCategory.HDDVDROM:
                                         dskType = MediaType.HDDVDROM;
                                         break;
-                                    case Decoders.DVD.DiskCategory.HDDVDRW:
+                                    case DiskCategory.HDDVDRW:
                                         dskType = MediaType.HDDVDRW;
                                         break;
-                                    case Decoders.DVD.DiskCategory.Nintendo:
-                                        if(decPfi.DiscSize == Decoders.DVD.DVDSize.Eighty) dskType = MediaType.GOD;
+                                    case DiskCategory.Nintendo:
+                                        if(decPfi.DiscSize == DVDSize.Eighty) dskType = MediaType.GOD;
                                         else dskType = MediaType.WOD;
                                         break;
-                                    case Decoders.DVD.DiskCategory.UMD:
+                                    case DiskCategory.UMD:
                                         dskType = MediaType.UMD;
                                         break;
                                 }
@@ -295,10 +303,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   out duration);
                     if(!sense)
                     {
-                        if(Decoders.Xbox.DMI.IsXbox(cmdBuf) || Decoders.Xbox.DMI.IsXbox360(cmdBuf))
+                        if(DMI.IsXbox(cmdBuf) || DMI.IsXbox360(cmdBuf))
                         {
-                            if(Decoders.Xbox.DMI.IsXbox(cmdBuf)) dskType = MediaType.XGD;
-                            else if(Decoders.Xbox.DMI.IsXbox360(cmdBuf))
+                            if(DMI.IsXbox(cmdBuf)) dskType = MediaType.XGD;
+                            else if(DMI.IsXbox360(cmdBuf))
                             {
                                 dskType = MediaType.XGD2;
 
@@ -311,9 +319,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             sense = dev.ScsiInquiry(out byte[] inqBuf, out senseBuf);
 
-                            if(sense || !Decoders.SCSI.Inquiry.Decode(inqBuf).HasValue ||
-                               Decoders.SCSI.Inquiry.Decode(inqBuf).HasValue &&
-                               !Decoders.SCSI.Inquiry.Decode(inqBuf).Value.KreonPresent)
+                            if(sense || !Inquiry.Decode(inqBuf).HasValue ||
+                               Inquiry.Decode(inqBuf).HasValue &&
+                               !Inquiry.Decode(inqBuf).Value.KreonPresent)
                             {
                                 dumpLog.WriteLine("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
                                 throw new
@@ -362,7 +370,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                               MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout,
                                               out duration);
                 if(!sense)
-                    if(Decoders.DVD.CSS_CPRM.DecodeLeadInCopyright(cmdBuf).HasValue)
+                    if(CSS_CPRM.DecodeLeadInCopyright(cmdBuf).HasValue)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
@@ -374,9 +382,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                         };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].CMI.Image, tmpBuf);
 
-                        Decoders.DVD.CSS_CPRM.LeadInCopyright cpy =
-                            Decoders.DVD.CSS_CPRM.DecodeLeadInCopyright(cmdBuf).Value;
-                        if(cpy.CopyrightType != Decoders.DVD.CopyrightType.NoProtection)
+                        CSS_CPRM.LeadInCopyright cpy =
+                            CSS_CPRM.DecodeLeadInCopyright(cmdBuf).Value;
+                        if(cpy.CopyrightType != CopyrightType.NoProtection)
                             sidecar.OpticalDisc[0].CopyProtection = cpy.CopyrightType.ToString();
                     }
             }
@@ -412,7 +420,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.DvdramDds, 0, dev.Timeout, out duration);
                     if(!sense)
-                        if(Decoders.DVD.DDS.Decode(cmdBuf).HasValue)
+                        if(DDS.Decode(cmdBuf).HasValue)
                         {
                             tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
@@ -430,7 +438,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, dev.Timeout,
                                                   out duration);
                     if(!sense)
-                        if(Decoders.DVD.Spare.Decode(cmdBuf).HasValue)
+                        if(Spare.Decode(cmdBuf).HasValue)
                         {
                             tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
@@ -574,7 +582,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
                                                   MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out duration);
                     if(!sense)
-                        if(Decoders.Bluray.DI.Decode(cmdBuf).HasValue)
+                        if(DI.Decode(cmdBuf).HasValue)
                         {
                             tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);

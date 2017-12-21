@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -165,7 +167,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public RBF(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public RBF(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "OS-9 Random Block File Plugin";
             PluginUUID = new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
@@ -173,7 +175,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 256) return false;
 
@@ -206,7 +208,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -275,7 +277,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(RBF9000Sb.rid_name, CurrentEncoding))
                   .AppendLine();
 
-                xmlFSType = new Schemas.FileSystemType
+                xmlFSType = new FileSystemType
                 {
                     Type = "OS-9 Random Block File",
                     Bootable = RBF9000Sb.rid_bootfile > 0,
@@ -323,7 +325,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Path descriptor options: {0}", StringHandlers.CToString(RBFSb.dd_opt, CurrentEncoding))
                   .AppendLine();
 
-                xmlFSType = new Schemas.FileSystemType
+                xmlFSType = new FileSystemType
                 {
                     Type = "OS-9 Random Block File",
                     Bootable = LSNToUInt32(RBFSb.dd_bt) > 0 && RBFSb.dd_bsz > 0,

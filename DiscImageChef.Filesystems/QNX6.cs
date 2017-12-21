@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
@@ -113,7 +115,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public QNX6(DiscImages.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public QNX6(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX6 Plugin";
             PluginUUID = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
@@ -121,7 +123,7 @@ namespace DiscImageChef.Filesystems
             else CurrentEncoding = encoding;
         }
 
-        public override bool Identify(DiscImages.ImagePlugin imagePlugin, Partition partition)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             uint sectors = QNX6_SuperBlockSize / imagePlugin.GetSectorSize();
             uint bootSectors = QNX6_BootBlocksSize / imagePlugin.GetSectorSize();
@@ -147,7 +149,7 @@ namespace DiscImageChef.Filesystems
             return qnxSb.magic == QNX6_Magic || audiSb.magic == QNX6_Magic;
         }
 
-        public override void GetInformation(DiscImages.ImagePlugin imagePlugin, Partition partition,
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
@@ -184,7 +186,7 @@ namespace DiscImageChef.Filesystems
                                 audiSb.freeBlocks * audiSb.blockSize, audiSb.numBlocks,
                                 audiSb.numBlocks * audiSb.blockSize).AppendLine();
 
-                xmlFSType = new Schemas.FileSystemType();
+                xmlFSType = new FileSystemType();
                 xmlFSType.Type = "QNX6 (Audi) filesystem";
                 xmlFSType.Clusters = audiSb.numBlocks;
                 xmlFSType.ClusterSize = (int)audiSb.blockSize;
@@ -215,7 +217,7 @@ namespace DiscImageChef.Filesystems
                             qnxSb.freeBlocks * qnxSb.blockSize, qnxSb.numBlocks, qnxSb.numBlocks * qnxSb.blockSize)
               .AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType = new FileSystemType();
             xmlFSType.Type = "QNX6 filesystem";
             xmlFSType.Clusters = qnxSb.numBlocks;
             xmlFSType.ClusterSize = (int)qnxSb.blockSize;
@@ -232,7 +234,6 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ModificationDateSpecified = true;
 
             information = sb.ToString();
-            return;
         }
 
         public override Errno Mount()
