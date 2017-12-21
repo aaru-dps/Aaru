@@ -113,8 +113,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(!page.SLM) return sb.ToString();
 
             sb.Append("\tDrive has two LUNs with rewritable being ");
-            if(page.SLM) sb.AppendLine("LUN 1");
-            else sb.AppendLine("LUN 0");
+            sb.AppendLine(page.SLR ? "LUN 1" : "LUN 0");
 
             return sb.ToString();
         }
