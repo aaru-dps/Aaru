@@ -312,7 +312,7 @@ namespace DiscImageChef.DiscImages
             header.Crc = BitConverter.ToUInt16(headerBytes, 10);
 
             ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            ImageInfo.ImageVersion = string.Format("{0}.{1}", (header.Version & 0xF0) >> 4, header.Version & 0x0F);
+            ImageInfo.ImageVersion = $"{(header.Version & 0xF0) >> 4}.{header.Version & 0x0F}";
             ImageInfo.ImageApplication = ImageInfo.ImageVersion;
 
             byte[] headerBytesForCrc = new byte[10];
@@ -927,7 +927,7 @@ namespace DiscImageChef.DiscImages
                     decodedData = new byte[8192];
                     break;
                 default:
-                    throw new ImageNotSupportedException(string.Format("Sector size {0} is incorrect.", sectorSize));
+                    throw new ImageNotSupportedException($"Sector size {sectorSize} is incorrect.");
             }
 
             switch(encodingType)
@@ -1006,8 +1006,7 @@ namespace DiscImageChef.DiscImages
                     break;
                 }
                 default:
-                    throw new ImageNotSupportedException(string.Format("Data encoding {0} is incorrect.",
-                                                                       encodingType));
+                    throw new ImageNotSupportedException($"Data encoding {encodingType} is incorrect.");
             }
 
             return decodedData;

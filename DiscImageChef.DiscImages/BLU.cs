@@ -312,7 +312,7 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(tag != SectorTagType.AppleSectorTag)
-                throw new FeatureUnsupportedImageException(string.Format("Tag {0} not supported by image format", tag));
+                throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
             if(bptag == 0) throw new FeatureNotPresentImageException("Disk image does not have tags");
 

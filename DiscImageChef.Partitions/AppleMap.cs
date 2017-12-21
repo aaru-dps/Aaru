@@ -171,7 +171,7 @@ namespace DiscImageChef.Partitions
                     };
 
                     if(old_entry.pdFSID == HFS_MAGIC_OLD) part.Type = "Apple_HFS";
-                    else part.Type = string.Format("0x{0:X8}", old_entry.pdFSID);
+                    else part.Type = $"0x{old_entry.pdFSID:X8}";
 
                     partitions.Add(part);
 

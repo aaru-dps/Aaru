@@ -867,7 +867,7 @@ namespace DiscImageChef.DiscImages
                             break;
                     }
 
-                    track.TrackDescription = string.Format("Track {0}", trk.point);
+                    track.TrackDescription = $"Track {trk.point}";
                     track.TrackStartSector = (ulong)(trk.startLba + trk.pregap);
                     track.TrackEndSector = (ulong)(trk.sectors + trk.startLba);
 
@@ -1088,7 +1088,8 @@ namespace DiscImageChef.DiscImages
             {
                 PMA.CDPMA pma0 = PMA.Decode(pma).Value;
 
-                foreach(uint id in from descriptor in pma0.PMADescriptors where descriptor.ADR == 2 select (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame)) ImageInfo.MediaSerialNumber = string.Format("{0:X6}", id & 0x00FFFFFF);
+                foreach(uint id in from descriptor in pma0.PMADescriptors where descriptor.ADR == 2 select (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame)) ImageInfo.MediaSerialNumber =
+                    $"{id & 0x00FFFFFF:X6}";
             }
 
             if(atip != null)
@@ -1278,9 +1279,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress, _track.TrackEndSector));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
 
             foreach(DataFileCharacteristics _chars in filePaths.Where(_chars => (long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)) {
                 chars = _chars;
@@ -1395,9 +1394,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress, _track.TrackEndSector));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
 
             foreach(DataFileCharacteristics _chars in filePaths.Where(_chars => (long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)) {
                 chars = _chars;
@@ -1695,9 +1692,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress, _track.TrackEndSector));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
 
             foreach(DataFileCharacteristics _chars in filePaths.Where(_chars => (long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)) {
                 chars = _chars;

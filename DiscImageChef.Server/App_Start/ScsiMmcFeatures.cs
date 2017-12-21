@@ -41,18 +41,17 @@ namespace DiscImageChef.Server.App_Start
         public static void Report(mmcFeaturesType ftr, ref List<string> mmcOneValue)
         {
             if(ftr.SupportsAACS && ftr.AACSVersionSpecified)
-                mmcOneValue.Add(string.Format("Drive supports AACS version {0}", ftr.AACSVersion));
+                mmcOneValue.Add($"Drive supports AACS version {ftr.AACSVersion}");
             else if(ftr.SupportsAACS) mmcOneValue.Add("Drive supports AACS");
-            if(ftr.AGIDsSpecified) mmcOneValue.Add(string.Format("Drive supports {0} AGIDs concurrently", ftr.AGIDs));
+            if(ftr.AGIDsSpecified) mmcOneValue.Add($"Drive supports {ftr.AGIDs} AGIDs concurrently");
             if(ftr.CanGenerateBindingNonce)
             {
                 mmcOneValue.Add("Drive supports generating the binding nonce");
                 if(ftr.BindingNonceBlocksSpecified)
-                    mmcOneValue.Add(string.Format("{0} media blocks are required for the binding nonce",
-                                                  ftr.BindingNonceBlocks));
+                    mmcOneValue.Add($"{ftr.BindingNonceBlocks} media blocks are required for the binding nonce");
             }
             if(ftr.BlocksPerReadableUnit > 1)
-                mmcOneValue.Add(string.Format("{0} logical blocks per media writable unit", ftr.BlocksPerReadableUnit));
+                mmcOneValue.Add($"{ftr.BlocksPerReadableUnit} logical blocks per media writable unit");
             if(ftr.BufferUnderrunFreeInDVD) mmcOneValue.Add("Drive supports zero loss linking writing DVDs");
             if(ftr.BufferUnderrunFreeInSAO) mmcOneValue.Add("Drive supports zero loss linking in Session at Once Mode");
             if(ftr.BufferUnderrunFreeInTAO) mmcOneValue.Add("Drive supports zero loss linking in Track at Once Mode");
@@ -122,7 +121,7 @@ namespace DiscImageChef.Server.App_Start
             if(ftr.ErrorRecoveryPage) mmcOneValue.Add("Drive shall report Read/Write Error Recovery mode page");
             if(ftr.Locked) mmcOneValue.Add("Drive can lock media");
             if(ftr.LogicalBlockSize > 0)
-                mmcOneValue.Add(string.Format("{0} bytes per logical block", ftr.LogicalBlockSize));
+                mmcOneValue.Add($"{ftr.LogicalBlockSize} bytes per logical block");
             if(ftr.MultiRead)
                 mmcOneValue.Add("Drive claims capability to read all CD formats according to OSTA Multi-Read Specification");
 
@@ -159,8 +158,7 @@ namespace DiscImageChef.Server.App_Start
                     mmcOneValue.Add("Drive uses a vendor unique interface");
                     break;
                 default:
-                    mmcOneValue.Add(string.Format("Drive uses an unknown interface with code {0}",
-                                                  (uint)ftr.PhysicalInterfaceStandard));
+                    mmcOneValue.Add($"Drive uses an unknown interface with code {(uint)ftr.PhysicalInterfaceStandard}");
                     break;
             }
 
@@ -220,18 +218,18 @@ namespace DiscImageChef.Server.App_Start
                 if(ftr.ChangerSupportsDiscPresent)
                     mmcOneValue.Add("Drive is able to report slots contents after a reset or change");
 
-                mmcOneValue.Add(string.Format("Drive has {0} slots", ftr.ChangerSlots + 1));
+                mmcOneValue.Add($"Drive has {ftr.ChangerSlots + 1} slots");
             }
             if(ftr.SupportsCSS && ftr.CSSVersionSpecified)
-                mmcOneValue.Add(string.Format("Drive supports DVD CSS/CPPM version {0}", ftr.CSSVersion));
+                mmcOneValue.Add($"Drive supports DVD CSS/CPPM version {ftr.CSSVersion}");
             else if(ftr.SupportsCSS) mmcOneValue.Add("Drive supports DVD CSS/CPRM");
             if(ftr.SupportsCPRM && ftr.CPRMVersionSpecified)
-                mmcOneValue.Add(string.Format("Drive supports DVD CPPM version {0}", ftr.CPRMVersion));
+                mmcOneValue.Add($"Drive supports DVD CPPM version {ftr.CPRMVersion}");
             else if(ftr.SupportsCPRM) mmcOneValue.Add("Drive supports DVD CPRM");
             if(ftr.DBML) mmcOneValue.Add("Drive reports Device Busy Class events during medium loading/unloading");
             if(ftr.DVDMultiRead) mmcOneValue.Add("Drive conforms to DVD Multi Drive Read-only Specifications");
             if(ftr.FirmwareDateSpecified)
-                mmcOneValue.Add(string.Format("Drive firmware is dated {0}", ftr.FirmwareDate));
+                mmcOneValue.Add($"Drive firmware is dated {ftr.FirmwareDate}");
             if(ftr.SupportsC2) mmcOneValue.Add("Drive supports C2 Error Pointers");
             if(ftr.SupportsDAP) mmcOneValue.Add("Drive supports the DAP bit in the READ CD and READ CD MSF commands");
             if(ftr.SupportsDeviceBusyEvent) mmcOneValue.Add("Drive supports Device Busy events");
@@ -254,8 +252,7 @@ namespace DiscImageChef.Server.App_Start
                     mmcOneValue.Add("Drive is a changer using cartridges");
                     break;
                 default:
-                    mmcOneValue.Add(string.Format("Drive uses unknown loading mechanism type {0}",
-                                                  ftr.LoadingMechanismType));
+                    mmcOneValue.Add($"Drive uses unknown loading mechanism type {ftr.LoadingMechanismType}");
                     break;
             }
 
@@ -270,7 +267,7 @@ namespace DiscImageChef.Server.App_Start
             if(ftr.SupportsSeparateVolume) mmcOneValue.Add("Drive supports separate volume per channel");
             if(ftr.SupportsVCPS) mmcOneValue.Add("Drive supports VCPS");
             if(ftr.VolumeLevelsSpecified)
-                mmcOneValue.Add(string.Format("Drive has {0} volume levels", ftr.VolumeLevels + 1));
+                mmcOneValue.Add($"Drive has {ftr.VolumeLevels + 1} volume levels");
             if(ftr.SupportsWriteProtectPAC)
                 mmcOneValue.Add("Drive supports reading/writing the Disc Write Protect PAC on BD-R/-RE media");
             if(ftr.SupportsWriteInhibitDCB)

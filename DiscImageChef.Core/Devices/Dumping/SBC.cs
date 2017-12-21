@@ -220,7 +220,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                     EVPDType evpd = new EVPDType
                                     {
-                                        Image = string.Format("{0}.evpd_{1:X2}h.bin", outputPrefix, page),
+                                        Image = $"{outputPrefix}.evpd_{page:X2}h.bin",
                                         Checksums = Checksum.GetChecksums(cmdBuf).ToArray(),
                                         Size = cmdBuf.Length
                                     };

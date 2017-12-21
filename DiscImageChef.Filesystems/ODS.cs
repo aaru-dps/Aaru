@@ -249,7 +249,7 @@ namespace DiscImageChef.Filesystems
                 ClusterSize = homeblock.cluster * 512,
                 Clusters = (long)partition.Size / (homeblock.cluster * 512),
                 VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding),
-                VolumeSerial = string.Format("{0:X8}", homeblock.serialnum)
+                VolumeSerial = $"{homeblock.serialnum:X8}"
             };
             if(homeblock.credate > 0)
             {

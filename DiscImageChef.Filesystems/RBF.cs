@@ -288,7 +288,7 @@ namespace DiscImageChef.Filesystems
                     ModificationDate = DateHandlers.UNIXToDateTime(RBF9000Sb.rid_mtime),
                     ModificationDateSpecified = true,
                     VolumeName = StringHandlers.CToString(RBF9000Sb.rid_name, CurrentEncoding),
-                    VolumeSerial = string.Format("{0:X8}", RBF9000Sb.rid_diskid)
+                    VolumeSerial = $"{RBF9000Sb.rid_diskid:X8}"
                 };
             }
             else
@@ -334,7 +334,7 @@ namespace DiscImageChef.Filesystems
                     CreationDate = DateHandlers.OS9ToDateTime(RBFSb.dd_dat),
                     CreationDateSpecified = true,
                     VolumeName = StringHandlers.CToString(RBFSb.dd_nam, CurrentEncoding),
-                    VolumeSerial = string.Format("{0:X4}", RBFSb.dd_dsk)
+                    VolumeSerial = $"{RBFSb.dd_dsk:X4}"
                 };
             }
 

@@ -166,7 +166,7 @@ namespace DiscImageChef.Partitions
 
                 Partition part = new Partition
                 {
-                    Description = string.Format("ID: {0}", entry.partitionId),
+                    Description = $"ID: {entry.partitionId}",
                     Size = (entry.endLBA - entry.startLBA + 1) * sectorSize,
                     Name = entry.name,
                     Length = (entry.endLBA - entry.startLBA + 1) / divisor,

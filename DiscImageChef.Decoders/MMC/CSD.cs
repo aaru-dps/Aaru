@@ -337,7 +337,7 @@ namespace DiscImageChef.Decoders.MMC
             sb.AppendFormat("\tDevice's clock frequency: {0}{1}", result, unit).AppendLine();
 
             unit = "";
-            for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1) if((csd.Classes & mask) == mask) unit += string.Format(" {0}", cl);
+            for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1) if((csd.Classes & mask) == mask) unit += $" {cl}";
 
             sb.AppendFormat("\tDevice support command classes {0}", unit).AppendLine();
             if(csd.ReadBlockLength == 15) sb.AppendLine("\tRead block length size is defined in extended CSD");

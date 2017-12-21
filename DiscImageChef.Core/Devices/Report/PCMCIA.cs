@@ -65,7 +65,7 @@ namespace DiscImageChef.Core.Devices.Report
                         {
                             report.PCMCIA.Manufacturer = vers.Manufacturer;
                             report.PCMCIA.ProductName = vers.Product;
-                            report.PCMCIA.Compliance = string.Format("{0}.{1}", vers.MajorVersion, vers.MinorVersion);
+                            report.PCMCIA.Compliance = $"{vers.MajorVersion}.{vers.MinorVersion}";
                             report.PCMCIA.AdditionalInformation = vers.AdditionalInformation;
                         }
                         break;

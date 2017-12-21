@@ -136,7 +136,7 @@ namespace DiscImageChef.Core
                                             sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
                                             sidecar.BlockMedia[0].PCMCIA.ProductName = vers.Product;
                                             sidecar.BlockMedia[0].PCMCIA.Compliance =
-                                                string.Format("{0}.{1}", vers.MajorVersion, vers.MinorVersion);
+                                                $"{vers.MajorVersion}.{vers.MinorVersion}";
                                             sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
                                         }
                                         break;

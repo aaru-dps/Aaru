@@ -277,7 +277,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(trk.PHOUR > 0)
                         track.StartMSF = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", trk.PMIN, trk.PSEC,
                                                        trk.PFRAME, trk.PHOUR);
-                    else track.StartMSF = string.Format("{0:D2}:{1:D2}:{2:D2}", trk.PMIN, trk.PSEC, trk.PFRAME);
+                    else track.StartMSF = $"{trk.PMIN:D2}:{trk.PSEC:D2}:{trk.PFRAME:D2}";
                     track.StartSector = trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME -
                                         150;
                     trackList.Add(track);
@@ -320,7 +320,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     if(phour > 0) lastMsf = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe, phour);
-                    else lastMsf = string.Format("{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe);
+                    else lastMsf = $"{pmin:D2}:{psec:D2}:{pframe:D2}";
                     lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
                 }
 
@@ -349,7 +349,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(phour > 0)
                     tracks[t - 1].EndMSF = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe, phour);
-                else tracks[t - 1].EndMSF = string.Format("{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe);
+                else tracks[t - 1].EndMSF = $"{pmin:D2}:{psec:D2}:{pframe:D2}";
             }
 
             tracks[tracks.Length - 1].EndMSF = lastMsf;

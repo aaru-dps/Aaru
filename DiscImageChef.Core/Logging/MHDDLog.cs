@@ -80,9 +80,9 @@ namespace DiscImageChef.Core.Logging
                     break;
             }
 
-            device = string.Format("DEVICE: {0} {1}", dev.Manufacturer, dev.Model);
-            fw = string.Format("F/W: {0}", dev.Revision);
-            sn = string.Format("S/N: {0}", dev.Serial);
+            device = $"DEVICE: {dev.Manufacturer} {dev.Model}";
+            fw = $"F/W: {dev.Revision}";
+            sn = $"S/N: {dev.Serial}";
             sectors = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
             sectorsize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes",
                                        blockSize);

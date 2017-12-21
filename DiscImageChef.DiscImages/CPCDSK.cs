@@ -554,15 +554,14 @@ namespace DiscImageChef.DiscImages
             byte[] sector;
             if(sectors.TryGetValue(sectorAddress, out sector)) return sector;
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                  string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
@@ -581,7 +580,7 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             if(tag != SectorTagType.FloppyAddressMark)
-                throw new FeatureUnsupportedImageException(string.Format("Tag {0} not supported by image format", tag));
+                throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
             byte[] addressMark;
             if(addressMarks.TryGetValue(sectorAddress, out addressMark)) return addressMark;
@@ -592,11 +591,11 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(tag != SectorTagType.FloppyAddressMark)
-                throw new FeatureUnsupportedImageException(string.Format("Tag {0} not supported by image format", tag));
+                throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");

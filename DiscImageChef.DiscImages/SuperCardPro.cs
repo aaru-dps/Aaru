@@ -384,13 +384,10 @@ namespace DiscImageChef.DiscImages
                                                   ImageInfo.ImageLastModificationTime);
 
                         ImageInfo.ImageApplicationVersion =
-                            string.Format("{0}.{1}", (footer.applicationVersion & 0xF0) >> 4,
-                                          footer.applicationVersion & 0xF);
+                            $"{(footer.applicationVersion & 0xF0) >> 4}.{footer.applicationVersion & 0xF}";
                         ImageInfo.DriveFirmwareRevision =
-                            string.Format("{0}.{1}", (footer.firmwareVersion & 0xF0) >> 4,
-                                          footer.firmwareVersion & 0xF);
-                        ImageInfo.ImageVersion =
-                            string.Format("{0}.{1}", (footer.imageVersion & 0xF0) >> 4, footer.imageVersion & 0xF);
+                            $"{(footer.firmwareVersion & 0xF0) >> 4}.{footer.firmwareVersion & 0xF}";
+                        ImageInfo.ImageVersion = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion & 0xF}";
 
                         break;
                     }
@@ -401,8 +398,7 @@ namespace DiscImageChef.DiscImages
             else
             {
                 ImageInfo.ImageApplication = "SuperCardPro";
-                ImageInfo.ImageApplicationVersion =
-                    string.Format("{0}.{1}", (Header.version & 0xF0) >> 4, Header.version & 0xF);
+                ImageInfo.ImageApplicationVersion = $"{(Header.version & 0xF0) >> 4}.{Header.version & 0xF}";
                 ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
                 ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
                 ImageInfo.ImageVersion = "1.5";

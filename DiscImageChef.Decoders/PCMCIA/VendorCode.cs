@@ -353,7 +353,7 @@ namespace DiscImageChef.Decoders.PCMCIA
                 case 0xC020: return "NextCom K.K.";
                 case 0xC250: return "EMTAC Technology Corporation";
                 case 0xD601: return "Elsa";
-                default: return string.Format("Unknown vendor id 0x{0:X4}", id);
+                default: return $"Unknown vendor id 0x{id:X4}";
             }
         }
     }

@@ -196,7 +196,7 @@ namespace DiscImageChef.Filesystems
                 xmlFSType.FreeClusters = audiSb.freeBlocks;
                 xmlFSType.FreeClustersSpecified = true;
                 //xmlFSType.VolumeName = CurrentEncoding.GetString(audiSb.id);
-                xmlFSType.VolumeSerial = string.Format("{0:X16}", audiSb.serial);
+                xmlFSType.VolumeSerial = $"{audiSb.serial:X16}";
 
                 information = sb.ToString();
                 return;
@@ -227,7 +227,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FreeClusters = qnxSb.freeBlocks;
             xmlFSType.FreeClustersSpecified = true;
             //xmlFSType.VolumeName = CurrentEncoding.GetString(qnxSb.volumeid);
-            xmlFSType.VolumeSerial = string.Format("{0:X16}", qnxSb.serial);
+            xmlFSType.VolumeSerial = $"{qnxSb.serial:X16}";
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.ctime);
             xmlFSType.CreationDateSpecified = true;
             xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.atime);

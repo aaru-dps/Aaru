@@ -142,12 +142,12 @@ namespace DiscImageChef.Commands
                         if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
                         else if(idPlugins.Count > 1)
                         {
-                            DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
+                            DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                             foreach(string pluginName in idPlugins)
                                 if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                                 {
-                                    DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
+                                    DicConsole.WriteLine($"As identified by {plugin.Name}.");
                                     Filesystem fs = (Filesystem)plugin
                                         .GetType().GetConstructor(new[]
                                         {
@@ -180,7 +180,7 @@ namespace DiscImageChef.Commands
                             plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
                             if(plugin == null) continue;
 
-                            DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
+                            DicConsole.WriteLine($"Identified by {plugin.Name}.");
                             Filesystem fs = (Filesystem)plugin
                                 .GetType().GetConstructor(new[]
                                 {
@@ -217,12 +217,12 @@ namespace DiscImageChef.Commands
                 if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
                 else if(idPlugins.Count > 1)
                 {
-                    DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
+                    DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                     foreach(string pluginName in idPlugins)
                         if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                         {
-                            DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
+                            DicConsole.WriteLine($"As identified by {plugin.Name}.");
                             Filesystem fs = (Filesystem)plugin
                                 .GetType().GetConstructor(new[]
                                 {
@@ -252,7 +252,7 @@ namespace DiscImageChef.Commands
                     plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
                     if(plugin != null)
                     {
-                        DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
+                        DicConsole.WriteLine($"Identified by {plugin.Name}.");
                         Filesystem fs = (Filesystem)plugin
                             .GetType().GetConstructor(new[] {typeof(ImagePlugin), typeof(Partition), typeof(Encoding)})
                             ?.Invoke(new object[] {imageFormat, wholePart, null});
@@ -303,7 +303,7 @@ namespace DiscImageChef.Commands
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine(string.Format("Error reading file: {0}", ex.Message));
+                DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                 DicConsole.DebugWriteLine("Ls command", ex.StackTrace);
             }
 

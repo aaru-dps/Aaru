@@ -185,7 +185,7 @@ namespace DiscImageChef.Filesystems
                     ext_os = "MasIX";
                     break;
                 default:
-                    ext_os = string.Format("Unknown OS ({0})", supblk.creator_os);
+                    ext_os = $"Unknown OS ({supblk.creator_os})";
                     break;
             }
 

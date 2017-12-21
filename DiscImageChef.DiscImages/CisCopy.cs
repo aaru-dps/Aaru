@@ -207,7 +207,7 @@ namespace DiscImageChef.DiscImages
                 case DiskType.MF2HD:
                     tracks = 160;
                     break;
-                default: throw new ImageNotSupportedException(string.Format("Incorrect disk type {0}", (byte)type));
+                default: throw new ImageNotSupportedException($"Incorrect disk type {(byte)type}");
             }
 
             byte[] trackBytes = new byte[tracks];

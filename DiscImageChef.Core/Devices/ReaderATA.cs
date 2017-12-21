@@ -265,7 +265,7 @@ namespace DiscImageChef.Core.Devices
             if(!error || !IsLba) return false;
 
             BlocksToRead = 1;
-            ErrorMessage = string.Format("Device error {0} trying to guess ideal transfer length.", dev.LastError);
+            ErrorMessage = $"Device error {dev.LastError} trying to guess ideal transfer length.";
             return true;
         }
 

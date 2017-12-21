@@ -154,7 +154,7 @@ namespace DiscImageChef.Devices
                                : FreeBSD.Command.SendScsiCommand((IntPtr)fd, cdb, ref buffer, out senseBuffer, timeout,
                                                                  flags, out duration, out sense);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
+                default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
 
@@ -201,7 +201,7 @@ namespace DiscImageChef.Devices
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
+                default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
 
@@ -249,7 +249,7 @@ namespace DiscImageChef.Devices
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
+                default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
 
@@ -288,7 +288,7 @@ namespace DiscImageChef.Devices
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
+                default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
 
@@ -321,7 +321,7 @@ namespace DiscImageChef.Devices
                                                         blockSize, blocks, ref buffer, out response, out duration,
                                                         out sense, timeout);
                 }
-                default: throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptId));
+                default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
     }

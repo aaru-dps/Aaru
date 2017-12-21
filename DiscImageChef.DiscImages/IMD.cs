@@ -220,7 +220,7 @@ namespace DiscImageChef.DiscImages
                             if(!track.ContainsKey(idmap[i])) track.Add(idmap[i], data);
                             break;
                         default:
-                            throw new ImageNotSupportedException(string.Format("Invalid sector type {0}", (byte)type));
+                            throw new ImageNotSupportedException($"Invalid sector type {(byte)type}");
                     }
                 }
 

@@ -235,7 +235,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Bootable = true;
             if(jfsSb.s_version == 1) xmlFSType.VolumeName = CurrentEncoding.GetString(jfsSb.s_fpack);
             else xmlFSType.VolumeName = CurrentEncoding.GetString(jfsSb.s_label);
-            xmlFSType.VolumeSerial = string.Format("{0}", jfsSb.s_uuid);
+            xmlFSType.VolumeSerial = $"{jfsSb.s_uuid}";
             xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec);
             xmlFSType.ModificationDateSpecified = true;
             if(jfsSb.s_state != 0) xmlFSType.Dirty = true;

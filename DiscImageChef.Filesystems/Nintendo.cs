@@ -387,7 +387,7 @@ namespace DiscImageChef.Filesystems
                 case "_": return "WiiFit";
             }
 
-            return string.Format("unknown type '{0}'", discType);
+            return $"unknown type '{discType}'";
         }
 
         string RegionCodeToString(string regionCode)
@@ -412,7 +412,7 @@ namespace DiscImageChef.Filesystems
                 case "U": return "Australia";
             }
 
-            return string.Format("unknown code '{0}'", regionCode);
+            return $"unknown code '{regionCode}'";
         }
 
         string PublisherCodeToString(string publisherCode)
@@ -442,7 +442,7 @@ namespace DiscImageChef.Filesystems
                 case "7D": return "Sierra";
             }
 
-            return string.Format("Unknown publisher '{0}'", publisherCode);
+            return $"Unknown publisher '{publisherCode}'";
         }
 
         string PartitionTypeToString(uint type)
@@ -454,7 +454,7 @@ namespace DiscImageChef.Filesystems
                 case 2: return "channel";
             }
 
-            return string.Format("unknown type {0}", type);
+            return $"unknown type {type}";
         }
 
         public override Errno Mount()

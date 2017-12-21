@@ -529,8 +529,7 @@ namespace DiscImageChef.DiscImages
             if(thisFooter.Version == VERSION1) ImageInfo.ImageVersion = "1.0";
             else
                 throw new
-                    ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.",
-                                                             thisFooter.DiskType));
+                    ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {thisFooter.DiskType} found. Please submit a bug with an example image.");
 
             switch(thisFooter.CreatorApplication)
             {
@@ -544,9 +543,8 @@ namespace DiscImageChef.DiscImages
                 }
                 case CREATOR_VIRTUAL_BOX:
                 {
-                    ImageInfo.ImageApplicationVersion = string.Format("{0}.{1:D2}",
-                                                                      (thisFooter.CreatorVersion & 0xFFFF0000) >> 16,
-                                                                      thisFooter.CreatorVersion & 0x0000FFFF);
+                    ImageInfo.ImageApplicationVersion =
+                        $"{(thisFooter.CreatorVersion & 0xFFFF0000) >> 16}.{thisFooter.CreatorVersion & 0x0000FFFF:D2}";
                     switch(thisFooter.CreatorHostOs)
                     {
                         case CREATOR_MACINTOSH:
@@ -558,10 +556,8 @@ namespace DiscImageChef.DiscImages
                             ImageInfo.ImageApplication = "VirtualBox";
                             break;
                         default:
-                            ImageInfo.ImageApplication = string.Format("VirtualBox for unknown OS \"{0}\"",
-                                                                       Encoding.ASCII.GetString(BigEndianBitConverter
-                                                                                                    .GetBytes(thisFooter
-                                                                                                                  .CreatorHostOs)));
+                            ImageInfo.ImageApplication =
+                                $"VirtualBox for unknown OS \"{Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.CreatorHostOs))}\"";
                             break;
                     }
 
@@ -576,8 +572,7 @@ namespace DiscImageChef.DiscImages
                             ImageInfo.ImageApplicationVersion = "2004";
                             break;
                         default:
-                            ImageInfo.ImageApplicationVersion =
-                                string.Format("Unknown version 0x{0:X8}", thisFooter.CreatorVersion);
+                            ImageInfo.ImageApplicationVersion = $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                             break;
                     }
 
@@ -597,7 +592,7 @@ namespace DiscImageChef.DiscImages
                                     break;
                                 default:
                                     ImageInfo.ImageApplicationVersion =
-                                        string.Format("Unknown version 0x{0:X8}", thisFooter.CreatorVersion);
+                                        $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                                     break;
                             }
 
@@ -619,18 +614,15 @@ namespace DiscImageChef.DiscImages
                                     break;
                                 default:
                                     ImageInfo.ImageApplicationVersion =
-                                        string.Format("Unknown version 0x{0:X8}", thisFooter.CreatorVersion);
+                                        $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                                     break;
                             }
 
                             break;
                         default:
-                            ImageInfo.ImageApplication = string.Format("Virtual PC for unknown OS \"{0}\"",
-                                                                       Encoding.ASCII.GetString(BigEndianBitConverter
-                                                                                                    .GetBytes(thisFooter
-                                                                                                                  .CreatorHostOs)));
-                            ImageInfo.ImageApplicationVersion =
-                                string.Format("Unknown version 0x{0:X8}", thisFooter.CreatorVersion);
+                            ImageInfo.ImageApplication =
+                                $"Virtual PC for unknown OS \"{Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.CreatorHostOs))}\"";
+                            ImageInfo.ImageApplicationVersion = $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                             break;
                     }
 
@@ -638,12 +630,9 @@ namespace DiscImageChef.DiscImages
                 }
                 default:
                 {
-                    ImageInfo.ImageApplication = string.Format("Unknown application \"{0}\"",
-                                                               Encoding.ASCII.GetString(BigEndianBitConverter
-                                                                                            .GetBytes(thisFooter
-                                                                                                          .CreatorHostOs)));
-                    ImageInfo.ImageApplicationVersion =
-                        string.Format("Unknown version 0x{0:X8}", thisFooter.CreatorVersion);
+                    ImageInfo.ImageApplication =
+                        $"Unknown application \"{Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.CreatorHostOs))}\"";
+                    ImageInfo.ImageApplicationVersion = $"Unknown version 0x{thisFooter.CreatorVersion:X8}";
                     break;
                 }
             }
@@ -764,8 +753,7 @@ namespace DiscImageChef.DiscImages
 
                 if(thisDynamic.HeaderVersion != VERSION1)
                     throw new
-                        ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.",
-                                                                 thisFooter.DiskType));
+                        ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {thisFooter.DiskType} found. Please submit a bug with an example image.");
 
                 DateTime startTime = DateTime.UtcNow;
 
@@ -964,8 +952,7 @@ namespace DiscImageChef.DiscImages
                 default:
                 {
                     throw new
-                        ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.",
-                                                                 thisFooter.DiskType));
+                        ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {thisFooter.DiskType} found. Please submit a bug with an example image.");
                 }
             }
         }
@@ -1198,8 +1185,7 @@ namespace DiscImageChef.DiscImages
                 default:
                 {
                     throw new
-                        ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.",
-                                                                 thisFooter.DiskType));
+                        ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {thisFooter.DiskType} found. Please submit a bug with an example image.");
                 }
             }
         }

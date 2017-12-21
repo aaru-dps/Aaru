@@ -274,7 +274,7 @@ namespace DiscImageChef.Filesystems
                     if(HPVH.signature == 0x482B) xmlFSType.Type = "HFS+";
                     if(HPVH.signature == 0x4858) xmlFSType.Type = "HFSX";
                     if(HPVH.drFndrInfo6 != 0 && HPVH.drFndrInfo7 != 0)
-                        xmlFSType.VolumeSerial = string.Format("{0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7);
+                        xmlFSType.VolumeSerial = $"{HPVH.drFndrInfo6:X8}{HPVH.drFndrInfo7:X8}";
                     xmlFSType.SystemIdentifier = Encoding.ASCII.GetString(HPVH.lastMountedVersion);
                 }
                 else

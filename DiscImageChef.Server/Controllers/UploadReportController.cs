@@ -67,8 +67,9 @@ namespace DiscImageChef.Server.Controllers
                 }
 
                 Random rng = new Random();
-                string filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
-                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename))) filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
+                string filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
+                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename))) filename =
+                    $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
 
                 FileStream newFile =
                     new FileStream(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename),

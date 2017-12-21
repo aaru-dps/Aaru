@@ -1453,44 +1453,37 @@ namespace DiscImageChef.Partitions
                 default:
                 {
                     if((amigaDosType & TYPEID_OFS) == TYPEID_OFS)
-                        return string.Format("Unknown Amiga DOS filesystem type {0}",
-                                             AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown Amiga DOS filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & TypeID_AMIXSysV) == TypeID_AMIXSysV)
-                        return string.Format("Unknown Amiga UNIX filesystem type {0}",
-                                             AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown Amiga UNIX filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & 0x50465300) == 0x50465300 || (amigaDosType & 0x41465300) == 0x41465300)
-                        return string.Format("Unknown ProfessionalFileSystem type {0}",
-                                             AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown ProfessionalFileSystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & TYPEID_SFS) == TYPEID_SFS)
-                        return string.Format("Unknown SmartFileSystem type {0}", AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown SmartFileSystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & TYPEID_OFS_MUSER) == TYPEID_OFS_MUSER)
-                        return string.Format("Unknown Amiga DOS multi-user filesystem type {0}",
-                                             AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown Amiga DOS multi-user filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & TYPEID_OLD_BSD_UNUSED) == TYPEID_OLD_BSD_UNUSED)
-                        return string.Format("Unknown BSD filesystem type {0}", AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown BSD filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & TYPEID_NETBSD_ROOT_UNUSED) == TYPEID_NETBSD_ROOT_UNUSED)
-                        return string.Format("Unknown NetBSD root filesystem type {0}",
-                                             AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown NetBSD root filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & TYPEID_NETBSD_USER_UNUSED) == TYPEID_NETBSD_USER_UNUSED)
-                        return string.Format("Unknown NetBSD user filesystem type {0}",
-                                             AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown NetBSD user filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & TYPEID_NETBSD_SWAP) == TYPEID_NETBSD_SWAP)
-                        return string.Format("Unknown NetBSD swap filesystem type {0}",
-                                             AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown NetBSD swap filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & TYPEID_LINUX) == TYPEID_LINUX ||
                        (amigaDosType & TYPEID_LINUX_SWAP) == TYPEID_LINUX_SWAP)
-                        return string.Format("Unknown Linux filesystem type {0}", AmigaDosTypeToString(amigaDosType));
+                        return $"Unknown Linux filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
-                    return string.Format("Unknown partition type {0}", AmigaDosTypeToString(amigaDosType));
+                    return $"Unknown partition type {AmigaDosTypeToString(amigaDosType)}";
                 }
             }
         }
@@ -1512,8 +1505,8 @@ namespace DiscImageChef.Partitions
             textPartString = Encoding.ASCII.GetString(textPart);
 
             return quoted
-                       ? string.Format("\"{0}\\{1}\"", textPartString, amigaDosType & 0xFF)
-                       : string.Format("{0}\\{1}", textPartString, amigaDosType & 0xFF);
+                       ? $"\"{textPartString}\\{amigaDosType & 0xFF}\""
+                       : $"{textPartString}\\{amigaDosType & 0xFF}";
         }
     }
 }

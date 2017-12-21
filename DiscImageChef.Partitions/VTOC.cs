@@ -334,7 +334,7 @@ namespace DiscImageChef.Partitions
                         Offset = (ulong)(parts[i].p_start * bps),
                         Size = (ulong)(parts[i].p_size * bps),
                         Sequence = (ulong)i,
-                        Type = string.Format("UNIX: {0}", decodeUNIXTAG(parts[i].p_tag, !useOld)),
+                        Type = $"UNIX: {decodeUNIXTAG(parts[i].p_tag, !useOld)}",
                         Scheme = Name
                     };
                     string info = "";
@@ -352,7 +352,7 @@ namespace DiscImageChef.Partitions
                     if(parts[i].p_flag.HasFlag(pFlag.V_REMAP)) info += " (alternate sector mapping)";
                     if(parts[i].p_flag.HasFlag(pFlag.V_RONLY)) info += " (read-only)";
                     if(timestamps[i] != 0)
-                        info += string.Format(" created on {0}", DateHandlers.UNIXToDateTime(timestamps[i]));
+                        info += $" created on {DateHandlers.UNIXToDateTime(timestamps[i])}";
 
                     part.Description = "UNIX slice" + info + ".";
 
@@ -544,7 +544,7 @@ namespace DiscImageChef.Partitions
                 case pTag.V_ALTSCTR: return "Alternate sector track";
                 case pTag.V_VMPUBLIC: return "volume mgt public partition";
                 case pTag.V_VMPRIVATE: return "volume mgt private partition";
-                default: return string.Format("Unknown TAG: 0x{0:X4}", type);
+                default: return $"Unknown TAG: 0x{type:X4}";
             }
         }
     }

@@ -57,8 +57,7 @@ namespace DiscImageChef.Server.App_Start
                     scsiOneValue.Add("Device is connected but unsupported.");
                     break;
                 default:
-                    scsiOneValue.Add(string.Format("Vendor value {0} set in Peripheral Qualifier field.",
-                                                   inquiry.PeripheralQualifier));
+                    scsiOneValue.Add($"Vendor value {inquiry.PeripheralQualifier} set in Peripheral Qualifier field.");
                     break;
             }
 
@@ -134,8 +133,7 @@ namespace DiscImageChef.Server.App_Start
                     scsiOneValue.Add("Unknown or no device type");
                     break;
                 default:
-                    scsiOneValue.Add(string.Format("Unknown device type field value 0x{0:X2}",
-                                                   inquiry.PeripheralDeviceType));
+                    scsiOneValue.Add($"Unknown device type field value 0x{inquiry.PeripheralDeviceType:X2}");
                     break;
             }
 
@@ -164,8 +162,7 @@ namespace DiscImageChef.Server.App_Start
                     break;
                 default:
                     scsiOneValue
-                        .Add(string.Format("Device claims to comply with unknown SCSI ANSI standard value 0x{0:X2})",
-                                           inquiry.ANSIVersion));
+                        .Add($"Device claims to comply with unknown SCSI ANSI standard value 0x{inquiry.ANSIVersion:X2})");
                     break;
             }
 
@@ -179,8 +176,7 @@ namespace DiscImageChef.Server.App_Start
                     break;
                 default:
                     scsiOneValue
-                        .Add(string.Format("Device claims to comply with unknown SCSI ECMA standard value 0x{0:X2})",
-                                           inquiry.ECMAVersion));
+                        .Add($"Device claims to comply with unknown SCSI ECMA standard value 0x{inquiry.ECMAVersion:X2})");
                     break;
             }
 
@@ -194,8 +190,7 @@ namespace DiscImageChef.Server.App_Start
                     break;
                 default:
                     scsiOneValue
-                        .Add(string.Format("Device claims to comply with unknown SCSI ISO/IEC standard value 0x{0:X2})",
-                                           inquiry.ISOVersion));
+                        .Add($"Device claims to comply with unknown SCSI ISO/IEC standard value 0x{inquiry.ISOVersion:X2})");
                     break;
             }
 
@@ -242,8 +237,7 @@ namespace DiscImageChef.Server.App_Start
                     scsiOneValue.Add("Device supports implicit and explicit assymetrical access");
                     break;
                 default:
-                    scsiOneValue.Add(string.Format("Unknown value in TPGS field 0x{0:X2}",
-                                                   inquiry.AsymmetricalLUNAccess));
+                    scsiOneValue.Add($"Unknown value in TPGS field 0x{inquiry.AsymmetricalLUNAccess:X2}");
                     break;
             }
 
@@ -262,8 +256,7 @@ namespace DiscImageChef.Server.App_Start
                     scsiOneValue.Add("Device supports ST and DT clocking");
                     break;
                 default:
-                    scsiOneValue.Add(string.Format("Unknown value in SPI clocking field 0x{0:X2}",
-                                                   inquiry.SPIClocking));
+                    scsiOneValue.Add($"Unknown value in SPI clocking field 0x{inquiry.SPIClocking:X2}");
                     break;
             }
 
@@ -935,8 +928,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x097D:
                     case 0x097E:
                     case 0x097F:
-                        scsiOneValue.Add(string.Format("Device complies with iSCSI revision {0}",
-                                                       VersionDescriptor & 0x1F));
+                        scsiOneValue.Add($"Device complies with iSCSI revision {VersionDescriptor & 0x1F}");
                         break;
                     case 0x0980:
                         scsiOneValue.Add("Device complies with SBP-3 (no version claimed)");
@@ -1696,8 +1688,7 @@ namespace DiscImageChef.Server.App_Start
                         scsiOneValue.Add("Device complies with IEEE 1667-2009");
                         break;
                     default:
-                        scsiOneValue.Add(string.Format("Device complies with unknown standard code 0x{0:X4}",
-                                                       VersionDescriptor));
+                        scsiOneValue.Add($"Device complies with unknown standard code 0x{VersionDescriptor:X4}");
                         break;
                 }
 

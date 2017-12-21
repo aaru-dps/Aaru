@@ -240,7 +240,7 @@ namespace DiscImageChef.Filesystems
                 FreeClustersSpecified = true,
                 Dirty = efsSb.sb_dirty > 0,
                 VolumeName = StringHandlers.CToString(efsSb.sb_fname, CurrentEncoding),
-                VolumeSerial = string.Format("{0:X8}", efsSb.sb_checksum),
+                VolumeSerial = $"{efsSb.sb_checksum:X8}",
                 CreationDate = DateHandlers.UNIXToDateTime(efsSb.sb_time),
                 CreationDateSpecified = true
             };

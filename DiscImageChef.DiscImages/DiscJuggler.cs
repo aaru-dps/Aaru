@@ -344,8 +344,7 @@ namespace DiscImageChef.DiscImages
                                     currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
                                     break;
                                 default:
-                                    throw new ImageNotSupportedException(string.Format("Unknown read mode {0}",
-                                                                                       readMode));
+                                    throw new ImageNotSupportedException($"Unknown read mode {readMode}");
                             }
 
                             break;
@@ -364,8 +363,7 @@ namespace DiscImageChef.DiscImages
                                     break;
                                 case 1:
                                     throw new
-                                        ImageNotSupportedException(string.Format("Invalid read mode {0} for this track",
-                                                                                 readMode));
+                                        ImageNotSupportedException($"Invalid read mode {readMode} for this track");
                                 case 2:
                                     track.TrackRawBytesPerSector = 2352;
                                     currentOffset += trackLen * (ulong)track.TrackRawBytesPerSector;
@@ -425,8 +423,7 @@ namespace DiscImageChef.DiscImages
                                         ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                                     break;
                                 default:
-                                    throw new ImageNotSupportedException(string.Format("Unknown read mode {0}",
-                                                                                       readMode));
+                                    throw new ImageNotSupportedException($"Unknown read mode {readMode}");
                             }
 
                             break;
@@ -439,8 +436,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 case 0:
                                     throw new
-                                        ImageNotSupportedException(string.Format("Invalid read mode {0} for this track",
-                                                                                 readMode));
+                                        ImageNotSupportedException($"Invalid read mode {readMode} for this track");
                                 case 1:
                                     track.TrackRawBytesPerSector = 2336;
                                     if(firstTrack) currentOffset += 150 * (ulong)track.TrackRawBytesPerSector;
@@ -482,13 +478,12 @@ namespace DiscImageChef.DiscImages
                                         ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
                                     break;
                                 default:
-                                    throw new ImageNotSupportedException(string.Format("Unknown read mode {0}",
-                                                                                       readMode));
+                                    throw new ImageNotSupportedException($"Unknown read mode {readMode}");
                             }
 
                             break;
                         default:
-                            throw new ImageNotSupportedException(string.Format("Unknown track mode {0}", trackMode));
+                            throw new ImageNotSupportedException($"Unknown track mode {trackMode}");
                     }
 
                     track.TrackFile = imageFilter.GetFilename();
@@ -702,16 +697,14 @@ namespace DiscImageChef.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in tracks where _track.TrackSequence == kvp.Key where sectorAddress < _track.TrackEndSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                  string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap.Where(kvp => sectorAddress >= kvp.Value).Where(kvp => tracks.Where(_track => _track.TrackSequence == kvp.Key).Any(_track => sectorAddress < _track.TrackEndSector))) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                  string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
@@ -730,9 +723,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress, _track.TrackEndSector));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
@@ -826,9 +817,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress, _track.TrackEndSector));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
 
             if(_track.TrackType == TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -1033,8 +1022,7 @@ namespace DiscImageChef.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                  string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
@@ -1053,9 +1041,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _track.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress, _track.TrackEndSector));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
 
             uint sectorOffset = 0;
             uint sectorSize = (uint)_track.TrackRawBytesPerSector;

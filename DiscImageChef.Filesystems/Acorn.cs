@@ -560,7 +560,7 @@ namespace DiscImageChef.Filesystems
                                  .AppendLine();
                     if(oldMap1.discId > 0)
                     {
-                        xmlFSType.VolumeSerial = string.Format("{0:X4}", oldMap1.discId);
+                        xmlFSType.VolumeSerial = $"{oldMap1.discId:X4}";
                         sbInformation.AppendFormat("Volume ID: {0:X4}", oldMap1.discId).AppendLine();
                     }
                     if(!ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
@@ -666,7 +666,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume flags: 0x{0:X4}", drSb.flags).AppendLine();
             if(drSb.disc_id > 0)
             {
-                xmlFSType.VolumeSerial = string.Format("{0:X4}", drSb.disc_id);
+                xmlFSType.VolumeSerial = $"{drSb.disc_id:X4}";
                 sbInformation.AppendFormat("Volume ID: {0:X4}", drSb.disc_id).AppendLine();
             }
             if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.disc_name))

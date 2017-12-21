@@ -156,7 +156,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Clusters = vbr.clusterHeapLength;
             xmlFSType.Dirty = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
             xmlFSType.Type = "exFAT";
-            xmlFSType.VolumeSerial = string.Format("{0:X8}", vbr.volumeSerial);
+            xmlFSType.VolumeSerial = $"{vbr.volumeSerial:X8}";
 
             information = sb.ToString();
         }

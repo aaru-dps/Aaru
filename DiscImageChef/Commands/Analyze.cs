@@ -169,12 +169,12 @@ namespace DiscImageChef.Commands
                             if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
                             else if(idPlugins.Count > 1)
                             {
-                                DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
+                                DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                                 foreach(string pluginName in idPlugins)
                                     if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                                     {
-                                        DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
+                                        DicConsole.WriteLine($"As identified by {plugin.Name}.");
                                         plugin.GetInformation(imageFormat, partitions[i], out information);
                                         DicConsole.Write(information);
                                         Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
@@ -185,7 +185,7 @@ namespace DiscImageChef.Commands
                                 plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
                                 if(plugin != null)
                                 {
-                                    DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
+                                    DicConsole.WriteLine($"Identified by {plugin.Name}.");
                                     plugin.GetInformation(imageFormat, partitions[i], out information);
                                     DicConsole.Write(information);
                                     Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
@@ -208,12 +208,12 @@ namespace DiscImageChef.Commands
                     if(idPlugins.Count == 0) DicConsole.WriteLine("Filesystem not identified");
                     else if(idPlugins.Count > 1)
                     {
-                        DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
+                        DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                         foreach(string pluginName in idPlugins)
                             if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                             {
-                                DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
+                                DicConsole.WriteLine($"As identified by {plugin.Name}.");
                                 plugin.GetInformation(imageFormat, wholePart, out information);
                                 DicConsole.Write(information);
                                 Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
@@ -224,7 +224,7 @@ namespace DiscImageChef.Commands
                         plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
                         if(plugin != null)
                         {
-                            DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
+                            DicConsole.WriteLine($"Identified by {plugin.Name}.");
                             plugin.GetInformation(imageFormat, wholePart, out information);
                             DicConsole.Write(information);
                             Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
@@ -234,7 +234,7 @@ namespace DiscImageChef.Commands
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine(string.Format("Error reading file: {0}", ex.Message));
+                DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                 DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
             }
 

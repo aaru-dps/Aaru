@@ -234,8 +234,7 @@ namespace DiscImageChef.DiscImages
                         trackMatch = regexTrack.Match(_line ?? throw new InvalidOperationException());
 
                         if(!trackMatch.Success)
-                            throw new ImageNotSupportedException(string.Format("Unknown line \"{0}\" at line {1}",
-                                                                               _line, line));
+                            throw new ImageNotSupportedException($"Unknown line \"{_line}\" at line {line}");
 
                         tracksFound++;
 
@@ -384,7 +383,7 @@ namespace DiscImageChef.DiscImages
                     Partition partition = new Partition();
 
                     // Index 01
-                    partition.Description = string.Format("Track {0}.", discimage.Tracks[i].Sequence);
+                    partition.Description = $"Track {discimage.Tracks[i].Sequence}.";
                     partition.Name = null;
                     partition.Start = discimage.Tracks[i].StartSector;
                     partition.Size = discimage.Tracks[i].Sectors * discimage.Tracks[i].Bps;

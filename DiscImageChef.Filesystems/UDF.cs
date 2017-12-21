@@ -431,25 +431,23 @@ namespace DiscImageChef.Filesystems
                                            .GetString(pvd.implementationIdentifier.identifier)
                                            .TrimEnd('\u0000')).AppendLine();
             sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be read",
-                                       Convert.ToInt32(string.Format("{0}", (lvidiu.minimumReadUDF & 0xFF00) >> 8), 10),
-                                       Convert.ToInt32(string.Format("{0}", lvidiu.minimumReadUDF & 0xFF), 10))
+                                       Convert.ToInt32($"{(lvidiu.minimumReadUDF & 0xFF00) >> 8}", 10),
+                                       Convert.ToInt32($"{lvidiu.minimumReadUDF & 0xFF}", 10))
                          .AppendLine();
             sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be written to",
-                                       Convert.ToInt32(string.Format("{0}", (lvidiu.minimumWriteUDF & 0xFF00) >> 8),
+                                       Convert.ToInt32($"{(lvidiu.minimumWriteUDF & 0xFF00) >> 8}",
                                                        10),
-                                       Convert.ToInt32(string.Format("{0}", lvidiu.minimumWriteUDF & 0xFF), 10))
+                                       Convert.ToInt32($"{lvidiu.minimumWriteUDF & 0xFF}", 10))
                          .AppendLine();
             sbInformation.AppendFormat("Volume cannot be written by any UDF version higher than {0}.{1:X2}",
-                                       Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8),
+                                       Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}",
                                                        10),
-                                       Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10))
+                                       Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10))
                          .AppendLine();
 
             xmlFSType = new FileSystemType();
-            xmlFSType.Type = string.Format("UDF v{0}.{1:X2}",
-                                           Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8),
-                                                           10),
-                                           Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10));
+            xmlFSType.Type =
+                $"UDF v{Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10)}.{Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10):X2}";
             xmlFSType.ApplicationIdentifier = CurrentEncoding
                 .GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000');
             xmlFSType.ClusterSize = (int)lvd.logicalBlockSize;

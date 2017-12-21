@@ -76,7 +76,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 throw new NotImplementedException("ReFS is not yet implemented");
                 /*
                 Filesystem fs = new DiscImageChef.Filesystems.ReFS();

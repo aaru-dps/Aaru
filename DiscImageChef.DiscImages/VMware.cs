@@ -338,7 +338,7 @@ namespace DiscImageChef.DiscImages
                 {
                     string curPath;
                     if(cowCount == 1) curPath = basePath + ".vmdk";
-                    else curPath = string.Format("{0}-{1:D2}.vmdk", basePath, cowCount);
+                    else curPath = $"{basePath}-{cowCount:D2}.vmdk";
 
                     if(!File.Exists(curPath)) break;
 
@@ -509,8 +509,7 @@ namespace DiscImageChef.DiscImages
                     throw new
                         ImageNotSupportedException("Raw device image files are not supported, try accessing the device directly.");
                 default:
-                    throw new ImageNotSupportedException(string.Format("Dunno how to handle \"{0}\" extents.",
-                                                                       imageType));
+                    throw new ImageNotSupportedException($"Dunno how to handle \"{imageType}\" extents.");
             }
 
             bool oneNoFlat = false || cowD;
@@ -518,7 +517,7 @@ namespace DiscImageChef.DiscImages
             foreach(VMwareExtent extent in extents.Values)
             {
                 if(extent.Filter == null)
-                    throw new Exception(string.Format("Extent file {0} not found.", extent.Filename));
+                    throw new Exception($"Extent file {extent.Filename} not found.");
 
                 if(extent.Access == "NOACCESS") throw new Exception("Cannot access NOACCESS extents ;).");
 
@@ -528,7 +527,7 @@ namespace DiscImageChef.DiscImages
                 extentStream.Seek(0, SeekOrigin.Begin);
 
                 if(extentStream.Length < SECTOR_SIZE)
-                    throw new Exception(string.Format("Extent {0} is too small.", extent.Filename));
+                    throw new Exception($"Extent {extent.Filename} is too small.");
 
                 VMwareExtentHeader extentHdr = new VMwareExtentHeader();
                 byte[] extentHdrB = new byte[Marshal.SizeOf(extentHdr)];
@@ -539,12 +538,11 @@ namespace DiscImageChef.DiscImages
                 Marshal.FreeHGlobal(extentHdrPtr);
 
                 if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
-                    throw new Exception(string.Format("{0} is not an VMware extent.", extent.Filter));
+                    throw new Exception($"{extent.Filter} is not an VMware extent.");
 
                 if(extentHdr.capacity < extent.Sectors)
                     throw new
-                        Exception(string.Format("Extent contains incorrect number of sectors, {0}. {1} were expected",
-                                                extentHdr.capacity, extent.Sectors));
+                        Exception($"Extent contains incorrect number of sectors, {extentHdr.capacity}. {extent.Sectors} were expected");
 
                 // TODO: Support compressed extents
                 if(extentHdr.compression != COMPRESSION_NONE)
@@ -673,12 +671,12 @@ namespace DiscImageChef.DiscImages
             {
                 Filter parentFilter =
                     new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentName));
-                if(parentFilter == null) throw new Exception(string.Format("Cannot find parent \"{0}\".", parentName));
+                if(parentFilter == null) throw new Exception($"Cannot find parent \"{parentName}\".");
 
                 parentImage = new VMware();
 
                 if(!parentImage.OpenImage(parentFilter))
-                    throw new Exception(string.Format("Cannot open parent \"{0}\".", parentName));
+                    throw new Exception($"Cannot open parent \"{parentName}\".");
             }
 
             sectorCache = new Dictionary<ulong, byte[]>();
@@ -691,8 +689,8 @@ namespace DiscImageChef.DiscImages
             ImageInfo.MediaType = MediaType.GENERIC_HDD;
             ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
             // VMDK version 1 started on VMware 4, so there is a previous version, "COWD"
-            if(cowD) ImageInfo.ImageVersion = string.Format("{0}", version);
-            else ImageInfo.ImageVersion = string.Format("{0}", version + 3);
+            if(cowD) ImageInfo.ImageVersion = $"{version}";
+            else ImageInfo.ImageVersion = $"{version + 3}";
 
             if(cowD)
             {
@@ -714,7 +712,7 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             byte[] sector;
 
@@ -732,7 +730,7 @@ namespace DiscImageChef.DiscImages
 
             if(!extentFound)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             Stream dataStream;
 
@@ -803,7 +801,7 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");

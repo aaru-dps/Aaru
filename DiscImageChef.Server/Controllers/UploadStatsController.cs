@@ -415,11 +415,10 @@ namespace DiscImageChef.Server.Controllers
                                                .ThenBy(device => device.Bus).ToList();
 
                 Random rng = new Random();
-                string filename = string.Format("BackupStats_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow,
-                                                rng.Next());
+                string filename = $"BackupStats_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
                 while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics",
                                                filename)))
-                    filename = string.Format("BackupStats_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
+                    filename = $"BackupStats_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
 
                 FileStream backup =
                     new

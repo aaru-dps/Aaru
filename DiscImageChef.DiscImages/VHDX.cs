@@ -455,8 +455,7 @@ namespace DiscImageChef.DiscImages
                 else if(vRegs[i].guid == metadataGuid) metadataOffset = (long)vRegs[i].offset;
                 else if((vRegs[i].flags & REGION_FLAGS_REQUIRED) == REGION_FLAGS_REQUIRED)
                     throw new
-                        ImageNotSupportedException(string.Format("Found unsupported and required region Guid {0}, not proceeding with image.",
-                                                                 vRegs[i].guid));
+                        ImageNotSupportedException($"Found unsupported and required region Guid {vRegs[i].guid}, not proceeding with image.");
             }
 
             if(batOffset == 0) throw new Exception("BAT not found, cannot continue.");
@@ -493,8 +492,7 @@ namespace DiscImageChef.DiscImages
                 else if(vMets[i].itemId == parentLocatorGuid) parentOff = vMets[i].offset;
                 else if((vMets[i].flags & METADATA_FLAGS_REQUIRED) == METADATA_FLAGS_REQUIRED)
                     throw new
-                        ImageNotSupportedException(string.Format("Found unsupported and required metadata Guid {0}, not proceeding with image.",
-                                                                 vMets[i].itemId));
+                        ImageNotSupportedException($"Found unsupported and required metadata Guid {vMets[i].itemId}, not proceeding with image.");
             }
 
             byte[] tmp;
@@ -558,8 +556,7 @@ namespace DiscImageChef.DiscImages
 
                 if(vParHdr.locatorType != parentTypeVhdxGuid)
                     throw new
-                        ImageNotSupportedException(string.Format("Found unsupported and required parent locator type {0}, not proceeding with image.",
-                                                                 vParHdr.locatorType));
+                        ImageNotSupportedException($"Found unsupported and required parent locator type {vParHdr.locatorType}, not proceeding with image.");
 
                 vPars = new VhdxParentLocatorEntry[vParHdr.keyValueCount];
                 for(int i = 0; i < vPars.Length; i++)
@@ -705,9 +702,7 @@ namespace DiscImageChef.DiscImages
                         default:
                             if((pt & BAT_FLAGS_MASK) != 0)
                                 throw new
-                                    ImageNotSupportedException(string
-                                                                   .Format("Unsupported sector bitmap block flags (0x{0:X16}) found, not proceeding.",
-                                                                           pt & BAT_FLAGS_MASK));
+                                    ImageNotSupportedException($"Unsupported sector bitmap block flags (0x{pt & BAT_FLAGS_MASK:X16}) found, not proceeding.");
 
                             break;
                     }
@@ -823,7 +818,7 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             byte[] sector;
 
@@ -836,8 +831,7 @@ namespace DiscImageChef.DiscImages
             ulong blkFlags = blkPtr & BAT_FLAGS_MASK;
 
             if((blkPtr & BAT_RESERVED_MASK) != 0)
-                throw new ImageNotSupportedException(string.Format("Unknown flags (0x{0:X16}) set in block pointer",
-                                                                   blkPtr & BAT_RESERVED_MASK));
+                throw new ImageNotSupportedException($"Unknown flags (0x{blkPtr & BAT_RESERVED_MASK:X16}) set in block pointer");
 
             switch(blkFlags & BAT_FLAGS_MASK) {
                 case PAYLOAD_BLOCK_NOT_PRESENT: return hasParent ? parentImage.ReadSector(sectorAddress) : new byte[logicalSectorSize];
@@ -878,12 +872,11 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string.Format("Requested more sectors ({0}) than available ({1})",
-                                                                    sectorAddress + length, ImageInfo.Sectors));
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({ImageInfo.Sectors})");
 
             MemoryStream ms = new MemoryStream();
 

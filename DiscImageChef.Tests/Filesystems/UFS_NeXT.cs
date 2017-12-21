@@ -81,7 +81,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
+                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);

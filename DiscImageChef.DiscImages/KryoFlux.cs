@@ -204,8 +204,8 @@ namespace DiscImageChef.DiscImages
                 int cylinder = t / heads;
                 int head = topHead ? 1 : t % heads;
                 string trackfile = Directory.Exists(basename)
-                                       ? Path.Combine(basename, string.Format("{0:D2}.{1:D1}.raw", cylinder, head))
-                                       : string.Format("{0}{1:D2}.{2:D1}.raw", basename, cylinder, head);
+                                       ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
+                                       : $"{basename}{cylinder:D2}.{head:D1}.raw";
 
                 if(!File.Exists(trackfile))
                     if(cylinder == 0)

@@ -329,8 +329,7 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.ImageApplication = "CiderPress";
                     break;
                 default:
-                    ImageInfo.ImageApplication =
-                        string.Format("Unknown creator code \"{0}\"", Encoding.ASCII.GetString(creator));
+                    ImageInfo.ImageApplication = $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\"";
                     break;
             }
 

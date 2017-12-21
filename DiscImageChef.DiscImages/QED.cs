@@ -235,8 +235,7 @@ namespace DiscImageChef.DiscImages
 
             if((qHdr.features & QED_FEATURE_MASK) > 0)
                 throw new ArgumentOutOfRangeException(nameof(qHdr.features),
-                                                      string.Format("Image uses unknown incompatible features {0:X}",
-                                                                    qHdr.features & QED_FEATURE_MASK));
+                                                      $"Image uses unknown incompatible features {qHdr.features & QED_FEATURE_MASK:X}");
 
             if((qHdr.features & QED_FEATURE_BACKING_FILE) == QED_FEATURE_BACKING_FILE)
                 throw new NotImplementedException("Differencing images not yet supported");
@@ -308,7 +307,7 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             byte[] sector;
 
@@ -321,9 +320,7 @@ namespace DiscImageChef.DiscImages
 
             if((long)l1Off >= l1Table.LongLength)
                 throw new ArgumentOutOfRangeException(nameof(l1Off),
-                                                      string
-                                                          .Format("Trying to read past L1 table, position {0} of a max {1}",
-                                                                  l1Off, l1Table.LongLength));
+                                                      $"Trying to read past L1 table, position {l1Off} of a max {l1Table.LongLength}");
 
             // TODO: Implement differential images
             if(l1Table[l1Off] == 0) return new byte[512];
@@ -379,7 +376,7 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");

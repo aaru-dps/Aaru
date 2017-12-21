@@ -472,10 +472,10 @@ namespace DiscImageChef.DiscImages
                                 string dev = null;
                                 string pre = null;
 
-                                major = string.Format("{0}", version.MajorVersion);
-                                minor = string.Format(".{0}", version.MinorVersion / 10);
+                                major = $"{version.MajorVersion}";
+                                minor = $".{version.MinorVersion / 10}";
                                 if(version.MinorVersion % 10 > 0)
-                                    release = string.Format(".{0}", version.MinorVersion % 10);
+                                    release = $".{version.MinorVersion % 10}";
                                 switch(version.DevStage)
                                 {
                                     case Version.DevelopmentStage.Alpha:
@@ -491,10 +491,9 @@ namespace DiscImageChef.DiscImages
 
                                 if(dev == null && version.PreReleaseVersion > 0) dev = "f";
 
-                                if(dev != null) pre = string.Format("{0}", version.PreReleaseVersion);
+                                if(dev != null) pre = $"{version.PreReleaseVersion}";
 
-                                ImageInfo.ImageApplicationVersion =
-                                    string.Format("{0}{1}{2}{3}{4}", major, minor, release, dev, pre);
+                                ImageInfo.ImageApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
                                 ImageInfo.ImageApplication = version.VersionString;
                                 ImageInfo.ImageComments = version.VersionMessage;
                             }
@@ -715,7 +714,7 @@ namespace DiscImageChef.DiscImages
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(tag != SectorTagType.AppleSectorTag)
-                throw new FeatureUnsupportedImageException(string.Format("Tag {0} not supported by image format", tag));
+                throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
             if(header.TagSize == 0) throw new FeatureNotPresentImageException("Disk image does not have tags");
 

@@ -51,31 +51,25 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(resume.Removable != removable)
                     throw new
-                        Exception(string.Format("Resume file specifies a {0} device but you're requesting to dump a {1} device, not continuing...",
-                                                resume.Removable ? "removable" : "non removable",
-                                                removable ? "removable" : "non removable"));
+                        Exception($"Resume file specifies a {(resume.Removable ? "removable" : "non removable")} device but you're requesting to dump a {(removable ? "removable" : "non removable")} device, not continuing...");
 
                 if(resume.LastBlock != blocks - 1)
                     throw new
-                        Exception(string.Format("Resume file specifies a device with {0} blocks but you're requesting to dump one with {1} blocks, not continuing...",
-                                                resume.LastBlock + 1, blocks));
+                        Exception($"Resume file specifies a device with {resume.LastBlock + 1} blocks but you're requesting to dump one with {blocks} blocks, not continuing...");
 
                 foreach(DumpHardwareType oldtry in resume.Tries)
                 {
                     if(oldtry.Manufacturer != manufacturer && !removable)
                         throw new
-                            Exception(string.Format("Resume file specifies a device manufactured by {0} but you're requesting to dump one by {1}, not continuing...",
-                                                    oldtry.Manufacturer, manufacturer));
+                            Exception($"Resume file specifies a device manufactured by {oldtry.Manufacturer} but you're requesting to dump one by {manufacturer}, not continuing...");
 
                     if(oldtry.Model != model && !removable)
                         throw new
-                            Exception(string.Format("Resume file specifies a device model {0} but you're requesting to dump model {1}, not continuing...",
-                                                    oldtry.Model, model));
+                            Exception($"Resume file specifies a device model {oldtry.Model} but you're requesting to dump model {model}, not continuing...");
 
                     if(oldtry.Serial != serial && !removable)
                         throw new
-                            Exception(string.Format("Resume file specifies a device with serial {0} but you're requesting to dump one with serial {1}, not continuing...",
-                                                    oldtry.Serial, serial));
+                            Exception($"Resume file specifies a device with serial {oldtry.Serial} but you're requesting to dump one with serial {serial}, not continuing...");
 
                     if(oldtry.Software == null) throw new Exception("Found corrupt resume file, cannot continue...");
 

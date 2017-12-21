@@ -958,7 +958,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
-                default: throw new ImageNotSupportedException(string.Format("Unsupported CHD version {0}", version));
+                default: throw new ImageNotSupportedException($"Unsupported CHD version {version}");
             }
 
             if(mapVersion >= 3)
@@ -1078,8 +1078,7 @@ namespace DiscImageChef.DiscImages
                                         _track.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException(string.Format("Unsupported track type {0}",
-                                                                                           _trk.type));
+                                        throw new ImageNotSupportedException($"Unsupported track type {_trk.type}");
                                 }
 
                                 switch((ChdOldSubType)_trk.subType)
@@ -1099,12 +1098,11 @@ namespace DiscImageChef.DiscImages
                                         break;
                                     default:
                                         throw new
-                                            ImageNotSupportedException(string.Format("Unsupported subchannel type {0}",
-                                                                                     _trk.type));
+                                            ImageNotSupportedException($"Unsupported subchannel type {_trk.type}");
                                 }
 
                                 _track.Indexes = new Dictionary<int, ulong>();
-                                _track.TrackDescription = string.Format("Track {0}", i + 1);
+                                _track.TrackDescription = $"Track {i + 1}";
                                 _track.TrackEndSector = currentSector + _trk.frames - 1;
                                 _track.TrackFile = imageFilter.GetFilename();
                                 _track.TrackFileType = "BINARY";
@@ -1191,8 +1189,7 @@ namespace DiscImageChef.DiscImages
                                         _track.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException(string.Format("Unsupported track type {0}",
-                                                                                           tracktype));
+                                        throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
                                 }
 
                                 switch(subtype)
@@ -1212,12 +1209,11 @@ namespace DiscImageChef.DiscImages
                                         break;
                                     default:
                                         throw new
-                                            ImageNotSupportedException(string.Format("Unsupported subchannel type {0}",
-                                                                                     subtype));
+                                            ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
                                 _track.Indexes = new Dictionary<int, ulong>();
-                                _track.TrackDescription = string.Format("Track {0}", trackNo);
+                                _track.TrackDescription = $"Track {trackNo}";
                                 _track.TrackEndSector = currentSector + frames - 1;
                                 _track.TrackFile = imageFilter.GetFilename();
                                 _track.TrackFileType = "BINARY";
@@ -1307,8 +1303,7 @@ namespace DiscImageChef.DiscImages
                                         _track.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException(string.Format("Unsupported track type {0}",
-                                                                                           tracktype));
+                                        throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
                                 }
 
                                 switch(subtype)
@@ -1328,12 +1323,11 @@ namespace DiscImageChef.DiscImages
                                         break;
                                     default:
                                         throw new
-                                            ImageNotSupportedException(string.Format("Unsupported subchannel type {0}",
-                                                                                     subtype));
+                                            ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
                                 _track.Indexes = new Dictionary<int, ulong>();
-                                _track.TrackDescription = string.Format("Track {0}", trackNo);
+                                _track.TrackDescription = $"Track {trackNo}";
                                 _track.TrackEndSector = currentSector + frames - 1;
                                 _track.TrackFile = imageFilter.GetFilename();
                                 _track.TrackFileType = "BINARY";
@@ -1428,8 +1422,7 @@ namespace DiscImageChef.DiscImages
                                         _track.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException(string.Format("Unsupported track type {0}",
-                                                                                           tracktype));
+                                        throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
                                 }
 
                                 switch(subtype)
@@ -1449,12 +1442,11 @@ namespace DiscImageChef.DiscImages
                                         break;
                                     default:
                                         throw new
-                                            ImageNotSupportedException(string.Format("Unsupported subchannel type {0}",
-                                                                                     subtype));
+                                            ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
                                 _track.Indexes = new Dictionary<int, ulong>();
-                                _track.TrackDescription = string.Format("Track {0}", trackNo);
+                                _track.TrackDescription = $"Track {trackNo}";
                                 _track.TrackEndSector = currentSector + frames - 1;
                                 _track.TrackFile = imageFilter.GetFilename();
                                 _track.TrackFileType = "BINARY";
@@ -1663,8 +1655,7 @@ namespace DiscImageChef.DiscImages
 
                     if(length == sectorsPerHunk * ImageInfo.SectorSize) hunk = compHunk;
                     else if((ChdCompression)hdrCompression > ChdCompression.Zlib)
-                        throw new ImageNotSupportedException(string.Format("Unsupported compression {0}",
-                                                                           (ChdCompression)hdrCompression));
+                        throw new ImageNotSupportedException($"Unsupported compression {(ChdCompression)hdrCompression}");
                     else
                     {
                         DeflateStream zStream =
@@ -1673,9 +1664,7 @@ namespace DiscImageChef.DiscImages
                         int read = zStream.Read(hunk, 0, (int)(sectorsPerHunk * ImageInfo.SectorSize));
                         if(read != sectorsPerHunk * ImageInfo.SectorSize)
                             throw new
-                                IOException(string
-                                                .Format("Unable to decompress hunk correctly, got {0} bytes, expected {1}",
-                                                        read, sectorsPerHunk * ImageInfo.SectorSize));
+                                IOException($"Unable to decompress hunk correctly, got {read} bytes, expected {sectorsPerHunk * ImageInfo.SectorSize}");
 
                         zStream.Close();
                     }
@@ -1705,9 +1694,7 @@ namespace DiscImageChef.DiscImages
                                         int read = zStream.Read(hunk, 0, (int)bytesPerHunk);
                                         if(read != bytesPerHunk)
                                             throw new
-                                                IOException(string
-                                                                .Format("Unable to decompress hunk correctly, got {0} bytes, expected {1}",
-                                                                        read, bytesPerHunk));
+                                                IOException($"Unable to decompress hunk correctly, got {read} bytes, expected {bytesPerHunk}");
 
                                         zStream.Close();
                                     }
@@ -1719,8 +1706,7 @@ namespace DiscImageChef.DiscImages
                                     break;
                                 case ChdCompression.Av:
                                     throw new
-                                        ImageNotSupportedException(string.Format("Unsupported compression {0}",
-                                                                                 (ChdCompression)hdrCompression));
+                                        ImageNotSupportedException($"Unsupported compression {(ChdCompression)hdrCompression}");
                             }
 
                             break;
@@ -1743,8 +1729,7 @@ namespace DiscImageChef.DiscImages
                         case Chdv3EntryFlags.SecondCompressed:
                             throw new ImageNotSupportedException("FLAC is not supported");
                         default:
-                            throw new ImageNotSupportedException(string.Format("Hunk type {0} is not supported",
-                                                                               entry.flags & 0xF));
+                            throw new ImageNotSupportedException($"Hunk type {entry.flags & 0xF} is not supported");
                     }
 
                     break;
@@ -1759,8 +1744,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 default:
-                    throw new ImageNotSupportedException(string.Format("Unsupported hunk map version {0}",
-                                                                       mapVersion));
+                    throw new ImageNotSupportedException($"Unsupported hunk map version {mapVersion}");
             }
 
             if(hunkCache.Count >= maxBlockCache) hunkCache.Clear();
@@ -1899,7 +1883,7 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             byte[] sector;
             Track track = new Track();
@@ -2006,7 +1990,7 @@ namespace DiscImageChef.DiscImages
 
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             byte[] sector;
             Track track = new Track();
@@ -2045,8 +2029,7 @@ namespace DiscImageChef.DiscImages
                         break;
                     default:
                         throw new
-                            FeatureSupportedButNotImplementedImageException(string.Format("Unsupported subchannel type {0}",
-                                                                                          track.TrackSubchannelType));
+                            FeatureSupportedButNotImplementedImageException($"Unsupported subchannel type {track.TrackSubchannelType}");
                 }
             else
                 switch(track.TrackType)
@@ -2221,12 +2204,11 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string.Format("Requested more sectors ({0}) than available ({1})",
-                                                                    sectorAddress + length, ImageInfo.Sectors));
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({ImageInfo.Sectors})");
 
             MemoryStream ms = new MemoryStream();
 
@@ -2243,12 +2225,11 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string.Format("Requested more sectors ({0}) than available ({1})",
-                                                                    sectorAddress + length, ImageInfo.Sectors));
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({ImageInfo.Sectors})");
 
             MemoryStream ms = new MemoryStream();
 
@@ -2267,7 +2248,7 @@ namespace DiscImageChef.DiscImages
 
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             byte[] sector;
             Track track = new Track();
@@ -2309,12 +2290,11 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string.Format("Requested more sectors ({0}) than available ({1})",
-                                                                    sectorAddress + length, ImageInfo.Sectors));
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({ImageInfo.Sectors})");
 
             MemoryStream ms = new MemoryStream();
 

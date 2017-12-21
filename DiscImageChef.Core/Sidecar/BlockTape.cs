@@ -102,7 +102,7 @@ namespace DiscImageChef.Core
                     {
                         sector = new byte[sectorsToRead * blockSize];
                         fs.Read(sector, 0, sector.Length);
-                        UpdateProgress2(string.Format("Hashing block {0} of {1} on file {2} of {3}", doneSectors, sectors, i + 1, files.Count),
+                        UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
                                         doneSectors, sectors);
                         doneSectors += sectorsToRead;
                     }
@@ -110,7 +110,7 @@ namespace DiscImageChef.Core
                     {
                         sector = new byte[(uint)(sectors - doneSectors) * blockSize];
                         fs.Read(sector, 0, sector.Length);
-                        UpdateProgress2(string.Format("Hashing block {0} of {1} on file {2} of {3}", doneSectors, sectors, i + 1, files.Count),
+                        UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
                                         doneSectors, sectors);
                         doneSectors += sectors - doneSectors;
                     }

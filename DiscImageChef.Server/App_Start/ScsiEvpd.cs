@@ -53,8 +53,7 @@ namespace DiscImageChef.Server.App_Start
                 else if(evpd.page == 0x89) decoded = EVPD.PrettifyPage_89(evpd.value);
                 else if(evpd.page == 0xB0) decoded = EVPD.PrettifyPage_B0(evpd.value);
                 else if(evpd.page == 0xB2)
-                    decoded = string.Format("TapeAlert Supported Flags Bitmap: 0x{0:X16}<br/>",
-                                            EVPD.DecodePageB2(evpd.value));
+                    decoded = $"TapeAlert Supported Flags Bitmap: 0x{EVPD.DecodePageB2(evpd.value):X16}<br/>";
                 else if(evpd.page == 0xB4) decoded = EVPD.DecodePageB4(evpd.value);
                 else if(evpd.page == 0xC0 && vendor.Trim() == "quantum")
                     decoded = EVPD.PrettifyPage_C0_Quantum(evpd.value);
@@ -79,7 +78,7 @@ namespace DiscImageChef.Server.App_Start
 
                 if(!string.IsNullOrEmpty(decoded)) decoded = decoded.Replace("\n", "<br/>");
 
-                evpdPages.Add(string.Format("EVPD page {0:X2}h", evpd.page), decoded);
+                evpdPages.Add($"EVPD page {evpd.page:X2}h", decoded);
             }
         }
     }

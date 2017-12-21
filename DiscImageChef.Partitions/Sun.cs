@@ -272,9 +272,8 @@ namespace DiscImageChef.Partitions
                             Scheme = Name
                         };
                         if(dkl8.dkl_vtoc.v_timestamp[i] != 0)
-                            part.Description += string.Format("\nPartition timestamped on {0}",
-                                                              DateHandlers
-                                                                  .UNIXToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
+                            part.Description +=
+                                $"\nPartition timestamped on {DateHandlers.UNIXToDateTime(dkl8.dkl_vtoc.v_timestamp[i])}";
 
                         if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
                             partitions.Add(part);
@@ -342,9 +341,8 @@ namespace DiscImageChef.Partitions
                             Scheme = Name
                         };
                         if(dkl16.dkl_vtoc.v_timestamp[i] != 0)
-                            part.Description += string.Format("\nPartition timestamped on {0}",
-                                                              DateHandlers
-                                                                  .UNIXToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
+                            part.Description +=
+                                $"\nPartition timestamped on {DateHandlers.UNIXToDateTime(dkl16.dkl_vtoc.v_timestamp[i])}";
                         if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
                             partitions.Add(part);
                     }

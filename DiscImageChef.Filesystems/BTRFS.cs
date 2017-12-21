@@ -249,8 +249,8 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FreeClusters = xmlFSType.Clusters - (long)(btrfsSb.bytes_used / btrfsSb.sectorsize);
             xmlFSType.FreeClustersSpecified = true;
             xmlFSType.VolumeName = btrfsSb.label;
-            xmlFSType.VolumeSerial = string.Format("{0}", btrfsSb.uuid);
-            xmlFSType.VolumeSetIdentifier = string.Format("{0}", btrfsSb.dev_item.device_uuid);
+            xmlFSType.VolumeSerial = $"{btrfsSb.uuid}";
+            xmlFSType.VolumeSetIdentifier = $"{btrfsSb.dev_item.device_uuid}";
             xmlFSType.Type = Name;
         }
 

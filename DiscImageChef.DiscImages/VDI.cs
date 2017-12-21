@@ -206,7 +206,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.MediaType = MediaType.GENERIC_HDD;
             ImageInfo.ImageComments = vHdr.description;
-            ImageInfo.ImageVersion = string.Format("{0}.{1}", vHdr.majorVersion, vHdr.minorVersion);
+            ImageInfo.ImageVersion = $"{vHdr.majorVersion}.{vHdr.minorVersion}";
 
             switch(vHdr.creator)
             {
@@ -241,7 +241,7 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             byte[] sector;
 
@@ -274,13 +274,11 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0} + {1}) than available ({2})",
-                                                                  sectorAddress, length, ImageInfo.Sectors));
+                                                      $"Requested more sectors ({sectorAddress} + {length}) than available ({ImageInfo.Sectors})");
 
             MemoryStream ms = new MemoryStream();
 

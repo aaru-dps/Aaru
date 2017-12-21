@@ -88,16 +88,14 @@ namespace DiscImageChef.Core.Devices
             if(read6 && !read10 && !read12 && !read16 && Blocks > 0x001FFFFF + 1)
             {
                 ErrorMessage =
-                    string.Format("Device only supports SCSI READ (6) but has more than {0} blocks ({1} blocks total)",
-                                  0x001FFFFF + 1, Blocks);
+                    $"Device only supports SCSI READ (6) but has more than {0x001FFFFF + 1} blocks ({Blocks} blocks total)";
                 return true;
             }
 
             if(!read16 && Blocks > 0xFFFFFFFF + (long)1)
             {
                 ErrorMessage =
-                    string.Format("Device only supports SCSI READ (10) but has more than {0} blocks ({1} blocks total)",
-                                  0xFFFFFFFF + (long)1, Blocks);
+                    $"Device only supports SCSI READ (10) but has more than {0xFFFFFFFF + (long)1} blocks ({Blocks} blocks total)";
                 return true;
             }
 
@@ -403,8 +401,7 @@ namespace DiscImageChef.Core.Devices
                 if(sense && Blocks == 0)
                     if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                     {
-                        ErrorMessage = string.Format("Unable to get media capacity\n" + "{0}",
-                                                     Sense.PrettifySense(senseBuf));
+                        ErrorMessage = "Unable to get media capacity\n" + $"{Sense.PrettifySense(senseBuf)}";
 
                         return true;
                     }
@@ -465,7 +462,7 @@ namespace DiscImageChef.Core.Devices
             if(!dev.Error) return false;
 
             BlocksToRead = 1;
-            ErrorMessage = string.Format("Device error {0} trying to guess ideal transfer length.", dev.LastError);
+            ErrorMessage = $"Device error {dev.LastError} trying to guess ideal transfer length.";
             return true;
         }
 

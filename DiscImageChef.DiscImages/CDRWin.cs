@@ -458,9 +458,7 @@ namespace DiscImageChef.DiscImages
                     uint trackSeq = uint.Parse(matchTrack.Groups[1].Value);
                     if(trackCount + 1 != trackSeq)
                         throw new
-                            FeatureUnsupportedImageException(string
-                                                                 .Format("Found TRACK {0} out of order in line {1}",
-                                                                         trackSeq, line));
+                            FeatureUnsupportedImageException($"Found TRACK {trackSeq} out of order in line {line}");
 
                     trackCount++;
                 }
@@ -493,9 +491,7 @@ namespace DiscImageChef.DiscImages
                     }
                     else if(matchDiskType.Success && intrack)
                         throw new
-                            FeatureUnsupportedImageException(string
-                                                                 .Format("Found REM ORIGINAL MEDIA TYPE field after a track in line {0}",
-                                                                         line));
+                            FeatureUnsupportedImageException($"Found REM ORIGINAL MEDIA TYPE field after a track in line {line}");
                     else if(matchSession.Success)
                     {
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM SESSION at line {0}", line);
@@ -545,9 +541,7 @@ namespace DiscImageChef.DiscImages
                             if(!intrack) discimage.Barcode = matchBarCode.Groups[1].Value;
                             else
                                 throw new
-                                    FeatureUnsupportedImageException(string
-                                                                         .Format("Found barcode field in incorrect place at line {0}",
-                                                                                 line));
+                                    FeatureUnsupportedImageException($"Found barcode field in incorrect place at line {line}");
                         }
                         else if(matchCdText.Success)
                         {
@@ -555,9 +549,7 @@ namespace DiscImageChef.DiscImages
                             if(!intrack) discimage.Cdtextfile = matchCdText.Groups[1].Value;
                             else
                                 throw new
-                                    FeatureUnsupportedImageException(string
-                                                                         .Format("Found CD-Text file field in incorrect place at line {0}",
-                                                                                 line));
+                                    FeatureUnsupportedImageException($"Found CD-Text file field in incorrect place at line {line}");
                         }
                         else if(matchComposer.Success)
                         {
@@ -571,9 +563,7 @@ namespace DiscImageChef.DiscImages
                             if(!intrack) discimage.DiskId = matchDiskId.Groups[1].Value;
                             else
                                 throw new
-                                    FeatureUnsupportedImageException(string
-                                                                         .Format("Found CDDB ID field in incorrect place at line {0}",
-                                                                                 line));
+                                    FeatureUnsupportedImageException($"Found CDDB ID field in incorrect place at line {line}");
                         }
                         else if(matchFile.Success)
                         {
@@ -622,16 +612,12 @@ namespace DiscImageChef.DiscImages
 
                                             if(currentfile.Datafilter == null)
                                                 throw new
-                                                    FeatureUnsupportedImageException(string
-                                                                                         .Format("File \"{0}\" not found.",
-                                                                                                 matchFile
-                                                                                                     .Groups[1].Value));
+                                                    FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
                                         }
                                     }
                                     else
                                         throw new
-                                            FeatureUnsupportedImageException(string.Format("File \"{0}\" not found.",
-                                                                                           matchFile.Groups[1].Value));
+                                            FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
                                 }
                                 else if(datafile[1] == ':' && datafile[2] == '\\' ||
                                         datafile[0] == '\\' && datafile[1] == '\\' ||
@@ -653,16 +639,12 @@ namespace DiscImageChef.DiscImages
 
                                             if(currentfile.Datafilter == null)
                                                 throw new
-                                                    FeatureUnsupportedImageException(string
-                                                                                         .Format("File \"{0}\" not found.",
-                                                                                                 matchFile
-                                                                                                     .Groups[1].Value));
+                                                    FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
                                         }
                                     }
                                     else
                                         throw new
-                                            FeatureUnsupportedImageException(string.Format("File \"{0}\" not found.",
-                                                                                           matchFile.Groups[1].Value));
+                                            FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
                                 }
                                 else
                                 {
@@ -671,8 +653,7 @@ namespace DiscImageChef.DiscImages
 
                                     if(currentfile.Datafilter == null)
                                         throw new
-                                            FeatureUnsupportedImageException(string.Format("File \"{0}\" not found.",
-                                                                                           matchFile.Groups[1].Value));
+                                            FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
                                 }
 
                             // File does exist, process it
@@ -687,13 +668,9 @@ namespace DiscImageChef.DiscImages
                                 case CDRWIN_DISK_TYPE_RIFF:
                                 case CDRWIN_DISK_TYPE_MP3:
                                     throw new
-                                        FeatureSupportedButNotImplementedImageException(string
-                                                                                            .Format("Unsupported file type {0}",
-                                                                                                    currentfile
-                                                                                                        .Filetype));
+                                        FeatureSupportedButNotImplementedImageException($"Unsupported file type {currentfile.Filetype}");
                                 default:
-                                    throw new FeatureUnsupportedImageException(string.Format("Unknown file type {0}",
-                                                                                             currentfile.Filetype));
+                                    throw new FeatureUnsupportedImageException($"Unknown file type {currentfile.Filetype}");
                             }
 
                             currentfile.Offset = 0;
@@ -704,9 +681,7 @@ namespace DiscImageChef.DiscImages
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found FLAGS at line {0}", line);
                             if(!intrack)
                                 throw new
-                                    FeatureUnsupportedImageException(string
-                                                                         .Format("Found FLAGS field in incorrect place at line {0}",
-                                                                                 line));
+                                    FeatureUnsupportedImageException($"Found FLAGS field in incorrect place at line {line}");
 
                             currenttrack.FlagDcp |= matchFile.Groups["dcp"].Value == "DCP";
                             currenttrack.Flag4ch |= matchFile.Groups["quad"].Value == "4CH";
@@ -724,17 +699,14 @@ namespace DiscImageChef.DiscImages
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found INDEX at line {0}", line);
                             if(!intrack)
                                 throw new
-                                    FeatureUnsupportedImageException(string.Format("Found INDEX before a track {0}",
-                                                                                   line));
+                                    FeatureUnsupportedImageException($"Found INDEX before a track {line}");
 
                             int index = int.Parse(matchIndex.Groups[1].Value);
                             ulong offset = CdrWinMsftoLba(matchIndex.Groups[2].Value);
 
                             if(index != 0 && index != 1 && currenttrack.Indexes.Count == 0)
                                 throw new
-                                    FeatureUnsupportedImageException(string
-                                                                         .Format("Found INDEX {0} before INDEX 00 or INDEX 01",
-                                                                                 index));
+                                    FeatureUnsupportedImageException($"Found INDEX {index} before INDEX 00 or INDEX 01");
 
                             if(index == 0 || index == 1 && !currenttrack.Indexes.ContainsKey(0))
                                 if((int)(currenttrack.Sequence - 2) >= 0 && offset > 1)
@@ -771,8 +743,7 @@ namespace DiscImageChef.DiscImages
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found ISRC at line {0}", line);
                             if(!intrack)
                                 throw new
-                                    FeatureUnsupportedImageException(string.Format("Found ISRC before a track {0}",
-                                                                                   line));
+                                    FeatureUnsupportedImageException($"Found ISRC before a track {line}");
 
                             currenttrack.Isrc = matchIsrc.Groups[1].Value;
                         }
@@ -782,9 +753,7 @@ namespace DiscImageChef.DiscImages
                             if(!intrack) discimage.Mcn = matchMcn.Groups[1].Value;
                             else
                                 throw new
-                                    FeatureUnsupportedImageException(string
-                                                                         .Format("Found CATALOG field in incorrect place at line {0}",
-                                                                                 line));
+                                    FeatureUnsupportedImageException($"Found CATALOG field in incorrect place at line {line}");
                         }
                         else if(matchPerformer.Success)
                         {
@@ -798,9 +767,7 @@ namespace DiscImageChef.DiscImages
                             if(intrack) currenttrack.Postgap = CdrWinMsftoLba(matchPostgap.Groups[1].Value);
                             else
                                 throw new
-                                    FeatureUnsupportedImageException(string
-                                                                         .Format("Found POSTGAP field before a track at line {0}",
-                                                                                 line));
+                                    FeatureUnsupportedImageException($"Found POSTGAP field before a track at line {line}");
                         }
                         else if(matchPregap.Success)
                         {
@@ -808,9 +775,7 @@ namespace DiscImageChef.DiscImages
                             if(intrack) currenttrack.Pregap = CdrWinMsftoLba(matchPregap.Groups[1].Value);
                             else
                                 throw new
-                                    FeatureUnsupportedImageException(string
-                                                                         .Format("Found PREGAP field before a track at line {0}",
-                                                                                 line));
+                                    FeatureUnsupportedImageException($"Found PREGAP field before a track at line {line}");
                         }
                         else if(matchSongWriter.Success)
                         {
@@ -829,9 +794,7 @@ namespace DiscImageChef.DiscImages
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found TRACK at line {0}", line);
                             if(currentfile.Datafilter == null)
                                 throw new
-                                    FeatureUnsupportedImageException(string
-                                                                         .Format("Found TRACK field before a file is defined at line {0}",
-                                                                                 line));
+                                    FeatureUnsupportedImageException($"Found TRACK field before a file is defined at line {line}");
 
                             if(intrack)
                             {
@@ -855,9 +818,7 @@ namespace DiscImageChef.DiscImages
                         { }
                         else // Non-empty unknown field
                             throw new
-                                FeatureUnsupportedImageException(string
-                                                                     .Format("Found unknown field defined at line {0}: \"{1}\"",
-                                                                             line, _line));
+                                FeatureUnsupportedImageException($"Found unknown field defined at line {line}: \"{_line}\"");
                     }
                 }
 
@@ -1111,8 +1072,7 @@ namespace DiscImageChef.DiscImages
                     indexZero |= discimage.Tracks[i].Indexes.TryGetValue(0, out indexZeroOffset);
 
                     if(!discimage.Tracks[i].Indexes.TryGetValue(1, out indexOneOffset))
-                        throw new ImageNotSupportedException(string.Format("Track {0} lacks index 01",
-                                                                           discimage.Tracks[i].Sequence));
+                        throw new ImageNotSupportedException($"Track {discimage.Tracks[i].Sequence} lacks index 01");
 
                     /*if(index_zero && index_one_offset > index_zero_offset)
                     {
@@ -1149,7 +1109,7 @@ namespace DiscImageChef.DiscImages
                     }*/
 
                     // Index 01
-                    partition.Description = string.Format("Track {0}.", discimage.Tracks[i].Sequence);
+                    partition.Description = $"Track {discimage.Tracks[i].Sequence}.";
                     partition.Name = discimage.Tracks[i].Title;
                     partition.Start = sectorOffset;
                     partition.Size = (discimage.Tracks[i].Sectors - index0Len) * discimage.Tracks[i].Bps;

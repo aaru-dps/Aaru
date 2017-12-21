@@ -529,8 +529,7 @@ namespace DiscImageChef.DiscImages
                                 currenttrack.Bps = 2336;
                                 break;
                             default:
-                                throw new NotSupportedException(string.Format("Track mode {0} is unsupported",
-                                                                              matchTrack.Groups["type"].Value));
+                                throw new NotSupportedException($"Track mode {matchTrack.Groups["type"].Value} is unsupported");
                         }
 
                         switch(matchTrack.Groups["subchan"].Value)
@@ -545,8 +544,7 @@ namespace DiscImageChef.DiscImages
                                 break;
                             default:
                                 throw new
-                                    NotSupportedException(string.Format("Track subchannel mode {0} is unsupported",
-                                                                        matchTrack.Groups["subchan"].Value));
+                                    NotSupportedException($"Track subchannel mode {matchTrack.Groups["subchan"].Value} is unsupported");
                         }
 
                         currenttrack.Tracktype = matchTrack.Groups["type"].Value;
@@ -861,7 +859,7 @@ namespace DiscImageChef.DiscImages
                     Partition partition = new Partition();
 
                     // Index 01
-                    partition.Description = string.Format("Track {0}.", discimage.Tracks[i].Sequence);
+                    partition.Description = $"Track {discimage.Tracks[i].Sequence}.";
                     partition.Name = discimage.Tracks[i].Title;
                     partition.Start = discimage.Tracks[i].StartSector;
                     partition.Size = (discimage.Tracks[i].Sectors - index0Len) * discimage.Tracks[i].Bps;
@@ -1064,16 +1062,14 @@ namespace DiscImageChef.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrdaoTrack in discimage.Tracks where cdrdaoTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                  string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrdaoTrack in discimage.Tracks where cdrdaoTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                  string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)

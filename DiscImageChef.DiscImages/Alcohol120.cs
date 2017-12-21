@@ -601,7 +601,7 @@ namespace DiscImageChef.DiscImages
                 {
                     Partition partition = new Partition();
 
-                    partition.Description = string.Format("Track {0}.", trk.point);
+                    partition.Description = $"Track {trk.point}.";
                     partition.Start = trk.startLba;
                     partition.Size = extra.sectors * trk.sectorSize;
                     partition.Length = extra.sectors;
@@ -690,7 +690,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.ImageCreationTime = alcImage.GetCreationTime();
             ImageInfo.ImageLastModificationTime = alcImage.GetLastWriteTime();
             ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
-            ImageInfo.ImageVersion = string.Format("{0}.{1}", header.version[0], header.version[1]);
+            ImageInfo.ImageVersion = $"{header.version[0]}.{header.version[1]}";
 
             if(!isDvd)
             {
@@ -868,9 +868,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _extra.sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress, _extra.sectors));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_extra.sectors}), won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
@@ -966,9 +964,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _extra.sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length, _extra.sectors));
+                                                      $"Requested more sectors ({length}) than present in track ({_extra.sectors}), won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
@@ -1321,9 +1317,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _extra.sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length, _extra.sectors));
+                                                      $"Requested more sectors ({length}) than present in track ({_extra.sectors}), won't cross tracks");
 
             uint sector_offset;
             uint sector_size;

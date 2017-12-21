@@ -314,9 +314,9 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "ZFS filesystem";
             if(decodedNvList.TryGetValue("name", out tmpObj)) xmlFSType.VolumeName = (string)tmpObj.value;
             if(decodedNvList.TryGetValue("guid", out tmpObj))
-                xmlFSType.VolumeSerial = string.Format("{0}", (ulong)tmpObj.value);
+                xmlFSType.VolumeSerial = $"{(ulong)tmpObj.value}";
             if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
-                xmlFSType.VolumeSetIdentifier = string.Format("{0}", (ulong)tmpObj.value);
+                xmlFSType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
         }
 
         static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList)

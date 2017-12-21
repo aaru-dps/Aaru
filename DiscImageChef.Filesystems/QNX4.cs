@@ -250,8 +250,8 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.altBoot.di_status = {0}", qnxSb.altBoot.di_status);
             */
 
-            information = string.Format("QNX4 filesystem\nCreated on {0}\n",
-                                        DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime));
+            information =
+                $"QNX4 filesystem\nCreated on {DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime)}\n";
 
             xmlFSType = new FileSystemType
             {

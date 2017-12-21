@@ -585,7 +585,7 @@ namespace DiscImageChef.DiscImages
                                                                           .ToUpper(CultureInfo.CurrentCulture)));
                     if(dataFilter != null) break;
 
-                    throw new ArgumentException(string.Format("Data file {0} not found", header.DataFile));
+                    throw new ArgumentException($"Data file {header.DataFile} not found");
                 }
             else throw new ArgumentException("Unable to find data file");
 
@@ -959,10 +959,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _track.TrackEndSector - _track.TrackStartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress,
-                                                                  _track.TrackEndSector - _track.TrackStartSector + 1));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector - _track.TrackStartSector + 1}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
@@ -1039,10 +1036,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _track.TrackEndSector - _track.TrackStartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress,
-                                                                  _track.TrackEndSector - _track.TrackStartSector + 1));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector - _track.TrackStartSector + 1}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
@@ -1229,10 +1223,7 @@ namespace DiscImageChef.DiscImages
 
             if(length + sectorAddress > _track.TrackEndSector - _track.TrackStartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress,
-                                                                  _track.TrackEndSector - _track.TrackStartSector + 1));
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector - _track.TrackStartSector + 1}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;

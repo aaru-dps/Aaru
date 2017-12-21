@@ -130,7 +130,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
             ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            ImageInfo.ImageVersion = string.Format("{0}.{1}", hdr.revision >> 8, hdr.revision & 0x0F);
+            ImageInfo.ImageVersion = $"{hdr.revision >> 8}.{hdr.revision & 0x0F}";
 
             if(!ArrayHelpers.ArrayIsNullOrEmpty(hdr.identify))
             {

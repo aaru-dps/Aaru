@@ -54,7 +54,7 @@ namespace DiscImageChef.Core
                 f = lba + 450150;
             }
 
-            return string.Format("{0}:{1:D2}:{2:D2}", m, s, f);
+            return $"{m}:{s:D2}:{f:D2}";
         }
 
         static string DdcdLbaToMsf(long lba)

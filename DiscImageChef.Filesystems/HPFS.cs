@@ -217,7 +217,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ClusterSize = hpfs_bpb.bps;
             xmlFSType.Type = "HPFS";
             xmlFSType.VolumeName = StringHandlers.CToString(hpfs_bpb.volume_label, CurrentEncoding);
-            xmlFSType.VolumeSerial = string.Format("{0:X8}", hpfs_bpb.serial_no);
+            xmlFSType.VolumeSerial = $"{hpfs_bpb.serial_no:X8}";
             xmlFSType.SystemIdentifier = StringHandlers.CToString(hpfs_bpb.oem_name);
 
             information = sb.ToString();

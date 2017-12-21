@@ -183,9 +183,7 @@ namespace DiscImageChef.DiscImages
                         if(record.compression != CompressType.Compressed &&
                            record.compression != CompressType.Uncompresed)
                             throw new
-                                ImageNotSupportedException(string
-                                                               .Format("Found record with unknown compression type 0x{0:X4} at {1}",
-                                                                       (ushort)record.compression, stream.Position));
+                                ImageNotSupportedException($"Found record with unknown compression type 0x{(ushort)record.compression:X4} at {stream.Position}");
 
                         DicConsole.DebugWriteLine("Apridisk plugin",
                                                   "Found {4} sector record at {0} for cylinder {1} head {2} sector {3}",
@@ -202,8 +200,7 @@ namespace DiscImageChef.DiscImages
                         break;
                     default:
                         throw new
-                            ImageNotSupportedException(string.Format("Found record with unknown type 0x{0:X8} at {1}",
-                                                                     (uint)record.type, stream.Position));
+                            ImageNotSupportedException($"Found record with unknown type 0x{(uint)record.type:X8} at {stream.Position}");
                 }
             }
 

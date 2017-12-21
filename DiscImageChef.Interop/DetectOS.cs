@@ -86,8 +86,7 @@ namespace DiscImageChef.Interop
             utsname unixname;
             int error = uname(out unixname);
             if(error != 0)
-                throw new Exception(string.Format("Unhandled exception calling uname: {0}",
-                                                  Marshal.GetLastWin32Error()));
+                throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
 
             switch(unixname.sysname)
             {
@@ -110,8 +109,7 @@ namespace DiscImageChef.Interop
                     {
                         Marshal.FreeHGlobal(pLen);
 
-                        throw new Exception(string.Format("Unhandled exception calling uname: {0}",
-                                                          Marshal.GetLastWin32Error()));
+                        throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
                     }
 
                     int length = Marshal.ReadInt32(pLen);
@@ -122,8 +120,7 @@ namespace DiscImageChef.Interop
                         Marshal.FreeHGlobal(pStr);
                         Marshal.FreeHGlobal(pLen);
 
-                        throw new Exception(string.Format("Unhandled exception calling uname: {0}",
-                                                          Marshal.GetLastWin32Error()));
+                        throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
                     }
 
                     string machine = Marshal.PtrToStringAnsi(pStr);
@@ -196,8 +193,7 @@ namespace DiscImageChef.Interop
             {
                 case PlatformID.MacOSX:
                     if(Environment.OSVersion.Version.Major != 1)
-                        return string.Format("10.{0}.{1}", Environment.OSVersion.Version.Major - 4,
-                                             Environment.OSVersion.Version.Minor);
+                        return $"10.{Environment.OSVersion.Version.Major - 4}.{Environment.OSVersion.Version.Minor}";
 
                     switch(Environment.OSVersion.Version.Minor) {
                         case 3: return "10.0";

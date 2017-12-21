@@ -81,9 +81,8 @@ namespace DiscImageChef.Server
                                              "Statistics.xml")))
                 {
 #if DEBUG
-                    content.InnerHtml = string.Format("<b>Sorry, cannot load data file \"{0}\"</b>",
-                                                      Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
-                                                                   "Statistics", "Statistics.xml"));
+                    content.InnerHtml =
+                        $"<b>Sorry, cannot load data file \"{Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml")}\"</b>";
 #else
                     content.InnerHtml = "<b>Sorry, cannot load data file</b>";
 #endif
@@ -105,11 +104,8 @@ namespace DiscImageChef.Server
                     foreach(OsStats nvs in statistics.OperatingSystems)
                         operatingSystems.Add(new NameValueStats
                         {
-                            name = string.Format("{0}{1}{2}",
-                                                 DetectOS
-                                                        .GetPlatformName((PlatformID)Enum.Parse(typeof(PlatformID), nvs.name),
-                                                                         nvs.version),
-                                                 string.IsNullOrEmpty(nvs.version) ? "" : " ", nvs.version),
+                            name =
+                                $"{DetectOS.GetPlatformName((PlatformID)Enum.Parse(typeof(PlatformID), nvs.name), nvs.version)}{(string.IsNullOrEmpty(nvs.version) ? "" : " ")}{nvs.version}",
                             Value = nvs.Value
                         });
 
@@ -233,30 +229,26 @@ namespace DiscImageChef.Server
                            !string.IsNullOrWhiteSpace(device.Model) && !string.IsNullOrWhiteSpace(device.Revision))
                         {
                             xmlFile = device.Manufacturer + "_" + device.Model + "_" + device.Revision + ".xml";
-                            url = string.Format("ViewReport.aspx?manufacturer={0}&model={1}&revision={2}",
-                                                HttpUtility.UrlPathEncode(device.Manufacturer),
-                                                HttpUtility.UrlPathEncode(device.Model),
-                                                HttpUtility.UrlPathEncode(device.Revision));
+                            url =
+                                $"ViewReport.aspx?manufacturer={HttpUtility.UrlPathEncode(device.Manufacturer)}&model={HttpUtility.UrlPathEncode(device.Model)}&revision={HttpUtility.UrlPathEncode(device.Revision)}";
                         }
                         else if(!string.IsNullOrWhiteSpace(device.Manufacturer) &&
                                 !string.IsNullOrWhiteSpace(device.Model))
                         {
                             xmlFile = device.Manufacturer + "_" + device.Model + ".xml";
-                            url = string.Format("ViewReport.aspx?manufacturer={0}&model={1}",
-                                                HttpUtility.UrlPathEncode(device.Manufacturer),
-                                                HttpUtility.UrlPathEncode(device.Model));
+                            url =
+                                $"ViewReport.aspx?manufacturer={HttpUtility.UrlPathEncode(device.Manufacturer)}&model={HttpUtility.UrlPathEncode(device.Model)}";
                         }
                         else if(!string.IsNullOrWhiteSpace(device.Model) && !string.IsNullOrWhiteSpace(device.Revision))
                         {
                             xmlFile = device.Model + "_" + device.Revision + ".xml";
-                            url = string.Format("ViewReport.aspx?model={0}&revision={1}",
-                                                HttpUtility.UrlPathEncode(device.Model),
-                                                HttpUtility.UrlPathEncode(device.Revision));
+                            url =
+                                $"ViewReport.aspx?model={HttpUtility.UrlPathEncode(device.Model)}&revision={HttpUtility.UrlPathEncode(device.Revision)}";
                         }
                         else
                         {
                             xmlFile = device.Model + ".xml";
-                            url = string.Format("ViewReport.aspx?model={0}", HttpUtility.UrlPathEncode(device.Model));
+                            url = $"ViewReport.aspx?model={HttpUtility.UrlPathEncode(device.Model)}";
                         }
 
                         xmlFile = xmlFile.Replace('/', '_').Replace('\\', '_').Replace('?', '_');
@@ -271,7 +263,7 @@ namespace DiscImageChef.Server
                             Revision = device.Revision,
                             Bus = device.Bus,
                             ReportLink =
-                                url == null ? "No" : string.Format("<a href=\"{0}\" target=\"_blank\">Yes</a>", url)
+                                url == null ? "No" : $"<a href=\"{url}\" target=\"_blank\">Yes</a>"
                         });
                     }
 

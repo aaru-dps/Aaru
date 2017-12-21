@@ -82,7 +82,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiGetBlocks();
                 default:
-                    ErrorMessage = string.Format("Unknown device type {0}.", dev.Type);
+                    ErrorMessage = $"Unknown device type {dev.Type}.";
                     return 0;
             }
         }
@@ -95,7 +95,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiFindReadCommand();
                 default:
-                    ErrorMessage = string.Format("Unknown device type {0}.", dev.Type);
+                    ErrorMessage = $"Unknown device type {dev.Type}.";
                     return true;
             }
         }
@@ -108,7 +108,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiGetBlockSize();
                 default:
-                    ErrorMessage = string.Format("Unknown device type {0}.", dev.Type);
+                    ErrorMessage = $"Unknown device type {dev.Type}.";
                     return true;
             }
         }
@@ -121,7 +121,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
                 default:
-                    ErrorMessage = string.Format("Unknown device type {0}.", dev.Type);
+                    ErrorMessage = $"Unknown device type {dev.Type}.";
                     return true;
             }
         }

@@ -250,7 +250,7 @@ namespace DiscImageChef.Filesystems.CPM
                         string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                         // If user is != 0, append user to name to have identical filenames
-                        if(user > 0) filename = string.Format("{0:X1}:{1}", user, filename);
+                        if(user > 0) filename = $"{user:X1}:{filename}";
                         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                         int entryNo = (32 * entry.extentCounter + entry.extentCounterHigh) / (dpb.exm + 1);
@@ -344,7 +344,7 @@ namespace DiscImageChef.Filesystems.CPM
                         string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                         // If user is != 0, append user to name to have identical filenames
-                        if(user > 0) filename = string.Format("{0:X1}:{1}", user, filename);
+                        if(user > 0) filename = $"{user:X1}:{filename}";
                         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                         int entryNo = (32 * entry.extentCounterHigh + entry.extentCounter) / (dpb.exm + 1);
@@ -423,7 +423,7 @@ namespace DiscImageChef.Filesystems.CPM
                     string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                     // If user is != 0, append user to name to have identical filenames
-                    if(user > 0) filename = string.Format("{0:X1}:{1}", user, filename);
+                    if(user > 0) filename = $"{user:X1}:{filename}";
                     if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                     // Do not repeat passwords

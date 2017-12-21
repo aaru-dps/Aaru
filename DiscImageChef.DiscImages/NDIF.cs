@@ -335,8 +335,7 @@ namespace DiscImageChef.DiscImages
                        bChnk.type > CHUNK_TYPE_ADC && bChnk.type < CHUNK_TYPE_STUFFIT ||
                        bChnk.type > CHUNK_TYPE_STUFFIT && bChnk.type < CHUNK_TYPE_END ||
                        bChnk.type == 1)
-                        throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
-                                                                           bChnk.type));
+                        throw new ImageNotSupportedException($"Unsupported chunk type 0x{bChnk.type:X8} found");
 
                     chunks.Add(bChnk.sector, bChnk);
                 }
@@ -382,9 +381,9 @@ namespace DiscImageChef.DiscImages
                     string dev = null;
                     string pre = null;
 
-                    major = string.Format("{0}", version.MajorVersion);
-                    minor = string.Format(".{0}", version.MinorVersion / 10);
-                    if(version.MinorVersion % 10 > 0) release = string.Format(".{0}", version.MinorVersion % 10);
+                    major = $"{version.MajorVersion}";
+                    minor = $".{version.MinorVersion / 10}";
+                    if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
                     switch(version.DevStage)
                     {
                         case Version.DevelopmentStage.Alpha:
@@ -400,10 +399,9 @@ namespace DiscImageChef.DiscImages
 
                     if(dev == null && version.PreReleaseVersion > 0) dev = "f";
 
-                    if(dev != null) pre = string.Format("{0}", version.PreReleaseVersion);
+                    if(dev != null) pre = $"{version.PreReleaseVersion}";
 
-                    ImageInfo.ImageApplicationVersion =
-                        string.Format("{0}{1}{2}{3}{4}", major, minor, release, dev, pre);
+                    ImageInfo.ImageApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
                     ImageInfo.ImageApplication = version.VersionString;
                     ImageInfo.ImageComments = version.VersionMessage;
 
@@ -467,7 +465,7 @@ namespace DiscImageChef.DiscImages
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             byte[] sector;
 
@@ -487,13 +485,11 @@ namespace DiscImageChef.DiscImages
 
             if(relOff < 0)
                 throw new ArgumentOutOfRangeException(nameof(relOff),
-                                                      string
-                                                          .Format("Got a negative offset for sector {0}. This should not happen.",
-                                                                  sectorAddress));
+                                                      $"Got a negative offset for sector {sectorAddress}. This should not happen.");
 
             if(!chunkFound)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if((currentChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
             {
@@ -508,8 +504,7 @@ namespace DiscImageChef.DiscImages
 
                     if(currentChunk.type == CHUNK_TYPE_ADC) decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
                     else
-                        throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
-                                                                           currentChunk.type));
+                        throw new ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
 
                     byte[] tmpBuffer = new byte[buffersize];
                     int realSize = decStream.Read(tmpBuffer, 0, (int)buffersize);
@@ -555,15 +550,14 @@ namespace DiscImageChef.DiscImages
                     return sector;
             }
 
-            throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
-                                                               currentChunk.type));
+            throw new ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      string.Format("Sector address {0} not found", sectorAddress));
+                                                      $"Sector address {sectorAddress} not found");
 
             if(sectorAddress + length > ImageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");

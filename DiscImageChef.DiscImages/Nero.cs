@@ -1711,7 +1711,7 @@ namespace DiscImageChef.DiscImages
                         }*/
 
                     partition = new Partition();
-                    partition.Description = string.Format("Track {0} Index 1", _track.TrackSequence);
+                    partition.Description = $"Track {_track.TrackSequence} Index 1";
                     partition.Size = neroTrack.EndOfTrack - neroTrack.Index1;
                     partition.Name = StringHandlers.CToString(neroTrack.Isrc);
                     partition.Length = partition.Size / neroTrack.SectorSize;
@@ -1838,16 +1838,14 @@ namespace DiscImageChef.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in imageTracks where _track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                  string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in imageTracks where _track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                  string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
@@ -1859,9 +1857,7 @@ namespace DiscImageChef.DiscImages
 
             if(length > _track.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length, _track.Sectors));
+                                                      $"Requested more sectors ({length}) than present in track ({_track.Sectors}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
@@ -1960,9 +1956,7 @@ namespace DiscImageChef.DiscImages
 
             if(length > _track.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length, _track.Sectors));
+                                                      $"Requested more sectors ({length}) than present in track ({_track.Sectors}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
@@ -2194,8 +2188,7 @@ namespace DiscImageChef.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in imageTracks where _track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                  string.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
@@ -2207,9 +2200,7 @@ namespace DiscImageChef.DiscImages
 
             if(length > _track.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      string
-                                                          .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
-                                                                  length, _track.Sectors));
+                                                      $"Requested more sectors ({length}) than present in track ({_track.Sectors}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;

@@ -878,7 +878,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Sector of backup FAT32 parameter block: {0}", Fat32BPB.backup_sector).AppendLine();
                 sb.AppendFormat("Drive number: 0x{0:X2}", Fat32BPB.drive_no).AppendLine();
                 sb.AppendFormat("Volume Serial Number: 0x{0:X8}", Fat32BPB.serial_no).AppendLine();
-                xmlFSType.VolumeSerial = string.Format("{0:X8}", Fat32BPB.serial_no);
+                xmlFSType.VolumeSerial = $"{Fat32BPB.serial_no:X8}";
 
                 if((Fat32BPB.flags & 0xF8) == 0x00)
                 {
@@ -1183,8 +1183,8 @@ namespace DiscImageChef.Filesystems
                     if(atariBPB.serial_no[0] == 0x49 && atariBPB.serial_no[1] == 0x48 && atariBPB.serial_no[2] == 0x43)
                         sb.AppendLine("Volume has been modified by Windows 9x/Me Volume Tracker.");
                     else
-                        xmlFSType.VolumeSerial = string.Format("{0:X2}{1:X2}{2:X2}", atariBPB.serial_no[0],
-                                                               atariBPB.serial_no[1], atariBPB.serial_no[2]);
+                        xmlFSType.VolumeSerial =
+                            $"{atariBPB.serial_no[0]:X2}{atariBPB.serial_no[1]:X2}{atariBPB.serial_no[2]:X2}";
 
                     xmlFSType.SystemIdentifier = StringHandlers.CToString(atariBPB.oem_name);
                     if(string.IsNullOrEmpty(xmlFSType.SystemIdentifier)) xmlFSType.SystemIdentifier = null;
@@ -1217,7 +1217,7 @@ namespace DiscImageChef.Filesystems
                     }
 
                     if(fakeBPB.signature == 0x28 || fakeBPB.signature == 0x29)
-                        xmlFSType.VolumeSerial = string.Format("{0:X8}", fakeBPB.serial_no);
+                        xmlFSType.VolumeSerial = $"{fakeBPB.serial_no:X8}";
                 }
 
                 if(xmlFSType.SystemIdentifier != null)

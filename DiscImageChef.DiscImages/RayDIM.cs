@@ -154,8 +154,7 @@ namespace DiscImageChef.DiscImages
 
             if(!sm.Success) return false;
 
-            ImageInfo.ImageApplicationVersion =
-                string.Format("{0}.{1}", sm.Groups["major"].Value, sm.Groups["minor"].Value);
+            ImageInfo.ImageApplicationVersion = $"{sm.Groups["major"].Value}.{sm.Groups["minor"].Value}";
 
             ImageInfo.Cylinders = (uint)(header.cylinders + 1);
             ImageInfo.Heads = (uint)(header.heads + 1);

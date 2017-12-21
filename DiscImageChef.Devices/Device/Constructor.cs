@@ -117,10 +117,10 @@ namespace DiscImageChef.Devices
                     break;
                 }
                 default:
-                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", PlatformId));
+                    throw new InvalidOperationException($"Platform {PlatformId} not yet supported.");
             }
 
-            if(Error) throw new SystemException(string.Format("Error {0} opening device.", LastError));
+            if(Error) throw new SystemException($"Error {LastError} opening device.");
 
             Type = DeviceType.Unknown;
             ScsiType = PeripheralDeviceTypes.UnknownDevice;
@@ -131,7 +131,7 @@ namespace DiscImageChef.Devices
             byte[] senseBuf;
             byte[] inqBuf = null;
 
-            if(Error) throw new SystemException(string.Format("Error {0} trying device.", LastError));
+            if(Error) throw new SystemException($"Error {LastError} trying device.");
 
             bool scsiSense = true;
             string ntDevicePath;
@@ -362,9 +362,8 @@ namespace DiscImageChef.Devices
                     CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
                     Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                     Model = decoded.ProductName;
-                    Revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4,
-                                             decoded.ProductRevision & 0x0F);
-                    Serial = string.Format("{0}", decoded.ProductSerialNumber);
+                    Revision = $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
+                    Serial = $"{decoded.ProductSerialNumber}";
                 }
                 else
                 {
@@ -372,9 +371,8 @@ namespace DiscImageChef.Devices
                     Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(cachedCid);
                     Manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
                     Model = decoded.ProductName;
-                    Revision = string.Format("{0:X2}.{1:X2}", (decoded.ProductRevision & 0xF0) >> 4,
-                                             decoded.ProductRevision & 0x0F);
-                    Serial = string.Format("{0}", decoded.ProductSerialNumber);
+                    Revision = $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
+                    Serial = $"{decoded.ProductSerialNumber}";
                 }
             }
             #endregion SecureDigital / MultiMediaCard
@@ -689,8 +687,8 @@ namespace DiscImageChef.Devices
 
             if(string.IsNullOrEmpty(Manufacturer)) Manufacturer = FireWireVendorName;
             if(string.IsNullOrEmpty(Model)) Model = FireWireModelName;
-            if(string.IsNullOrEmpty(Serial)) Serial = string.Format("{0:X16}", firewireGuid);
-            else foreach(char c in Serial.Where(c => char.IsControl(c))) Serial = string.Format("{0:X16}", firewireGuid);
+            if(string.IsNullOrEmpty(Serial)) Serial = $"{firewireGuid:X16}";
+            else foreach(char c in Serial.Where(c => char.IsControl(c))) Serial = $"{firewireGuid:X16}";
         }
 
         static int ConvertFromHexAscii(string file, out byte[] outBuf)

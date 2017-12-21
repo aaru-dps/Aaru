@@ -370,7 +370,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     xmlFSType.FreeClustersSpecified = true;
                     xmlFSType.Type = "LisaFS";
                     xmlFSType.VolumeName = info_mddf.volname;
-                    xmlFSType.VolumeSerial = string.Format("{0:X16}", info_mddf.volid);
+                    xmlFSType.VolumeSerial = $"{info_mddf.volid:X16}";
 
                     return;
                 }

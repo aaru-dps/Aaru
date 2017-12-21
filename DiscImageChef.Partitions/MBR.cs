@@ -209,7 +209,7 @@ namespace DiscImageChef.Partitions
 
                     if(valid)
                     {
-                        part.Type = string.Format("0x{0:X2}", entry.type);
+                        part.Type = $"0x{entry.type:X2}";
                         part.Name = DecodeMBRType(entry.type);
                         part.Sequence = counter;
                         part.Description = entry.status == 0x80 ? "Partition is bootable." : "";
@@ -326,7 +326,7 @@ namespace DiscImageChef.Partitions
 
                         if(!ext_valid) continue;
 
-                        part.Type = string.Format("0x{0:X2}", ebr_entry.type);
+                        part.Type = $"0x{ebr_entry.type:X2}";
                         part.Name = DecodeMBRType(ebr_entry.type);
                         part.Sequence = counter;
                         part.Description = ebr_entry.status == 0x80 ? "Partition is bootable." : "";

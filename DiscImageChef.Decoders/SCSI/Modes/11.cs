@@ -214,7 +214,7 @@ namespace DiscImageChef.Decoders.SCSI
                 case PartitionSizeUnitOfMeasures.Exponential:
                     sb.AppendFormat("\tPartitions are defined in units of {0} bytes", Math.Pow(10, page.PartitionUnits))
                       .AppendLine();
-                    measure = string.Format("units of {0} bytes", Math.Pow(10, page.PartitionUnits));
+                    measure = $"units of {Math.Pow(10, page.PartitionUnits)} bytes";
                     break;
                 default:
                     sb.AppendFormat("\tUnknown partition size unit code {0}", (byte)page.PSUM).AppendLine();

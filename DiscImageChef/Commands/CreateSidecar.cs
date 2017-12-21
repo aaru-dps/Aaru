@@ -144,7 +144,7 @@ namespace DiscImageChef.Commands
                 }
                 catch(Exception ex)
                 {
-                    DicConsole.ErrorWriteLine(string.Format("Error reading file: {0}", ex.Message));
+                    DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                     DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
                 }
             }

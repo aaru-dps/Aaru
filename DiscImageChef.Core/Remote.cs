@@ -59,8 +59,7 @@ namespace DiscImageChef.Core
                     xmlSer.Serialize(xmlStream, report);
                     xmlStream.Seek(0, SeekOrigin.Begin);
                     WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreport");
-                    ((HttpWebRequest)request).UserAgent =
-                        string.Format("DiscImageChef {0}", typeof(Version).Assembly.GetName().Version);
+                    ((HttpWebRequest)request).UserAgent = $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
                     request.Method = "POST";
                     request.ContentLength = xmlStream.Length;
                     request.ContentType = "application/xml";

@@ -156,7 +156,7 @@ namespace DiscImageChef.Filesystems
 
             xmlFSType.ClusterSize = ntfs_bb.spc * ntfs_bb.bps;
             xmlFSType.Clusters = ntfs_bb.sectors / ntfs_bb.spc;
-            xmlFSType.VolumeSerial = string.Format("{0:X16}", ntfs_bb.serial_no);
+            xmlFSType.VolumeSerial = $"{ntfs_bb.serial_no:X16}";
             xmlFSType.Type = "NTFS";
 
             information = sb.ToString();

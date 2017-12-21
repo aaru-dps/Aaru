@@ -482,7 +482,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.VolumeName = diskName;
             xmlFSType.Bootable = bsum == bootBlk.checksum;
             // Useful as a serial
-            xmlFSType.VolumeSerial = string.Format("{0:X8}", rootBlk.checksum);
+            xmlFSType.VolumeSerial = $"{rootBlk.checksum:X8}";
         }
 
         static RootBlock MarshalRootBlock(byte[] block)

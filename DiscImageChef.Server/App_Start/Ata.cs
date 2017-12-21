@@ -320,7 +320,7 @@ namespace DiscImageChef.Server.App_Start
                         tmpString = "ACS-3 Revision 4";
                         break;
                     default:
-                        tmpString = string.Format("Unknown ATA revision 0x{0:X4}", ataReport.MinorVersion);
+                        tmpString = $"Unknown ATA revision 0x{ataReport.MinorVersion:X4}";
                         break;
                 }
 
@@ -352,7 +352,7 @@ namespace DiscImageChef.Server.App_Start
                         break;
                     default:
                         ataTwoValue.Add("Unknown transport type",
-                                        string.Format("0x{0:X1}", (ataReport.TransportMajorVersion & 0xF000) >> 12));
+                                        $"0x{(ataReport.TransportMajorVersion & 0xF000) >> 12:X1}");
                         break;
                 }
             }
@@ -426,8 +426,7 @@ namespace DiscImageChef.Server.App_Start
                         ataOneValue.Add("ATAPI Unknown or no device type");
                         break;
                     default:
-                        ataOneValue.Add(string.Format("ATAPI Unknown device type field value 0x{0:X2}",
-                                                      ((ushort)ataReport.GeneralConfiguration & 0x1F00) >> 8));
+                        ataOneValue.Add($"ATAPI Unknown device type field value 0x{((ushort)ataReport.GeneralConfiguration & 0x1F00) >> 8:X2}");
                         break;
                 }
 
@@ -444,8 +443,7 @@ namespace DiscImageChef.Server.App_Start
                         ataOneValue.Add("Device shall set DRQ within 50 µs of receiving PACKET");
                         break;
                     default:
-                        ataOneValue.Add(string.Format("Unknown ATAPI DRQ behaviour code {0}",
-                                                      ((ushort)ataReport.GeneralConfiguration & 0x60) >> 5));
+                        ataOneValue.Add($"Unknown ATAPI DRQ behaviour code {((ushort)ataReport.GeneralConfiguration & 0x60) >> 5}");
                         break;
                 }
 
@@ -459,8 +457,7 @@ namespace DiscImageChef.Server.App_Start
                         ataOneValue.Add("ATAPI device uses 16 byte command packet");
                         break;
                     default:
-                        ataOneValue.Add(string.Format("Unknown ATAPI packet size code {0}",
-                                                      (ushort)ataReport.GeneralConfiguration & 0x03));
+                        ataOneValue.Add($"Unknown ATAPI packet size code {(ushort)ataReport.GeneralConfiguration & 0x03}");
                         break;
                 }
             }
@@ -529,8 +526,7 @@ namespace DiscImageChef.Server.App_Start
                             .Add("Device does not require SET FEATURES to spin up and IDENTIFY DEVICE response is complete.");
                         break;
                     default:
-                        ataOneValue.Add(string.Format("Unknown device specific configuration 0x{0:X4}",
-                                                      (ushort)ataReport.SpecificConfiguration));
+                        ataOneValue.Add($"Unknown device specific configuration 0x{(ushort)ataReport.SpecificConfiguration:X4}");
                         break;
                 }
 
@@ -540,21 +536,16 @@ namespace DiscImageChef.Server.App_Start
                 switch(ataReport.BufferType)
                 {
                     case 1:
-                        ataOneValue.Add(string.Format("{0} KiB of single ported single sector buffer",
-                                                      ataReport.BufferSize * logicalsectorsize / 1024));
+                        ataOneValue.Add($"{ataReport.BufferSize * logicalsectorsize / 1024} KiB of single ported single sector buffer");
                         break;
                     case 2:
-                        ataOneValue.Add(string.Format("{0} KiB of dual ported multi sector buffer",
-                                                      ataReport.BufferSize * logicalsectorsize / 1024));
+                        ataOneValue.Add($"{ataReport.BufferSize * logicalsectorsize / 1024} KiB of dual ported multi sector buffer");
                         break;
                     case 3:
-                        ataOneValue.Add(string.Format("{0} KiB of dual ported multi sector buffer with read caching",
-                                                      ataReport.BufferSize * logicalsectorsize / 1024));
+                        ataOneValue.Add($"{ataReport.BufferSize * logicalsectorsize / 1024} KiB of dual ported multi sector buffer with read caching");
                         break;
                     default:
-                        ataOneValue.Add(string.Format("{0} KiB of unknown type {1} buffer",
-                                                      ataReport.BufferSize * logicalsectorsize / 1024,
-                                                      ataReport.BufferType));
+                        ataOneValue.Add($"{ataReport.BufferSize * logicalsectorsize / 1024} KiB of unknown type {ataReport.BufferType} buffer");
                         break;
                 }
 
@@ -570,8 +561,7 @@ namespace DiscImageChef.Server.App_Start
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.DMASupport)) ataOneValue.Add("DMA is supported");
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.PhysicalAlignment1) ||
                    ataReport.Capabilities.HasFlag(CapabilitiesBit.PhysicalAlignment0))
-                    ataOneValue.Add(string.Format("Long Physical Alignment setting is {0}",
-                                                  (ushort)ataReport.Capabilities & 0x03));
+                    ataOneValue.Add($"Long Physical Alignment setting is {(ushort)ataReport.Capabilities & 0x03}");
                 if(atapi)
                 {
                     if(ataReport.Capabilities.HasFlag(CapabilitiesBit.InterleavedDMA))
@@ -595,10 +585,8 @@ namespace DiscImageChef.Server.App_Start
                 if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.MultipleValid))
                 {
                     ataOneValue
-                        .Add(string.Format("A maximum of {0} sectors can be transferred per interrupt on READ/WRITE MULTIPLE",
-                                           ataReport.MultipleSectorNumber));
-                    ataOneValue.Add(string.Format("Device supports setting a maximum of {0} sectors",
-                                                  ataReport.MultipleMaxSectors));
+                        .Add($"A maximum of {ataReport.MultipleSectorNumber} sectors can be transferred per interrupt on READ/WRITE MULTIPLE");
+                    ataOneValue.Add($"Device supports setting a maximum of {ataReport.MultipleMaxSectors} sectors");
                 }
 
             if(ata1 && ataReport.TrustedComputingSpecified)
@@ -608,9 +596,9 @@ namespace DiscImageChef.Server.App_Start
             if(minatalevel <= 3)
             {
                 if(ataReport.PIOTransferTimingModeSpecified)
-                    ataTwoValue.Add("PIO timing mode", string.Format("{0}", ataReport.PIOTransferTimingMode));
+                    ataTwoValue.Add("PIO timing mode", $"{ataReport.PIOTransferTimingMode}");
                 if(ataReport.DMATransferTimingModeSpecified)
-                    ataTwoValue.Add("DMA timing mode", string.Format("{0}", ataReport.DMATransferTimingMode));
+                    ataTwoValue.Add("DMA timing mode", $"{ataReport.DMATransferTimingMode}");
             }
 
             if(ataReport.APIOSupportedSpecified)
@@ -792,25 +780,23 @@ namespace DiscImageChef.Server.App_Start
             }
 
             if(ataReport.MinMDMACycleTime != 0 && ataReport.RecommendedMDMACycleTime != 0)
-                ataOneValue.Add(string.Format("At minimum {0} ns. transfer cycle time per word in MDMA, " + "{1} ns. recommended",
-                                              ataReport.MinMDMACycleTime, ataReport.RecommendedMDMACycleTime));
+                ataOneValue.Add($"At minimum {ataReport.MinMDMACycleTime} ns. transfer cycle time per word in MDMA, " +
+                                $"{ataReport.RecommendedMDMACycleTime} ns. recommended");
             if(ataReport.MinPIOCycleTimeNoFlow != 0)
-                ataOneValue.Add(string.Format("At minimum {0} ns. transfer cycle time per word in PIO, " + "without flow control",
-                                              ataReport.MinPIOCycleTimeNoFlow));
+                ataOneValue.Add($"At minimum {ataReport.MinPIOCycleTimeNoFlow} ns. transfer cycle time per word in PIO, " +
+                                "without flow control");
             if(ataReport.MinPIOCycleTimeFlow != 0)
-                ataOneValue.Add(string.Format("At minimum {0} ns. transfer cycle time per word in PIO, " + "with IORDY flow control",
-                                              ataReport.MinPIOCycleTimeFlow));
+                ataOneValue.Add($"At minimum {ataReport.MinPIOCycleTimeFlow} ns. transfer cycle time per word in PIO, " +
+                                "with IORDY flow control");
 
-            if(ataReport.MaxQueueDepth != 0) ataOneValue.Add(string.Format("{0} depth of queue maximum", ataReport.MaxQueueDepth + 1));
+            if(ataReport.MaxQueueDepth != 0) ataOneValue.Add($"{ataReport.MaxQueueDepth + 1} depth of queue maximum");
 
             if(atapi)
             {
                 if(ataReport.PacketBusRelease != 0)
-                    ataOneValue.Add(string.Format("{0} ns. typical to release bus from receipt of PACKET",
-                                                  ataReport.PacketBusRelease));
+                    ataOneValue.Add($"{ataReport.PacketBusRelease} ns. typical to release bus from receipt of PACKET");
                 if(ataReport.ServiceBusyClear != 0)
-                    ataOneValue.Add(string.Format("{0} ns. typical to clear BSY bit from receipt of SERVICE",
-                                                  ataReport.ServiceBusyClear));
+                    ataOneValue.Add($"{ataReport.ServiceBusyClear} ns. typical to clear BSY bit from receipt of SERVICE");
             }
 
             if(ataReport.TransportMajorVersionSpecified && ((ataReport.TransportMajorVersion & 0xF000) >> 12 == 0x1 ||
@@ -862,8 +848,7 @@ namespace DiscImageChef.Server.App_Start
             }
 
             if(ataReport.InterseekDelay != 0x0000 && ataReport.InterseekDelay != 0xFFFF)
-                ataOneValue.Add(string.Format("{0} microseconds of interseek delay for ISO-7779 accoustic testing",
-                                              ataReport.InterseekDelay));
+                ataOneValue.Add($"{ataReport.InterseekDelay} microseconds of interseek delay for ISO-7779 accoustic testing");
 
             if((ushort)ataReport.DeviceFormFactor != 0x0000 && (ushort)ataReport.DeviceFormFactor != 0xFFFF)
                 switch(ataReport.DeviceFormFactor)
@@ -884,14 +869,13 @@ namespace DiscImageChef.Server.App_Start
                         ataOneValue.Add("Device nominal size is smaller than 1.8\"");
                         break;
                     default:
-                        ataOneValue.Add(string.Format("Device nominal size field value {0} is unknown",
-                                                      ataReport.DeviceFormFactor));
+                        ataOneValue.Add($"Device nominal size field value {ataReport.DeviceFormFactor} is unknown");
                         break;
                 }
 
             if(atapi)
                 if(ataReport.ATAPIByteCount > 0)
-                    ataOneValue.Add(string.Format("{0} bytes count limit for ATAPI", ataReport.ATAPIByteCount));
+                    ataOneValue.Add($"{ataReport.ATAPIByteCount} bytes count limit for ATAPI");
 
             if(cfa)
                 if((ataReport.CFAPowerMode & 0x8000) == 0x8000)
@@ -902,8 +886,7 @@ namespace DiscImageChef.Server.App_Start
                     if((ataReport.CFAPowerMode & 0x1000) == 0x1000)
                         ataOneValue.Add("CompactFlash power mode 1 is disabled");
 
-                    ataOneValue.Add(string.Format("CompactFlash device uses a maximum of {0} mA",
-                                                  ataReport.CFAPowerMode & 0x0FFF));
+                    ataOneValue.Add($"CompactFlash device uses a maximum of {ataReport.CFAPowerMode & 0x0FFF} mA");
                 }
 
             if(ataReport.CommandSetSpecified || ataReport.CommandSet2Specified || ataReport.CommandSet3Specified ||
@@ -995,8 +978,7 @@ namespace DiscImageChef.Server.App_Start
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.AAM) && ataReport.EnabledCommandSet2Specified
                     )
                         ataOneValue
-                            .Add(string.Format("Automatic Acoustic Management is supported and enabled with value {0} (vendor recommends {1}",
-                                               ataReport.CurrentAAM, ataReport.RecommendedAAM));
+                            .Add($"Automatic Acoustic Management is supported and enabled with value {ataReport.CurrentAAM} (vendor recommends {ataReport.RecommendedAAM}");
                     else ataOneValue.Add("Automatic Acoustic Management is supported");
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.SetMax))
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.SetMax) &&
@@ -1023,8 +1005,7 @@ namespace DiscImageChef.Server.App_Start
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.APM) && ataReport.EnabledCommandSet2Specified
                     )
                         ataOneValue
-                            .Add(string.Format("Advanced Power Management is supported and enabled with value {0}",
-                                               ataReport.CurrentAPM));
+                            .Add($"Advanced Power Management is supported and enabled with value {ataReport.CurrentAPM}");
                     else ataOneValue.Add("Advanced Power Management is supported");
                 if(ataReport.CommandSet2.HasFlag(CommandSetBit2.CompactFlash))
                     if(ataReport.EnabledCommandSet2.HasFlag(CommandSetBit2.CompactFlash) &&
@@ -1148,12 +1129,10 @@ namespace DiscImageChef.Server.App_Start
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.WRV) && ataReport.EnabledCommandSet4Specified
                     ) ataOneValue.Add("Write/Read/Verify is supported and enabled");
                     else ataOneValue.Add("Write/Read/Verify is supported");
-                    ataOneValue.Add(string.Format("{0} sectors for Write/Read/Verify mode 2",
-                                                  ataReport.WRVSectorCountMode2));
-                    ataOneValue.Add(string.Format("{0} sectors for Write/Read/Verify mode 3",
-                                                  ataReport.WRVSectorCountMode3));
+                    ataOneValue.Add($"{ataReport.WRVSectorCountMode2} sectors for Write/Read/Verify mode 2");
+                    ataOneValue.Add($"{ataReport.WRVSectorCountMode3} sectors for Write/Read/Verify mode 3");
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.WRV) && ataReport.EnabledCommandSet4Specified
-                    ) ataOneValue.Add(string.Format("Current Write/Read/Verify mode: {0}", ataReport.WRVMode));
+                    ) ataOneValue.Add($"Current Write/Read/Verify mode: {ataReport.WRVMode}");
                 }
                 if(ataReport.CommandSet4.HasFlag(CommandSetBit4.DT1825))
                     if(ataReport.EnabledCommandSet4.HasFlag(CommandSetBit4.DT1825) &&
@@ -1273,13 +1252,12 @@ namespace DiscImageChef.Server.App_Start
             }
             if((ataReport.RemovableStatusSet & 0x03) > 0) ataOneValue.Add("Removable Media Status Notification feature set is supported");
 
-            if(ataReport.FreeFallSensitivity != 0x00 && ataReport.FreeFallSensitivity != 0xFF) ataOneValue.Add(string.Format("Free-fall sensitivity set to {0}", ataReport.FreeFallSensitivity));
+            if(ataReport.FreeFallSensitivity != 0x00 && ataReport.FreeFallSensitivity != 0xFF) ataOneValue.Add($"Free-fall sensitivity set to {ataReport.FreeFallSensitivity}");
 
             if(ataReport.DataSetMgmtSpecified && ataReport.DataSetMgmt.HasFlag(DataSetMgmtBit.Trim))
                 ataOneValue.Add("TRIM is supported");
             if(ataReport.DataSetMgmtSizeSpecified && ataReport.DataSetMgmtSize > 0)
-                ataOneValue.Add(string.Format("DATA SET MANAGEMENT can receive a maximum of {0} blocks of 512 bytes",
-                                              ataReport.DataSetMgmtSize));
+                ataOneValue.Add($"DATA SET MANAGEMENT can receive a maximum of {ataReport.DataSetMgmtSize} blocks of 512 bytes");
 
             if(ataReport.SecurityStatusSpecified && ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Supported))
             {
@@ -1308,13 +1286,11 @@ namespace DiscImageChef.Server.App_Start
                 if(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Enhanced))
                     ataOneValue.Add("Supports enhanced security erase");
 
-                ataOneValue.Add(string.Format("{0} minutes to complete secure erase", ataReport.SecurityEraseTime * 2));
+                ataOneValue.Add($"{ataReport.SecurityEraseTime * 2} minutes to complete secure erase");
                 if(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Enhanced))
-                    ataOneValue.Add(string.Format("{0} minutes to complete enhanced secure erase",
-                                                  ataReport.EnhancedSecurityEraseTime * 2));
+                    ataOneValue.Add($"{ataReport.EnhancedSecurityEraseTime * 2} minutes to complete enhanced secure erase");
 
-                ataOneValue.Add(string.Format("Master password revision code: {0}",
-                                              ataReport.MasterPasswordRevisionCode));
+                ataOneValue.Add($"Master password revision code: {ataReport.MasterPasswordRevisionCode}");
             }
 
             if(ataReport.CommandSet3Specified && ataReport.CommandSet3.HasFlag(CommandSetBit3.MustBeSet) &&
@@ -1322,14 +1298,11 @@ namespace DiscImageChef.Server.App_Start
                ataReport.CommandSet3.HasFlag(CommandSetBit3.Streaming))
             {
                 ataOneValue.Add("<i>Streaming:</i>");
-                ataOneValue.Add(string.Format("Minimum request size is {0}", ataReport.StreamMinReqSize));
-                ataOneValue.Add(string.Format("Streaming transfer time in PIO is {0}",
-                                              ataReport.StreamTransferTimePIO));
-                ataOneValue.Add(string.Format("Streaming transfer time in DMA is {0}",
-                                              ataReport.StreamTransferTimeDMA));
-                ataOneValue.Add(string.Format("Streaming access latency is {0}", ataReport.StreamAccessLatency));
-                ataOneValue.Add(string.Format("Streaming performance granularity is {0}",
-                                              ataReport.StreamPerformanceGranularity));
+                ataOneValue.Add($"Minimum request size is {ataReport.StreamMinReqSize}");
+                ataOneValue.Add($"Streaming transfer time in PIO is {ataReport.StreamTransferTimePIO}");
+                ataOneValue.Add($"Streaming transfer time in DMA is {ataReport.StreamTransferTimeDMA}");
+                ataOneValue.Add($"Streaming access latency is {ataReport.StreamAccessLatency}");
+                ataOneValue.Add($"Streaming performance granularity is {ataReport.StreamPerformanceGranularity}");
             }
 
             if(ataReport.SCTCommandTransportSpecified &&
@@ -1351,17 +1324,16 @@ namespace DiscImageChef.Server.App_Start
             if(ataReport.NVCacheCapsSpecified && (ataReport.NVCacheCaps & 0x0010) == 0x0010)
             {
                 ataOneValue.Add("<i>Non-Volatile Cache:</i>");
-                ataOneValue.Add(string.Format("Version {0}", (ataReport.NVCacheCaps & 0xF000) >> 12));
+                ataOneValue.Add($"Version {(ataReport.NVCacheCaps & 0xF000) >> 12}");
                 if((ataReport.NVCacheCaps & 0x0001) == 0x0001)
                 {
                     if((ataReport.NVCacheCaps & 0x0002) == 0x0002)
                         ataOneValue.Add("Power mode feature set is supported and enabled");
                     else ataOneValue.Add("Power mode feature set is supported");
 
-                    ataOneValue.Add(string.Format("Version {0}", (ataReport.NVCacheCaps & 0x0F00) >> 8));
+                    ataOneValue.Add($"Version {(ataReport.NVCacheCaps & 0x0F00) >> 8}");
                 }
-                ataOneValue.Add(string.Format("Non-Volatile Cache is {0} bytes",
-                                              ataReport.NVCacheSize * logicalsectorsize));
+                ataOneValue.Add($"Non-Volatile Cache is {ataReport.NVCacheSize * logicalsectorsize} bytes");
             }
 
             if(ataReport.ReadCapabilities != null)
@@ -1375,31 +1347,26 @@ namespace DiscImageChef.Server.App_Start
                     if(ataReport.ReadCapabilities.NominalRotationRate == 0x0001)
                         ataOneValue.Add("Device does not rotate.");
                     else
-                        ataOneValue.Add(string.Format("Device rotates at {0} rpm",
-                                                      ataReport.ReadCapabilities.NominalRotationRate));
+                        ataOneValue.Add($"Device rotates at {ataReport.ReadCapabilities.NominalRotationRate} rpm");
 
                 if(!atapi)
                 {
                     if(ataReport.ReadCapabilities.BlockSizeSpecified)
                     {
-                        ataTwoValue.Add("Logical sector size",
-                                        string.Format("{0} bytes", ataReport.ReadCapabilities.BlockSize));
+                        ataTwoValue.Add("Logical sector size", $"{ataReport.ReadCapabilities.BlockSize} bytes");
                         logicalsectorsize = ataReport.ReadCapabilities.BlockSize;
                     }
                     if(ataReport.ReadCapabilities.PhysicalBlockSizeSpecified)
-                        ataTwoValue.Add("Physical sector size",
-                                        string.Format("{0} bytes", ataReport.ReadCapabilities.PhysicalBlockSize));
+                        ataTwoValue.Add("Physical sector size", $"{ataReport.ReadCapabilities.PhysicalBlockSize} bytes");
                     if(ataReport.ReadCapabilities.LongBlockSizeSpecified)
-                        ataTwoValue.Add("READ LONG sector size",
-                                        string.Format("{0} bytes", ataReport.ReadCapabilities.LongBlockSize));
+                        ataTwoValue.Add("READ LONG sector size", $"{ataReport.ReadCapabilities.LongBlockSize} bytes");
 
                     if(ataReport.ReadCapabilities.BlockSizeSpecified &&
                        ataReport.ReadCapabilities.PhysicalBlockSizeSpecified &&
                        ataReport.ReadCapabilities.BlockSize != ataReport.ReadCapabilities.PhysicalBlockSize &&
                        (ataReport.ReadCapabilities.LogicalAlignment & 0x8000) == 0x0000 &&
                        (ataReport.ReadCapabilities.LogicalAlignment & 0x4000) == 0x4000)
-                        ataOneValue.Add(string.Format("Logical sector starts at offset {0} from physical sector",
-                                                      ataReport.ReadCapabilities.LogicalAlignment & 0x3FFF));
+                        ataOneValue.Add($"Logical sector starts at offset {ataReport.ReadCapabilities.LogicalAlignment & 0x3FFF} from physical sector");
 
                     if(ataReport.ReadCapabilities.CHS != null && ataReport.ReadCapabilities.CurrentCHS != null)
                     {
@@ -1407,118 +1374,70 @@ namespace DiscImageChef.Server.App_Start
                                              ataReport.ReadCapabilities.CurrentCHS.Heads *
                                              ataReport.ReadCapabilities.CurrentCHS.Sectors;
                         ataTwoValue.Add("Cylinders",
-                                        string.Format("{0} max., {1} current", ataReport.ReadCapabilities.CHS.Cylinders,
-                                                      ataReport.ReadCapabilities.CurrentCHS.Cylinders));
+                                        $"{ataReport.ReadCapabilities.CHS.Cylinders} max., {ataReport.ReadCapabilities.CurrentCHS.Cylinders} current");
                         ataTwoValue.Add("Heads",
-                                        string.Format("{0} max., {1} current", ataReport.ReadCapabilities.CHS.Heads,
-                                                      ataReport.ReadCapabilities.CurrentCHS.Heads));
+                                        $"{ataReport.ReadCapabilities.CHS.Heads} max., {ataReport.ReadCapabilities.CurrentCHS.Heads} current");
                         ataTwoValue.Add("Sectors per track",
-                                        string.Format("{0} max., {1} current", ataReport.ReadCapabilities.CHS.Sectors,
-                                                      ataReport.ReadCapabilities.CurrentCHS.Sectors));
+                                        $"{ataReport.ReadCapabilities.CHS.Sectors} max., {ataReport.ReadCapabilities.CurrentCHS.Sectors} current");
                         ataTwoValue.Add("Sectors addressable in CHS mode",
-                                        string.Format("{0} max., {1} current",
-                                                      ataReport.ReadCapabilities.CHS.Cylinders *
-                                                      ataReport.ReadCapabilities.CHS.Heads *
-                                                      ataReport.ReadCapabilities.CHS.Sectors, currentSectors));
+                                        $"{ataReport.ReadCapabilities.CHS.Cylinders * ataReport.ReadCapabilities.CHS.Heads * ataReport.ReadCapabilities.CHS.Sectors} max., {currentSectors} current");
                         ataTwoValue.Add("Device size in CHS mode",
-                                        string.Format("{0} bytes, {1} Mb, {2:F2} MiB",
-                                                      (ulong)currentSectors * logicalsectorsize,
-                                                      (ulong)currentSectors * logicalsectorsize / 1000 / 1000,
-                                                      (double)((ulong)currentSectors * logicalsectorsize) / 1024 /
-                                                      1024));
+                                        $"{(ulong)currentSectors * logicalsectorsize} bytes, {(ulong)currentSectors * logicalsectorsize / 1000 / 1000} Mb, {(double)((ulong)currentSectors * logicalsectorsize) / 1024 / 1024:F2} MiB");
                     }
                     else if(ataReport.ReadCapabilities.CHS != null)
                     {
                         int currentSectors = ataReport.ReadCapabilities.CHS.Cylinders *
                                              ataReport.ReadCapabilities.CHS.Heads *
                                              ataReport.ReadCapabilities.CHS.Sectors;
-                        ataTwoValue.Add("Cylinders", string.Format("{0}", ataReport.ReadCapabilities.CHS.Cylinders));
-                        ataTwoValue.Add("Heads", string.Format("{0}", ataReport.ReadCapabilities.CHS.Heads));
-                        ataTwoValue.Add("Sectors per track",
-                                        string.Format("{0}", ataReport.ReadCapabilities.CHS.Sectors));
-                        ataTwoValue.Add("Sectors addressable in CHS mode", string.Format("{0}", currentSectors));
+                        ataTwoValue.Add("Cylinders", $"{ataReport.ReadCapabilities.CHS.Cylinders}");
+                        ataTwoValue.Add("Heads", $"{ataReport.ReadCapabilities.CHS.Heads}");
+                        ataTwoValue.Add("Sectors per track", $"{ataReport.ReadCapabilities.CHS.Sectors}");
+                        ataTwoValue.Add("Sectors addressable in CHS mode", $"{currentSectors}");
                         ataTwoValue.Add("Device size in CHS mode",
-                                        string.Format("{0} bytes, {1} Mb, {2:F2} MiB",
-                                                      (ulong)currentSectors * logicalsectorsize,
-                                                      (ulong)currentSectors * logicalsectorsize / 1000 / 1000,
-                                                      (double)((ulong)currentSectors * logicalsectorsize) / 1024 /
-                                                      1024));
+                                        $"{(ulong)currentSectors * logicalsectorsize} bytes, {(ulong)currentSectors * logicalsectorsize / 1000 / 1000} Mb, {(double)((ulong)currentSectors * logicalsectorsize) / 1024 / 1024:F2} MiB");
                     }
 
                     if(ataReport.ReadCapabilities.LBASectorsSpecified)
                     {
                         ataTwoValue.Add("Sectors addressable in sectors in 28-bit LBA mode",
-                                        string.Format("{0}", ataReport.ReadCapabilities.LBASectors));
+                                        $"{ataReport.ReadCapabilities.LBASectors}");
 
                         if((ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize / 1024 / 1024 > 1000000)
                             ataTwoValue.Add("Device size in 28-bit LBA mode",
-                                            string.Format("{0} bytes, {1} Tb, {2:F2} TiB",
-                                                          (ulong)ataReport.ReadCapabilities.LBASectors *
-                                                          logicalsectorsize,
-                                                          (ulong)ataReport.ReadCapabilities.LBASectors *
-                                                          logicalsectorsize / 1000 / 1000 / 1000 / 1000,
-                                                          (double)((ulong)ataReport.ReadCapabilities.LBASectors *
-                                                                   logicalsectorsize) / 1024 / 1024 / 1024 / 1024));
+                                            $"{(ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize} bytes, {(ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize / 1000 / 1000 / 1000 / 1000} Tb, {(double)((ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize) / 1024 / 1024 / 1024 / 1024:F2} TiB");
                         else if((ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize / 1024 / 1024 >
                                 1000)
                             ataTwoValue.Add("Device size in 28-bit LBA mode",
-                                            string.Format("{0} bytes, {1} Gb, {2:F2} GiB",
-                                                          (ulong)ataReport.ReadCapabilities.LBASectors *
-                                                          logicalsectorsize,
-                                                          (ulong)ataReport.ReadCapabilities.LBASectors *
-                                                          logicalsectorsize / 1000 / 1000 / 1000,
-                                                          (double)((ulong)ataReport.ReadCapabilities.LBASectors *
-                                                                   logicalsectorsize) / 1024 / 1024 / 1024));
+                                            $"{(ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize} bytes, {(ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize / 1000 / 1000 / 1000} Gb, {(double)((ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize) / 1024 / 1024 / 1024:F2} GiB");
                         else
                             ataTwoValue.Add("Device size in 28-bit LBA mode",
-                                            string.Format("{0} bytes, {1} Mb, {2:F2} MiB",
-                                                          (ulong)ataReport.ReadCapabilities.LBASectors *
-                                                          logicalsectorsize,
-                                                          (ulong)ataReport.ReadCapabilities.LBASectors *
-                                                          logicalsectorsize / 1000 / 1000,
-                                                          (double)((ulong)ataReport.ReadCapabilities.LBASectors *
-                                                                   logicalsectorsize) / 1024 / 1024));
+                                            $"{(ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize} bytes, {(ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize / 1000 / 1000} Mb, {(double)((ulong)ataReport.ReadCapabilities.LBASectors * logicalsectorsize) / 1024 / 1024:F2} MiB");
                     }
 
                     if(ataReport.ReadCapabilities.LBA48SectorsSpecified)
                     {
                         ataTwoValue.Add("Sectors addressable in sectors in 48-bit LBA mode",
-                                        string.Format("{0}", ataReport.ReadCapabilities.LBA48Sectors));
+                                        $"{ataReport.ReadCapabilities.LBA48Sectors}");
 
                         if(ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize / 1024 / 1024 > 1000000)
                             ataTwoValue.Add("Device size in 48-bit LBA mode",
-                                            string.Format("{0} bytes, {1} Tb, {2:F2} TiB",
-                                                          ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize,
-                                                          ataReport.ReadCapabilities.LBA48Sectors *
-                                                          logicalsectorsize / 1000 / 1000 / 1000 / 1000,
-                                                          (double)(ataReport.ReadCapabilities.LBA48Sectors *
-                                                                   logicalsectorsize) / 1024 / 1024 / 1024 / 1024));
+                                            $"{ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize} bytes, {ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize / 1000 / 1000 / 1000 / 1000} Tb, {(double)(ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize) / 1024 / 1024 / 1024 / 1024:F2} TiB");
                         else if(ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize / 1024 / 1024 > 1000)
                             ataTwoValue.Add("Device size in 48-bit LBA mode",
-                                            string.Format("{0} bytes, {1} Gb, {2:F2} GiB",
-                                                          ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize,
-                                                          ataReport.ReadCapabilities.LBA48Sectors *
-                                                          logicalsectorsize / 1000 / 1000 / 1000,
-                                                          (double)(ataReport.ReadCapabilities.LBA48Sectors *
-                                                                   logicalsectorsize) / 1024 / 1024 / 1024));
+                                            $"{ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize} bytes, {ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize / 1000 / 1000 / 1000} Gb, {(double)(ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize) / 1024 / 1024 / 1024:F2} GiB");
                         else
                             ataTwoValue.Add("Device size in 48-bit LBA mode",
-                                            string.Format("{0} bytes, {1} Mb, {2:F2} MiB",
-                                                          ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize,
-                                                          ataReport.ReadCapabilities.LBA48Sectors *
-                                                          logicalsectorsize / 1000 / 1000,
-                                                          (double)(ataReport.ReadCapabilities.LBA48Sectors *
-                                                                   logicalsectorsize) / 1024 / 1024));
+                                            $"{ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize} bytes, {ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize / 1000 / 1000} Mb, {(double)(ataReport.ReadCapabilities.LBA48Sectors * logicalsectorsize) / 1024 / 1024:F2} MiB");
                     }
 
                     if(ata1 || cfa)
                     {
                         if(ataReport.ReadCapabilities.UnformattedBPT > 0)
                             ataTwoValue.Add("Bytes per unformatted track",
-                                            string.Format("{0}", ataReport.ReadCapabilities.UnformattedBPT));
+                                            $"{ataReport.ReadCapabilities.UnformattedBPT}");
                         if(ataReport.ReadCapabilities.UnformattedBPS > 0)
                             ataTwoValue.Add("Bytes per unformatted sector",
-                                            string.Format("{0}", ataReport.ReadCapabilities.UnformattedBPS));
+                                            $"{ataReport.ReadCapabilities.UnformattedBPS}");
                     }
                 }
 

@@ -73,8 +73,7 @@ namespace DiscImageChef.Server.App_Start
                     mmcOneValue.Add("Drive is a changer using cartridges");
                     break;
                 default:
-                    mmcOneValue.Add(string.Format("Drive uses unknown loading mechanism type {0}",
-                                                  mode.LoadingMechanismType));
+                    mmcOneValue.Add($"Drive uses unknown loading mechanism type {mode.LoadingMechanismType}");
                     break;
             }
 
@@ -97,12 +96,12 @@ namespace DiscImageChef.Server.App_Start
             if(mode.SeparateChannelVolume) mmcOneValue.Add("Each channel's volume can be controlled independently");
 
             if(mode.SupportedVolumeLevels > 0)
-                mmcOneValue.Add(string.Format("Drive supports {0} volume levels", mode.SupportedVolumeLevels));
-            if(mode.BufferSize > 0) mmcOneValue.Add(string.Format("Drive has {0} Kbyte of buffer", mode.BufferSize));
+                mmcOneValue.Add($"Drive supports {mode.SupportedVolumeLevels} volume levels");
+            if(mode.BufferSize > 0) mmcOneValue.Add($"Drive has {mode.BufferSize} Kbyte of buffer");
             if(mode.MaximumSpeed > 0)
-                mmcOneValue.Add(string.Format("Drive's maximum reading speed is {0} Kbyte/sec.", mode.MaximumSpeed));
+                mmcOneValue.Add($"Drive's maximum reading speed is {mode.MaximumSpeed} Kbyte/sec.");
             if(mode.CurrentSpeed > 0)
-                mmcOneValue.Add(string.Format("Drive's current reading speed is {0} Kbyte/sec.", mode.CurrentSpeed));
+                mmcOneValue.Add($"Drive's current reading speed is {mode.CurrentSpeed} Kbyte/sec.");
 
             if(mode.ReadsCDR)
             {
@@ -133,30 +132,24 @@ namespace DiscImageChef.Server.App_Start
             if(mode.CurrentWriteSpeedSelected > 0)
             {
                 if(mode.RotationControlSelected == 0)
-                    mmcOneValue.Add(string.Format("Drive's current writing speed is {0} Kbyte/sec. in CLV mode",
-                                                  mode.CurrentWriteSpeedSelected));
+                    mmcOneValue.Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in CLV mode");
                 else if(mode.RotationControlSelected == 1)
-                    mmcOneValue.Add(string.Format("Drive's current writing speed is {0} Kbyte/sec. in pure CAV mode",
-                                                  mode.CurrentWriteSpeedSelected));
+                    mmcOneValue.Add($"Drive's current writing speed is {mode.CurrentWriteSpeedSelected} Kbyte/sec. in pure CAV mode");
             }
             else
             {
                 if(mode.MaximumWriteSpeed > 0)
-                    mmcOneValue.Add(string.Format("Drive's maximum writing speed is {0} Kbyte/sec.",
-                                                  mode.MaximumWriteSpeed));
+                    mmcOneValue.Add($"Drive's maximum writing speed is {mode.MaximumWriteSpeed} Kbyte/sec.");
                 if(mode.CurrentWriteSpeed > 0)
-                    mmcOneValue.Add(string.Format("Drive's current writing speed is {0} Kbyte/sec.",
-                                                  mode.CurrentWriteSpeed));
+                    mmcOneValue.Add($"Drive's current writing speed is {mode.CurrentWriteSpeed} Kbyte/sec.");
             }
 
             if(mode.WriteSpeedPerformanceDescriptors != null)
                 foreach(Modes.ModePage_2A_WriteDescriptor descriptor in mode.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0)) if(descriptor.RotationControl == 0)
-                        mmcOneValue.Add(string.Format("Drive supports writing at {0} Kbyte/sec. in CLV mode",
-                                                      descriptor.WriteSpeed));
+                        mmcOneValue.Add($"Drive supports writing at {descriptor.WriteSpeed} Kbyte/sec. in CLV mode");
                     else if(descriptor.RotationControl == 1)
                         mmcOneValue
-                            .Add(string.Format("Drive supports writing at is {0} Kbyte/sec. in pure CAV mode",
-                                               descriptor.WriteSpeed));
+                            .Add($"Drive supports writing at is {descriptor.WriteSpeed} Kbyte/sec. in pure CAV mode");
 
             if(mode.TestWrite) mmcOneValue.Add("Drive supports test writing");
 

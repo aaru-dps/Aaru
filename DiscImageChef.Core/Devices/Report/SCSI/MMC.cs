@@ -1917,7 +1917,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                         if(debug)
                                         {
                                             FileStream bingo =
-                                                new FileStream(string.Format("{0}_readlong.bin", mediaType),
+                                                new FileStream($"{mediaType}_readlong.bin",
                                                                FileMode.Create);
                                             bingo.Write(buffer, 0, buffer.Length);
                                             bingo.Close();

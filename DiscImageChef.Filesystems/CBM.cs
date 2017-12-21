@@ -259,7 +259,7 @@ namespace DiscImageChef.Filesystems
                              .AppendLine();
 
                 xmlFSType.VolumeName = StringHandlers.CToString(cbmHdr.name, CurrentEncoding);
-                xmlFSType.VolumeSerial = string.Format("{0}", cbmHdr.diskId);
+                xmlFSType.VolumeSerial = $"{cbmHdr.diskId}";
             }
             else
             {
@@ -282,7 +282,7 @@ namespace DiscImageChef.Filesystems
                              .AppendLine();
 
                 xmlFSType.VolumeName = StringHandlers.CToString(cbmBam.name, CurrentEncoding);
-                xmlFSType.VolumeSerial = string.Format("{0}", cbmBam.diskId);
+                xmlFSType.VolumeSerial = $"{cbmBam.diskId}";
             }
 
             information = sbInformation.ToString();

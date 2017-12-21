@@ -302,7 +302,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "HFS";
             xmlFSType.VolumeName = StringHandlers.PascalToString(MDB.drVN, CurrentEncoding);
             if(MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
-                xmlFSType.VolumeSerial = string.Format("{0:X8}{1:X8}", MDB.drFndrInfo6, MDB.drFndrInfo7);
+                xmlFSType.VolumeSerial = $"{MDB.drFndrInfo6:X8}{MDB.drFndrInfo7:X8}";
         }
 
         static byte[] Read2048SectorAs512(ImagePlugin imagePlugin, ulong LBA)

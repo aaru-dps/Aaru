@@ -185,7 +185,7 @@ namespace DiscImageChef.Decoders.SCSI
                 case ScsiDefinitions.SCSI1: return "SCSI-1";
                 case ScsiDefinitions.SCSI2: return "SCSI-2";
                 case ScsiDefinitions.SCSI3: return "SCSI-3";
-                default: return string.Format("Unknown definition code {0}", (byte)definition);
+                default: return $"Unknown definition code {(byte)definition}";
             }
         }
 
@@ -510,7 +510,7 @@ namespace DiscImageChef.Decoders.SCSI
                             protocol = "USB Attached SCSI";
                             break;
                         default:
-                            protocol = string.Format("unknown code {0}", (byte)descriptor.ProtocolIdentifier);
+                            protocol = $"unknown code {(byte)descriptor.ProtocolIdentifier}";
                             break;
                     }
 

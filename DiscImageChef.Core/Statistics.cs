@@ -154,7 +154,7 @@ namespace DiscImageChef.Core
 
             if(CurrentStats != null)
             {
-                string partial = string.Format("PartialStats_{0:yyyyMMddHHmmssfff}.xml", DateTime.UtcNow);
+                string partial = $"PartialStats_{DateTime.UtcNow:yyyyMMddHHmmssfff}.xml";
 
                 fs = new FileStream(Path.Combine(Settings.Settings.StatsPath, partial), FileMode.Create);
                 xs = new XmlSerializer(CurrentStats.GetType());
@@ -197,7 +197,7 @@ namespace DiscImageChef.Core
 
                         WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");
                         ((HttpWebRequest)request).UserAgent =
-                            string.Format("DiscImageChef {0}", typeof(Version).Assembly.GetName().Version);
+                            $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
                         request.Method = "POST";
                         request.ContentLength = fs.Length;
                         request.ContentType = "application/xml";
