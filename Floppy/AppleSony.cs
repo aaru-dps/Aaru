@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
@@ -446,11 +447,8 @@ namespace DiscImageChef.Decoders.Floppy
 
             MemoryStream raw = new MemoryStream();
             raw.Write(track.gap, 0, track.gap.Length);
-            foreach(RawSector sector in track.sectors)
-            {
-                byte[] rawSector = MarshalSector(sector);
-                raw.Write(rawSector, 0, rawSector.Length);
-            }
+            foreach(byte[] rawSector in track.sectors.Select(sector => MarshalSector(sector)))
+            { raw.Write(rawSector, 0, rawSector.Length); }
 
             return raw.ToArray();
         }
@@ -490,11 +488,7 @@ namespace DiscImageChef.Decoders.Floppy
             if(disk == null) return null;
 
             MemoryStream raw = new MemoryStream();
-            foreach(RawTrack track in disk)
-            {
-                byte[] rawTrack = MarshalTrack(track);
-                raw.Write(rawTrack, 0, rawTrack.Length);
-            }
+            foreach(byte[] rawTrack in disk.Select(track => MarshalTrack(track))) { raw.Write(rawTrack, 0, rawTrack.Length); }
 
             return raw.ToArray();
         }
