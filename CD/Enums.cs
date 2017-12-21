@@ -57,7 +57,7 @@ namespace DiscImageChef.Decoders.CD
         /// <summary>
         /// Q Sub-channel encodes the start of a video track (if found in TOC) for CD-V
         /// </summary>
-        VideoTrackPointer = 0x04,
+        VideoTrackPointer = 0x04
     }
 
     public enum TOC_CONTROL : byte

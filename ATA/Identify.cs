@@ -1032,7 +1032,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// Indicates a device specific minimum standby timer value
             /// </summary>
-            SpecificStandbyTimer = 0x0001,
+            SpecificStandbyTimer = 0x0001
         }
 
         [Flags]
@@ -1117,7 +1117,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// SMART feature set is supported
             /// </summary>
-            SMART = 0x0001,
+            SMART = 0x0001
         }
 
         /// <summary>
@@ -1189,7 +1189,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// DOWNLOAD MICROCODE is supported
             /// </summary>
-            DownloadMicrocode = 0x0001,
+            DownloadMicrocode = 0x0001
         }
 
         /// <summary>
@@ -1261,7 +1261,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// SMART error logging supported
             /// </summary>
-            SMARTLog = 0x0001,
+            SMARTLog = 0x0001
         }
 
         /// <summary>
@@ -1306,7 +1306,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// Security supported
             /// </summary>
-            Supported = 0x0001,
+            Supported = 0x0001
         }
 
         /// <summary>
@@ -1364,7 +1364,7 @@ namespace DiscImageChef.Decoders.ATA
             /// ATA-1
             /// </summary>
             Ata1 = 0x0002,
-            Reserved00 = 0x0001,
+            Reserved00 = 0x0001
         }
 
         public enum SpecificConfigurationEnum : ushort
@@ -1418,7 +1418,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// Trusted Computing feature set is supported
             /// </summary>
-            TrustedComputing = 0x0001,
+            TrustedComputing = 0x0001
         }
 
         /// <summary>
@@ -1478,7 +1478,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// Reserved for DT1825
             /// </summary>
-            DT1825 = 0x0001,
+            DT1825 = 0x0001
         }
 
         [Flags]
@@ -1517,7 +1517,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// SCT Command Transport supported
             /// </summary>
-            Supported = 0x0001,
+            Supported = 0x0001
         }
 
         [Flags]
@@ -1574,7 +1574,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// MUST NOT be set
             /// </summary>
-            Clear = 0x0001,
+            Clear = 0x0001
         }
 
         [Flags]
@@ -1627,7 +1627,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// MUST NOT be set
             /// </summary>
-            Clear = 0x0001,
+            Clear = 0x0001
         }
 
         [Flags]
@@ -1661,7 +1661,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// Multiple logical sector setting is valid
             /// </summary>
-            MultipleValid = 0x0001,
+            MultipleValid = 0x0001
         }
 
         [Flags]
@@ -1730,7 +1730,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// Zoned capabilities bit 0
             /// </summary>
-            ZonedBit0 = 0x0001,
+            ZonedBit0 = 0x0001
         }
 
         public enum DeviceFormFactorEnum : ushort
@@ -1782,7 +1782,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// TRIM is suported
             /// </summary>
-            Trim = 0x0001,
+            Trim = 0x0001
         }
 
         [Flags]
@@ -1832,7 +1832,7 @@ namespace DiscImageChef.Decoders.ATA
             /// <summary>
             /// MUST NOT be set
             /// </summary>
-            Clear = 0x0001,
+            Clear = 0x0001
         }
 
         public static IdentifyDevice? Decode(byte[] IdentifyDeviceResponse)
