@@ -593,47 +593,33 @@ namespace DiscImageChef.DiscImages
             {
                 filtersList = new FiltersList();
 
-                do
-                {
-                    subFilter =
-                        filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.SubchannelFile));
-                    if(subFilter != null) break;
-
+                subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.SubchannelFile));
+                if(subFilter == null)
                     subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                    header.SubchannelFile.ToLower(CultureInfo
                                                                                                      .CurrentCulture)));
-                    if(subFilter != null) break;
-
+                if(subFilter == null)
                     subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                    header.SubchannelFile.ToUpper(CultureInfo
                                                                                                      .CurrentCulture)));
-                    if(subFilter != null) break;
-
+                if(subFilter == null)
                     subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                    header.SubchannelFile.Split(new[] {'\\'},
                                                                                                StringSplitOptions
                                                                                                    .RemoveEmptyEntries)
                                                                          .Last()));
-                    if(subFilter != null) break;
-
+                if(subFilter == null)
                     subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                    header.SubchannelFile.Split(new[] {'\\'},
                                                                                                StringSplitOptions
                                                                                                    .RemoveEmptyEntries)
                                                                          .Last().ToLower(CultureInfo.CurrentCulture)));
-                    if(subFilter != null) break;
-
+                if(subFilter == null)
                     subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                    header.SubchannelFile.Split(new[] {'\\'},
                                                                                                StringSplitOptions
                                                                                                    .RemoveEmptyEntries)
                                                                          .Last().ToUpper(CultureInfo.CurrentCulture)));
-                    if(subFilter != null) break;
-
-                    subFilter = null;
-                    break;
-                }
-                while(true);
             }
 
             tracks = new List<Track>();
@@ -808,7 +794,8 @@ namespace DiscImageChef.DiscImages
                 session.StartTrack = uint.MaxValue;
                 session.StartSector = uint.MaxValue;
 
-                foreach(Track track in tracks.Where(track => track.TrackSession == i)) {
+                foreach(Track track in tracks.Where(track => track.TrackSession == i))
+                {
                     if(track.TrackSequence < session.StartTrack) session.StartTrack = track.TrackSequence;
                     if(track.TrackSequence > session.EndTrack) session.StartTrack = track.TrackSequence;
                     if(track.TrackStartSector < session.StartSector) session.StartSector = track.TrackStartSector;
@@ -929,14 +916,28 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1 select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in tracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector + 1
+                                                     select kvp)
+                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1 select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in tracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector + 1
+                                                     select kvp)
+                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -947,7 +948,8 @@ namespace DiscImageChef.DiscImages
 
             _track.TrackSequence = 0;
 
-            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track)) {
+            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
+            {
                 _track = bwTrack;
                 break;
             }
@@ -960,8 +962,7 @@ namespace DiscImageChef.DiscImages
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
                                                                   length + sectorAddress,
-                                                                  _track.TrackEndSector - _track.TrackStartSector +
-                                                                  1));
+                                                                  _track.TrackEndSector - _track.TrackStartSector + 1));
 
             uint sectorOffset;
             uint sectorSize;
@@ -1027,7 +1028,8 @@ namespace DiscImageChef.DiscImages
 
             _track.TrackSequence = 0;
 
-            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track)) {
+            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
+            {
                 _track = bwTrack;
                 break;
             }
@@ -1040,8 +1042,7 @@ namespace DiscImageChef.DiscImages
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
                                                                   length + sectorAddress,
-                                                                  _track.TrackEndSector - _track.TrackStartSector +
-                                                                  1));
+                                                                  _track.TrackEndSector - _track.TrackStartSector + 1));
 
             uint sectorOffset;
             uint sectorSize;
@@ -1199,7 +1200,14 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector + 1 select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap
+                                                     where sectorAddress >= kvp.Value
+                                                     from track in tracks
+                                                     where track.TrackSequence == kvp.Key
+                                                     where sectorAddress - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector + 1
+                                                     select kvp)
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1210,7 +1218,8 @@ namespace DiscImageChef.DiscImages
 
             _track.TrackSequence = 0;
 
-            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track)) {
+            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
+            {
                 _track = bwTrack;
                 break;
             }
@@ -1223,8 +1232,7 @@ namespace DiscImageChef.DiscImages
                                                       string
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
                                                                   length + sectorAddress,
-                                                                  _track.TrackEndSector - _track.TrackStartSector +
-                                                                  1));
+                                                                  _track.TrackEndSector - _track.TrackStartSector + 1));
 
             uint sectorOffset;
             uint sectorSize;

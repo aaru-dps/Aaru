@@ -1384,8 +1384,6 @@ namespace DiscImageChef.CommonTypes
                         }
                         default: return MediaType.UnknownMO;
                     }
-
-                    return MediaType.UnknownMO;
                 }
                 // MultiMedia Device
                 case 0x05:

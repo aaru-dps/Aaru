@@ -112,8 +112,6 @@ namespace DiscImageChef.DiscImages
                 case 1255168: return true;
                 default: return false;
             }
-
-            return true;
         }
 
         public override bool OpenImage(Filter imageFilter)

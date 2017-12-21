@@ -205,9 +205,6 @@ namespace DiscImageChef.Interop
                     }
 
                     goto default;
-
-                    return string.Format("10.{0}.{1}", Environment.OSVersion.Version.Major - 4,
-                                         Environment.OSVersion.Version.Minor);
                 case PlatformID.Win32NT:
                     // From Windows 8.1 the reported version is simply falsified...
                     if(Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Major >= 2 ||

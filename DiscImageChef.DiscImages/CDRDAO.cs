@@ -1234,8 +1234,6 @@ namespace DiscImageChef.DiscImages
                     sectorOffset = 2048;
                     sectorSize = 96;
                     break;
-
-                    throw new ArgumentException("No tags in image for requested track", nameof(tag));
                 case CDRDAO_TRACK_TYPE_MODE2_FORM2:
                 case CDRDAO_TRACK_TYPE_MODE2_MIX:
                     if(tag != SectorTagType.CdSectorSubchannel)
@@ -1244,8 +1242,6 @@ namespace DiscImageChef.DiscImages
                     sectorOffset = 2336;
                     sectorSize = 96;
                     break;
-
-                    throw new ArgumentException("No tags in image for requested track", nameof(tag));
                 case CDRDAO_TRACK_TYPE_AUDIO:
                     if(tag != SectorTagType.CdSectorSubchannel)
                         throw new ArgumentException("No tags in image for requested track", nameof(tag));
@@ -1253,8 +1249,6 @@ namespace DiscImageChef.DiscImages
                     sectorOffset = 2352;
                     sectorSize = 96;
                     break;
-
-                    throw new ArgumentException("No tags in image for requested track", nameof(tag));
                 case CDRDAO_TRACK_TYPE_MODE1_RAW:
                 {
                     switch(tag)
@@ -1321,8 +1315,6 @@ namespace DiscImageChef.DiscImages
                     sectorOffset = 2352;
                     sectorSize = 96;
                     break;
-
-                    throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
