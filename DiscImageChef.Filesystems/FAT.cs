@@ -1340,7 +1340,7 @@ namespace DiscImageChef.Filesystems
                     if(entry.ctime > 0 && entry.cdate > 0)
                     {
                         xmlFSType.CreationDate = DateHandlers.DOSToDateTime(entry.cdate, entry.ctime);
-                        if(entry.ctime_ms > 0) xmlFSType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
+                        if(entry.ctime_ms > 0) xmlFSType.CreationDate = xmlFSType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
                         xmlFSType.CreationDateSpecified = true;
                         sb.AppendFormat("Volume created on {0}", xmlFSType.CreationDate).AppendLine();
                     }

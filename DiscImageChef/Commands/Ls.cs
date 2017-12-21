@@ -178,13 +178,14 @@ namespace DiscImageChef.Commands
                         else
                         {
                             plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+                            if(plugin == null) continue;
+
                             DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
                             Filesystem fs = (Filesystem)plugin
                                 .GetType().GetConstructor(new[]
                                 {
                                     typeof(ImagePlugin), typeof(Partition), typeof(Encoding)
-                                })
-                                ?.Invoke(new object[] {imageFormat, partitions[i], null});
+                                })?.Invoke(new object[] {imageFormat, partitions[i], null});
                             if(fs == null) continue;
 
                             error = fs.Mount(options.Debug);
@@ -255,43 +256,48 @@ namespace DiscImageChef.Commands
                         Filesystem fs = (Filesystem)plugin
                             .GetType().GetConstructor(new[] {typeof(ImagePlugin), typeof(Partition), typeof(Encoding)})
                             ?.Invoke(new object[] {imageFormat, wholePart, null});
-                        error = fs.Mount(options.Debug);
-                        if(error == Errno.NoError)
+                        if(fs != null)
                         {
-                            List<string> rootDir = new List<string>();
-                            error = fs.ReadDir("/", ref rootDir);
+                            error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
-                                foreach(string entry in rootDir)
-                                    if(options.Long)
-                                    {
-                                        FileEntryInfo stat = new FileEntryInfo();
-                                        List<string> xattrs = new List<string>();
-
-                                        error = fs.Stat(entry, ref stat);
-                                        if(error == Errno.NoError)
+                            {
+                                List<string> rootDir = new List<string>();
+                                error = fs.ReadDir("/", ref rootDir);
+                                if(error == Errno.NoError)
+                                    foreach(string entry in rootDir)
+                                        if(options.Long)
                                         {
-                                            DicConsole.WriteLine("{0}\t{1}\t{2} bytes\t{3}", stat.CreationTimeUtc,
-                                                                 stat.Inode, stat.Length, entry);
+                                            FileEntryInfo stat = new FileEntryInfo();
+                                            List<string> xattrs = new List<string>();
 
-                                            error = fs.ListXAttr(entry, ref xattrs);
-                                            if(error != Errno.NoError) continue;
-
-                                            foreach(string xattr in xattrs)
+                                            error = fs.Stat(entry, ref stat);
+                                            if(error == Errno.NoError)
                                             {
-                                                byte[] xattrBuf = new byte[0];
-                                                error = fs.GetXattr(entry, xattr, ref xattrBuf);
-                                                if(error == Errno.NoError)
-                                                    DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr, xattrBuf.Length);
+                                                DicConsole.WriteLine("{0}\t{1}\t{2} bytes\t{3}", stat.CreationTimeUtc,
+                                                                     stat.Inode, stat.Length, entry);
+
+                                                error = fs.ListXAttr(entry, ref xattrs);
+                                                if(error != Errno.NoError) continue;
+
+                                                foreach(string xattr in xattrs)
+                                                {
+                                                    byte[] xattrBuf = new byte[0];
+                                                    error = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                                    if(error == Errno.NoError)
+                                                        DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr,
+                                                                             xattrBuf.Length);
+                                                }
                                             }
+                                            else DicConsole.WriteLine("{0}", entry);
                                         }
                                         else DicConsole.WriteLine("{0}", entry);
-                                    }
-                                    else DicConsole.WriteLine("{0}", entry);
-                            else DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
+                                else
+                                    DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
-                            Core.Statistics.AddFilesystem(fs.XmlFSType.Type);
+                                Core.Statistics.AddFilesystem(fs.XmlFSType.Type);
+                            }
+                            else DicConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                         }
-                        else DicConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                     }
                 }
             }

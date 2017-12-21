@@ -77,7 +77,7 @@ namespace DiscImageChef.Devices.Windows
             catch(Exception ex)
             {
 #if DEBUG
-                throw ex;
+                throw;
 #else
                 return null;
 #endif
