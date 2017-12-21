@@ -369,20 +369,19 @@ namespace DiscImageChef.Filesystems
                 {
                     if(tagId == TagIdentifier.TerminatingDescriptor) break;
 
-                    if(tagId == TagIdentifier.LogicalVolumeDescriptor)
-                    {
-                        IntPtr lvdPtr = Marshal.AllocHGlobal(Marshal.SizeOf(lvd));
-                        Marshal.Copy(sector, 0, lvdPtr, Marshal.SizeOf(lvd));
-                        lvd = (LogicalVolumeDescriptor)Marshal.PtrToStructure(lvdPtr, typeof(LogicalVolumeDescriptor));
-                        Marshal.FreeHGlobal(lvdPtr);
-                    }
-
-                    if(tagId == TagIdentifier.PrimaryVolumeDescriptor)
-                    {
-                        IntPtr pvdPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pvd));
-                        Marshal.Copy(sector, 0, pvdPtr, Marshal.SizeOf(pvd));
-                        pvd = (PrimaryVolumeDescriptor)Marshal.PtrToStructure(pvdPtr, typeof(PrimaryVolumeDescriptor));
-                        Marshal.FreeHGlobal(pvdPtr);
+                    switch(tagId) {
+                        case TagIdentifier.LogicalVolumeDescriptor:
+                            IntPtr lvdPtr = Marshal.AllocHGlobal(Marshal.SizeOf(lvd));
+                            Marshal.Copy(sector, 0, lvdPtr, Marshal.SizeOf(lvd));
+                            lvd = (LogicalVolumeDescriptor)Marshal.PtrToStructure(lvdPtr, typeof(LogicalVolumeDescriptor));
+                            Marshal.FreeHGlobal(lvdPtr);
+                            break;
+                        case TagIdentifier.PrimaryVolumeDescriptor:
+                            IntPtr pvdPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pvd));
+                            Marshal.Copy(sector, 0, pvdPtr, Marshal.SizeOf(pvd));
+                            pvd = (PrimaryVolumeDescriptor)Marshal.PtrToStructure(pvdPtr, typeof(PrimaryVolumeDescriptor));
+                            Marshal.FreeHGlobal(pvdPtr);
+                            break;
                     }
                 }
                 else break;

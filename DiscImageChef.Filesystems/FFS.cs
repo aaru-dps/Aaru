@@ -359,9 +359,14 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("NINDIR: 0x{0:X8}", ufs_sb.fs_nindir).AppendLine();
             sbInformation.AppendFormat("INOPB: 0x{0:X8}", ufs_sb.fs_inopb).AppendLine();
             sbInformation.AppendFormat("NSPF: 0x{0:X8}", ufs_sb.fs_old_nspf).AppendLine();
-            if(ufs_sb.fs_optim == 0) sbInformation.AppendLine("Filesystem will minimize allocation time");
-            else if(ufs_sb.fs_optim == 1) sbInformation.AppendLine("Filesystem will minimize volume fragmentation");
-            else sbInformation.AppendFormat("Unknown optimization value: 0x{0:X8}", ufs_sb.fs_optim).AppendLine();
+            switch(ufs_sb.fs_optim) {
+                case 0: sbInformation.AppendLine("Filesystem will minimize allocation time");
+                    break;
+                case 1: sbInformation.AppendLine("Filesystem will minimize volume fragmentation");
+                    break;
+                default: sbInformation.AppendFormat("Unknown optimization value: 0x{0:X8}", ufs_sb.fs_optim).AppendLine();
+                    break;
+            }
             if(fs_type_sun) sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_old_npsect).AppendLine();
             else if(fs_type_sun86)
                 sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_old_npsect))

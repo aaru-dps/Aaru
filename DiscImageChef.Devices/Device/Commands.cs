@@ -137,40 +137,40 @@ namespace DiscImageChef.Devices
                                   uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
                                   out double duration, out bool sense, uint timeout = 0)
         {
-            if(command == MmcCommands.SendCid && cachedCid != null)
-            {
-                System.DateTime start = System.DateTime.Now;
-                buffer = new byte[cachedCid.Length];
-                System.Array.Copy(cachedCid, buffer, buffer.Length);
-                response = new uint[4];
-                sense = false;
-                System.DateTime end = System.DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
-                return 0;
-            }
-
-            if(command == MmcCommands.SendCsd && cachedCid != null)
-            {
-                System.DateTime start = System.DateTime.Now;
-                buffer = new byte[cachedCsd.Length];
-                System.Array.Copy(cachedCsd, buffer, buffer.Length);
-                response = new uint[4];
-                sense = false;
-                System.DateTime end = System.DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
-                return 0;
-            }
-
-            if(command == (MmcCommands)SecureDigitalCommands.SendScr && cachedScr != null)
-            {
-                System.DateTime start = System.DateTime.Now;
-                buffer = new byte[cachedScr.Length];
-                System.Array.Copy(cachedScr, buffer, buffer.Length);
-                response = new uint[4];
-                sense = false;
-                System.DateTime end = System.DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
-                return 0;
+            switch(command) {
+                case MmcCommands.SendCid when cachedCid != null:
+                {
+                    System.DateTime start = System.DateTime.Now;
+                    buffer = new byte[cachedCid.Length];
+                    System.Array.Copy(cachedCid, buffer, buffer.Length);
+                    response = new uint[4];
+                    sense = false;
+                    System.DateTime end = System.DateTime.Now;
+                    duration = (end - start).TotalMilliseconds;
+                    return 0;
+                }
+                case MmcCommands.SendCsd when cachedCid != null:
+                {
+                    System.DateTime start = System.DateTime.Now;
+                    buffer = new byte[cachedCsd.Length];
+                    System.Array.Copy(cachedCsd, buffer, buffer.Length);
+                    response = new uint[4];
+                    sense = false;
+                    System.DateTime end = System.DateTime.Now;
+                    duration = (end - start).TotalMilliseconds;
+                    return 0;
+                }
+                case (MmcCommands)SecureDigitalCommands.SendScr when cachedScr != null:
+                {
+                    System.DateTime start = System.DateTime.Now;
+                    buffer = new byte[cachedScr.Length];
+                    System.Array.Copy(cachedScr, buffer, buffer.Length);
+                    response = new uint[4];
+                    sense = false;
+                    System.DateTime end = System.DateTime.Now;
+                    duration = (end - start).TotalMilliseconds;
+                    return 0;
+                }
             }
 
             if((command == (MmcCommands)SecureDigitalCommands.SendOperatingCondition ||

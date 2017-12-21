@@ -123,70 +123,77 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
 
             extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
-            if(extension == ".iso" && imageFilter.GetDataForkLength() % 2048 == 0) ImageInfo.SectorSize = 2048;
-            else if(extension == ".d81" && imageFilter.GetDataForkLength() == 819200) ImageInfo.SectorSize = 256;
-            else if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
-                    (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 ||
-                     imageFilter.GetDataForkLength() == 655360)) ImageInfo.SectorSize = 256;
-            else if((extension == ".adf" || extension == ".adl") && imageFilter.GetDataForkLength() == 819200)
-                ImageInfo.SectorSize = 1024;
-            else
-                switch(imageFilter.GetDataForkLength())
-                {
-                    case 242944:
-                    case 256256:
-                    case 495872:
-                    case 92160:
-                    case 133120:
-                        ImageInfo.SectorSize = 128;
-                        break;
-                    case 116480:
-                    case 287488: // T0S0 = 128bps
-                    case 988416: // T0S0 = 128bps
-                    case 995072: // T0S0 = 128bps, T0S1 = 256bps
-                    case 1021696: // T0S0 = 128bps, T0S1 = 256bps
-                    case 232960:
-                    case 143360:
-                    case 286720:
-                    case 512512:
-                    case 102400:
-                    case 204800:
-                    case 655360:
-                    case 80384: // T0S0 = 128bps
-                    case 325632: // T0S0 = 128bps, T0S1 = 256bps
-                    case 653312: // T0S0 = 128bps, T0S1 = 256bps
-
-                    #region Commodore
-                    case 174848:
-                    case 175531:
-                    case 196608:
-                    case 197376:
-                    case 349696:
-                    case 351062:
-                    case 822400:
-                        #endregion Commodore
-
-                        ImageInfo.SectorSize = 256;
-                        break;
-                    case 81664:
-                        ImageInfo.SectorSize = 319;
-                        break;
-                    case 306432: // T0S0 = 128bps
-                    case 1146624: // T0S0 = 128bps, T0S1 = 256bps
-                    case 1177344: // T0S0 = 128bps, T0S1 = 256bps
-                        ImageInfo.SectorSize = 512;
-                        break;
-                    case 1222400: // T0S0 = 128bps, T0S1 = 256bps
-                    case 1304320: // T0S0 = 128bps, T0S1 = 256bps
-                    case 1255168: // T0S0 = 128bps, T0S1 = 256bps
-                    case 1261568:
-                    case 1638400:
+            switch(extension) {
+                case ".iso" when imageFilter.GetDataForkLength() % 2048 == 0: ImageInfo.SectorSize = 2048;
+                    break;
+                case ".d81" when imageFilter.GetDataForkLength() == 819200: ImageInfo.SectorSize = 256;
+                    break;
+                default:
+                    if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
+                       (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 ||
+                        imageFilter.GetDataForkLength() == 655360)) ImageInfo.SectorSize = 256;
+                    else if((extension == ".adf" || extension == ".adl") && imageFilter.GetDataForkLength() == 819200)
                         ImageInfo.SectorSize = 1024;
-                        break;
-                    default:
-                        ImageInfo.SectorSize = 512;
-                        break;
-                }
+                    else
+                        switch(imageFilter.GetDataForkLength())
+                        {
+                            case 242944:
+                            case 256256:
+                            case 495872:
+                            case 92160:
+                            case 133120:
+                                ImageInfo.SectorSize = 128;
+                                break;
+                            case 116480:
+                            case 287488: // T0S0 = 128bps
+                            case 988416: // T0S0 = 128bps
+                            case 995072: // T0S0 = 128bps, T0S1 = 256bps
+                            case 1021696: // T0S0 = 128bps, T0S1 = 256bps
+                            case 232960:
+                            case 143360:
+                            case 286720:
+                            case 512512:
+                            case 102400:
+                            case 204800:
+                            case 655360:
+                            case 80384: // T0S0 = 128bps
+                            case 325632: // T0S0 = 128bps, T0S1 = 256bps
+                            case 653312: // T0S0 = 128bps, T0S1 = 256bps
+
+                            #region Commodore
+                            case 174848:
+                            case 175531:
+                            case 196608:
+                            case 197376:
+                            case 349696:
+                            case 351062:
+                            case 822400:
+                                #endregion Commodore
+
+                                ImageInfo.SectorSize = 256;
+                                break;
+                            case 81664:
+                                ImageInfo.SectorSize = 319;
+                                break;
+                            case 306432: // T0S0 = 128bps
+                            case 1146624: // T0S0 = 128bps, T0S1 = 256bps
+                            case 1177344: // T0S0 = 128bps, T0S1 = 256bps
+                                ImageInfo.SectorSize = 512;
+                                break;
+                            case 1222400: // T0S0 = 128bps, T0S1 = 256bps
+                            case 1304320: // T0S0 = 128bps, T0S1 = 256bps
+                            case 1255168: // T0S0 = 128bps, T0S1 = 256bps
+                            case 1261568:
+                            case 1638400:
+                                ImageInfo.SectorSize = 1024;
+                                break;
+                            default:
+                                ImageInfo.SectorSize = 512;
+                                break;
+                        }
+
+                    break;
+            }
 
             ImageInfo.ImageSize = (ulong)imageFilter.GetDataForkLength();
             ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();

@@ -113,17 +113,17 @@ namespace DiscImageChef.Filesystems
             CramSuperBlock crSb = new CramSuperBlock();
             bool littleEndian = true;
 
-            if(magic == Cram_MAGIC)
-            {
-                IntPtr crSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(crSb));
-                Marshal.Copy(sector, 0, crSbPtr, Marshal.SizeOf(crSb));
-                crSb = (CramSuperBlock)Marshal.PtrToStructure(crSbPtr, typeof(CramSuperBlock));
-                Marshal.FreeHGlobal(crSbPtr);
-            }
-            else if(magic == Cram_CIGAM)
-            {
-                crSb = BigEndianMarshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
-                littleEndian = false;
+            switch(magic) {
+                case Cram_MAGIC:
+                    IntPtr crSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(crSb));
+                    Marshal.Copy(sector, 0, crSbPtr, Marshal.SizeOf(crSb));
+                    crSb = (CramSuperBlock)Marshal.PtrToStructure(crSbPtr, typeof(CramSuperBlock));
+                    Marshal.FreeHGlobal(crSbPtr);
+                    break;
+                case Cram_CIGAM:
+                    crSb = BigEndianMarshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
+                    littleEndian = false;
+                    break;
             }
 
             StringBuilder sbInformation = new StringBuilder();

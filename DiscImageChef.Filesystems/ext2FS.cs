@@ -121,53 +121,51 @@ namespace DiscImageChef.Filesystems
 
             xmlFSType = new Schemas.FileSystemType();
 
-            if(supblk.magic == ext2OldFSMagic)
-            {
-                sb.AppendLine("ext2 (old) filesystem");
-                xmlFSType.Type = "ext2";
-            }
-            else if(supblk.magic == ext2FSMagic)
-            {
-                ext3 |= (supblk.ftr_compat & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
-                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_RECOVER) == EXT3_FEATURE_INCOMPAT_RECOVER ||
-                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) == EXT3_FEATURE_INCOMPAT_JOURNAL_DEV;
-
-                if((supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_HUGE_FILE) == EXT4_FEATURE_RO_COMPAT_HUGE_FILE ||
-                   (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_GDT_CSUM) == EXT4_FEATURE_RO_COMPAT_GDT_CSUM ||
-                   (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_DIR_NLINK) == EXT4_FEATURE_RO_COMPAT_DIR_NLINK ||
-                   (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE) == EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT) == EXT4_FEATURE_INCOMPAT_64BIT ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_MMP) == EXT4_FEATURE_INCOMPAT_MMP ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_FLEX_BG) == EXT4_FEATURE_INCOMPAT_FLEX_BG ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_EA_INODE) == EXT4_FEATURE_INCOMPAT_EA_INODE ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_DIRDATA) == EXT4_FEATURE_INCOMPAT_DIRDATA)
-                {
-                    ext3 = false;
-                    ext4 = true;
-                }
-
-                new_ext2 |= !ext3 && !ext4;
-
-                if(new_ext2)
-                {
-                    sb.AppendLine("ext2 filesystem");
+            switch(supblk.magic) {
+                case ext2OldFSMagic:
+                    sb.AppendLine("ext2 (old) filesystem");
                     xmlFSType.Type = "ext2";
-                }
-                if(ext3)
-                {
-                    sb.AppendLine("ext3 filesystem");
-                    xmlFSType.Type = "ext3";
-                }
-                if(ext4)
-                {
-                    sb.AppendLine("ext4 filesystem");
-                    xmlFSType.Type = "ext4";
-                }
-            }
-            else
-            {
-                information = "Not a ext2/3/4 filesystem" + Environment.NewLine;
-                return;
+                    break;
+                case ext2FSMagic:
+                    ext3 |= (supblk.ftr_compat & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
+                            (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_RECOVER) == EXT3_FEATURE_INCOMPAT_RECOVER ||
+                            (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) == EXT3_FEATURE_INCOMPAT_JOURNAL_DEV;
+
+                    if((supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_HUGE_FILE) == EXT4_FEATURE_RO_COMPAT_HUGE_FILE ||
+                       (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_GDT_CSUM) == EXT4_FEATURE_RO_COMPAT_GDT_CSUM ||
+                       (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_DIR_NLINK) == EXT4_FEATURE_RO_COMPAT_DIR_NLINK ||
+                       (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE) == EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE ||
+                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT) == EXT4_FEATURE_INCOMPAT_64BIT ||
+                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_MMP) == EXT4_FEATURE_INCOMPAT_MMP ||
+                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_FLEX_BG) == EXT4_FEATURE_INCOMPAT_FLEX_BG ||
+                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_EA_INODE) == EXT4_FEATURE_INCOMPAT_EA_INODE ||
+                       (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_DIRDATA) == EXT4_FEATURE_INCOMPAT_DIRDATA)
+                    {
+                        ext3 = false;
+                        ext4 = true;
+                    }
+
+                    new_ext2 |= !ext3 && !ext4;
+
+                    if(new_ext2)
+                    {
+                        sb.AppendLine("ext2 filesystem");
+                        xmlFSType.Type = "ext2";
+                    }
+                    if(ext3)
+                    {
+                        sb.AppendLine("ext3 filesystem");
+                        xmlFSType.Type = "ext3";
+                    }
+                    if(ext4)
+                    {
+                        sb.AppendLine("ext4 filesystem");
+                        xmlFSType.Type = "ext4";
+                    }
+                    break;
+                default:
+                    information = "Not a ext2/3/4 filesystem" + Environment.NewLine;
+                    return;
             }
 
             string ext_os;

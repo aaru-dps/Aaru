@@ -175,12 +175,14 @@ namespace DiscImageChef.Filesystems
                 huge_sectors /= 4;
             }
 
-            // exFAT
-            if(oem_string == "EXFAT   ") return false;
-            // NTFS
-            if(oem_string == "NTFS    " && bootable == 0xAA55 && fats_no == 0 && fat_sectors == 0) return false;
-            // QNX4
-            if(oem_string == "FQNX4FS ") return false;
+            switch(oem_string) {
+                // exFAT
+                case "EXFAT   ": return false;
+                // NTFS
+                case "NTFS    " when bootable == 0xAA55 && fats_no == 0 && fat_sectors == 0: return false;
+                // QNX4
+                case "FQNX4FS ": return false;
+            }
 
             // HPFS
             if(16 + partition.Start <= partition.End)
@@ -195,32 +197,27 @@ namespace DiscImageChef.Filesystems
                 if(hpfs_magic1 == 0xF995E849 && hpfs_magic2 == 0xFA53E9C5) return false;
             }
 
-            // FAT32 for sure
-            if(bits_in_bps == 1 && correct_spc && fats_no <= 2 && sectors == 0 && fat_sectors == 0 &&
-               fat32_signature == 0x29 && fat32_string == "FAT32   ") return true;
-            // short FAT32
-            if(bits_in_bps == 1 && correct_spc && fats_no <= 2 && sectors == 0 && fat_sectors == 0 &&
-               fat32_signature == 0x28)
-                return big_sectors == 0
-                           ? huge_sectors <= partition.End - partition.Start + 1
-                           : big_sectors <= partition.End - partition.Start + 1;
-            // MSX-DOS FAT12
-            if(bits_in_bps == 1 && correct_spc && fats_no <= 2 && root_entries > 0 &&
-               sectors <= partition.End - partition.Start + 1 && fat_sectors > 0 &&
-               msx_string == "VOL_ID") return true;
-            // EBPB
-            if(bits_in_bps == 1 && correct_spc && fats_no <= 2 && root_entries > 0 && fat_sectors > 0 &&
-               (bpb_signature == 0x28 || bpb_signature == 0x29))
-                return sectors == 0
-                           ? big_sectors <= partition.End - partition.Start + 1
-                           : sectors <= partition.End - partition.Start + 1;
-
-            // BPB
-            if(bits_in_bps == 1 && correct_spc && reserved_secs < partition.End - partition.Start && fats_no <= 2 &&
-               root_entries > 0 && fat_sectors > 0)
-                return sectors == 0
-                           ? big_sectors <= partition.End - partition.Start + 1
-                           : sectors <= partition.End - partition.Start + 1;
+            switch(bits_in_bps) {
+                // FAT32 for sure
+                case 1 when correct_spc && fats_no <= 2 && sectors == 0 && fat_sectors == 0 && fat32_signature == 0x29 && fat32_string == "FAT32   ": return true;
+                // short FAT32
+                case 1 when correct_spc && fats_no <= 2 && sectors == 0 && fat_sectors == 0 && fat32_signature == 0x28:
+                    return big_sectors == 0
+                               ? huge_sectors <= partition.End - partition.Start + 1
+                               : big_sectors <= partition.End - partition.Start + 1;
+                // MSX-DOS FAT12
+                case 1 when correct_spc && fats_no <= 2 && root_entries > 0 && sectors <= partition.End - partition.Start + 1 && fat_sectors > 0 && msx_string == "VOL_ID": return true;
+                // EBPB
+                case 1 when correct_spc && fats_no <= 2 && root_entries > 0 && fat_sectors > 0 && (bpb_signature == 0x28 || bpb_signature == 0x29):
+                    return sectors == 0
+                               ? big_sectors <= partition.End - partition.Start + 1
+                               : sectors <= partition.End - partition.Start + 1;
+                // BPB
+                case 1 when correct_spc && reserved_secs < partition.End - partition.Start && fats_no <= 2 && root_entries > 0 && fat_sectors > 0:
+                    return sectors == 0
+                               ? big_sectors <= partition.End - partition.Start + 1
+                               : sectors <= partition.End - partition.Start + 1;
+            }
 
             // Apricot BPB
             if(bits_in_apricot_bps == 1 && apricot_correct_spc &&

@@ -208,10 +208,12 @@ namespace DiscImageChef.Core
 
                                 sidecar.OpticalDisc[0].Dimensions = new DimensionsType();
                                 if(dskType == MediaType.UMD) sidecar.OpticalDisc[0].Dimensions.Diameter = 60;
-                                else if(pfi.Value.DiscSize == Decoders.DVD.DVDSize.Eighty)
-                                    sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
-                                else if(pfi.Value.DiscSize == Decoders.DVD.DVDSize.OneTwenty)
-                                    sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
+                                else switch(pfi.Value.DiscSize) {
+                                    case Decoders.DVD.DVDSize.Eighty: sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
+                                        break;
+                                    case Decoders.DVD.DVDSize.OneTwenty: sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
+                                        break;
+                                }
                             }
 
                         break;
@@ -291,15 +293,16 @@ namespace DiscImageChef.Core
 
                 if(trk.Indexes != null && trk.Indexes.ContainsKey(0)) if(trk.Indexes.TryGetValue(0, out ulong idx0)) xmlTrk.StartSector = (long)idx0;
 
-                if(sidecar.OpticalDisc[0].DiscType == "CD" || sidecar.OpticalDisc[0].DiscType == "GD")
-                {
-                    xmlTrk.StartMSF = LbaToMsf(xmlTrk.StartSector);
-                    xmlTrk.EndMSF = LbaToMsf(xmlTrk.EndSector);
-                }
-                else if(sidecar.OpticalDisc[0].DiscType == "DDCD")
-                {
-                    xmlTrk.StartMSF = DdcdLbaToMsf(xmlTrk.StartSector);
-                    xmlTrk.EndMSF = DdcdLbaToMsf(xmlTrk.EndSector);
+                switch(sidecar.OpticalDisc[0].DiscType) {
+                    case "CD":
+                    case "GD":
+                        xmlTrk.StartMSF = LbaToMsf(xmlTrk.StartSector);
+                        xmlTrk.EndMSF = LbaToMsf(xmlTrk.EndSector);
+                        break;
+                    case "DDCD":
+                        xmlTrk.StartMSF = DdcdLbaToMsf(xmlTrk.StartSector);
+                        xmlTrk.EndMSF = DdcdLbaToMsf(xmlTrk.EndSector);
+                        break;
                 }
 
                 xmlTrk.Image = new ImageType {Value = Path.GetFileName(trk.TrackFile), format = trk.TrackFileType};
@@ -468,12 +471,16 @@ namespace DiscImageChef.Core
                                     lstFs.Add(plugin.XmlFSType);
                                     Statistics.AddFilesystem(plugin.XmlFSType.Type);
 
-                                    if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                    if(plugin.XmlFSType.Type == "PC Engine filesystem")
-                                        dskType = MediaType.SuperCDROM2;
-                                    if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                    if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
-                                        dskType = MediaType.GOD;
+                                    switch(plugin.XmlFSType.Type) {
+                                        case "Opera": dskType = MediaType.ThreeDO;
+                                            break;
+                                        case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                            break;
+                                        case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                            break;
+                                        case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                            break;
+                                    }
                                 }
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -512,10 +519,16 @@ namespace DiscImageChef.Core
                                 lstFs.Add(plugin.XmlFSType);
                                 Statistics.AddFilesystem(plugin.XmlFSType.Type);
 
-                                if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                if(plugin.XmlFSType.Type == "PC Engine filesystem") dskType = MediaType.SuperCDROM2;
-                                if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem") dskType = MediaType.GOD;
+                                switch(plugin.XmlFSType.Type) {
+                                    case "Opera": dskType = MediaType.ThreeDO;
+                                        break;
+                                    case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                        break;
+                                    case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                        break;
+                                    case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                        break;
+                                }
                             }
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body

@@ -118,31 +118,31 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.Cis);
                     if(tuples != null)
                         foreach(Decoders.PCMCIA.Tuple tuple in tuples)
-                            if(tuple.Code == TupleCodes.CISTPL_MANFID)
-                            {
-                                ManufacturerIdentificationTuple manfid =
-                                    CIS.DecodeManufacturerIdentificationTuple(tuple);
+                            switch(tuple.Code) {
+                                case TupleCodes.CISTPL_MANFID:
+                                    ManufacturerIdentificationTuple manfid =
+                                        CIS.DecodeManufacturerIdentificationTuple(tuple);
 
-                                if(manfid != null)
-                                {
-                                    sidecar.BlockMedia[0].PCMCIA.ManufacturerCode = manfid.ManufacturerID;
-                                    sidecar.BlockMedia[0].PCMCIA.CardCode = manfid.CardID;
-                                    sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
-                                    sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified = true;
-                                }
-                            }
-                            else if(tuple.Code == TupleCodes.CISTPL_VERS_1)
-                            {
-                                Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
+                                    if(manfid != null)
+                                    {
+                                        sidecar.BlockMedia[0].PCMCIA.ManufacturerCode = manfid.ManufacturerID;
+                                        sidecar.BlockMedia[0].PCMCIA.CardCode = manfid.CardID;
+                                        sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
+                                        sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified = true;
+                                    }
+                                    break;
+                                case TupleCodes.CISTPL_VERS_1:
+                                    Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
 
-                                if(vers != null)
-                                {
-                                    sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
-                                    sidecar.BlockMedia[0].PCMCIA.ProductName = vers.Product;
-                                    sidecar.BlockMedia[0].PCMCIA.Compliance =
-                                        string.Format("{0}.{1}", vers.MajorVersion, vers.MinorVersion);
-                                    sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
-                                }
+                                    if(vers != null)
+                                    {
+                                        sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
+                                        sidecar.BlockMedia[0].PCMCIA.ProductName = vers.Product;
+                                        sidecar.BlockMedia[0].PCMCIA.Compliance =
+                                            string.Format("{0}.{1}", vers.MajorVersion, vers.MinorVersion);
+                                        sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
+                                    }
+                                    break;
                             }
                 }
 

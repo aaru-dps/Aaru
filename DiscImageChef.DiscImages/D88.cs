@@ -407,9 +407,14 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.MediaType = MediaType.NEC_8_SD;
                 else if(bps == IBMSectorSizeCode.QuarterKilo)
                 {
-                    if(trkCounter == 80 && spt == 16) ImageInfo.MediaType = MediaType.NEC_525_SS;
-                    else if(trkCounter == 154 && spt == 26) ImageInfo.MediaType = MediaType.NEC_8_DD;
-                    else if(trkCounter == 160 && spt == 16) ImageInfo.MediaType = MediaType.NEC_525_DS;
+                    switch(trkCounter) {
+                        case 80 when spt == 16: ImageInfo.MediaType = MediaType.NEC_525_SS;
+                            break;
+                        case 154 when spt == 26: ImageInfo.MediaType = MediaType.NEC_8_DD;
+                            break;
+                        case 160 when spt == 16: ImageInfo.MediaType = MediaType.NEC_525_DS;
+                            break;
+                    }
                 }
                 else if(trkCounter == 154 && spt == 8 && bps == IBMSectorSizeCode.Kilo)
                     ImageInfo.MediaType = MediaType.NEC_525_HD;

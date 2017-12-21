@@ -310,86 +310,84 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         ushort nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
 
-                        // Easy, contains size field
-                        if(nextSignature == AppleMagic)
-                        {
-                            Apple = true;
-                            sa_off += sa[sa_off + 2];
-                            noneFound = false;
-                        }
-
-                        // Not easy, contains size field
-                        if(nextSignature == AppleMagicOld)
-                        {
-                            Apple = true;
-                            AppleOldId apple_id = (AppleOldId)sa[sa_off + 2];
-                            noneFound = false;
-
-                            switch(apple_id)
-                            {
-                                case AppleOldId.ProDOS:
-                                    sa_off += Marshal.SizeOf(typeof(AppleProDOSOldSystemUse));
-                                    break;
-                                case AppleOldId.TypeCreator:
-                                case AppleOldId.TypeCreatorBundle:
-                                    sa_off += Marshal.SizeOf(typeof(AppleHFSTypeCreatorSystemUse));
-                                    break;
-                                case AppleOldId.TypeCreatorIcon:
-                                case AppleOldId.TypeCreatorIconBundle:
-                                    sa_off += Marshal.SizeOf(typeof(AppleHFSIconSystemUse));
-                                    break;
-                                case AppleOldId.HFS:
-                                    sa_off += Marshal.SizeOf(typeof(AppleHFSOldSystemUse));
-                                    break;
-                            }
-                        }
-
-                        // IEEE-P1281 aka SUSP 1.12
-                        if(nextSignature == SUSP_Indicator)
-                        {
-                            SUSP = true;
-                            sa_off += sa[sa_off + 2];
-                            noneFound = false;
-
-                            while(sa_off + 2 < sa_len)
-                            {
-                                nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
-
-                                if(nextSignature == AppleMagic)
-                                    if(sa[sa_off + 3] == 1 && sa[sa_off + 2] == 7) Apple = true;
-                                    else Apple |= sa[sa_off + 3] != 1;
-
-                                if(nextSignature == SUSP_Continuation && sa_off + sa[sa_off + 2] <= sa_len)
-                                {
-                                    byte[] ce = new byte[sa[sa_off + 2]];
-                                    Array.Copy(sa, sa_off, ce, 0, ce.Length);
-                                    ContinuationArea ca =
-                                        BigEndianMarshal.ByteArrayToStructureBigEndian<ContinuationArea>(ce);
-                                    contareas.Add(ca);
-                                }
-
-                                if(nextSignature == SUSP_Reference && sa_off + sa[sa_off + 2] <= sa_len)
-                                {
-                                    byte[] er = new byte[sa[sa_off + 2]];
-                                    Array.Copy(sa, sa_off, er, 0, er.Length);
-                                    refareas.Add(er);
-                                }
-
-                                RRIP |= nextSignature == RRIP_Magic || nextSignature == RRIP_PosixAttributes ||
-                                        nextSignature == RRIP_PosixDevNo || nextSignature == RRIP_Symlink ||
-                                        nextSignature == RRIP_Name || nextSignature == RRIP_Childlink ||
-                                        nextSignature == RRIP_Parentlink || nextSignature == RRIP_RelocatedDir ||
-                                        nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
-
-                                ziso |= nextSignature == ziso_Magic;
-                                Amiga |= nextSignature == Amiga_Magic;
-                                AAIP |= nextSignature == AAIP_Magic ||
-                                        nextSignature == AAIP_OldMagic && sa[sa_off + 3] == 1 && sa[sa_off + 2] >= 9;
-
+                        switch(nextSignature) {
+                            // Easy, contains size field
+                            case AppleMagic:
+                                Apple = true;
                                 sa_off += sa[sa_off + 2];
+                                noneFound = false;
+                                break;
+                            // Not easy, contains size field
+                            case AppleMagicOld:
+                                Apple = true;
+                                AppleOldId apple_id = (AppleOldId)sa[sa_off + 2];
+                                noneFound = false;
 
-                                if(nextSignature == SUSP_Terminator) break;
-                            }
+                                switch(apple_id)
+                                {
+                                    case AppleOldId.ProDOS:
+                                        sa_off += Marshal.SizeOf(typeof(AppleProDOSOldSystemUse));
+                                        break;
+                                    case AppleOldId.TypeCreator:
+                                    case AppleOldId.TypeCreatorBundle:
+                                        sa_off += Marshal.SizeOf(typeof(AppleHFSTypeCreatorSystemUse));
+                                        break;
+                                    case AppleOldId.TypeCreatorIcon:
+                                    case AppleOldId.TypeCreatorIconBundle:
+                                        sa_off += Marshal.SizeOf(typeof(AppleHFSIconSystemUse));
+                                        break;
+                                    case AppleOldId.HFS:
+                                        sa_off += Marshal.SizeOf(typeof(AppleHFSOldSystemUse));
+                                        break;
+                                }
+
+                                break;
+                            // IEEE-P1281 aka SUSP 1.12
+                            case SUSP_Indicator:
+                                SUSP = true;
+                                sa_off += sa[sa_off + 2];
+                                noneFound = false;
+
+                                while(sa_off + 2 < sa_len)
+                                {
+                                    nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
+
+                                    switch(nextSignature) {
+                                        case AppleMagic:
+                                            if(sa[sa_off + 3] == 1 && sa[sa_off + 2] == 7) Apple = true;
+                                            else Apple |= sa[sa_off + 3] != 1;
+                                            break;
+                                        case SUSP_Continuation when sa_off + sa[sa_off + 2] <= sa_len:
+                                            byte[] ce = new byte[sa[sa_off + 2]];
+                                            Array.Copy(sa, sa_off, ce, 0, ce.Length);
+                                            ContinuationArea ca =
+                                                BigEndianMarshal.ByteArrayToStructureBigEndian<ContinuationArea>(ce);
+                                            contareas.Add(ca);
+                                            break;
+                                        case SUSP_Reference when sa_off + sa[sa_off + 2] <= sa_len:
+                                            byte[] er = new byte[sa[sa_off + 2]];
+                                            Array.Copy(sa, sa_off, er, 0, er.Length);
+                                            refareas.Add(er);
+                                            break;
+                                    }
+
+                                    RRIP |= nextSignature == RRIP_Magic || nextSignature == RRIP_PosixAttributes ||
+                                            nextSignature == RRIP_PosixDevNo || nextSignature == RRIP_Symlink ||
+                                            nextSignature == RRIP_Name || nextSignature == RRIP_Childlink ||
+                                            nextSignature == RRIP_Parentlink || nextSignature == RRIP_RelocatedDir ||
+                                            nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
+
+                                    ziso |= nextSignature == ziso_Magic;
+                                    Amiga |= nextSignature == Amiga_Magic;
+                                    AAIP |= nextSignature == AAIP_Magic ||
+                                            nextSignature == AAIP_OldMagic && sa[sa_off + 3] == 1 && sa[sa_off + 2] >= 9;
+
+                                    sa_off += sa[sa_off + 2];
+
+                                    if(nextSignature == SUSP_Terminator) break;
+                                }
+
+                                break;
                         }
 
                         if(noneFound) break;
@@ -417,16 +415,17 @@ namespace DiscImageChef.Filesystems.ISO9660
                 {
                     ushort nextSignature = BigEndianBitConverter.ToUInt16(ca_data, ca_off);
 
-                    // Apple never said to include its extensions inside a continuation area, but just in case
-                    if(nextSignature == AppleMagic)
-                        if(ca_data[ca_off + 3] == 1 && ca_data[ca_off + 2] == 7) Apple = true;
-                        else Apple |= ca_data[ca_off + 3] != 1;
-
-                    if(nextSignature == SUSP_Reference && ca_off + ca_data[ca_off + 2] <= ca.ca_length_be)
-                    {
-                        byte[] er = new byte[ca_data[ca_off + 2]];
-                        Array.Copy(ca_data, ca_off, er, 0, er.Length);
-                        refareas.Add(er);
+                    switch(nextSignature) {
+                        // Apple never said to include its extensions inside a continuation area, but just in case
+                        case AppleMagic:
+                            if(ca_data[ca_off + 3] == 1 && ca_data[ca_off + 2] == 7) Apple = true;
+                            else Apple |= ca_data[ca_off + 3] != 1;
+                            break;
+                        case SUSP_Reference when ca_off + ca_data[ca_off + 2] <= ca.ca_length_be:
+                            byte[] er = new byte[ca_data[ca_off + 2]];
+                            Array.Copy(ca_data, ca_off, er, 0, er.Length);
+                            refareas.Add(er);
+                            break;
                     }
 
                     RRIP |= nextSignature == RRIP_Magic || nextSignature == RRIP_PosixAttributes ||

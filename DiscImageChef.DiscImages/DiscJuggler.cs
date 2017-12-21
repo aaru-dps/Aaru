@@ -927,10 +927,10 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            if(_track.TrackSubchannelType == TrackSubchannelType.None)
-                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                            if(_track.TrackSubchannelType == TrackSubchannelType.Q16Interleaved)
-                                throw new ArgumentException("Q16 subchannel not yet supported");
+                            switch(_track.TrackSubchannelType) {
+                                case TrackSubchannelType.None: throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                                case TrackSubchannelType.Q16Interleaved: throw new ArgumentException("Q16 subchannel not yet supported");
+                            }
 
                             sectorOffset = 2352;
                             sectorSize = 96;
@@ -968,10 +968,10 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            if(_track.TrackSubchannelType == TrackSubchannelType.None)
-                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                            if(_track.TrackSubchannelType == TrackSubchannelType.Q16Interleaved)
-                                throw new ArgumentException("Q16 subchannel not yet supported");
+                            switch(_track.TrackSubchannelType) {
+                                case TrackSubchannelType.None: throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                                case TrackSubchannelType.Q16Interleaved: throw new ArgumentException("Q16 subchannel not yet supported");
+                            }
 
                             sectorOffset = 2352;
                             sectorSize = 96;
@@ -987,10 +987,10 @@ namespace DiscImageChef.DiscImages
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSubchannel:
-                            if(_track.TrackSubchannelType == TrackSubchannelType.None)
-                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
-                            if(_track.TrackSubchannelType == TrackSubchannelType.Q16Interleaved)
-                                throw new ArgumentException("Q16 subchannel not yet supported");
+                            switch(_track.TrackSubchannelType) {
+                                case TrackSubchannelType.None: throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                                case TrackSubchannelType.Q16Interleaved: throw new ArgumentException("Q16 subchannel not yet supported");
+                            }
 
                             sectorOffset = 2352;
                             sectorSize = 96;

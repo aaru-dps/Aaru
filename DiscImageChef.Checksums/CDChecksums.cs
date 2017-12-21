@@ -61,8 +61,13 @@ namespace DiscImageChef.Checksums
 
                     if(channelStatus == null && subchannelStatus == null) status = null;
                     if(channelStatus == false || subchannelStatus == false) status = false;
-                    if(channelStatus == null && subchannelStatus == true) status = true;
-                    if(channelStatus == true && subchannelStatus == null) status = true;
+                    switch(channelStatus) {
+                        case null when subchannelStatus == true: status = true;
+                            break;
+                        case true when subchannelStatus == null: status = true;
+                            break;
+                    }
+
                     if(channelStatus == true && subchannelStatus == true) status = true;
 
                     return status;

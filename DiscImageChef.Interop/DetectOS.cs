@@ -197,8 +197,10 @@ namespace DiscImageChef.Interop
                 case PlatformID.MacOSX:
                     if(Environment.OSVersion.Version.Major == 1)
                     {
-                        if(Environment.OSVersion.Version.Minor == 3) return "10.0";
-                        if(Environment.OSVersion.Version.Minor == 4) return "10.1";
+                        switch(Environment.OSVersion.Version.Minor) {
+                            case 3: return "10.0";
+                            case 4: return "10.1";
+                        }
 
                         goto default;
                     }

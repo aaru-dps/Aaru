@@ -288,13 +288,17 @@ namespace DiscImageChef.DiscImages
             if(imageHeader.DataSize == 0 && imageHeader.Blocks == 0 &&
                imageHeader.ImageFormat != PRODOS_SECTOR_ORDER) return false;
 
-            if(imageHeader.ImageFormat == PRODOS_SECTOR_ORDER && imageHeader.Blocks == 0) return false;
-
-            if(imageHeader.ImageFormat == PRODOS_SECTOR_ORDER) imageHeader.DataSize = imageHeader.Blocks * 512;
-            else if(imageHeader.Blocks == 0 && imageHeader.DataSize != 0)
-                imageHeader.Blocks = imageHeader.DataSize / 256;
-            else if(imageHeader.DataSize == 0 && imageHeader.Blocks != 0)
-                imageHeader.DataSize = imageHeader.Blocks * 256;
+            switch(imageHeader.ImageFormat) {
+                case PRODOS_SECTOR_ORDER when imageHeader.Blocks == 0: return false;
+                case PRODOS_SECTOR_ORDER: imageHeader.DataSize = imageHeader.Blocks * 512;
+                    break;
+                default:
+                    if(imageHeader.Blocks == 0 && imageHeader.DataSize != 0)
+                        imageHeader.Blocks = imageHeader.DataSize / 256;
+                    else if(imageHeader.DataSize == 0 && imageHeader.Blocks != 0)
+                        imageHeader.DataSize = imageHeader.Blocks * 256;
+                    break;
+            }
 
             ImageInfo.SectorSize = (uint)(imageHeader.ImageFormat == PRODOS_SECTOR_ORDER ? 512 : 256);
 

@@ -694,19 +694,24 @@ namespace DiscImageChef.DiscImages
 
                 MemoryStream sectorBmpMs = new MemoryStream();
                 foreach(ulong pt in sectorBitmapPointers)
-                    if((pt & BAT_FLAGS_MASK) == SECTOR_BITMAP_NOT_PRESENT) sectorBmpMs.Write(new byte[1048576], 0, 1048576);
-                    else if((pt & BAT_FLAGS_MASK) == SECTOR_BITMAP_PRESENT)
-                    {
-                        stream.Seek((long)((pt & BAT_FILE_OFFSET_MASK) * 1048576), SeekOrigin.Begin);
-                        byte[] bmp = new byte[1048576];
-                        stream.Read(bmp, 0, bmp.Length);
-                        sectorBmpMs.Write(bmp, 0, bmp.Length);
+                    switch(pt & BAT_FLAGS_MASK) {
+                        case SECTOR_BITMAP_NOT_PRESENT: sectorBmpMs.Write(new byte[1048576], 0, 1048576);
+                            break;
+                        case SECTOR_BITMAP_PRESENT:
+                            stream.Seek((long)((pt & BAT_FILE_OFFSET_MASK) * 1048576), SeekOrigin.Begin);
+                            byte[] bmp = new byte[1048576];
+                            stream.Read(bmp, 0, bmp.Length);
+                            sectorBmpMs.Write(bmp, 0, bmp.Length);
+                            break;
+                        default:
+                            if((pt & BAT_FLAGS_MASK) != 0)
+                                throw new
+                                    ImageNotSupportedException(string
+                                                                   .Format("Unsupported sector bitmap block flags (0x{0:X16}) found, not proceeding.",
+                                                                           pt & BAT_FLAGS_MASK));
+
+                            break;
                     }
-                    else if((pt & BAT_FLAGS_MASK) != 0)
-                        throw new
-                            ImageNotSupportedException(string
-                                                           .Format("Unsupported sector bitmap block flags (0x{0:X16}) found, not proceeding.",
-                                                                   pt & BAT_FLAGS_MASK));
 
                 sectorBitmap = sectorBmpMs.ToArray();
                 sectorBmpMs.Close();
@@ -835,11 +840,12 @@ namespace DiscImageChef.DiscImages
                 throw new ImageNotSupportedException(string.Format("Unknown flags (0x{0:X16}) set in block pointer",
                                                                    blkPtr & BAT_RESERVED_MASK));
 
-            if((blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_NOT_PRESENT)
-                return hasParent ? parentImage.ReadSector(sectorAddress) : new byte[logicalSectorSize];
-
-            if((blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_UNDEFINED || (blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_ZERO ||
-               (blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_UNMAPPER) return new byte[logicalSectorSize];
+            switch(blkFlags & BAT_FLAGS_MASK) {
+                case PAYLOAD_BLOCK_NOT_PRESENT: return hasParent ? parentImage.ReadSector(sectorAddress) : new byte[logicalSectorSize];
+                case PAYLOAD_BLOCK_UNDEFINED:
+                case PAYLOAD_BLOCK_ZERO:
+                case PAYLOAD_BLOCK_UNMAPPER: return new byte[logicalSectorSize];
+            }
 
             bool partialBlock;
             partialBlock = !((blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_FULLY_PRESENT);

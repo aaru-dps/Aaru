@@ -461,19 +461,17 @@ namespace DiscImageChef.DiscImages
                         bChnk.sector += bHdr.sectorStart;
                         bChnk.offset += bHdr.dataOffset;
 
-                        // TODO: Handle comments
-                        if(bChnk.type == CHUNK_TYPE_COMMNT) continue;
-
-                        // TODO: Handle compressed chunks
-                        if(bChnk.type == CHUNK_TYPE_KENCODE)
-                            throw new
-                                ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                        if(bChnk.type == CHUNK_TYPE_RLE)
-                            throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
-                        if(bChnk.type == CHUNK_TYPE_LZH)
-                            throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
-                        if(bChnk.type == CHUNK_TYPE_LZFSE)
-                            throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
+                        switch(bChnk.type) {
+                            // TODO: Handle comments
+                            case CHUNK_TYPE_COMMNT: continue;
+                            // TODO: Handle compressed chunks
+                            case CHUNK_TYPE_KENCODE:
+                                throw new
+                                    ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
+                            case CHUNK_TYPE_RLE: throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
+                            case CHUNK_TYPE_LZH: throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
+                            case CHUNK_TYPE_LZFSE: throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
+                        }
 
                         if(bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT ||
                            bChnk.type > CHUNK_TYPE_LZFSE && bChnk.type < CHUNK_TYPE_END)
@@ -551,14 +549,17 @@ namespace DiscImageChef.DiscImages
                     MemoryStream cmpMs = new MemoryStream(cmpBuffer);
                     Stream decStream;
 
-                    if(currentChunk.type == CHUNK_TYPE_ADC) decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
-                    else if(currentChunk.type == CHUNK_TYPE_ZLIB)
-                        decStream = new Ionic.Zlib.ZlibStream(cmpMs, Ionic.Zlib.CompressionMode.Decompress);
-                    else if(currentChunk.type == CHUNK_TYPE_BZIP)
-                        decStream = new BZip2Stream(cmpMs, CompressionMode.Decompress);
-                    else
-                        throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
-                                                                           currentChunk.type));
+                    switch(currentChunk.type) {
+                        case CHUNK_TYPE_ADC: decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
+                            break;
+                        case CHUNK_TYPE_ZLIB: decStream = new Ionic.Zlib.ZlibStream(cmpMs, Ionic.Zlib.CompressionMode.Decompress);
+                            break;
+                        case CHUNK_TYPE_BZIP: decStream = new BZip2Stream(cmpMs, CompressionMode.Decompress);
+                            break;
+                        default:
+                            throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
+                                                                               currentChunk.type));
+                    }
 
 #if DEBUG
                     try
@@ -598,26 +599,24 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            if(currentChunk.type == CHUNK_TYPE_NOCOPY || currentChunk.type == CHUNK_TYPE_ZERO)
-            {
-                sector = new byte[SECTOR_SIZE];
+            switch(currentChunk.type) {
+                case CHUNK_TYPE_NOCOPY:
+                case CHUNK_TYPE_ZERO:
+                    sector = new byte[SECTOR_SIZE];
 
-                if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
-                sectorCache.Add(sectorAddress, sector);
-                return sector;
-            }
+                    sectorCache.Add(sectorAddress, sector);
+                    return sector;
+                case CHUNK_TYPE_COPY:
+                    imageStream.Seek((long)currentChunk.offset + relOff, SeekOrigin.Begin);
+                    sector = new byte[SECTOR_SIZE];
+                    imageStream.Read(sector, 0, sector.Length);
 
-            if(currentChunk.type == CHUNK_TYPE_COPY)
-            {
-                imageStream.Seek((long)currentChunk.offset + relOff, SeekOrigin.Begin);
-                sector = new byte[SECTOR_SIZE];
-                imageStream.Read(sector, 0, sector.Length);
+                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
-                if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
-
-                sectorCache.Add(sectorAddress, sector);
-                return sector;
+                    sectorCache.Add(sectorAddress, sector);
+                    return sector;
             }
 
             throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",

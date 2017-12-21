@@ -89,72 +89,76 @@ namespace DiscImageChef.Core.Devices.Dumping
             int physicalBlockSize = 0;
             bool byteAddressed = true;
 
-            if(dev.Type == DeviceType.MMC)
-            {
-                ExtendedCSD ecsdDecoded = new ExtendedCSD();
-                CSD csdDecoded = new CSD();
-
-                dumpLog.WriteLine("Reading Extended CSD");
-                sense = dev.ReadExtendedCsd(out ecsd, out response, timeout, out duration);
-                if(!sense)
+            switch(dev.Type) {
+                case DeviceType.MMC:
                 {
-                    ecsdDecoded = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
-                    blocksToRead = ecsdDecoded.OptimalReadSize;
-                    blocks = ecsdDecoded.SectorCount;
-                    blockSize = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
-                    if(ecsdDecoded.NativeSectorSize == 0) physicalBlockSize = 512;
-                    else if(ecsdDecoded.NativeSectorSize == 1) physicalBlockSize = 4096;
-                    // Supposing it's high-capacity MMC if it has Extended CSD...
-                    byteAddressed = false;
-                }
-                else ecsd = null;
+                    ExtendedCSD ecsdDecoded = new ExtendedCSD();
+                    CSD csdDecoded = new CSD();
 
-                dumpLog.WriteLine("Reading CSD");
-                sense = dev.ReadCsd(out csd, out response, timeout, out duration);
-                if(!sense)
-                {
-                    if(blocks == 0)
+                    dumpLog.WriteLine("Reading Extended CSD");
+                    sense = dev.ReadExtendedCsd(out ecsd, out response, timeout, out duration);
+                    if(!sense)
                     {
-                        csdDecoded = Decoders.MMC.Decoders.DecodeCSD(csd);
-                        blocks = (ulong)((csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2));
-                        blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
+                        ecsdDecoded = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
+                        blocksToRead = ecsdDecoded.OptimalReadSize;
+                        blocks = ecsdDecoded.SectorCount;
+                        blockSize = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
+                        if(ecsdDecoded.NativeSectorSize == 0) physicalBlockSize = 512;
+                        else if(ecsdDecoded.NativeSectorSize == 1) physicalBlockSize = 4096;
+                        // Supposing it's high-capacity MMC if it has Extended CSD...
+                        byteAddressed = false;
                     }
+                    else ecsd = null;
+
+                    dumpLog.WriteLine("Reading CSD");
+                    sense = dev.ReadCsd(out csd, out response, timeout, out duration);
+                    if(!sense)
+                    {
+                        if(blocks == 0)
+                        {
+                            csdDecoded = Decoders.MMC.Decoders.DecodeCSD(csd);
+                            blocks = (ulong)((csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2));
+                            blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
+                        }
+                    }
+                    else csd = null;
+
+                    dumpLog.WriteLine("Reading OCR");
+                    sense = dev.ReadOcr(out ocr, out response, timeout, out duration);
+                    if(sense) ocr = null;
+
+                    sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                    break;
                 }
-                else csd = null;
-
-                dumpLog.WriteLine("Reading OCR");
-                sense = dev.ReadOcr(out ocr, out response, timeout, out duration);
-                if(sense) ocr = null;
-
-                sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
-            }
-            else if(dev.Type == DeviceType.SecureDigital)
-            {
-                Decoders.SecureDigital.CSD csdDecoded = new Decoders.SecureDigital.CSD();
-
-                dumpLog.WriteLine("Reading CSD");
-                sense = dev.ReadCsd(out csd, out response, timeout, out duration);
-                if(!sense)
+                case DeviceType.SecureDigital:
                 {
-                    csdDecoded = Decoders.SecureDigital.Decoders.DecodeCSD(csd);
-                    blocks = (ulong)(csdDecoded.Structure == 0
-                                         ? (csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2)
-                                         : (csdDecoded.Size + 1) * 1024);
-                    blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
-                    // Structure >=1 for SDHC/SDXC, so that's block addressed
-                    byteAddressed = csdDecoded.Structure == 0;
+                    Decoders.SecureDigital.CSD csdDecoded = new Decoders.SecureDigital.CSD();
+
+                    dumpLog.WriteLine("Reading CSD");
+                    sense = dev.ReadCsd(out csd, out response, timeout, out duration);
+                    if(!sense)
+                    {
+                        csdDecoded = Decoders.SecureDigital.Decoders.DecodeCSD(csd);
+                        blocks = (ulong)(csdDecoded.Structure == 0
+                                             ? (csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2)
+                                             : (csdDecoded.Size + 1) * 1024);
+                        blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
+                        // Structure >=1 for SDHC/SDXC, so that's block addressed
+                        byteAddressed = csdDecoded.Structure == 0;
+                    }
+                    else csd = null;
+
+                    dumpLog.WriteLine("Reading OCR");
+                    sense = dev.ReadSdocr(out ocr, out response, timeout, out duration);
+                    if(sense) ocr = null;
+
+                    dumpLog.WriteLine("Reading SCR");
+                    sense = dev.ReadScr(out scr, out response, timeout, out duration);
+                    if(sense) scr = null;
+
+                    sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                    break;
                 }
-                else csd = null;
-
-                dumpLog.WriteLine("Reading OCR");
-                sense = dev.ReadSdocr(out ocr, out response, timeout, out duration);
-                if(sense) ocr = null;
-
-                dumpLog.WriteLine("Reading SCR");
-                sense = dev.ReadScr(out scr, out response, timeout, out duration);
-                if(sense) scr = null;
-
-                sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
             }
 
             dumpLog.WriteLine("Reading CID");
@@ -222,17 +226,17 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
             ;
 
-            if(dev.Type == DeviceType.MMC)
-            {
-                sidecar.BlockMedia[0].MultiMediaCard.CID = cidDump;
-                sidecar.BlockMedia[0].MultiMediaCard.CSD = csdDump;
-                sidecar.BlockMedia[0].MultiMediaCard.OCR = ocrDump;
-            }
-            else if(dev.Type == DeviceType.SecureDigital)
-            {
-                sidecar.BlockMedia[0].SecureDigital.CID = cidDump;
-                sidecar.BlockMedia[0].SecureDigital.CSD = csdDump;
-                sidecar.BlockMedia[0].SecureDigital.OCR = ocrDump;
+            switch(dev.Type) {
+                case DeviceType.MMC:
+                    sidecar.BlockMedia[0].MultiMediaCard.CID = cidDump;
+                    sidecar.BlockMedia[0].MultiMediaCard.CSD = csdDump;
+                    sidecar.BlockMedia[0].MultiMediaCard.OCR = ocrDump;
+                    break;
+                case DeviceType.SecureDigital:
+                    sidecar.BlockMedia[0].SecureDigital.CID = cidDump;
+                    sidecar.BlockMedia[0].SecureDigital.CSD = csdDump;
+                    sidecar.BlockMedia[0].SecureDigital.OCR = ocrDump;
+                    break;
             }
 
             DateTime start;
@@ -544,15 +548,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             sidecar.BlockMedia[0].Checksums = dataChk.End().ToArray();
             string xmlDskTyp = null, xmlDskSubTyp = null;
-            if(dev.Type == DeviceType.MMC)
-            {
-                Metadata.MediaType.MediaTypeToString(MediaType.MMC, out xmlDskTyp, out xmlDskSubTyp);
-                sidecar.BlockMedia[0].Dimensions = Metadata.Dimensions.DimensionsFromMediaType(MediaType.MMC);
-            }
-            else if(dev.Type == DeviceType.SecureDigital)
-            {
-                Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital, out xmlDskTyp, out xmlDskSubTyp);
-                sidecar.BlockMedia[0].Dimensions = Metadata.Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
+            switch(dev.Type) {
+                case DeviceType.MMC:
+                    Metadata.MediaType.MediaTypeToString(MediaType.MMC, out xmlDskTyp, out xmlDskSubTyp);
+                    sidecar.BlockMedia[0].Dimensions = Metadata.Dimensions.DimensionsFromMediaType(MediaType.MMC);
+                    break;
+                case DeviceType.SecureDigital:
+                    Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital, out xmlDskTyp, out xmlDskSubTyp);
+                    sidecar.BlockMedia[0].Dimensions = Metadata.Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
+                    break;
             }
             sidecar.BlockMedia[0].DiskType = xmlDskTyp;
             sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
@@ -562,8 +566,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 format = "Raw disk image (sector by sector copy)",
                 Value = outputPrefix + ".bin"
             };
-            if(dev.Type == DeviceType.MMC) sidecar.BlockMedia[0].Interface = "MultiMediaCard";
-            else if(dev.Type == DeviceType.SecureDigital) sidecar.BlockMedia[0].Interface = "SecureDigital";
+            switch(dev.Type) {
+                case DeviceType.MMC: sidecar.BlockMedia[0].Interface = "MultiMediaCard";
+                    break;
+                case DeviceType.SecureDigital: sidecar.BlockMedia[0].Interface = "SecureDigital";
+                    break;
+            }
             sidecar.BlockMedia[0].LogicalBlocks = (long)blocks;
             sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize > 0 ? physicalBlockSize : (int)blockSize;
             sidecar.BlockMedia[0].LogicalBlockSize = (int)blockSize;
@@ -597,8 +605,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 xmlFs.Close();
             }
 
-            if(dev.Type == DeviceType.MMC) Statistics.AddMedia(MediaType.MMC, true);
-            else if(dev.Type == DeviceType.SecureDigital) Statistics.AddMedia(MediaType.SecureDigital, true);
+            switch(dev.Type) {
+                case DeviceType.MMC: Statistics.AddMedia(MediaType.MMC, true);
+                    break;
+                case DeviceType.SecureDigital: Statistics.AddMedia(MediaType.SecureDigital, true);
+                    break;
+            }
         }
     }
 }

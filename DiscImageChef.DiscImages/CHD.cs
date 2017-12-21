@@ -2038,17 +2038,17 @@ namespace DiscImageChef.DiscImages
             uint sector_size;
 
             if(tag == SectorTagType.CdSectorSubchannel)
-                if(track.TrackSubchannelType == TrackSubchannelType.None)
-                    throw new FeatureNotPresentImageException("Requested sector does not contain subchannel");
-                else if(track.TrackSubchannelType == TrackSubchannelType.RawInterleaved)
-                {
-                    sector_offset = (uint)track.TrackRawBytesPerSector;
-                    sector_size = 96;
+                switch(track.TrackSubchannelType) {
+                    case TrackSubchannelType.None: throw new FeatureNotPresentImageException("Requested sector does not contain subchannel");
+                    case TrackSubchannelType.RawInterleaved:
+                        sector_offset = (uint)track.TrackRawBytesPerSector;
+                        sector_size = 96;
+                        break;
+                    default:
+                        throw new
+                            FeatureSupportedButNotImplementedImageException(string.Format("Unsupported subchannel type {0}",
+                                                                                          track.TrackSubchannelType));
                 }
-                else
-                    throw new
-                        FeatureSupportedButNotImplementedImageException(string.Format("Unsupported subchannel type {0}",
-                                                                                      track.TrackSubchannelType));
             else
                 switch(track.TrackType)
                 {

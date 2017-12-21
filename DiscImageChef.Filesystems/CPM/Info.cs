@@ -263,9 +263,14 @@ namespace DiscImageChef.Filesystems.CPM
 
                             if(amsSb.format == 2)
                             {
-                                if((amsSb.sidedness & 0x02) == 1) workingDefinition.order = "SIDES";
-                                else if((amsSb.sidedness & 0x02) == 2) workingDefinition.order = "CYLINDERS";
-                                else workingDefinition.order = null;
+                                switch(amsSb.sidedness & 0x02) {
+                                    case 1: workingDefinition.order = "SIDES";
+                                        break;
+                                    case 2: workingDefinition.order = "CYLINDERS";
+                                        break;
+                                    default: workingDefinition.order = null;
+                                        break;
+                                }
 
                                 workingDefinition.side2 = new Side();
                                 workingDefinition.side2.sideId = 1;

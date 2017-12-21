@@ -58,47 +58,51 @@ namespace DiscImageChef.Core.Devices.Scanning
             uint blockSize = 512;
             bool byteAddressed = true;
 
-            if(dev.Type == DeviceType.MMC)
-            {
-                ExtendedCSD ecsd = new ExtendedCSD();
-                CSD csd = new CSD();
-
-                sense = dev.ReadExtendedCsd(out cmdBuf, out response, timeout, out duration);
-                if(!sense)
+            switch(dev.Type) {
+                case DeviceType.MMC:
                 {
-                    ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
-                    blocksToRead = ecsd.OptimalReadSize;
-                    results.Blocks = ecsd.SectorCount;
-                    blockSize = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
-                    // Supposing it's high-capacity MMC if it has Extended CSD...
-                    byteAddressed = false;
+                    ExtendedCSD ecsd = new ExtendedCSD();
+                    CSD csd = new CSD();
+
+                    sense = dev.ReadExtendedCsd(out cmdBuf, out response, timeout, out duration);
+                    if(!sense)
+                    {
+                        ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
+                        blocksToRead = ecsd.OptimalReadSize;
+                        results.Blocks = ecsd.SectorCount;
+                        blockSize = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
+                        // Supposing it's high-capacity MMC if it has Extended CSD...
+                        byteAddressed = false;
+                    }
+
+                    if(sense || results.Blocks == 0)
+                    {
+                        sense = dev.ReadCsd(out cmdBuf, out response, timeout, out duration);
+                        if(!sense)
+                        {
+                            csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
+                            results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
+                            blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
+                        }
+                    }
+                    break;
                 }
-
-                if(sense || results.Blocks == 0)
+                case DeviceType.SecureDigital:
                 {
+                    Decoders.SecureDigital.CSD csd = new Decoders.SecureDigital.CSD();
+
                     sense = dev.ReadCsd(out cmdBuf, out response, timeout, out duration);
                     if(!sense)
                     {
-                        csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
-                        results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
+                        csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
+                        results.Blocks = (ulong)(csd.Structure == 0
+                                                     ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
+                                                     : (csd.Size + 1) * 1024);
                         blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
+                        // Structure >=1 for SDHC/SDXC, so that's block addressed
+                        byteAddressed = csd.Structure == 0;
                     }
-                }
-            }
-            else if(dev.Type == DeviceType.SecureDigital)
-            {
-                Decoders.SecureDigital.CSD csd = new Decoders.SecureDigital.CSD();
-
-                sense = dev.ReadCsd(out cmdBuf, out response, timeout, out duration);
-                if(!sense)
-                {
-                    csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
-                    results.Blocks = (ulong)(csd.Structure == 0
-                                                 ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
-                                                 : (csd.Size + 1) * 1024);
-                    blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
-                    // Structure >=1 for SDHC/SDXC, so that's block addressed
-                    byteAddressed = csd.Structure == 0;
+                    break;
                 }
             }
 

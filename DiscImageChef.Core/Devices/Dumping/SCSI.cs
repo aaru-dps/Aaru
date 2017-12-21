@@ -173,23 +173,21 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             CICMMetadataType sidecar = new CICMMetadataType();
 
-            if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
-            {
-                if(dumpRaw) throw new ArgumentException("Tapes cannot be dumped raw.");
+            switch(dev.ScsiType) {
+                case Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess:
+                    if(dumpRaw) throw new ArgumentException("Tapes cannot be dumped raw.");
 
-                Ssc.Dump(dev, outputPrefix, devicePath, ref sidecar, ref resume, ref dumpLog);
-                return;
+                    Ssc.Dump(dev, outputPrefix, devicePath, ref sidecar, ref resume, ref dumpLog);
+                    return;
+                case Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice:
+                    Mmc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
+                             ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, dumpLeadIn, encoding);
+                    return;
+                default:
+                    Sbc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar,
+                             ref dskType, false, ref resume, ref dumpLog, encoding);
+                    break;
             }
-
-            if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
-            {
-                Mmc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError,
-                         ref sidecar, ref dskType, separateSubchannel, ref resume, ref dumpLog, dumpLeadIn, encoding);
-                return;
-            }
-
-            Sbc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar,
-                     ref dskType, false, ref resume, ref dumpLog, encoding);
         }
     }
 }

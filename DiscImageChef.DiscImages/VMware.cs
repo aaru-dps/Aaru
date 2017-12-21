@@ -739,28 +739,26 @@ namespace DiscImageChef.DiscImages
 
             Stream dataStream;
 
-            if(currentExtent.Type == "ZERO")
-            {
-                sector = new byte[SECTOR_SIZE];
+            switch(currentExtent.Type) {
+                case "ZERO":
+                    sector = new byte[SECTOR_SIZE];
 
-                if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
-                sectorCache.Add(sectorAddress, sector);
-                return sector;
-            }
+                    sectorCache.Add(sectorAddress, sector);
+                    return sector;
+                case "FLAT":
+                case "VMFS":
+                    dataStream = currentExtent.Filter.GetDataForkStream();
+                    dataStream.Seek((long)((currentExtent.Offset + (sectorAddress - extentStartSector)) * SECTOR_SIZE),
+                                    SeekOrigin.Begin);
+                    sector = new byte[SECTOR_SIZE];
+                    dataStream.Read(sector, 0, sector.Length);
 
-            if(currentExtent.Type == "FLAT" || currentExtent.Type == "VMFS")
-            {
-                dataStream = currentExtent.Filter.GetDataForkStream();
-                dataStream.Seek((long)((currentExtent.Offset + (sectorAddress - extentStartSector)) * SECTOR_SIZE),
-                                SeekOrigin.Begin);
-                sector = new byte[SECTOR_SIZE];
-                dataStream.Read(sector, 0, sector.Length);
+                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
-                if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
-
-                sectorCache.Add(sectorAddress, sector);
-                return sector;
+                    sectorCache.Add(sectorAddress, sector);
+                    return sector;
             }
 
             ulong index = sectorAddress / grainSize;

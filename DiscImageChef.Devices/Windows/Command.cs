@@ -139,10 +139,15 @@ namespace DiscImageChef.Devices.Windows
                 dataBuffer = new byte[64 * 512]
             };
 
-            if(protocol == AtaProtocol.PioIn || protocol == AtaProtocol.UDmaIn || protocol == AtaProtocol.Dma)
-                aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
-            else if(protocol == AtaProtocol.PioOut || protocol == AtaProtocol.UDmaOut)
-                aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+            switch(protocol) {
+                case AtaProtocol.PioIn:
+                case AtaProtocol.UDmaIn:
+                case AtaProtocol.Dma: aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
+                    break;
+                case AtaProtocol.PioOut:
+                case AtaProtocol.UDmaOut: aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+                    break;
+            }
 
             switch(protocol)
             {
@@ -224,10 +229,15 @@ namespace DiscImageChef.Devices.Windows
                 dataBuffer = new byte[64 * 512]
             };
 
-            if(protocol == AtaProtocol.PioIn || protocol == AtaProtocol.UDmaIn || protocol == AtaProtocol.Dma)
-                aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
-            else if(protocol == AtaProtocol.PioOut || protocol == AtaProtocol.UDmaOut)
-                aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+            switch(protocol) {
+                case AtaProtocol.PioIn:
+                case AtaProtocol.UDmaIn:
+                case AtaProtocol.Dma: aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
+                    break;
+                case AtaProtocol.PioOut:
+                case AtaProtocol.UDmaOut: aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+                    break;
+            }
 
             switch(protocol)
             {
@@ -317,10 +327,15 @@ namespace DiscImageChef.Devices.Windows
                 dataBuffer = new byte[64 * 512]
             };
 
-            if(protocol == AtaProtocol.PioIn || protocol == AtaProtocol.UDmaIn || protocol == AtaProtocol.Dma)
-                aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
-            else if(protocol == AtaProtocol.PioOut || protocol == AtaProtocol.UDmaOut)
-                aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+            switch(protocol) {
+                case AtaProtocol.PioIn:
+                case AtaProtocol.UDmaIn:
+                case AtaProtocol.Dma: aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
+                    break;
+                case AtaProtocol.PioOut:
+                case AtaProtocol.UDmaOut: aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+                    break;
+            }
 
             switch(protocol)
             {

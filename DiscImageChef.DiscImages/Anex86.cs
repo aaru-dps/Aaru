@@ -145,12 +145,20 @@ namespace DiscImageChef.DiscImages
                             switch(fdihdr.spt)
                             {
                                 case 8:
-                                    if(fdihdr.heads == 1) ImageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
-                                    else if(fdihdr.heads == 2) ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
+                                    switch(fdihdr.heads) {
+                                        case 1: ImageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
+                                            break;
+                                        case 2: ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
+                                            break;
+                                    }
                                     break;
                                 case 9:
-                                    if(fdihdr.heads == 1) ImageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
-                                    else if(fdihdr.heads == 2) ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
+                                    switch(fdihdr.heads) {
+                                        case 1: ImageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
+                                            break;
+                                        case 2: ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
+                                            break;
+                                    }
                                     break;
                             }
 
@@ -222,8 +230,12 @@ namespace DiscImageChef.DiscImages
                             switch(fdihdr.spt)
                             {
                                 case 16:
-                                    if(fdihdr.heads == 1) ImageInfo.MediaType = MediaType.NEC_525_SS;
-                                    else if(fdihdr.heads == 2) ImageInfo.MediaType = MediaType.NEC_525_DS;
+                                    switch(fdihdr.heads) {
+                                        case 1: ImageInfo.MediaType = MediaType.NEC_525_SS;
+                                            break;
+                                        case 2: ImageInfo.MediaType = MediaType.NEC_525_DS;
+                                            break;
+                                    }
                                     break;
                             }
 
@@ -232,12 +244,20 @@ namespace DiscImageChef.DiscImages
                             switch(fdihdr.spt)
                             {
                                 case 8:
-                                    if(fdihdr.heads == 1) ImageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
-                                    else if(fdihdr.heads == 2) ImageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
+                                    switch(fdihdr.heads) {
+                                        case 1: ImageInfo.MediaType = MediaType.DOS_35_SS_DD_8;
+                                            break;
+                                        case 2: ImageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
+                                            break;
+                                    }
                                     break;
                                 case 9:
-                                    if(fdihdr.heads == 1) ImageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
-                                    else if(fdihdr.heads == 2) ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+                                    switch(fdihdr.heads) {
+                                        case 1: ImageInfo.MediaType = MediaType.DOS_35_SS_DD_9;
+                                            break;
+                                        case 2: ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+                                            break;
+                                    }
                                     break;
                                 case 15:
                                     if(fdihdr.heads == 2) ImageInfo.MediaType = MediaType.NEC_35_HD_15;

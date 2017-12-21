@@ -959,68 +959,67 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                  mediaType + ".bin", "read results", buffer);
                         }
 
-                        if(mediaType == "DVD-ROM" || mediaType == "HD DVD-ROM")
-                        {
-                            mediaTest.CanReadBCASpecified = true;
-                            DicConsole.WriteLine("Querying DVD BCA...");
-                            mediaTest.CanReadBCA =
-                                !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                       MmcDiscStructureFormat.BurstCuttingArea, 0, timeout,
-                                                       out duration);
-                            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
-                            if(debug)
-                                DataFile.WriteTo("SCSI Report", "bca",
-                                                 "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
-                                                 mediaType + ".bin", "read results", buffer);
-                            mediaTest.CanReadAACSSpecified = true;
-                            DicConsole.WriteLine("Querying DVD AACS...");
-                            mediaTest.CanReadAACS =
-                                !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                       MmcDiscStructureFormat.DvdAacs, 0, timeout, out duration);
-                            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadAACS);
-                            if(debug)
-                                DataFile.WriteTo("SCSI Report", "aacs",
-                                                 "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
-                                                 mediaType + ".bin", "read results", buffer);
-                        }
-
-                        if(mediaType == "BD-ROM")
-                        {
-                            mediaTest.CanReadBCASpecified = true;
-                            DicConsole.WriteLine("Querying BD BCA...");
-                            mediaTest.CanReadBCA =
-                                !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Bd, 0, 0,
-                                                       MmcDiscStructureFormat.BdBurstCuttingArea, 0, timeout,
-                                                       out duration);
-                            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
-                            if(debug)
-                                DataFile.WriteTo("SCSI Report", "bdbca",
-                                                 "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
-                                                 mediaType + ".bin", "read results", buffer);
-                        }
-
-                        if(mediaType == "DVD-RAM" || mediaType == "HD DVD-RAM")
-                        {
-                            mediaTest.CanReadDDSSpecified = true;
-                            mediaTest.CanReadSpareAreaInformationSpecified = true;
-                            mediaTest.CanReadDDS =
-                                !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                       MmcDiscStructureFormat.DvdramDds, 0, timeout, out duration);
-                            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
-                            if(debug)
-                                DataFile.WriteTo("SCSI Report", "dds",
-                                                 "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
-                                                 mediaType + ".bin", "read results", buffer);
-                            mediaTest.CanReadSpareAreaInformation =
-                                !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                       MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, timeout,
-                                                       out duration);
-                            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                      !mediaTest.CanReadSpareAreaInformation);
-                            if(debug)
-                                DataFile.WriteTo("SCSI Report", "sai",
-                                                 "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
-                                                 mediaType + ".bin", "read results", buffer);
+                        switch(mediaType) {
+                            case "DVD-ROM":
+                            case "HD DVD-ROM":
+                                mediaTest.CanReadBCASpecified = true;
+                                DicConsole.WriteLine("Querying DVD BCA...");
+                                mediaTest.CanReadBCA =
+                                    !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                           MmcDiscStructureFormat.BurstCuttingArea, 0, timeout,
+                                                           out duration);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
+                                if(debug)
+                                    DataFile.WriteTo("SCSI Report", "bca",
+                                                     "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
+                                                     mediaType + ".bin", "read results", buffer);
+                                mediaTest.CanReadAACSSpecified = true;
+                                DicConsole.WriteLine("Querying DVD AACS...");
+                                mediaTest.CanReadAACS =
+                                    !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                           MmcDiscStructureFormat.DvdAacs, 0, timeout, out duration);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadAACS);
+                                if(debug)
+                                    DataFile.WriteTo("SCSI Report", "aacs",
+                                                     "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
+                                                     mediaType + ".bin", "read results", buffer);
+                                break;
+                            case "BD-ROM":
+                                mediaTest.CanReadBCASpecified = true;
+                                DicConsole.WriteLine("Querying BD BCA...");
+                                mediaTest.CanReadBCA =
+                                    !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Bd, 0, 0,
+                                                           MmcDiscStructureFormat.BdBurstCuttingArea, 0, timeout,
+                                                           out duration);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
+                                if(debug)
+                                    DataFile.WriteTo("SCSI Report", "bdbca",
+                                                     "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
+                                                     mediaType + ".bin", "read results", buffer);
+                                break;
+                            case "DVD-RAM":
+                            case "HD DVD-RAM":
+                                mediaTest.CanReadDDSSpecified = true;
+                                mediaTest.CanReadSpareAreaInformationSpecified = true;
+                                mediaTest.CanReadDDS =
+                                    !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                           MmcDiscStructureFormat.DvdramDds, 0, timeout, out duration);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
+                                if(debug)
+                                    DataFile.WriteTo("SCSI Report", "dds",
+                                                     "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
+                                                     mediaType + ".bin", "read results", buffer);
+                                mediaTest.CanReadSpareAreaInformation =
+                                    !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                           MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, timeout,
+                                                           out duration);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                          !mediaTest.CanReadSpareAreaInformation);
+                                if(debug)
+                                    DataFile.WriteTo("SCSI Report", "sai",
+                                                     "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" +
+                                                     mediaType + ".bin", "read results", buffer);
+                                break;
                         }
 
                         if(mediaType.StartsWith("BD-R", StringComparison.Ordinal) && mediaType != "BD-ROM")

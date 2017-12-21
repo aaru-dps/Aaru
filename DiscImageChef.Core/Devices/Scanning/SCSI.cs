@@ -137,38 +137,36 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             Reader scsiReader = null;
 
-            if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
-               dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
-               dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
-               dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice ||
-               dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
-               dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
-            {
-                scsiReader = new Reader(dev, dev.Timeout, null, false);
-                results.Blocks = scsiReader.GetDeviceBlocks();
-                if(scsiReader.FindReadCommand())
-                {
-                    DicConsole.ErrorWriteLine("Unable to read medium.");
-                    return results;
-                }
+            switch(dev.ScsiType) {
+                case Decoders.SCSI.PeripheralDeviceTypes.DirectAccess:
+                case Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice:
+                case Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice:
+                case Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice:
+                case Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice:
+                case Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice:
+                    scsiReader = new Reader(dev, dev.Timeout, null, false);
+                    results.Blocks = scsiReader.GetDeviceBlocks();
+                    if(scsiReader.FindReadCommand())
+                    {
+                        DicConsole.ErrorWriteLine("Unable to read medium.");
+                        return results;
+                    }
 
-                blockSize = scsiReader.LogicalBlockSize;
+                    blockSize = scsiReader.LogicalBlockSize;
 
-                if(results.Blocks != 0 && blockSize != 0)
-                {
-                    results.Blocks++;
+                    if(results.Blocks != 0 && blockSize != 0)
+                    {
+                        results.Blocks++;
 #pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-                    DicConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
-                                         results.Blocks, blockSize, results.Blocks * (ulong)blockSize);
+                        DicConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
+                                             results.Blocks, blockSize, results.Blocks * (ulong)blockSize);
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
-                }
-            }
-
-            if(dev.ScsiType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
-            {
-                DicConsole.WriteLine("Scanning will never be supported on SCSI Streaming Devices.");
-                DicConsole.WriteLine("It has no sense to do it, and it will put too much strain on the tape.");
-                return results;
+                    }
+                    break;
+                case Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess:
+                    DicConsole.WriteLine("Scanning will never be supported on SCSI Streaming Devices.");
+                    DicConsole.WriteLine("It has no sense to do it, and it will put too much strain on the tape.");
+                    return results;
             }
 
             if(results.Blocks == 0)

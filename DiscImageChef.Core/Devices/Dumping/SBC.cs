@@ -658,12 +658,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     Statistics.AddFilesystem(plugin.XmlFSType.Type);
                                     dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                                    if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                    if(plugin.XmlFSType.Type == "PC Engine filesystem")
-                                        dskType = MediaType.SuperCDROM2;
-                                    if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                    if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
-                                        dskType = MediaType.GOD;
+                                    switch(plugin.XmlFSType.Type) {
+                                        case "Opera": dskType = MediaType.ThreeDO;
+                                            break;
+                                        case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                            break;
+                                        case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                            break;
+                                        case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                            break;
+                                    }
                                 }
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -696,10 +700,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 Statistics.AddFilesystem(plugin.XmlFSType.Type);
                                 dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
 
-                                if(plugin.XmlFSType.Type == "Opera") dskType = MediaType.ThreeDO;
-                                if(plugin.XmlFSType.Type == "PC Engine filesystem") dskType = MediaType.SuperCDROM2;
-                                if(plugin.XmlFSType.Type == "Nintendo Wii filesystem") dskType = MediaType.WOD;
-                                if(plugin.XmlFSType.Type == "Nintendo Gamecube filesystem") dskType = MediaType.GOD;
+                                switch(plugin.XmlFSType.Type) {
+                                    case "Opera": dskType = MediaType.ThreeDO;
+                                        break;
+                                    case "PC Engine filesystem": dskType = MediaType.SuperCDROM2;
+                                        break;
+                                    case "Nintendo Wii filesystem": dskType = MediaType.WOD;
+                                        break;
+                                    case "Nintendo Gamecube filesystem": dskType = MediaType.GOD;
+                                        break;
+                                }
                             }
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body

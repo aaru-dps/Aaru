@@ -176,11 +176,16 @@ namespace DiscImageChef.Filesystems
                                 1 << (int)besb.block_shift, besb.block_size).AppendLine();
             }
 
-            if(besb.flags == BEFS_CLEAN)
-                if(besb.log_start == besb.log_end) sb.AppendLine("Filesystem is clean");
-                else sb.AppendLine("Filesystem is dirty");
-            else if(besb.flags == BEFS_DIRTY) sb.AppendLine("Filesystem is dirty");
-            else sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
+            switch(besb.flags) {
+                case BEFS_CLEAN:
+                    if(besb.log_start == besb.log_end) sb.AppendLine("Filesystem is clean");
+                    else sb.AppendLine("Filesystem is dirty");
+                    break;
+                case BEFS_DIRTY: sb.AppendLine("Filesystem is dirty");
+                    break;
+                default: sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
+                    break;
+            }
 
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(besb.name, CurrentEncoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", besb.block_size).AppendLine();

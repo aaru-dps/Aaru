@@ -292,17 +292,21 @@ namespace DiscImageChef.DiscImages
                                 kvp[1] = kvp[1].Trim();
                                 DicConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
 
-                                if(kvp[0] == hostDate)
-                                {
-                                    if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
-                                                              DateTimeStyles.AssumeLocal, out blockDate))
-                                        foundDate = true;
+                                switch(kvp[0]) {
+                                    case hostDate:
+                                        if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
+                                                                  DateTimeStyles.AssumeLocal, out blockDate))
+                                            foundDate = true;
+                                        break;
+                                    case hostTime:
+                                        DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
+                                                               DateTimeStyles.AssumeLocal, out blockTime);
+                                        break;
+                                    case kfName: ImageInfo.ImageApplication = kvp[1];
+                                        break;
+                                    case kfVersion: ImageInfo.ImageApplicationVersion = kvp[1];
+                                        break;
                                 }
-                                else if(kvp[0] == hostTime)
-                                    DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
-                                                           DateTimeStyles.AssumeLocal, out blockTime);
-                                else if(kvp[0] == kfName) ImageInfo.ImageApplication = kvp[1];
-                                else if(kvp[0] == kfVersion) ImageInfo.ImageApplicationVersion = kvp[1];
                             }
 
                             if(foundDate)

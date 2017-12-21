@@ -166,20 +166,21 @@ namespace DiscImageChef.Filesystems
                 filenamesize = 60;
                 littleEndian = magic != MINIX3_CIGAM || magic == MINIX2_CIGAM || magic == MINIX_CIGAM;
 
-                if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
-                {
-                    minixVersion = "Minix v3 filesystem";
-                    xmlFSType.Type = "Minix v3";
-                }
-                else if(magic == MINIX2_MAGIC || magic == MINIX2_CIGAM)
-                {
-                    minixVersion = "Minix 3 v2 filesystem";
-                    xmlFSType.Type = "Minix 3 v2";
-                }
-                else
-                {
-                    minixVersion = "Minix 3 v1 filesystem";
-                    xmlFSType.Type = "Minix 3 v1";
+                switch(magic) {
+                    case MINIX3_MAGIC:
+                    case MINIX3_CIGAM:
+                        minixVersion = "Minix v3 filesystem";
+                        xmlFSType.Type = "Minix v3";
+                        break;
+                    case MINIX2_MAGIC:
+                    case MINIX2_CIGAM:
+                        minixVersion = "Minix 3 v2 filesystem";
+                        xmlFSType.Type = "Minix 3 v2";
+                        break;
+                    default:
+                        minixVersion = "Minix 3 v1 filesystem";
+                        xmlFSType.Type = "Minix 3 v1";
+                        break;
                 }
 
                 minix3 = true;

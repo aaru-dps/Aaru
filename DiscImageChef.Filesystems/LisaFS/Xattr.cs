@@ -167,17 +167,14 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(error != Errno.NoError) return error;
 
-            if(xattr == "com.apple.lisa.password" && file.password_valid > 0)
-            {
-                buf = new byte[8];
-                Array.Copy(file.password, 0, buf, 0, 8);
-                return Errno.NoError;
-            }
-
-            if(xattr == "com.apple.lisa.serial" && file.serial > 0)
-            {
-                buf = Encoding.ASCII.GetBytes(file.serial.ToString());
-                return Errno.NoError;
+            switch(xattr) {
+                case "com.apple.lisa.password" when file.password_valid > 0:
+                    buf = new byte[8];
+                    Array.Copy(file.password, 0, buf, 0, 8);
+                    return Errno.NoError;
+                case "com.apple.lisa.serial" when file.serial > 0:
+                    buf = Encoding.ASCII.GetBytes(file.serial.ToString());
+                    return Errno.NoError;
             }
 
             if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo) && xattr == "com.apple.lisa.label")

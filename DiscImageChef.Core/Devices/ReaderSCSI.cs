@@ -337,13 +337,16 @@ namespace DiscImageChef.Core.Devices
                 }
                 else
                 {
-                    if(dev.Manufacturer == "HL-DT-ST")
-                        hldtstReadRaw =
-                            !dev.HlDtStReadRawDvd(out readBuffer, out senseBuf, 0, 1, timeout, out duration);
-
-                    if(dev.Manufacturer == "PLEXTOR")
-                        plextorReadRaw =
-                            !dev.PlextorReadRawDvd(out readBuffer, out senseBuf, 0, 1, timeout, out duration);
+                    switch(dev.Manufacturer) {
+                        case "HL-DT-ST":
+                            hldtstReadRaw =
+                                !dev.HlDtStReadRawDvd(out readBuffer, out senseBuf, 0, 1, timeout, out duration);
+                            break;
+                        case "PLEXTOR":
+                            plextorReadRaw =
+                                !dev.PlextorReadRawDvd(out readBuffer, out senseBuf, 0, 1, timeout, out duration);
+                            break;
+                    }
 
                     if(hldtstReadRaw || plextorReadRaw)
                     {

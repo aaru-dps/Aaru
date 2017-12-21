@@ -123,17 +123,17 @@ namespace DiscImageChef.Filesystems
             SquashSuperBlock sqSb = new SquashSuperBlock();
             bool littleEndian = true;
 
-            if(magic == Squash_MAGIC)
-            {
-                IntPtr sqSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(sqSb));
-                Marshal.Copy(sector, 0, sqSbPtr, Marshal.SizeOf(sqSb));
-                sqSb = (SquashSuperBlock)Marshal.PtrToStructure(sqSbPtr, typeof(SquashSuperBlock));
-                Marshal.FreeHGlobal(sqSbPtr);
-            }
-            else if(magic == Squash_CIGAM)
-            {
-                sqSb = BigEndianMarshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
-                littleEndian = false;
+            switch(magic) {
+                case Squash_MAGIC:
+                    IntPtr sqSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(sqSb));
+                    Marshal.Copy(sector, 0, sqSbPtr, Marshal.SizeOf(sqSb));
+                    sqSb = (SquashSuperBlock)Marshal.PtrToStructure(sqSbPtr, typeof(SquashSuperBlock));
+                    Marshal.FreeHGlobal(sqSbPtr);
+                    break;
+                case Squash_CIGAM:
+                    sqSb = BigEndianMarshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
+                    littleEndian = false;
+                    break;
             }
 
             StringBuilder sbInformation = new StringBuilder();

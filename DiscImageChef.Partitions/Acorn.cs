@@ -109,60 +109,66 @@ namespace DiscImageChef.Partitions
                 }
             }
 
-            if((bootBlock.flags & TYPE_MASK) == TYPE_LINUX)
-            {
-                LinuxTable table = new LinuxTable();
-                IntPtr tablePtr = Marshal.AllocHGlobal(512);
-                Marshal.Copy(map, 0, tablePtr, 512);
-                table = (LinuxTable)Marshal.PtrToStructure(tablePtr, typeof(LinuxTable));
-                Marshal.FreeHGlobal(tablePtr);
-
-                foreach(LinuxEntry entry in table.entries)
+            switch(bootBlock.flags & TYPE_MASK) {
+                case TYPE_LINUX:
                 {
-                    Partition part = new Partition
-                    {
-                        Start = (ulong)(mapSector + entry.start),
-                        Size = entry.size,
-                        Length = (ulong)(entry.size * sector.Length),
-                        Sequence = counter,
-                        Scheme = Name
-                    };
-                    part.Offset = part.Start * (ulong)sector.Length;
-                    if(entry.magic == LINUX_MAGIC || entry.magic == SWAP_MAGIC)
-                    {
-                        partitions.Add(part);
-                        counter++;
-                    }
-                }
-            }
-            else if((bootBlock.flags & TYPE_MASK) == TYPE_RISCIX_MFM ||
-                    (bootBlock.flags & TYPE_MASK) == TYPE_RISCIX_SCSI)
-            {
-                RiscIxTable table = new RiscIxTable();
-                IntPtr tablePtr = Marshal.AllocHGlobal(512);
-                Marshal.Copy(map, 0, tablePtr, 512);
-                table = (RiscIxTable)Marshal.PtrToStructure(tablePtr, typeof(RiscIxTable));
-                Marshal.FreeHGlobal(tablePtr);
+                    LinuxTable table = new LinuxTable();
+                    IntPtr tablePtr = Marshal.AllocHGlobal(512);
+                    Marshal.Copy(map, 0, tablePtr, 512);
+                    table = (LinuxTable)Marshal.PtrToStructure(tablePtr, typeof(LinuxTable));
+                    Marshal.FreeHGlobal(tablePtr);
 
-                if(table.magic == RISCIX_MAGIC)
-                    foreach(RiscIxEntry entry in table.partitions)
+                    foreach(LinuxEntry entry in table.entries)
                     {
                         Partition part = new Partition
                         {
                             Start = (ulong)(mapSector + entry.start),
-                            Size = entry.length,
-                            Length = (ulong)(entry.length * sector.Length),
-                            Name = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1")),
+                            Size = entry.size,
+                            Length = (ulong)(entry.size * sector.Length),
                             Sequence = counter,
                             Scheme = Name
                         };
                         part.Offset = part.Start * (ulong)sector.Length;
-                        if(entry.length > 0)
+                        if(entry.magic == LINUX_MAGIC || entry.magic == SWAP_MAGIC)
                         {
                             partitions.Add(part);
                             counter++;
                         }
                     }
+
+                    break;
+                }
+                case TYPE_RISCIX_MFM:
+                case TYPE_RISCIX_SCSI:
+                {
+                    RiscIxTable table = new RiscIxTable();
+                    IntPtr tablePtr = Marshal.AllocHGlobal(512);
+                    Marshal.Copy(map, 0, tablePtr, 512);
+                    table = (RiscIxTable)Marshal.PtrToStructure(tablePtr, typeof(RiscIxTable));
+                    Marshal.FreeHGlobal(tablePtr);
+
+                    if(table.magic == RISCIX_MAGIC)
+                        foreach(RiscIxEntry entry in table.partitions)
+                        {
+                            Partition part = new Partition
+                            {
+                                Start = (ulong)(mapSector + entry.start),
+                                Size = entry.length,
+                                Length = (ulong)(entry.length * sector.Length),
+                                Name = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1")),
+                                Sequence = counter,
+                                Scheme = Name
+                            };
+                            part.Offset = part.Start * (ulong)sector.Length;
+                            if(entry.length > 0)
+                            {
+                                partitions.Add(part);
+                                counter++;
+                            }
+                        }
+
+                    break;
+                }
             }
 
             return !(partitions.Count == 0);

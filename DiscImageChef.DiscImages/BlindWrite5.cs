@@ -735,12 +735,14 @@ namespace DiscImageChef.DiscImages
 
                 long sectorSize = dataFile.Length / dataFile.Sectors;
                 if(sectorSize > 2352)
-                    if(sectorSize - 2352 == 16) chars.Subchannel = TrackSubchannelType.Q16Interleaved;
-                    else if(sectorSize - 2352 == 96) chars.Subchannel = TrackSubchannelType.PackedInterleaved;
-                    else
-                    {
-                        DicConsole.ErrorWriteLine("BlindWrite5 found unknown subchannel size: {0}", sectorSize - 2352);
-                        return false;
+                    switch(sectorSize - 2352) {
+                        case 16: chars.Subchannel = TrackSubchannelType.Q16Interleaved;
+                            break;
+                        case 96: chars.Subchannel = TrackSubchannelType.PackedInterleaved;
+                            break;
+                        default:
+                            DicConsole.ErrorWriteLine("BlindWrite5 found unknown subchannel size: {0}", sectorSize - 2352);
+                            return false;
                     }
                 else chars.Subchannel = TrackSubchannelType.None;
 
@@ -1114,8 +1116,12 @@ namespace DiscImageChef.DiscImages
 
             if(isBd && ImageInfo.Sectors > 24438784)
             {
-                if(ImageInfo.MediaType == MediaType.BDR) ImageInfo.MediaType = MediaType.BDRXL;
-                if(ImageInfo.MediaType == MediaType.BDRE) ImageInfo.MediaType = MediaType.BDREXL;
+                switch(ImageInfo.MediaType) {
+                    case MediaType.BDR: ImageInfo.MediaType = MediaType.BDRXL;
+                        break;
+                    case MediaType.BDRE: ImageInfo.MediaType = MediaType.BDREXL;
+                        break;
+                }
             }
 
             DicConsole.DebugWriteLine("BlindWrite5 plugin", "ImageInfo.mediaType = {0}", ImageInfo.MediaType);

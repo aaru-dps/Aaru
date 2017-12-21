@@ -325,14 +325,12 @@ namespace DiscImageChef.DiscImages
                     bChnk.sector += (uint)ImageInfo.Sectors;
 
                     // TODO: Handle compressed chunks
-                    if(bChnk.type == CHUNK_TYPE_KENCODE)
-                        throw new ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                    if(bChnk.type == CHUNK_TYPE_RLE)
-                        throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
-                    if(bChnk.type == CHUNK_TYPE_LZH)
-                        throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
-                    if(bChnk.type == CHUNK_TYPE_STUFFIT)
-                        throw new ImageNotSupportedException("Chunks compressed with StuffIt! are not yet supported.");
+                    switch(bChnk.type) {
+                        case CHUNK_TYPE_KENCODE: throw new ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
+                        case CHUNK_TYPE_RLE: throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
+                        case CHUNK_TYPE_LZH: throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
+                        case CHUNK_TYPE_STUFFIT: throw new ImageNotSupportedException("Chunks compressed with StuffIt! are not yet supported.");
+                    }
 
                     // TODO: Handle compressed chunks
                     if(bChnk.type > CHUNK_TYPE_COPY && bChnk.type < CHUNK_TYPE_KENCODE ||
@@ -543,26 +541,23 @@ namespace DiscImageChef.DiscImages
                 return sector;
             }
 
-            if(currentChunk.type == CHUNK_TYPE_NOCOPY)
-            {
-                sector = new byte[SECTOR_SIZE];
+            switch(currentChunk.type) {
+                case CHUNK_TYPE_NOCOPY:
+                    sector = new byte[SECTOR_SIZE];
 
-                if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
-                sectorCache.Add(sectorAddress, sector);
-                return sector;
-            }
+                    sectorCache.Add(sectorAddress, sector);
+                    return sector;
+                case CHUNK_TYPE_COPY:
+                    imageStream.Seek(currentChunk.offset + relOff, SeekOrigin.Begin);
+                    sector = new byte[SECTOR_SIZE];
+                    imageStream.Read(sector, 0, sector.Length);
 
-            if(currentChunk.type == CHUNK_TYPE_COPY)
-            {
-                imageStream.Seek(currentChunk.offset + relOff, SeekOrigin.Begin);
-                sector = new byte[SECTOR_SIZE];
-                imageStream.Read(sector, 0, sector.Length);
+                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
 
-                if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
-
-                sectorCache.Add(sectorAddress, sector);
-                return sector;
+                    sectorCache.Add(sectorAddress, sector);
+                    return sector;
             }
 
             throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found",
