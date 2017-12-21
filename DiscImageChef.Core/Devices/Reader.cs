@@ -67,7 +67,8 @@ namespace DiscImageChef.Core.Devices
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    if(Identify.Decode(identification).HasValue) ataId = Identify.Decode(identification).Value;
+                    Identify.IdentifyDevice? ataIdNullable = Identify.Decode(identification);
+                    if(ataIdNullable.HasValue) ataId = ataIdNullable.Value;
                     break;
                 case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
             }

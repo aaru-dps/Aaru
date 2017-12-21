@@ -58,8 +58,6 @@ namespace DiscImageChef.Core.Devices.Scanning
             sense = dev.AtaIdentify(out cmdBuf, out errorChs);
             if(!sense && Identify.Decode(cmdBuf).HasValue)
             {
-                Identify.IdentifyDevice ataId = Identify.Decode(cmdBuf).Value;
-
                 // Initializate reader
                 Reader ataReader = new Reader(dev, timeout, cmdBuf);
                 // Fill reader blocks
