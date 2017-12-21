@@ -305,41 +305,38 @@ namespace DiscImageChef.Checksums
         /// <param name="bb">Outs parity symbols.</param>
         public int encode_rs(int[] data, out int[] bb)
         {
-            if(initialized)
+            if(!initialized) throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
+
+            int i, j;
+            int feedback;
+            bb = new int[nn - kk];
+
+            Clear(ref bb, nn - kk);
+            for(i = kk - 1; i >= 0; i--)
             {
-                int i, j;
-                int feedback;
-                bb = new int[nn - kk];
+                if(mm != 8) if(data[i] > nn) return -1; /* Illegal symbol */
 
-                Clear(ref bb, nn - kk);
-                for(i = kk - 1; i >= 0; i--)
+                feedback = index_of[data[i] ^ bb[nn - kk - 1]];
+                if(feedback != a0)
                 {
-                    if(mm != 8) if(data[i] > nn) return -1; /* Illegal symbol */
+                    /* feedback term is non-zero */
+                    for(j = nn - kk - 1; j > 0; j--)
+                        if(gg[j] != a0) bb[j] = bb[j - 1] ^ alpha_to[Modnn(gg[j] + feedback)];
+                        else bb[j] = bb[j - 1];
 
-                    feedback = index_of[data[i] ^ bb[nn - kk - 1]];
-                    if(feedback != a0)
-                    {
-                        /* feedback term is non-zero */
-                        for(j = nn - kk - 1; j > 0; j--)
-                            if(gg[j] != a0) bb[j] = bb[j - 1] ^ alpha_to[Modnn(gg[j] + feedback)];
-                            else bb[j] = bb[j - 1];
-
-                        bb[0] = alpha_to[Modnn(gg[0] + feedback)];
-                    }
-                    else
-                    {
-                        /* feedback term is zero. encoder becomes a
-                                     * single-byte shifter */
-                        for(j = nn - kk - 1; j > 0; j--) bb[j] = bb[j - 1];
-
-                        bb[0] = 0;
-                    }
+                    bb[0] = alpha_to[Modnn(gg[0] + feedback)];
                 }
+                else
+                {
+                    /* feedback term is zero. encoder becomes a
+                                     * single-byte shifter */
+                    for(j = nn - kk - 1; j > 0; j--) bb[j] = bb[j - 1];
 
-                return 0;
+                    bb[0] = 0;
+                }
             }
 
-            throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
+            return 0;
         }
 
         /*
@@ -364,243 +361,236 @@ namespace DiscImageChef.Checksums
         /// <param name="noEras">Number of erasures.</param>
         public int eras_dec_rs(ref int[] data, out int[] erasPos, int noEras)
         {
-            if(initialized)
+            if(!initialized) throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
+
+            erasPos = new int[nn - kk];
+            int degLambda, el, degOmega;
+            int i, j, r;
+            int u, q, tmp, num1, num2, den, discrR;
+            int[] recd = new int[nn];
+            int[] lambda = new int[nn - kk + 1]; /* Err+Eras Locator poly */
+            int[] s = new int[nn - kk + 1]; /* syndrome poly */
+            int[] b = new int[nn - kk + 1];
+            int[] t = new int[nn - kk + 1];
+            int[] omega = new int[nn - kk + 1];
+            int[] root = new int[nn - kk];
+            int[] reg = new int[nn - kk + 1];
+            int[] loc = new int[nn - kk];
+            int synError, count;
+
+            /* data[] is in polynomial form, copy and convert to index form */
+            for(i = nn - 1; i >= 0; i--)
             {
-                erasPos = new int[nn - kk];
-                int degLambda, el, degOmega;
-                int i, j, r;
-                int u, q, tmp, num1, num2, den, discrR;
-                int[] recd = new int[nn];
-                int[] lambda = new int[nn - kk + 1]; /* Err+Eras Locator poly */
-                int[] s = new int[nn - kk + 1]; /* syndrome poly */
-                int[] b = new int[nn - kk + 1];
-                int[] t = new int[nn - kk + 1];
-                int[] omega = new int[nn - kk + 1];
-                int[] root = new int[nn - kk];
-                int[] reg = new int[nn - kk + 1];
-                int[] loc = new int[nn - kk];
-                int synError, count;
+                if(mm != 8) if(data[i] > nn) return -1; /* Illegal symbol */
 
-                /* data[] is in polynomial form, copy and convert to index form */
-                for(i = nn - 1; i >= 0; i--)
-                {
-                    if(mm != 8) if(data[i] > nn) return -1; /* Illegal symbol */
-
-                    recd[i] = index_of[data[i]];
-                }
-                /* first form the syndromes; i.e., evaluate recd(x) at roots of g(x)
+                recd[i] = index_of[data[i]];
+            }
+            /* first form the syndromes; i.e., evaluate recd(x) at roots of g(x)
              * namely @**(B0+i), i = 0, ... ,(NN-KK-1)
              */
-                synError = 0;
-                for(i = 1; i <= nn - kk; i++)
-                {
-                    tmp = 0;
-                    for(j = 0; j < nn; j++)
-                        if(recd[j] != a0) /* recd[j] in index form */
-                            tmp ^= alpha_to[Modnn(recd[j] + (B0 + i - 1) * j)];
+            synError = 0;
+            for(i = 1; i <= nn - kk; i++)
+            {
+                tmp = 0;
+                for(j = 0; j < nn; j++)
+                    if(recd[j] != a0) /* recd[j] in index form */
+                        tmp ^= alpha_to[Modnn(recd[j] + (B0 + i - 1) * j)];
 
-                    synError |= tmp; /* set flag if non-zero syndrome =>
+                synError |= tmp; /* set flag if non-zero syndrome =>
                      * error */
-                    /* store syndrome in index form  */
-                    s[i] = index_of[tmp];
-                }
+                /* store syndrome in index form  */
+                s[i] = index_of[tmp];
+            }
 
-                if(synError == 0) return 0;
+            if(synError == 0) return 0;
 
-                Clear(ref lambda, nn - kk);
-                lambda[0] = 1;
-                if(noEras > 0)
+            Clear(ref lambda, nn - kk);
+            lambda[0] = 1;
+            if(noEras > 0)
+            {
+                /* Init lambda to be the erasure locator polynomial */
+                lambda[1] = alpha_to[erasPos[0]];
+                for(i = 1; i < noEras; i++)
                 {
-                    /* Init lambda to be the erasure locator polynomial */
-                    lambda[1] = alpha_to[erasPos[0]];
-                    for(i = 1; i < noEras; i++)
+                    u = erasPos[i];
+                    for(j = i + 1; j > 0; j--)
                     {
-                        u = erasPos[i];
-                        for(j = i + 1; j > 0; j--)
-                        {
-                            tmp = index_of[lambda[j - 1]];
-                            if(tmp != a0) lambda[j] ^= alpha_to[Modnn(u + tmp)];
-                        }
+                        tmp = index_of[lambda[j - 1]];
+                        if(tmp != a0) lambda[j] ^= alpha_to[Modnn(u + tmp)];
                     }
+                }
 
 #if DEBUG
-                    /* find roots of the erasure location polynomial */
-                    for(i = 1; i <= noEras; i++) reg[i] = index_of[lambda[i]];
+                /* find roots of the erasure location polynomial */
+                for(i = 1; i <= noEras; i++) reg[i] = index_of[lambda[i]];
 
-                    count = 0;
-                    for(i = 1; i <= nn; i++)
-                    {
-                        q = 1;
-                        for(j = 1; j <= noEras; j++)
-                            if(reg[j] != a0)
-                            {
-                                reg[j] = Modnn(reg[j] + j);
-                                q ^= alpha_to[reg[j]];
-                            }
-
-                        if(q == 0)
-                        {
-                            /* store root and error location
-                             * number indices
-                             */
-                            root[count] = i;
-                            loc[count] = nn - i;
-                            count++;
-                        }
-                    }
-
-                    if(count != noEras)
-                    {
-                        DicConsole.DebugWriteLine("Reed Solomon", "\n lambda(x) is WRONG\n");
-                        return -1;
-                    }
-
-                    DicConsole.DebugWriteLine("Reed Solomon",
-                                              "\n Erasure positions as determined by roots of Eras Loc Poly:\n");
-                    for(i = 0; i < count; i++) DicConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
-
-                    DicConsole.DebugWriteLine("Reed Solomon", "\n");
-#endif
-                }
-
-                for(i = 0; i < nn - kk + 1; i++) b[i] = index_of[lambda[i]];
-
-                /*
-             * Begin Berlekamp-Massey algorithm to determine error+erasure
-             * locator polynomial
-             */
-                r = noEras;
-                el = noEras;
-                while(++r <= nn - kk)
-                {
-                    /* r is the step number */
-                    /* Compute discrepancy at the r-th step in poly-form */
-                    discrR = 0;
-                    for(i = 0; i < r; i++) if(lambda[i] != 0 && s[r - i] != a0) discrR ^= alpha_to[Modnn(index_of[lambda[i]] + s[r - i])];
-
-                    discrR = index_of[discrR]; /* Index form */
-                    if(discrR == a0)
-                    {
-                        /* 2 lines below: B(x) <-- x*B(x) */
-                        Copydown(ref b, ref b, nn - kk);
-                        b[0] = a0;
-                    }
-                    else
-                    {
-                        /* 7 lines below: T(x) <-- lambda(x) - discr_r*x*b(x) */
-                        t[0] = lambda[0];
-                        for(i = 0; i < nn - kk; i++)
-                            if(b[i] != a0) t[i + 1] = lambda[i + 1] ^ alpha_to[Modnn(discrR + b[i])];
-                            else t[i + 1] = lambda[i + 1];
-
-                        if(2 * el <= r + noEras - 1)
-                        {
-                            el = r + noEras - el;
-                            /*
-                         * 2 lines below: B(x) <-- inv(discr_r) *
-                         * lambda(x)
-                         */
-                            for(i = 0; i <= nn - kk; i++)
-                                b[i] = lambda[i] == 0 ? a0 : Modnn(index_of[lambda[i]] - discrR + nn);
-                        }
-                        else
-                        {
-                            /* 2 lines below: B(x) <-- x*B(x) */
-                            Copydown(ref b, ref b, nn - kk);
-                            b[0] = a0;
-                        }
-
-                        Copy(ref lambda, ref t, nn - kk + 1);
-                    }
-                }
-
-                /* Convert lambda to index form and compute deg(lambda(x)) */
-                degLambda = 0;
-                for(i = 0; i < nn - kk + 1; i++)
-                {
-                    lambda[i] = index_of[lambda[i]];
-                    if(lambda[i] != a0) degLambda = i;
-                }
-                /*
-             * Find roots of the error+erasure locator polynomial. By Chien
-             * Search
-             */
-                int temp = reg[0];
-                Copy(ref reg, ref lambda, nn - kk);
-                reg[0] = temp;
-                count = 0; /* Number of roots of lambda(x) */
+                count = 0;
                 for(i = 1; i <= nn; i++)
                 {
                     q = 1;
-                    for(j = degLambda; j > 0; j--)
+                    for(j = 1; j <= noEras; j++)
                         if(reg[j] != a0)
                         {
                             reg[j] = Modnn(reg[j] + j);
                             q ^= alpha_to[reg[j]];
                         }
 
-                    if(q == 0)
-                    {
-                        /* store root (index-form) and error location number */
-                        root[count] = i;
-                        loc[count] = nn - i;
-                        count++;
-                    }
+                    if(q != 0) continue;
+                    /* store root and error location
+                             * number indices
+                             */
+                    root[count] = i;
+                    loc[count] = nn - i;
+                    count++;
                 }
 
-#if DEBUG
-                DicConsole.DebugWriteLine("Reed Solomon", "\n Final error positions:\t");
+                if(count != noEras)
+                {
+                    DicConsole.DebugWriteLine("Reed Solomon", "\n lambda(x) is WRONG\n");
+                    return -1;
+                }
+
+                DicConsole.DebugWriteLine("Reed Solomon",
+                                          "\n Erasure positions as determined by roots of Eras Loc Poly:\n");
                 for(i = 0; i < count; i++) DicConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
 
                 DicConsole.DebugWriteLine("Reed Solomon", "\n");
 #endif
+            }
 
-                if(degLambda != count) return -1;
-                /*
+            for(i = 0; i < nn - kk + 1; i++) b[i] = index_of[lambda[i]];
+
+            /*
+             * Begin Berlekamp-Massey algorithm to determine error+erasure
+             * locator polynomial
+             */
+            r = noEras;
+            el = noEras;
+            while(++r <= nn - kk)
+            {
+                /* r is the step number */
+                /* Compute discrepancy at the r-th step in poly-form */
+                discrR = 0;
+                for(i = 0; i < r; i++) if(lambda[i] != 0 && s[r - i] != a0) discrR ^= alpha_to[Modnn(index_of[lambda[i]] + s[r - i])];
+
+                discrR = index_of[discrR]; /* Index form */
+                if(discrR == a0)
+                {
+                    /* 2 lines below: B(x) <-- x*B(x) */
+                    Copydown(ref b, ref b, nn - kk);
+                    b[0] = a0;
+                }
+                else
+                {
+                    /* 7 lines below: T(x) <-- lambda(x) - discr_r*x*b(x) */
+                    t[0] = lambda[0];
+                    for(i = 0; i < nn - kk; i++)
+                        if(b[i] != a0) t[i + 1] = lambda[i + 1] ^ alpha_to[Modnn(discrR + b[i])];
+                        else t[i + 1] = lambda[i + 1];
+
+                    if(2 * el <= r + noEras - 1)
+                    {
+                        el = r + noEras - el;
+                        /*
+                         * 2 lines below: B(x) <-- inv(discr_r) *
+                         * lambda(x)
+                         */
+                        for(i = 0; i <= nn - kk; i++)
+                            b[i] = lambda[i] == 0 ? a0 : Modnn(index_of[lambda[i]] - discrR + nn);
+                    }
+                    else
+                    {
+                        /* 2 lines below: B(x) <-- x*B(x) */
+                        Copydown(ref b, ref b, nn - kk);
+                        b[0] = a0;
+                    }
+
+                    Copy(ref lambda, ref t, nn - kk + 1);
+                }
+            }
+
+            /* Convert lambda to index form and compute deg(lambda(x)) */
+            degLambda = 0;
+            for(i = 0; i < nn - kk + 1; i++)
+            {
+                lambda[i] = index_of[lambda[i]];
+                if(lambda[i] != a0) degLambda = i;
+            }
+            /*
+             * Find roots of the error+erasure locator polynomial. By Chien
+             * Search
+             */
+            int temp = reg[0];
+            Copy(ref reg, ref lambda, nn - kk);
+            reg[0] = temp;
+            count = 0; /* Number of roots of lambda(x) */
+            for(i = 1; i <= nn; i++)
+            {
+                q = 1;
+                for(j = degLambda; j > 0; j--)
+                    if(reg[j] != a0)
+                    {
+                        reg[j] = Modnn(reg[j] + j);
+                        q ^= alpha_to[reg[j]];
+                    }
+
+                if(q != 0) continue;
+                /* store root (index-form) and error location number */
+                root[count] = i;
+                loc[count] = nn - i;
+                count++;
+            }
+
+#if DEBUG
+            DicConsole.DebugWriteLine("Reed Solomon", "\n Final error positions:\t");
+            for(i = 0; i < count; i++) DicConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
+
+            DicConsole.DebugWriteLine("Reed Solomon", "\n");
+#endif
+
+            if(degLambda != count) return -1;
+            /*
              * Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
              * x**(NN-KK)). in index form. Also find deg(omega).
              */
-                degOmega = 0;
-                for(i = 0; i < nn - kk; i++)
-                {
-                    tmp = 0;
-                    j = degLambda < i ? degLambda : i;
-                    for(; j >= 0; j--) if(s[i + 1 - j] != a0 && lambda[j] != a0) tmp ^= alpha_to[Modnn(s[i + 1 - j] + lambda[j])];
+            degOmega = 0;
+            for(i = 0; i < nn - kk; i++)
+            {
+                tmp = 0;
+                j = degLambda < i ? degLambda : i;
+                for(; j >= 0; j--) if(s[i + 1 - j] != a0 && lambda[j] != a0) tmp ^= alpha_to[Modnn(s[i + 1 - j] + lambda[j])];
 
-                    if(tmp != 0) degOmega = i;
-                    omega[i] = index_of[tmp];
-                }
+                if(tmp != 0) degOmega = i;
+                omega[i] = index_of[tmp];
+            }
 
-                omega[nn - kk] = a0;
+            omega[nn - kk] = a0;
 
-                /*
+            /*
              * Compute error values in poly-form. num1 = omega(inv(X(l))), num2 =
              * inv(X(l))**(B0-1) and den = lambda_pr(inv(X(l))) all in poly-form
              */
-                for(j = count - 1; j >= 0; j--)
+            for(j = count - 1; j >= 0; j--)
+            {
+                num1 = 0;
+                for(i = degOmega; i >= 0; i--) if(omega[i] != a0) num1 ^= alpha_to[Modnn(omega[i] + i * root[j])];
+
+                num2 = alpha_to[Modnn(root[j] * (B0 - 1) + nn)];
+                den = 0;
+
+                /* lambda[i+1] for i even is the formal derivative lambda_pr of lambda[i] */
+                for(i = Min(degLambda, nn - kk - 1) & ~1; i >= 0; i -= 2) if(lambda[i + 1] != a0) den ^= alpha_to[Modnn(lambda[i + 1] + i * root[j])];
+
+                if(den == 0)
                 {
-                    num1 = 0;
-                    for(i = degOmega; i >= 0; i--) if(omega[i] != a0) num1 ^= alpha_to[Modnn(omega[i] + i * root[j])];
-
-                    num2 = alpha_to[Modnn(root[j] * (B0 - 1) + nn)];
-                    den = 0;
-
-                    /* lambda[i+1] for i even is the formal derivative lambda_pr of lambda[i] */
-                    for(i = Min(degLambda, nn - kk - 1) & ~1; i >= 0; i -= 2) if(lambda[i + 1] != a0) den ^= alpha_to[Modnn(lambda[i + 1] + i * root[j])];
-
-                    if(den == 0)
-                    {
-                        DicConsole.DebugWriteLine("Reed Solomon", "\n ERROR: denominator = 0\n");
-                        return -1;
-                    }
-                    /* Apply error to data */
-                    if(num1 != 0) data[loc[j]] ^= alpha_to[Modnn(index_of[num1] + index_of[num2] + nn - index_of[den])];
+                    DicConsole.DebugWriteLine("Reed Solomon", "\n ERROR: denominator = 0\n");
+                    return -1;
                 }
-
-                return count;
+                /* Apply error to data */
+                if(num1 != 0) data[loc[j]] ^= alpha_to[Modnn(index_of[num1] + index_of[num2] + nn - index_of[den])];
             }
 
-            throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
+            return count;
         }
     }
 }

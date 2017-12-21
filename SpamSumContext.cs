@@ -246,11 +246,10 @@ namespace DiscImageChef.Checksums
                      * */
                     self.Bh[i].Digest[++self.Bh[i].Dlen] = 0;
                     self.Bh[i].H = HASH_INIT;
-                    if(self.Bh[i].Dlen < SPAMSUM_LENGTH / 2)
-                    {
-                        self.Bh[i].Halfh = HASH_INIT;
-                        self.Bh[i].Halfdigest = 0;
-                    }
+                    if(self.Bh[i].Dlen >= SPAMSUM_LENGTH / 2) continue;
+
+                    self.Bh[i].Halfh = HASH_INIT;
+                    self.Bh[i].Halfdigest = 0;
                 }
                 else fuzzy_try_reduce_blockhash();
             }
