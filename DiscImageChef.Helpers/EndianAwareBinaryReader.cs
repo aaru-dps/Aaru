@@ -49,7 +49,7 @@ namespace DiscImageChef
         public EndianAwareBinaryReader(Stream input, bool isLittleEndian) :
             this(input, Encoding.UTF8, isLittleEndian) { }
 
-        public bool IsLittleEndian { get; set; }
+        public bool IsLittleEndian { get; set;  }
 
         public override double ReadDouble()
         {

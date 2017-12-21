@@ -51,10 +51,10 @@ namespace DiscImageChef.Devices
             registers.lbaLow = (byte)((lba & 0xFF) / 0x1);
             registers.deviceHead += 0x40;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
 
@@ -74,10 +74,10 @@ namespace DiscImageChef.Devices
             registers.sector = sector;
             registers.deviceHead = (byte)(head & 0x0F);
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
 
@@ -93,10 +93,10 @@ namespace DiscImageChef.Devices
 
             registers.command = (byte)AtaCommands.RequestSense;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             errorCode = statusRegisters.error;
 

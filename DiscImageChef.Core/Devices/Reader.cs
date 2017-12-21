@@ -40,42 +40,14 @@ namespace DiscImageChef.Core.Devices
     {
         Device dev;
         uint timeout;
-        ulong blocks;
-        uint blocksToRead;
-        string errorMessage;
-        bool readRaw;
-        uint blockSize;
-        uint physicalsectorsize;
-        uint longBlockSize;
 
-        internal string ErrorMessage
-        {
-            get { return errorMessage; }
-        }
-        internal ulong Blocks
-        {
-            get { return blocks; }
-        }
-        internal uint BlocksToRead
-        {
-            get { return blocksToRead; }
-        }
-        internal uint LogicalBlockSize
-        {
-            get { return blockSize; }
-        }
-        internal uint PhysicalBlockSize
-        {
-            get { return physicalsectorsize; }
-        }
-        internal uint LongBlockSize
-        {
-            get { return longBlockSize; }
-        }
-        internal bool CanReadRaw
-        {
-            get { return readRaw; }
-        }
+        internal string ErrorMessage { get; private set; }
+        internal ulong Blocks { get; set; }
+        internal uint BlocksToRead { get; private set; }
+        internal uint LogicalBlockSize { get; private set; }
+        internal uint PhysicalBlockSize { get; private set; }
+        internal uint LongBlockSize { get; private set; }
+        internal bool CanReadRaw { get; private set; }
         internal bool CanSeek
         {
             get { return ataSeek || seek6 || seek10; }
@@ -89,8 +61,8 @@ namespace DiscImageChef.Core.Devices
         {
             this.dev = dev;
             this.timeout = timeout;
-            blocksToRead = 64;
-            readRaw = raw;
+            BlocksToRead = 64;
+            CanReadRaw = raw;
 
             switch(dev.Type)
             {
@@ -109,7 +81,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiGetBlocks();
                 default:
-                    errorMessage = string.Format("Unknown device type {0}.", dev.Type);
+                    ErrorMessage = string.Format("Unknown device type {0}.", dev.Type);
                     return 0;
             }
         }
@@ -122,7 +94,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiFindReadCommand();
                 default:
-                    errorMessage = string.Format("Unknown device type {0}.", dev.Type);
+                    ErrorMessage = string.Format("Unknown device type {0}.", dev.Type);
                     return true;
             }
         }
@@ -135,7 +107,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiGetBlockSize();
                 default:
-                    errorMessage = string.Format("Unknown device type {0}.", dev.Type);
+                    ErrorMessage = string.Format("Unknown device type {0}.", dev.Type);
                     return true;
             }
         }
@@ -148,7 +120,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
                 default:
-                    errorMessage = string.Format("Unknown device type {0}.", dev.Type);
+                    ErrorMessage = string.Format("Unknown device type {0}.", dev.Type);
                     return true;
             }
         }
@@ -160,7 +132,7 @@ namespace DiscImageChef.Core.Devices
 
         internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration)
         {
-            return ReadBlocks(out buffer, block, blocksToRead, out duration);
+            return ReadBlocks(out buffer, block, BlocksToRead, out duration);
         }
 
         internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)

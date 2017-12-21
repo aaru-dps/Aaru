@@ -50,7 +50,7 @@ namespace DiscImageChef.Devices
         public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                    ScsiDirection direction, out double duration, out bool sense)
         {
-            return Command.SendScsiCommand(platformId, fd, cdb, ref buffer, out senseBuffer, timeout, direction,
+            return Command.SendScsiCommand(PlatformId, FileHandle, cdb, ref buffer, out senseBuffer, timeout, direction,
                                            out duration, out sense);
         }
 
@@ -71,7 +71,7 @@ namespace DiscImageChef.Devices
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            return Command.SendAtaCommand(platformId, fd, registers, out errorRegisters, protocol, transferRegister,
+            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
                                           ref buffer, timeout, transferBlocks, out duration, out sense);
         }
 
@@ -92,7 +92,7 @@ namespace DiscImageChef.Devices
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            return Command.SendAtaCommand(platformId, fd, registers, out errorRegisters, protocol, transferRegister,
+            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
                                           ref buffer, timeout, transferBlocks, out duration, out sense);
         }
 
@@ -113,7 +113,7 @@ namespace DiscImageChef.Devices
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            return Command.SendAtaCommand(platformId, fd, registers, out errorRegisters, protocol, transferRegister,
+            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
                                           ref buffer, timeout, transferBlocks, out duration, out sense);
         }
 
@@ -175,7 +175,7 @@ namespace DiscImageChef.Devices
 
             if((command != (MmcCommands)SecureDigitalCommands.SendOperatingCondition &&
                 command != MmcCommands.SendOpCond) || cachedOcr == null)
-                return Command.SendMmcCommand(platformId, fd, command, write, isApplication, flags, argument, blockSize,
+                return Command.SendMmcCommand(PlatformId, FileHandle, command, write, isApplication, flags, argument, blockSize,
                                               blocks, ref buffer, out response, out duration, out sense, timeout);
 
             {

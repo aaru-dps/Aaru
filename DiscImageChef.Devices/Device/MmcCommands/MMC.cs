@@ -41,10 +41,10 @@ namespace DiscImageChef.Devices
             buffer = new byte[16];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendCsd, false, false,
+            LastError = SendMmcCommand(MmcCommands.SendCsd, false, false,
                                        MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("MMC Device", "SEND_CSD took {0} ms.", duration);
 
@@ -56,10 +56,10 @@ namespace DiscImageChef.Devices
             buffer = new byte[16];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendCid, false, false,
+            LastError = SendMmcCommand(MmcCommands.SendCid, false, false,
                                        MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("MMC Device", "SEND_CID took {0} ms.", duration);
 
@@ -71,10 +71,10 @@ namespace DiscImageChef.Devices
             buffer = new byte[4];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendOpCond, false, true,
+            LastError = SendMmcCommand(MmcCommands.SendOpCond, false, true,
                                        MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0, 4, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SecureDigital Device", "SEND_OP_COND took {0} ms.", duration);
 
@@ -86,10 +86,10 @@ namespace DiscImageChef.Devices
             buffer = new byte[512];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendExtCsd, false, false,
+            LastError = SendMmcCommand(MmcCommands.SendExtCsd, false, false,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0, 512, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("MMC Device", "SEND_EXT_CSD took {0} ms.", duration);
 
@@ -101,10 +101,10 @@ namespace DiscImageChef.Devices
             byte[] buffer = new byte[0];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SetBlocklen, false, false,
+            LastError = SendMmcCommand(MmcCommands.SetBlocklen, false, false,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, length, 0,
                                        0, ref buffer, out response, out duration, out sense, timeout);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("MMC Device", "SET_BLOCKLEN took {0} ms.", duration);
 
@@ -124,11 +124,11 @@ namespace DiscImageChef.Devices
             if(transferLength > 1) command = MmcCommands.ReadMultipleBlock;
             else command = MmcCommands.ReadSingleBlock;
 
-            lastError = SendMmcCommand(command, false, false,
+            LastError = SendMmcCommand(command, false, false,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
                                        blockSize, transferLength, ref buffer, out response, out duration, out sense,
                                        timeout);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             if(transferLength > 1)
             {
@@ -149,10 +149,10 @@ namespace DiscImageChef.Devices
             buffer = new byte[4];
             bool sense = false;
 
-            lastError = SendMmcCommand(MmcCommands.SendStatus, false, true,
+            LastError = SendMmcCommand(MmcCommands.SendStatus, false, true,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, 0, 4, 1,
                                        ref buffer, out response, out duration, out sense, timeout);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SecureDigital Device", "SEND_STATUS took {0} ms.", duration);
 

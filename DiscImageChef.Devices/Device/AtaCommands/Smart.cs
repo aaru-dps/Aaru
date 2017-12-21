@@ -48,10 +48,10 @@ namespace DiscImageChef.Devices
             registers.lbaHigh = 0xC2;
             registers.lbaMid = 0x4F;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SMART DISABLE OPERATIONS took {0} ms.", duration);
 
@@ -71,10 +71,10 @@ namespace DiscImageChef.Devices
             registers.lbaMid = 0x4F;
             registers.sectorCount = 0xF1;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SMART ENABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
 
@@ -93,10 +93,10 @@ namespace DiscImageChef.Devices
             registers.lbaHigh = 0xC2;
             registers.lbaMid = 0x4F;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SMART DISABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
 
@@ -114,10 +114,10 @@ namespace DiscImageChef.Devices
             registers.lbaHigh = 0xC2;
             registers.lbaMid = 0x4F;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SMART ENABLE OPERATIONS took {0} ms.", duration);
 
@@ -137,10 +137,10 @@ namespace DiscImageChef.Devices
             registers.lbaMid = 0x4F;
             registers.lbaLow = subcommand;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SMART EXECUTE OFF-LINE IMMEDIATE took {0} ms.", duration);
 
@@ -159,10 +159,10 @@ namespace DiscImageChef.Devices
             registers.lbaHigh = 0xC2;
             registers.lbaMid = 0x4F;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SMART READ DATA took {0} ms.", duration);
 
@@ -182,10 +182,10 @@ namespace DiscImageChef.Devices
             registers.lbaMid = 0x4F;
             registers.lbaLow = logAddress;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SMART READ LOG took {0} ms.", duration);
 
@@ -203,10 +203,10 @@ namespace DiscImageChef.Devices
             registers.lbaHigh = 0xC2;
             registers.lbaMid = 0x4F;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SMART RETURN STATUS took {0} ms.", duration);
 

@@ -70,9 +70,9 @@ namespace DiscImageChef.Devices
 
             buffer = new byte[blockSize * transferLength];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
 
@@ -106,9 +106,9 @@ namespace DiscImageChef.Devices
             cdb[4] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[5] = (byte)(buffer.Length & 0xFF);
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "Plextor READ DVD (RAW) took {0} ms.", duration);
 
@@ -133,9 +133,9 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
             cdb[8] = 1;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
 
@@ -160,9 +160,9 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
             cdb[8] = 2;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
 
@@ -193,9 +193,9 @@ namespace DiscImageChef.Devices
             cdb[8] = (byte)((blockSize & 0xFF00) >> 8);
             cdb[9] = (byte)(blockSize & 0xFF);
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
 
@@ -227,13 +227,13 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.PlextorPoweRec;
             cdb[9] = (byte)buf.Length;
 
-            lastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
 
-            if(sense || error) return sense;
+            if(sense || Error) return sense;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             selected = BigEndianBitConverter.ToUInt16(buf, 4);
@@ -267,13 +267,13 @@ namespace DiscImageChef.Devices
             cdb[1] = (byte)PlextorSubCommands.GetMode;
             cdb[9] = (byte)buf.Length;
 
-            lastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
 
-            if(sense || error) return sense;
+            if(sense || Error) return sense;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             enabled = buf[2] != 0;
@@ -303,9 +303,9 @@ namespace DiscImageChef.Devices
             cdb[3] = 4;
             cdb[10] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SILENT MODE took {0} ms.", duration);
 
@@ -332,9 +332,9 @@ namespace DiscImageChef.Devices
             cdb[2] = (byte)PlextorSubCommands.GigaRec;
             cdb[10] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET GIGAREC took {0} ms.", duration);
 
@@ -365,9 +365,9 @@ namespace DiscImageChef.Devices
             if(dvd) cdb[3] = 0x12;
             else cdb[3] = 0x02;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET VARIREC took {0} ms.", duration);
 
@@ -393,9 +393,9 @@ namespace DiscImageChef.Devices
             cdb[2] = (byte)PlextorSubCommands.SecuRec;
             cdb[10] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SECUREC took {0} ms.", duration);
 
@@ -422,9 +422,9 @@ namespace DiscImageChef.Devices
             cdb[2] = (byte)PlextorSubCommands.SpeedRead;
             cdb[10] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SPEEDREAD took {0} ms.", duration);
 
@@ -451,9 +451,9 @@ namespace DiscImageChef.Devices
             cdb[2] = (byte)PlextorSubCommands.SessionHide;
             cdb[9] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SINGLE-SESSION / HIDE CD-R took {0} ms.", duration);
 
@@ -484,9 +484,9 @@ namespace DiscImageChef.Devices
             if(dualLayer) cdb[3] = (byte)PlextorSubCommands.BitSetRdl;
             else cdb[3] = (byte)PlextorSubCommands.BitSetR;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET BOOK BITSETTING took {0} ms.", duration);
 
@@ -514,9 +514,9 @@ namespace DiscImageChef.Devices
             cdb[2] = (byte)PlextorSubCommands.TestWriteDvdPlus;
             cdb[10] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET TEST WRITE DVD+ took {0} ms.", duration);
 

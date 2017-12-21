@@ -70,18 +70,10 @@ namespace DiscImageChef.Settings
     public static class Settings
     {
         public static DicSettings Current;
-        static string reportsPath;
-        static string statsPath;
 
-        public static string ReportsPath
-        {
-            get { return reportsPath; }
-        }
+        static string ReportsPath { get; set; }
 
-        public static string StatsPath
-        {
-            get { return statsPath; }
-        }
+        public static string StatsPath { get; private set; }
 
         public static void LoadSettings()
         {
@@ -103,11 +95,11 @@ namespace DiscImageChef.Settings
                         string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
 
-                        reportsPath = Path.Combine(dicPath, "Reports");
-                        if(!Directory.Exists(reportsPath)) Directory.CreateDirectory(reportsPath);
+                        ReportsPath = Path.Combine(dicPath, "Reports");
+                        if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
 
-                        statsPath = Path.Combine(dicPath, "Statistics");
-                        if(!Directory.Exists(statsPath)) Directory.CreateDirectory(statsPath);
+                        StatsPath = Path.Combine(dicPath, "Statistics");
+                        if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                     }
                         break;
                     case Interop.PlatformID.Win32NT:
@@ -124,11 +116,11 @@ namespace DiscImageChef.Settings
                         string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
 
-                        reportsPath = Path.Combine(dicPath, "Reports");
-                        if(!Directory.Exists(reportsPath)) Directory.CreateDirectory(reportsPath);
+                        ReportsPath = Path.Combine(dicPath, "Reports");
+                        if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
 
-                        statsPath = Path.Combine(dicPath, "Statistics");
-                        if(!Directory.Exists(statsPath)) Directory.CreateDirectory(statsPath);
+                        StatsPath = Path.Combine(dicPath, "Statistics");
+                        if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                     }
                         break;
                     default:
@@ -141,16 +133,16 @@ namespace DiscImageChef.Settings
                         string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
 
-                        reportsPath = Path.Combine(dicPath, "Reports");
-                        if(!Directory.Exists(reportsPath)) Directory.CreateDirectory(reportsPath);
+                        ReportsPath = Path.Combine(dicPath, "Reports");
+                        if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
 
-                        statsPath = Path.Combine(dicPath, "Statistics");
-                        if(!Directory.Exists(statsPath)) Directory.CreateDirectory(statsPath);
+                        StatsPath = Path.Combine(dicPath, "Statistics");
+                        if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                     }
                         break;
                 }
             }
-            catch { reportsPath = null; }
+            catch { ReportsPath = null; }
 
             FileStream prefsFs = null;
             StreamReader prefsSr = null;

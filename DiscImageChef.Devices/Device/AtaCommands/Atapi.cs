@@ -90,10 +90,10 @@ namespace DiscImageChef.Devices
 
             registers.command = (byte)AtaCommands.IdentifyPacketDevice;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "IDENTIFY PACKET DEVICE took {0} ms.", duration);
 

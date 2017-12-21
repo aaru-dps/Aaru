@@ -46,10 +46,10 @@ namespace DiscImageChef.Devices
 
             registers.command = (byte)AtaCommands.ReadBuffer;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ BUFFER took {0} ms.", duration);
 
@@ -65,9 +65,9 @@ namespace DiscImageChef.Devices
 
             registers.command = (byte)AtaCommands.ReadBufferDma;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.NoTransfer,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.NoTransfer,
                                        ref buffer, timeout, false, out duration, out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ BUFFER DMA took {0} ms.", duration);
 
@@ -97,9 +97,9 @@ namespace DiscImageChef.Devices
             registers.lbaLow = (byte)((lba & 0xFF) / 0x1);
             registers.deviceHead += 0x40;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
                                        ref buffer, timeout, true, out duration, out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ DMA took {0} ms.", duration);
 
@@ -122,10 +122,10 @@ namespace DiscImageChef.Devices
             registers.lbaLow = (byte)((lba & 0xFF) / 0x1);
             registers.deviceHead += 0x40;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ MULTIPLE took {0} ms.", duration);
 
@@ -143,10 +143,10 @@ namespace DiscImageChef.Devices
             registers.command = (byte)AtaCommands.ReadNativeMaxAddress;
             registers.deviceHead += 0x40;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             if((statusRegisters.status & 0x23) == 0)
             {
@@ -185,10 +185,10 @@ namespace DiscImageChef.Devices
             registers.lbaLow = (byte)((lba & 0xFF) / 0x1);
             registers.deviceHead += 0x40;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ SECTORS took {0} ms.", duration);
 
@@ -217,10 +217,10 @@ namespace DiscImageChef.Devices
             registers.lbaLow = (byte)((lba & 0xFF) / 0x1);
             registers.deviceHead += 0x40;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ LONG took {0} ms.", duration);
 
@@ -240,10 +240,10 @@ namespace DiscImageChef.Devices
             registers.lbaLow = (byte)((lba & 0xFF) / 0x1);
             registers.deviceHead += 0x40;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "SEEK took {0} ms.", duration);
 

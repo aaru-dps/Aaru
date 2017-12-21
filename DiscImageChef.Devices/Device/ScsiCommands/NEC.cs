@@ -63,9 +63,9 @@ namespace DiscImageChef.Devices
 
             buffer = new byte[2352 * transferLength];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
 

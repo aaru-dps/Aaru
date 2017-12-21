@@ -97,9 +97,9 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.FujitsuDisplay;
             cdb[6] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "FUJITSU DISPLAY took {0} ms.", duration);
 

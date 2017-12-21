@@ -75,9 +75,9 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;
             if(park) cdb[4] = 1;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "CERTANCE PARK UNPARK took {0} ms.", duration);
 

@@ -74,9 +74,9 @@ namespace DiscImageChef.Devices
             cdb[13] = (byte)(buffer.Length & 0xFF);
             if(cache) cdb[14] += 0x01;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             if(sense) return true;
 
@@ -91,9 +91,9 @@ namespace DiscImageChef.Devices
             cdb[13] = (byte)(buffer.Length & 0xFF);
             senseBuffer = new byte[32];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ ATTRIBUTE took {0} ms.", duration);
 

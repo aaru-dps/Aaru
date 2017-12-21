@@ -147,75 +147,49 @@ namespace DiscImageChef.Filesystems
     /// </summary>
     public class FileEntryInfo
     {
-        DateTime crtimeUtc;
-        DateTime atimeUtc;
-        DateTime ctimeUtc;
-        DateTime btimeUtc;
-        DateTime mtimeUtc;
-
         /// <summary>File attributes</summary>
         public FileAttributes Attributes;
 
         /// <summary>File creation date in UTC</summary>
-        public DateTime CreationTimeUtc
-        {
-            get { return crtimeUtc; }
-            set { crtimeUtc = value; }
-        }
+        public DateTime CreationTimeUtc { get; set; }
         /// <summary>File last access date in UTC</summary>
-        public DateTime AccessTimeUtc
-        {
-            get { return atimeUtc; }
-            set { atimeUtc = value; }
-        }
+        public DateTime AccessTimeUtc { get; set; }
         /// <summary>File attributes change date in UTC</summary>
-        public DateTime StatusChangeTimeUtc
-        {
-            get { return ctimeUtc; }
-            set { ctimeUtc = value; }
-        }
+        public DateTime StatusChangeTimeUtc { get; set; }
         /// <summary>File last backup date in UTC</summary>
-        public DateTime BackupTimeUtc
-        {
-            get { return btimeUtc; }
-            set { btimeUtc = value; }
-        }
+        public DateTime BackupTimeUtc { get; set; }
         /// <summary>File last modification date in UTC</summary>
-        public DateTime LastWriteTimeUtc
-        {
-            get { return mtimeUtc; }
-            set { mtimeUtc = value; }
-        }
+        public DateTime LastWriteTimeUtc { get; set; }
 
         /// <summary>File creation date</summary>
         public DateTime CreationTime
         {
-            get { return crtimeUtc.ToLocalTime(); }
-            set { crtimeUtc = value.ToUniversalTime(); }
+            get { return CreationTimeUtc.ToLocalTime(); }
+            set { CreationTimeUtc = value.ToUniversalTime(); }
         }
         /// <summary>File last access date</summary>
         public DateTime AccessTime
         {
-            get { return atimeUtc.ToLocalTime(); }
-            set { atimeUtc = value.ToUniversalTime(); }
+            get { return AccessTimeUtc.ToLocalTime(); }
+            set { AccessTimeUtc = value.ToUniversalTime(); }
         }
         /// <summary>File attributes change date</summary>
         public DateTime StatusChangeTime
         {
-            get { return ctimeUtc.ToLocalTime(); }
-            set { ctimeUtc = value.ToUniversalTime(); }
+            get { return StatusChangeTimeUtc.ToLocalTime(); }
+            set { StatusChangeTimeUtc = value.ToUniversalTime(); }
         }
         /// <summary>File last backup date</summary>
         public DateTime BackupTime
         {
-            get { return btimeUtc.ToLocalTime(); }
-            set { btimeUtc = value.ToUniversalTime(); }
+            get { return BackupTimeUtc.ToLocalTime(); }
+            set { BackupTimeUtc = value.ToUniversalTime(); }
         }
         /// <summary>File last modification date</summary>
         public DateTime LastWriteTime
         {
-            get { return mtimeUtc.ToLocalTime(); }
-            set { mtimeUtc = value.ToUniversalTime(); }
+            get { return LastWriteTimeUtc.ToLocalTime(); }
+            set { LastWriteTimeUtc = value.ToUniversalTime(); }
         }
 
         /// <summary>inode number for this file</summary>

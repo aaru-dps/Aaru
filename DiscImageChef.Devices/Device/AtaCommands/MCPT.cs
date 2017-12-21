@@ -59,10 +59,10 @@ namespace DiscImageChef.Devices
             registers.command = (byte)AtaCommands.CheckMediaCardType;
             registers.feature = feature;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "CHECK MEDIA CARD TYPE took {0} ms.", duration);
 

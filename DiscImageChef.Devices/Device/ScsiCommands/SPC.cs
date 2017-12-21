@@ -88,9 +88,9 @@ namespace DiscImageChef.Devices
             byte[] cdb = {(byte)ScsiCommands.Inquiry, 0, 0, 0, 36, 0};
             bool sense;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             if(sense) return true;
 
@@ -100,9 +100,9 @@ namespace DiscImageChef.Devices
             buffer = new byte[pagesLength];
             senseBuffer = new byte[32];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);
 
@@ -164,9 +164,9 @@ namespace DiscImageChef.Devices
             byte[] cdb = {(byte)ScsiCommands.Inquiry, 1, page, 0, 36, 0};
             bool sense;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             if(sense) return true;
 
@@ -179,9 +179,9 @@ namespace DiscImageChef.Devices
             buffer = new byte[pagesLength];
             senseBuffer = new byte[32];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);
 
@@ -202,9 +202,9 @@ namespace DiscImageChef.Devices
             bool sense;
             byte[] buffer = new byte[0];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "TEST UNIT READY took {0} ms.", duration);
 
@@ -271,9 +271,9 @@ namespace DiscImageChef.Devices
             cdb[4] = (byte)buffer.Length;
             cdb[5] = 0;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             if(sense) return true;
 
@@ -282,9 +282,9 @@ namespace DiscImageChef.Devices
             cdb[4] = (byte)buffer.Length;
             senseBuffer = new byte[32];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "MODE SENSE(6) took {0} ms.", duration);
 
@@ -360,9 +360,9 @@ namespace DiscImageChef.Devices
             cdb[8] = (byte)(buffer.Length & 0xFF);
             cdb[9] = 0;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             if(sense) return true;
 
@@ -374,9 +374,9 @@ namespace DiscImageChef.Devices
             cdb[8] = (byte)(buffer.Length & 0xFF);
             senseBuffer = new byte[32];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "MODE SENSE(10) took {0} ms.", duration);
 
@@ -444,9 +444,9 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
             cdb[4] = (byte)((byte)preventMode & 0x03);
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PREVENT ALLOW MEDIUM REMOVAL took {0} ms.", duration);
 
@@ -498,9 +498,9 @@ namespace DiscImageChef.Devices
                 cdb[5] = (byte)(address & 0xFF);
             }
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ CAPACITY took {0} ms.", duration);
 
@@ -560,9 +560,9 @@ namespace DiscImageChef.Devices
             cdb[12] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[13] = (byte)(buffer.Length & 0xFF);
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ CAPACITY(16) took {0} ms.", duration);
 
@@ -591,9 +591,9 @@ namespace DiscImageChef.Devices
             cdb[8] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[9] = (byte)(buffer.Length & 0xFF);
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             if(sense) return true;
 
@@ -608,9 +608,9 @@ namespace DiscImageChef.Devices
             cdb[9] = (byte)(buffer.Length & 0xFF);
             senseBuffer = new byte[32];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ MEDIA SERIAL NUMBER took {0} ms.", duration);
 
@@ -738,12 +738,12 @@ namespace DiscImageChef.Devices
             // Prevent overflows
             if(buffer.Length > 255)
             {
-                if(platformId != Interop.PlatformID.Win32NT && platformId != Interop.PlatformID.Win32S &&
-                   platformId != Interop.PlatformID.Win32Windows && platformId != Interop.PlatformID.WinCE &&
-                   platformId != Interop.PlatformID.WindowsPhone &&
-                   platformId != Interop.PlatformID.Xbox) lastError = 75;
-                else lastError = 111;
-                error = true;
+                if(PlatformId != Interop.PlatformID.Win32NT && PlatformId != Interop.PlatformID.Win32S &&
+                   PlatformId != Interop.PlatformID.Win32Windows && PlatformId != Interop.PlatformID.WinCE &&
+                   PlatformId != Interop.PlatformID.WindowsPhone &&
+                   PlatformId != Interop.PlatformID.Xbox) LastError = 75;
+                else LastError = 111;
+                Error = true;
                 duration = 0;
                 return true;
             }
@@ -756,9 +756,9 @@ namespace DiscImageChef.Devices
             if(savePages) cdb[1] += 0x01;
             cdb[4] = (byte)buffer.Length;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "MODE SELECT(6) took {0} ms.", duration);
 
@@ -781,12 +781,12 @@ namespace DiscImageChef.Devices
             // Prevent overflows
             if(buffer.Length > 65535)
             {
-                if(platformId != Interop.PlatformID.Win32NT && platformId != Interop.PlatformID.Win32S &&
-                   platformId != Interop.PlatformID.Win32Windows && platformId != Interop.PlatformID.WinCE &&
-                   platformId != Interop.PlatformID.WindowsPhone &&
-                   platformId != Interop.PlatformID.Xbox) lastError = 75;
-                else lastError = 111;
-                error = true;
+                if(PlatformId != Interop.PlatformID.Win32NT && PlatformId != Interop.PlatformID.Win32S &&
+                   PlatformId != Interop.PlatformID.Win32Windows && PlatformId != Interop.PlatformID.WinCE &&
+                   PlatformId != Interop.PlatformID.WindowsPhone &&
+                   PlatformId != Interop.PlatformID.Xbox) LastError = 75;
+                else LastError = 111;
+                Error = true;
                 duration = 0;
                 return true;
             }
@@ -800,9 +800,9 @@ namespace DiscImageChef.Devices
             cdb[7] = (byte)((buffer.Length & 0xFF00) << 8);
             cdb[8] = (byte)(buffer.Length & 0xFF);
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "MODE SELECT(10) took {0} ms.", duration);
 
@@ -828,9 +828,9 @@ namespace DiscImageChef.Devices
             cdb[4] = (byte)buffer.Length;
             cdb[5] = 0;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
-            error = lastError != 0;
+            Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "REQUEST SENSE took {0} ms.", duration);
 
