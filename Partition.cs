@@ -68,7 +68,7 @@ namespace DiscImageChef.CommonTypes
             return Start == other.Start && Length == other.Length;
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             if(obj == null || !(obj is Partition)) return false;
             else return Equals((Partition)obj);
