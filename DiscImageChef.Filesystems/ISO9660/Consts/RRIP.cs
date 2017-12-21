@@ -34,7 +34,7 @@ using System;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
-    public partial class ISO9660 : Filesystem
+    public partial class ISO9660
     {
         const ushort RRIP_Magic = 0x5252; // "RR"
         const ushort RRIP_PosixAttributes = 0x5058; // "PX"

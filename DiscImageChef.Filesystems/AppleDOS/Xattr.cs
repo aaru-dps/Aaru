@@ -35,7 +35,7 @@ using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    public partial class AppleDOS : Filesystem
+    public partial class AppleDOS
     {
         /// <summary>
         /// Lists all extended attributes, alternate data streams and forks of the given file.

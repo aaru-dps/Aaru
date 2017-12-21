@@ -34,7 +34,7 @@ using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
-    public partial class ISO9660 : Filesystem
+    public partial class ISO9660
     {
         public override Errno ReadLink(string path, ref string dest)
         {

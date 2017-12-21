@@ -33,7 +33,7 @@
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public partial class PascalPlugin : Filesystem
+    public partial class PascalPlugin
     {
         enum PascalFileKind : short
         {

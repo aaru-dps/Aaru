@@ -34,7 +34,7 @@ using System;
 
 namespace DiscImageChef.Filesystems.CPM
 {
-    partial class CPM : Filesystem
+    partial class CPM
     {
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {

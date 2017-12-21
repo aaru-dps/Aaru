@@ -38,7 +38,7 @@ using System.Xml.Serialization;
 
 namespace DiscImageChef.Filesystems.CPM
 {
-    partial class CPM : Filesystem
+    partial class CPM
     {
         /// <summary>
         /// Loads all the known CP/M disk definitions from an XML stored as an embedded resource.

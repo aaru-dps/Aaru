@@ -43,7 +43,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems.CPM
 {
-    partial class CPM : Filesystem
+    partial class CPM
     {
         public override Errno Mount()
         {

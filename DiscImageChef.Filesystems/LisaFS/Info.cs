@@ -40,7 +40,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
-    public partial class LisaFS : Filesystem
+    public partial class LisaFS
     {
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {

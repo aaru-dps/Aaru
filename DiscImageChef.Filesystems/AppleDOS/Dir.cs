@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    public partial class AppleDOS : Filesystem
+    public partial class AppleDOS
     {
         /// <summary>
         /// Solves a symbolic link.

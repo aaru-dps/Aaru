@@ -32,7 +32,7 @@
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
-    public partial class ISO9660 : Filesystem
+    public partial class ISO9660
     {
         const ulong ziso_header_magic = 0x37E45396C9DBD607;
         const ulong ziso_header_cigam = 0x07D6DBC99653E437;

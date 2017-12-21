@@ -34,7 +34,7 @@ using System;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
-    public partial class LisaFS : Filesystem
+    public partial class LisaFS
     {
         /// <summary>
         /// The MDDF is the most import block on a Lisa FS volume.

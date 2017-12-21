@@ -42,7 +42,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems.CPM
 {
-    partial class CPM : Filesystem
+    partial class CPM
     {
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {

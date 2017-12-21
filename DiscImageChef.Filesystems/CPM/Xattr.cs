@@ -35,7 +35,7 @@ using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems.CPM
 {
-    partial class CPM : Filesystem
+    partial class CPM
     {
         /// <summary>
         /// Reads an extended attribute, alternate data stream or fork from the given file.

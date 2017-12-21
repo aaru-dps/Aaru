@@ -39,7 +39,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    public partial class AppleDOS : Filesystem
+    public partial class AppleDOS
     {
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {

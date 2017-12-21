@@ -36,7 +36,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
-    public partial class ISO9660 : Filesystem
+    public partial class ISO9660
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HighSierraPrimaryVolumeDescriptor

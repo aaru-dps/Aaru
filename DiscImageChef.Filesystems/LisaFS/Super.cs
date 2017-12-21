@@ -39,7 +39,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
-    public partial class LisaFS : Filesystem
+    public partial class LisaFS
     {
         /// <summary>
         /// Mounts an Apple Lisa filesystem

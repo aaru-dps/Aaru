@@ -32,7 +32,7 @@
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
-    public partial class ISO9660 : Filesystem
+    public partial class ISO9660
     {
         const ushort SUSP_Continuation = 0x4345; // "CE"
         const ushort SUSP_Padding = 0x5044; // "PD"

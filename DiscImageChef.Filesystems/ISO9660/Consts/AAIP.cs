@@ -34,7 +34,7 @@ using System;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
-    public partial class ISO9660 : Filesystem
+    public partial class ISO9660
     {
         const ushort AAIP_Magic = 0x414C; // "AL"
         const ushort AAIP_OldMagic = 0x4141; // "AA"

@@ -32,7 +32,7 @@
 
 namespace DiscImageChef.Filesystems.CPM
 {
-    partial class CPM : Filesystem
+    partial class CPM
     {
         /// <summary>
         /// Enumerates the format identification byte used by CP/M-86

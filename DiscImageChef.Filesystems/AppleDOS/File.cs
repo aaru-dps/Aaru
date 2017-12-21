@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    public partial class AppleDOS : Filesystem
+    public partial class AppleDOS
     {
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {

@@ -37,7 +37,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    public partial class AppleDOS : Filesystem
+    public partial class AppleDOS
     {
         /// <summary>
         /// Mounts an Apple DOS filesystem

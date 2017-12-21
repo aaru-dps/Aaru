@@ -37,7 +37,7 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
-    public partial class LisaFS : Filesystem
+    public partial class LisaFS
     {
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {

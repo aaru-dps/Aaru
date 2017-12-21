@@ -38,7 +38,7 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
-    public partial class LisaFS : Filesystem
+    public partial class LisaFS
     {
         /// <summary>
         /// Solves a symbolic link.

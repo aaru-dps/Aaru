@@ -32,7 +32,7 @@
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
-    public partial class LisaFS : Filesystem
+    public partial class LisaFS
     {
         /// <summary>
         /// Lisa FS v1, from Lisa OS 1.0 (Workshop or Office)

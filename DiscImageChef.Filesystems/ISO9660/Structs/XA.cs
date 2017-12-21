@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
-    public partial class ISO9660 : Filesystem
+    public partial class ISO9660
     {
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

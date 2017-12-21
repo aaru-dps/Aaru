@@ -37,7 +37,7 @@ using Schemas;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    public partial class AppleMFS : Filesystem
+    public partial class AppleMFS
     {
         public override Errno Mount(bool debug)
         {

@@ -34,7 +34,7 @@ using System;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
-    public partial class ISO9660 : Filesystem
+    public partial class ISO9660
     {
         const ushort Amiga_Magic = 0x4153; // "AS"
 

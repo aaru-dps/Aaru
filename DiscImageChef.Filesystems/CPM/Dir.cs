@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems.CPM
 {
-    partial class CPM : Filesystem
+    partial class CPM
     {
         public override Errno ReadDir(string path, ref List<string> contents)
         {

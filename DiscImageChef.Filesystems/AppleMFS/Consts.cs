@@ -33,7 +33,7 @@
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    public partial class AppleMFS : Filesystem
+    public partial class AppleMFS
     {
         const ushort MFS_MAGIC = 0xD2D7;
         // "LK"

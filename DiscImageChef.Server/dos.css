@@ -1,25 +1,26 @@
-﻿@font-face {
+﻿@font-face
+{
     font-family: 'VGAsquarePx';
     src: url(int10h.org/vga_squarepx.eot);
     src: url(int10h.org/vga_squarepx.eot?#iefix) format('embedded-opentype'),
-         url(int10h.org/vga_squarepx.woff2) format('woff2'),
-         url(int10h.org/vga_squarepx.woff) format('woff'),
-         url(int10h.org/vga_squarepx.ttf) format('truetype');
+    url(int10h.org/vga_squarepx.woff2) format('woff2'),
+    url(int10h.org/vga_squarepx.woff) format('woff'),
+    url(int10h.org/vga_squarepx.ttf) format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 /* define a black "stipple" background with DOS font */
 
-body {
-    background:
-              radial-gradient(black 15%, transparent 16%) 0 0,
-              radial-gradient(black 15%, transparent 16%) 8px 8px,
-              radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 0 1px,
-              radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 8px 9px;
+body
+{
+    background: radial-gradient(black 15%, transparent 16%) 0 0,
+    radial-gradient(black 15%, transparent 16%) 8px 8px,
+    radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 0 1px,
+    radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 8px 9px;
     background-color: #282828;
     background-size: 16px 16px;
-    color: #aaa;
+    color: #AAAAAA;
     font-family: 'VGAsquarePx', serif;
     font-size: 20pt;
     margin: 0;
@@ -27,18 +28,21 @@ body {
 
 /* links are cyan, hover is bright yellow */
 
-a {
-    color: #0aa;
+a
+{
+    color: #00AAAA;
     text-decoration: none;
 }
 
-a:hover { color: #ff5; }
+a:hover
+{ color: #FFFF55; }
 
 /* headings and bold text are bright white */
 
 h1, h2, h3, h4,
-b, strong {
-    color: #fff;
+b, strong
+{
+    color: #FFFFFF;
     font-size: 1em;
     font-style: normal;
     font-weight: normal;
@@ -47,14 +51,16 @@ b, strong {
 
 /* italic text is green */
 
-em, i {
-    color: #0a0;
+em, i
+{
+    color: #00AA00;
     font-style: normal;
 }
 
 /* define content areas */
 
-header, main, footer {
+header, main, footer
+{
     margin: 0 auto;
     padding: 1em 0;
     max-width: 800px;
@@ -62,71 +68,90 @@ header, main, footer {
 
 /* use black on cyan text for header */
 
-header {
-    background-color: #0aa;
-    color: #000;
+header
+{
+    background-color: #00AAAA;
+    color: #000000;
 }
 
 /* insert the "April 1st" text */
 
-header > h1::before { content: "Today is April 1, 2017!"; }
+header > h1::before
+{ content: "Today is April 1, 2017!"; }
 
-header > h1 img {
+header > h1 img
+{
     display: block;
     width: 300px;
 }
 
-header > form { }
+header > form
+{ }
 
-header > form fieldset { border: none; }
+header > form fieldset
+{ border: none; }
 
 /* use black on gray for navigation */
 
-nav {
-    background-color: #aaa;
-    color: #000;
+nav
+{
+    background-color: #AAAAAA;
+    color: #000000;
 }
 
-nav a { color: #000; }
+nav a
+{ color: #000000; }
 
-nav img { display: none; }
+nav img
+{ display: none; }
 
-nav span { }
+nav span
+{ }
 
-nav > ul {
+nav > ul
+{
     list-style-type: none;
     margin: 0;
     padding: 0;
     text-align: center;
 }
 
-nav > ul li {
+nav > ul li
+{
     display: inline;
     margin: 0 .5em;
 }
 
 /* use white on blue for main text */
 
-main {
-    background-color: #00a;
-    color: #aaa;
+main
+{
+    background-color: #0000AA;
+    color: #AAAAAA;
 }
 
-main > nav { }
+main > nav
+{ }
 
-main > nav li::before { content: ">"; }
+main > nav li::before
+{ content: ">"; }
 
-main > section { }
+main > section
+{ }
 
-main div.third img { display: block; }
+main div.third img
+{ display: block; }
 
 /* use black on brown text for footer */
 
-footer {
-    background-color: #a50;
-    color: #000;
+footer
+{
+    background-color: #AA5500;
+    color: #000000;
 }
 
-footer > nav { }
+footer > nav
+{ }
 
-footer > section { }
+footer > section
+{ }

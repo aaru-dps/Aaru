@@ -38,7 +38,7 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    public partial class AppleMFS : Filesystem
+    public partial class AppleMFS
     {
         public override Errno ReadDir(string path, ref List<string> contents)
         {
