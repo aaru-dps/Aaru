@@ -269,7 +269,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(ProDosAppleDouble))
             {
                 FileStream prodosStream = new FileStream(ProDosAppleDouble, FileMode.Open, FileAccess.Read);
-                if(prodosStream != null && prodosStream.Length > 26)
+                if(prodosStream.Length > 26)
                 {
                     byte[] prodos_b = new byte[26];
                     prodosStream.Read(prodos_b, 0, 26);
@@ -284,7 +284,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(UNIXAppleDouble))
             {
                 FileStream unixStream = new FileStream(UNIXAppleDouble, FileMode.Open, FileAccess.Read);
-                if(unixStream != null && unixStream.Length > 26)
+                if(unixStream.Length > 26)
                 {
                     byte[] unix_b = new byte[26];
                     unixStream.Read(unix_b, 0, 26);
@@ -299,7 +299,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(DOSAppleDouble))
             {
                 FileStream dosStream = new FileStream(DOSAppleDouble, FileMode.Open, FileAccess.Read);
-                if(dosStream != null && dosStream.Length > 26)
+                if(dosStream.Length > 26)
                 {
                     byte[] dos_b = new byte[26];
                     dosStream.Read(dos_b, 0, 26);
@@ -314,7 +314,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(DOSAppleDoubleLower))
             {
                 FileStream doslStream = new FileStream(DOSAppleDoubleLower, FileMode.Open, FileAccess.Read);
-                if(doslStream != null && doslStream.Length > 26)
+                if(doslStream.Length > 26)
                 {
                     byte[] dosl_b = new byte[26];
                     doslStream.Read(dosl_b, 0, 26);
@@ -329,7 +329,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(NetatalkAppleDouble))
             {
                 FileStream netatalkStream = new FileStream(NetatalkAppleDouble, FileMode.Open, FileAccess.Read);
-                if(netatalkStream != null && netatalkStream.Length > 26)
+                if(netatalkStream.Length > 26)
                 {
                     byte[] netatalk_b = new byte[26];
                     netatalkStream.Read(netatalk_b, 0, 26);
@@ -344,7 +344,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(DAVEAppleDouble))
             {
                 FileStream daveStream = new FileStream(DAVEAppleDouble, FileMode.Open, FileAccess.Read);
-                if(daveStream != null && daveStream.Length > 26)
+                if(daveStream.Length > 26)
                 {
                     byte[] dave_b = new byte[26];
                     daveStream.Read(dave_b, 0, 26);
@@ -359,7 +359,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(OSXAppleDouble))
             {
                 FileStream osxStream = new FileStream(OSXAppleDouble, FileMode.Open, FileAccess.Read);
-                if(osxStream != null && osxStream.Length > 26)
+                if(osxStream.Length > 26)
                 {
                     byte[] osx_b = new byte[26];
                     osxStream.Read(osx_b, 0, 26);
@@ -374,7 +374,7 @@ namespace DiscImageChef.Filters
             if(!File.Exists(UnArAppleDouble)) return false;
 
             FileStream unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
-            if(unarStream == null || unarStream.Length <= 26) return false;
+            if(unarStream.Length <= 26) return false;
 
             byte[] unar_b = new byte[26];
             unarStream.Read(unar_b, 0, 26);
@@ -439,7 +439,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(ProDosAppleDouble))
             {
                 FileStream prodosStream = new FileStream(ProDosAppleDouble, FileMode.Open, FileAccess.Read);
-                if(prodosStream != null && prodosStream.Length > 26)
+                if(prodosStream.Length > 26)
                 {
                     byte[] prodos_b = new byte[26];
                     prodosStream.Read(prodos_b, 0, 26);
@@ -455,7 +455,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(UNIXAppleDouble))
             {
                 FileStream unixStream = new FileStream(UNIXAppleDouble, FileMode.Open, FileAccess.Read);
-                if(unixStream != null && unixStream.Length > 26)
+                if(unixStream.Length > 26)
                 {
                     byte[] unix_b = new byte[26];
                     unixStream.Read(unix_b, 0, 26);
@@ -471,7 +471,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(DOSAppleDouble))
             {
                 FileStream dosStream = new FileStream(DOSAppleDouble, FileMode.Open, FileAccess.Read);
-                if(dosStream != null && dosStream.Length > 26)
+                if(dosStream.Length > 26)
                 {
                     byte[] dos_b = new byte[26];
                     dosStream.Read(dos_b, 0, 26);
@@ -487,7 +487,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(DOSAppleDoubleLower))
             {
                 FileStream doslStream = new FileStream(DOSAppleDoubleLower, FileMode.Open, FileAccess.Read);
-                if(doslStream != null && doslStream.Length > 26)
+                if(doslStream.Length > 26)
                 {
                     byte[] dosl_b = new byte[26];
                     doslStream.Read(dosl_b, 0, 26);
@@ -503,7 +503,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(NetatalkAppleDouble))
             {
                 FileStream netatalkStream = new FileStream(NetatalkAppleDouble, FileMode.Open, FileAccess.Read);
-                if(netatalkStream != null && netatalkStream.Length > 26)
+                if(netatalkStream.Length > 26)
                 {
                     byte[] netatalk_b = new byte[26];
                     netatalkStream.Read(netatalk_b, 0, 26);
@@ -519,7 +519,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(DAVEAppleDouble))
             {
                 FileStream daveStream = new FileStream(DAVEAppleDouble, FileMode.Open, FileAccess.Read);
-                if(daveStream != null && daveStream.Length > 26)
+                if(daveStream.Length > 26)
                 {
                     byte[] dave_b = new byte[26];
                     daveStream.Read(dave_b, 0, 26);
@@ -535,7 +535,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(OSXAppleDouble))
             {
                 FileStream osxStream = new FileStream(OSXAppleDouble, FileMode.Open, FileAccess.Read);
-                if(osxStream != null && osxStream.Length > 26)
+                if(osxStream.Length > 26)
                 {
                     byte[] osx_b = new byte[26];
                     osxStream.Read(osx_b, 0, 26);
@@ -551,7 +551,7 @@ namespace DiscImageChef.Filters
             if(File.Exists(UnArAppleDouble))
             {
                 FileStream unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
-                if(unarStream != null && unarStream.Length > 26)
+                if(unarStream.Length > 26)
                 {
                     byte[] unar_b = new byte[26];
                     unarStream.Read(unar_b, 0, 26);

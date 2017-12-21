@@ -159,7 +159,7 @@ namespace DiscImageChef.Devices
 
             DicConsole.DebugWriteLine("SCSI Device", "KREON GET FEATURE LIST took {0} ms.", duration);
 
-            if(sense) return sense;
+            if(sense) return true;
 
             if(buffer[0] != 0xA5 || buffer[1] != 0x5A || buffer[2] != 0x5A || buffer[3] != 0xA5) return true;
 

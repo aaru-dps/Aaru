@@ -378,7 +378,7 @@ namespace DiscImageChef.Filesystems
                 }
                 sb.AppendFormat("Dump volume number: {0}", aixHdr.c_volume).AppendLine();
             }
-            else if(useNew)
+            else
             {
                 xmlFSType.Type = "dump(8)";
                 sb.AppendLine(xmlFSType.Type);

@@ -645,7 +645,7 @@ namespace DiscImageChef.Filesystems
                         byte[] subListBytes = new byte[item.encodedSize - (offset - currOff)];
                         Array.Copy(nvlist, offset, subListBytes, 0, subListBytes.Length);
                         Dictionary<string, NVS_Item> subList;
-                        if(DecodeNvList(subListBytes, out subList, xdr, littleEndian)) item.value = subList;
+                        if(DecodeNvList(subListBytes, out subList, true, littleEndian)) item.value = subList;
                         else goto default;
                         offset = (int)(currOff + item.encodedSize);
                         break;

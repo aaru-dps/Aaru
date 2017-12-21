@@ -169,23 +169,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                         bool allFirstSessionTracksAreAudio = true;
                         bool hasVideoTrack = false;
 
-                        if(toc.HasValue)
-                            foreach(FullTOC.TrackDataDescriptor track in toc.Value.TrackDescriptors)
+                        foreach(FullTOC.TrackDataDescriptor track in toc.Value.TrackDescriptors)
+                        {
+                            if(track.TNO == 1 && ((TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
+                                                  (TOC_CONTROL)(track.CONTROL & 0x0D) ==
+                                                  TOC_CONTROL.DataTrackIncremental)) allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
+
+                            if((TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
+                               (TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrackIncremental)
                             {
-                                if(track.TNO == 1 && ((TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
-                                                      (TOC_CONTROL)(track.CONTROL & 0x0D) ==
-                                                      TOC_CONTROL.DataTrackIncremental)) allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
-
-                                if((TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
-                                   (TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrackIncremental)
-                                {
-                                    hasDataTrack = true;
-                                    allFirstSessionTracksAreAudio &= track.TNO >= firstTrackLastSession;
-                                }
-                                else hasAudioTrack = true;
-
-                                hasVideoTrack |= track.ADR == 4;
+                                hasDataTrack = true;
+                                allFirstSessionTracksAreAudio &= track.TNO >= firstTrackLastSession;
                             }
+                            else hasAudioTrack = true;
+
+                            hasVideoTrack |= track.ADR == 4;
+                        }
 
                         if(hasDataTrack && hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2)
                             dskType = MediaType.CDPLUS;

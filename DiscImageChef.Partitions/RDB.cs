@@ -901,7 +901,7 @@ namespace DiscImageChef.Partitions
             ulong rdbBlock = 0;
             bool foundRdb = false;
 
-            while(rdbBlock < 16 && !foundRdb)
+            while(rdbBlock < 16)
             {
                 if(imagePlugin.GetSectors() <= rdbBlock) return false;
 

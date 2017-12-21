@@ -298,7 +298,7 @@ namespace DiscImageChef.Filters
         public override bool Identify(string path)
         {
             FileStream fstream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            if(fstream == null || fstream.Length < 128) return false;
+            if(fstream.Length < 128) return false;
 
             byte[] hdr_b = new byte[128];
             fstream.Read(hdr_b, 0, 128);

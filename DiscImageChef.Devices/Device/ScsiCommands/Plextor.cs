@@ -240,7 +240,7 @@ namespace DiscImageChef.Devices
             max = BigEndianBitConverter.ToUInt16(buf, 6);
             last = BigEndianBitConverter.ToUInt16(buf, 8);
 
-            return sense;
+            return false;
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace DiscImageChef.Devices
             enabled = buf[2] != 0;
             speed = BigEndianBitConverter.ToUInt16(buf, 4);
 
-            return sense;
+            return false;
         }
 
         /// <summary>

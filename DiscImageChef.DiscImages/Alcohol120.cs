@@ -448,7 +448,7 @@ namespace DiscImageChef.DiscImages
             if(isDvd)
             {
                 // TODO: Second layer
-                if(header.structuresOffset >= 0)
+                if(header.structuresOffset > 0)
                 {
                     byte[] structures = new byte[4100];
                     stream.Seek(header.structuresOffset, SeekOrigin.Begin);

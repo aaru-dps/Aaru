@@ -280,7 +280,7 @@ namespace DiscImageChef.Partitions
                             partitions.Add(part);
                     }
             }
-            else if(useDkl16)
+            else
             {
                 DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_sanity = 0x{0:X8}", dkl16.dkl_vtoc.v_sanity);
                 DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_version = {0}", dkl16.dkl_vtoc.v_version);

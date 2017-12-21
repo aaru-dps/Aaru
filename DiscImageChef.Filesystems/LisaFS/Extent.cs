@@ -88,6 +88,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     if(extTag.fileID != fileId * -1) continue;
 
                     ptr = i;
+                    found = true;
                     break;
                 }
 

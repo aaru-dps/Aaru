@@ -919,7 +919,7 @@ namespace DiscImageChef.DiscImages
                         currentLocator++;
                     }
 
-                    if(!locatorFound || parentPath == null)
+                    if(!locatorFound)
                         throw new
                             FileNotFoundException("(VirtualPC plugin): Cannot find parent file for differencing disk image");
 

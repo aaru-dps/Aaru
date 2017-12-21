@@ -127,7 +127,7 @@ namespace DiscImageChef.Server.Controllers
                                 break;
                             }
 
-                            if(removeNvs != null && addNvs != null)
+                            if(removeNvs != null)
                             {
                                 oldStats.OperatingSystems.Remove(removeNvs);
                                 oldStats.OperatingSystems.Add(addNvs);
@@ -155,7 +155,7 @@ namespace DiscImageChef.Server.Controllers
                             break;
                         }
 
-                        if(removeNvs != null && addNvs != null)
+                        if(removeNvs != null)
                         {
                             oldStats.OperatingSystems.Remove(removeNvs);
                             oldStats.OperatingSystems.Add(addNvs);
@@ -182,7 +182,7 @@ namespace DiscImageChef.Server.Controllers
                                 break;
                             }
 
-                            if(removeNvs != null && addNvs != null)
+                            if(removeNvs != null)
                             {
                                 oldStats.Versions.Remove(removeNvs);
                                 oldStats.Versions.Add(addNvs);
@@ -208,7 +208,7 @@ namespace DiscImageChef.Server.Controllers
                             break;
                         }
 
-                        if(removeNvs != null && addNvs != null)
+                        if(removeNvs != null)
                         {
                             oldStats.Versions.Remove(removeNvs);
                             oldStats.Versions.Add(addNvs);
@@ -235,7 +235,7 @@ namespace DiscImageChef.Server.Controllers
                                 break;
                             }
 
-                            if(removeNvs != null && addNvs != null)
+                            if(removeNvs != null)
                             {
                                 oldStats.Filesystems.Remove(removeNvs);
                                 oldStats.Filesystems.Add(addNvs);
@@ -261,7 +261,7 @@ namespace DiscImageChef.Server.Controllers
                                 break;
                             }
 
-                            if(removeNvs != null && addNvs != null)
+                            if(removeNvs != null)
                             {
                                 oldStats.Partitions.Remove(removeNvs);
                                 oldStats.Partitions.Add(addNvs);
@@ -287,7 +287,7 @@ namespace DiscImageChef.Server.Controllers
                                 break;
                             }
 
-                            if(removeNvs != null && addNvs != null)
+                            if(removeNvs != null)
                             {
                                 oldStats.MediaImages.Remove(removeNvs);
                                 oldStats.MediaImages.Add(addNvs);
@@ -313,7 +313,7 @@ namespace DiscImageChef.Server.Controllers
                                 break;
                             }
 
-                            if(removeNvs != null && addNvs != null)
+                            if(removeNvs != null)
                             {
                                 oldStats.Filters.Remove(removeNvs);
                                 oldStats.Filters.Add(addNvs);
