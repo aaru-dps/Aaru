@@ -226,29 +226,28 @@ namespace DiscImageChef.Decoders.PCMCIA
 
                 buffer.Add(data[position]);
 
-                if(data[position] == 0x00)
+                if(data[position] != 0x00) continue;
+
+                if(!firstString)
                 {
-                    if(!firstString)
-                    {
-                        tuple.Manufacturer = StringHandlers.CToString(buffer.ToArray());
-                        buffer = new List<byte>();
-                        firstString = true;
-                        continue;
-                    }
-
-                    if(!secondString)
-                    {
-                        tuple.Product = StringHandlers.CToString(buffer.ToArray());
-                        buffer = new List<byte>();
-                        firstString = true;
-                        continue;
-                    }
-
-                    if(strings == null) strings = new List<string>();
-
-                    strings.Add(StringHandlers.CToString(buffer.ToArray()));
+                    tuple.Manufacturer = StringHandlers.CToString(buffer.ToArray());
                     buffer = new List<byte>();
+                    firstString = true;
+                    continue;
                 }
+
+                if(!secondString)
+                {
+                    tuple.Product = StringHandlers.CToString(buffer.ToArray());
+                    buffer = new List<byte>();
+                    firstString = true;
+                    continue;
+                }
+
+                if(strings == null) strings = new List<string>();
+
+                strings.Add(StringHandlers.CToString(buffer.ToArray()));
+                buffer = new List<byte>();
             }
 
             if(strings != null) tuple.AdditionalInformation = strings.ToArray();

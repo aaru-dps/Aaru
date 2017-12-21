@@ -142,11 +142,10 @@ namespace DiscImageChef.Decoders.Bluray
                 offset += unit.Length;
             }
 
-            if(units.Count > 0)
-            {
-                decoded.Units = new DiscInformationUnits[units.Count];
-                for(int i = 0; i < units.Count; i++) decoded.Units[i] = units[i];
-            }
+            if(units.Count <= 0) return decoded;
+
+            decoded.Units = new DiscInformationUnits[units.Count];
+            for(int i = 0; i < units.Count; i++) decoded.Units[i] = units[i];
 
             return decoded;
         }

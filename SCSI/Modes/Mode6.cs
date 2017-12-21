@@ -184,20 +184,19 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if(header.BlockDescriptors != null)
-            {
-                hdr[3] = (byte)(header.BlockDescriptors.Length * 8);
+            if(header.BlockDescriptors == null) return hdr;
 
-                for(int i = 0; i < header.BlockDescriptors.Length; i++)
-                {
-                    hdr[0 + i * 8 + 4] = (byte)header.BlockDescriptors[i].Density;
-                    hdr[1 + i * 8 + 4] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF0000) >> 16);
-                    hdr[2 + i * 8 + 4] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF00) >> 8);
-                    hdr[3 + i * 8 + 4] = (byte)(header.BlockDescriptors[i].Blocks & 0xFF);
-                    hdr[5 + i * 8 + 4] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF0000) >> 16);
-                    hdr[6 + i * 8 + 4] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF00) >> 8);
-                    hdr[7 + i * 8 + 4] = (byte)(header.BlockDescriptors[i].BlockLength & 0xFF);
-                }
+            hdr[3] = (byte)(header.BlockDescriptors.Length * 8);
+
+            for(int i = 0; i < header.BlockDescriptors.Length; i++)
+            {
+                hdr[0 + i * 8 + 4] = (byte)header.BlockDescriptors[i].Density;
+                hdr[1 + i * 8 + 4] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF0000) >> 16);
+                hdr[2 + i * 8 + 4] = (byte)((header.BlockDescriptors[i].Blocks & 0xFF00) >> 8);
+                hdr[3 + i * 8 + 4] = (byte)(header.BlockDescriptors[i].Blocks & 0xFF);
+                hdr[5 + i * 8 + 4] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF0000) >> 16);
+                hdr[6 + i * 8 + 4] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF00) >> 8);
+                hdr[7 + i * 8 + 4] = (byte)(header.BlockDescriptors[i].BlockLength & 0xFF);
             }
 
             return hdr;
@@ -214,7 +213,8 @@ namespace DiscImageChef.Decoders.SCSI
 
             Array.Copy(hdr, 0, md, 0, hdr.Length);
 
-            if(mode.Pages != null)
+            if(mode.Pages == null) return md;
+
             {
                 int offset = hdr.Length;
                 foreach(ModePage page in mode.Pages)

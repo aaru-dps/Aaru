@@ -144,78 +144,76 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static byte[] DecodeSector(RawSector sector)
         {
-            if(sector.addressField.prologue[0] == 0xD5 && sector.addressField.prologue[1] == 0xAA &&
-               sector.addressField.prologue[2] == 0x96)
+            if(sector.addressField.prologue[0] != 0xD5 || sector.addressField.prologue[1] != 0xAA ||
+               sector.addressField.prologue[2] != 0x96) return null;
+
+            uint ck1, ck2, ck3;
+            byte carry;
+            byte w1, w2, w3, w4;
+            byte[] bf1 = new byte[175];
+            byte[] bf2 = new byte[175];
+            byte[] bf3 = new byte[175];
+            byte[] nib_data = sector.dataField.data;
+            MemoryStream ms = new MemoryStream();
+
+            int j = 0;
+            w3 = 0;
+            for(int i = 0; i <= 174; i++)
             {
-                uint ck1, ck2, ck3;
-                byte carry;
-                byte w1, w2, w3, w4;
-                byte[] bf1 = new byte[175];
-                byte[] bf2 = new byte[175];
-                byte[] bf3 = new byte[175];
-                byte[] nib_data = sector.dataField.data;
-                MemoryStream ms = new MemoryStream();
+                w4 = nib_data[j++];
+                w1 = nib_data[j++];
+                w2 = nib_data[j++];
 
-                int j = 0;
-                w3 = 0;
-                for(int i = 0; i <= 174; i++)
-                {
-                    w4 = nib_data[j++];
-                    w1 = nib_data[j++];
-                    w2 = nib_data[j++];
+                if(i != 174) w3 = nib_data[j++];
 
-                    if(i != 174) w3 = nib_data[j++];
-
-                    bf1[i] = (byte)(((w1 & 0x3F) | ((w4 << 2) & 0xC0)) & 0x0F);
-                    bf2[i] = (byte)(((w2 & 0x3F) | ((w4 << 4) & 0xC0)) & 0x0F);
-                    bf3[i] = (byte)(((w3 & 0x3F) | ((w4 << 6) & 0xC0)) & 0x0F);
-                }
-
-                j = 0;
-                ck1 = 0;
-                ck2 = 0;
-                ck3 = 0;
-                while(true)
-                {
-                    ck1 = (ck1 & 0xFF) << 1;
-                    if((ck1 & 0x0100) > 0) ck1++;
-
-                    carry = (byte)((bf1[j] ^ ck1) & 0xFF);
-                    ck3 += carry;
-                    if((ck1 & 0x0100) > 0)
-                    {
-                        ck3++;
-                        ck1 &= 0xFF;
-                    }
-                    ms.WriteByte(carry);
-
-                    carry = (byte)((bf2[j] ^ ck3) & 0xFF);
-                    ck2 += carry;
-                    if(ck3 > 0xFF)
-                    {
-                        ck2++;
-                        ck3 &= 0xFF;
-                    }
-                    ms.WriteByte(carry);
-
-                    if(ms.Length == 524) break;
-
-                    carry = (byte)((bf3[j] ^ ck2) & 0xFF);
-                    ck1 += carry;
-                    if(ck2 > 0xFF)
-                    {
-                        ck1++;
-                        ck2 &= 0xFF;
-                    }
-                    ms.WriteByte(carry);
-                    j++;
-                }
-
-                return ms.ToArray();
+                bf1[i] = (byte)(((w1 & 0x3F) | ((w4 << 2) & 0xC0)) & 0x0F);
+                bf2[i] = (byte)(((w2 & 0x3F) | ((w4 << 4) & 0xC0)) & 0x0F);
+                bf3[i] = (byte)(((w3 & 0x3F) | ((w4 << 6) & 0xC0)) & 0x0F);
             }
 
+            j = 0;
+            ck1 = 0;
+            ck2 = 0;
+            ck3 = 0;
+            while(true)
+            {
+                ck1 = (ck1 & 0xFF) << 1;
+                if((ck1 & 0x0100) > 0) ck1++;
+
+                carry = (byte)((bf1[j] ^ ck1) & 0xFF);
+                ck3 += carry;
+                if((ck1 & 0x0100) > 0)
+                {
+                    ck3++;
+                    ck1 &= 0xFF;
+                }
+                ms.WriteByte(carry);
+
+                carry = (byte)((bf2[j] ^ ck3) & 0xFF);
+                ck2 += carry;
+                if(ck3 > 0xFF)
+                {
+                    ck2++;
+                    ck3 &= 0xFF;
+                }
+                ms.WriteByte(carry);
+
+                if(ms.Length == 524) break;
+
+                carry = (byte)((bf3[j] ^ ck2) & 0xFF);
+                ck1 += carry;
+                if(ck2 > 0xFF)
+                {
+                    ck1++;
+                    ck2 &= 0xFF;
+                }
+                ms.WriteByte(carry);
+                j++;
+            }
+
+            return ms.ToArray();
+
             // Not Apple Sony GCR?
-            return null;
         }
 
         public static RawSector MarshalSector(byte[] data, int offset = 0)

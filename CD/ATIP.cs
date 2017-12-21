@@ -272,12 +272,11 @@ namespace DiscImageChef.Decoders.CD
             decoded.Reserved8 = CDATIPResponse[23];
             decoded.Reserved9 = CDATIPResponse[27];
 
-            if(CDATIPResponse.Length >= 32)
-            {
-                decoded.S4Values = new byte[3];
-                Array.Copy(CDATIPResponse, 28, decoded.S4Values, 0, 3);
-                decoded.Reserved10 = CDATIPResponse[31];
-            }
+            if(CDATIPResponse.Length < 32) return decoded;
+
+            decoded.S4Values = new byte[3];
+            Array.Copy(CDATIPResponse, 28, decoded.S4Values, 0, 3);
+            decoded.Reserved10 = CDATIPResponse[31];
 
             return decoded;
         }
@@ -425,23 +424,22 @@ namespace DiscImageChef.Decoders.CD
                       .AppendLine();
             }
 
-            if(response.LeadInStartMin == 97)
+            if(response.LeadInStartMin != 97) return sb.ToString();
+
+            int type = response.LeadInStartFrame % 10;
+            int frm = response.LeadInStartFrame - type;
+            string manufacturer = "";
+
+            if(response.DiscType) sb.AppendLine("Disc uses phase change");
+            else
             {
-                int type = response.LeadInStartFrame % 10;
-                int frm = response.LeadInStartFrame - type;
-                string manufacturer = "";
-
-                if(response.DiscType) sb.AppendLine("Disc uses phase change");
-                else
-                {
-                    if(type < 5) sb.AppendLine("Disc uses long strategy type dye (Cyanine, AZO, etc...)");
-                    else sb.AppendLine("Disc uses short strategy type dye (Phthalocyanine, etc...)");
-                }
-
-                manufacturer = ManufacturerFromATIP(response.LeadInStartSec, frm);
-
-                if(manufacturer != "") sb.AppendFormat("Disc manufactured by: {0}", manufacturer).AppendLine();
+                if(type < 5) sb.AppendLine("Disc uses long strategy type dye (Cyanine, AZO, etc...)");
+                else sb.AppendLine("Disc uses short strategy type dye (Phthalocyanine, etc...)");
             }
+
+            manufacturer = ManufacturerFromATIP(response.LeadInStartSec, frm);
+
+            if(manufacturer != "") sb.AppendFormat("Disc manufactured by: {0}", manufacturer).AppendLine();
 
             return sb.ToString();
         }

@@ -2274,11 +2274,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.Lock |= (feature[4] & 0x01) == 0x01;
             }
 
-            if(decoded.Version >= 2)
-            {
-                decoded.Load |= (feature[4] & 0x10) == 0x10;
-                decoded.DBML |= (feature[4] & 0x02) == 0x02;
-            }
+            if(decoded.Version < 2) return decoded;
+
+            decoded.Load |= (feature[4] & 0x10) == 0x10;
+            decoded.DBML |= (feature[4] & 0x02) == 0x02;
 
             return decoded;
         }
@@ -2332,13 +2331,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.LogicalBlockSize =
-                    (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
-                decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
-                decoded.PP |= (feature[10] & 0x01) == 0x01;
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.LogicalBlockSize =
+                (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+            decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
+            decoded.PP |= (feature[10] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -2441,14 +2439,13 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 1)
-            {
-                decoded.LastLBA = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
-                decoded.LogicalBlockSize =
-                    (uint)((feature[8] << 24) + (feature[9] << 16) + (feature[10] << 8) + feature[11]);
-                decoded.Blocking = (ushort)((feature[12] << 8) + feature[13]);
-                decoded.PP |= (feature[14] & 0x01) == 0x01;
-            }
+            if(decoded.Version < 1) return decoded;
+
+            decoded.LastLBA = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+            decoded.LogicalBlockSize =
+                (uint)((feature[8] << 24) + (feature[9] << 16) + (feature[10] << 8) + feature[11]);
+            decoded.Blocking = (ushort)((feature[12] << 8) + feature[13]);
+            decoded.PP |= (feature[14] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -2479,11 +2476,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 if(feature.Length > feature[7] + 8) Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
             }
 
-            if(decoded.Version >= 3)
-            {
-                decoded.TRIO |= (feature[6] & 0x04) == 0x04;
-                decoded.ARSV |= (feature[6] & 0x02) == 0x02;
-            }
+            if(decoded.Version < 3) return decoded;
+
+            decoded.TRIO |= (feature[6] & 0x04) == 0x04;
+            decoded.ARSV |= (feature[6] & 0x02) == 0x02;
 
             return decoded;
         }
@@ -2582,13 +2578,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.LogicalBlockSize =
-                    (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
-                decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
-                decoded.PP |= (feature[10] & 0x01) == 0x01;
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.LogicalBlockSize =
+                (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+            decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
+            decoded.PP |= (feature[10] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -2655,11 +2650,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(decoded.Version >= 0) decoded.Write |= (feature[4] & 0x01) == 0x01;
 
-            if(decoded.Version >= 1)
-            {
-                decoded.DVDPWrite |= (feature[4] & 0x04) == 0x04;
-                decoded.DVDPRead |= (feature[4] & 0x02) == 0x02;
-            }
+            if(decoded.Version < 1) return decoded;
+
+            decoded.DVDPWrite |= (feature[4] & 0x04) == 0x04;
+            decoded.DVDPRead |= (feature[4] & 0x02) == 0x02;
 
             return decoded;
         }
@@ -2682,12 +2676,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.DRTDM |= (feature[4] & 0x01) == 0x01;
-                decoded.DBICacheZones = feature[5];
-                decoded.Entries = (ushort)((feature[6] << 8) + feature[7]);
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.DRTDM |= (feature[4] & 0x01) == 0x01;
+            decoded.DBICacheZones = feature[5];
+            decoded.Entries = (ushort)((feature[6] << 8) + feature[7]);
 
             return decoded;
         }
@@ -2762,13 +2755,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.DSDG |= (feature[4] & 0x08) == 0x08;
-                decoded.DSDR |= (feature[4] & 0x04) == 0x04;
-                decoded.Intermediate |= (feature[4] & 0x02) == 0x02;
-                decoded.Blank |= (feature[4] & 0x01) == 0x01;
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.DSDG |= (feature[4] & 0x08) == 0x08;
+            decoded.DSDR |= (feature[4] & 0x04) == 0x04;
+            decoded.Intermediate |= (feature[4] & 0x02) == 0x02;
+            decoded.Blank |= (feature[4] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -2799,12 +2791,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.DataTypeSupported = (ushort)((feature[6] << 8) + feature[7]);
             }
 
-            if(decoded.Version >= 2)
-            {
-                decoded.BUF |= (feature[4] & 0x40) == 0x40;
-                decoded.RWRaw |= (feature[4] & 0x10) == 0x10;
-                decoded.RWPack |= (feature[4] & 0x08) == 0x08;
-            }
+            if(decoded.Version < 2) return decoded;
+
+            decoded.BUF |= (feature[4] & 0x40) == 0x40;
+            decoded.RWRaw |= (feature[4] & 0x10) == 0x10;
+            decoded.RWPack |= (feature[4] & 0x08) == 0x08;
 
             return decoded;
         }
@@ -2936,11 +2927,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.Intermediate |= (feature[4] & 0x02) == 0x02;
-                decoded.Blank |= (feature[4] & 0x01) == 0x01;
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.Intermediate |= (feature[4] & 0x02) == 0x02;
+            decoded.Blank |= (feature[4] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -2963,11 +2953,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(feature[7] > 0 && feature.Length > feature[7] + 8)
-            {
-                decoded.LinkSizes = new byte[feature[7]];
-                Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
-            }
+            if(feature[7] <= 0 || feature.Length <= feature[7] + 8) return decoded;
+
+            decoded.LinkSizes = new byte[feature[7]];
+            Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
 
             return decoded;
         }
@@ -3055,12 +3044,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.Write |= (feature[4] & 0x01) == 0x01;
-                decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
-                decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.Write |= (feature[4] & 0x01) == 0x01;
+            decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
+            decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -3113,14 +3101,13 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.OldROM |= (feature[25] & 0x01) == 0x01;
             }
 
-            if(decoded.Version >= 1)
-            {
-                decoded.BCA |= (feature[4] & 0x01) == 0x01;
-                decoded.RE2 |= (feature[9] & 0x04) == 0x04;
-                decoded.RE1 |= (feature[9] & 0x02) == 0x02;
-                decoded.R |= (feature[17] & 0x02) == 0x02;
-                decoded.ROM |= (feature[25] & 0x02) == 0x02;
-            }
+            if(decoded.Version < 1) return decoded;
+
+            decoded.BCA |= (feature[4] & 0x01) == 0x01;
+            decoded.RE2 |= (feature[9] & 0x04) == 0x04;
+            decoded.RE1 |= (feature[9] & 0x02) == 0x02;
+            decoded.R |= (feature[17] & 0x02) == 0x02;
+            decoded.ROM |= (feature[25] & 0x02) == 0x02;
 
             return decoded;
         }
@@ -3150,12 +3137,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.OldR |= (feature[17] & 0x01) == 0x01;
             }
 
-            if(decoded.Version >= 1)
-            {
-                decoded.RE2 |= (feature[9] & 0x04) == 0x04;
-                decoded.RE1 |= (feature[9] & 0x02) == 0x02;
-                decoded.R |= (feature[17] & 0x02) == 0x02;
-            }
+            if(decoded.Version < 1) return decoded;
+
+            decoded.RE2 |= (feature[9] & 0x04) == 0x04;
+            decoded.RE1 |= (feature[9] & 0x02) == 0x02;
+            decoded.R |= (feature[17] & 0x02) == 0x02;
 
             return decoded;
         }
@@ -3199,11 +3185,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
-                decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
+            decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -3226,11 +3211,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
-                decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
+            decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -3320,12 +3304,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.SCC |= (feature[4] & 0x10) == 0x10;
-                decoded.SDP |= (feature[4] & 0x04) == 0x04;
-                decoded.HighestSlotNumber = (byte)(feature[7] & 0x1F);
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.SCC |= (feature[4] & 0x10) == 0x10;
+            decoded.SDP |= (feature[4] & 0x04) == 0x04;
+            decoded.HighestSlotNumber = (byte)(feature[7] & 0x1F);
 
             return decoded;
         }
@@ -3348,13 +3331,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.Scan |= (feature[4] & 0x04) == 0x04;
-                decoded.SCM |= (feature[4] & 0x02) == 0x02;
-                decoded.SV |= (feature[4] & 0x01) == 0x01;
-                decoded.VolumeLevels = (ushort)((feature[6] << 8) + feature[7]);
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.Scan |= (feature[4] & 0x04) == 0x04;
+            decoded.SCM |= (feature[4] & 0x02) == 0x02;
+            decoded.SV |= (feature[4] & 0x01) == 0x01;
+            decoded.VolumeLevels = (ushort)((feature[6] << 8) + feature[7]);
 
             return decoded;
         }
@@ -3400,11 +3382,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 1 && feature.Length >= 8)
-            {
-                decoded.Group3 |= (feature[4] & 0x01) == 0x01;
-                decoded.UnitLength = (ushort)((feature[6] << 8) + feature[7]);
-            }
+            if(decoded.Version < 1 || feature.Length < 8) return decoded;
+
+            decoded.Group3 |= (feature[4] & 0x01) == 0x01;
+            decoded.UnitLength = (ushort)((feature[6] << 8) + feature[7]);
 
             return decoded;
         }
@@ -3459,11 +3440,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.SW |= (feature[4] & 0x01) == 0x01;
             }
 
-            if(decoded.Version >= 5 && feature.Length >= 8)
-            {
-                decoded.SMP |= (feature[4] & 0x20) == 0x20;
-                decoded.RBCB |= (feature[4] & 0x10) == 0x10;
-            }
+            if(decoded.Version < 5 || feature.Length < 8) return decoded;
+
+            decoded.SMP |= (feature[4] & 0x20) == 0x20;
+            decoded.RBCB |= (feature[4] & 0x10) == 0x10;
 
             return decoded;
         }
@@ -3486,12 +3466,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                byte[] serial = new byte[feature.Length];
-                Array.Copy(feature, 4, serial, 0, feature.Length - 4);
-                decoded.Serial = StringHandlers.CToString(serial).Trim();
-            }
+            if(decoded.Version < 0) return decoded;
+
+            byte[] serial = new byte[feature.Length];
+            Array.Copy(feature, 4, serial, 0, feature.Length - 4);
+            decoded.Serial = StringHandlers.CToString(serial).Trim();
 
             return decoded;
         }
@@ -3535,13 +3514,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.DCBs = new uint[feature[3] / 4];
-                for(int i = 0; i < decoded.DCBs.Length; i++)
-                    decoded.DCBs[i] = (uint)((feature[0 + 4 + i * 4] << 24) + (feature[1 + 4 + i * 4] << 16) +
-                                             (feature[2 + 4 + i * 4] << 8) + feature[3 + 4 + i * 4]);
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.DCBs = new uint[feature[3] / 4];
+            for(int i = 0; i < decoded.DCBs.Length; i++)
+                decoded.DCBs[i] = (uint)((feature[0 + 4 + i * 4] << 24) + (feature[1 + 4 + i * 4] << 16) +
+                                         (feature[2 + 4 + i * 4] << 8) + feature[3 + 4 + i * 4]);
 
             return decoded;
         }
@@ -3587,16 +3565,15 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.Century = (ushort)((feature[4] << 8) + feature[5]);
-                decoded.Year = (ushort)((feature[6] << 8) + feature[7]);
-                decoded.Month = (ushort)((feature[8] << 8) + feature[9]);
-                decoded.Day = (ushort)((feature[10] << 8) + feature[11]);
-                decoded.Hour = (ushort)((feature[12] << 8) + feature[13]);
-                decoded.Minute = (ushort)((feature[14] << 8) + feature[15]);
-                decoded.Second = (ushort)((feature[16] << 8) + feature[17]);
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.Century = (ushort)((feature[4] << 8) + feature[5]);
+            decoded.Year = (ushort)((feature[6] << 8) + feature[7]);
+            decoded.Month = (ushort)((feature[8] << 8) + feature[9]);
+            decoded.Day = (ushort)((feature[10] << 8) + feature[11]);
+            decoded.Hour = (ushort)((feature[12] << 8) + feature[13]);
+            decoded.Minute = (ushort)((feature[14] << 8) + feature[15]);
+            decoded.Second = (ushort)((feature[16] << 8) + feature[17]);
 
             return decoded;
         }
@@ -3627,13 +3604,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.AACSVersion = feature[7];
             }
 
-            if(decoded.Version >= 2)
-            {
-                decoded.RDC |= (feature[4] & 0x10) == 0x10;
-                decoded.RMC |= (feature[4] & 0x08) == 0x08;
-                decoded.WBE |= (feature[4] & 0x04) == 0x04;
-                decoded.BEC |= (feature[4] & 0x02) == 0x02;
-            }
+            if(decoded.Version < 2) return decoded;
+
+            decoded.RDC |= (feature[4] & 0x10) == 0x10;
+            decoded.RMC |= (feature[4] & 0x08) == 0x08;
+            decoded.WBE |= (feature[4] & 0x04) == 0x04;
+            decoded.BEC |= (feature[4] & 0x02) == 0x02;
 
             return decoded;
         }
@@ -3721,16 +3697,16 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Persistent |= (feature[2] & 0x02) == 0x02;
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
-            if(decoded.Version >= 0)
-            {
-                decoded.PSAU |= (feature[4] & 0x80) == 0x80;
-                decoded.LOSPB |= (feature[4] & 0x40) == 0x40;
-                decoded.ME |= (feature[4] & 0x01) == 0x01;
-                decoded.Profiles = new ushort[feature[5]];
-                if(feature[5] * 2 + 6 == feature.Length)
-                    for(int i = 0; i < feature[5]; i++)
-                        decoded.Profiles[i] = (ushort)((feature[0 + 6 + 2 * i] << 8) + feature[1 + 6 + 2 * i]);
-            }
+            if(decoded.Version < 0) return decoded;
+
+            decoded.PSAU |= (feature[4] & 0x80) == 0x80;
+            decoded.LOSPB |= (feature[4] & 0x40) == 0x40;
+            decoded.ME |= (feature[4] & 0x01) == 0x01;
+            decoded.Profiles = new ushort[feature[5]];
+            if(feature[5] * 2 + 6 != feature.Length) return decoded;
+
+            for(int i = 0; i < feature[5]; i++)
+                decoded.Profiles[i] = (ushort)((feature[0 + 6 + 2 * i] << 8) + feature[1 + 6 + 2 * i]);
 
             return decoded;
         }
@@ -3743,136 +3719,137 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("MMC Supported Profiles:");
-            if(ftr.Profiles != null)
-                foreach(Profile prof in ftr.Profiles)
-                {
-                    switch(prof.Number)
-                    {
-                        case ProfileNumber.Reserved:
-                            sb.Append("\tDrive reported a reserved profile number");
-                            break;
-                        case ProfileNumber.NonRemovable:
-                            sb.Append("\tDrive supports non-removable changeable media");
-                            break;
-                        case ProfileNumber.Removable:
-                            sb.Append("\tDrive supports rewritable and removable media");
-                            break;
-                        case ProfileNumber.MOErasable:
-                            sb.Append("\tDrive supports Magnet-Optical media");
-                            break;
-                        case ProfileNumber.OpticalWORM:
-                            sb.Append("\tDrive supports optical write-once media");
-                            break;
-                        case ProfileNumber.ASMO:
-                            sb.Append("\tDrive supports Advanced Storage - Magneto-Optical");
-                            break;
-                        case ProfileNumber.CDROM:
-                            sb.Append("\tDrive supports CD-ROM");
-                            break;
-                        case ProfileNumber.CDR:
-                            sb.Append("\tDrive supports CD-R");
-                            break;
-                        case ProfileNumber.CDRW:
-                            sb.Append("\tDrive supports CD-RW");
-                            break;
-                        case ProfileNumber.DVDROM:
-                            sb.Append("\tDrive supports DVD-ROM");
-                            break;
-                        case ProfileNumber.DVDRSeq:
-                            sb.Append("\tDrive supports DVD-R");
-                            break;
-                        case ProfileNumber.DVDRAM:
-                            sb.Append("\tDrive supports DVD-RAM");
-                            break;
-                        case ProfileNumber.DVDRWRes:
-                            sb.Append("\tDrive supports restricted overwrite DVD-RW");
-                            break;
-                        case ProfileNumber.DVDRWSeq:
-                            sb.Append("\tDrive supports sequentially recorded DVD-RW");
-                            break;
-                        case ProfileNumber.DVDRDLSeq:
-                            sb.Append("\tDrive supports sequentially recorded DVD-R DL");
-                            break;
-                        case ProfileNumber.DVDRDLJump:
-                            sb.Append("\tDrive supports layer jump recorded DVD-R DL");
-                            break;
-                        case ProfileNumber.DVDRWDL:
-                            sb.Append("\tDrive supports DVD-RW DL");
-                            break;
-                        case ProfileNumber.DVDDownload:
-                            sb.Append("\tDrive supports DVD-Download");
-                            break;
-                        case ProfileNumber.DVDRWPlus:
-                            sb.Append("\tDrive supports DVD+RW");
-                            break;
-                        case ProfileNumber.DVDRPlus:
-                            sb.Append("\tDrive supports DVD+R");
-                            break;
-                        case ProfileNumber.DDCDROM:
-                            sb.Append("\tDrive supports DDCD-ROM");
-                            break;
-                        case ProfileNumber.DDCDR:
-                            sb.Append("\tDrive supports DDCD-R");
-                            break;
-                        case ProfileNumber.DDCDRW:
-                            sb.Append("\tDrive supports DDCD-RW");
-                            break;
-                        case ProfileNumber.DVDRWDLPlus:
-                            sb.Append("\tDrive supports DVD+RW DL");
-                            break;
-                        case ProfileNumber.DVDRDLPlus:
-                            sb.Append("\tDrive supports DVD+R DL");
-                            break;
-                        case ProfileNumber.BDROM:
-                            sb.Append("\tDrive supports BD-ROM");
-                            break;
-                        case ProfileNumber.BDRSeq:
-                            sb.Append("\tDrive supports BD-R SRM");
-                            break;
-                        case ProfileNumber.BDRRdm:
-                            sb.Append("\tDrive supports BD-R RRM");
-                            break;
-                        case ProfileNumber.BDRE:
-                            sb.Append("\tDrive supports BD-RE");
-                            break;
-                        case ProfileNumber.HDDVDROM:
-                            sb.Append("\tDrive supports HD DVD-ROM");
-                            break;
-                        case ProfileNumber.HDDVDR:
-                            sb.Append("\tDrive supports HD DVD-R");
-                            break;
-                        case ProfileNumber.HDDVDRAM:
-                            sb.Append("\tDrive supports HD DVD-RAM");
-                            break;
-                        case ProfileNumber.HDDVDRW:
-                            sb.Append("\tDrive supports HD DVD-RW");
-                            break;
-                        case ProfileNumber.HDDVDRDL:
-                            sb.Append("\tDrive supports HD DVD-R DL");
-                            break;
-                        case ProfileNumber.HDDVDRWDL:
-                            sb.Append("\tDrive supports HD DVD-RW DL");
-                            break;
-                        case ProfileNumber.HDBURNROM:
-                            sb.Append("\tDrive supports HDBurn CD-ROM");
-                            break;
-                        case ProfileNumber.HDBURNR:
-                            sb.Append("\tDrive supports HDBurn CD-R");
-                            break;
-                        case ProfileNumber.HDBURNRW:
-                            sb.Append("\tDrive supports HDBurn CD-RW");
-                            break;
-                        case ProfileNumber.Unconforming:
-                            sb.Append("\tDrive is not conforming to any profile");
-                            break;
-                        default:
-                            sb.AppendFormat("\tDrive informs of unknown profile 0x{0:X4}", (ushort)prof.Number);
-                            break;
-                    }
+            if(ftr.Profiles == null) return sb.ToString();
 
-                    if(prof.Current) sb.AppendLine(" (current)");
-                    else sb.AppendLine();
+            foreach(Profile prof in ftr.Profiles)
+            {
+                switch(prof.Number)
+                {
+                    case ProfileNumber.Reserved:
+                        sb.Append("\tDrive reported a reserved profile number");
+                        break;
+                    case ProfileNumber.NonRemovable:
+                        sb.Append("\tDrive supports non-removable changeable media");
+                        break;
+                    case ProfileNumber.Removable:
+                        sb.Append("\tDrive supports rewritable and removable media");
+                        break;
+                    case ProfileNumber.MOErasable:
+                        sb.Append("\tDrive supports Magnet-Optical media");
+                        break;
+                    case ProfileNumber.OpticalWORM:
+                        sb.Append("\tDrive supports optical write-once media");
+                        break;
+                    case ProfileNumber.ASMO:
+                        sb.Append("\tDrive supports Advanced Storage - Magneto-Optical");
+                        break;
+                    case ProfileNumber.CDROM:
+                        sb.Append("\tDrive supports CD-ROM");
+                        break;
+                    case ProfileNumber.CDR:
+                        sb.Append("\tDrive supports CD-R");
+                        break;
+                    case ProfileNumber.CDRW:
+                        sb.Append("\tDrive supports CD-RW");
+                        break;
+                    case ProfileNumber.DVDROM:
+                        sb.Append("\tDrive supports DVD-ROM");
+                        break;
+                    case ProfileNumber.DVDRSeq:
+                        sb.Append("\tDrive supports DVD-R");
+                        break;
+                    case ProfileNumber.DVDRAM:
+                        sb.Append("\tDrive supports DVD-RAM");
+                        break;
+                    case ProfileNumber.DVDRWRes:
+                        sb.Append("\tDrive supports restricted overwrite DVD-RW");
+                        break;
+                    case ProfileNumber.DVDRWSeq:
+                        sb.Append("\tDrive supports sequentially recorded DVD-RW");
+                        break;
+                    case ProfileNumber.DVDRDLSeq:
+                        sb.Append("\tDrive supports sequentially recorded DVD-R DL");
+                        break;
+                    case ProfileNumber.DVDRDLJump:
+                        sb.Append("\tDrive supports layer jump recorded DVD-R DL");
+                        break;
+                    case ProfileNumber.DVDRWDL:
+                        sb.Append("\tDrive supports DVD-RW DL");
+                        break;
+                    case ProfileNumber.DVDDownload:
+                        sb.Append("\tDrive supports DVD-Download");
+                        break;
+                    case ProfileNumber.DVDRWPlus:
+                        sb.Append("\tDrive supports DVD+RW");
+                        break;
+                    case ProfileNumber.DVDRPlus:
+                        sb.Append("\tDrive supports DVD+R");
+                        break;
+                    case ProfileNumber.DDCDROM:
+                        sb.Append("\tDrive supports DDCD-ROM");
+                        break;
+                    case ProfileNumber.DDCDR:
+                        sb.Append("\tDrive supports DDCD-R");
+                        break;
+                    case ProfileNumber.DDCDRW:
+                        sb.Append("\tDrive supports DDCD-RW");
+                        break;
+                    case ProfileNumber.DVDRWDLPlus:
+                        sb.Append("\tDrive supports DVD+RW DL");
+                        break;
+                    case ProfileNumber.DVDRDLPlus:
+                        sb.Append("\tDrive supports DVD+R DL");
+                        break;
+                    case ProfileNumber.BDROM:
+                        sb.Append("\tDrive supports BD-ROM");
+                        break;
+                    case ProfileNumber.BDRSeq:
+                        sb.Append("\tDrive supports BD-R SRM");
+                        break;
+                    case ProfileNumber.BDRRdm:
+                        sb.Append("\tDrive supports BD-R RRM");
+                        break;
+                    case ProfileNumber.BDRE:
+                        sb.Append("\tDrive supports BD-RE");
+                        break;
+                    case ProfileNumber.HDDVDROM:
+                        sb.Append("\tDrive supports HD DVD-ROM");
+                        break;
+                    case ProfileNumber.HDDVDR:
+                        sb.Append("\tDrive supports HD DVD-R");
+                        break;
+                    case ProfileNumber.HDDVDRAM:
+                        sb.Append("\tDrive supports HD DVD-RAM");
+                        break;
+                    case ProfileNumber.HDDVDRW:
+                        sb.Append("\tDrive supports HD DVD-RW");
+                        break;
+                    case ProfileNumber.HDDVDRDL:
+                        sb.Append("\tDrive supports HD DVD-R DL");
+                        break;
+                    case ProfileNumber.HDDVDRWDL:
+                        sb.Append("\tDrive supports HD DVD-RW DL");
+                        break;
+                    case ProfileNumber.HDBURNROM:
+                        sb.Append("\tDrive supports HDBurn CD-ROM");
+                        break;
+                    case ProfileNumber.HDBURNR:
+                        sb.Append("\tDrive supports HDBurn CD-R");
+                        break;
+                    case ProfileNumber.HDBURNRW:
+                        sb.Append("\tDrive supports HDBurn CD-RW");
+                        break;
+                    case ProfileNumber.Unconforming:
+                        sb.Append("\tDrive is not conforming to any profile");
+                        break;
+                    default:
+                        sb.AppendFormat("\tDrive informs of unknown profile 0x{0:X4}", (ushort)prof.Number);
+                        break;
                 }
+
+                if(prof.Current) sb.AppendLine(" (current)");
+                else sb.AppendLine();
+            }
 
             return sb.ToString();
         }
@@ -4337,27 +4314,26 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if(ftr.TestWrite) sb.AppendLine("\tDrive can do a test writing");
             if(ftr.BUF) sb.AppendLine("\tDrive supports zero loss linking");
 
-            if(ftr.DataTypeSupported > 0)
-            {
-                sb.Append("\tDrive supports data block types:");
-                if((ftr.DataTypeSupported & 0x0001) == 0x0001) sb.Append(" 0");
-                if((ftr.DataTypeSupported & 0x0002) == 0x0002) sb.Append(" 1");
-                if((ftr.DataTypeSupported & 0x0004) == 0x0004) sb.Append(" 2");
-                if((ftr.DataTypeSupported & 0x0008) == 0x0008) sb.Append(" 3");
-                if((ftr.DataTypeSupported & 0x0010) == 0x0010) sb.Append(" 4");
-                if((ftr.DataTypeSupported & 0x0020) == 0x0020) sb.Append(" 5");
-                if((ftr.DataTypeSupported & 0x0040) == 0x0040) sb.Append(" 6");
-                if((ftr.DataTypeSupported & 0x0080) == 0x0080) sb.Append(" 7");
-                if((ftr.DataTypeSupported & 0x0100) == 0x0100) sb.Append(" 8");
-                if((ftr.DataTypeSupported & 0x0200) == 0x0200) sb.Append(" 9");
-                if((ftr.DataTypeSupported & 0x0400) == 0x0400) sb.Append(" 10");
-                if((ftr.DataTypeSupported & 0x0800) == 0x0800) sb.Append(" 11");
-                if((ftr.DataTypeSupported & 0x1000) == 0x1000) sb.Append(" 12");
-                if((ftr.DataTypeSupported & 0x2000) == 0x2000) sb.Append(" 13");
-                if((ftr.DataTypeSupported & 0x4000) == 0x4000) sb.Append(" 14");
-                if((ftr.DataTypeSupported & 0x8000) == 0x8000) sb.Append(" 15");
-                sb.AppendLine();
-            }
+            if(ftr.DataTypeSupported <= 0) return sb.ToString();
+
+            sb.Append("\tDrive supports data block types:");
+            if((ftr.DataTypeSupported & 0x0001) == 0x0001) sb.Append(" 0");
+            if((ftr.DataTypeSupported & 0x0002) == 0x0002) sb.Append(" 1");
+            if((ftr.DataTypeSupported & 0x0004) == 0x0004) sb.Append(" 2");
+            if((ftr.DataTypeSupported & 0x0008) == 0x0008) sb.Append(" 3");
+            if((ftr.DataTypeSupported & 0x0010) == 0x0010) sb.Append(" 4");
+            if((ftr.DataTypeSupported & 0x0020) == 0x0020) sb.Append(" 5");
+            if((ftr.DataTypeSupported & 0x0040) == 0x0040) sb.Append(" 6");
+            if((ftr.DataTypeSupported & 0x0080) == 0x0080) sb.Append(" 7");
+            if((ftr.DataTypeSupported & 0x0100) == 0x0100) sb.Append(" 8");
+            if((ftr.DataTypeSupported & 0x0200) == 0x0200) sb.Append(" 9");
+            if((ftr.DataTypeSupported & 0x0400) == 0x0400) sb.Append(" 10");
+            if((ftr.DataTypeSupported & 0x0800) == 0x0800) sb.Append(" 11");
+            if((ftr.DataTypeSupported & 0x1000) == 0x1000) sb.Append(" 12");
+            if((ftr.DataTypeSupported & 0x2000) == 0x2000) sb.Append(" 13");
+            if((ftr.DataTypeSupported & 0x4000) == 0x4000) sb.Append(" 14");
+            if((ftr.DataTypeSupported & 0x8000) == 0x8000) sb.Append(" 15");
+            sb.AppendLine();
 
             return sb.ToString();
         }
@@ -4449,9 +4425,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             sb.AppendLine("MMC Layer Jump Recording:");
 
-            if(ftr.LinkSizes != null)
-                foreach(byte link in ftr.LinkSizes)
-                    sb.AppendFormat("\tCurrent media has a {0} bytes link available", link).AppendLine();
+            if(ftr.LinkSizes == null) return sb.ToString();
+
+            foreach(byte link in ftr.LinkSizes)
+                sb.AppendFormat("\tCurrent media has a {0} bytes link available", link).AppendLine();
 
             return sb.ToString();
         }
@@ -4469,19 +4446,18 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("Drive can write CD-RW");
-            if(ftr.SubtypeSupport > 0)
-            {
-                sb.Append("\tDrive supports CD-RW subtypes");
-                if((ftr.SubtypeSupport & 0x01) == 0x01) sb.Append(" 0");
-                if((ftr.SubtypeSupport & 0x02) == 0x02) sb.Append(" 1");
-                if((ftr.SubtypeSupport & 0x04) == 0x04) sb.Append(" 2");
-                if((ftr.SubtypeSupport & 0x08) == 0x08) sb.Append(" 3");
-                if((ftr.SubtypeSupport & 0x10) == 0x10) sb.Append(" 4");
-                if((ftr.SubtypeSupport & 0x20) == 0x20) sb.Append(" 5");
-                if((ftr.SubtypeSupport & 0x40) == 0x40) sb.Append(" 6");
-                if((ftr.SubtypeSupport & 0x80) == 0x80) sb.Append(" 7");
-                sb.AppendLine();
-            }
+            if(ftr.SubtypeSupport <= 0) return sb.ToString();
+
+            sb.Append("\tDrive supports CD-RW subtypes");
+            if((ftr.SubtypeSupport & 0x01) == 0x01) sb.Append(" 0");
+            if((ftr.SubtypeSupport & 0x02) == 0x02) sb.Append(" 1");
+            if((ftr.SubtypeSupport & 0x04) == 0x04) sb.Append(" 2");
+            if((ftr.SubtypeSupport & 0x08) == 0x08) sb.Append(" 3");
+            if((ftr.SubtypeSupport & 0x10) == 0x10) sb.Append(" 4");
+            if((ftr.SubtypeSupport & 0x20) == 0x20) sb.Append(" 5");
+            if((ftr.SubtypeSupport & 0x40) == 0x40) sb.Append(" 6");
+            if((ftr.SubtypeSupport & 0x80) == 0x80) sb.Append(" 7");
+            sb.AppendLine();
 
             return sb.ToString();
         }
@@ -4722,12 +4698,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             sb.AppendLine("Drive supports Timeout & Protect mode page 1Dh");
 
-            if(ftr.Group3)
-            {
-                sb.AppendLine("\tDrive supports the Group3 in Timeout & Protect mode page 1Dh");
-                if(ftr.UnitLength > 0)
-                    sb.AppendFormat("\tDrive has {0} increase of Group 3 time unit", ftr.UnitLength).AppendLine();
-            }
+            if(!ftr.Group3) return sb.ToString();
+
+            sb.AppendLine("\tDrive supports the Group3 in Timeout & Protect mode page 1Dh");
+            if(ftr.UnitLength > 0)
+                sb.AppendFormat("\tDrive has {0} increase of Group 3 time unit", ftr.UnitLength).AppendLine();
 
             return sb.ToString();
         }
@@ -4791,7 +4766,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             Feature_010A ftr = feature.Value;
             StringBuilder sb = new StringBuilder();
 
-            if(ftr.DCBs != null) foreach(uint DCB in ftr.DCBs) sb.AppendFormat("Drive supports DCB {0:X8}h", DCB).AppendLine();
+            if(ftr.DCBs == null) return sb.ToString();
+
+            foreach(uint DCB in ftr.DCBs) sb.AppendFormat("Drive supports DCB {0:X8}h", DCB).AppendLine();
 
             return sb.ToString();
         }
@@ -4946,9 +4923,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if(ftr.LOSPB) sb.AppendLine("\tDrive supports linked OSPBs");
             if(ftr.ME) sb.AppendLine("\tDrive will only record on the OSSC Disc Format");
 
-            if(ftr.Profiles != null)
-                for(int i = 0; i < ftr.Profiles.Length; i++)
-                    sb.AppendFormat("\tProfile {0}: {1}", i, ftr.Profiles[i]).AppendLine();
+            if(ftr.Profiles == null) return sb.ToString();
+
+            for(int i = 0; i < ftr.Profiles.Length; i++)
+                sb.AppendFormat("\tProfile {0}: {1}", i, ftr.Profiles[i]).AppendLine();
 
             return sb.ToString();
         }

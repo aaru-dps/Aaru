@@ -316,15 +316,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.DiscApplicationCode = response[32];
             decoded.OPCTablesNumber = response[33];
 
-            if(decoded.OPCTablesNumber > 0 && response.Length == decoded.OPCTablesNumber * 8 + 34)
+            if(decoded.OPCTablesNumber <= 0 || response.Length != decoded.OPCTablesNumber * 8 + 34) return decoded;
+
+            decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
+            for(int i = 0; i < decoded.OPCTablesNumber; i++)
             {
-                decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
-                for(int i = 0; i < decoded.OPCTablesNumber; i++)
-                {
-                    decoded.OPCTables[i].Speed = (ushort)((response[34 + i * 8 + 0] << 16) + response[34 + i * 8 + 1]);
-                    decoded.OPCTables[i].OPCValues = new byte[6];
-                    Array.Copy(response, 34 + i * 8 + 2, decoded.OPCTables[i].OPCValues, 0, 6);
-                }
+                decoded.OPCTables[i].Speed = (ushort)((response[34 + i * 8 + 0] << 16) + response[34 + i * 8 + 1]);
+                decoded.OPCTables[i].OPCValues = new byte[6];
+                Array.Copy(response, 34 + i * 8 + 2, decoded.OPCTables[i].OPCValues, 0, 6);
             }
 
             return decoded;
@@ -425,11 +424,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if(decoded.DBC_V) sb.AppendFormat("Disc barcode: {0:X16}", decoded.DiscBarcode).AppendLine();
             if(decoded.DAC_V) sb.AppendFormat("Disc application code: {0}", decoded.DiscApplicationCode).AppendLine();
 
-            if(decoded.OPCTables != null)
-                foreach(OPCTable table in decoded.OPCTables)
-                    sb.AppendFormat("OPC values for {0}Kbit/sec.: {1}, {2}, {3}, {4}, {5}, {6}", table.Speed,
-                                    table.OPCValues[0], table.OPCValues[1], table.OPCValues[2], table.OPCValues[3],
-                                    table.OPCValues[4], table.OPCValues[5]).AppendLine();
+            if(decoded.OPCTables == null) return sb.ToString();
+
+            foreach(OPCTable table in decoded.OPCTables)
+                sb.AppendFormat("OPC values for {0}Kbit/sec.: {1}, {2}, {3}, {4}, {5}, {6}", table.Speed,
+                                table.OPCValues[0], table.OPCValues[1], table.OPCValues[2], table.OPCValues[3],
+                                table.OPCValues[4], table.OPCValues[5]).AppendLine();
 
             return sb.ToString();
         }

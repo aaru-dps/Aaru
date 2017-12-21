@@ -91,11 +91,10 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendFormat("\tVendor-specific mode control: {0}", page.ModeControl);
             sb.AppendFormat("\tVendor-specific velocity setting: {0}", page.VelocitySetting);
 
-            if(page.EncryptionCapable)
-            {
-                sb.AppendLine("\tDrive supports encryption");
-                if(page.EncryptionEnabled) sb.AppendLine("\tDrive has encryption enabled");
-            }
+            if(!page.EncryptionCapable) return sb.ToString();
+
+            sb.AppendLine("\tDrive supports encryption");
+            if(page.EncryptionEnabled) sb.AppendLine("\tDrive has encryption enabled");
 
             return sb.ToString();
         }

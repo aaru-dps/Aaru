@@ -301,11 +301,10 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(sense.Length >= 18) decoded.SenseKeySpecific = (uint)((sense[15] << 16) + (sense[16] << 8) + sense[17]);
 
-            if(sense.Length > 18)
-            {
-                decoded.AdditionalSense = new byte[sense.Length - 18];
-                Array.Copy(sense, 18, decoded.AdditionalSense, 0, decoded.AdditionalSense.Length);
-            }
+            if(sense.Length <= 18) return decoded;
+
+            decoded.AdditionalSense = new byte[sense.Length - 18];
+            Array.Copy(sense, 18, decoded.AdditionalSense, 0, decoded.AdditionalSense.Length);
 
             return decoded;
         }
@@ -398,33 +397,34 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(decoded.AdditionalLength < 10) return sb.ToString();
 
-            if(decoded.SKSV)
-                switch(decoded.SenseKey)
-                {
-                    case SenseKeys.IllegalRequest:
-                    {
-                        if((decoded.SenseKeySpecific & 0x400000) == 0x400000) sb.AppendLine("Illegal field in CDB");
-                        else sb.AppendLine("Illegal field in data parameters");
+            if(!decoded.SKSV) return sb.ToString();
 
-                        if((decoded.SenseKeySpecific & 0x200000) == 0x200000)
-                            sb.AppendFormat("Invalid value in bit {0} in field {1} of CDB",
-                                            (decoded.SenseKeySpecific & 0x70000) >> 16,
-                                            decoded.SenseKeySpecific & 0xFFFF).AppendLine();
-                        else
-                            sb.AppendFormat("Invalid value in field {0} of CDB", decoded.SenseKeySpecific & 0xFFFF)
-                              .AppendLine();
-                    }
-                        break;
-                    case SenseKeys.NotReady:
-                        sb.AppendFormat("Format progress {0:P}", (double)(decoded.SenseKeySpecific & 0xFFFF) / 65536)
+            switch(decoded.SenseKey)
+            {
+                case SenseKeys.IllegalRequest:
+                {
+                    if((decoded.SenseKeySpecific & 0x400000) == 0x400000) sb.AppendLine("Illegal field in CDB");
+                    else sb.AppendLine("Illegal field in data parameters");
+
+                    if((decoded.SenseKeySpecific & 0x200000) == 0x200000)
+                        sb.AppendFormat("Invalid value in bit {0} in field {1} of CDB",
+                                        (decoded.SenseKeySpecific & 0x70000) >> 16,
+                                        decoded.SenseKeySpecific & 0xFFFF).AppendLine();
+                    else
+                        sb.AppendFormat("Invalid value in field {0} of CDB", decoded.SenseKeySpecific & 0xFFFF)
                           .AppendLine();
-                        break;
-                    case SenseKeys.RecoveredError:
-                    case SenseKeys.HardwareError:
-                    case SenseKeys.MediumError:
-                        sb.AppendFormat("Actual retry count is {0}", decoded.SenseKeySpecific & 0xFFFF).AppendLine();
-                        break;
                 }
+                    break;
+                case SenseKeys.NotReady:
+                    sb.AppendFormat("Format progress {0:P}", (double)(decoded.SenseKeySpecific & 0xFFFF) / 65536)
+                      .AppendLine();
+                    break;
+                case SenseKeys.RecoveredError:
+                case SenseKeys.HardwareError:
+                case SenseKeys.MediumError:
+                    sb.AppendFormat("Actual retry count is {0}", decoded.SenseKeySpecific & 0xFFFF).AppendLine();
+                    break;
+            }
 
             return sb.ToString();
         }
