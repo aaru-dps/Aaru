@@ -197,7 +197,7 @@ namespace DiscImageChef.Decoders.SCSI
             else if(page.CLEAR && page.ADDP)
                 sb.AppendLine("\tDevice shall erase all partitions differing on size on MODE SELECT for partitioning");
 
-            string measure = "";
+            string measure;
 
             switch(page.PSUM)
             {

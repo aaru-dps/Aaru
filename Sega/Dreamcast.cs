@@ -91,7 +91,7 @@ namespace DiscImageChef.Decoders.Sega
 
             if(ipbin_sector.Length < 512) return null;
 
-            IPBin ipbin = new IPBin();
+            IPBin ipbin;
             IntPtr ptr = Marshal.AllocHGlobal(512);
             Marshal.Copy(ipbin_sector, 0, ptr, 512);
             ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));

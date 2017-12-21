@@ -237,6 +237,7 @@ namespace DiscImageChef.Decoders.PCMCIA
                     continue;
                 }
 
+                // TODO: Check this
                 if(!secondString)
                 {
                     tuple.Product = StringHandlers.CToString(buffer.ToArray());

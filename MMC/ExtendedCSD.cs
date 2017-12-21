@@ -205,7 +205,7 @@ namespace DiscImageChef.Decoders.MMC
 
             if(response.Length != 512) return null;
 
-            ExtendedCSD csd = new ExtendedCSD();
+            ExtendedCSD csd;
             GCHandle handle = GCHandle.Alloc(response, GCHandleType.Pinned);
             csd = (ExtendedCSD)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedCSD));
             handle.Free();

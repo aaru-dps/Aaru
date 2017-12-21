@@ -1885,21 +1885,12 @@ namespace DiscImageChef.Decoders.ATA
             IdentifyDevice ATAID = IdentifyDeviceResponse.Value;
             if(ATAID.GeneralConfiguration.HasFlag(GeneralConfigurationBit.NonMagnetic))
                 if((ushort)ATAID.GeneralConfiguration != 0x848A)
-                {
-                    //if (ATAID.CommandSet.HasFlag(CommandSetBit.Packet))
-                    //{
                     atapi = true;
-                    cfa = false;
-                    //}
-                }
                 else
-                {
-                    atapi = false;
                     cfa = true;
-                }
 
-            if(atapi && !cfa) sb.AppendLine("ATAPI device");
-            else if(!atapi && cfa) sb.AppendLine("CompactFlash device");
+            if(atapi) sb.AppendLine("ATAPI device");
+            else if(cfa) sb.AppendLine("CompactFlash device");
             else sb.AppendLine("ATA device");
 
             if(ATAID.Model != "") sb.AppendFormat("Model: {0}", ATAID.Model).AppendLine();

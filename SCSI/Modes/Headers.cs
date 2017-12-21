@@ -181,7 +181,7 @@ namespace DiscImageChef.Decoders.SCSI
 
                     if(header.Value.WriteProtected) sb.AppendLine("\tMedium is write protected");
 
-                    string medium = "";
+                    string medium;
 
                     switch(header.Value.MediumType)
                     {

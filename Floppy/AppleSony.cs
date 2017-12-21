@@ -495,7 +495,7 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static bool IsAppleSonyGCR(byte[] data)
         {
-            int position = 0;
+            int position;
             RawSector sector = MarshalSector(data, out position, 0);
 
             return sector != null && position != 0;
