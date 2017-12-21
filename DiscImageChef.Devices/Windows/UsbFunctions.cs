@@ -259,7 +259,7 @@ namespace DiscImageChef.Devices.Windows
             }
 
             // Did we find an InterfaceID of a USB device?
-            if(instanceId.StartsWith("USB\\")) foundDevice = FindDeviceByInstanceId(instanceId);
+            if(instanceId?.StartsWith("USB\\", StringComparison.Ordinal) == true) foundDevice = FindDeviceByInstanceId(instanceId);
             return foundDevice;
         }
 

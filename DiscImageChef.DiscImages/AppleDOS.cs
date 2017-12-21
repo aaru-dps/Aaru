@@ -77,7 +77,7 @@ namespace DiscImageChef.DiscImages
 
         public override bool IdentifyImage(Filter imageFilter)
         {
-            extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+            extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
             if(imageFilter.GetDataForkLength() == 143360 && (extension == ".po" || extension == ".do")) return true;
 
@@ -97,7 +97,7 @@ namespace DiscImageChef.DiscImages
 
             deinterleaved = new byte[tmp.Length];
 
-            extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+            extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
             int[] offsets;
 

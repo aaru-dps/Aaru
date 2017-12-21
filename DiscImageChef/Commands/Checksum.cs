@@ -120,7 +120,7 @@ namespace DiscImageChef.Commands
 
                                 byte[] hiddenSector = inputFormat.ReadSector(i);
 
-                                mediaChecksum.Update(hiddenSector);
+                                mediaChecksum?.Update(hiddenSector);
                             }
 
                         DicConsole.DebugWriteLine("Checksum command",
@@ -155,17 +155,19 @@ namespace DiscImageChef.Commands
                                 doneSectors += sectors - doneSectors;
                             }
 
-                            if(options.WholeDisc) mediaChecksum.Update(sector);
+                            if(options.WholeDisc)
+                                mediaChecksum?.Update(sector);
 
-                            if(options.SeparatedTracks) trackChecksum.Update(sector);
+                            if(options.SeparatedTracks) trackChecksum?.Update(sector);
                         }
 
                         DicConsole.WriteLine();
 
                         if(options.SeparatedTracks)
-                            foreach(ChecksumType chk in trackChecksum.End())
-                                DicConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence, chk.type,
-                                                     chk.Value);
+                            if(trackChecksum != null)
+                                foreach(ChecksumType chk in trackChecksum.End())
+                                    DicConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence, chk.type,
+                                                         chk.Value);
 
                         previousTrackEnd = currentTrack.TrackEndSector;
                     }
@@ -176,12 +178,13 @@ namespace DiscImageChef.Commands
                             DicConsole.Write("\rHashing track-less sector {0}", i);
 
                             byte[] hiddenSector = inputFormat.ReadSector(i);
-                            mediaChecksum.Update(hiddenSector);
+                            mediaChecksum?.Update(hiddenSector);
                         }
 
                     if(options.WholeDisc)
-                        foreach(ChecksumType chk in mediaChecksum.End())
-                            DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
+                        if(mediaChecksum != null)
+                            foreach(ChecksumType chk in mediaChecksum.End())
+                                DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
                 }
                 catch(Exception ex)
                 {

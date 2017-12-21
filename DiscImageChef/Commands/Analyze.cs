@@ -183,10 +183,13 @@ namespace DiscImageChef.Commands
                             else
                             {
                                 plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
-                                DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
-                                plugin.GetInformation(imageFormat, partitions[i], out information);
-                                DicConsole.Write(information);
-                                Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                if(plugin != null)
+                                {
+                                    DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
+                                    plugin.GetInformation(imageFormat, partitions[i], out information);
+                                    DicConsole.Write(information);
+                                    Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                                }
                             }
                         }
                     }
@@ -219,10 +222,13 @@ namespace DiscImageChef.Commands
                     else
                     {
                         plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
-                        DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
-                        plugin.GetInformation(imageFormat, wholePart, out information);
-                        DicConsole.Write(information);
-                        Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                        if(plugin != null)
+                        {
+                            DicConsole.WriteLine(string.Format("Identified by {0}.", plugin.Name));
+                            plugin.GetInformation(imageFormat, wholePart, out information);
+                            DicConsole.Write(information);
+                            Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
+                        }
                     }
                 }
             }

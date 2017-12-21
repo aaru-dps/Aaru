@@ -51,8 +51,8 @@ namespace DiscImageChef.Filters
                 {
                     if(!type.IsSubclassOf(typeof(Filter))) continue;
 
-                    Filter filter = (Filter)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                    if(!filtersList.ContainsKey(filter.Name.ToLower())) filtersList.Add(filter.Name.ToLower(), filter);
+                    Filter filter = (Filter)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                    if(filter != null && !filtersList.ContainsKey(filter.Name.ToLower())) filtersList.Add(filter.Name.ToLower(), filter);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
         }
@@ -67,18 +67,17 @@ namespace DiscImageChef.Filters
                     if(!filter.Identify(path)) continue;
 
                     Filter foundFilter =
-                        (Filter)filter.GetType().GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                    foundFilter.Open(path);
+                        (Filter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
 
-                    if(foundFilter.IsOpened()) return foundFilter;
+                    foundFilter?.Open(path);
+
+                    if(foundFilter?.IsOpened() == true) return foundFilter;
                 }
                 else noFilter = filter;
 
-            if(!noFilter.Identify(path)) return noFilter;
+            if(!noFilter?.Identify(path) == true) return noFilter;
 
-            noFilter.Open(path);
-
-            if(noFilter.IsOpened()) return noFilter;
+            noFilter?.Open(path);
 
             return noFilter;
         }

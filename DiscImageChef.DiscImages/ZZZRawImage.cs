@@ -80,7 +80,7 @@ namespace DiscImageChef.DiscImages
             // Check if file is not multiple of 512
             if(imageFilter.GetDataForkLength() % 512 == 0) return true;
 
-            extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+            extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
             if(extension == ".hdf" && ImageInfo.ImageSize % 256 == 0) return true;
 
@@ -119,7 +119,7 @@ namespace DiscImageChef.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+            extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
             switch(extension) {
                 case ".iso" when imageFilter.GetDataForkLength() % 2048 == 0: ImageInfo.SectorSize = 2048;
                     break;

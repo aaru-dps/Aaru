@@ -579,6 +579,8 @@ namespace DiscImageChef.Server
             {
                 _line = tocStream.ReadLine();
 
+                if(_line == null) break;
+
                 if(_line.Length == 0 || _line[0] == '#') continue;
 
                 if(inManufacturer)

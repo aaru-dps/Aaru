@@ -65,7 +65,7 @@ namespace DiscImageChef.Core
                 {
                     if(!type.IsSubclassOf(typeof(ImagePlugin))) continue;
 
-                    ImagePlugin plugin = (ImagePlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                    ImagePlugin plugin = (ImagePlugin)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                     RegisterImagePlugin(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
@@ -77,7 +77,7 @@ namespace DiscImageChef.Core
                 {
                     if(!type.IsSubclassOf(typeof(PartitionPlugin))) continue;
 
-                    PartitionPlugin plugin = (PartitionPlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                    PartitionPlugin plugin = (PartitionPlugin)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                     RegisterPartPlugin(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
@@ -91,9 +91,8 @@ namespace DiscImageChef.Core
 
                     Filesystem plugin;
                     if(encoding != null)
-                        plugin = (Filesystem)type.GetConstructor(new[] {encoding.GetType()})
-                                                 .Invoke(new object[] {encoding});
-                    else plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                        plugin = (Filesystem)type.GetConstructor(new[] {encoding.GetType()})?.Invoke(new object[] {encoding});
+                    else plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                     RegisterPlugin(plugin);
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }

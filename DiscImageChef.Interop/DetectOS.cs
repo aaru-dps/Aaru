@@ -131,9 +131,9 @@ namespace DiscImageChef.Interop
                     Marshal.FreeHGlobal(pStr);
                     Marshal.FreeHGlobal(pLen);
 
-                    if(machine.StartsWith("iPad", StringComparison.Ordinal) ||
-                       machine.StartsWith("iPod", StringComparison.Ordinal) ||
-                       machine.StartsWith("iPhone", StringComparison.Ordinal)) return PlatformID.iOS;
+                    if(machine != null && (machine.StartsWith("iPad", StringComparison.Ordinal) ||
+                                           machine.StartsWith("iPod", StringComparison.Ordinal) ||
+                                           machine.StartsWith("iPhone", StringComparison.Ordinal))) return PlatformID.iOS;
 
                     return PlatformID.MacOSX;
                 }

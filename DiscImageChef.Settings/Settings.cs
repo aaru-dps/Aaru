@@ -242,7 +242,7 @@ namespace DiscImageChef.Settings
                     case PlatformID.WinCE:
                     case PlatformID.WindowsPhone:
                     {
-                        RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE").OpenSubKey("Claunia.com");
+                        RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE")?.OpenSubKey("Claunia.com");
                         if(parentKey == null)
                         {
                             SetDefaultSettings();
@@ -358,40 +358,43 @@ namespace DiscImageChef.Settings
                     case PlatformID.WindowsPhone:
                     {
                         RegistryKey parentKey =
-                            Registry.CurrentUser.OpenSubKey("SOFTWARE", true).CreateSubKey("Claunia.com");
-                        RegistryKey key = parentKey.CreateSubKey("DiscImageChef");
+                            Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.CreateSubKey("Claunia.com");
+                        RegistryKey key = parentKey?.CreateSubKey("DiscImageChef");
 
-                        key.SetValue("SaveReportsGlobally", Current.SaveReportsGlobally);
-                        key.SetValue("ShareReports", Current.ShareReports);
+                        if(key != null)
+                        {
+                            key.SetValue("SaveReportsGlobally", Current.SaveReportsGlobally);
+                            key.SetValue("ShareReports", Current.ShareReports);
 
-                        if(Current.Stats != null)
-                        {
-                            key.SetValue("Statistics", true);
-                            key.SetValue("ShareStats", Current.Stats.ShareStats);
-                            key.SetValue("BenchmarkStats", Current.Stats.BenchmarkStats);
-                            key.SetValue("CommandStats", Current.Stats.CommandStats);
-                            key.SetValue("DeviceStats", Current.Stats.DeviceStats);
-                            key.SetValue("FilesystemStats", Current.Stats.FilesystemStats);
-                            key.SetValue("FilterStats", Current.Stats.FilterStats);
-                            key.SetValue("MediaImageStats", Current.Stats.MediaImageStats);
-                            key.SetValue("MediaScanStats", Current.Stats.MediaScanStats);
-                            key.SetValue("PartitionStats", Current.Stats.PartitionStats);
-                            key.SetValue("MediaStats", Current.Stats.MediaStats);
-                            key.SetValue("VerifyStats", Current.Stats.VerifyStats);
-                        }
-                        else
-                        {
-                            key.SetValue("Statistics", true);
-                            key.DeleteValue("ShareStats", false);
-                            key.DeleteValue("BenchmarkStats", false);
-                            key.DeleteValue("CommandStats", false);
-                            key.DeleteValue("DeviceStats", false);
-                            key.DeleteValue("FilesystemStats", false);
-                            key.DeleteValue("MediaImageStats", false);
-                            key.DeleteValue("MediaScanStats", false);
-                            key.DeleteValue("PartitionStats", false);
-                            key.DeleteValue("MediaStats", false);
-                            key.DeleteValue("VerifyStats", false);
+                            if(Current.Stats != null)
+                            {
+                                key.SetValue("Statistics", true);
+                                key.SetValue("ShareStats", Current.Stats.ShareStats);
+                                key.SetValue("BenchmarkStats", Current.Stats.BenchmarkStats);
+                                key.SetValue("CommandStats", Current.Stats.CommandStats);
+                                key.SetValue("DeviceStats", Current.Stats.DeviceStats);
+                                key.SetValue("FilesystemStats", Current.Stats.FilesystemStats);
+                                key.SetValue("FilterStats", Current.Stats.FilterStats);
+                                key.SetValue("MediaImageStats", Current.Stats.MediaImageStats);
+                                key.SetValue("MediaScanStats", Current.Stats.MediaScanStats);
+                                key.SetValue("PartitionStats", Current.Stats.PartitionStats);
+                                key.SetValue("MediaStats", Current.Stats.MediaStats);
+                                key.SetValue("VerifyStats", Current.Stats.VerifyStats);
+                            }
+                            else
+                            {
+                                key.SetValue("Statistics", true);
+                                key.DeleteValue("ShareStats", false);
+                                key.DeleteValue("BenchmarkStats", false);
+                                key.DeleteValue("CommandStats", false);
+                                key.DeleteValue("DeviceStats", false);
+                                key.DeleteValue("FilesystemStats", false);
+                                key.DeleteValue("MediaImageStats", false);
+                                key.DeleteValue("MediaScanStats", false);
+                                key.DeleteValue("PartitionStats", false);
+                                key.DeleteValue("MediaStats", false);
+                                key.DeleteValue("VerifyStats", false);
+                            }
                         }
                     }
                         break;
