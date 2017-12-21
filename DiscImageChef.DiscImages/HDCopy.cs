@@ -66,6 +66,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -367,11 +368,7 @@ namespace DiscImageChef.DiscImages
 
         public override MediaType GetMediaType()
         {
-            foreach(MediaTypeTableEntry ent in mediaTypes)
-                if(ent.Tracks == ImageInfo.Cylinders && ent.SectorsPerTrack == ImageInfo.SectorsPerTrack)
-                    return ent.MediaType;
-
-            return MediaType.Unknown;
+            return (from ent in mediaTypes where ent.Tracks == ImageInfo.Cylinders && ent.SectorsPerTrack == ImageInfo.SectorsPerTrack select ent.MediaType).FirstOrDefault();
         }
 
         void ReadTrackIntoCache(Stream stream, int tracknum)

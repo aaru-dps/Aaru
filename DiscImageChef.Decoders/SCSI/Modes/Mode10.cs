@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -275,7 +276,7 @@ namespace DiscImageChef.Decoders.SCSI
         public static byte[] EncodeMode10(DecodedMode mode, PeripheralDeviceTypes deviceType)
         {
             int modeSize = 0;
-            if(mode.Pages != null) foreach(ModePage page in mode.Pages) modeSize += page.PageResponse.Length;
+            if(mode.Pages != null) modeSize += mode.Pages.Sum(page => page.PageResponse.Length);
 
             byte[] hdr = EncodeModeHeader10(mode.Header, deviceType);
             modeSize += hdr.Length;

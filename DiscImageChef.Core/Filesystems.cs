@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filesystems;
 using DiscImageChef.DiscImages;
@@ -41,11 +42,10 @@ namespace DiscImageChef.Core
     {
         public static void Identify(ImagePlugin imagePlugin, out List<string> idPlugins, Partition partition)
         {
-            idPlugins = new List<string>();
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
 
-            foreach(Filesystem plugin in plugins.PluginsList.Values) if(plugin.Identify(imagePlugin, partition)) idPlugins.Add(plugin.Name.ToLower());
+            idPlugins = (from plugin in plugins.PluginsList.Values where plugin.Identify(imagePlugin, partition) select plugin.Name.ToLower()).ToList();
         }
     }
 }

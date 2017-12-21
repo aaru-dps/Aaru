@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Claunia.RsrcFork;
@@ -268,10 +269,7 @@ namespace DiscImageChef.DiscImages
             catch(InvalidCastException) { return false; }
 
             ImageInfo.Sectors = 0;
-            foreach(short id in bcems)
-            {
-                byte[] bcem = rsrc.GetResource(NDIF_RESOURCEID);
-
+            foreach(byte[] bcem in bcems.Select(id => rsrc.GetResource(NDIF_RESOURCEID))) {
                 if(bcem.Length < 128) return false;
 
                 header = BigEndianMarshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
@@ -479,13 +477,11 @@ namespace DiscImageChef.DiscImages
             bool chunkFound = false;
             ulong chunkStartSector = 0;
 
-            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks)
-                if(sectorAddress >= kvp.Key)
-                {
-                    currentChunk = kvp.Value;
-                    chunkFound = true;
-                    chunkStartSector = kvp.Key;
-                }
+            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key)) {
+                currentChunk = kvp.Value;
+                chunkFound = true;
+                chunkStartSector = kvp.Key;
+            }
 
             long relOff = ((long)sectorAddress - (long)chunkStartSector) * SECTOR_SIZE;
 

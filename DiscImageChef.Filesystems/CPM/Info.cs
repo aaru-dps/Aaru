@@ -790,13 +790,7 @@ namespace DiscImageChef.Filesystems.CPM
                        definitions.definitions.Count > 0)
                     {
                         DicConsole.DebugWriteLine("CP/M Plugin", "Trying all known definitions.");
-                        foreach(CpmDefinition def in definitions.definitions)
-                        {
-                            ulong sectors = (ulong)(def.cylinders * def.sides * def.sectorsPerTrack);
-
-                            if(sectors != imagePlugin.GetSectors() || def.bytesPerSector != imagePlugin.GetSectorSize())
-                                continue;
-
+                        foreach(CpmDefinition def in from def in definitions.definitions let sectors = (ulong)(def.cylinders * def.sides * def.sectorsPerTrack) where sectors == imagePlugin.GetSectors() && def.bytesPerSector == imagePlugin.GetSectorSize() select def) {
                             // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector
                             DicConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
                             ulong offset;

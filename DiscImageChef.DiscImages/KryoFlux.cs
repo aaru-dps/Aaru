@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -283,11 +284,7 @@ namespace DiscImageChef.DiscImages
                             DateTime blockTime = DateTime.Now;
                             bool foundDate = false;
 
-                            foreach(string line in lines)
-                            {
-                                string[] kvp = line.Split('=');
-                                if(kvp.Length != 2) continue;
-
+                            foreach(string[] kvp in lines.Select(line => line.Split('=')).Where(kvp => kvp.Length == 2)) {
                                 kvp[0] = kvp[0].Trim();
                                 kvp[1] = kvp[1].Trim();
                                 DicConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);

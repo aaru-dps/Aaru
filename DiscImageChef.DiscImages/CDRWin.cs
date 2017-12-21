@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
@@ -1364,24 +1365,14 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(CdrWinTrack cdrwinTrack in discimage.Tracks)
-                        if(cdrwinTrack.Sequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < cdrwinTrack.Sectors)
-                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrwinTrack in discimage.Tracks where cdrwinTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(CdrWinTrack cdrwinTrack in discimage.Tracks)
-                        if(cdrwinTrack.Sequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < cdrwinTrack.Sectors)
-                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrwinTrack in discimage.Tracks where cdrwinTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1392,12 +1383,10 @@ namespace DiscImageChef.DiscImages
 
             _track.Sequence = 0;
 
-            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks)
-                if(cdrwinTrack.Sequence == track)
-                {
-                    _track = cdrwinTrack;
-                    break;
-                }
+            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track)) {
+                _track = cdrwinTrack;
+                break;
+            }
 
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1500,12 +1489,10 @@ namespace DiscImageChef.DiscImages
 
             _track.Sequence = 0;
 
-            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks)
-                if(cdrwinTrack.Sequence == track)
-                {
-                    _track = cdrwinTrack;
-                    break;
-                }
+            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track)) {
+                _track = cdrwinTrack;
+                break;
+            }
 
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1691,12 +1678,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(CdrWinTrack cdrwinTrack in discimage.Tracks)
-                        if(cdrwinTrack.Sequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < cdrwinTrack.Sectors)
-                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from cdrwinTrack in discimage.Tracks where cdrwinTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1707,12 +1689,10 @@ namespace DiscImageChef.DiscImages
 
             _track.Sequence = 0;
 
-            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks)
-                if(cdrwinTrack.Sequence == track)
-                {
-                    _track = cdrwinTrack;
-                    break;
-                }
+            foreach(CdrWinTrack cdrwinTrack in discimage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track)) {
+                _track = cdrwinTrack;
+                break;
+            }
 
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");

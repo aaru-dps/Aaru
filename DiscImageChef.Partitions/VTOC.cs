@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -64,10 +65,7 @@ namespace DiscImageChef.Partitions
             bool magic_found = false;
             bool absolute = false;
 
-            foreach(ulong i in new ulong[] {0, 1, 8, 29})
-            {
-                if(i + sectorOffset >= imagePlugin.GetSectors()) break;
-
+            foreach(ulong i in new ulong[] {0, 1, 8, 29}.TakeWhile(i => i + sectorOffset < imagePlugin.GetSectors())) {
                 pdsector = imagePlugin.ReadSector(i + sectorOffset);
                 magic = BitConverter.ToUInt32(pdsector, 4);
                 DicConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})",

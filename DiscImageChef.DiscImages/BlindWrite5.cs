@@ -866,30 +866,28 @@ namespace DiscImageChef.DiscImages
                     track.TrackStartSector = (ulong)(trk.startLba + trk.pregap);
                     track.TrackEndSector = (ulong)(trk.sectors + trk.startLba);
 
-                    foreach(DataFileCharacteristics chars in filePaths)
-                        if(trk.startLba >= chars.StartLba &&
-                           trk.startLba + trk.sectors <= chars.StartLba + chars.Sectors)
+                    foreach(DataFileCharacteristics chars in filePaths.Where(chars => trk.startLba >= chars.StartLba &&
+                                                                                      trk.startLba + trk.sectors <= chars.StartLba + chars.Sectors)) {
+                        track.TrackFilter = chars.FileFilter;
+                        track.TrackFile = chars.FileFilter.GetFilename();
+                        if(trk.startLba >= 0)
+                            track.TrackFileOffset = (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize);
+                        else track.TrackFileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
+                        track.TrackFileType = "BINARY";
+                        if(chars.Subchannel != TrackSubchannelType.None)
                         {
-                            track.TrackFilter = chars.FileFilter;
-                            track.TrackFile = chars.FileFilter.GetFilename();
-                            if(trk.startLba >= 0)
-                                track.TrackFileOffset = (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize);
-                            else track.TrackFileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
-                            track.TrackFileType = "BINARY";
-                            if(chars.Subchannel != TrackSubchannelType.None)
-                            {
-                                track.TrackSubchannelFilter = track.TrackFilter;
-                                track.TrackSubchannelFile = track.TrackFile;
-                                track.TrackSubchannelType = chars.Subchannel;
-                                track.TrackSubchannelOffset = track.TrackFileOffset;
+                            track.TrackSubchannelFilter = track.TrackFilter;
+                            track.TrackSubchannelFile = track.TrackFile;
+                            track.TrackSubchannelType = chars.Subchannel;
+                            track.TrackSubchannelOffset = track.TrackFileOffset;
 
-                                if(chars.Subchannel == TrackSubchannelType.PackedInterleaved)
-                                    if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                        ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
-                            }
-
-                            break;
+                            if(chars.Subchannel == TrackSubchannelType.PackedInterleaved)
+                                if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                         }
+
+                        break;
+                    }
 
                     track.TrackPregap = trk.pregap;
                     track.TrackSequence = trk.point;
@@ -1085,12 +1083,7 @@ namespace DiscImageChef.DiscImages
             {
                 Decoders.CD.PMA.CDPMA pma0 = Decoders.CD.PMA.Decode(pma).Value;
 
-                foreach(Decoders.CD.PMA.CDPMADescriptors descriptor in pma0.PMADescriptors)
-                    if(descriptor.ADR == 2)
-                    {
-                        uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
-                        ImageInfo.MediaSerialNumber = string.Format("{0:X6}", id & 0x00FFFFFF);
-                    }
+                foreach(uint id in from descriptor in pma0.PMADescriptors where descriptor.ADR == 2 select (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame)) ImageInfo.MediaSerialNumber = string.Format("{0:X6}", id & 0x00FFFFFF);
             }
 
             if(atip != null)
@@ -1250,24 +1243,14 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(Track track in tracks)
-                        if(track.TrackSequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector)
-                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(Track track in tracks)
-                        if(track.TrackSequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector)
-                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1280,12 +1263,10 @@ namespace DiscImageChef.DiscImages
 
             _track.TrackSequence = 0;
 
-            foreach(Track bwTrack in tracks)
-                if(bwTrack.TrackSequence == track)
-                {
-                    _track = bwTrack;
-                    break;
-                }
+            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track)) {
+                _track = bwTrack;
+                break;
+            }
 
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1296,12 +1277,10 @@ namespace DiscImageChef.DiscImages
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
                                                                   length + sectorAddress, _track.TrackEndSector));
 
-            foreach(DataFileCharacteristics _chars in filePaths)
-                if((long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)
-                {
-                    chars = _chars;
-                    break;
-                }
+            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars => (long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)) {
+                chars = _chars;
+                break;
+            }
 
             if(string.IsNullOrEmpty(chars.FilePath) || chars.FileFilter == null)
                 throw new ArgumentOutOfRangeException(nameof(chars.FileFilter), "Track does not exist in disc image");
@@ -1401,12 +1380,10 @@ namespace DiscImageChef.DiscImages
 
             _track.TrackSequence = 0;
 
-            foreach(Track bwTrack in tracks)
-                if(bwTrack.TrackSequence == track)
-                {
-                    _track = bwTrack;
-                    break;
-                }
+            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track)) {
+                _track = bwTrack;
+                break;
+            }
 
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1417,12 +1394,10 @@ namespace DiscImageChef.DiscImages
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
                                                                   length + sectorAddress, _track.TrackEndSector));
 
-            foreach(DataFileCharacteristics _chars in filePaths)
-                if((long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)
-                {
-                    chars = _chars;
-                    break;
-                }
+            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars => (long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)) {
+                chars = _chars;
+                break;
+            }
 
             if(string.IsNullOrEmpty(chars.FilePath) || chars.FileFilter == null)
                 throw new ArgumentOutOfRangeException(nameof(chars.FileFilter), "Track does not exist in disc image");
@@ -1692,12 +1667,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(Track track in tracks)
-                        if(track.TrackSequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector)
-                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < track.TrackEndSector - track.TrackStartSector select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -1710,12 +1680,10 @@ namespace DiscImageChef.DiscImages
 
             _track.TrackSequence = 0;
 
-            foreach(Track bwTrack in tracks)
-                if(bwTrack.TrackSequence == track)
-                {
-                    _track = bwTrack;
-                    break;
-                }
+            foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track)) {
+                _track = bwTrack;
+                break;
+            }
 
             if(_track.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1726,12 +1694,10 @@ namespace DiscImageChef.DiscImages
                                                           .Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks",
                                                                   length + sectorAddress, _track.TrackEndSector));
 
-            foreach(DataFileCharacteristics _chars in filePaths)
-                if((long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)
-                {
-                    chars = _chars;
-                    break;
-                }
+            foreach(DataFileCharacteristics _chars in filePaths.Where(_chars => (long)sectorAddress >= _chars.StartLba && length < (ulong)_chars.Sectors - sectorAddress)) {
+                chars = _chars;
+                break;
+            }
 
             if(string.IsNullOrEmpty(chars.FilePath) || chars.FileFilter == null)
                 throw new ArgumentOutOfRangeException(nameof(chars.FileFilter), "Track does not exist in disc image");
@@ -1837,10 +1803,7 @@ namespace DiscImageChef.DiscImages
 
         public override List<Track> GetSessionTracks(ushort session)
         {
-            List<Track> tracks = new List<Track>();
-            foreach(Track _track in this.tracks) if(_track.TrackSession == session) tracks.Add(_track);
-
-            return tracks;
+            return this.tracks.Where(_track => _track.TrackSession == session).ToList();
         }
 
         public override List<Session> GetSessions()

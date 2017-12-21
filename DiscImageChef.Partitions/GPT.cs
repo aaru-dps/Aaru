@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
 
@@ -150,34 +151,32 @@ namespace DiscImageChef.Partitions
 
             ulong pseq = 0;
 
-            foreach(GptEntry entry in entries)
-                if(entry.partitionType != Guid.Empty && entry.partitionId != Guid.Empty)
+            foreach(GptEntry entry in entries.Where(entry => entry.partitionType != Guid.Empty && entry.partitionId != Guid.Empty)) {
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}", entry.partitionType);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}", entry.partitionId);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}", entry.startLBA);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.endLBA = {0}", entry.endLBA);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
+                DicConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}", entry.name);
+
+                if(entry.startLBA / divisor > imagePlugin.GetSectors() ||
+                   entry.endLBA / divisor > imagePlugin.GetSectors()) return false;
+
+                CommonTypes.Partition part = new CommonTypes.Partition
                 {
-                    DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}", entry.partitionType);
-                    DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}", entry.partitionId);
-                    DicConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}", entry.startLBA);
-                    DicConsole.DebugWriteLine("GPT Plugin", "entry.endLBA = {0}", entry.endLBA);
-                    DicConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
-                    DicConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}", entry.name);
-
-                    if(entry.startLBA / divisor > imagePlugin.GetSectors() ||
-                       entry.endLBA / divisor > imagePlugin.GetSectors()) return false;
-
-                    CommonTypes.Partition part = new CommonTypes.Partition
-                    {
-                        Description = string.Format("ID: {0}", entry.partitionId),
-                        Size = (entry.endLBA - entry.startLBA + 1) * sectorSize,
-                        Name = entry.name,
-                        Length = (entry.endLBA - entry.startLBA + 1) / divisor,
-                        Sequence = pseq++,
-                        Offset = entry.startLBA * sectorSize,
-                        Start = entry.startLBA / divisor,
-                        Type = GetGuidTypeName(entry.partitionType),
-                        Scheme = Name
-                    };
-                    DicConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.Type);
-                    partitions.Add(part);
-                }
+                    Description = string.Format("ID: {0}", entry.partitionId),
+                    Size = (entry.endLBA - entry.startLBA + 1) * sectorSize,
+                    Name = entry.name,
+                    Length = (entry.endLBA - entry.startLBA + 1) / divisor,
+                    Sequence = pseq++,
+                    Offset = entry.startLBA * sectorSize,
+                    Start = entry.startLBA / divisor,
+                    Type = GetGuidTypeName(entry.partitionType),
+                    Scheme = Name
+                };
+                DicConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.Type);
+                partitions.Add(part);
+            }
 
             return true;
         }

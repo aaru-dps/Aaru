@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DiscImageChef.Checksums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -108,13 +109,7 @@ namespace DiscImageChef.Commands
                             trackSize += (ulong)sector.LongLength;
                         }
 
-                        foreach(ulong l in entTable)
-                        {
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                            double frequency = (double)l / (double)trackSize;
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
-                            entropy += -(frequency * Math.Log(frequency, 2));
-                        }
+                        entropy += entTable.Select(l => (double)l / (double)trackSize).Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
                         DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", currentTrack.TrackSequence, entropy);
 
@@ -163,13 +158,7 @@ namespace DiscImageChef.Commands
                 diskSize += (ulong)sector.LongLength;
             }
 
-            foreach(ulong l in entTable)
-            {
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                double frequency = (double)l / (double)diskSize;
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
-                entropy += -(frequency * Math.Log(frequency, 2));
-            }
+            entropy += entTable.Select(l => (double)l / (double)diskSize).Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
             DicConsole.WriteLine();
 

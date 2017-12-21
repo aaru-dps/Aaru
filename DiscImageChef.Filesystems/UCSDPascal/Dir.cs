@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
@@ -45,9 +46,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = new List<string>();
-            foreach(PascalFileEntry ent in fileEntries)
-                contents.Add(StringHandlers.PascalToString(ent.filename, CurrentEncoding));
+            contents = fileEntries.Select(ent => StringHandlers.PascalToString(ent.filename, CurrentEncoding)).ToList();
 
             if(debug)
             {

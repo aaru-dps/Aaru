@@ -1631,7 +1631,7 @@ namespace DiscImageChef.DiscImages
         Track GetTrack(ulong sector)
         {
             Track track = new Track();
-            foreach(KeyValuePair<ulong, uint> kvp in offsetmap) if(sector >= kvp.Key) tracks.TryGetValue(kvp.Value, out track);
+            foreach(KeyValuePair<ulong, uint> kvp in offsetmap.Where(kvp => sector >= kvp.Key)) tracks.TryGetValue(kvp.Value, out track);
 
             return track;
         }
@@ -2450,10 +2450,7 @@ namespace DiscImageChef.DiscImages
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
-            List<Track> trks = new List<Track>();
-            foreach(Track track in tracks.Values) trks.Add(track);
-
-            return trks;
+            return tracks.Values.ToList();
         }
 
         public override List<Track> GetSessionTracks(Session session)
@@ -2469,10 +2466,7 @@ namespace DiscImageChef.DiscImages
             if(isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
-            List<Track> trks = new List<Track>();
-            foreach(Track track in tracks.Values) if(track.TrackSession == session) trks.Add(track);
-
-            return trks;
+            return tracks.Values.Where(track => track.TrackSession == session).ToList();
         }
 
         public override List<Session> GetSessions()

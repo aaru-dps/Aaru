@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -900,8 +901,7 @@ namespace DiscImageChef.DiscImages
         #region private methods
         static uint VhdxChecksum(byte[] data)
         {
-            uint checksum = 0;
-            foreach(byte b in data) checksum += b;
+            uint checksum = data.Aggregate<byte, uint>(0, (current, b) => current + b);
 
             return ~checksum;
         }

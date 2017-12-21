@@ -46,12 +46,8 @@ namespace DiscImageChef.Commands
 
         internal static void DoList(ListEncodingsOptions encodingOptions)
         {
-            List<CommonEncodingInfo> encodings = new List<CommonEncodingInfo>();
-
-            foreach(System.Text.EncodingInfo info in System.Text.Encoding.GetEncodings())
-                encodings.Add(new CommonEncodingInfo {Name = info.Name, DisplayName = info.GetEncoding().EncodingName});
-            foreach(Claunia.Encoding.EncodingInfo info in Claunia.Encoding.Encoding.GetEncodings())
-                encodings.Add(new CommonEncodingInfo {Name = info.Name, DisplayName = info.DisplayName});
+            List<CommonEncodingInfo> encodings = System.Text.Encoding.GetEncodings().Select(info => new CommonEncodingInfo {Name = info.Name, DisplayName = info.GetEncoding().EncodingName}).ToList();
+            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new CommonEncodingInfo {Name = info.Name, DisplayName = info.DisplayName}));
 
             DicConsole.WriteLine("{0,-16} {1,-8}", "Name", "Description");
 

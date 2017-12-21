@@ -35,6 +35,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
@@ -282,7 +283,7 @@ namespace DiscImageChef.Filesystems.CPM
                         // because that's where the directory resides.
                         // There is also a field telling how many bytes are used in the last block, but its meaning is non-standard so
                         // we must ignore it.
-                        foreach(ushort blk in entry.allocations) if(!blocks.Contains(blk) && blk != 0) blocks.Add(blk);
+                        foreach(ushort blk in entry.allocations.Where(blk => !blocks.Contains(blk) && blk != 0)) blocks.Add(blk);
 
                         // Save the file
                         fInfo.UID = (ulong)user;
@@ -376,7 +377,7 @@ namespace DiscImageChef.Filesystems.CPM
                         // because that's where the directory resides.
                         // There is also a field telling how many bytes are used in the last block, but its meaning is non-standard so
                         // we must ignore it.
-                        foreach(ushort blk in entry.allocations) if(!blocks.Contains(blk) && blk != 0) blocks.Add(blk);
+                        foreach(ushort blk in entry.allocations.Cast<ushort>().Where(blk => !blocks.Contains(blk) && blk != 0)) blocks.Add(blk);
 
                         // Save the file
                         fInfo.UID = (ulong)user;

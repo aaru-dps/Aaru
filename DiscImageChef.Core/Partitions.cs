@@ -123,11 +123,9 @@ namespace DiscImageChef.Core
             // Be sure that device partitions are not excluded if not mapped by any scheme...
             if(image.ImageInfo.ImageHasPartitions)
             {
-                List<ulong> startLocations = new List<ulong>();
+                List<ulong> startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
-                foreach(Partition detectedPartition in childPartitions) startLocations.Add(detectedPartition.Start);
-
-                foreach(Partition imagePartition in image.GetPartitions()) if(!startLocations.Contains(imagePartition.Start)) childPartitions.Add(imagePartition);
+                childPartitions.AddRange(image.GetPartitions().Where(imagePartition => !startLocations.Contains(imagePartition.Start)));
             }
 
             Partition[] childArray = childPartitions
@@ -144,7 +142,7 @@ namespace DiscImageChef.Core
 
             List<string> schemes = new List<string>();
 
-            foreach(Partition part in partitions) if(!schemes.Contains(part.Scheme)) schemes.Add(part.Scheme);
+            foreach(Partition part in partitions.Where(part => !schemes.Contains(part.Scheme))) schemes.Add(part.Scheme);
 
             foreach(string scheme in schemes) Statistics.AddPartition(scheme);
         }

@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -61,17 +62,17 @@ namespace DiscImageChef.Devices.Windows
                     new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");
                 ManagementObjectCollection objCol = mgmtObjSearcher.Get();
 
-                foreach(ManagementObject drive in objCol) deviceIDs.Add((string)drive["DeviceID"]);
+                deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["DeviceID"]);
 
                 mgmtObjSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_TapeDrive");
                 objCol = mgmtObjSearcher.Get();
 
-                foreach(ManagementObject drive in objCol) deviceIDs.Add((string)drive["DeviceID"]);
+                deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["DeviceID"]);
 
                 mgmtObjSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_CDROMDrive");
                 objCol = mgmtObjSearcher.Get();
 
-                foreach(ManagementObject drive in objCol) deviceIDs.Add((string)drive["Drive"]);
+                deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["Drive"]);
             }
             catch(Exception ex)
             {

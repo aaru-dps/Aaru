@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -86,16 +87,14 @@ namespace DiscImageChef.Filesystems
                 262144 / imagePlugin.GetSectorSize()
             };
 
-            foreach(ulong loc in locations)
-                if(partition.End > partition.Start + loc + sb_size_in_sectors)
-                {
-                    ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
-                    magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+            foreach(ulong loc in locations.Where(loc => partition.End > partition.Start + loc + sb_size_in_sectors)) {
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                    if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW ||
-                       magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC ||
-                       magic == UFS_BAD_CIGAM) return true;
-                }
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW ||
+                   magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC ||
+                   magic == UFS_BAD_CIGAM) return true;
+            }
 
             return false;
         }
@@ -129,21 +128,19 @@ namespace DiscImageChef.Filesystems
                 262144 / imagePlugin.GetSectorSize()
             };
 
-            foreach(ulong loc in locations)
-                if(partition.End > partition.Start + loc + sb_size_in_sectors)
+            foreach(ulong loc in locations.Where(loc => partition.End > partition.Start + loc + sb_size_in_sectors)) {
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW ||
+                   magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                 {
-                    ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
-                    magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                    if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW ||
-                       magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    {
-                        sb_offset = partition.Start + loc;
-                        break;
-                    }
-
-                    magic = 0;
+                    sb_offset = partition.Start + loc;
+                    break;
                 }
+
+                magic = 0;
+            }
 
             if(magic == 0)
             {

@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DiscImageChef.Decoders;
 using DiscImageChef.DiscImages;
 
@@ -89,12 +90,9 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         Errno ReadDir(short dirId, ref List<string> contents)
         {
-            contents = new List<string>();
-            foreach(CatalogEntry entry in catalogCache)
-                if(entry.parentID == dirId)
-                    // Do same trick as Mac OS X, replace filesystem '/' with '-',
-                    // as '-' is the path separator in Lisa OS
-                    contents.Add(StringHandlers.CToString(entry.filename, CurrentEncoding).Replace('/', '-'));
+            // Do same trick as Mac OS X, replace filesystem '/' with '-',
+            // as '-' is the path separator in Lisa OS
+            contents = (from entry in catalogCache where entry.parentID == dirId select StringHandlers.CToString(entry.filename, CurrentEncoding).Replace('/', '-')).ToList();
 
             return Errno.NoError;
         }

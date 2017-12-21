@@ -245,10 +245,7 @@ namespace DiscImageChef.Filesystems
             ulong[] positions = {256, 512, partition.End - 256, partition.End};
             bool anchorFound = false;
 
-            foreach(ulong position in positions)
-            {
-                if(position + partition.Start >= partition.End) continue;
-
+            foreach(ulong position in positions.Where(position => position + partition.Start < partition.End)) {
                 sector = imagePlugin.ReadSector(position);
                 anchor = new AnchorVolumeDescriptorPointer();
                 IntPtr anchorPtr = Marshal.AllocHGlobal(Marshal.SizeOf(anchor));

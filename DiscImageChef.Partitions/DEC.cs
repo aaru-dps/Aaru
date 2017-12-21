@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
@@ -68,19 +69,15 @@ namespace DiscImageChef.Partitions
 
             ulong counter = 0;
 
-            foreach(DECPartition entry in table.pt_part)
+            foreach(Partition part in table.pt_part.Select(entry => new Partition
             {
-                Partition part = new Partition
-                {
-                    Start = entry.pi_blkoff,
-                    Offset = (ulong)(entry.pi_blkoff * sector.Length),
-                    Size = (ulong)entry.pi_nblocks,
-                    Length = (ulong)(entry.pi_nblocks * sector.Length),
-                    Sequence = counter,
-                    Scheme = Name
-                };
-                if(part.Size <= 0) continue;
-
+                Start = entry.pi_blkoff,
+                Offset = (ulong)(entry.pi_blkoff * sector.Length),
+                Size = (ulong)entry.pi_nblocks,
+                Length = (ulong)(entry.pi_nblocks * sector.Length),
+                Sequence = counter,
+                Scheme = Name
+            }).Where(part => part.Size > 0)) {
                 partitions.Add(part);
                 counter++;
             }

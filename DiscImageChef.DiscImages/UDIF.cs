@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Claunia.PropertyList;
 using Claunia.RsrcFork;
@@ -291,7 +292,7 @@ namespace DiscImageChef.DiscImages
                     throw new
                         ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
 
-                foreach(short blkxId in blkxRez.GetIds()) blkxList.Add(blkxRez.GetResource(blkxId));
+                blkxList.AddRange(blkxRez.GetIds().Select(blkxId => blkxRez.GetResource(blkxId)));
 
                 Resource versRez = rsrc.GetResource(0x76657273);
 
@@ -322,9 +323,7 @@ namespace DiscImageChef.DiscImages
 
                 NSObject[] blkx = ((NSArray)blkxObj).GetArray();
 
-                foreach(NSObject partObj in blkx)
-                {
-                    NSDictionary part = (NSDictionary)partObj;
+                foreach(NSDictionary part in blkx.Cast<NSDictionary>()) {
                     NSObject nameObj, dataObj;
 
                     if(!part.TryGetValue("Name", out nameObj)) throw new Exception("Could not retrieve Name");
@@ -518,13 +517,11 @@ namespace DiscImageChef.DiscImages
             bool chunkFound = false;
             ulong chunkStartSector = 0;
 
-            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks)
-                if(sectorAddress >= kvp.Key)
-                {
-                    currentChunk = kvp.Value;
-                    chunkFound = true;
-                    chunkStartSector = kvp.Key;
-                }
+            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key)) {
+                currentChunk = kvp.Value;
+                chunkFound = true;
+                chunkStartSector = kvp.Key;
+            }
 
             long relOff = ((long)sectorAddress - (long)chunkStartSector) * SECTOR_SIZE;
 

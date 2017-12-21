@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
 using DiscImageChef.Metadata;
@@ -133,7 +134,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 }
                 if(inq.VersionDescriptors != null)
                 {
-                    foreach(ushort descriptor in inq.VersionDescriptors) if(descriptor != 0) versionDescriptors.Add(descriptor);
+                    versionDescriptors.AddRange(inq.VersionDescriptors.Where(descriptor => descriptor != 0));
 
                     if(versionDescriptors.Count > 0)
                         report.SCSI.Inquiry.VersionDescriptors = versionDescriptors.ToArray();
@@ -184,18 +185,16 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 if(evpdPages != null && evpdPages.Length > 0)
                 {
                     List<pageType> evpds = new List<pageType>();
-                    foreach(byte page in evpdPages)
-                        if(page != 0x80)
-                        {
-                            DicConsole.WriteLine("Querying SCSI EVPD {0:X2}h...", page);
-                            sense = dev.ScsiInquiry(out buffer, out senseBuffer, page);
-                            if(sense) continue;
+                    foreach(byte page in evpdPages.Where(page => page != 0x80)) {
+                        DicConsole.WriteLine("Querying SCSI EVPD {0:X2}h...", page);
+                        sense = dev.ScsiInquiry(out buffer, out senseBuffer, page);
+                        if(sense) continue;
 
-                            pageType evpd = new pageType();
-                            evpd.page = page;
-                            evpd.value = buffer;
-                            evpds.Add(evpd);
-                        }
+                        pageType evpd = new pageType();
+                        evpd.page = page;
+                        evpd.value = buffer;
+                        evpds.Add(evpd);
+                    }
 
                     if(evpds.Count > 0) report.SCSI.EVPDPages = evpds.ToArray();
                 }

@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -261,10 +262,7 @@ namespace DiscImageChef.Filesystems
             RootBlock rblk = new RootBlock();
 
             // So to handle even number of sectors
-            foreach(ulong root_ptr in root_ptrs)
-            {
-                if(root_ptr >= partition.End || root_ptr < partition.Start) continue;
-
+            foreach(ulong root_ptr in root_ptrs.Where(root_ptr => root_ptr < partition.End && root_ptr >= partition.Start)) {
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", root_ptr);
 
                 sector = imagePlugin.ReadSector(root_ptr);
@@ -346,10 +344,7 @@ namespace DiscImageChef.Filesystems
             uint blockSize = 0;
 
             // So to handle even number of sectors
-            foreach(ulong root_ptr in root_ptrs)
-            {
-                if(root_ptr >= partition.End || root_ptr < partition.Start) continue;
-
+            foreach(ulong root_ptr in root_ptrs.Where(root_ptr => root_ptr < partition.End && root_ptr >= partition.Start)) {
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", root_ptr);
 
                 RootBlockSector = imagePlugin.ReadSector(root_ptr);

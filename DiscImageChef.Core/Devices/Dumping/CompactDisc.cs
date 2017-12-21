@@ -244,14 +244,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sessionsForAlcohol[i].SessionSequence = (ushort)(i + 1);
                 sessionsForAlcohol[i].StartTrack = ushort.MaxValue;
             }
-            foreach(FullTOC.TrackDataDescriptor trk in toc.Value.TrackDescriptors)
-                if(trk.POINT > 0 && trk.POINT < 0xA0 && trk.SessionNumber <= sessionsForAlcohol.Length)
-                {
-                    if(trk.POINT < sessionsForAlcohol[trk.SessionNumber - 1].StartTrack)
-                        sessionsForAlcohol[trk.SessionNumber - 1].StartTrack = trk.POINT;
-                    if(trk.POINT > sessionsForAlcohol[trk.SessionNumber - 1].EndTrack)
-                        sessionsForAlcohol[trk.SessionNumber - 1].EndTrack = trk.POINT;
-                }
+            foreach(FullTOC.TrackDataDescriptor trk in toc.Value.TrackDescriptors.Where(trk => trk.POINT > 0 && trk.POINT < 0xA0 && trk.SessionNumber <= sessionsForAlcohol.Length)) {
+                if(trk.POINT < sessionsForAlcohol[trk.SessionNumber - 1].StartTrack)
+                    sessionsForAlcohol[trk.SessionNumber - 1].StartTrack = trk.POINT;
+                if(trk.POINT > sessionsForAlcohol[trk.SessionNumber - 1].EndTrack)
+                    sessionsForAlcohol[trk.SessionNumber - 1].EndTrack = trk.POINT;
+            }
 
             alcohol.AddSessions(sessionsForAlcohol);
 
@@ -264,67 +262,65 @@ namespace DiscImageChef.Core.Devices.Dumping
             List<TrackType> trackList = new List<TrackType>();
             long lastSector = 0;
             string lastMsf = null;
-            foreach(FullTOC.TrackDataDescriptor trk in sortedTracks)
-                if(trk.ADR == 1 || trk.ADR == 4)
-                    if(trk.POINT >= 0x01 && trk.POINT <= 0x63)
+            foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR == 4)) if(trk.POINT >= 0x01 && trk.POINT <= 0x63)
+                {
+                    TrackType track = new TrackType
                     {
-                        TrackType track = new TrackType
-                        {
-                            Sequence = new TrackSequenceType {Session = trk.SessionNumber, TrackNumber = trk.POINT}
-                        };
-                        if((TOC_CONTROL)(trk.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
-                           (TOC_CONTROL)(trk.CONTROL & 0x0D) == TOC_CONTROL.DataTrackIncremental)
-                            track.TrackType1 = TrackTypeTrackType.mode1;
-                        else track.TrackType1 = TrackTypeTrackType.audio;
-                        if(trk.PHOUR > 0)
-                            track.StartMSF = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", trk.PMIN, trk.PSEC,
-                                                           trk.PFRAME, trk.PHOUR);
-                        else track.StartMSF = string.Format("{0:D2}:{1:D2}:{2:D2}", trk.PMIN, trk.PSEC, trk.PFRAME);
-                        track.StartSector = trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME -
-                                            150;
-                        trackList.Add(track);
-                    }
-                    else if(trk.POINT == 0xA2)
+                        Sequence = new TrackSequenceType {Session = trk.SessionNumber, TrackNumber = trk.POINT}
+                    };
+                    if((TOC_CONTROL)(trk.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
+                       (TOC_CONTROL)(trk.CONTROL & 0x0D) == TOC_CONTROL.DataTrackIncremental)
+                        track.TrackType1 = TrackTypeTrackType.mode1;
+                    else track.TrackType1 = TrackTypeTrackType.audio;
+                    if(trk.PHOUR > 0)
+                        track.StartMSF = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", trk.PMIN, trk.PSEC,
+                                                       trk.PFRAME, trk.PHOUR);
+                    else track.StartMSF = string.Format("{0:D2}:{1:D2}:{2:D2}", trk.PMIN, trk.PSEC, trk.PFRAME);
+                    track.StartSector = trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME -
+                                        150;
+                    trackList.Add(track);
+                }
+                else if(trk.POINT == 0xA2)
+                {
+                    int phour, pmin, psec, pframe;
+                    if(trk.PFRAME == 0)
                     {
-                        int phour, pmin, psec, pframe;
-                        if(trk.PFRAME == 0)
-                        {
-                            pframe = 74;
+                        pframe = 74;
 
-                            if(trk.PSEC == 0)
+                        if(trk.PSEC == 0)
+                        {
+                            psec = 59;
+
+                            if(trk.PMIN == 0)
                             {
-                                psec = 59;
-
-                                if(trk.PMIN == 0)
-                                {
-                                    pmin = 59;
-                                    phour = trk.PHOUR - 1;
-                                }
-                                else
-                                {
-                                    pmin = trk.PMIN - 1;
-                                    phour = trk.PHOUR;
-                                }
+                                pmin = 59;
+                                phour = trk.PHOUR - 1;
                             }
                             else
                             {
-                                psec = trk.PSEC - 1;
-                                pmin = trk.PMIN;
+                                pmin = trk.PMIN - 1;
                                 phour = trk.PHOUR;
                             }
                         }
                         else
                         {
-                            pframe = trk.PFRAME - 1;
-                            psec = trk.PSEC;
+                            psec = trk.PSEC - 1;
                             pmin = trk.PMIN;
                             phour = trk.PHOUR;
                         }
-
-                        if(phour > 0) lastMsf = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe, phour);
-                        else lastMsf = string.Format("{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe);
-                        lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
                     }
+                    else
+                    {
+                        pframe = trk.PFRAME - 1;
+                        psec = trk.PSEC;
+                        pmin = trk.PMIN;
+                        phour = trk.PHOUR;
+                    }
+
+                    if(phour > 0) lastMsf = string.Format("{3:D2}:{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe, phour);
+                    else lastMsf = string.Format("{0:D2}:{1:D2}:{2:D2}", pmin, psec, pframe);
+                    lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
+                }
 
             TrackType[] tracks = trackList.ToArray();
             for(int t = 1; t < tracks.Length; t++)

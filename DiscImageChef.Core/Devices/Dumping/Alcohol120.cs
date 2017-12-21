@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
@@ -376,16 +377,12 @@ namespace DiscImageChef.Core.Devices.Dumping
 
         internal void AddSessions(Session[] cdSessions)
         {
-            foreach(Session cdSession in cdSessions)
+            foreach(AlcoholSession session in cdSessions.Select(cdSession => new AlcoholSession
             {
-                AlcoholSession session = new AlcoholSession
-                {
-                    firstTrack = (ushort)cdSession.StartTrack,
-                    lastTrack = (ushort)cdSession.EndTrack,
-                    sessionSequence = cdSession.SessionSequence
-                };
-                sessions.Add(session);
-            }
+                firstTrack = (ushort)cdSession.StartTrack,
+                lastTrack = (ushort)cdSession.EndTrack,
+                sessionSequence = cdSession.SessionSequence
+            })) { sessions.Add(session); }
         }
 
         internal void SetTrackTypes(byte point, TrackType mode, TrackSubchannelType subMode)

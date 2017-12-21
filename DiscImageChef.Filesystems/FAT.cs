@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -240,11 +241,8 @@ namespace DiscImageChef.Filesystems
                 bool equal_fat_ids = fat1_sector0[0] == fat2_sector0[0] && fat1_sector0[1] == fat2_sector0[1];
                 // Volume is software interleaved 2:1
                 MemoryStream rootMs = new MemoryStream();
-                foreach(ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20})
-                {
-                    byte[] tmp = imagePlugin.ReadSector(rootSector);
-                    rootMs.Write(tmp, 0, tmp.Length);
-                }
+                foreach(byte[] tmp in from ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20} select imagePlugin.ReadSector(rootSector))
+                { rootMs.Write(tmp, 0, tmp.Length); }
 
                 byte[] root_dir = rootMs.ToArray();
                 rootMs = null;
@@ -606,11 +604,8 @@ namespace DiscImageChef.Filesystems
                 bool equal_fat_ids = fat1_sector0[0] == fat2_sector0[0] && fat1_sector0[1] == fat2_sector0[1];
                 // Volume is software interleaved 2:1
                 MemoryStream rootMs = new MemoryStream();
-                foreach(ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20})
-                {
-                    byte[] tmp = imagePlugin.ReadSector(rootSector);
-                    rootMs.Write(tmp, 0, tmp.Length);
-                }
+                foreach(byte[] tmp in from ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20} select imagePlugin.ReadSector(rootSector))
+                { rootMs.Write(tmp, 0, tmp.Length); }
 
                 byte[] root_dir = rootMs.ToArray();
                 rootMs = null;
@@ -1310,11 +1305,8 @@ namespace DiscImageChef.Filesystems
                 if(useDecRainbowBPB)
                 {
                     MemoryStream rootMs = new MemoryStream();
-                    foreach(ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20})
-                    {
-                        byte[] tmp = imagePlugin.ReadSector(rootSector);
-                        rootMs.Write(tmp, 0, tmp.Length);
-                    }
+                    foreach(byte[] tmp in from ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20} select imagePlugin.ReadSector(rootSector))
+                    { rootMs.Write(tmp, 0, tmp.Length); }
 
                     root_directory = rootMs.ToArray();
                     rootMs = null;

@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -278,8 +279,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                decMode.Value.Header.BlockDescriptors.Length >= 1)
                                 scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
-                            foreach(Decoders.SCSI.Modes.ModePage modePage in decMode.Value.Pages)
-                                containsFloppyPage |= modePage.Page == 0x05;
+                            containsFloppyPage = decMode.Value.Pages.Aggregate(containsFloppyPage, (current, modePage) => current | (modePage.Page == 0x05));
                         }
                     }
                 }

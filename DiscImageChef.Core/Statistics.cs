@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Xml.Serialization;
@@ -105,14 +106,12 @@ namespace DiscImageChef.Core
                 long count = 0;
 
                 OsStats old = null;
-                foreach(OsStats nvs in AllStats.OperatingSystems)
-                    if(nvs.name == Interop.DetectOS.GetRealPlatformID().ToString() &&
-                       nvs.version == Interop.DetectOS.GetVersion())
-                    {
-                        count = nvs.Value + 1;
-                        old = nvs;
-                        break;
-                    }
+                foreach(OsStats nvs in AllStats.OperatingSystems.Where(nvs => nvs.name == Interop.DetectOS.GetRealPlatformID().ToString() &&
+                                                                              nvs.version == Interop.DetectOS.GetVersion())) {
+                    count = nvs.Value + 1;
+                    old = nvs;
+                    break;
+                }
 
                 if(old != null) AllStats.OperatingSystems.Remove(old);
 
@@ -131,13 +130,11 @@ namespace DiscImageChef.Core
                 long count = 0;
 
                 NameValueStats old = null;
-                foreach(NameValueStats nvs in AllStats.Versions)
-                    if(nvs.name == Version.GetVersion())
-                    {
-                        count = nvs.Value + 1;
-                        old = nvs;
-                        break;
-                    }
+                foreach(NameValueStats nvs in AllStats.Versions.Where(nvs => nvs.name == Version.GetVersion())) {
+                    count = nvs.Value + 1;
+                    old = nvs;
+                    break;
+                }
 
                 if(old != null) AllStats.Versions.Remove(old);
 
@@ -333,13 +330,7 @@ namespace DiscImageChef.Core
             if(AllStats.Filesystems == null) AllStats.Filesystems = new List<NameValueStats>();
             if(CurrentStats.Filesystems == null) CurrentStats.Filesystems = new List<NameValueStats>();
 
-            NameValueStats old = null;
-            foreach(NameValueStats nvs in AllStats.Filesystems)
-                if(nvs.name == filesystem)
-                {
-                    old = nvs;
-                    break;
-                }
+            NameValueStats old = AllStats.Filesystems.FirstOrDefault(nvs => nvs.name == filesystem);
 
             NameValueStats nw = new NameValueStats();
             if(old != null)
@@ -355,13 +346,7 @@ namespace DiscImageChef.Core
             }
             AllStats.Filesystems.Add(nw);
 
-            old = null;
-            foreach(NameValueStats nvs in CurrentStats.Filesystems)
-                if(nvs.name == filesystem)
-                {
-                    old = nvs;
-                    break;
-                }
+            old = CurrentStats.Filesystems.FirstOrDefault(nvs => nvs.name == filesystem);
 
             nw = new NameValueStats();
             if(old != null)
@@ -385,13 +370,7 @@ namespace DiscImageChef.Core
             if(AllStats.Partitions == null) AllStats.Partitions = new List<NameValueStats>();
             if(CurrentStats.Partitions == null) CurrentStats.Partitions = new List<NameValueStats>();
 
-            NameValueStats old = null;
-            foreach(NameValueStats nvs in AllStats.Partitions)
-                if(nvs.name == partition)
-                {
-                    old = nvs;
-                    break;
-                }
+            NameValueStats old = AllStats.Partitions.FirstOrDefault(nvs => nvs.name == partition);
 
             NameValueStats nw = new NameValueStats();
             if(old != null)
@@ -407,13 +386,7 @@ namespace DiscImageChef.Core
             }
             AllStats.Partitions.Add(nw);
 
-            old = null;
-            foreach(NameValueStats nvs in CurrentStats.Partitions)
-                if(nvs.name == partition)
-                {
-                    old = nvs;
-                    break;
-                }
+            old = CurrentStats.Partitions.FirstOrDefault(nvs => nvs.name == partition);
 
             nw = new NameValueStats();
             if(old != null)
@@ -437,13 +410,7 @@ namespace DiscImageChef.Core
             if(AllStats.Filters == null) AllStats.Filters = new List<NameValueStats>();
             if(CurrentStats.Filters == null) CurrentStats.Filters = new List<NameValueStats>();
 
-            NameValueStats old = null;
-            foreach(NameValueStats nvs in AllStats.Filters)
-                if(nvs.name == format)
-                {
-                    old = nvs;
-                    break;
-                }
+            NameValueStats old = AllStats.Filters.FirstOrDefault(nvs => nvs.name == format);
 
             NameValueStats nw = new NameValueStats();
             if(old != null)
@@ -459,13 +426,7 @@ namespace DiscImageChef.Core
             }
             AllStats.Filters.Add(nw);
 
-            old = null;
-            foreach(NameValueStats nvs in CurrentStats.Filters)
-                if(nvs.name == format)
-                {
-                    old = nvs;
-                    break;
-                }
+            old = CurrentStats.Filters.FirstOrDefault(nvs => nvs.name == format);
 
             nw = new NameValueStats();
             if(old != null)
@@ -489,13 +450,7 @@ namespace DiscImageChef.Core
             if(AllStats.MediaImages == null) AllStats.MediaImages = new List<NameValueStats>();
             if(CurrentStats.MediaImages == null) CurrentStats.MediaImages = new List<NameValueStats>();
 
-            NameValueStats old = null;
-            foreach(NameValueStats nvs in AllStats.MediaImages)
-                if(nvs.name == format)
-                {
-                    old = nvs;
-                    break;
-                }
+            NameValueStats old = AllStats.MediaImages.FirstOrDefault(nvs => nvs.name == format);
 
             NameValueStats nw = new NameValueStats();
             if(old != null)
@@ -511,13 +466,7 @@ namespace DiscImageChef.Core
             }
             AllStats.MediaImages.Add(nw);
 
-            old = null;
-            foreach(NameValueStats nvs in CurrentStats.MediaImages)
-                if(nvs.name == format)
-                {
-                    old = nvs;
-                    break;
-                }
+            old = CurrentStats.MediaImages.FirstOrDefault(nvs => nvs.name == format);
 
             nw = new NameValueStats();
             if(old != null)
@@ -546,14 +495,7 @@ namespace DiscImageChef.Core
             else if(dev.IsFireWire) deviceBus = "FireWire";
             else deviceBus = dev.Type.ToString();
 
-            DeviceStats old = null;
-            foreach(DeviceStats ds in AllStats.Devices)
-                if(ds.Manufacturer == dev.Manufacturer && ds.Model == dev.Model && ds.Revision == dev.Revision &&
-                   ds.Bus == deviceBus)
-                {
-                    old = ds;
-                    break;
-                }
+            DeviceStats old = AllStats.Devices.FirstOrDefault(ds => ds.Manufacturer == dev.Manufacturer && ds.Model == dev.Model && ds.Revision == dev.Revision && ds.Bus == deviceBus);
 
             if(old != null) AllStats.Devices.Remove(old);
 
@@ -565,14 +507,7 @@ namespace DiscImageChef.Core
             nw.ManufacturerSpecified = true;
             AllStats.Devices.Add(nw);
 
-            old = null;
-            foreach(DeviceStats ds in CurrentStats.Devices)
-                if(ds.Manufacturer == dev.Manufacturer && ds.Model == dev.Model && ds.Revision == dev.Revision &&
-                   ds.Bus == deviceBus)
-                {
-                    old = ds;
-                    break;
-                }
+            old = CurrentStats.Devices.FirstOrDefault(ds => ds.Manufacturer == dev.Manufacturer && ds.Model == dev.Model && ds.Revision == dev.Revision && ds.Bus == deviceBus);
 
             if(old != null) CurrentStats.Devices.Remove(old);
 
@@ -592,13 +527,7 @@ namespace DiscImageChef.Core
             if(AllStats.Medias == null) AllStats.Medias = new List<MediaStats>();
             if(CurrentStats.Medias == null) CurrentStats.Medias = new List<MediaStats>();
 
-            MediaStats old = null;
-            foreach(MediaStats ms in AllStats.Medias)
-                if(ms.real == real && ms.type == type.ToString())
-                {
-                    old = ms;
-                    break;
-                }
+            MediaStats old = AllStats.Medias.FirstOrDefault(ms => ms.real == real && ms.type == type.ToString());
 
             MediaStats nw = new MediaStats();
             if(old != null)
@@ -616,13 +545,7 @@ namespace DiscImageChef.Core
             }
             AllStats.Medias.Add(nw);
 
-            old = null;
-            foreach(MediaStats ms in CurrentStats.Medias)
-                if(ms.real == real && ms.type == type.ToString())
-                {
-                    old = ms;
-                    break;
-                }
+            old = CurrentStats.Medias.FirstOrDefault(ms => ms.real == real && ms.type == type.ToString());
 
             nw = new MediaStats();
             if(old != null)

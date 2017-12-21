@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
 using DiscImageChef.DiscImages;
@@ -50,10 +51,20 @@ namespace DiscImageChef.Core
                 imageFormat = null;
 
                 // Check all but RAW plugin
-                foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values)
-                    if(imageplugin.PluginUuid != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin => imageplugin.PluginUuid != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))) try
                     {
-                        try
+                        DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
+                        if(!imageplugin.IdentifyImage(imageFilter)) continue;
+
+                        imageFormat = imageplugin;
+                        break;
+                    }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    catch { }
+
+                // Check only RAW plugin
+                if(imageFormat == null)
+                    foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin => imageplugin.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))) try
                         {
                             DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
                             if(!imageplugin.IdentifyImage(imageFilter)) continue;
@@ -63,26 +74,6 @@ namespace DiscImageChef.Core
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch { }
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
-                    }
-
-                // Check only RAW plugin
-                if(imageFormat == null)
-                    foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values)
-                        if(imageplugin.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-                        {
-                            try
-                            {
-                                DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
-                                if(!imageplugin.IdentifyImage(imageFilter)) continue;
-
-                                imageFormat = imageplugin;
-                                break;
-                            }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                            catch { }
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                        }
 
                 // Still not recognized
                 if(imageFormat == null) return null;

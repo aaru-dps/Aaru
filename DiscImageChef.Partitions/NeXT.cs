@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
@@ -76,10 +77,7 @@ namespace DiscImageChef.Partitions
 
             ulong label_position = 0;
 
-            foreach(ulong i in new ulong[] {0, 4, 15, 16})
-            {
-                if(i + sectorOffset >= imagePlugin.GetSectors()) break;
-
+            foreach(ulong i in new ulong[] {0, 4, 15, 16}.TakeWhile(i => i + sectorOffset < imagePlugin.GetSectors())) {
                 label_sector = imagePlugin.ReadSector(i + sectorOffset);
                 magic = BigEndianBitConverter.ToUInt32(label_sector, 0x00);
                 if(magic != NEXT_MAGIC1 && magic != NEXT_MAGIC2 && magic != NEXT_MAGIC3) continue;

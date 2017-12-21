@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DiscImageChef.Checksums;
 
 namespace DiscImageChef.Core
@@ -514,14 +515,7 @@ namespace DiscImageChef.Core
             }
 
             EndProgress();
-            double entropy = 0;
-            foreach(ulong l in entTable)
-            {
-#pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
-                double frequency = (double)l / (double)bufferSize;
-#pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
-                entropy += -(frequency * Math.Log(frequency, 2));
-            }
+            double entropy = entTable.Select(l => (double)l / (double)bufferSize).Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);

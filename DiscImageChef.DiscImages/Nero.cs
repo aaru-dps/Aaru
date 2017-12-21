@@ -1834,12 +1834,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(Track _track in imageTracks)
-                        if(_track.TrackSequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector)
-                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in imageTracks where _track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                   string.Format("Sector address {0} not found", sectorAddress));
@@ -1847,12 +1842,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(Track _track in imageTracks)
-                        if(_track.TrackSequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector)
-                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in imageTracks where _track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                   string.Format("Sector address {0} not found", sectorAddress));
@@ -2200,12 +2190,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(Track _track in imageTracks)
-                        if(_track.TrackSequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector)
-                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in imageTracks where _track.TrackSequence == kvp.Key where sectorAddress - kvp.Value < _track.TrackEndSector - _track.TrackStartSector select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                   string.Format("Sector address {0} not found", sectorAddress));
@@ -2347,10 +2332,7 @@ namespace DiscImageChef.DiscImages
 
         public override List<Track> GetSessionTracks(ushort session)
         {
-            List<Track> sessionTracks = new List<Track>();
-            foreach(Track _track in imageTracks) if(_track.TrackSession == session) sessionTracks.Add(_track);
-
-            return sessionTracks;
+            return imageTracks.Where(_track => _track.TrackSession == session).ToList();
         }
 
         public override List<Session> GetSessions()

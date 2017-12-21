@@ -152,9 +152,9 @@ namespace DiscImageChef.Commands
                             else if(checkStatus == true && tempStatus == true) checkStatus = true;
                             else checkStatus = null;
 
-                            foreach(ulong failLba in tempfailingLbas) failingLbas.Add(failLba);
+                            failingLbas.AddRange(tempfailingLbas);
 
-                            foreach(ulong unknownLba in tempunknownLbas) unknownLbas.Add(unknownLba);
+                            unknownLbas.AddRange(tempunknownLbas);
 
                             if(remainingSectors < 512)
                             {
@@ -199,9 +199,9 @@ namespace DiscImageChef.Commands
                         else if(checkStatus == true && tempStatus == true) checkStatus = true;
                         else checkStatus = null;
 
-                        foreach(ulong failLba in tempfailingLbas) failingLbas.Add(failLba);
+                        failingLbas.AddRange(tempfailingLbas);
 
-                        foreach(ulong unknownLba in tempunknownLbas) unknownLbas.Add(unknownLba);
+                        unknownLbas.AddRange(tempunknownLbas);
 
                         if(remainingSectors < 512)
                         {

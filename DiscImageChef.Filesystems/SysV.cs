@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
 
@@ -132,12 +133,7 @@ namespace DiscImageChef.Filesystems
                 spc
             };
 
-            foreach(int i in locations)
-            {
-                if(i + sb_size_in_sectors >= (int)imagePlugin.ImageInfo.Sectors) break;
-
-                byte[] sb_sector = imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors);
-
+            foreach(byte[] sb_sector in locations.TakeWhile(i => i + sb_size_in_sectors < (int)imagePlugin.ImageInfo.Sectors).Select(i => imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors))) {
                 magic = BitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
 
                 if(magic == XENIX_MAGIC || magic == XENIX_CIGAM || magic == SYSV_MAGIC || magic == SYSV_CIGAM)

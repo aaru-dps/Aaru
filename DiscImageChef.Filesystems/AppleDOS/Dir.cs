@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems.AppleDOS
@@ -63,8 +64,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = new List<string>();
-            foreach(string ent in catalogCache.Keys) contents.Add(ent);
+            contents = catalogCache.Keys.ToList();
 
             if(debug)
             {
@@ -103,31 +103,29 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 catSector = (CatalogSector)Marshal.PtrToStructure(catPtr, typeof(CatalogSector));
                 Marshal.FreeHGlobal(catPtr);
 
-                foreach(FileEntry entry in catSector.entries)
-                    if(entry.extentTrack > 0)
-                    {
-                        track1UsedByFiles |= entry.extentTrack == 1;
-                        track2UsedByFiles |= entry.extentTrack == 2;
+                foreach(FileEntry entry in catSector.entries.Where(entry => entry.extentTrack > 0)) {
+                    track1UsedByFiles |= entry.extentTrack == 1;
+                    track2UsedByFiles |= entry.extentTrack == 2;
 
-                        byte[] filenameB = new byte[30];
-                        ushort ts = (ushort)((entry.extentTrack << 8) | entry.extentSector);
+                    byte[] filenameB = new byte[30];
+                    ushort ts = (ushort)((entry.extentTrack << 8) | entry.extentSector);
 
-                        // Apple DOS has high byte set over ASCII.
-                        for(int i = 0; i < 30; i++) filenameB[i] = (byte)(entry.filename[i] & 0x7F);
+                    // Apple DOS has high byte set over ASCII.
+                    for(int i = 0; i < 30; i++) filenameB[i] = (byte)(entry.filename[i] & 0x7F);
 
-                        string filename = StringHandlers.SpacePaddedToString(filenameB, CurrentEncoding);
+                    string filename = StringHandlers.SpacePaddedToString(filenameB, CurrentEncoding);
 
-                        if(!catalogCache.ContainsKey(filename)) catalogCache.Add(filename, ts);
+                    if(!catalogCache.ContainsKey(filename)) catalogCache.Add(filename, ts);
 
-                        if(!fileTypeCache.ContainsKey(filename))
-                            fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
+                    if(!fileTypeCache.ContainsKey(filename))
+                        fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
 
-                        if(!fileSizeCache.ContainsKey(filename))
-                            fileSizeCache.Add(filename, entry.length * vtoc.bytesPerSector);
+                    if(!fileSizeCache.ContainsKey(filename))
+                        fileSizeCache.Add(filename, entry.length * vtoc.bytesPerSector);
 
-                        if((entry.typeAndFlags & 0x80) == 0x80 && !lockedFiles.Contains(filename))
-                            lockedFiles.Add(filename);
-                    }
+                    if((entry.typeAndFlags & 0x80) == 0x80 && !lockedFiles.Contains(filename))
+                        lockedFiles.Add(filename);
+                }
 
                 lba = (ulong)(catSector.trackOfNext * sectorsPerTrack + catSector.sectorOfNext);
 

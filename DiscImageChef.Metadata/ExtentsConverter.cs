@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Extents;
 using Schemas;
 
@@ -56,9 +57,7 @@ namespace DiscImageChef.Metadata
         {
             if(extents == null) return null;
 
-            List<Tuple<ulong, ulong>> tuples = new List<Tuple<ulong, ulong>>();
-
-            foreach(ExtentType extent in extents) tuples.Add(new Tuple<ulong, ulong>(extent.Start, extent.End));
+            List<Tuple<ulong, ulong>> tuples = extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).ToList();
 
             return new ExtentsULong(tuples);
         }

@@ -125,9 +125,7 @@ namespace Extents
 
         public bool Contains(sbyte item)
         {
-            foreach(Tuple<sbyte, sbyte> extent in backend) if(item >= extent.Item1 && item <= extent.Item2) return true;
-
-            return false;
+            return backend.Any(extent => item >= extent.Item1 && item <= extent.Item2);
         }
 
         public void Clear()
@@ -196,12 +194,10 @@ namespace Extents
         public bool GetStart(sbyte item, out sbyte start)
         {
             start = 0;
-            foreach(Tuple<sbyte, sbyte> extent in backend)
-                if(item >= extent.Item1 && item <= extent.Item2)
-                {
-                    start = extent.Item1;
-                    return true;
-                }
+            foreach(Tuple<sbyte, sbyte> extent in backend.Where(extent => item >= extent.Item1 && item <= extent.Item2)) {
+                start = extent.Item1;
+                return true;
+            }
 
             return false;
         }

@@ -32,7 +32,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Partitions
@@ -1317,8 +1319,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.priority = {0}", fshd.Dnode.Priority);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.startup = {0}", fshd.Dnode.Startup);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.seglist_ptr = {0}", fshd.Dnode.SeglistPtr);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.global_vec = 0x{0:X8}",
-                                          fshd.Dnode.GlobalVec);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.global_vec = 0x{0:X8}", fshd.Dnode.GlobalVec);
 
                 nextBlock = fshd.Dnode.SeglistPtr;
                 bool thereAreLoadSegments = false;
@@ -1370,24 +1371,24 @@ namespace DiscImageChef.Partitions
             }
 
             ulong sequence = 0;
-            foreach(PartitionEntry rdbEntry in partitionEntries)
+            foreach(Partition entry in partitionEntries.Select(rdbEntry => new CommonTypes.Partition
             {
-                CommonTypes.Partition entry = new CommonTypes.Partition
-                {
-                    Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
-                    Name = rdbEntry.DriveName,
-                    Sequence = sequence,
-                    Length =
-                        (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                        rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt,
-                    Start = rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
-                            sectorOffset,
-                    Type = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
-                    Scheme = Name
-                };
-                entry.Offset = entry.Start * rdb.BlockSize;
-                entry.Size = entry.Length * rdb.BlockSize;
-
+                Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
+                Name = rdbEntry.DriveName,
+                Sequence = sequence,
+                Length =
+                    (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
+                    rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt,
+                Start = rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                        sectorOffset,
+                Type = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
+                Scheme = Name,
+                Offset = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                          sectorOffset) * rdb.BlockSize,
+                Size = ((rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
+                       rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) * rdb.BlockSize
+            }))
+            {
                 partitions.Add(entry);
                 sequence++;
             }
@@ -1425,9 +1426,12 @@ namespace DiscImageChef.Partitions
                 case TYPEID_FFS_MUSER: return "Amiga Fast File System with multi-user patches";
                 case TYPEID_OFS_INTL_MUSER:
                     return "Amiga Original File System with international characters and multi-user patches";
-                case TYPEID_FFS_INTL_MUSER: return "Amiga Fast File System with international characters and multi-user patches";
-                case TYPEID_OFS_CACHE_MUSER: return "Amiga Original File System with directory cache and multi-user patches";
-                case TYPEID_FFS_CACHE_MUSER: return "Amiga Fast File System with directory cache and multi-user patches";
+                case TYPEID_FFS_INTL_MUSER:
+                    return "Amiga Fast File System with international characters and multi-user patches";
+                case TYPEID_OFS_CACHE_MUSER:
+                    return "Amiga Original File System with directory cache and multi-user patches";
+                case TYPEID_FFS_CACHE_MUSER:
+                    return "Amiga Fast File System with directory cache and multi-user patches";
                 case TYPEID_OLD_BSD_UNUSED: return "BSD unused";
                 case TYPEID_OLD_BSD_SWAP: return "BSD swap";
                 case TYPEID_OLD_BSD42_FFS: return "BSD 4.2 FFS";

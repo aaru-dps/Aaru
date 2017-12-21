@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
@@ -66,20 +67,16 @@ namespace DiscImageChef.Partitions
 
             ulong counter = 0;
 
-            foreach(RioKarmaEntry entry in table.entries)
+            foreach(Partition part in from entry in table.entries let part = new Partition
             {
-                Partition part = new Partition
-                {
-                    Start = entry.offset,
-                    Offset = (ulong)(entry.offset * sector.Length),
-                    Size = entry.size,
-                    Length = (ulong)(entry.size * sector.Length),
-                    Type = "Rio Karma",
-                    Sequence = counter,
-                    Scheme = Name
-                };
-                if(entry.type != ENTRY_MAGIC) continue;
-
+                Start = entry.offset,
+                Offset = (ulong)(entry.offset * sector.Length),
+                Size = entry.size,
+                Length = (ulong)(entry.size * sector.Length),
+                Type = "Rio Karma",
+                Sequence = counter,
+                Scheme = Name
+            } where entry.type == ENTRY_MAGIC select part) {
                 partitions.Add(part);
                 counter++;
             }

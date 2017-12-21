@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -156,9 +157,7 @@ namespace DiscImageChef.Commands
                 }
 
                 string[] contents = Directory.GetFiles(options.InputFile, "*", SearchOption.TopDirectoryOnly);
-                List<string> files = new List<string>();
-
-                foreach(string file in contents) if(new FileInfo(file).Length % options.BlockSize == 0) files.Add(file);
+                List<string> files = contents.Where(file => new FileInfo(file).Length % options.BlockSize == 0).ToList();
 
                 files.Sort(StringComparer.CurrentCultureIgnoreCase);
 

@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -1386,14 +1387,7 @@ namespace DiscImageChef.DiscImages
 
             foreach(AlcoholTrack track in alcTracks.Values)
             {
-                ushort sessionNo = 0;
-
-                foreach(Session session in sessions)
-                    if(track.point >= session.StartTrack || track.point <= session.EndTrack)
-                    {
-                        sessionNo = session.SessionSequence;
-                        break;
-                    }
+                ushort sessionNo = (from session in sessions where track.point >= session.StartTrack || track.point <= session.EndTrack select session.SessionSequence).FirstOrDefault();
 
                 AlcoholTrackExtra extra;
                 if(!alcTrackExtras.TryGetValue(track.point, out extra)) continue;
@@ -1447,14 +1441,7 @@ namespace DiscImageChef.DiscImages
 
             foreach(AlcoholTrack track in alcTracks.Values)
             {
-                ushort sessionNo = 0;
-
-                foreach(Session ses in sessions)
-                    if(track.point >= ses.StartTrack || track.point <= ses.EndTrack)
-                    {
-                        sessionNo = ses.SessionSequence;
-                        break;
-                    }
+                ushort sessionNo = (from ses in sessions where track.point >= ses.StartTrack || track.point <= ses.EndTrack select ses.SessionSequence).FirstOrDefault();
 
                 AlcoholTrackExtra extra;
                 if(!alcTrackExtras.TryGetValue(track.point, out extra) || session != sessionNo) continue;

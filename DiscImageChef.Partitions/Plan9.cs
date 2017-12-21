@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Partitions
@@ -60,14 +61,7 @@ namespace DiscImageChef.Partitions
             // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
             string[] really = StringHandlers.CToString(sector).Split(new[] {'\n'});
 
-            foreach(string part in really)
-            {
-                if(part.Length < 5 || part.Substring(0, 5) != "part ") break;
-
-                string[] tokens = part.Split(new[] {' '});
-
-                if(tokens.Length != 4) break;
-
+            foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part.Substring(0, 5) == "part ").Select(part => part.Split(new[] {' '})).TakeWhile(tokens => tokens.Length == 4)) {
                 if(!ulong.TryParse(tokens[2], out ulong start) || !ulong.TryParse(tokens[3], out ulong end)) break;
 
                 Partition _part = new Partition

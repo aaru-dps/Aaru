@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
@@ -670,7 +671,7 @@ namespace DiscImageChef.Devices
                 if(string.IsNullOrEmpty(manufacturer)) manufacturer = usbManufacturerString;
                 if(string.IsNullOrEmpty(model)) model = usbProductString;
                 if(string.IsNullOrEmpty(serial)) serial = usbSerialString;
-                else foreach(char c in serial) if(char.IsControl(c)) serial = usbSerialString;
+                else foreach(char c in serial.Where(c => char.IsControl(c))) serial = usbSerialString;
             }
 
             if(!firewire) return;
@@ -678,7 +679,7 @@ namespace DiscImageChef.Devices
             if(string.IsNullOrEmpty(manufacturer)) manufacturer = firewireVendorName;
             if(string.IsNullOrEmpty(model)) model = firewireModelName;
             if(string.IsNullOrEmpty(serial)) serial = string.Format("{0:X16}", firewireGuid);
-            else foreach(char c in serial) if(char.IsControl(c)) serial = string.Format("{0:X16}", firewireGuid);
+            else foreach(char c in serial.Where(c => char.IsControl(c))) serial = string.Format("{0:X16}", firewireGuid);
         }
 
         static int ConvertFromHexAscii(string file, out byte[] outBuf)

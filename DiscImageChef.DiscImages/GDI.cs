@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -294,39 +295,35 @@ namespace DiscImageChef.DiscImages
                     {
                         _sessions[s].SessionSequence = 1;
 
-                        foreach(GdiTrack trk in discimage.Tracks)
-                            if(!trk.HighDensity)
-                            {
-                                if(_sessions[s].StartTrack == 0) _sessions[s].StartTrack = trk.Sequence;
-                                else if(_sessions[s].StartTrack > trk.Sequence) _sessions[s].StartTrack = trk.Sequence;
+                        foreach(GdiTrack trk in discimage.Tracks.Where(trk => !trk.HighDensity)) {
+                            if(_sessions[s].StartTrack == 0) _sessions[s].StartTrack = trk.Sequence;
+                            else if(_sessions[s].StartTrack > trk.Sequence) _sessions[s].StartTrack = trk.Sequence;
 
-                                if(_sessions[s].EndTrack < trk.Sequence) _sessions[s].EndTrack = trk.Sequence;
+                            if(_sessions[s].EndTrack < trk.Sequence) _sessions[s].EndTrack = trk.Sequence;
 
-                                if(_sessions[s].StartSector > trk.StartSector)
-                                    _sessions[s].StartSector = trk.StartSector;
+                            if(_sessions[s].StartSector > trk.StartSector)
+                                _sessions[s].StartSector = trk.StartSector;
 
-                                if(_sessions[s].EndSector < trk.Sectors + trk.StartSector - 1)
-                                    _sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
-                            }
+                            if(_sessions[s].EndSector < trk.Sectors + trk.StartSector - 1)
+                                _sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
+                        }
                     }
                     else
                     {
                         _sessions[s].SessionSequence = 2;
 
-                        foreach(GdiTrack trk in discimage.Tracks)
-                            if(trk.HighDensity)
-                            {
-                                if(_sessions[s].StartTrack == 0) _sessions[s].StartTrack = trk.Sequence;
-                                else if(_sessions[s].StartTrack > trk.Sequence) _sessions[s].StartTrack = trk.Sequence;
+                        foreach(GdiTrack trk in discimage.Tracks.Where(trk => trk.HighDensity)) {
+                            if(_sessions[s].StartTrack == 0) _sessions[s].StartTrack = trk.Sequence;
+                            else if(_sessions[s].StartTrack > trk.Sequence) _sessions[s].StartTrack = trk.Sequence;
 
-                                if(_sessions[s].EndTrack < trk.Sequence) _sessions[s].EndTrack = trk.Sequence;
+                            if(_sessions[s].EndTrack < trk.Sequence) _sessions[s].EndTrack = trk.Sequence;
 
-                                if(_sessions[s].StartSector > trk.StartSector)
-                                    _sessions[s].StartSector = trk.StartSector;
+                            if(_sessions[s].StartSector > trk.StartSector)
+                                _sessions[s].StartSector = trk.StartSector;
 
-                                if(_sessions[s].EndSector < trk.Sectors + trk.StartSector - 1)
-                                    _sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
-                            }
+                            if(_sessions[s].EndSector < trk.Sectors + trk.StartSector - 1)
+                                _sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
+                        }
                     }
 
                 discimage.Sessions.Add(_sessions[0]);
@@ -407,17 +404,15 @@ namespace DiscImageChef.DiscImages
 
                 ImageInfo.SectorSize = 2352; // All others
 
-                foreach(GdiTrack track in discimage.Tracks)
-                    if((track.Flags & 0x40) == 0x40 && track.Bps == 2352)
-                    {
-                        ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-                        ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                        ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-                        ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
-                        ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
-                        ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
-                        ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
-                    }
+                foreach(GdiTrack track in discimage.Tracks.Where(track => (track.Flags & 0x40) == 0x40 && track.Bps == 2352)) {
+                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                    ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                }
 
                 ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
                 ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
@@ -488,12 +483,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(GdiTrack gdiTrack in discimage.Tracks)
-                        if(gdiTrack.Sequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < gdiTrack.Sectors)
-                                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from gdiTrack in discimage.Tracks where gdiTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             ulong transitionStart;
             offsetmap.TryGetValue(0, out transitionStart);
@@ -505,12 +495,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(GdiTrack gdiTrack in discimage.Tracks)
-                        if(gdiTrack.Sequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < gdiTrack.Sectors)
-                                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from gdiTrack in discimage.Tracks where gdiTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             ulong transitionStart;
             offsetmap.TryGetValue(0, out transitionStart);
@@ -535,12 +520,10 @@ namespace DiscImageChef.DiscImages
 
             _track.Sequence = 0;
 
-            foreach(GdiTrack gdiTrack in discimage.Tracks)
-                if(gdiTrack.Sequence == track)
-                {
-                    _track = gdiTrack;
-                    break;
-                }
+            foreach(GdiTrack gdiTrack in discimage.Tracks.Where(gdiTrack => gdiTrack.Sequence == track)) {
+                _track = gdiTrack;
+                break;
+            }
 
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -641,12 +624,10 @@ namespace DiscImageChef.DiscImages
 
             _track.Sequence = 0;
 
-            foreach(GdiTrack gdiTrack in discimage.Tracks)
-                if(gdiTrack.Sequence == track)
-                {
-                    _track = gdiTrack;
-                    break;
-                }
+            foreach(GdiTrack gdiTrack in discimage.Tracks.Where(gdiTrack => gdiTrack.Sequence == track)) {
+                _track = gdiTrack;
+                break;
+            }
 
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -796,12 +777,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
-                if(sectorAddress >= kvp.Value)
-                    foreach(GdiTrack gdiTrack in discimage.Tracks)
-                        if(gdiTrack.Sequence == kvp.Key)
-                            if(sectorAddress - kvp.Value < gdiTrack.Sectors)
-                                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from gdiTrack in discimage.Tracks where gdiTrack.Sequence == kvp.Key where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp) return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
@@ -821,12 +797,10 @@ namespace DiscImageChef.DiscImages
 
             _track.Sequence = 0;
 
-            foreach(GdiTrack gdiTrack in discimage.Tracks)
-                if(gdiTrack.Sequence == track)
-                {
-                    _track = gdiTrack;
-                    break;
-                }
+            foreach(GdiTrack gdiTrack in discimage.Tracks.Where(gdiTrack => gdiTrack.Sequence == track)) {
+                _track = gdiTrack;
+                break;
+            }
 
             if(_track.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");

@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems.AppleMFS
@@ -46,8 +47,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = new List<string>();
-            foreach(KeyValuePair<uint, string> kvp in idToFilename) contents.Add(kvp.Value);
+            contents = idToFilename.Select(kvp => kvp.Value).ToList();
 
             if(debug)
             {
