@@ -44,9 +44,7 @@ namespace DiscImageChef.Core.Devices.Report
             report.PCMCIA.CIS = dev.Cis;
             Tuple[] tuples = CIS.GetTuples(dev.Cis);
             if(tuples != null)
-            {
                 foreach(Tuple tuple in tuples)
-                {
                     if(tuple.Code == TupleCodes.CISTPL_MANFID)
                     {
                         ManufacturerIdentificationTuple manfid = CIS.DecodeManufacturerIdentificationTuple(tuple);
@@ -71,8 +69,6 @@ namespace DiscImageChef.Core.Devices.Report
                             report.PCMCIA.AdditionalInformation = vers.AdditionalInformation;
                         }
                     }
-                }
-            }
         }
     }
 }

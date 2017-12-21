@@ -76,31 +76,25 @@ namespace DiscImageChef.Server.App_Start
                                                     testedMedia.BlockSize));
 
                     if(testedMedia.Blocks * testedMedia.BlockSize / 1024 / 1024 > 1000000)
-                    {
                         mediaOneValue.Add(string.Format("Medium size: {0} bytes, {1} Tb, {2:F2} TiB",
                                                         testedMedia.Blocks * testedMedia.BlockSize,
                                                         testedMedia.Blocks * testedMedia.BlockSize / 1000 / 1000 /
                                                         1000 / 1000,
                                                         (double)(testedMedia.Blocks * testedMedia.BlockSize) / 1024 /
                                                         1024 / 1024 / 1024));
-                    }
                     else if(testedMedia.Blocks * testedMedia.BlockSize / 1024 / 1024 > 1000)
-                    {
                         mediaOneValue.Add(string.Format("Medium size: {0} bytes, {1} Gb, {2:F2} GiB",
                                                         testedMedia.Blocks * testedMedia.BlockSize,
                                                         testedMedia.Blocks * testedMedia.BlockSize / 1000 / 1000 /
                                                         1000,
                                                         (double)(testedMedia.Blocks * testedMedia.BlockSize) / 1024 /
                                                         1024 / 1024));
-                    }
                     else
-                    {
                         mediaOneValue.Add(string.Format("Medium size: {0} bytes, {1} Mb, {2:F2} MiB",
                                                         testedMedia.Blocks * testedMedia.BlockSize,
                                                         testedMedia.Blocks * testedMedia.BlockSize / 1000 / 1000,
                                                         (double)(testedMedia.Blocks * testedMedia.BlockSize) / 1024 /
                                                         1024));
-                    }
                 }
 
                 if(testedMedia.CHS != null && testedMedia.CurrentCHS != null)
@@ -142,32 +136,26 @@ namespace DiscImageChef.Server.App_Start
                                                     testedMedia.LBASectors));
 
                     if((ulong)testedMedia.LBASectors * testedMedia.BlockSize / 1024 / 1024 > 1000000)
-                    {
                         mediaOneValue.Add(string.Format("Medium size in 28-bit LBA mode: {0} bytes, {1} Tb, {2:F2} TiB",
                                                         (ulong)testedMedia.LBASectors * testedMedia.BlockSize,
                                                         (ulong)testedMedia.LBASectors * testedMedia.BlockSize / 1000 /
                                                         1000 / 1000 / 1000,
                                                         (double)((ulong)testedMedia.LBASectors *
                                                                  testedMedia.BlockSize) / 1024 / 1024 / 1024 / 1024));
-                    }
                     else if((ulong)testedMedia.LBASectors * testedMedia.BlockSize / 1024 / 1024 > 1000)
-                    {
                         mediaOneValue.Add(string.Format("Medium size in 28-bit LBA mode: {0} bytes, {1} Gb, {2:F2} GiB",
                                                         (ulong)testedMedia.LBASectors * testedMedia.BlockSize,
                                                         (ulong)testedMedia.LBASectors * testedMedia.BlockSize / 1000 /
                                                         1000 / 1000,
                                                         (double)((ulong)testedMedia.LBASectors *
                                                                  testedMedia.BlockSize) / 1024 / 1024 / 1024));
-                    }
                     else
-                    {
                         mediaOneValue.Add(string.Format("Medium size in 28-bit LBA mode: {0} bytes, {1} Mb, {2:F2} MiB",
                                                         (ulong)testedMedia.LBASectors * testedMedia.BlockSize,
                                                         (ulong)testedMedia.LBASectors * testedMedia.BlockSize / 1000 /
                                                         1000,
                                                         (double)((ulong)testedMedia.LBASectors *
                                                                  testedMedia.BlockSize) / 1024 / 1024));
-                    }
                 }
 
                 if(testedMedia.LBA48SectorsSpecified)
@@ -176,49 +164,39 @@ namespace DiscImageChef.Server.App_Start
                                                     testedMedia.LBA48Sectors));
 
                     if(testedMedia.LBA48Sectors * testedMedia.BlockSize / 1024 / 1024 > 1000000)
-                    {
                         mediaOneValue.Add(string.Format("Medium size in 48-bit LBA mode: {0} bytes, {1} Tb, {2:F2} TiB",
                                                         testedMedia.LBA48Sectors * testedMedia.BlockSize,
                                                         testedMedia.LBA48Sectors * testedMedia.BlockSize / 1000 /
                                                         1000 / 1000 / 1000,
                                                         (double)(testedMedia.LBA48Sectors * testedMedia.BlockSize) /
                                                         1024 / 1024 / 1024 / 1024));
-                    }
                     else if(testedMedia.LBA48Sectors * testedMedia.BlockSize / 1024 / 1024 > 1000)
-                    {
                         mediaOneValue.Add(string.Format("Medium size in 48-bit LBA mode: {0} bytes, {1} Gb, {2:F2} GiB",
                                                         testedMedia.LBA48Sectors * testedMedia.BlockSize,
                                                         testedMedia.LBA48Sectors * testedMedia.BlockSize / 1000 /
                                                         1000 / 1000,
                                                         (double)(testedMedia.LBA48Sectors * testedMedia.BlockSize) /
                                                         1024 / 1024 / 1024));
-                    }
                     else
-                    {
                         mediaOneValue.Add(string.Format("Medium size in 48-bit LBA mode: {0} bytes, {1} Mb, {2:F2} MiB",
                                                         testedMedia.LBA48Sectors * testedMedia.BlockSize,
                                                         testedMedia.LBA48Sectors * testedMedia.BlockSize / 1000 /
                                                         1000,
                                                         (double)(testedMedia.LBA48Sectors * testedMedia.BlockSize) /
                                                         1024 / 1024));
-                    }
                 }
 
                 if(testedMedia.NominalRotationRateSpecified && testedMedia.NominalRotationRate != 0x0000 &&
                    testedMedia.NominalRotationRate != 0xFFFF)
-                {
                     if(testedMedia.NominalRotationRate == 0x0001) mediaOneValue.Add("Medium does not rotate.");
                     else mediaOneValue.Add(string.Format("Medium rotates at {0} rpm", testedMedia.NominalRotationRate));
-                }
 
                 if(testedMedia.BlockSizeSpecified && testedMedia.PhysicalBlockSizeSpecified &&
                    testedMedia.BlockSize != testedMedia.PhysicalBlockSize &&
                    (testedMedia.LogicalAlignment & 0x8000) == 0x0000 &&
                    (testedMedia.LogicalAlignment & 0x4000) == 0x4000)
-                {
                     mediaOneValue.Add(string.Format("Logical sector starts at offset {0} from physical sector",
                                                     testedMedia.LogicalAlignment & 0x3FFF));
-                }
 
                 if(testedMedia.SupportsRead && ata)
                     mediaOneValue.Add("Device can use the READ SECTOR(S) command in CHS mode with this medium");

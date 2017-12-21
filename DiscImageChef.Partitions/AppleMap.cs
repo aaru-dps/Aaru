@@ -96,7 +96,6 @@ namespace DiscImageChef.Partitions
             uint sequence = 0;
 
             if(ddm.sbSig == DDM_MAGIC)
-            {
                 if(ddm.sbDrvrCount < max_drivers)
                 {
                     ddm.sbMap = new AppleDriverEntry[ddm.sbDrvrCount];
@@ -131,7 +130,6 @@ namespace DiscImageChef.Partitions
                         sequence++;
                     }
                 }
-            }
 
             byte[] part_sector = imagePlugin.ReadSector(1 + sectorOffset);
             AppleOldDevicePartitionMap old_map =
@@ -335,11 +333,9 @@ namespace DiscImageChef.Partitions
                             sequence++;
                         }
                         else
-                        {
                             DicConsole.DebugWriteLine("AppleMap Plugin",
                                                       "Not adding partition becaus start ({0}) is outside media size ({1})",
                                                       _partition.Start, imagePlugin.ImageInfo.Sectors - 1);
-                        }
                     }
                 }
             }

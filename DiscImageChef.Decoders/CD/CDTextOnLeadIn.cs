@@ -237,7 +237,6 @@ namespace DiscImageChef.Decoders.CD
 #endif
 
             foreach(CDTextPack descriptor in response.DataPacks)
-            {
                 if((descriptor.HeaderID1 & 0x80) != 0x80)
                 {
                     // Ignore NOPs
@@ -366,7 +365,6 @@ namespace DiscImageChef.Decoders.CD
 
                     sb.AppendFormat("CRC: 0x{0:X4}", descriptor.CRC).AppendLine();
                 }
-            }
 
             return sb.ToString();
         }

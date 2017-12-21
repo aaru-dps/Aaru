@@ -238,8 +238,6 @@ namespace DiscImageChef.DiscImages
 
                     // For empty cylinders
                     if(sectorsOff[cyl][head].Length == 0)
-                    {
-                        // Last cylinder
                         if(cyl + 1 == hdr.cylinders ||
                            // Next cylinder is also empty
                            sectorsOff[cyl + 1][head].Length == 0) emptyCyl = true;
@@ -249,7 +247,6 @@ namespace DiscImageChef.DiscImages
                             sectorsData[cyl][head] = new byte[spt][];
                             for(int i = 0; i < spt; i++) sectorsData[cyl][head][i] = new byte[ImageInfo.SectorSize];
                         }
-                    }
                 }
 
                 if(emptyCyl) ImageInfo.Cylinders--;

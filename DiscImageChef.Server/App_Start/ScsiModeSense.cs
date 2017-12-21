@@ -45,20 +45,15 @@ namespace DiscImageChef.Server.App_Start
                 scsiOneValue.Add(string.Format("Medium type is {0:X2}h", modeSense.MediumType));
             if(modeSense.WriteProtected) scsiOneValue.Add("Device is write protected.");
             if(modeSense.BlockDescriptors != null)
-            {
                 foreach(blockDescriptorType descriptor in modeSense.BlockDescriptors)
-                {
                     if(descriptor.BlocksSpecified && descriptor.BlockLengthSpecified)
                         scsiOneValue.Add(string.Format("Density code {0:X2}h has {1} blocks of {2} bytes each",
                                                        descriptor.Density, descriptor.Blocks, descriptor.BlockLength));
                     else scsiOneValue.Add(string.Format("Density code {0:X2}h", descriptor.Density));
-                }
-            }
 
             if(modeSense.DPOandFUA) scsiOneValue.Add("Drive supports DPO and FUA bits");
             if(modeSense.BlankCheckEnabled) scsiOneValue.Add("Blank checking during write is enabled");
             if(modeSense.BufferedModeSpecified)
-            {
                 switch(modeSense.BufferedMode)
                 {
                     case 0:
@@ -74,12 +69,10 @@ namespace DiscImageChef.Server.App_Start
                         scsiOneValue.Add(string.Format("Unknown buffered mode code 0x{0:X2}", modeSense.BufferedMode));
                         break;
                 }
-            }
 
             if(modeSense.ModePages != null)
             {
                 foreach(modePageType page in modeSense.ModePages)
-                {
                     switch(page.page)
                     {
                         case 0x00:
@@ -102,14 +95,12 @@ namespace DiscImageChef.Server.App_Start
                         case 0x01:
                         {
                             if(page.subpage == 0)
-                            {
                                 if(deviceType == PeripheralDeviceTypes.MultiMediaDevice)
                                     modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                                   Modes.PrettifyModePage_01_MMC(page.value));
                                 else
                                     modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                                   Modes.PrettifyModePage_01(page.value));
-                            }
                             else goto default;
 
                             break;
@@ -162,14 +153,12 @@ namespace DiscImageChef.Server.App_Start
                         case 0x07:
                         {
                             if(page.subpage == 0)
-                            {
                                 if(deviceType == PeripheralDeviceTypes.MultiMediaDevice)
                                     modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                                   Modes.PrettifyModePage_07_MMC(page.value));
                                 else
                                     modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                                   Modes.PrettifyModePage_07(page.value));
-                            }
                             else goto default;
 
                             break;
@@ -234,14 +223,12 @@ namespace DiscImageChef.Server.App_Start
                         case 0x10:
                         {
                             if(page.subpage == 0)
-                            {
                                 if(deviceType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
                                     modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                                   Modes.PrettifyModePage_10_SSC(page.value));
                                 else
                                     modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                                   Modes.PrettifyModePage_10(page.value));
-                            }
                             else goto default;
 
                             break;
@@ -290,14 +277,12 @@ namespace DiscImageChef.Server.App_Start
                         case 0x1C:
                         {
                             if(page.subpage == 0)
-                            {
                                 if(deviceType == PeripheralDeviceTypes.MultiMediaDevice)
                                     modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                                   Modes.PrettifyModePage_1C_SFF(page.value));
                                 else
                                     modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                                   Modes.PrettifyModePage_1C(page.value));
-                            }
                             else if(page.subpage == 1)
                                 modePages.Add(string.Format("MODE page {0:X2}h", page.page),
                                               Modes.PrettifyModePage_1C_S01(page.value));
@@ -419,14 +404,11 @@ namespace DiscImageChef.Server.App_Start
                         }
                             break;
                     }
-                }
 
                 Dictionary<string, string> newModePages = new Dictionary<string, string>();
                 foreach(KeyValuePair<string, string> kvp in modePages)
-                {
                     if(string.IsNullOrWhiteSpace(kvp.Value)) newModePages.Add(kvp.Key, "Undecoded");
                     else newModePages.Add(kvp.Key, kvp.Value.Replace("\n", "<br/>"));
-                }
 
                 modePages = newModePages;
             }

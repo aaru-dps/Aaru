@@ -288,14 +288,12 @@ namespace DiscImageChef.Filesystems
             }
 
             if(supblk.check_t > 0)
-            {
                 if(supblk.check_inv > 0)
                     sb.AppendFormat("Last checked on {0} (should check every {1} seconds)",
                                     DateHandlers.UNIXUnsignedToDateTime(supblk.check_t), supblk.check_inv).AppendLine();
                 else
                     sb.AppendFormat("Last checked on {0}", DateHandlers.UNIXUnsignedToDateTime(supblk.check_t))
                       .AppendLine();
-            }
             else
             {
                 if(supblk.check_inv > 0)

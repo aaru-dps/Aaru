@@ -116,7 +116,6 @@ namespace DiscImageChef.Filesystems
                 byte[] tmp = imagePlugin.ReadSectors(partition.Start, 2);
 
                 foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00})
-                {
                     if(BitConverter.ToUInt16(tmp, offset) == 0 &&
                        (byte)((tmp[offset + 0x04] & ProDOSStorageTypeMask) >> 4) == RootDirectoryType &&
                        tmp[offset + 0x23] == ProDOSEntryLength && tmp[offset + 0x24] == ProDOSEntriesPerBlock)
@@ -125,7 +124,6 @@ namespace DiscImageChef.Filesystems
                         APMFromHDDOnCD = true;
                         break;
                     }
-                }
             }
 
             ushort prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
@@ -172,7 +170,6 @@ namespace DiscImageChef.Filesystems
                 byte[] tmp = imagePlugin.ReadSectors(partition.Start, 2);
 
                 foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00})
-                {
                     if(BitConverter.ToUInt16(tmp, offset) == 0 &&
                        (byte)((tmp[offset + 0x04] & ProDOSStorageTypeMask) >> 4) == RootDirectoryType &&
                        tmp[offset + 0x23] == ProDOSEntryLength && tmp[offset + 0x24] == ProDOSEntriesPerBlock)
@@ -181,7 +178,6 @@ namespace DiscImageChef.Filesystems
                         APMFromHDDOnCD = true;
                         break;
                     }
-                }
             }
 
             ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock = new ProDOSRootDirectoryKeyBlock();

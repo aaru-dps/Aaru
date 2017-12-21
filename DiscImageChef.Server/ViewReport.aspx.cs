@@ -54,25 +54,19 @@ namespace DiscImageChef.Server
 
                 // Strip non-ascii, strip slashes and question marks
                 if(manufacturer != null)
-                {
                     manufacturer = Encoding
                         .ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII,
                                                           Encoding.UTF8.GetBytes(manufacturer))).Replace('/', '_')
                         .Replace('\\', '_').Replace('?', '_');
-                }
                 if(model != null)
-                {
                     model = Encoding
                         .ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII, Encoding.UTF8.GetBytes(model)))
                         .Replace('/', '_').Replace('\\', '_').Replace('?', '_');
-                }
                 if(revision != null)
-                {
                     revision = Encoding
                         .ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII,
                                                           Encoding.UTF8.GetBytes(revision))).Replace('/', '_')
                         .Replace('\\', '_').Replace('?', '_');
-                }
 
                 string xmlFile = null;
                 if(!string.IsNullOrWhiteSpace(manufacturer) && !string.IsNullOrWhiteSpace(model) &&
@@ -113,16 +107,12 @@ namespace DiscImageChef.Server
                     lblUsbProduct.Text = HttpUtility.HtmlEncode(report.USB.Product);
                     lblUsbVendor.Text = string.Format("0x{0:x4}", report.USB.VendorID);
                     if(usbVendorDescription != null)
-                    {
                         lblUsbVendorDescription.Text =
                             string.Format("({0})", HttpUtility.HtmlEncode(usbVendorDescription));
-                    }
                     lblUsbProductId.Text = string.Format("0x{0:x4}", report.USB.ProductID);
                     if(usbProductDescription != null)
-                    {
                         lblUsbProductDescription.Text =
                             string.Format("({0})", HttpUtility.HtmlEncode(usbProductDescription));
-                    }
                 }
                 else divUsb.Visible = false;
 
@@ -147,7 +137,6 @@ namespace DiscImageChef.Server
                     {
                         Dictionary<string, string> decodedTuples = new Dictionary<string, string>();
                         foreach(Decoders.PCMCIA.Tuple tuple in tuples)
-                        {
                             switch(tuple.Code)
                             {
                                 case Decoders.PCMCIA.TupleCodes.CISTPL_NULL:
@@ -159,7 +148,6 @@ namespace DiscImageChef.Server
                                     Decoders.PCMCIA.DeviceGeometryTuple geom =
                                         Decoders.PCMCIA.CIS.DecodeDeviceGeometryTuple(tuple.Data);
                                     if(geom != null && geom.Geometries != null)
-                                    {
                                         foreach(Decoders.PCMCIA.DeviceGeometry geometry in geom.Geometries)
                                         {
                                             decodedTuples.Add("Device width",
@@ -183,7 +171,6 @@ namespace DiscImageChef.Server
                                                                             (1 << (geometry.Interleaving - 1)) *
                                                                             (1 << (geometry.Partitions - 1))));
                                         }
-                                    }
 
                                     break;
                                 case Decoders.PCMCIA.TupleCodes.CISTPL_ALTSTR:
@@ -226,7 +213,6 @@ namespace DiscImageChef.Server
                                     decodedTuples.Add("Unknown tuple ID", string.Format("0x{0:X2}", (byte)tuple.Code));
                                     break;
                             }
-                        }
 
                         if(decodedTuples.Count > 0)
                         {
@@ -283,11 +269,9 @@ namespace DiscImageChef.Server
 
                     if(VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification) !=
                        report.SCSI.Inquiry.VendorIdentification)
-                    {
                         lblScsiVendor.Text = string.Format("{0} ({1})", report.SCSI.Inquiry.VendorIdentification,
                                                            VendorString.Prettify(report.SCSI.Inquiry
                                                                                        .VendorIdentification));
-                    }
                     else lblScsiVendor.Text = report.SCSI.Inquiry.VendorIdentification;
                     lblScsiProduct.Text = report.SCSI.Inquiry.ProductIdentification;
                     lblScsiRevision.Text = report.SCSI.Inquiry.ProductRevisionLevel;
@@ -299,10 +283,8 @@ namespace DiscImageChef.Server
                     if(report.SCSI.SupportsModeSubpages) scsiOneValue.Add("Device supports MODE SENSE subpages");
 
                     if(report.SCSI.ModeSense != null)
-                    {
                         ScsiModeSense.Report(report.SCSI.ModeSense, report.SCSI.Inquiry.VendorIdentification,
                                              report.SCSI.Inquiry.PeripheralDeviceType, ref scsiOneValue, ref modePages);
-                    }
 
                     if(modePages.Count > 0)
                     {
@@ -411,7 +393,6 @@ namespace DiscImageChef.Server
 
                             if(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1024 /
                                1024 > 1000000)
-                            {
                                 scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Tb, {2:F2} TiB",
                                                                report.SCSI.ReadCapabilities.Blocks *
                                                                report.SCSI.ReadCapabilities.BlockSize,
@@ -421,11 +402,9 @@ namespace DiscImageChef.Server
                                                                (double)(report.SCSI.ReadCapabilities.Blocks *
                                                                         report.SCSI.ReadCapabilities.BlockSize) / 1024 /
                                                                1024 / 1024 / 1024));
-                            }
                             else if(
                                 report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1024 /
                                 1024 > 1000)
-                            {
                                 scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Gb, {2:F2} GiB",
                                                                report.SCSI.ReadCapabilities.Blocks *
                                                                report.SCSI.ReadCapabilities.BlockSize,
@@ -435,9 +414,7 @@ namespace DiscImageChef.Server
                                                                (double)(report.SCSI.ReadCapabilities.Blocks *
                                                                         report.SCSI.ReadCapabilities.BlockSize) / 1024 /
                                                                1024 / 1024));
-                            }
                             else
-                            {
                                 scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Mb, {2:F2} MiB",
                                                                report.SCSI.ReadCapabilities.Blocks *
                                                                report.SCSI.ReadCapabilities.BlockSize,
@@ -446,26 +423,19 @@ namespace DiscImageChef.Server
                                                                (double)(report.SCSI.ReadCapabilities.Blocks *
                                                                         report.SCSI.ReadCapabilities.BlockSize) / 1024 /
                                                                1024));
-                            }
                         }
 
                         if(report.SCSI.ReadCapabilities.MediumTypeSpecified)
-                        {
                             scsiOneValue.Add(string.Format("Medium type code: {0:X2}h",
                                                            report.SCSI.ReadCapabilities.MediumType));
-                        }
                         if(report.SCSI.ReadCapabilities.DensitySpecified)
-                        {
                             scsiOneValue.Add(string.Format("Density code: {0:X2}h",
                                                            report.SCSI.ReadCapabilities.Density));
-                        }
                         if((report.SCSI.ReadCapabilities.SupportsReadLong ||
                             report.SCSI.ReadCapabilities.SupportsReadLong16) &&
                            report.SCSI.ReadCapabilities.LongBlockSizeSpecified)
-                        {
                             scsiOneValue.Add(string.Format("Long block size: {0} bytes",
                                                            report.SCSI.ReadCapabilities.LongBlockSize));
-                        }
                         if(report.SCSI.ReadCapabilities.SupportsReadCapacity)
                             scsiOneValue.Add("Device supports READ CAPACITY (10) command.");
                         if(report.SCSI.ReadCapabilities.SupportsReadCapacity16)

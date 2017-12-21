@@ -313,7 +313,6 @@ namespace DiscImageChef.Partitions
             }
 
             if(validTable)
-            {
                 for(int i = 0; i < 8; i++)
                 {
                     uint type = table.icdEntries[i].type & 0x00FFFFFF;
@@ -321,7 +320,6 @@ namespace DiscImageChef.Partitions
                     if(type == TypeGEMDOS || type == TypeBigGEMDOS || type == TypeLinux || type == TypeSwap ||
                        type == TypeRAW || type == TypeNetBSD || type == TypeNetBSDSwap || type == TypeSysV ||
                        type == TypeMac || type == TypeMinix || type == TypeMinix2)
-                    {
                         if(table.icdEntries[i].start <= imagePlugin.GetSectors())
                         {
                             if(table.icdEntries[i].start + table.icdEntries[i].length > imagePlugin.GetSectors())
@@ -388,9 +386,7 @@ namespace DiscImageChef.Partitions
                             partitions.Add(part);
                             partitionSequence++;
                         }
-                    }
                 }
-            }
 
             return partitions.Count > 0;
         }

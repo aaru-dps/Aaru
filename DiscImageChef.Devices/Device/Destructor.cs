@@ -44,7 +44,6 @@ namespace DiscImageChef.Devices
         ~Device()
         {
             if(fd != null)
-            {
                 switch(platformId)
                 {
                     case Interop.PlatformID.Win32NT:
@@ -57,7 +56,6 @@ namespace DiscImageChef.Devices
                         FreeBSD.Extern.cam_close_device((IntPtr)fd);
                         break;
                 }
-            }
         }
     }
 }

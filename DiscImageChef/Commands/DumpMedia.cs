@@ -63,7 +63,6 @@ namespace DiscImageChef.Commands
             Encoding encoding = null;
 
             if(options.EncodingName != null)
-            {
                 try
                 {
                     encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
@@ -75,7 +74,6 @@ namespace DiscImageChef.Commands
                     encoding = null;
                     return;
                 }
-            }
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
                char.IsLetter(options.DevicePath[0])) options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
@@ -93,7 +91,6 @@ namespace DiscImageChef.Commands
             Resume resume = null;
             XmlSerializer xs = new XmlSerializer(typeof(Resume));
             if(File.Exists(options.OutputPrefix + ".resume.xml") && options.Resume)
-            {
                 try
                 {
                     StreamReader sr = new StreamReader(options.OutputPrefix + ".resume.xml");
@@ -105,7 +102,6 @@ namespace DiscImageChef.Commands
                     DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
                     return;
                 }
-            }
 
             if(resume != null && resume.NextBlock > resume.LastBlock && resume.BadBlocks.Count == 0)
             {

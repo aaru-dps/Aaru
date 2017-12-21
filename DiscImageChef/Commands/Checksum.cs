@@ -102,7 +102,6 @@ namespace DiscImageChef.Commands
             Core.Checksum mediaChecksum = null;
 
             if(inputFormat.ImageInfo.ImageHasPartitions)
-            {
                 try
                 {
                     Core.Checksum trackChecksum = null;
@@ -115,7 +114,6 @@ namespace DiscImageChef.Commands
                     foreach(Track currentTrack in inputTracks)
                     {
                         if(currentTrack.TrackStartSector - previousTrackEnd != 0 && options.WholeDisc)
-                        {
                             for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
                             {
                                 DicConsole.Write("\rHashing track-less sector {0}", i);
@@ -124,7 +122,6 @@ namespace DiscImageChef.Commands
 
                                 mediaChecksum.Update(hiddenSector);
                             }
-                        }
 
                         DicConsole.DebugWriteLine("Checksum command",
                                                   "Track {0} starts at sector {1} and ends at sector {2}",
@@ -166,19 +163,14 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine();
 
                         if(options.SeparatedTracks)
-                        {
                             foreach(ChecksumType chk in trackChecksum.End())
-                            {
                                 DicConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence, chk.type,
                                                      chk.Value);
-                            }
-                        }
 
                         previousTrackEnd = currentTrack.TrackEndSector;
                     }
 
                     if(inputFormat.GetSectors() - previousTrackEnd != 0 && options.WholeDisc)
-                    {
                         for(ulong i = previousTrackEnd + 1; i < inputFormat.GetSectors(); i++)
                         {
                             DicConsole.Write("\rHashing track-less sector {0}", i);
@@ -186,20 +178,16 @@ namespace DiscImageChef.Commands
                             byte[] hiddenSector = inputFormat.ReadSector(i);
                             mediaChecksum.Update(hiddenSector);
                         }
-                    }
 
                     if(options.WholeDisc)
-                    {
                         foreach(ChecksumType chk in mediaChecksum.End())
                             DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
-                    }
                 }
                 catch(Exception ex)
                 {
                     if(options.Debug) DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
                     else DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
                 }
-            }
             else
             {
                 mediaChecksum = new Core.Checksum(enabledChecksums);

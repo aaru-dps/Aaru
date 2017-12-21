@@ -51,33 +51,27 @@ namespace DiscImageChef.Core
 
             // Getting all partitions from device (e.g. tracks)
             if(image.ImageInfo.ImageHasPartitions)
-            {
                 foreach(Partition imagePartition in image.GetPartitions())
                 {
                     foreach(PartitionPlugin _partplugin in plugins.PartPluginsList.Values)
-                    {
                         if(_partplugin.GetInformation(image, out List<Partition> _partitions, imagePartition.Start))
                         {
                             partitions.AddRange(_partitions);
                             DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name,
                                                       imagePartition.Start);
                         }
-                    }
 
                     checkedLocations.Add(imagePartition.Start);
                 }
-            }
             // Getting all partitions at start of device
             else
             {
                 foreach(PartitionPlugin _partplugin in plugins.PartPluginsList.Values)
-                {
                     if(_partplugin.GetInformation(image, out List<Partition> _partitions, 0))
                     {
                         partitions.AddRange(_partitions);
                         DicConsole.DebugWriteLine("Partitions", "Found {0} @ 0", _partplugin.Name);
                     }
-                }
 
                 checkedLocations.Add(0);
             }
@@ -113,10 +107,8 @@ namespace DiscImageChef.Core
                     partitions.RemoveAt(0);
 
                     foreach(Partition child in childs)
-                    {
                         if(checkedLocations.Contains(child.Start)) childPartitions.Add(child);
                         else partitions.Add(child);
-                    }
                 }
                 else
                 {

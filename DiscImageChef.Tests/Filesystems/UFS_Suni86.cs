@@ -71,13 +71,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Filesystem fs = new DiscImageChef.Filesystems.FFSPlugin();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                {
                     if(partitions[j].Type == "Replacement sectors")
                     {
                         part = j;
                         break;
                     }
-                }
 
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);

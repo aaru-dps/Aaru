@@ -175,7 +175,6 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             if(decoded.MSWI)
-            {
                 switch(decoded.RAMSWI)
                 {
                     case 0: break;
@@ -190,7 +189,6 @@ namespace DiscImageChef.Decoders.DVD
                           .AppendLine();
                         break;
                 }
-            }
 
             return sb.ToString();
         }

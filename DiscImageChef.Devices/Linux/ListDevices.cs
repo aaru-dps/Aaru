@@ -99,7 +99,6 @@ namespace DiscImageChef.Devices.Linux
                 }
 
                 if(string.IsNullOrEmpty(devices[i].Vendor) || devices[i].Vendor == "ATA")
-                {
                     if(devices[i].Model != null)
                     {
                         string[] pieces = devices[i].Model.Split(' ');
@@ -109,7 +108,6 @@ namespace DiscImageChef.Devices.Linux
                             devices[i].Model = devices[i].Model.Substring(pieces[0].Length + 1);
                         }
                     }
-                }
 
                 // TODO: Get better device type from sysfs paths
                 if(string.IsNullOrEmpty(devices[i].Bus))

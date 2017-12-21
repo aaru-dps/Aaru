@@ -106,7 +106,6 @@ namespace DiscImageChef.Core
 
                     OsStats old = null;
                     foreach(OsStats nvs in AllStats.OperatingSystems)
-                    {
                         if(nvs.name == Interop.DetectOS.GetRealPlatformID().ToString() &&
                            nvs.version == Interop.DetectOS.GetVersion())
                         {
@@ -114,7 +113,6 @@ namespace DiscImageChef.Core
                             old = nvs;
                             break;
                         }
-                    }
 
                     if(old != null) AllStats.OperatingSystems.Remove(old);
 
@@ -134,14 +132,12 @@ namespace DiscImageChef.Core
 
                     NameValueStats old = null;
                     foreach(NameValueStats nvs in AllStats.Versions)
-                    {
                         if(nvs.name == Version.GetVersion())
                         {
                             count = nvs.Value + 1;
                             old = nvs;
                             break;
                         }
-                    }
 
                     if(old != null) AllStats.Versions.Remove(old);
 
@@ -182,7 +178,6 @@ namespace DiscImageChef.Core
                                                           SearchOption.TopDirectoryOnly);
 
                 foreach(string statsFile in statsFiles)
-                {
                     try
                     {
                         if(!File.Exists(statsFile)) continue;
@@ -237,7 +232,6 @@ namespace DiscImageChef.Core
                         continue;
 #endif
                     }
-                }
 
                 submitStatsLock = false;
             });
@@ -343,13 +337,11 @@ namespace DiscImageChef.Core
 
                 NameValueStats old = null;
                 foreach(NameValueStats nvs in AllStats.Filesystems)
-                {
                     if(nvs.name == filesystem)
                     {
                         old = nvs;
                         break;
                     }
-                }
 
                 NameValueStats nw = new NameValueStats();
                 if(old != null)
@@ -367,13 +359,11 @@ namespace DiscImageChef.Core
 
                 old = null;
                 foreach(NameValueStats nvs in CurrentStats.Filesystems)
-                {
                     if(nvs.name == filesystem)
                     {
                         old = nvs;
                         break;
                     }
-                }
 
                 nw = new NameValueStats();
                 if(old != null)
@@ -400,13 +390,11 @@ namespace DiscImageChef.Core
 
                 NameValueStats old = null;
                 foreach(NameValueStats nvs in AllStats.Partitions)
-                {
                     if(nvs.name == partition)
                     {
                         old = nvs;
                         break;
                     }
-                }
 
                 NameValueStats nw = new NameValueStats();
                 if(old != null)
@@ -424,13 +412,11 @@ namespace DiscImageChef.Core
 
                 old = null;
                 foreach(NameValueStats nvs in CurrentStats.Partitions)
-                {
                     if(nvs.name == partition)
                     {
                         old = nvs;
                         break;
                     }
-                }
 
                 nw = new NameValueStats();
                 if(old != null)
@@ -457,13 +443,11 @@ namespace DiscImageChef.Core
 
                 NameValueStats old = null;
                 foreach(NameValueStats nvs in AllStats.Filters)
-                {
                     if(nvs.name == format)
                     {
                         old = nvs;
                         break;
                     }
-                }
 
                 NameValueStats nw = new NameValueStats();
                 if(old != null)
@@ -481,13 +465,11 @@ namespace DiscImageChef.Core
 
                 old = null;
                 foreach(NameValueStats nvs in CurrentStats.Filters)
-                {
                     if(nvs.name == format)
                     {
                         old = nvs;
                         break;
                     }
-                }
 
                 nw = new NameValueStats();
                 if(old != null)
@@ -514,13 +496,11 @@ namespace DiscImageChef.Core
 
                 NameValueStats old = null;
                 foreach(NameValueStats nvs in AllStats.MediaImages)
-                {
                     if(nvs.name == format)
                     {
                         old = nvs;
                         break;
                     }
-                }
 
                 NameValueStats nw = new NameValueStats();
                 if(old != null)
@@ -538,13 +518,11 @@ namespace DiscImageChef.Core
 
                 old = null;
                 foreach(NameValueStats nvs in CurrentStats.MediaImages)
-                {
                     if(nvs.name == format)
                     {
                         old = nvs;
                         break;
                     }
-                }
 
                 nw = new NameValueStats();
                 if(old != null)
@@ -576,14 +554,12 @@ namespace DiscImageChef.Core
 
                 DeviceStats old = null;
                 foreach(DeviceStats ds in AllStats.Devices)
-                {
                     if(ds.Manufacturer == dev.Manufacturer && ds.Model == dev.Model && ds.Revision == dev.Revision &&
                        ds.Bus == deviceBus)
                     {
                         old = ds;
                         break;
                     }
-                }
 
                 if(old != null) AllStats.Devices.Remove(old);
 
@@ -597,14 +573,12 @@ namespace DiscImageChef.Core
 
                 old = null;
                 foreach(DeviceStats ds in CurrentStats.Devices)
-                {
                     if(ds.Manufacturer == dev.Manufacturer && ds.Model == dev.Model && ds.Revision == dev.Revision &&
                        ds.Bus == deviceBus)
                     {
                         old = ds;
                         break;
                     }
-                }
 
                 if(old != null) CurrentStats.Devices.Remove(old);
 
@@ -627,13 +601,11 @@ namespace DiscImageChef.Core
 
                 MediaStats old = null;
                 foreach(MediaStats ms in AllStats.Medias)
-                {
                     if(ms.real == real && ms.type == type.ToString())
                     {
                         old = ms;
                         break;
                     }
-                }
 
                 MediaStats nw = new MediaStats();
                 if(old != null)
@@ -653,13 +625,11 @@ namespace DiscImageChef.Core
 
                 old = null;
                 foreach(MediaStats ms in CurrentStats.Medias)
-                {
                     if(ms.real == real && ms.type == type.ToString())
                     {
                         old = ms;
                         break;
                     }
-                }
 
                 nw = new MediaStats();
                 if(old != null)
@@ -731,7 +701,6 @@ namespace DiscImageChef.Core
                 }
 
                 if(mediaVerified.HasValue)
-                {
                     if(mediaVerified.Value)
                     {
                         CurrentStats.Verify.MediaImages.Correct++;
@@ -742,7 +711,6 @@ namespace DiscImageChef.Core
                         CurrentStats.Verify.MediaImages.Failed++;
                         AllStats.Verify.MediaImages.Failed++;
                     }
-                }
 
                 CurrentStats.Verify.Sectors.Correct += correct;
                 CurrentStats.Verify.Sectors.Error += failed;

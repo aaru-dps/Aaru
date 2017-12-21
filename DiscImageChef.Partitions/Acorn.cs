@@ -145,7 +145,6 @@ namespace DiscImageChef.Partitions
                 Marshal.FreeHGlobal(tablePtr);
 
                 if(table.magic == RISCIX_MAGIC)
-                {
                     foreach(RiscIxEntry entry in table.partitions)
                     {
                         Partition part = new Partition
@@ -164,7 +163,6 @@ namespace DiscImageChef.Partitions
                             counter++;
                         }
                     }
-                }
             }
 
             return !(partitions.Count == 0);

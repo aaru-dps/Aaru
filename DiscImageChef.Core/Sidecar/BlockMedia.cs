@@ -79,7 +79,6 @@ namespace DiscImageChef.Core
             }
 
             foreach(MediaTagType tagType in image.ImageInfo.ReadableMediaTags)
-            {
                 switch(tagType)
                 {
                     case MediaTagType.ATAPI_IDENTIFY:
@@ -112,9 +111,7 @@ namespace DiscImageChef.Core
                         };
                         Tuple[] tuples = CIS.GetTuples(cis);
                         if(tuples != null)
-                        {
                             foreach(Tuple tuple in tuples)
-                            {
                                 if(tuple.Code == TupleCodes.CISTPL_MANFID)
                                 {
                                     ManufacturerIdentificationTuple manfid =
@@ -141,8 +138,6 @@ namespace DiscImageChef.Core
                                         sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
                                     }
                                 }
-                            }
-                        }
 
                         break;
                     case MediaTagType.SCSI_INQUIRY:
@@ -230,7 +225,6 @@ namespace DiscImageChef.Core
                         };
                         break;
                 }
-            }
 
             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
             if(image.PluginUuid == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
@@ -312,7 +306,6 @@ namespace DiscImageChef.Core
                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
                     foreach(Filesystem plugin in plugins.PluginsList.Values)
-                    {
                         try
                         {
                             if(plugin.Identify(image, partitions[i]))
@@ -328,7 +321,6 @@ namespace DiscImageChef.Core
                         {
                             //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                         }
-                    }
 
                     if(lstFs.Count > 0) sidecar.BlockMedia[0].FileSystemInformation[i].FileSystems = lstFs.ToArray();
                 }
@@ -348,7 +340,6 @@ namespace DiscImageChef.Core
                 List<FileSystemType> lstFs = new List<FileSystemType>();
 
                 foreach(Filesystem plugin in plugins.PluginsList.Values)
-                {
                     try
                     {
                         if(plugin.Identify(image, wholePart))
@@ -364,7 +355,6 @@ namespace DiscImageChef.Core
                     {
                         //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                     }
-                }
 
                 if(lstFs.Count > 0) sidecar.BlockMedia[0].FileSystemInformation[0].FileSystems = lstFs.ToArray();
             }
@@ -384,7 +374,6 @@ namespace DiscImageChef.Core
                 Decoders.ATA.Identify.IdentifyDevice? ataId =
                     Decoders.ATA.Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
                 if(ataId.HasValue)
-                {
                     if(ataId.Value.CurrentCylinders > 0 && ataId.Value.CurrentHeads > 0 &&
                        ataId.Value.CurrentSectorsPerTrack > 0)
                     {
@@ -404,7 +393,6 @@ namespace DiscImageChef.Core
                         sidecar.BlockMedia[0].Heads = ataId.Value.Heads;
                         sidecar.BlockMedia[0].SectorsPerTrack = ataId.Value.SectorsPerTrack;
                     }
-                }
             }
 
             // TODO: This is more of a hack, redo it planned for >4.0
@@ -544,7 +532,6 @@ namespace DiscImageChef.Core
 
                     if(image.ImageInfo.Heads == 2 && scpImage.Header.heads == 0 ||
                        image.ImageInfo.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2))
-                    {
                         if(scpImage.Header.end + 1 >= image.ImageInfo.Cylinders)
                         {
                             List<BlockTrackType> scpBlockTrackTypes = new List<BlockTrackType>();
@@ -590,18 +577,13 @@ namespace DiscImageChef.Core
                                 scpBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                         }
                         else
-                        {
                             DicConsole
                                 .ErrorWriteLine("SuperCardPro image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                                 scpImage.Header.end + 1, image.ImageInfo.Cylinders);
-                        }
-                    }
                     else
-                    {
                         DicConsole
                             .ErrorWriteLine("SuperCardPro image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                             2, image.ImageInfo.Heads);
-                    }
                 }
             }
             #endregion
@@ -635,7 +617,6 @@ namespace DiscImageChef.Core
                     catch(NotImplementedException) { }
 
                     if(kfImage.ImageInfo.Heads == image.ImageInfo.Heads)
-                    {
                         if(kfImage.ImageInfo.Cylinders >= image.ImageInfo.Cylinders)
                         {
                             List<BlockTrackType> kfBlockTrackTypes = new List<BlockTrackType>();
@@ -680,18 +661,13 @@ namespace DiscImageChef.Core
                                 kfBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                         }
                         else
-                        {
                             DicConsole
                                 .ErrorWriteLine("KryoFlux image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                                 kfImage.ImageInfo.Cylinders, image.ImageInfo.Cylinders);
-                        }
-                    }
                     else
-                    {
                         DicConsole
                             .ErrorWriteLine("KryoFluximage do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                             kfImage.ImageInfo.Heads, image.ImageInfo.Heads);
-                    }
                 }
             }
             #endregion
@@ -712,7 +688,6 @@ namespace DiscImageChef.Core
                     catch(NotImplementedException) { }
 
                     if(image.ImageInfo.Heads == dfiImage.ImageInfo.Heads)
-                    {
                         if(dfiImage.ImageInfo.Cylinders >= image.ImageInfo.Cylinders)
                         {
                             List<BlockTrackType> dfiBlockTrackTypes = new List<BlockTrackType>();
@@ -756,18 +731,13 @@ namespace DiscImageChef.Core
                                 dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                         }
                         else
-                        {
                             DicConsole
                                 .ErrorWriteLine("DiscFerret image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                                 dfiImage.ImageInfo.Cylinders, image.ImageInfo.Cylinders);
-                        }
-                    }
                     else
-                    {
                         DicConsole
                             .ErrorWriteLine("DiscFerret image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                             dfiImage.ImageInfo.Heads, image.ImageInfo.Heads);
-                    }
                 }
             }
             #endregion

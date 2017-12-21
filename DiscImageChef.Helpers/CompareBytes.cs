@@ -54,13 +54,11 @@ namespace DiscImageChef
             else leastBytes = compareArray1.LongLength;
 
             for(long i = 0; i < leastBytes; i++)
-            {
                 if(compareArray1[i] != compareArray2[i])
                 {
                     different = true;
                     return;
                 }
-            }
         }
     }
 }

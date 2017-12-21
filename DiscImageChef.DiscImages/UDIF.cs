@@ -521,14 +521,12 @@ namespace DiscImageChef.DiscImages
             ulong chunkStartSector = 0;
 
             foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks)
-            {
                 if(sectorAddress >= kvp.Key)
                 {
                     currentChunk = kvp.Value;
                     chunkFound = true;
                     chunkStartSector = kvp.Key;
                 }
-            }
 
             long relOff = ((long)sectorAddress - (long)chunkStartSector) * SECTOR_SIZE;
 

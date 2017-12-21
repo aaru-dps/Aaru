@@ -403,7 +403,6 @@ namespace DiscImageChef.DiscImages
 
             ImageInfo.MediaType = MediaType.Unknown;
             if(allEqual)
-            {
                 if(trkCounter == 154 && spt == 26 && bps == IBMSectorSizeCode.EighthKilo)
                     ImageInfo.MediaType = MediaType.NEC_8_SD;
                 else if(bps == IBMSectorSizeCode.QuarterKilo)
@@ -415,7 +414,6 @@ namespace DiscImageChef.DiscImages
                 else if(trkCounter == 154 && spt == 8 && bps == IBMSectorSizeCode.Kilo)
                     ImageInfo.MediaType = MediaType.NEC_525_HD;
                 else if(bps == IBMSectorSizeCode.HalfKilo)
-                {
                     switch(d88Hdr.track_table.Length)
                     {
                         case 40:
@@ -470,8 +468,6 @@ namespace DiscImageChef.DiscImages
                             if(spt == 38) ImageInfo.MediaType = MediaType.NEC_35_TD;
                             break;
                     }
-                }
-            }
 
             DicConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", ImageInfo.MediaType);
 

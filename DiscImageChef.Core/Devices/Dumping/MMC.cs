@@ -188,7 +188,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     Decoders.DVD.PFI.PhysicalFormatInformation? nintendoPfi = Decoders.DVD.PFI.Decode(cmdBuf);
                     if(nintendoPfi != null)
-                    {
                         if(nintendoPfi.Value.DiskCategory == Decoders.DVD.DiskCategory.Nintendo &&
                            nintendoPfi.Value.PartVersion == 15)
                         {
@@ -196,7 +195,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                             throw new
                                 NotImplementedException("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
                         }
-                    }
                 }
             }
             #endregion Nintendo
@@ -232,7 +230,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         // False book types
                         if(dskType == MediaType.DVDROM)
-                        {
                             switch(decPfi.DiskCategory)
                             {
                                 case Decoders.DVD.DiskCategory.DVDPR:
@@ -281,7 +278,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     dskType = MediaType.UMD;
                                     break;
                             }
-                        }
                     }
                 }
 
@@ -353,7 +349,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                               MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout,
                                               out duration);
                 if(!sense)
-                {
                     if(Decoders.DVD.CSS_CPRM.DecodeLeadInCopyright(cmdBuf).HasValue)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
@@ -371,7 +366,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(cpy.CopyrightType != Decoders.DVD.CopyrightType.NoProtection)
                             sidecar.OpticalDisc[0].CopyProtection = cpy.CopyrightType.ToString();
                     }
-                }
             }
             #endregion DVD-ROM
 
@@ -404,7 +398,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.DvdramDds, 0, dev.Timeout, out duration);
                 if(!sense)
-                {
                     if(Decoders.DVD.DDS.Decode(cmdBuf).HasValue)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
@@ -417,14 +410,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                         };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DDS.Image, tmpBuf);
                     }
-                }
 
                 dumpLog.WriteLine("Reading Spare Area Information.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, dev.Timeout,
                                               out duration);
                 if(!sense)
-                {
                     if(Decoders.DVD.Spare.Decode(cmdBuf).HasValue)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
@@ -437,7 +428,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].SAI.Image, tmpBuf);
                     }
-                }
             }
             #endregion DVD-RAM and HD DVD-RAM
 
@@ -569,7 +559,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
                                               MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out duration);
                 if(!sense)
-                {
                     if(Decoders.Bluray.DI.Decode(cmdBuf).HasValue)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
@@ -582,7 +571,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DI.Image, tmpBuf);
                     }
-                }
 
                 dumpLog.WriteLine("Reading PAC.");
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,

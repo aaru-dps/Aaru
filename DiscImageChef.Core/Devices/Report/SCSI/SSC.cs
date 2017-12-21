@@ -138,10 +138,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             report.SCSI.SequentialDevice.SupportedMediaTypes[i].DensityCodes =
                                 new int[mtsh.Value.descriptors[i].densityCodes.Length];
                             for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                            {
                                 report.SCSI.SequentialDevice.SupportedMediaTypes[i].DensityCodes[j] =
                                     mtsh.Value.descriptors[i].densityCodes[j];
-                            }
                         }
                     }
                 }
@@ -181,7 +179,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     {
                         Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
                         if(decSense.HasValue)
-                        {
                             if(decSense.Value.ASC == 0x3A)
                             {
                                 int leftRetries = 20;
@@ -213,7 +210,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 seqTest.MediaIsRecognized &= !sense;
                             }
                             else seqTest.MediaIsRecognized = false;
-                        }
                         else seqTest.MediaIsRecognized = false;
                     }
 
@@ -302,10 +298,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     seqTest.SupportedMediaTypes[i].DensityCodes =
                                         new int[mtsh.Value.descriptors[i].densityCodes.Length];
                                     for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                                    {
                                         seqTest.SupportedMediaTypes[i].DensityCodes[j] =
                                             mtsh.Value.descriptors[i].densityCodes[j];
-                                    }
                                 }
                             }
                         }

@@ -200,7 +200,6 @@ namespace DiscImageChef.Decoders.CD
             sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
             sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
             foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
-            {
                 if((descriptor.CONTROL & 0x08) == 0x08 ||
                    descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6 ||
                    descriptor.TNO != 0)
@@ -378,7 +377,6 @@ namespace DiscImageChef.Decoders.CD
                                 default:
                                 {
                                     if(descriptor.POINT >= 0x01 && descriptor.POINT <= 0x63)
-                                    {
                                         if(descriptor.ADR == 4)
                                             sb.AppendFormat("Video track {3} starts at: {0:D2}:{1:D2}:{2:D2}",
                                                             descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
@@ -424,8 +422,6 @@ namespace DiscImageChef.Decoders.CD
 
                                             sb.AppendLine(")");
                                         }
-                                        //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
-                                    }
                                     else
                                     {
                                         sb.AppendFormat("ADR = {0}", descriptor.ADR).AppendLine();
@@ -593,7 +589,6 @@ namespace DiscImageChef.Decoders.CD
                         }
                     }
                 }
-            }
 
             return sb.ToString();
         }

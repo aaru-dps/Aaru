@@ -137,7 +137,6 @@ namespace DiscImageChef.Core.Devices
                     {
                         decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                         if(decSense.HasValue)
-                        {
                             if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
                                decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                             {
@@ -149,13 +148,10 @@ namespace DiscImageChef.Core.Devices
                                                                  (ushort)longBlockSize, timeout, out duration);
                                 }
                             }
-                        }
                     }
 
                     if(readRaw && longBlockSize == blockSize)
-                    {
                         if(blockSize == 512)
-                        {
                             foreach(ushort testSize in new[]
                             {
                                 // Long sector sizes for floppies
@@ -186,9 +182,7 @@ namespace DiscImageChef.Core.Devices
                                     break;
                                 }
                             }
-                        }
                         else if(blockSize == 1024)
-                        {
                             foreach(ushort testSize in new[]
                             {
                                 // Long sector sizes for floppies
@@ -217,7 +211,6 @@ namespace DiscImageChef.Core.Devices
                                     break;
                                 }
                             }
-                        }
                         else if(blockSize == 2048)
                         {
                             testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 2380, timeout,
@@ -284,7 +277,6 @@ namespace DiscImageChef.Core.Devices
                                 }
                             }
                         }
-                    }
 
                     if(!readRaw && dev.Manufacturer == "SYQUEST")
                     {
@@ -294,7 +286,6 @@ namespace DiscImageChef.Core.Devices
                         {
                             decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                             if(decSense.HasValue)
-                            {
                                 if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
                                    decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                 {
@@ -315,7 +306,6 @@ namespace DiscImageChef.Core.Devices
                                     {
                                         decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                                         if(decSense.HasValue)
-                                        {
                                             if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
                                                decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                             {
@@ -328,10 +318,8 @@ namespace DiscImageChef.Core.Devices
                                                                               longBlockSize, timeout, out duration);
                                                 }
                                             }
-                                        }
                                     }
                                 }
-                            }
                         }
 
                         if(!readRaw && blockSize == 256)
@@ -350,16 +338,12 @@ namespace DiscImageChef.Core.Devices
                 else
                 {
                     if(dev.Manufacturer == "HL-DT-ST")
-                    {
                         hldtstReadRaw =
                             !dev.HlDtStReadRawDvd(out readBuffer, out senseBuf, 0, 1, timeout, out duration);
-                    }
 
                     if(dev.Manufacturer == "PLEXTOR")
-                    {
                         plextorReadRaw =
                             !dev.PlextorReadRawDvd(out readBuffer, out senseBuf, 0, 1, timeout, out duration);
-                    }
 
                     if(hldtstReadRaw || plextorReadRaw)
                     {
@@ -419,8 +403,6 @@ namespace DiscImageChef.Core.Devices
                 sense = dev.ReadCapacity16(out cmdBuf, out senseBuf, timeout, out duration);
 
                 if(sense && blocks == 0)
-                {
-                    // Not all MMC devices support READ CAPACITY, as they have READ TOC
                     if(dev.ScsiType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                     {
                         errorMessage = string.Format("Unable to get media capacity\n" + "{0}",
@@ -428,7 +410,6 @@ namespace DiscImageChef.Core.Devices
 
                         return true;
                     }
-                }
 
                 if(!sense)
                 {
@@ -502,61 +483,39 @@ namespace DiscImageChef.Core.Devices
             duration = 0;
 
             if(readRaw)
-            {
                 if(readLong16)
-                {
                     sense = dev.ReadLong16(out buffer, out senseBuf, false, block, longBlockSize, timeout,
                                            out duration);
-                }
                 else if(readLong10)
-                {
                     sense = dev.ReadLong10(out buffer, out senseBuf, false, false, (uint)block, (ushort)longBlockSize,
                                            timeout, out duration);
-                }
                 else if(syqReadLong10)
-                {
                     sense = dev.SyQuestReadLong10(out buffer, out senseBuf, (uint)block, longBlockSize, timeout,
                                                   out duration);
-                }
                 else if(syqReadLong6)
-                {
                     sense = dev.SyQuestReadLong6(out buffer, out senseBuf, (uint)block, longBlockSize, timeout,
                                                  out duration);
-                }
                 else if(hldtstReadRaw)
-                {
                     sense = dev.HlDtStReadRawDvd(out buffer, out senseBuf, (uint)block, longBlockSize, timeout,
                                                  out duration);
-                }
                 else if(plextorReadRaw)
-                {
                     sense = dev.PlextorReadRawDvd(out buffer, out senseBuf, (uint)block, longBlockSize, timeout,
                                                   out duration);
-                }
                 else return true;
-            }
             else
             {
                 if(read16)
-                {
                     sense = dev.Read16(out buffer, out senseBuf, 0, false, true, false, block, blockSize, 0, count,
                                        false, timeout, out duration);
-                }
                 else if(read12)
-                {
                     sense = dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block, blockSize,
                                        0, count, false, timeout, out duration);
-                }
                 else if(read10)
-                {
                     sense = dev.Read10(out buffer, out senseBuf, 0, false, true, false, false, (uint)block, blockSize,
                                        0, (ushort)count, timeout, out duration);
-                }
                 else if(read6)
-                {
                     sense = dev.Read6(out buffer, out senseBuf, (uint)block, blockSize, (byte)count, timeout,
                                       out duration);
-                }
                 else return true;
             }
 

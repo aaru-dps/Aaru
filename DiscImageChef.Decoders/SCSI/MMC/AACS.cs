@@ -463,10 +463,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             StringBuilder sb = new StringBuilder();
 
             if(response.MaxLBAExtents == 0)
-            {
                 if(response.DataLength > 2) sb.AppendLine("Drive can store 256 LBA Extents");
                 else sb.AppendLine("Drive cannot store LBA Extents");
-            }
             else sb.AppendFormat("Drive can store {0} LBA Extents", response.MaxLBAExtents).AppendLine();
 
             for(int i = 0; i < response.Extents.Length; i++)

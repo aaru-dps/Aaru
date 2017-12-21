@@ -304,7 +304,6 @@ namespace DiscImageChef.Filters
             creationTime = DateTime.UtcNow;
             lastWriteTime = creationTime;
             foreach(AppleSingleEntry entry in entries)
-            {
                 switch((AppleSingleEntryID)entry.id)
                 {
                     case AppleSingleEntryID.DataFork:
@@ -356,7 +355,6 @@ namespace DiscImageChef.Filters
                         rsrcFork = entry;
                         break;
                 }
-            }
 
             ms.Close();
             opened = true;
@@ -383,7 +381,6 @@ namespace DiscImageChef.Filters
             creationTime = DateTime.UtcNow;
             lastWriteTime = creationTime;
             foreach(AppleSingleEntry entry in entries)
-            {
                 switch((AppleSingleEntryID)entry.id)
                 {
                     case AppleSingleEntryID.DataFork:
@@ -435,7 +432,6 @@ namespace DiscImageChef.Filters
                         rsrcFork = entry;
                         break;
                 }
-            }
 
             stream.Seek(0, SeekOrigin.Begin);
             opened = true;
@@ -463,7 +459,6 @@ namespace DiscImageChef.Filters
             creationTime = DateTime.UtcNow;
             lastWriteTime = creationTime;
             foreach(AppleSingleEntry entry in entries)
-            {
                 switch((AppleSingleEntryID)entry.id)
                 {
                     case AppleSingleEntryID.DataFork:
@@ -515,7 +510,6 @@ namespace DiscImageChef.Filters
                         rsrcFork = entry;
                         break;
                 }
-            }
 
             fs.Close();
             opened = true;

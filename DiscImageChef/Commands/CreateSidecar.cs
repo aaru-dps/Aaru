@@ -57,7 +57,6 @@ namespace DiscImageChef.Commands
             Encoding encoding = null;
 
             if(options.EncodingName != null)
-            {
                 try
                 {
                     encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
@@ -69,7 +68,6 @@ namespace DiscImageChef.Commands
                     encoding = null;
                     return;
                 }
-            }
 
             if(File.Exists(options.InputFile))
             {
@@ -102,10 +100,8 @@ namespace DiscImageChef.Commands
                     else
                     {
                         if(options.Verbose)
-                        {
                             DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                         imageFormat.PluginUuid);
-                        }
                         else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
                     }
 

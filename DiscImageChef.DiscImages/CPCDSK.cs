@@ -282,16 +282,12 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("CPCDSK plugin", "header.sides = {0}", header.sides);
             if(!extended) DicConsole.DebugWriteLine("CPCDSK plugin", "header.tracksize = {0}", header.tracksize);
             else
-            {
                 for(int i = 0; i < header.tracks; i++)
                 {
                     for(int j = 0; j < header.sides; j++)
-                    {
                         DicConsole.DebugWriteLine("CPCDSK plugin", "Track {0} Side {1} size = {2}", i, j,
                                                   header.tracksizeTable[i * header.sides + j] * 256);
-                    }
                 }
-            }
 
             ulong currentSector = 0;
             sectors = new Dictionary<ulong, byte[]>();
@@ -345,10 +341,8 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
 
                     if(trackInfo.sectors != sectorsPerTrack)
-                    {
                         if(sectorsPerTrack == 0) sectorsPerTrack = trackInfo.sectors;
                         else allTracksSameSize = false;
-                    }
 
                     byte[][] thisTrackSectors = new byte[trackInfo.sectors][];
                     byte[][] thisTrackAddressMarks = new byte[trackInfo.sectors][];

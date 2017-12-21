@@ -104,7 +104,6 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 Marshal.FreeHGlobal(catPtr);
 
                 foreach(FileEntry entry in catSector.entries)
-                {
                     if(entry.extentTrack > 0)
                     {
                         track1UsedByFiles |= entry.extentTrack == 1;
@@ -129,7 +128,6 @@ namespace DiscImageChef.Filesystems.AppleDOS
                         if((entry.typeAndFlags & 0x80) == 0x80 && !lockedFiles.Contains(filename))
                             lockedFiles.Add(filename);
                     }
-                }
 
                 lba = (ulong)(catSector.trackOfNext * sectorsPerTrack + catSector.sectorOfNext);
 

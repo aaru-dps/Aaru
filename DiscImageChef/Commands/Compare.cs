@@ -77,10 +77,8 @@ namespace DiscImageChef.Commands
             else
             {
                 if(options.Verbose)
-                {
                     DicConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
                                                 input1Format.PluginUuid);
-                }
                 else DicConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
             }
 
@@ -92,10 +90,8 @@ namespace DiscImageChef.Commands
             else
             {
                 if(options.Verbose)
-                {
                     DicConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
                                                 input2Format.PluginUuid);
-                }
                 else DicConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
             }
 
@@ -295,10 +291,8 @@ namespace DiscImageChef.Commands
                 sb.AppendFormat("Drive serial number\t{0}\t{1}", image1Info.DriveSerialNumber,
                                 image2Info.DriveSerialNumber).AppendLine();
                 foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
-                {
                     sb.AppendFormat("Has {0}?\t{1}\t{2}", disktag, image1DiskTags.ContainsKey(disktag),
                                     image2DiskTags.ContainsKey(disktag)).AppendLine();
-                }
             }
 
             DicConsole.WriteLine("Comparing disk image characteristics");

@@ -139,7 +139,6 @@ namespace DiscImageChef.Filesystems
                 fields.fourthPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40018)];
 
                 for(int i = 0; i < fields.firstPartitions.Length; i++)
-                {
                     if(offset1 + i * 8 + 8 < 0x50000)
                     {
                         fields.firstPartitions[i].offset =
@@ -147,10 +146,8 @@ namespace DiscImageChef.Filesystems
                         fields.firstPartitions[i].type =
                             BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
                     }
-                }
 
                 for(int i = 0; i < fields.secondPartitions.Length; i++)
-                {
                     if(offset1 + i * 8 + 8 < 0x50000)
                     {
                         fields.firstPartitions[i].offset =
@@ -158,10 +155,8 @@ namespace DiscImageChef.Filesystems
                         fields.firstPartitions[i].type =
                             BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
                     }
-                }
 
                 for(int i = 0; i < fields.thirdPartitions.Length; i++)
-                {
                     if(offset1 + i * 8 + 8 < 0x50000)
                     {
                         fields.firstPartitions[i].offset =
@@ -169,10 +164,8 @@ namespace DiscImageChef.Filesystems
                         fields.firstPartitions[i].type =
                             BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
                     }
-                }
 
                 for(int i = 0; i < fields.fourthPartitions.Length; i++)
-                {
                     if(offset1 + i * 8 + 8 < 0x50000)
                     {
                         fields.firstPartitions[i].offset =
@@ -180,7 +173,6 @@ namespace DiscImageChef.Filesystems
                         fields.firstPartitions[i].type =
                             BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
                     }
-                }
 
                 fields.region = header[0x4E000];
                 fields.japanAge = header[0x4E010];

@@ -178,14 +178,10 @@ namespace DiscImageChef.Filesystems
                     }
 
                     if((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
-                    {
                         if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
-                        {
                             if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.GetSectorSize() ||
                                s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize())
                                 return true;
-                        }
-                    }
                 }
             }
 
@@ -330,9 +326,7 @@ namespace DiscImageChef.Filesystems
                     }
 
                     if((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
-                    {
                         if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
-                        {
                             if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.GetSectorSize() ||
                                s_fsize * 512 == (partition.End - partition.Start) * imagePlugin.GetSectorSize())
                             {
@@ -341,8 +335,6 @@ namespace DiscImageChef.Filesystems
                                 start = i;
                                 break;
                             }
-                        }
-                    }
                 }
             }
 

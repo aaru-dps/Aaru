@@ -257,14 +257,12 @@ namespace DiscImageChef.Filesystems
                 for(int e = 0; e < 96 * 32; e += 32)
                 {
                     for(int c = 0; c < 11; c++)
-                    {
                         if(root_dir[c + e] < 0x20 && root_dir[c + e] != 0x00 && root_dir[c + e] != 0x05 ||
                            root_dir[c + e] == 0xFF || root_dir[c + e] == 0x2E)
                         {
                             valid_root_dir = false;
                             break;
                         }
-                    }
 
                     if(!valid_root_dir) break;
                 }
@@ -498,7 +496,6 @@ namespace DiscImageChef.Filesystems
                     if(EBPB.sectors == 0)
                     {
                         if(EBPB.big_sectors <= partition.End - partition.Start + 1)
-                        {
                             if(EBPB.signature == 0x29 || andos_oem_correct)
                             {
                                 DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
@@ -509,10 +506,8 @@ namespace DiscImageChef.Filesystems
                                 DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.4 BPB");
                                 useShortEBPB = true;
                             }
-                        }
                     }
                     else if(EBPB.sectors <= partition.End - partition.Start + 1)
-                    {
                         if(EBPB.signature == 0x29 || andos_oem_correct)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
@@ -523,12 +518,10 @@ namespace DiscImageChef.Filesystems
                             DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.4 BPB");
                             useShortEBPB = true;
                         }
-                    }
                 }
                 else if(bits_in_bps_dos33 == 1 && correct_spc_dos33 &&
                         dos33BPB.rsectors < partition.End - partition.Start && dos33BPB.fats_no <= 2 &&
                         dos33BPB.root_ent > 0 && dos33BPB.spfat > 0)
-                {
                     if(dos33BPB.sectors == 0 && dos33BPB.hsectors <= partition.Start && dos33BPB.big_sectors > 0 &&
                        dos33BPB.big_sectors <= partition.End - partition.Start + 1)
                     {
@@ -537,7 +530,6 @@ namespace DiscImageChef.Filesystems
                     }
                     else if(dos33BPB.big_sectors == 0 && dos33BPB.hsectors <= partition.Start && dos33BPB.sectors > 0 &&
                             dos33BPB.sectors <= partition.End - partition.Start + 1)
-                    {
                         if(atariBPB.jump[0] == 0x60 || atariBPB.jump[0] == 0xE9 && atariBPB.jump[1] == 0x00 &&
                            Encoding.ASCII.GetString(dos33BPB.oem_name) != "NEXT    ")
                         {
@@ -549,7 +541,6 @@ namespace DiscImageChef.Filesystems
                             DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.3 BPB");
                             useDOS33BPB = true;
                         }
-                    }
                     else
                     {
                         if(dos32BPB.hsectors <= partition.Start &&
@@ -559,7 +550,6 @@ namespace DiscImageChef.Filesystems
                             useDOS32BPB = true;
                         }
                         else if(dos30BPB.sptrk > 0 && dos30BPB.sptrk < 64 && dos30BPB.heads > 0 && dos30BPB.heads < 256)
-                        {
                             if(atariBPB.jump[0] == 0x60 || atariBPB.jump[0] == 0xE9 && atariBPB.jump[1] == 0x00 &&
                                Encoding.ASCII.GetString(dos33BPB.oem_name) != "NEXT    ")
                             {
@@ -571,7 +561,6 @@ namespace DiscImageChef.Filesystems
                                 DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.0 BPB");
                                 useDOS3BPB = true;
                             }
-                        }
                         else
                         {
                             if(atariBPB.jump[0] == 0x60 || atariBPB.jump[0] == 0xE9 && atariBPB.jump[1] == 0x00 &&
@@ -587,7 +576,6 @@ namespace DiscImageChef.Filesystems
                             }
                         }
                     }
-                }
             }
 
             BIOSParameterBlockEBPB fakeBPB = new BIOSParameterBlockEBPB();
@@ -635,14 +623,12 @@ namespace DiscImageChef.Filesystems
                 for(int e = 0; e < 96 * 32; e += 32)
                 {
                     for(int c = 0; c < 11; c++)
-                    {
                         if(root_dir[c + e] < 0x20 && root_dir[c + e] != 0x00 && root_dir[c + e] != 0x05 ||
                            root_dir[c + e] == 0xFF || root_dir[c + e] == 0x2E)
                         {
                             valid_root_dir = false;
                             break;
                         }
-                    }
 
                     if(!valid_root_dir) break;
                 }
@@ -865,11 +851,9 @@ namespace DiscImageChef.Filesystems
                 }
 
                 if(Fat32BPB.oem_name != null)
-                {
                     if(Fat32BPB.oem_name[5] == 0x49 && Fat32BPB.oem_name[6] == 0x48 && Fat32BPB.oem_name[7] == 0x43)
                         sb.AppendLine("Volume has been modified by Windows 9x/Me Volume Tracker.");
                     else xmlFSType.SystemIdentifier = StringHandlers.CToString(Fat32BPB.oem_name);
-                }
 
                 if(!string.IsNullOrEmpty(xmlFSType.SystemIdentifier))
                     sb.AppendFormat("OEM Name: {0}", xmlFSType.SystemIdentifier.Trim()).AppendLine();
@@ -1360,10 +1344,8 @@ namespace DiscImageChef.Filesystems
                     Array.Copy(entry.extension, 0, fullname, 8, 3);
                     string volname = CurrentEncoding.GetString(fullname).Trim();
                     if(!string.IsNullOrEmpty(volname))
-                    {
                         if((entry.caseinfo & 0x0C) > 0) xmlFSType.VolumeName = volname.ToLower();
                         else xmlFSType.VolumeName = volname;
-                    }
 
                     if(entry.ctime > 0 && entry.cdate > 0)
                     {

@@ -51,7 +51,6 @@ namespace DiscImageChef.Core
 
                 // Check all but RAW plugin
                 foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values)
-                {
                     if(imageplugin.PluginUuid != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                     {
                         try
@@ -67,13 +66,10 @@ namespace DiscImageChef.Core
                         catch { }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
                     }
-                }
 
                 // Check only RAW plugin
                 if(imageFormat == null)
-                {
                     foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values)
-                    {
                         if(imageplugin.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                         {
                             try
@@ -89,8 +85,6 @@ namespace DiscImageChef.Core
                             catch { }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                         }
-                    }
-                }
 
                 // Still not recognized
                 if(imageFormat == null) return null;

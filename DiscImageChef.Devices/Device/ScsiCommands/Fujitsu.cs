@@ -61,7 +61,6 @@ namespace DiscImageChef.Devices
             }
 
             if(mode != FujitsuDisplayModes.Half)
-            {
                 if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                    !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 {
@@ -85,7 +84,6 @@ namespace DiscImageChef.Devices
                     displayLen = false;
                     halfMsg = false;
                 }
-            }
 
             buffer[0] = (byte)((byte)mode << 5);
             if(displayLen) buffer[0] += 0x10;

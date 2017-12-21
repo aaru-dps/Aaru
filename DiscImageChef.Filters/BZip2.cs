@@ -91,11 +91,8 @@ namespace DiscImageChef.Filters
             if(buffer[0] == 0x42 && buffer[1] == 0x5A && buffer[2] == 0x68 && buffer[3] >= 0x31 && buffer[3] <= 0x39)
             {
                 if(buffer.Length > 512)
-                {
-                    // Check it is not an UDIF
                     if(buffer[buffer.Length - 512] == 0x6B && buffer[buffer.Length - 511] == 0x6F &&
                        buffer[buffer.Length - 510] == 0x6C && buffer[buffer.Length - 509] == 0x79) return false;
-                }
 
                 return true;
             }

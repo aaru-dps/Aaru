@@ -140,7 +140,6 @@ namespace DiscImageChef.Decoders.Sega
 
             IPBinInformation.AppendFormat("Peripherals:").AppendLine();
             foreach(byte peripheral in ipbin.peripherals)
-            {
                 switch((char)peripheral)
                 {
                     case 'A':
@@ -166,11 +165,9 @@ namespace DiscImageChef.Decoders.Sega
                         IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
                         break;
                 }
-            }
 
             IPBinInformation.AppendLine("Regions supported:");
             foreach(byte region in ipbin.region_codes)
-            {
                 switch((char)region)
                 {
                     case 'J':
@@ -190,7 +187,6 @@ namespace DiscImageChef.Decoders.Sega
                         IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
                         break;
                 }
-            }
 
             return IPBinInformation.ToString();
         }

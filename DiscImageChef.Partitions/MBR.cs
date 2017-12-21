@@ -189,11 +189,9 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("MBR plugin", "lba_sectors {0}", lba_sectors);
 
                 if(valid && minix) // Let's mix the fun
-                {
                     if(GetMinix(imagePlugin, lba_start, divider, sectorOffset, sectorSize,
                                 out List<Partition> mnx_parts)) partitions.AddRange(mnx_parts);
                     else minix = false;
-                }
 
                 if(valid && !minix)
                 {
@@ -311,11 +309,9 @@ namespace DiscImageChef.Partitions
                                 ext_sectors = imagePlugin.GetSectors() - ext_start;
 
                             if(ext_valid && ext_minix) // Let's mix the fun
-                            {
                                 if(GetMinix(imagePlugin, lba_start, divider, sectorOffset, sectorSize,
                                             out List<Partition> mnx_parts)) partitions.AddRange(mnx_parts);
                                 else ext_minix = false;
-                            }
 
                             if(ext_valid && !ext_minix)
                             {

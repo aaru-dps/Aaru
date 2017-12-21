@@ -726,14 +726,12 @@ namespace DiscImageChef.DiscImages
             ulong extentStartSector = 0;
 
             foreach(KeyValuePair<ulong, VMwareExtent> kvp in extents)
-            {
                 if(sectorAddress >= kvp.Key)
                 {
                     currentExtent = kvp.Value;
                     extentFound = true;
                     extentStartSector = kvp.Key;
                 }
-            }
 
             if(!extentFound)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),

@@ -49,7 +49,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
             xattrs = new List<string>();
 
             if(debug)
-            {
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
@@ -60,7 +59,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
                     return Errno.NoError;
                 }
-            }
 
             uint fileID;
             MFS_FileEntry entry;
@@ -94,12 +92,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
-            {
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
-                {
                     if(device.ImageInfo.ReadableSectorTags.Contains(DiscImages.SectorTagType.AppleSectorTag) &&
                        string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
                     {
@@ -132,8 +128,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
                         }
                     }
                     else return Errno.NoSuchExtendedAttribute;
-                }
-            }
 
             uint fileID;
             MFS_FileEntry entry;

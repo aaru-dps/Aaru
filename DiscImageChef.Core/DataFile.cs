@@ -107,14 +107,12 @@ namespace DiscImageChef.Core
             if(!string.IsNullOrEmpty(filename))
             {
                 if(File.Exists(filename))
-                {
                     if(overwrite) File.Delete(filename);
                     else
                     {
                         DicConsole.ErrorWriteLine("Not overwriting file {0}", filename);
                         return;
                     }
-                }
 
                 try
                 {

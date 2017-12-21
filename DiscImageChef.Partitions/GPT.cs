@@ -64,7 +64,6 @@ namespace DiscImageChef.Partitions
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
 
             if(signature != GptMagic)
-            {
                 if(imagePlugin.ImageInfo.XmlMediaType == DiscImages.XmlMediaType.OpticalDisc)
                 {
                     hdrBytes = imagePlugin.ReadSector(sectorOffset);
@@ -81,7 +80,6 @@ namespace DiscImageChef.Partitions
                     else return false;
                 }
                 else return false;
-            }
 
             try
             {
@@ -153,7 +151,6 @@ namespace DiscImageChef.Partitions
             ulong pseq = 0;
 
             foreach(GptEntry entry in entries)
-            {
                 if(entry.partitionType != Guid.Empty && entry.partitionId != Guid.Empty)
                 {
                     DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}", entry.partitionType);
@@ -181,7 +178,6 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.Type);
                     partitions.Add(part);
                 }
-            }
 
             return true;
         }

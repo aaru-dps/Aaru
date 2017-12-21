@@ -220,7 +220,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                         DicConsole.WriteLine("GET CONFIGURATION length is {0} bytes", ftr.DataLength);
                         DicConsole.WriteLine("GET CONFIGURATION current profile is {0:X4}h", ftr.CurrentProfile);
                         if(ftr.Descriptors != null)
-                        {
                             foreach(Decoders.SCSI.MMC.Features.FeatureDescriptor desc in ftr.Descriptors)
                             {
                                 DicConsole.WriteLine("Feature {0:X4}h", desc.Code);
@@ -465,7 +464,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                         break;
                                 }
                             }
-                        }
                     }
 
                     DicConsole.WriteLine("Press any key to continue...");
@@ -1710,7 +1708,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ TOC/PMA/ATIP decoded buffer:");
                     if(buffer != null)
-                    {
                         switch(format)
                         {
                             case 0:
@@ -1738,7 +1735,6 @@ namespace DiscImageChef.Tests.Devices.SCSI
                                 PrintHex.PrintHexArray(buffer, 64);
                                 break;
                         }
-                    }
 
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();

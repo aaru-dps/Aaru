@@ -380,10 +380,8 @@ namespace DiscImageChef.Filesystems.CPM
 
                     // Check for alternate location of format ID
                     if(sector.Last() == 0x00 || sector.Last() == 0xFF)
-                    {
                         if(sector[0x40] == 0x94 || sector[0x40] == 0x26) formatByte = sector[0x40];
                         else formatByte = sector.Last();
-                    }
                     else formatByte = sector.Last();
 
                     uint firstDirectorySector86 = 0;
@@ -878,10 +876,8 @@ namespace DiscImageChef.Filesystems.CPM
 
                                 // Complement of the directory bytes if needed
                                 if(def.complement)
-                                {
                                     for(int b = 0; b < directory.Length; b++)
                                         directory[b] = (byte)(~directory[b] & 0xFF);
-                                }
 
                                 // Check the directory
                                 if(CheckDir(directory))

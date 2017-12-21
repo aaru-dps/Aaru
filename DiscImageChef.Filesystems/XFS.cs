@@ -157,7 +157,6 @@ namespace DiscImageChef.Filesystems
                 }
             }
             else
-            {
                 foreach(ulong location in new[] {0, 1, 2})
                 {
                     XFS_Superblock xfsSb = new XFS_Superblock();
@@ -175,7 +174,6 @@ namespace DiscImageChef.Filesystems
 
                     if(xfsSb.magicnum == XFS_Magic) return true;
                 }
-            }
 
             return false;
         }
@@ -212,7 +210,6 @@ namespace DiscImageChef.Filesystems
                 }
             }
             else
-            {
                 foreach(ulong location in new[] {0, 1, 2})
                 {
                     uint sbSize = (uint)(Marshal.SizeOf(xfsSb) / imagePlugin.GetSectorSize());
@@ -228,7 +225,6 @@ namespace DiscImageChef.Filesystems
 
                     if(xfsSb.magicnum == XFS_Magic) break;
                 }
-            }
 
             if(xfsSb.magicnum != XFS_Magic) return;
 

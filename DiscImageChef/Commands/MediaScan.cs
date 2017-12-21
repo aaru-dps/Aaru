@@ -95,20 +95,16 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("{0} sectors took more than 500 ms.", results.F);
             DicConsole.WriteLine("{0} sectors could not be read.", results.UnreadableSectors.Count);
             if(results.UnreadableSectors.Count > 0)
-            {
                 foreach(ulong bad in results.UnreadableSectors)
                     DicConsole.WriteLine("Sector {0} could not be read", bad);
-            }
 
             DicConsole.WriteLine();
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
             if(results.SeekTotal != 0 || results.SeekMin != double.MaxValue || results.SeekMax != double.MinValue)
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
-            {
                 DicConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                      results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
-            }
 
             Core.Statistics.AddMediaScan((long)results.A, (long)results.B, (long)results.C, (long)results.D,
                                          (long)results.E, (long)results.F, (long)results.Blocks, (long)results.Errored,

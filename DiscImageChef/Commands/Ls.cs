@@ -62,7 +62,6 @@ namespace DiscImageChef.Commands
             Encoding encoding = null;
 
             if(options.EncodingName != null)
-            {
                 try
                 {
                     encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
@@ -74,7 +73,6 @@ namespace DiscImageChef.Commands
                     encoding = null;
                     return;
                 }
-            }
 
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins(encoding);
@@ -96,10 +94,8 @@ namespace DiscImageChef.Commands
                 else
                 {
                     if(options.Verbose)
-                    {
                         DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                     imageFormat.PluginUuid);
-                    }
                     else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
                 }
 
@@ -152,7 +148,6 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
 
                             foreach(string pluginName in idPlugins)
-                            {
                                 if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                                 {
                                     DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
@@ -169,20 +164,15 @@ namespace DiscImageChef.Commands
                                         error = fs.ReadDir("/", ref rootDir);
                                         if(error == Errno.NoError) foreach(string entry in rootDir) DicConsole.WriteLine("{0}", entry);
                                         else
-                                        {
                                             DicConsole.ErrorWriteLine("Error {0} reading root directory {0}",
                                                                       error.ToString());
-                                        }
 
                                         Core.Statistics.AddFilesystem(fs.XmlFSType.Type);
                                     }
                                     else
-                                    {
                                         DicConsole.ErrorWriteLine("Unable to mount device, error {0}",
                                                                   error.ToString());
-                                    }
                                 }
-                            }
                         }
                         else
                         {
@@ -223,7 +213,6 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
 
                     foreach(string pluginName in idPlugins)
-                    {
                         if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                         {
                             DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
@@ -245,7 +234,6 @@ namespace DiscImageChef.Commands
                             }
                             else DicConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                         }
-                    }
                 }
                 else
                 {
@@ -262,9 +250,7 @@ namespace DiscImageChef.Commands
                         List<string> rootDir = new List<string>();
                         error = fs.ReadDir("/", ref rootDir);
                         if(error == Errno.NoError)
-                        {
                             foreach(string entry in rootDir)
-                            {
                                 if(options.Long)
                                 {
                                     FileEntryInfo stat = new FileEntryInfo();
@@ -278,20 +264,16 @@ namespace DiscImageChef.Commands
 
                                         error = fs.ListXAttr(entry, ref xattrs);
                                         if(error == Errno.NoError)
-                                        {
                                             foreach(string xattr in xattrs)
                                             {
                                                 byte[] xattrBuf = new byte[0];
                                                 error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                 if(error == Errno.NoError) DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr, xattrBuf.Length);
                                             }
-                                        }
                                     }
                                     else DicConsole.WriteLine("{0}", entry);
                                 }
                                 else DicConsole.WriteLine("{0}", entry);
-                            }
-                        }
                         else DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
                         Core.Statistics.AddFilesystem(fs.XmlFSType.Type);

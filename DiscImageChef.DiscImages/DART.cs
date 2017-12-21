@@ -250,7 +250,6 @@ namespace DiscImageChef.DiscImages
             MemoryStream tagMs = new MemoryStream();
 
             for(int i = 0; i < bLength.Length; i++)
-            {
                 if(bLength[i] != 0)
                 {
                     buffer = new byte[BUFFER_SIZE];
@@ -273,7 +272,6 @@ namespace DiscImageChef.DiscImages
                         throw new ImageNotSupportedException("Compressed images not yet supported");
                     }
                 }
-            }
 
             dataCache = dataMs.ToArray();
             if(header.srcType == DISK_LISA || header.srcType == DISK_MAC || header.srcType == DISK_APPLE2)

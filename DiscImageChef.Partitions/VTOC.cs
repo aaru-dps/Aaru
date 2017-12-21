@@ -323,16 +323,13 @@ namespace DiscImageChef.Partitions
             // Check for a partition describing the VTOC whose start is the same as the start we know.
             // This means partition starts are absolute, not relative, to the VTOC position
             for(int i = 0; i < V_NUMPAR; i++)
-            {
                 if(parts[i].p_tag == pTag.V_BACKUP && (ulong)parts[i].p_start == sectorOffset)
                 {
                     absolute = true;
                     break;
                 }
-            }
 
             for(int i = 0; i < V_NUMPAR; i++)
-            {
                 if(parts[i].p_tag != pTag.V_UNUSED)
                 {
                     Partition part = new Partition
@@ -366,7 +363,6 @@ namespace DiscImageChef.Partitions
 
                     if(part.End < imagePlugin.GetSectors()) partitions.Add(part);
                 }
-            }
 
             return partitions.Count > 0;
         }

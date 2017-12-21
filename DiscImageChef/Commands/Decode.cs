@@ -72,13 +72,10 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddFilter(inputFilter.Name);
 
             if(options.DiskTags)
-            {
                 if(inputFormat.ImageInfo.ReadableMediaTags.Count == 0)
                     DicConsole.WriteLine("There are no disk tags in chosen disc image.");
                 else
-                {
                     foreach(MediaTagType tag in inputFormat.ImageInfo.ReadableMediaTags)
-                    {
                         switch(tag)
                         {
                             case MediaTagType.SCSI_INQUIRY:
@@ -117,10 +114,8 @@ namespace DiscImageChef.Commands
                             {
                                 byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
                                 if(identify == null)
-                                {
                                     DicConsole
                                         .WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
-                                }
                                 else
                                 {
                                     DicConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");
@@ -228,9 +223,6 @@ namespace DiscImageChef.Commands
                                                      tag);
                                 break;
                         }
-                    }
-                }
-            }
 
             if(options.SectorTags)
             {
@@ -250,9 +242,7 @@ namespace DiscImageChef.Commands
                 if(inputFormat.ImageInfo.ReadableSectorTags.Count == 0)
                     DicConsole.WriteLine("There are no sector tags in chosen disc image.");
                 else
-                {
                     foreach(SectorTagType tag in inputFormat.ImageInfo.ReadableSectorTags)
-                    {
                         switch(tag)
                         {
                             default:
@@ -260,8 +250,6 @@ namespace DiscImageChef.Commands
                                                      tag);
                                 break;
                         }
-                    }
-                }
             }
 
             Core.Statistics.AddCommand("decode");

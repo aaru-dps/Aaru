@@ -130,11 +130,9 @@ namespace DiscImageChef.Partitions
             DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_sanity = 0x{0:X8}", dkl16.dkl_vtoc.v_sanity);
 
             if(dkl.dkl_magic == DKL_MAGIC || dkl.dkl_magic == DKL_CIGAM)
-            {
                 if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE || dkl16.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl16 = true;
                 else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE || dkl8.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl8 = true;
                 else useDkl = true;
-            }
 
             if(!useDkl && !useDkl8 && !useDkl16)
             {
@@ -147,11 +145,9 @@ namespace DiscImageChef.Partitions
                 handle.Free();
 
                 if(dkl.dkl_magic == DKL_MAGIC || dkl.dkl_magic == DKL_CIGAM)
-                {
                     if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE || dkl16.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl16 = true;
                     else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE || dkl8.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl8 = true;
                     else useDkl = true;
-                }
             }
 
             if(!useDkl && !useDkl8 && !useDkl16) return false;
@@ -191,7 +187,6 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Sun plugin", "sectorsPerCylinder = {0}", sectorsPerCylinder);
 
                 for(int i = 0; i < NDKMAP; i++)
-                {
                     if(dkl.dkl_map[i].dkl_cylno > 0 && dkl.dkl_map[i].dkl_nblk > 0)
                     {
                         CommonTypes.Partition part = new CommonTypes.Partition
@@ -209,7 +204,6 @@ namespace DiscImageChef.Partitions
                         if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
                             partitions.Add(part);
                     }
-                }
             }
             else if(useDkl8)
             {
@@ -257,7 +251,6 @@ namespace DiscImageChef.Partitions
                 if(dkl8.dkl_vtoc.v_nparts > NDKMAP) return false;
 
                 for(int i = 0; i < dkl8.dkl_vtoc.v_nparts; i++)
-                {
                     if(dkl8.dkl_map[i].dkl_nblk > 0 && dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
                        dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunWholeDisk)
                     {
@@ -283,7 +276,6 @@ namespace DiscImageChef.Partitions
                         if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
                             partitions.Add(part);
                     }
-                }
             }
             else if(useDkl16)
             {
@@ -327,7 +319,6 @@ namespace DiscImageChef.Partitions
                 if(dkl16.dkl_vtoc.v_nparts > NDKMAP16) return false;
 
                 for(int i = 0; i < dkl16.dkl_vtoc.v_nparts; i++)
-                {
                     if(dkl16.dkl_vtoc.v_part[i].p_size > 0 && dkl16.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
                        dkl16.dkl_vtoc.v_part[i].p_tag != SunTag.SunWholeDisk)
                     {
@@ -354,7 +345,6 @@ namespace DiscImageChef.Partitions
                         if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
                             partitions.Add(part);
                     }
-                }
             }
 
             return partitions.Count > 0;

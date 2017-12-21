@@ -183,7 +183,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                 extentCache.Add(fileId, file);
 
                 if(debug)
-                {
                     if(!printedExtents.Contains(fileId))
                     {
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId,
@@ -268,7 +267,6 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                         printedExtents.Add(fileId);
                     }
-                }
 
                 return Errno.NoError;
             }

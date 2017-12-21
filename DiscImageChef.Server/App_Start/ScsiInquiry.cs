@@ -268,9 +268,7 @@ namespace DiscImageChef.Server.App_Start
             }
 
             if(inquiry.VersionDescriptors != null)
-            {
                 foreach(ushort VersionDescriptor in inquiry.VersionDescriptors)
-                {
                     switch(VersionDescriptor)
                     {
                         case 0xFFFF:
@@ -1701,8 +1699,6 @@ namespace DiscImageChef.Server.App_Start
                                                            VersionDescriptor));
                             break;
                     }
-                }
-            }
 
             return scsiOneValue;
         }

@@ -70,13 +70,11 @@ namespace DiscImageChef.Tests.Filesystems
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                {
                     if(partitions[j].Type == "0x07")
                     {
                         part = j;
                         break;
                     }
-                }
 
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 throw new NotImplementedException("ReFS is not yet implemented");

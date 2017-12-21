@@ -217,15 +217,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             sense = dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF,
                                     5, out duration);
             if(!sense || dev.Error)
-            {
                 sense = dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                         0x00, 5, out duration);
-            }
 
             Decoders.SCSI.Modes.DecodedMode? decMode = null;
 
             if(!sense && !dev.Error)
-            {
                 if(Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
                 {
                     decMode = Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.ScsiType);
@@ -237,7 +234,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     };
                     DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].SCSI.ModeSense10.Image, cmdBuf);
                 }
-            }
 
             dumpLog.WriteLine("Requesting MODE SENSE (6).");
             sense = dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5,
@@ -248,7 +244,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(sense || dev.Error) sense = dev.ModeSense(out cmdBuf, out senseBuf, 5, out duration);
 
             if(!sense && !dev.Error)
-            {
                 if(Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
                 {
                     decMode = Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.ScsiType);
@@ -260,7 +255,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     };
                     DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].SCSI.ModeSense.Image, cmdBuf);
                 }
-            }
 
             // TODO: Check partitions page
             if(decMode.HasValue)
@@ -302,7 +296,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
                 if(fxSense.HasValue)
-                {
                     if(fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest)
                     {
                         sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
@@ -346,7 +339,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                         return;
                     }
-                }
                 else
                 {
                     DicConsole.WriteLine();

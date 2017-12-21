@@ -79,7 +79,6 @@ namespace DiscImageChef.Tests.Filesystems
                 Filesystem fs = new DiscImageChef.Filesystems.NTFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                {
                     if(partitions[j].Type == "0x07" ||
                        // Value incorrectly set by Haiku
                        partitions[j].Type == "0x86")
@@ -87,7 +86,6 @@ namespace DiscImageChef.Tests.Filesystems
                         part = j;
                         break;
                     }
-                }
 
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);

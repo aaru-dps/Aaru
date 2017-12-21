@@ -149,18 +149,14 @@ namespace DiscImageChef.Filesystems
                imagePlugin.GetSectorSize() == 2448)
             {
                 if(BPB.bps != imagePlugin.GetSectorSize())
-                {
                     sb
                         .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
                                       BPB.bps, 2048).AppendLine();
-                }
             }
             else if(BPB.bps != imagePlugin.GetSectorSize())
-            {
                 sb
                     .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
                                   BPB.bps, imagePlugin.GetSectorSize()).AppendLine();
-            }
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", BPB.sectors, BPB.sectors * BPB.bps).AppendLine();
             if(BPB.sectors > imagePlugin.GetSectors())
                 sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)",

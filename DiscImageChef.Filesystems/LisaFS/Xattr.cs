@@ -149,13 +149,11 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 // Only MDDF contains an extended attributes
                 if(fileId == FILEID_MDDF)
-                {
                     if(xattr == "com.apple.lisa.password")
                     {
                         buf = Encoding.ASCII.GetBytes(mddf.password);
                         return Errno.NoError;
                     }
-                }
 
                 // But on debug mode even system files contain tags
                 if(debug && xattr == "com.apple.lisa.tags") return ReadSystemFile(fileId, out buf, true);

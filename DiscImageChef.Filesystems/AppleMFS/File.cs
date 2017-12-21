@@ -155,7 +155,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
-            {
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
@@ -197,7 +196,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
                     return Errno.NoError;
                 }
-            }
 
             uint fileID;
             MFS_FileEntry entry;
@@ -301,14 +299,12 @@ namespace DiscImageChef.Filesystems.AppleMFS
             else
             {
                 if(resourceFork)
-                {
                     if(ms.Length < entry.flRLgLen) buf = ms.ToArray();
                     else
                     {
                         buf = new byte[entry.flRLgLen];
                         Array.Copy(ms.ToArray(), 0, buf, 0, buf.Length);
                     }
-                }
                 else
                 {
                     if(ms.Length < entry.flLgLen) buf = ms.ToArray();

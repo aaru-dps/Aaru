@@ -75,10 +75,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
-            {
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0) file = catalogBlocks;
                 else file = bootBlocks;
-            }
             else
             {
                 PascalFileEntry entry;
@@ -112,7 +110,6 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             if(debug)
-            {
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
                 {
@@ -140,7 +137,6 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
                     return Errno.NoError;
                 }
-            }
 
             PascalFileEntry entry;
             Errno error = GetFileEntry(path, out entry);
@@ -169,14 +165,12 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             entry = new PascalFileEntry();
 
             foreach(PascalFileEntry ent in fileEntries)
-            {
                 if(string.Compare(path, StringHandlers.PascalToString(ent.filename, CurrentEncoding),
                                   StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
                     entry = ent;
                     return Errno.NoError;
                 }
-            }
 
             return Errno.NoSuchFile;
         }

@@ -98,7 +98,6 @@ namespace DiscImageChef.Server
                 {
                     operatingSystems = new List<NameValueStats>();
                     foreach(OsStats nvs in statistics.OperatingSystems)
-                    {
                         operatingSystems.Add(new NameValueStats
                         {
                             name = string.Format("{0}{1}{2}",
@@ -108,7 +107,6 @@ namespace DiscImageChef.Server
                                                  string.IsNullOrEmpty(nvs.version) ? "" : " ", nvs.version),
                             Value = nvs.Value
                         });
-                    }
 
                     repOperatingSystems.DataSource = operatingSystems.OrderBy(os => os.name).ToList();
                     repOperatingSystems.DataBind();
@@ -119,11 +117,9 @@ namespace DiscImageChef.Server
                 {
                     versions = new List<NameValueStats>();
                     foreach(NameValueStats nvs in statistics.Versions)
-                    {
                         if(nvs.name == "previous")
                             versions.Add(new NameValueStats {name = "Previous than 3.4.99.0", Value = nvs.Value});
                         else versions.Add(nvs);
-                    }
 
                     repVersions.DataSource = versions.OrderBy(ver => ver.name).ToList();
                     repVersions.DataBind();

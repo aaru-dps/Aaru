@@ -61,7 +61,6 @@ namespace DiscImageChef.Core
             assembly = Assembly.GetAssembly(typeof(ImagePlugin));
 
             foreach(Type type in assembly.GetTypes())
-            {
                 try
                 {
                     if(type.IsSubclassOf(typeof(ImagePlugin)))
@@ -71,12 +70,10 @@ namespace DiscImageChef.Core
                     }
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-            }
 
             assembly = Assembly.GetAssembly(typeof(PartitionPlugin));
 
             foreach(Type type in assembly.GetTypes())
-            {
                 try
                 {
                     if(type.IsSubclassOf(typeof(PartitionPlugin)))
@@ -86,28 +83,23 @@ namespace DiscImageChef.Core
                     }
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-            }
 
             assembly = Assembly.GetAssembly(typeof(Filesystem));
 
             foreach(Type type in assembly.GetTypes())
-            {
                 try
                 {
                     if(type.IsSubclassOf(typeof(Filesystem)))
                     {
                         Filesystem plugin;
                         if(encoding != null)
-                        {
                             plugin = (Filesystem)type.GetConstructor(new Type[] {encoding.GetType()})
                                                      .Invoke(new object[] {encoding});
-                        }
                         else plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterPlugin(plugin);
                     }
                 }
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
-            }
         }
 
         void RegisterImagePlugin(ImagePlugin plugin)

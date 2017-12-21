@@ -124,7 +124,6 @@ namespace DiscImageChef.Devices.FreeBSD
             }
 
             if((csio.ccb_h.status & CamStatus.CamAutosnsValid) != 0)
-            {
                 if(csio.sense_len - csio.sense_resid > 0)
                 {
                     sense = (csio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamScsiStatusError;
@@ -132,7 +131,6 @@ namespace DiscImageChef.Devices.FreeBSD
                     senseBuffer[0] = csio.sense_data.error_code;
                     Array.Copy(csio.sense_data.sense_buf, 0, senseBuffer, 1, senseBuffer.Length - 1);
                 }
-            }
 
             buffer = new byte[csio.dxfer_len];
             cdb = new byte[csio.cdb_len];
@@ -231,7 +229,6 @@ namespace DiscImageChef.Devices.FreeBSD
             }
 
             if((csio.ccb_h.status & CamStatus.CamAutosnsValid) != 0)
-            {
                 if(csio.sense_len - csio.sense_resid > 0)
                 {
                     sense = (csio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamScsiStatusError;
@@ -239,7 +236,6 @@ namespace DiscImageChef.Devices.FreeBSD
                     senseBuffer[0] = csio.sense_data.error_code;
                     Array.Copy(csio.sense_data.sense_buf, 0, senseBuffer, 1, senseBuffer.Length - 1);
                 }
-            }
 
             buffer = new byte[csio.dxfer_len];
             cdb = new byte[csio.cdb_len];

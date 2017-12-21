@@ -117,9 +117,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Decoding PCMCIA CIS.");
                     Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.Cis);
                     if(tuples != null)
-                    {
                         foreach(Decoders.PCMCIA.Tuple tuple in tuples)
-                        {
                             if(tuple.Code == TupleCodes.CISTPL_MANFID)
                             {
                                 ManufacturerIdentificationTuple manfid =
@@ -146,8 +144,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
                                 }
                             }
-                        }
-                    }
                 }
 
                 sidecar.BlockMedia[0].ATA = new ATAType
@@ -506,7 +502,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                            partitions[i].Scheme);
 
                             foreach(Filesystem plugin in plugins.PluginsList.Values)
-                            {
                                 try
                                 {
                                     if(plugin.Identify(imageFormat, partitions[i]))
@@ -523,7 +518,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 {
                                     //DicConsole.DebugWriteLine("Dump-media command", "Plugin {0} crashed", _plugin.Name);
                                 }
-                            }
 
                             if(lstFs.Count > 0) xmlFileSysInfo[i].FileSystems = lstFs.ToArray();
                         }
@@ -544,7 +538,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         };
 
                         foreach(Filesystem plugin in plugins.PluginsList.Values)
-                        {
                             try
                             {
                                 if(plugin.Identify(imageFormat, wholePart))
@@ -561,7 +554,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                             }
-                        }
 
                         if(lstFs.Count > 0) xmlFileSysInfo[0].FileSystems = lstFs.ToArray();
                     }

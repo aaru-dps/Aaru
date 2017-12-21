@@ -111,22 +111,16 @@ namespace DiscImageChef.Server.App_Start
             }
 
             if(mode.ReadsCDRW)
-            {
                 if(mode.WritesCDRW) mmcOneValue.Add("Drive can read and write CD-RW");
                 else mmcOneValue.Add("Drive can read CD-RW");
-            }
 
             if(mode.ReadsDVDROM) mmcOneValue.Add("Drive can read DVD-ROM");
             if(mode.ReadsDVDR)
-            {
                 if(mode.WritesDVDR) mmcOneValue.Add("Drive can read and write DVD-R");
                 else mmcOneValue.Add("Drive can read DVD-R");
-            }
             if(mode.ReadsDVDRAM)
-            {
                 if(mode.WritesDVDRAM) mmcOneValue.Add("Drive can read and write DVD-RAM");
                 else mmcOneValue.Add("Drive can read DVD-RAM");
-            }
 
             if(mode.CompositeAudioVideo) mmcOneValue.Add("Drive can deliver a composite audio and video data stream");
             if(mode.DigitalPort1) mmcOneValue.Add("Drive supports IEC-958 digital output on port 1");
@@ -154,12 +148,9 @@ namespace DiscImageChef.Server.App_Start
             }
 
             if(mode.WriteSpeedPerformanceDescriptors != null)
-            {
                 foreach(Decoders.SCSI.Modes.ModePage_2A_WriteDescriptor descriptor in
                     mode.WriteSpeedPerformanceDescriptors)
-                {
                     if(descriptor.WriteSpeed > 0)
-                    {
                         if(descriptor.RotationControl == 0)
                             mmcOneValue.Add(string.Format("Drive supports writing at {0} Kbyte/sec. in CLV mode",
                                                           descriptor.WriteSpeed));
@@ -167,9 +158,6 @@ namespace DiscImageChef.Server.App_Start
                             mmcOneValue
                                 .Add(string.Format("Drive supports writing at is {0} Kbyte/sec. in pure CAV mode",
                                                    descriptor.WriteSpeed));
-                    }
-                }
-            }
 
             if(mode.TestWrite) mmcOneValue.Add("Drive supports test writing");
 

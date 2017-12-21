@@ -91,12 +91,10 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             contents = new List<string>();
             foreach(CatalogEntry entry in catalogCache)
-            {
                 if(entry.parentID == dirId)
                     // Do same trick as Mac OS X, replace filesystem '/' with '-',
                     // as '-' is the path separator in Lisa OS
                     contents.Add(StringHandlers.CToString(entry.filename, CurrentEncoding).Replace('/', '-'));
-            }
 
             return Errno.NoError;
         }
@@ -228,8 +226,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 // Traverse all entries
                 while(offset + 64 <= buf.Length)
-                {
-                    // Catalog block header
+                // Catalog block header
                     if(buf[offset + 0x24] == 0x08) offset += 78;
                     // Maybe just garbage? Found in more than 1 disk
                     else if(buf[offset + 0x24] == 0x7C) offset += 50;
@@ -256,13 +253,11 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                         ExtentFile ext;
                         if(ReadExtentsFile(entry.fileID, out ext) == Errno.NoError)
-                        {
                             if(!fileSizeCache.ContainsKey(entry.fileID))
                             {
                                 catalogCache.Add(entry);
                                 fileSizeCache.Add(entry.fileID, entry.length);
                             }
-                        }
 
                         offset += 64;
                     }
@@ -292,7 +287,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                         offset += 48;
                     }
                     else break;
-                }
             }
 
             return Errno.NoError;

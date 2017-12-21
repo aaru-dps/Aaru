@@ -207,7 +207,6 @@ namespace DiscImageChef.DiscImages
                                        : string.Format("{0}{1:D2}.{2:D1}.raw", basename, cylinder, head);
 
                 if(!File.Exists(trackfile))
-                {
                     if(cylinder == 0)
                     {
                         if(head == 0)
@@ -236,7 +235,6 @@ namespace DiscImageChef.DiscImages
                         step = 2;
                         break;
                     }
-                }
 
                 ZZZNoFilter trackFilter = new ZZZNoFilter();
                 trackFilter.Open(trackfile);
@@ -301,10 +299,8 @@ namespace DiscImageChef.DiscImages
                                         foundDate = true;
                                 }
                                 else if(kvp[0] == hostTime)
-                                {
                                     DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
                                                            DateTimeStyles.AssumeLocal, out blockTime);
-                                }
                                 else if(kvp[0] == kfName) ImageInfo.ImageApplication = kvp[1];
                                 else if(kvp[0] == kfVersion) ImageInfo.ImageApplicationVersion = kvp[1];
                             }

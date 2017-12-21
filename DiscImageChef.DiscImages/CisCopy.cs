@@ -143,10 +143,8 @@ namespace DiscImageChef.DiscImages
             stream.Read(trackBytes, 0, tracks);
 
             for(int i = 0; i < tracks; i++)
-            {
                 if(trackBytes[i] != (byte)TrackType.Copied && trackBytes[i] != (byte)TrackType.Omitted &&
                    trackBytes[i] != (byte)TrackType.OmittedAlternate) return false;
-            }
 
             Compression cmpr = (Compression)stream.ReadByte();
 

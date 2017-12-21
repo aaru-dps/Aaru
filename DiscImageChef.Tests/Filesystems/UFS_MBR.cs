@@ -112,7 +112,6 @@ namespace DiscImageChef.Tests.Filesystems
                 Filesystem fs = new DiscImageChef.Filesystems.FFSPlugin();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
-                {
                     if(partitions[j].Type == "0x63" || partitions[j].Type == "0xA8" || partitions[j].Type == "0xA5" ||
                        partitions[j].Type == "0xA9" || partitions[j].Type == "0x82" || partitions[j].Type == "0x83" ||
                        partitions[j].Type == "4.2BSD Fast File System" || partitions[j].Type == "Sun boot")
@@ -120,7 +119,6 @@ namespace DiscImageChef.Tests.Filesystems
                         part = j;
                         break;
                     }
-                }
 
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);

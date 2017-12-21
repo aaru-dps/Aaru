@@ -583,7 +583,6 @@ namespace DiscImageChef.Filters
             creationTime = DateTime.UtcNow;
             lastWriteTime = creationTime;
             foreach(AppleDoubleEntry entry in entries)
-            {
                 switch((AppleDoubleEntryID)entry.id)
                 {
                     case AppleDoubleEntryID.DataFork:
@@ -635,7 +634,6 @@ namespace DiscImageChef.Filters
                         rsrcFork = entry;
                         break;
                 }
-            }
 
             dataFork = new AppleDoubleEntry();
             dataFork.id = (uint)AppleDoubleEntryID.DataFork;

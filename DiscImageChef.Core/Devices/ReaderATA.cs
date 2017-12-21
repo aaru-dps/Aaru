@@ -200,10 +200,8 @@ namespace DiscImageChef.Core.Devices
             if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 && (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
             {
                 if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
-                {
                     if(ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF) blockSize = 512;
                     else blockSize = ataId.LogicalSectorWords * 2;
-                }
                 else blockSize = 512;
 
                 if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)

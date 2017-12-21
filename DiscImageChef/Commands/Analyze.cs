@@ -64,7 +64,6 @@ namespace DiscImageChef.Commands
             Encoding encoding = null;
 
             if(options.EncodingName != null)
-            {
                 try
                 {
                     encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
@@ -76,7 +75,6 @@ namespace DiscImageChef.Commands
                     encoding = null;
                     return;
                 }
-            }
 
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins(encoding);
@@ -99,10 +97,8 @@ namespace DiscImageChef.Commands
                 else
                 {
                     if(options.Verbose)
-                    {
                         DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                     imageFormat.PluginUuid);
-                    }
                     else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
                 }
 
@@ -179,7 +175,6 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
 
                                     foreach(string pluginName in idPlugins)
-                                    {
                                         if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                                         {
                                             DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
@@ -187,7 +182,6 @@ namespace DiscImageChef.Commands
                                             DicConsole.Write(information);
                                             Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
                                         }
-                                    }
                                 }
                                 else
                                 {
@@ -218,7 +212,6 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine(string.Format("Identified by {0} plugins", idPlugins.Count));
 
                         foreach(string pluginName in idPlugins)
-                        {
                             if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                             {
                                 DicConsole.WriteLine(string.Format("As identified by {0}.", plugin.Name));
@@ -226,7 +219,6 @@ namespace DiscImageChef.Commands
                                 DicConsole.Write(information);
                                 Core.Statistics.AddFilesystem(plugin.XmlFSType.Type);
                             }
-                        }
                     }
                     else
                     {

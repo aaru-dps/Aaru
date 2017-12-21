@@ -679,10 +679,8 @@ namespace DiscImageChef.Filesystems
                     case NVS_DataTypes.DATA_TYPE_BOOLEAN_ARRAY:
                     case NVS_DataTypes.DATA_TYPE_BOOLEAN_VALUE:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((bool[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (bool)item.value).AppendLine();
 
                         break;
@@ -691,109 +689,87 @@ namespace DiscImageChef.Filesystems
                     case NVS_DataTypes.DATA_TYPE_UINT8:
                     case NVS_DataTypes.DATA_TYPE_UINT8_ARRAY:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((byte[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (byte)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_DOUBLE:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((double[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (double)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_HRTIME:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((DateTime[])item.value)[i])
                                   .AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (DateTime)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT16:
                     case NVS_DataTypes.DATA_TYPE_INT16_ARRAY:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((short[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (short)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT32:
                     case NVS_DataTypes.DATA_TYPE_INT32_ARRAY:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((int[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (int)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT64:
                     case NVS_DataTypes.DATA_TYPE_INT64_ARRAY:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((long[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (long)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT8:
                     case NVS_DataTypes.DATA_TYPE_INT8_ARRAY:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((sbyte[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (sbyte)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_STRING:
                     case NVS_DataTypes.DATA_TYPE_STRING_ARRAY:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((string[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (string)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT16:
                     case NVS_DataTypes.DATA_TYPE_UINT16_ARRAY:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ushort[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (ushort)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT32:
                     case NVS_DataTypes.DATA_TYPE_UINT32_ARRAY:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((uint[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (uint)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT64:
                     case NVS_DataTypes.DATA_TYPE_UINT64_ARRAY:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ulong[])item.value)[i]).AppendLine();
-                        }
                         else sb.AppendFormat("{0} = {1}", item.name, (ulong)item.value).AppendLine();
 
                         break;
@@ -807,11 +783,9 @@ namespace DiscImageChef.Filesystems
                         break;
                     default:
                         if(item.elements > 1)
-                        {
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = Unknown data type {2}", item.name, i, item.dataType)
                                   .AppendLine();
-                        }
                         else sb.AppendFormat("{0} = Unknown data type {1}", item.name, item.dataType).AppendLine();
 
                         break;
