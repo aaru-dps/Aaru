@@ -82,6 +82,7 @@ namespace DiscImageChef.Server.Controllers
                 response.Content = new StringContent("ok", System.Text.Encoding.UTF8, "text/plain");
                 return response;
             }
+            // ReSharper disable once RedundantCatchClause
             catch
             {
 #if DEBUG

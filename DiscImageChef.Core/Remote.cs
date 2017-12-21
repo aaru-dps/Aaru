@@ -81,6 +81,7 @@ namespace DiscImageChef.Core
                     // Can't connect to the server, do nothing
                     return;
                 }
+                // ReSharper disable once RedundantCatchClause
                 catch
                 {
 #if DEBUG
