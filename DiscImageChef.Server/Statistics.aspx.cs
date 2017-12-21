@@ -282,7 +282,7 @@ namespace DiscImageChef.Server
                 }
                 else divDevices.Visible = false;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 content.InnerHtml = "<b>Could not load statistics</b>";
 #if DEBUG

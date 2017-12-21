@@ -878,7 +878,6 @@ namespace DiscImageChef.DiscImages
                     int currentLocator = 0;
                     bool locatorFound = false;
                     string parentPath = null;
-                    FiltersList filters;
 
                     while(!locatorFound && currentLocator < 8)
                     {

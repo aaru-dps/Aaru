@@ -427,7 +427,6 @@ namespace DiscImageChef.Core.Devices
 
         bool ScsiGetBlocksToRead(uint startWithBlocks)
         {
-            bool sense;
             byte[] readBuffer;
             byte[] senseBuf;
             double duration;
