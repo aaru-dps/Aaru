@@ -2378,10 +2378,8 @@ namespace DiscImageChef.Decoders.ATA
 
                     if((ATAID.PhysLogSectorSize & 0x2000) == 0x2000)
                     {
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
                         physicalsectorsize =
                             logicalsectorsize * (uint)Math.Pow(2, ATAID.PhysLogSectorSize & 0xF);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
                     }
                     else physicalsectorsize = logicalsectorsize;
                 }
