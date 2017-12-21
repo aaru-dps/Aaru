@@ -89,7 +89,7 @@ namespace DiscImageChef.Core
                     Sequence = i
                 };
 
-                uint sectorsToRead = 512;
+                const uint SECTORS_TO_READ = 512;
                 long sectors = fs.Length / blockSize;
                 long doneSectors = 0;
 
@@ -98,13 +98,13 @@ namespace DiscImageChef.Core
                 {
                     byte[] sector;
 
-                    if(sectors - doneSectors >= sectorsToRead)
+                    if(sectors - doneSectors >= SECTORS_TO_READ)
                     {
-                        sector = new byte[sectorsToRead * blockSize];
+                        sector = new byte[SECTORS_TO_READ * blockSize];
                         fs.Read(sector, 0, sector.Length);
                         UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
                                         doneSectors, sectors);
-                        doneSectors += sectorsToRead;
+                        doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {

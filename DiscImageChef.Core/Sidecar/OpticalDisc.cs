@@ -235,7 +235,7 @@ namespace DiscImageChef.Core
             try
             {
                 List<Session> sessions = image.GetSessions();
-                sidecar.OpticalDisc[0].Sessions = sessions != null ? sessions.Count : 1;
+                sidecar.OpticalDisc[0].Sessions = sessions?.Count ?? 1;
             }
             catch { sidecar.OpticalDisc[0].Sessions = 1; }
 
@@ -473,7 +473,7 @@ namespace DiscImageChef.Core
                             {
                                 if(!plugin.Identify(image, partitions[i])) continue;
 
-                                plugin.GetInformation(image, partitions[i], out string foo);
+                                plugin.GetInformation(image, partitions[i], out _);
                                 lstFs.Add(plugin.XmlFSType);
                                 Statistics.AddFilesystem(plugin.XmlFSType.Type);
 
@@ -520,7 +520,7 @@ namespace DiscImageChef.Core
                         {
                             if(!plugin.Identify(image, xmlPart)) continue;
 
-                            plugin.GetInformation(image, xmlPart, out string foo);
+                            plugin.GetInformation(image, xmlPart, out _);
                             lstFs.Add(plugin.XmlFSType);
                             Statistics.AddFilesystem(plugin.XmlFSType.Type);
 

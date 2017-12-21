@@ -46,7 +46,7 @@ namespace DiscImageChef.Core
 
         public void Close()
         {
-            if(dataFs != null) dataFs.Close();
+            dataFs?.Close();
         }
 
         public int Read(byte[] array, int offset, int count)
@@ -92,7 +92,7 @@ namespace DiscImageChef.Core
 
         public long Position
         {
-            get { return dataFs.Position; }
+            get => dataFs.Position;
         }
 
         public static void WriteTo(string who, string outputPrefix, string outputSuffix, string what, byte[] data)

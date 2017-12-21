@@ -45,21 +45,16 @@ namespace DiscImageChef.Core.Devices.Scanning
         {
             ScanResults results = new ScanResults();
             bool aborted;
-            MhddLog mhddLog;
-            IbgLog ibgLog;
-            byte[] cmdBuf;
             bool sense;
             results.Blocks = 0;
-            ushort currentProfile = 0x0001;
-            AtaErrorRegistersCHS errorChs;
-            uint timeout = 5;
-            double duration;
+            const ushort ATA_PROFILE = 0x0001;
+            const uint TIMEOUT = 5;
 
-            sense = dev.AtaIdentify(out cmdBuf, out errorChs);
+            sense = dev.AtaIdentify(out byte[] cmdBuf, out _);
             if(!sense && Identify.Decode(cmdBuf).HasValue)
             {
                 // Initializate reader
-                Reader ataReader = new Reader(dev, timeout, cmdBuf);
+                Reader ataReader = new Reader(dev, TIMEOUT, cmdBuf);
                 // Fill reader blocks
                 results.Blocks = ataReader.GetDeviceBlocks();
                 if(ataReader.FindReadCommand())
@@ -76,7 +71,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 uint blockSize = ataReader.LogicalBlockSize;
                 // Check how many blocks to read, if error show and return
-                if(ataReader.GetBlocksToRead(64))
+                if(ataReader.GetBlocksToRead())
                 {
                     DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
                     return results;
@@ -110,20 +105,18 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 Random rnd = new Random();
 
-                uint seekPos;
-                ushort seekCy;
-                byte seekHd;
-                byte seekSc;
-
                 aborted = false;
                 System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
+                MhddLog mhddLog;
+                IbgLog ibgLog;
+                double duration;
                 if(ataReader.IsLba)
                 {
                     DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                     mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
-                    ibgLog = new IbgLog(ibgLogPath, currentProfile);
+                    ibgLog = new IbgLog(ibgLogPath, ATA_PROFILE);
 
                     start = DateTime.UtcNow;
                     for(ulong i = 0; i < results.Blocks; i += blocksToRead)
@@ -159,8 +152,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             results.Errored += blocksToRead;
                             for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
-                            if(duration < 500) mhddLog.Write(i, 65535);
-                            else mhddLog.Write(i, duration);
+                            mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
                             ibgLog.Write(i, 0);
                         }
@@ -181,7 +173,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                         {
                             if(aborted) break;
 
-                            seekPos = (uint)rnd.Next((int)results.Blocks);
+                            uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
                             DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
 
@@ -199,7 +191,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 else
                 {
                     mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
-                    ibgLog = new IbgLog(ibgLogPath, currentProfile);
+                    ibgLog = new IbgLog(ibgLogPath, ATA_PROFILE);
 
                     ulong currentBlock = 0;
                     results.Blocks = (ulong)(cylinders * heads * sectors);
@@ -240,8 +232,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                                 {
                                     results.Errored += blocksToRead;
                                     results.UnreadableSectors.Add(currentBlock);
-                                    if(duration < 500) mhddLog.Write(currentBlock, 65535);
-                                    else mhddLog.Write(currentBlock, duration);
+                                    mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration);
 
                                     ibgLog.Write(currentBlock, 0);
                                 }
@@ -266,9 +257,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                         {
                             if(aborted) break;
 
-                            seekCy = (ushort)rnd.Next(cylinders);
-                            seekHd = (byte)rnd.Next(heads);
-                            seekSc = (byte)rnd.Next(sectors);
+                            ushort seekCy = (ushort)rnd.Next(cylinders);
+                            byte seekHd = (byte)rnd.Next(heads);
+                            byte seekSc = (byte)rnd.Next(sectors);
 
                             DicConsole.Write("\rSeeking to cylinder {0}, head {1}, sector {2}...\t\t", seekCy, seekHd,
                                              seekSc);

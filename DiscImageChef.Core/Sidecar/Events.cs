@@ -44,39 +44,37 @@ namespace DiscImageChef.Core
 
         public static void InitProgress()
         {
-            if(InitProgressEvent != null) InitProgressEvent();
+            InitProgressEvent?.Invoke();
         }
 
         public static void UpdateProgress(string text, long current, long maximum)
         {
-            if(UpdateProgressEvent != null)
-                UpdateProgressEvent(string.Format(text, current, maximum), current, maximum);
+            UpdateProgressEvent?.Invoke(string.Format(text, current, maximum), current, maximum);
         }
 
         public static void EndProgress()
         {
-            if(EndProgressEvent != null) EndProgressEvent();
+            EndProgressEvent?.Invoke();
         }
 
         public static void InitProgress2()
         {
-            if(InitProgressEvent2 != null) InitProgressEvent2();
+            InitProgressEvent2?.Invoke();
         }
 
         public static void UpdateProgress2(string text, long current, long maximum)
         {
-            if(UpdateProgressEvent2 != null)
-                UpdateProgressEvent2(string.Format(text, current, maximum), current, maximum);
+            UpdateProgressEvent2?.Invoke(string.Format(text, current, maximum), current, maximum);
         }
 
         public static void EndProgress2()
         {
-            if(EndProgressEvent2 != null) EndProgressEvent2();
+            EndProgressEvent2?.Invoke();
         }
 
         public static void UpdateStatus(string text, params object[] args)
         {
-            if(UpdateStatusEvent != null) UpdateStatusEvent(string.Format(text, args));
+            UpdateStatusEvent?.Invoke(string.Format(text, args));
         }
     }
 }

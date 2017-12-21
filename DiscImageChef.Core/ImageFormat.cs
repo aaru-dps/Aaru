@@ -44,11 +44,10 @@ namespace DiscImageChef.Core
         {
             try
             {
-                ImagePlugin imageFormat;
                 PluginBase plugins = new PluginBase();
                 plugins.RegisterAllPlugins();
 
-                imageFormat = null;
+                ImagePlugin imageFormat = null;
 
                 // Check all but RAW plugin
                 foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin => imageplugin.PluginUuid != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))) try
@@ -60,10 +59,12 @@ namespace DiscImageChef.Core
                         break;
                     }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                    catch { }
+                    catch { // ignored
+ }
+
+                if(imageFormat != null) return imageFormat;
 
                 // Check only RAW plugin
-                if(imageFormat == null)
                     foreach(ImagePlugin imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin => imageplugin.PluginUuid == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))) try
                         {
                             DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
@@ -73,11 +74,10 @@ namespace DiscImageChef.Core
                             break;
                         }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                        catch { }
+                    catch { // ignored
+ }
 
                 // Still not recognized
-                if(imageFormat == null) return null;
-
                 return imageFormat;
             }
             catch { return null; }

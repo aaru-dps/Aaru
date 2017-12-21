@@ -173,7 +173,7 @@ namespace DiscImageChef.Core
 
                 submitStatsLock = true;
 
-                var statsFiles = Directory.EnumerateFiles(Settings.Settings.StatsPath, "PartialStats_*.xml",
+                IEnumerable<string> statsFiles = Directory.EnumerateFiles(Settings.Settings.StatsPath, "PartialStats_*.xml",
                                                           SearchOption.TopDirectoryOnly);
 
                 foreach(string statsFile in statsFiles)
@@ -366,7 +366,7 @@ namespace DiscImageChef.Core
             CurrentStats.Filesystems.Add(nw);
         }
 
-        public static void AddPartition(string partition)
+        internal static void AddPartition(string partition)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.PartitionStats) return;
 
@@ -502,24 +502,28 @@ namespace DiscImageChef.Core
 
             if(old != null) AllStats.Devices.Remove(old);
 
-            DeviceStats nw = new DeviceStats();
-            nw.Model = dev.Model;
-            nw.Manufacturer = dev.Manufacturer;
-            nw.Revision = dev.Revision;
-            nw.Bus = deviceBus;
-            nw.ManufacturerSpecified = true;
+            DeviceStats nw = new DeviceStats
+            {
+                Model = dev.Model,
+                Manufacturer = dev.Manufacturer,
+                Revision = dev.Revision,
+                Bus = deviceBus,
+                ManufacturerSpecified = true
+            };
             AllStats.Devices.Add(nw);
 
             old = CurrentStats.Devices.FirstOrDefault(ds => ds.Manufacturer == dev.Manufacturer && ds.Model == dev.Model && ds.Revision == dev.Revision && ds.Bus == deviceBus);
 
             if(old != null) CurrentStats.Devices.Remove(old);
 
-            nw = new DeviceStats();
-            nw.Model = dev.Model;
-            nw.Manufacturer = dev.Manufacturer;
-            nw.Revision = dev.Revision;
-            nw.Bus = deviceBus;
-            nw.ManufacturerSpecified = true;
+            nw = new DeviceStats
+            {
+                Model = dev.Model,
+                Manufacturer = dev.Manufacturer,
+                Revision = dev.Revision,
+                Bus = deviceBus,
+                ManufacturerSpecified = true
+            };
             CurrentStats.Devices.Add(nw);
         }
 
@@ -572,16 +576,10 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.BenchmarkStats) return;
 
-            CurrentStats.Benchmark = new BenchmarkStats();
-            CurrentStats.Benchmark.Checksum = new List<ChecksumStats>();
-            AllStats.Benchmark = new BenchmarkStats();
-            AllStats.Benchmark.Checksum = new List<ChecksumStats>();
+            CurrentStats.Benchmark = new BenchmarkStats {Checksum = new List<ChecksumStats>()};
+            AllStats.Benchmark = new BenchmarkStats {Checksum = new List<ChecksumStats>()};
 
-            foreach(KeyValuePair<string, double> kvp in checksums)
-            {
-                ChecksumStats st = new ChecksumStats();
-                st.algorithm = kvp.Key;
-                st.Value = kvp.Value;
+            foreach(ChecksumStats st in checksums.Select(kvp => new ChecksumStats {algorithm = kvp.Key, Value = kvp.Value})) {
                 CurrentStats.Benchmark.Checksum.Add(st);
                 AllStats.Benchmark.Checksum.Add(st);
             }
@@ -605,17 +603,12 @@ namespace DiscImageChef.Core
 
             if(CurrentStats.Verify == null)
             {
-                CurrentStats.Verify = new VerifyStats();
-                CurrentStats.Verify.MediaImages = new VerifiedItems();
-                CurrentStats.Verify.Sectors = new ScannedSectors();
+                CurrentStats.Verify =
+                    new VerifyStats {MediaImages = new VerifiedItems(), Sectors = new ScannedSectors()};
             }
 
             if(AllStats.Verify == null)
-            {
-                AllStats.Verify = new VerifyStats();
-                AllStats.Verify.MediaImages = new VerifiedItems();
-                AllStats.Verify.Sectors = new ScannedSectors();
-            }
+            { AllStats.Verify = new VerifyStats {MediaImages = new VerifiedItems(), Sectors = new ScannedSectors()}; }
 
             if(mediaVerified.HasValue)
                 if(mediaVerified.Value)
@@ -646,18 +639,10 @@ namespace DiscImageChef.Core
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaScanStats) return;
 
             if(CurrentStats.MediaScan == null)
-            {
-                CurrentStats.MediaScan = new MediaScanStats();
-                CurrentStats.MediaScan.Sectors = new ScannedSectors();
-                CurrentStats.MediaScan.Times = new TimeStats();
-            }
+            { CurrentStats.MediaScan = new MediaScanStats {Sectors = new ScannedSectors(), Times = new TimeStats()}; }
 
             if(AllStats.MediaScan == null)
-            {
-                AllStats.MediaScan = new MediaScanStats();
-                AllStats.MediaScan.Sectors = new ScannedSectors();
-                AllStats.MediaScan.Times = new TimeStats();
-            }
+            { AllStats.MediaScan = new MediaScanStats {Sectors = new ScannedSectors(), Times = new TimeStats()}; }
 
             CurrentStats.MediaScan.Sectors.Correct += correct;
             CurrentStats.MediaScan.Sectors.Error += error;

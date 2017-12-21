@@ -43,14 +43,11 @@ namespace DiscImageChef.Core.Devices.Report
         {
             if(report == null) return;
 
-            byte[] buffer;
-            double duration;
-            uint timeout = 5;
+            const uint TIMEOUT = 5;
 
             DicConsole.WriteLine("Querying ATAPI IDENTIFY...");
 
-            AtaErrorRegistersCHS errorRegs;
-            dev.AtapiIdentify(out buffer, out errorRegs, timeout, out duration);
+            dev.AtapiIdentify(out byte[] buffer, out _, TIMEOUT, out _);
 
             if(!Identify.Decode(buffer).HasValue) return;
 

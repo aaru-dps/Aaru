@@ -42,7 +42,7 @@ namespace DiscImageChef.Core.Devices
         uint timeout;
 
         internal string ErrorMessage { get; private set; }
-        internal ulong Blocks { get; set; }
+        internal ulong Blocks { get; private set; }
         internal uint BlocksToRead { get; private set; }
         internal uint LogicalBlockSize { get; private set; }
         internal uint PhysicalBlockSize { get; private set; }
@@ -50,11 +50,11 @@ namespace DiscImageChef.Core.Devices
         internal bool CanReadRaw { get; private set; }
         internal bool CanSeek
         {
-            get { return ataSeek || seek6 || seek10; }
+            get => ataSeek || seek6 || seek10;
         }
         internal bool CanSeekLba
         {
-            get { return ataSeekLba || seek6 || seek10; }
+            get => ataSeekLba || seek6 || seek10;
         }
 
         internal Reader(Device dev, uint timeout, byte[] identification, bool raw = false)

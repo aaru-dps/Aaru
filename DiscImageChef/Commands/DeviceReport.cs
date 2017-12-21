@@ -80,7 +80,7 @@ namespace DiscImageChef.Commands
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    SecureDigital.Report(dev, ref report, options.Debug, ref removable);
+                    SecureDigital.Report(dev, ref report);
                     break;
                 case DeviceType.NVMe:
                     Nvme.Report(dev, ref report, options.Debug, ref removable);

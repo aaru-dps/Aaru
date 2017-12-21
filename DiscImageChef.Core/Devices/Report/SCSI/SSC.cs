@@ -47,17 +47,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
         {
             if(report == null) return;
 
-            byte[] senseBuffer;
-            byte[] buffer;
-            double duration;
             bool sense;
-            uint timeout = 5;
+            const uint TIMEOUT = 5;
             ConsoleKeyInfo pressedKey;
-            Modes.DecodedMode? decMode;
 
             report.SCSI.SequentialDevice = new sscType();
             DicConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
-            sense = dev.ReadBlockLimits(out buffer, out senseBuffer, timeout, out duration);
+            sense = dev.ReadBlockLimits(out byte[] buffer, out byte[] senseBuffer, TIMEOUT, out _);
             if(!sense)
             {
                 BlockLimits.BlockLimitsData? decBl = BlockLimits.Decode(buffer);
@@ -82,7 +78,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             }
 
             DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT...");
-            sense = dev.ReportDensitySupport(out buffer, out senseBuffer, false, false, timeout, out duration);
+            sense = dev.ReportDensitySupport(out buffer, out senseBuffer, false, false, TIMEOUT, out _);
             if(!sense)
             {
                 DensitySupport.DensitySupportHeader? dsh =
@@ -116,7 +112,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             }
 
             DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types...");
-            sense = dev.ReportDensitySupport(out buffer, out senseBuffer, true, false, timeout, out duration);
+            sense = dev.ReportDensitySupport(out buffer, out senseBuffer, true, false, TIMEOUT, out _);
             if(!sense)
             {
                 DensitySupport.MediaTypeSupportHeader? mtsh =
@@ -175,8 +171,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                 seqTest.MediaIsRecognized = true;
 
-                dev.Load(out senseBuffer, timeout, out duration);
-                sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
+                dev.Load(out senseBuffer, TIMEOUT, out _);
+                sense = dev.ScsiTestUnitReady(out senseBuffer, TIMEOUT, out _);
                 if(sense)
                 {
                     FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
@@ -188,7 +184,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             {
                                 DicConsole.Write("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
+                                sense = dev.ScsiTestUnitReady(out senseBuffer, TIMEOUT, out _);
                                 if(!sense) break;
 
                                 leftRetries--;
@@ -203,7 +199,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             {
                                 DicConsole.Write("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
+                                sense = dev.ScsiTestUnitReady(out senseBuffer, TIMEOUT, out _);
                                 if(!sense) break;
 
                                 leftRetries--;
@@ -217,11 +213,11 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                 if(seqTest.MediaIsRecognized)
                 {
-                    decMode = null;
+                    Modes.DecodedMode? decMode = null;
 
                     DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
                     sense = dev.ModeSense10(out buffer, out senseBuffer, false, true,
-                                            ScsiModeSensePageControl.Current, 0x3F, 0x00, timeout, out duration);
+                                            ScsiModeSensePageControl.Current, 0x3F, 0x00, TIMEOUT, out _);
                     if(!sense && !dev.Error)
                     {
                         report.SCSI.SupportsModeSense10 = true;
@@ -230,7 +226,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     }
 
                     DicConsole.WriteLine("Querying SCSI MODE SENSE...");
-                    sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
+                    sense = dev.ModeSense(out buffer, out senseBuffer, TIMEOUT, out _);
                     if(!sense && !dev.Error)
                     {
                         report.SCSI.SupportsModeSense6 = true;
@@ -252,7 +248,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 }
 
                 DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for current media...");
-                sense = dev.ReportDensitySupport(out buffer, out senseBuffer, false, true, timeout, out duration);
+                sense = dev.ReportDensitySupport(out buffer, out senseBuffer, false, true, TIMEOUT, out _);
                 if(!sense)
                 {
                     DensitySupport.DensitySupportHeader? dsh =
@@ -279,7 +275,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 }
 
                 DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...");
-                sense = dev.ReportDensitySupport(out buffer, out senseBuffer, true, true, timeout, out duration);
+                sense = dev.ReportDensitySupport(out buffer, out senseBuffer, true, true, TIMEOUT, out _);
                 if(!sense)
                 {
                     DensitySupport.MediaTypeSupportHeader? mtsh =
@@ -309,7 +305,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 seqTest.CanReadMediaSerialSpecified = true;
                 DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
                 seqTest.CanReadMediaSerial =
-                    !dev.ReadMediaSerialNumber(out buffer, out senseBuffer, timeout, out duration);
+                    !dev.ReadMediaSerialNumber(out buffer, out senseBuffer, TIMEOUT, out _);
                 seqTests.Add(seqTest);
             }
 

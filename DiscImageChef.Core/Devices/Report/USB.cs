@@ -53,11 +53,13 @@ namespace DiscImageChef.Core.Devices.Report
 
             if(pressedKey.Key != ConsoleKey.Y) return;
 
-            report.USB = new usbType();
-            report.USB.Manufacturer = dev.UsbManufacturerString;
-            report.USB.Product = dev.UsbProductString;
-            report.USB.ProductID = dev.UsbProductId;
-            report.USB.VendorID = dev.UsbVendorId;
+            report.USB = new usbType
+            {
+                Manufacturer = dev.UsbManufacturerString,
+                Product = dev.UsbProductString,
+                ProductID = dev.UsbProductId,
+                VendorID = dev.UsbVendorId
+            };
 
             pressedKey = new ConsoleKeyInfo();
             while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)

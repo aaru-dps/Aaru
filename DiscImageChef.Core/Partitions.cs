@@ -45,7 +45,7 @@ namespace DiscImageChef.Core
         {
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
-            List<Partition> partitions = new List<Partition>();
+            List<Partition> foundPartitions = new List<Partition>();
             List<Partition> childPartitions = new List<Partition>();
             List<ulong> checkedLocations = new List<ulong>();
 
@@ -53,11 +53,11 @@ namespace DiscImageChef.Core
             if(image.ImageInfo.ImageHasPartitions)
                 foreach(Partition imagePartition in image.GetPartitions())
                 {
-                    foreach(PartitionPlugin _partplugin in plugins.PartPluginsList.Values)
-                        if(_partplugin.GetInformation(image, out List<Partition> _partitions, imagePartition.Start))
+                    foreach(PartitionPlugin partitionPlugin in plugins.PartPluginsList.Values)
+                        if(partitionPlugin.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
                         {
-                            partitions.AddRange(_partitions);
-                            DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name,
+                            foundPartitions.AddRange(partitions);
+                            DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
                                                       imagePartition.Start);
                         }
 
@@ -66,57 +66,57 @@ namespace DiscImageChef.Core
             // Getting all partitions at start of device
             else
             {
-                foreach(PartitionPlugin _partplugin in plugins.PartPluginsList.Values)
-                    if(_partplugin.GetInformation(image, out List<Partition> _partitions, 0))
+                foreach(PartitionPlugin partitionPlugin in plugins.PartPluginsList.Values)
+                    if(partitionPlugin.GetInformation(image, out List<Partition> partitions, 0))
                     {
-                        partitions.AddRange(_partitions);
-                        DicConsole.DebugWriteLine("Partitions", "Found {0} @ 0", _partplugin.Name);
+                        foundPartitions.AddRange(partitions);
+                        DicConsole.DebugWriteLine("Partitions", "Found {0} @ 0", partitionPlugin.Name);
                     }
 
                 checkedLocations.Add(0);
             }
 
-            while(partitions.Count > 0)
+            while(foundPartitions.Count > 0)
             {
-                if(checkedLocations.Contains(partitions[0].Start))
+                if(checkedLocations.Contains(foundPartitions[0].Start))
                 {
-                    childPartitions.Add(partitions[0]);
-                    partitions.RemoveAt(0);
+                    childPartitions.Add(foundPartitions[0]);
+                    foundPartitions.RemoveAt(0);
                     continue;
                 }
 
                 List<Partition> childs = new List<Partition>();
 
-                foreach(PartitionPlugin _partplugin in plugins.PartPluginsList.Values)
+                foreach(PartitionPlugin partitionPlugin in plugins.PartPluginsList.Values)
                 {
-                    DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", _partplugin.Name, partitions[0].Start);
-                    if(!_partplugin.GetInformation(image, out List<Partition> _partitions, partitions[0].Start))
+                    DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", partitionPlugin.Name, foundPartitions[0].Start);
+                    if(!partitionPlugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
                         continue;
 
-                    DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name,
-                                              partitions[0].Start);
-                    childs.AddRange(_partitions);
+                    DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
+                                              foundPartitions[0].Start);
+                    childs.AddRange(partitions);
                 }
 
-                checkedLocations.Add(partitions[0].Start);
+                checkedLocations.Add(foundPartitions[0].Start);
 
                 DicConsole.DebugWriteLine("Partitions", "Got {0} childs", childs.Count);
 
                 if(childs.Count > 0)
                 {
-                    partitions.RemoveAt(0);
+                    foundPartitions.RemoveAt(0);
 
                     foreach(Partition child in childs)
                         if(checkedLocations.Contains(child.Start)) childPartitions.Add(child);
-                        else partitions.Add(child);
+                        else foundPartitions.Add(child);
                 }
                 else
                 {
-                    childPartitions.Add(partitions[0]);
-                    partitions.RemoveAt(0);
+                    childPartitions.Add(foundPartitions[0]);
+                    foundPartitions.RemoveAt(0);
                 }
 
-                DicConsole.DebugWriteLine("Partitions", "Got {0} parents", partitions.Count);
+                DicConsole.DebugWriteLine("Partitions", "Got {0} parents", foundPartitions.Count);
                 DicConsole.DebugWriteLine("Partitions", "Got {0} partitions", childPartitions.Count);
             }
 

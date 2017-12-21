@@ -313,7 +313,7 @@ namespace DiscImageChef.Core
                         {
                             if(!plugin.Identify(image, partitions[i])) continue;
 
-                            plugin.GetInformation(image, partitions[i], out string foo);
+                            plugin.GetInformation(image, partitions[i], out _);
                             lstFs.Add(plugin.XmlFSType);
                             Statistics.AddFilesystem(plugin.XmlFSType.Type);
                         }
@@ -346,7 +346,7 @@ namespace DiscImageChef.Core
                     {
                         if(!plugin.Identify(image, wholePart)) continue;
 
-                        plugin.GetInformation(image, wholePart, out string foo);
+                        plugin.GetInformation(image, wholePart, out _);
                         lstFs.Add(plugin.XmlFSType);
                         Statistics.AddFilesystem(plugin.XmlFSType.Type);
                     }
@@ -541,13 +541,17 @@ namespace DiscImageChef.Core
 
                             for(byte t = scpImage.Header.start; t <= scpImage.Header.end; t++)
                             {
-                                BlockTrackType scpBlockTrackType = new BlockTrackType();
-                                scpBlockTrackType.Cylinder = t / image.ImageInfo.Heads;
-                                scpBlockTrackType.Head = t % image.ImageInfo.Heads;
-                                scpBlockTrackType.Image = new ImageType();
-                                scpBlockTrackType.Image.format = scpImage.GetImageFormat();
-                                scpBlockTrackType.Image.Value = Path.GetFileName(scpFilePath);
-                                scpBlockTrackType.Image.offset = scpImage.Header.offsets[t];
+                                BlockTrackType scpBlockTrackType = new BlockTrackType
+                                {
+                                    Cylinder = t / image.ImageInfo.Heads,
+                                    Head = t % image.ImageInfo.Heads,
+                                    Image = new ImageType
+                                    {
+                                        format = scpImage.GetImageFormat(),
+                                        Value = Path.GetFileName(scpFilePath),
+                                        offset = scpImage.Header.offsets[t]
+                                    }
+                                };
 
                                 if(scpBlockTrackType.Cylinder < image.ImageInfo.Cylinders)
                                 {
@@ -626,17 +630,21 @@ namespace DiscImageChef.Core
 
                             foreach(KeyValuePair<byte, Filter> kvp in kfImage.tracks)
                             {
-                                BlockTrackType kfBlockTrackType = new BlockTrackType();
-                                kfBlockTrackType.Cylinder = kvp.Key / image.ImageInfo.Heads;
-                                kfBlockTrackType.Head = kvp.Key % image.ImageInfo.Heads;
-                                kfBlockTrackType.Image = new ImageType();
-                                kfBlockTrackType.Image.format = kfImage.GetImageFormat();
-                                kfBlockTrackType.Image.Value =
-                                    kfDir
-                                        ? Path.Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value.GetBasePath())),
-                                                       kvp.Value.GetFilename())
-                                        : kvp.Value.GetFilename();
-                                kfBlockTrackType.Image.offset = 0;
+                                BlockTrackType kfBlockTrackType = new BlockTrackType
+                                {
+                                    Cylinder = kvp.Key / image.ImageInfo.Heads,
+                                    Head = kvp.Key % image.ImageInfo.Heads,
+                                    Image = new ImageType
+                                    {
+                                        format = kfImage.GetImageFormat(),
+                                        Value = kfDir
+                                                    ? Path
+                                                        .Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value.GetBasePath())),
+                                                                 kvp.Value.GetFilename())
+                                                    : kvp.Value.GetFilename(),
+                                        offset = 0
+                                    }
+                                };
 
                                 if(kfBlockTrackType.Cylinder < image.ImageInfo.Cylinders)
                                 {
@@ -697,12 +705,16 @@ namespace DiscImageChef.Core
 
                     foreach(int t in dfiImage.TrackOffsets.Keys)
                     {
-                        BlockTrackType dfiBlockTrackType = new BlockTrackType();
-                        dfiBlockTrackType.Cylinder = t / image.ImageInfo.Heads;
-                        dfiBlockTrackType.Head = t % image.ImageInfo.Heads;
-                        dfiBlockTrackType.Image = new ImageType();
-                        dfiBlockTrackType.Image.format = dfiImage.GetImageFormat();
-                        dfiBlockTrackType.Image.Value = Path.GetFileName(dfiFilePath);
+                        BlockTrackType dfiBlockTrackType = new BlockTrackType
+                        {
+                            Cylinder = t / image.ImageInfo.Heads,
+                            Head = t % image.ImageInfo.Heads,
+                            Image = new ImageType
+                            {
+                                format = dfiImage.GetImageFormat(),
+                                Value = Path.GetFileName(dfiFilePath)
+                            }
+                        };
 
                         if(dfiBlockTrackType.Cylinder < image.ImageInfo.Cylinders)
                         {

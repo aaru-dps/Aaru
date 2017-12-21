@@ -45,15 +45,12 @@ namespace DiscImageChef.Core.Devices.Scanning
         {
             ScanResults results = new ScanResults();
             bool aborted;
-            MhddLog mhddLog;
-            IbgLog ibgLog;
             byte[] cmdBuf;
             bool sense;
             results.Blocks = 0;
-            uint[] response;
-            uint timeout = 5;
-            double duration = 0;
-            ushort currentProfile = 0x0001;
+            const uint TIMEOUT = 5;
+            double duration;
+            const ushort SD_PROFILE = 0x0001;
             uint blocksToRead = 128;
             uint blockSize = 512;
             bool byteAddressed = true;
@@ -61,13 +58,10 @@ namespace DiscImageChef.Core.Devices.Scanning
             switch(dev.Type) {
                 case DeviceType.MMC:
                 {
-                    ExtendedCSD ecsd = new ExtendedCSD();
-                    CSD csd = new CSD();
-
-                    sense = dev.ReadExtendedCsd(out cmdBuf, out response, timeout, out duration);
+                    sense = dev.ReadExtendedCsd(out cmdBuf, out _, TIMEOUT, out _);
                     if(!sense)
                     {
-                        ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
+                        ExtendedCSD ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
                         blocksToRead = ecsd.OptimalReadSize;
                         results.Blocks = ecsd.SectorCount;
                         blockSize = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
@@ -77,10 +71,10 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                     if(sense || results.Blocks == 0)
                     {
-                        sense = dev.ReadCsd(out cmdBuf, out response, timeout, out duration);
+                        sense = dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
                         if(!sense)
                         {
-                            csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
+                            CSD csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
                             results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
                             blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
                         }
@@ -89,12 +83,10 @@ namespace DiscImageChef.Core.Devices.Scanning
                 }
                 case DeviceType.SecureDigital:
                 {
-                    Decoders.SecureDigital.CSD csd = new Decoders.SecureDigital.CSD();
-
-                    sense = dev.ReadCsd(out cmdBuf, out response, timeout, out duration);
+                    sense = dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
                     if(!sense)
                     {
-                        csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
+                        Decoders.SecureDigital.CSD csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
                         results.Blocks = (ulong)(csd.Structure == 0
                                                      ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
                                                      : (csd.Size + 1) * 1024);
@@ -112,11 +104,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                 return results;
             }
 
-            sense = true;
-
             while(true)
             {
-                sense = dev.Read(out cmdBuf, out response, 0, blockSize, blocksToRead, byteAddressed, timeout,
+                sense = dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT,
                                  out duration);
 
                 if(sense) blocksToRead /= 2;
@@ -126,7 +116,6 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             if(sense)
             {
-                blocksToRead = 1;
                 DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
                 return results;
             }
@@ -150,19 +139,15 @@ namespace DiscImageChef.Core.Devices.Scanning
             results.SeekTotal = 0;
             const int SEEK_TIMES = 1000;
 
-            double seekCur = 0;
-
             Random rnd = new Random();
-
-            uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
             aborted = false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-            mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
-            ibgLog = new IbgLog(ibgLogPath, currentProfile);
+            MhddLog mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
+            IbgLog ibgLog = new IbgLog(ibgLogPath, SD_PROFILE);
 
             start = DateTime.UtcNow;
             for(ulong i = 0; i < results.Blocks; i += blocksToRead)
@@ -178,8 +163,8 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.Blocks, currentSpeed);
 
-                bool error = dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed,
-                                      timeout, out duration);
+                bool error = dev.Read(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
+                                      TIMEOUT, out duration);
 
                 if(!error)
                 {
@@ -198,8 +183,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     results.Errored += blocksToRead;
                     for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
-                    if(duration < 500) mhddLog.Write(i, 65535);
-                    else mhddLog.Write(i, duration);
+                    mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
                     ibgLog.Write(i, 0);
                 }
@@ -219,12 +203,12 @@ namespace DiscImageChef.Core.Devices.Scanning
             {
                 if(aborted) break;
 
-                seekPos = (uint)rnd.Next((int)results.Blocks);
+                uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
                 DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
 
-                dev.Read(out cmdBuf, out response, seekPos, blockSize, blocksToRead, byteAddressed, timeout,
-                         out seekCur);
+                dev.Read(out cmdBuf, out _, seekPos, blockSize, blocksToRead, byteAddressed, TIMEOUT,
+                         out double seekCur);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(seekCur > results.SeekMax && seekCur != 0) results.SeekMax = seekCur;

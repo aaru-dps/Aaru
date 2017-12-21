@@ -39,7 +39,7 @@ namespace DiscImageChef.Core.Devices.Report
 {
     static class FireWire
     {
-        internal static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
+        internal static void Report(Device dev, ref DeviceReport report, ref bool removable)
         {
             if(report == null) return;
 
@@ -53,11 +53,13 @@ namespace DiscImageChef.Core.Devices.Report
 
             if(pressedKey.Key != ConsoleKey.Y) return;
 
-            report.FireWire = new firewireType();
-            report.FireWire.Manufacturer = dev.FireWireVendorName;
-            report.FireWire.Product = dev.FireWireModelName;
-            report.FireWire.ProductID = dev.FireWireModel;
-            report.FireWire.VendorID = dev.FireWireVendor;
+            report.FireWire = new firewireType
+            {
+                Manufacturer = dev.FireWireVendorName,
+                Product = dev.FireWireModelName,
+                ProductID = dev.FireWireModel,
+                VendorID = dev.FireWireVendor
+            };
 
             pressedKey = new ConsoleKeyInfo();
             while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)

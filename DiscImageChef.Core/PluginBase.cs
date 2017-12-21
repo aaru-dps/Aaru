@@ -56,9 +56,7 @@ namespace DiscImageChef.Core
 
         public void RegisterAllPlugins(Encoding encoding = null)
         {
-            Assembly assembly;
-
-            assembly = Assembly.GetAssembly(typeof(ImagePlugin));
+            Assembly assembly = Assembly.GetAssembly(typeof(ImagePlugin));
 
             foreach(Type type in assembly.GetTypes())
                 try

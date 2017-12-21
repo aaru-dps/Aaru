@@ -50,17 +50,15 @@ namespace DiscImageChef.Core.Devices.Scanning
             bool aborted;
             MhddLog mhddLog;
             IbgLog ibgLog;
-            byte[] cmdBuf;
             byte[] senseBuf;
             bool sense = false;
-            double duration;
             results.Blocks = 0;
             uint blockSize = 0;
             ushort currentProfile = 0x0001;
 
             if(dev.IsRemovable)
             {
-                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                 if(sense)
                 {
                     FixedSense? decSense = Sense.DecodeFixed(senseBuf);
@@ -72,7 +70,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             {
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
 
                                 leftRetries--;
@@ -91,7 +89,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             {
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
 
                                 leftRetries--;
@@ -112,7 +110,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             {
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
 
                                 leftRetries--;
@@ -148,7 +146,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 case PeripheralDeviceTypes.OpticalDevice:
                 case PeripheralDeviceTypes.SimplifiedDevice:
                 case PeripheralDeviceTypes.WriteOnceDevice:
-                    scsiReader = new Reader(dev, dev.Timeout, null, false);
+                    scsiReader = new Reader(dev, dev.Timeout, null);
                     results.Blocks = scsiReader.GetDeviceBlocks();
                     if(scsiReader.FindReadCommand())
                     {
@@ -182,8 +180,8 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
             {
-                sense = dev.GetConfiguration(out cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current, dev.Timeout,
-                                             out duration);
+                sense = dev.GetConfiguration(out byte[] cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current, dev.Timeout,
+                                             out _);
                 if(!sense)
                 {
                     Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
@@ -210,13 +208,12 @@ namespace DiscImageChef.Core.Devices.Scanning
                     currentProfile = 0x0008;
                     // We discarded all discs that falsify a TOC before requesting a real TOC
                     // No TOC, no CD (or an empty one)
-                    bool tocSense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out duration);
+                    bool tocSense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out _);
                     if(!tocSense) toc = FullTOC.Decode(cmdBuf);
                 }
             }
             else compactDisc = false;
 
-            byte[] readBuffer;
             uint blocksToRead = 64;
 
             results.A = 0; // <3ms
@@ -238,8 +235,6 @@ namespace DiscImageChef.Core.Devices.Scanning
             aborted = false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
-            bool readcd = false;
-
             if(compactDisc)
             {
                 if(toc == null)
@@ -248,9 +243,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                     return results;
                 }
 
-                readcd = !dev.ReadCd(out readBuffer, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false,
-                                     true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                     MmcSubchannel.None, dev.Timeout, out duration);
+                bool readcd = !dev.ReadCd(out _, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                          true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                          MmcSubchannel.None, dev.Timeout, out _);
 
                 if(readcd) DicConsole.WriteLine("Using MMC READ CD command.");
 
@@ -260,9 +255,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                 {
                     if(readcd)
                     {
-                        sense = dev.ReadCd(out readBuffer, out senseBuf, 0, 2352, blocksToRead, MmcSectorTypes.AllTypes,
+                        sense = dev.ReadCd(out _, out senseBuf, 0, 2352, blocksToRead, MmcSectorTypes.AllTypes,
                                            false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                           MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out duration);
+                                           MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
                         if(dev.Error) blocksToRead /= 2;
                     }
 
@@ -297,7 +292,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                     if(readcd)
                     {
-                        sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)i, 2352, blocksToRead,
+                        sense = dev.ReadCd(out _, out senseBuf, (uint)i, 2352, blocksToRead,
                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                            true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out cmdDuration);
                         results.ProcessingTime += cmdDuration;
@@ -333,8 +328,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                                 results.Errored += blocksToRead;
                                 for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
-                                if(cmdDuration < 500) mhddLog.Write(i, 65535);
-                                else mhddLog.Write(i, cmdDuration);
+                                mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                                 ibgLog.Write(i, 0);
                             }
@@ -344,8 +338,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             results.Errored += blocksToRead;
                             for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
-                            if(cmdDuration < 500) mhddLog.Write(i, 65535);
-                            else mhddLog.Write(i, cmdDuration);
+                            mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                             ibgLog.Write(i, 0);
                         }
@@ -375,8 +368,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                 {
                     if(aborted) break;
 
-                    double cmdDuration = 0;
-
                     if(results.Blocks - i < blocksToRead) blocksToRead = (uint)(results.Blocks - i);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
@@ -386,7 +377,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                     DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.Blocks, currentSpeed);
 
-                    sense = scsiReader.ReadBlocks(out readBuffer, i, blocksToRead, out cmdDuration);
+                    sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration);
                     results.ProcessingTime += cmdDuration;
 
                     if(!sense && !dev.Error)
@@ -407,8 +398,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                         results.Errored += blocksToRead;
                         for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
-                        if(cmdDuration < 500) mhddLog.Write(i, 65535);
-                        else mhddLog.Write(i, cmdDuration);
+                        mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
                         ibgLog.Write(i, 0);
                     }
 
@@ -428,22 +418,19 @@ namespace DiscImageChef.Core.Devices.Scanning
             results.SeekTotal = 0;
             const int SEEK_TIMES = 1000;
 
-            double seekCur = 0;
-
             Random rnd = new Random();
-
-            uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
             for(int i = 0; i < SEEK_TIMES; i++)
             {
                 if(aborted) break;
 
-                seekPos = (uint)rnd.Next((int)results.Blocks);
+                uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
                 DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
 
+                double seekCur;
                 if(scsiReader.CanSeek) scsiReader.Seek(seekPos, out seekCur);
-                else scsiReader.ReadBlock(out readBuffer, seekPos, out seekCur);
+                else scsiReader.ReadBlock(out _, seekPos, out seekCur);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(seekCur > results.SeekMax && seekCur != 0) results.SeekMax = seekCur;

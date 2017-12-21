@@ -59,8 +59,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 ref DumpLog dumpLog, Encoding encoding)
         {
             bool aborted;
-            MhddLog mhddLog;
-            IbgLog ibgLog;
 
             if(dumpRaw)
             {
@@ -75,12 +73,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             bool sense;
-            ushort currentProfile = 0x0001;
-            uint timeout = 5;
-            double duration;
+            const ushort ATA_PROFILE = 0x0001;
+            const uint TIMEOUT = 5;
 
             dumpLog.WriteLine("Requesting ATA IDENTIFY DEVICE.");
-            sense = dev.AtaIdentify(out byte[] cmdBuf, out AtaErrorRegistersCHS errorChs);
+            sense = dev.AtaIdentify(out byte[] cmdBuf, out _);
             if(!sense && Identify.Decode(cmdBuf).HasValue)
             {
                 Identify.IdentifyDevice? ataIdNullable = Identify.Decode(cmdBuf);
@@ -170,7 +167,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     double currentSpeed = 0;
                     double maxSpeed = double.MinValue;
                     double minSpeed = double.MaxValue;
-                    Checksum dataChk;
 
                     aborted = false;
                     System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
@@ -179,7 +175,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     // Initializate reader
                     dumpLog.WriteLine("Initializing reader.");
-                    Reader ataReader = new Reader(dev, timeout, cmdBuf);
+                    Reader ataReader = new Reader(dev, TIMEOUT, cmdBuf);
                     // Fill reader blocks
                     ulong blocks = ataReader.GetDeviceBlocks();
                     // Check block sizes
@@ -218,7 +214,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
                     dumpLog.WriteLine("Device reports {0} bytes per physical block.", physicalsectorsize);
 
-                    bool removable = false || !dev.IsCompactFlash &&
+                    bool removable = !dev.IsCompactFlash &&
                                      ataId.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit
                                                                                 .Removable);
                     DumpHardwareType currentTry = null;
@@ -228,12 +224,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(currentTry == null || extents == null)
                         throw new Exception("Could not process resume file, not continuing...");
 
+                    MhddLog mhddLog;
+                    IbgLog ibgLog;
+                    double duration;
                     if(ataReader.IsLba)
                     {
                         DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                         mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-                        ibgLog = new IbgLog(outputPrefix + ".ibg", currentProfile);
+                        ibgLog = new IbgLog(outputPrefix + ".ibg", ATA_PROFILE);
                         dumpFile = new DataFile(outputPrefix + ".bin");
                         if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
 
@@ -271,8 +270,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 for(ulong b = i; b < i + blocksToRead; b++) resume.BadBlocks.Add(b);
 
-                                if(duration < 500) mhddLog.Write(i, 65535);
-                                else mhddLog.Write(i, duration);
+                                mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
                                 ibgLog.Write(i, 0);
                                 dumpFile.Write(new byte[blockSize * blocksToRead]);
@@ -348,7 +346,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     else
                     {
                         mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-                        ibgLog = new IbgLog(outputPrefix + ".ibg", currentProfile);
+                        ibgLog = new IbgLog(outputPrefix + ".ibg", ATA_PROFILE);
                         dumpFile = new DataFile(outputPrefix + ".bin");
 
                         ulong currentBlock = 0;
@@ -390,8 +388,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     else
                                     {
                                         resume.BadBlocks.Add(currentBlock);
-                                        if(duration < 500) mhddLog.Write(currentBlock, 65535);
-                                        else mhddLog.Write(currentBlock, duration);
+                                        mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration);
 
                                         ibgLog.Write(currentBlock, 0);
                                         dumpFile.Write(new byte[blockSize]);
@@ -416,7 +413,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
                     }
 
-                    dataChk = new Checksum();
+                    Checksum dataChk = new Checksum();
                     dumpFile.Seek(0, SeekOrigin.Begin);
                     blocksToRead = 500;
 
@@ -454,7 +451,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     PluginBase plugins = new PluginBase();
                     plugins.RegisterAllPlugins(encoding);
-                    ImagePlugin imageFormat;
 
                     FiltersList filtersList = new FiltersList();
                     Filter inputFilter = filtersList.GetFilter(outputPrefix + ".bin");
@@ -465,7 +461,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         return;
                     }
 
-                    imageFormat = ImageFormat.Detect(inputFilter);
+                    ImagePlugin imageFormat = ImageFormat.Detect(inputFilter);
                     PartitionType[] xmlFileSysInfo = null;
 
                     try { if(!imageFormat.OpenImage(inputFilter)) imageFormat = null; }
@@ -503,7 +499,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     {
                                         if(!plugin.Identify(imageFormat, partitions[i])) continue;
 
-                                        plugin.GetInformation(imageFormat, partitions[i], out string foo);
+                                        plugin.GetInformation(imageFormat, partitions[i], out _);
                                         lstFs.Add(plugin.XmlFSType);
                                         Statistics.AddFilesystem(plugin.XmlFSType.Type);
                                         dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);
@@ -538,7 +534,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 {
                                     if(!plugin.Identify(imageFormat, wholePart)) continue;
 
-                                    plugin.GetInformation(imageFormat, wholePart, out string foo);
+                                    plugin.GetInformation(imageFormat, wholePart, out _);
                                     lstFs.Add(plugin.XmlFSType);
                                     Statistics.AddFilesystem(plugin.XmlFSType.Type);
                                     dumpLog.WriteLine("Filesystem {0} found.", plugin.XmlFSType.Type);

@@ -53,8 +53,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         {
             FixedSense? fxSense;
             bool aborted;
-            MhddLog mhddLog;
-            IbgLog ibgLog;
             bool sense;
             ulong blocks = 0;
             uint blockSize;
@@ -66,7 +64,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             double currentSpeed = 0;
             double maxSpeed = double.MinValue;
             double minSpeed = double.MaxValue;
-            Checksum dataChk;
 
             dev.RequestSense(out byte[] senseBuf, dev.Timeout, out double duration);
             fxSense = Sense.DecodeFixed(senseBuf, out string strSense);
@@ -87,7 +84,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dumpLog.WriteLine("Rewinding, please wait...");
                 DicConsole.Write("Rewinding, please wait...");
                 // Rewind, let timeout apply
-                sense = dev.Rewind(out senseBuf, dev.Timeout, out duration);
+                dev.Rewind(out senseBuf, dev.Timeout, out duration);
 
                 // Still rewinding?
                 // TODO: Pause?
@@ -367,21 +364,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            Checksum partitionChk;
-            Checksum fileChk;
             List<TapePartitionType> partitions = new List<TapePartitionType>();
             List<TapeFileType> files = new List<TapeFileType>();
-            TapeFileType currentTapeFile;
-            TapePartitionType currentTapePartition;
 
             DicConsole.WriteLine();
             DataFile dumpFile = new DataFile(outputPrefix + ".bin");
-            dataChk = new Checksum();
+            Checksum dataChk = new Checksum();
             start = DateTime.UtcNow;
-            mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
-            ibgLog = new IbgLog(outputPrefix + ".ibg", 0x0008);
+            MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
+            IbgLog ibgLog = new IbgLog(outputPrefix + ".ibg", 0x0008);
 
-            currentTapeFile = new TapeFileType
+            TapeFileType currentTapeFile = new TapeFileType
             {
                 Image = new ImageType
                 {
@@ -394,8 +387,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 StartBlock = (long)currentBlock,
                 BlockSize = blockSize
             };
-            fileChk = new Checksum();
-            currentTapePartition = new TapePartitionType
+            Checksum fileChk = new Checksum();
+            TapePartitionType currentTapePartition = new TapePartitionType
             {
                 Image = new ImageType
                 {
@@ -407,7 +400,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Sequence = currentPartition,
                 StartBlock = (long)currentBlock
             };
-            partitionChk = new Checksum();
+            Checksum partitionChk = new Checksum();
 
             aborted = false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
@@ -467,7 +460,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         currentPartitionSize = 0;
                         partitionChk = new Checksum();
                         DicConsole.WriteLine("Seeking to partition {0}", currentPartition);
-                        sense = dev.Locate(out senseBuf, false, currentPartition, 0, dev.Timeout, out duration);
+                        dev.Locate(out senseBuf, false, currentPartition, 0, dev.Timeout, out duration);
                         totalDuration += duration;
                     }
 

@@ -67,35 +67,35 @@ namespace DiscImageChef.Core
         public static event UpdateProgressHandler UpdateProgressEvent;
         public static event EndProgressHandler EndProgressEvent;
 
-        public static void InitProgress()
+        static void InitProgress()
         {
-            if(InitProgressEvent != null) InitProgressEvent();
+            InitProgressEvent?.Invoke();
         }
 
-        public static void UpdateProgress(string text, int current, int maximum)
+        static void UpdateProgress(string text, int current, int maximum)
         {
-            if(UpdateProgressEvent != null)
-                UpdateProgressEvent(string.Format(text, current, maximum), current, maximum);
+            UpdateProgressEvent?.Invoke(string.Format(text, current, maximum), current, maximum);
         }
 
-        public static void EndProgress()
+        static void EndProgress()
         {
-            if(EndProgressEvent != null) EndProgressEvent();
+            EndProgressEvent?.Invoke();
         }
 
         public static BenchmarkResults Do(int bufferSize, int blockSize)
         {
-            BenchmarkResults results = new BenchmarkResults();
-            results.Entries = new Dictionary<string, BenchmarkEntry>();
-            results.MinMemory = long.MaxValue;
-            results.MaxMemory = 0;
-            results.SeparateTime = 0;
+            BenchmarkResults results = new BenchmarkResults
+            {
+                Entries = new Dictionary<string, BenchmarkEntry>(),
+                MinMemory = long.MaxValue,
+                MaxMemory = 0,
+                SeparateTime = 0
+            };
             MemoryStream ms = new MemoryStream(bufferSize);
             Random rnd = new Random();
             DateTime start;
             DateTime end;
             long mem;
-            object ctx;
 
             start = DateTime.Now;
             InitProgress();
@@ -136,7 +136,7 @@ namespace DiscImageChef.Core
             results.ReadSpeed = bufferSize / 1048576.0 / (end - start).TotalSeconds;
 
             #region Adler32
-            ctx = new Adler32Context();
+            object ctx = new Adler32Context();
             ((Adler32Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);

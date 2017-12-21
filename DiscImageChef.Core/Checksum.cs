@@ -292,89 +292,67 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.All))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.adler32;
-                chk.Value = adler32Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.adler32, Value = adler32Ctx.End()};
                 chks.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Crc16))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.crc16;
-                chk.Value = crc16Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.crc16, Value = crc16Ctx.End()};
                 chks.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Crc32))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.crc32;
-                chk.Value = crc32Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.crc32, Value = crc32Ctx.End()};
                 chks.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Crc64))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.crc64;
-                chk.Value = crc64Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.crc64, Value = crc64Ctx.End()};
                 chks.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Md5))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.md5;
-                chk.Value = md5Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.md5, Value = md5Ctx.End()};
                 chks.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Ripemd160))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.ripemd160;
-                chk.Value = ripemd160Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.ripemd160, Value = ripemd160Ctx.End()};
                 chks.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Sha1))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha1;
-                chk.Value = sha1Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.sha1, Value = sha1Ctx.End()};
                 chks.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Sha256))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha256;
-                chk.Value = sha256Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.sha256, Value = sha256Ctx.End()};
                 chks.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Sha384))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha384;
-                chk.Value = sha384Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.sha384, Value = sha384Ctx.End()};
                 chks.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Sha512))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha512;
-                chk.Value = sha512Ctx.End();
+                chk = new ChecksumType {type = ChecksumTypeType.sha512, Value = sha512Ctx.End()};
                 chks.Add(chk);
             }
 
             if(!enabled.HasFlag(EnableChecksum.SpamSum)) return chks;
 
-            chk = new ChecksumType();
-            chk.type = ChecksumTypeType.spamsum;
-            chk.Value = ssctx.End();
+            chk = new ChecksumType {type = ChecksumTypeType.spamsum, Value = ssctx.End()};
             chks.Add(chk);
 
             return chks;
@@ -394,18 +372,6 @@ namespace DiscImageChef.Core
             Sha512Context sha512CtxData = null;
             SpamSumContext ssctxData = null;
 
-            AdlerPacket adlerPktData;
-            Crc16Packet crc16PktData;
-            Crc32Packet crc32PktData;
-            Crc64Packet crc64PktData;
-            Md5Packet md5PktData;
-            Ripemd160Packet ripemd160PktData;
-            Sha1Packet sha1PktData;
-            Sha256Packet sha256PktData;
-            Sha384Packet sha384PktData;
-            Sha512Packet sha512PktData;
-            SpamsumPacket spamsumPktData;
-
             Thread adlerThreadData = new Thread(UpdateAdler);
             Thread crc16ThreadData = new Thread(UpdateCrc16);
             Thread crc32ThreadData = new Thread(UpdateCrc32);
@@ -421,7 +387,7 @@ namespace DiscImageChef.Core
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
                 adler32CtxData = new Adler32Context();
-                adlerPktData = new AdlerPacket();
+                AdlerPacket adlerPktData = new AdlerPacket();
                 adler32CtxData.Init();
                 adlerPktData.Context = adler32CtxData;
                 adlerPktData.Data = data;
@@ -430,7 +396,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                crc16PktData = new Crc16Packet();
+                Crc16Packet crc16PktData = new Crc16Packet();
                 crc16CtxData = new Crc16Context();
                 crc16CtxData.Init();
                 crc16PktData.Context = crc16CtxData;
@@ -440,7 +406,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                crc32PktData = new Crc32Packet();
+                Crc32Packet crc32PktData = new Crc32Packet();
                 crc32CtxData = new Crc32Context();
                 crc32CtxData.Init();
                 crc32PktData.Context = crc32CtxData;
@@ -450,7 +416,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                crc64PktData = new Crc64Packet();
+                Crc64Packet crc64PktData = new Crc64Packet();
                 crc64CtxData = new Crc64Context();
                 crc64CtxData.Init();
                 crc64PktData.Context = crc64CtxData;
@@ -460,7 +426,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                md5PktData = new Md5Packet();
+                Md5Packet md5PktData = new Md5Packet();
                 md5CtxData = new Md5Context();
                 md5CtxData.Init();
                 md5PktData.Context = md5CtxData;
@@ -470,7 +436,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                ripemd160PktData = new Ripemd160Packet();
+                Ripemd160Packet ripemd160PktData = new Ripemd160Packet();
                 ripemd160CtxData = new Ripemd160Context();
                 ripemd160CtxData.Init();
                 ripemd160PktData.Context = ripemd160CtxData;
@@ -480,7 +446,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                sha1PktData = new Sha1Packet();
+                Sha1Packet sha1PktData = new Sha1Packet();
                 sha1CtxData = new Sha1Context();
                 sha1CtxData.Init();
                 sha1PktData.Context = sha1CtxData;
@@ -490,7 +456,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                sha256PktData = new Sha256Packet();
+                Sha256Packet sha256PktData = new Sha256Packet();
                 sha256CtxData = new Sha256Context();
                 sha256CtxData.Init();
                 sha256PktData.Context = sha256CtxData;
@@ -500,7 +466,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                sha384PktData = new Sha384Packet();
+                Sha384Packet sha384PktData = new Sha384Packet();
                 sha384CtxData = new Sha384Context();
                 sha384CtxData.Init();
                 sha384PktData.Context = sha384CtxData;
@@ -510,7 +476,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                sha512PktData = new Sha512Packet();
+                Sha512Packet sha512PktData = new Sha512Packet();
                 sha512CtxData = new Sha512Context();
                 sha512CtxData.Init();
                 sha512PktData.Context = sha512CtxData;
@@ -520,7 +486,7 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
             {
-                spamsumPktData = new SpamsumPacket();
+                SpamsumPacket spamsumPktData = new SpamsumPacket();
                 ssctxData = new SpamSumContext();
                 ssctxData.Init();
                 spamsumPktData.Context = ssctxData;
@@ -538,89 +504,67 @@ namespace DiscImageChef.Core
 
             if(enabled.HasFlag(EnableChecksum.Adler32))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.adler32;
-                chk.Value = adler32CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.adler32, Value = adler32CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Crc16))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.crc16;
-                chk.Value = crc16CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.crc16, Value = crc16CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Crc32))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.crc32;
-                chk.Value = crc32CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.crc32, Value = crc32CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Crc64))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.crc64;
-                chk.Value = crc64CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.crc64, Value = crc64CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Md5))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.md5;
-                chk.Value = md5CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.md5, Value = md5CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Ripemd160))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.ripemd160;
-                chk.Value = ripemd160CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.ripemd160, Value = ripemd160CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Sha1))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha1;
-                chk.Value = sha1CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.sha1, Value = sha1CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Sha256))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha256;
-                chk.Value = sha256CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.sha256, Value = sha256CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Sha384))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha384;
-                chk.Value = sha384CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.sha384, Value = sha384CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(enabled.HasFlag(EnableChecksum.Sha512))
             {
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha512;
-                chk.Value = sha512CtxData.End();
+                chk = new ChecksumType {type = ChecksumTypeType.sha512, Value = sha512CtxData.End()};
                 dataChecksums.Add(chk);
             }
 
             if(!enabled.HasFlag(EnableChecksum.SpamSum)) return dataChecksums;
 
-            chk = new ChecksumType();
-            chk.type = ChecksumTypeType.spamsum;
-            chk.Value = ssctxData.End();
+            chk = new ChecksumType {type = ChecksumTypeType.spamsum, Value = ssctxData.End()};
             dataChecksums.Add(chk);
 
             return dataChecksums;

@@ -50,15 +50,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel,
                                 ref Resume resume, ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)
         {
-            byte[] senseBuf;
-            bool sense;
             MediaType dskType = MediaType.Unknown;
             int resets = 0;
 
             if(dev.IsRemovable)
             {
                 deviceGotReset:
-                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out double duration);
+                bool sense = dev.ScsiTestUnitReady(out byte[] senseBuf, dev.Timeout, out _);
                 if(sense)
                 {
                     FixedSense? decSense = Sense.DecodeFixed(senseBuf);
@@ -81,7 +79,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
 
                                 decSense = Sense.DecodeFixed(senseBuf);
@@ -104,7 +102,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
 
                                 decSense = Sense.DecodeFixed(senseBuf);
@@ -141,7 +139,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 DicConsole.WriteLine("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
 
                                 decSense = Sense.DecodeFixed(senseBuf);

@@ -48,14 +48,7 @@ namespace DiscImageChef.Core.Logging
 
             mhddFs = new FileStream(outputFile, FileMode.Create);
 
-            string device;
             string mode;
-            string fw;
-            string sn;
-            string sectors;
-            string sectorsize;
-            string scanblocksize;
-            string ver;
 
             switch(dev.Type)
             {
@@ -80,15 +73,15 @@ namespace DiscImageChef.Core.Logging
                     break;
             }
 
-            device = $"DEVICE: {dev.Manufacturer} {dev.Model}";
-            fw = $"F/W: {dev.Revision}";
-            sn = $"S/N: {dev.Serial}";
-            sectors = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
-            sectorsize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes",
-                                       blockSize);
-            scanblocksize = string.Format(new CultureInfo("en-US"),
-                                          "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
-            ver = "VER:2 ";
+            string device = $"DEVICE: {dev.Manufacturer} {dev.Model}";
+            string fw = $"F/W: {dev.Revision}";
+            string sn = $"S/N: {dev.Serial}";
+            string sectors = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
+            string sectorsize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes",
+                                              blockSize);
+            string scanblocksize = string.Format(new CultureInfo("en-US"),
+                                                 "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
+            const string MHDD_VER = "VER:2 ";
 
             byte[] deviceBytes = Encoding.ASCII.GetBytes(device);
             byte[] modeBytes = Encoding.ASCII.GetBytes(mode);
@@ -97,7 +90,7 @@ namespace DiscImageChef.Core.Logging
             byte[] sectorsBytes = Encoding.ASCII.GetBytes(sectors);
             byte[] sectorsizeBytes = Encoding.ASCII.GetBytes(sectorsize);
             byte[] scanblocksizeBytes = Encoding.ASCII.GetBytes(scanblocksize);
-            byte[] verBytes = Encoding.ASCII.GetBytes(ver);
+            byte[] verBytes = Encoding.ASCII.GetBytes(MHDD_VER);
 
             uint pointer = (uint)(deviceBytes.Length + modeBytes.Length + fwBytes.Length + snBytes.Length +
                                   sectorsBytes.Length + sectorsizeBytes.Length + scanblocksizeBytes.Length +

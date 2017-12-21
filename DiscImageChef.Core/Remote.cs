@@ -73,7 +73,7 @@ namespace DiscImageChef.Core
                     Stream data = response.GetResponseStream();
                     StreamReader reader = new StreamReader(data ?? throw new InvalidOperationException());
 
-                    string responseFromServer = reader.ReadToEnd();
+                    reader.ReadToEnd();
                     data.Close();
                     response.Close();
                     xmlStream.Close();

@@ -38,10 +38,9 @@ namespace DiscImageChef.Core.Devices.Report
 {
     static class Pcmcia
     {
-        internal static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
+        internal static void Report(Device dev, ref DeviceReport report)
         {
-            report.PCMCIA = new pcmciaType();
-            report.PCMCIA.CIS = dev.Cis;
+            report.PCMCIA = new pcmciaType {CIS = dev.Cis};
             Tuple[] tuples = CIS.GetTuples(dev.Cis);
             if(tuples == null) return;
 
