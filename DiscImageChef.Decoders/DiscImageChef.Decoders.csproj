@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -74,10 +74,51 @@
     <Compile Include="SCSI\MMC\WriteProtect.cs" />
     <Compile Include="SCSI\MMC\DiscInformation.cs" />
     <Compile Include="SCSI\Enums.cs" />
+    <Compile Include="SCSI\Modes\00_SFF.cs" />
+    <Compile Include="SCSI\Modes\01.cs" />
+    <Compile Include="SCSI\Modes\01_MMC.cs" />
+    <Compile Include="SCSI\Modes\02.cs" />
+    <Compile Include="SCSI\Modes\03.cs" />
+    <Compile Include="SCSI\Modes\04.cs" />
+    <Compile Include="SCSI\Modes\05.cs" />
+    <Compile Include="SCSI\Modes\06.cs" />
+    <Compile Include="SCSI\Modes\07.cs" />
+    <Compile Include="SCSI\Modes\07_MMC.cs" />
+    <Compile Include="SCSI\Modes\08.cs" />
+    <Compile Include="SCSI\Modes\0A.cs" />
+    <Compile Include="SCSI\Modes\0B.cs" />
+    <Compile Include="SCSI\Modes\0C.cs" />
+    <Compile Include="SCSI\Modes\0D.cs" />
+    <Compile Include="SCSI\Modes\0E.cs" />
+    <Compile Include="SCSI\Modes\0F.cs" />
+    <Compile Include="SCSI\Modes\10.cs" />
+    <Compile Include="SCSI\Modes\10_SSC.cs" />
+    <Compile Include="SCSI\Modes\11.cs" />
+    <Compile Include="SCSI\Modes\12_13_14.cs" />
+    <Compile Include="SCSI\Modes\1A.cs" />
+    <Compile Include="SCSI\Modes\1B.cs" />
+    <Compile Include="SCSI\Modes\1C.cs" />
+    <Compile Include="SCSI\Modes\1C_SFF.cs" />
+    <Compile Include="SCSI\Modes\1D.cs" />
+    <Compile Include="SCSI\Modes\21_Certance.cs" />
+    <Compile Include="SCSI\Modes\22_Certance.cs" />
+    <Compile Include="SCSI\Modes\24_IBM.cs" />
+    <Compile Include="SCSI\Modes\2A.cs" />
+    <Compile Include="SCSI\Modes\2F_IBM.cs" />
+    <Compile Include="SCSI\Modes\30_Apple.cs" />
+    <Compile Include="SCSI\Modes\3B_HP.cs" />
+    <Compile Include="SCSI\Modes\3C_HP.cs" />
+    <Compile Include="SCSI\Modes\3D_HP.cs" />
+    <Compile Include="SCSI\Modes\3D_IBM.cs" />
+    <Compile Include="SCSI\Modes\3E_Fujitsu.cs" />
+    <Compile Include="SCSI\Modes\3E_HP.cs" />
+    <Compile Include="SCSI\Modes\Headers.cs" />
+    <Compile Include="SCSI\Modes\Mode10.cs" />
+    <Compile Include="SCSI\Modes\Mode6.cs" />
+    <Compile Include="SCSI\Modes\Structs.cs" />
     <Compile Include="SCSI\VendorString.cs" />
     <Compile Include="ATA\Identify.cs" />
     <Compile Include="SCSI\EVPD.cs" />
-    <Compile Include="SCSI\Modes.cs" />
     <Compile Include="SCSI\MMC\Features.cs" />
     <Compile Include="SCSI\DiscStructureCapabilities.cs" />
     <Compile Include="SCSI\Sense.cs" />
@@ -91,7 +132,6 @@
     <Compile Include="SCSI\SSC\BlockLimits.cs" />
     <Compile Include="SCSI\SSC\DensitySupport.cs" />
     <Compile Include="SCSI\Types.cs" />
-    <Compile Include="SCSI\ModesEncoders.cs" />
     <Compile Include="LisaTag.cs" />
     <Compile Include="CD\Sector.cs" />
     <Compile Include="PCMCIA\Enums.cs" />
