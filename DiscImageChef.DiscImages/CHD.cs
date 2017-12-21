@@ -122,7 +122,7 @@ namespace DiscImageChef.DiscImages
             /// </summary>
             public uint flags;
             /// <summary>
-            /// Compression algorithm, <see cref="ChdCompression"/> 
+            /// Compression algorithm, <see cref="ChdCompression"/>
             /// </summary>
             public uint compression;
             /// <summary>
@@ -176,7 +176,7 @@ namespace DiscImageChef.DiscImages
             /// </summary>
             public uint flags;
             /// <summary>
-            /// Compression algorithm, <see cref="ChdCompression"/> 
+            /// Compression algorithm, <see cref="ChdCompression"/>
             /// </summary>
             public uint compression;
             /// <summary>
@@ -233,7 +233,7 @@ namespace DiscImageChef.DiscImages
             /// </summary>
             public uint flags;
             /// <summary>
-            /// Compression algorithm, <see cref="ChdCompression"/> 
+            /// Compression algorithm, <see cref="ChdCompression"/>
             /// </summary>
             public uint compression;
             /// <summary>
@@ -326,7 +326,7 @@ namespace DiscImageChef.DiscImages
             /// </summary>
             public uint flags;
             /// <summary>
-            /// Compression algorithm, <see cref="ChdCompression"/> 
+            /// Compression algorithm, <see cref="ChdCompression"/>
             /// </summary>
             public uint compression;
             /// <summary>

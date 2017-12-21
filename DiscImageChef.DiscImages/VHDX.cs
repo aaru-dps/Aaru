@@ -49,7 +49,7 @@ namespace DiscImageChef.DiscImages
         struct VhdxIdentifier
         {
             /// <summary>
-            /// Signature, <see cref="Vhdx.VHDX_SIGNATURE"/> 
+            /// Signature, <see cref="Vhdx.VHDX_SIGNATURE"/>
             /// </summary>
             public ulong signature;
             /// <summary>
@@ -61,7 +61,7 @@ namespace DiscImageChef.DiscImages
         struct VhdxHeader
         {
             /// <summary>
-            /// Signature, <see cref="Vhdx.VHDX_HEADER_SIG"/> 
+            /// Signature, <see cref="Vhdx.VHDX_HEADER_SIG"/>
             /// </summary>
             public uint Signature;
             /// <summary>
@@ -107,7 +107,7 @@ namespace DiscImageChef.DiscImages
         struct VhdxRegionTableHeader
         {
             /// <summary>
-            /// Signature, <see cref="Vhdx.VHDX_REGION_SIG"/> 
+            /// Signature, <see cref="Vhdx.VHDX_REGION_SIG"/>
             /// </summary>
             public uint signature;
             /// <summary>

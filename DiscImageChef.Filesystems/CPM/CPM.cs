@@ -86,7 +86,7 @@ namespace DiscImageChef.Filesystems.CPM
         byte[] labelUpdateDate;
 
         /// <summary>
-        /// Cached <see cref="FileSystemInfo"/> 
+        /// Cached <see cref="FileSystemInfo"/>
         /// </summary>
         FileSystemInfo cpmStat;
         /// <summary>
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems.CPM
         /// </summary>
         Dictionary<string, byte[]> fileCache;
         /// <summary>
-        /// Cached file <see cref="FileEntryInfo"/> 
+        /// Cached file <see cref="FileEntryInfo"/>
         /// </summary>
         Dictionary<string, FileEntryInfo> statCache;
         /// <summary>

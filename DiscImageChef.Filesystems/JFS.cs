@@ -82,7 +82,7 @@ namespace DiscImageChef.Filesystems
         struct JFS_Extent
         {
             /// <summary>
-            /// Leftmost 24 bits are extent length, rest 8 bits are most significant for <see cref="addr2"/> 
+            /// Leftmost 24 bits are extent length, rest 8 bits are most significant for <see cref="addr2"/>
             /// </summary>
             public uint len_addr;
             public uint addr2;

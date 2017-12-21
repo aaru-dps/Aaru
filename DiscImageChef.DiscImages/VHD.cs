@@ -55,7 +55,7 @@ namespace DiscImageChef.DiscImages
         struct HardDiskFooter
         {
             /// <summary>
-            /// Offset 0x00, File magic number, <see cref="Vhd.IMAGE_COOKIE"/> 
+            /// Offset 0x00, File magic number, <see cref="Vhd.IMAGE_COOKIE"/>
             /// </summary>
             public ulong Cookie;
             /// <summary>
@@ -150,7 +150,7 @@ namespace DiscImageChef.DiscImages
         struct DynamicDiskHeader
         {
             /// <summary>
-            /// Offset 0x00, Header magic, <see cref="Vhd.DYNAMIC_COOKIE"/> 
+            /// Offset 0x00, Header magic, <see cref="Vhd.DYNAMIC_COOKIE"/>
             /// </summary>
             public ulong Cookie;
             /// <summary>
@@ -196,7 +196,7 @@ namespace DiscImageChef.DiscImages
             /// </summary>
             public string ParentName;
             /// <summary>
-            /// Offset 0x240, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
+            /// Offset 0x240, Parent disk image locator entry, <see cref="ParentLocatorEntry"/>
             /// </summary>
             public ParentLocatorEntry[] LocatorEntries;
             /// <summary>

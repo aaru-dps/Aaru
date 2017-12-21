@@ -88,7 +88,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] ctwo;
             /// <summary>
-            /// Set to <see cref="IBMIdType.IndexMark"/> 
+            /// Set to <see cref="IBMIdType.IndexMark"/>
             /// </summary>
             public IBMIdType type;
             /// <summary>
@@ -150,11 +150,11 @@ namespace DiscImageChef.Decoders.Floppy
             /// </summary>
             public byte sector;
             /// <summary>
-            /// <see cref="IBMSectorSizeCode"/> 
+            /// <see cref="IBMSectorSizeCode"/>
             /// </summary>
             public IBMSectorSizeCode sectorSize;
             /// <summary>
-            /// CRC16 from <see cref="aone"/> to end of <see cref="sectorSize"/> 
+            /// CRC16 from <see cref="aone"/> to end of <see cref="sectorSize"/>
             /// </summary>
             public ushort crc;
         }
@@ -181,7 +181,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// </summary>
             public byte[] data;
             /// <summary>
-            /// CRC16 from <see cref="aone"/> to end of <see cref="data"/> 
+            /// CRC16 from <see cref="aone"/> to end of <see cref="data"/>
             /// </summary>
             public ushort crc;
         }

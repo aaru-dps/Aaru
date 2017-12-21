@@ -187,7 +187,7 @@ namespace DiscImageChef.Devices.FreeBSD
     struct CcbScsiio
     {
         public CcbHdr ccb_h;
-        /// <summary>Ptr for next CCB for action</summary>    
+        /// <summary>Ptr for next CCB for action</summary>
         public IntPtr next_ccb;
         /// <summary>Ptr to mapping info</summary>
         public IntPtr req_map;
@@ -233,7 +233,7 @@ namespace DiscImageChef.Devices.FreeBSD
     struct CcbScsiio64
     {
         public CcbHdr ccb_h;
-        /// <summary>Ptr for next CCB for action</summary>    
+        /// <summary>Ptr for next CCB for action</summary>
         public IntPtr next_ccb;
         /// <summary>Ptr to mapping info</summary>
         public IntPtr req_map;
@@ -280,7 +280,7 @@ namespace DiscImageChef.Devices.FreeBSD
     struct CcbAtaio
     {
         public CcbHdr ccb_h;
-        /// <summary>Ptr for next CCB for action</summary>    
+        /// <summary>Ptr for next CCB for action</summary>
         public IntPtr next_ccb;
         /// <summary>ATA command register set</summary>
         public AtaCmd cmd;
@@ -443,7 +443,7 @@ namespace DiscImageChef.Devices.FreeBSD
     struct CcbNvmeio
     {
         public CcbHdr ccb_h;
-        /// <summary>Ptr for next CCB for action</summary>    
+        /// <summary>Ptr for next CCB for action</summary>
         public IntPtr next_ccb;
         /// <summary>NVME command, per NVME standard</summary>
         public NvmeCommand cmd;
@@ -578,12 +578,12 @@ namespace DiscImageChef.Devices.FreeBSD
         public uint io_ocr;
 
         /// <summary>
-        /// Card CID -- raw 
+        /// Card CID -- raw
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public uint[] card_cid;
 
         /// <summary>
-        /// Card CID -- parsed 
+        /// Card CID -- parsed
         /// </summary>
         public MmcCid cid;
 

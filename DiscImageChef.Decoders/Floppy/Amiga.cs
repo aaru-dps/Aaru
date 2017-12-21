@@ -70,7 +70,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] label;
             /// <summary>
-            /// Checksum from <see cref="amiga"/> to <see cref="label"/> 
+            /// Checksum from <see cref="amiga"/> to <see cref="label"/>
             /// </summary>
             public uint headerChecksum;
             /// <summary>

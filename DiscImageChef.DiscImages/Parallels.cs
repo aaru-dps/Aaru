@@ -66,7 +66,7 @@ namespace DiscImageChef.DiscImages
         struct ParallelsHeader
         {
             /// <summary>
-            /// Magic, <see cref="Parallels.parallelsMagic"/> or <see cref="Parallels.parallelsExtMagic"/> 
+            /// Magic, <see cref="Parallels.parallelsMagic"/> or <see cref="Parallels.parallelsExtMagic"/>
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] magic;
             /// <summary>

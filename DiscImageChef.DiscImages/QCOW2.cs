@@ -80,7 +80,7 @@ namespace DiscImageChef.DiscImages
         struct QCow2Header
         {
             /// <summary>
-            /// <see cref="Qcow2.QCOW_MAGIC"/> 
+            /// <see cref="Qcow2.QCOW_MAGIC"/>
             /// </summary>
             public uint magic;
             /// <summary>
@@ -92,7 +92,7 @@ namespace DiscImageChef.DiscImages
             /// </summary>
             public ulong backing_file_offset;
             /// <summary>
-            /// Size of <see cref="backing_file_offset"/> 
+            /// Size of <see cref="backing_file_offset"/>
             /// </summary>
             public uint backing_file_size;
             /// <summary>

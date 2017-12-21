@@ -571,7 +571,7 @@ namespace DiscImageChef.Devices
 
         #region Commands defined on ATA/ATAPI-8 rev. 3f
         /// <summary>
-        /// Sends a Non Volatile Cache subcommand. <see cref="AtaNonVolatileCacheSubCommands"/> 
+        /// Sends a Non Volatile Cache subcommand. <see cref="AtaNonVolatileCacheSubCommands"/>
         /// </summary>
         NonVolatileCacheCommand = 0xB6,
         /// <summary>
@@ -735,7 +735,7 @@ namespace DiscImageChef.Devices
     {
         #region Commands defined on ATA/ATAPI-6 rev. 3b
         /// <summary>
-        /// Disables any change made by <see cref="Set"/> 
+        /// Disables any change made by <see cref="Set"/>
         /// </summary>
         Restore = 0xC0,
         /// <summary>
@@ -778,7 +778,7 @@ namespace DiscImageChef.Devices
         /// </summary>
         SetPassword = 0x01,
         /// <summary>
-        /// Disables <see cref="Lock"/> 
+        /// Disables <see cref="Lock"/>
         /// </summary>
         UnLock = 0x03,
         #endregion Commands defined on ATA/ATAPI-6 rev. 3b
@@ -814,7 +814,7 @@ namespace DiscImageChef.Devices
         RemoveLbaFromNvCache = 0x11,
         /// <summary>
         /// Disables the Non Volatile Cache Power Mode
-        /// <see cref="SetNvCachePowerMode"/> 
+        /// <see cref="SetNvCachePowerMode"/>
         /// </summary>
         ReturnFromNvCachePowerMode = 0x01,
         /// <summary>
@@ -1059,7 +1059,7 @@ namespace DiscImageChef.Devices
         /// </summary>
         WriteDiagnosticOld = 0x1B,
         /// <summary>
-        /// Requests the data after completion of a <see cref="WriteDiagnostic"/> 
+        /// Requests the data after completion of a <see cref="WriteDiagnostic"/>
         /// ANSI X3T9.3 No. 185 (SASI)
         /// </summary>
         ReadDiagnostic = 0x1C,
@@ -1464,12 +1464,12 @@ namespace DiscImageChef.Devices
         /// </summary>
         ReadSerialNumber = 0xAB,
         /// <summary>
-        /// Receives information about a previous or current <see cref="ExtendedCopy"/> 
+        /// Receives information about a previous or current <see cref="ExtendedCopy"/>
         /// SPC-2 rev. 20
         /// </summary>
         ReceiveCopyResults = 0x84,
         /// <summary>
-        /// Requests the data after completion of a <see cref="SendDiagnostic"/> 
+        /// Requests the data after completion of a <see cref="SendDiagnostic"/>
         /// ECMA-111 (SCSI-1)
         /// </summary>
         ReceiveDiagnostic = SasiCommands.ReadDiagnostic,
@@ -1525,7 +1525,7 @@ namespace DiscImageChef.Devices
         ServiceActionIn = 0x9E,
         /// <summary>
         /// Extended commands
-        /// SPC-4 
+        /// SPC-4
         /// </summary>
         ServiceActionOut = 0x9F,
         /// <summary>
@@ -2276,7 +2276,7 @@ namespace DiscImageChef.Devices
         /// </summary>
         ReportVolumeTypesSupported = 0x44,
         /// <summary>
-        /// Gets the results of <see cref="SendVolumeTag"/> 
+        /// Gets the results of <see cref="SendVolumeTag"/>
         /// SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
         RequestVolumeElementAddress = 0xB5,

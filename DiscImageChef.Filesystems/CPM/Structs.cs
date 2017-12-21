@@ -202,43 +202,43 @@ namespace DiscImageChef.Filesystems.CPM
             /// </summary>
             public byte recordsPerSector;
             /// <summary>
-            /// <see cref="DiscParameterBlock.spt"/> 
+            /// <see cref="DiscParameterBlock.spt"/>
             /// </summary>
             public ushort spt;
             /// <summary>
-            /// <see cref="DiscParameterBlock.bsh"/> 
+            /// <see cref="DiscParameterBlock.bsh"/>
             /// </summary>
             public byte bsh;
             /// <summary>
-            /// <see cref="DiscParameterBlock.blm"/> 
+            /// <see cref="DiscParameterBlock.blm"/>
             /// </summary>
             public byte blm;
             /// <summary>
-            /// <see cref="DiscParameterBlock.exm"/> 
+            /// <see cref="DiscParameterBlock.exm"/>
             /// </summary>
             public byte exm;
             /// <summary>
-            /// <see cref="DiscParameterBlock.dsm"/> 
+            /// <see cref="DiscParameterBlock.dsm"/>
             /// </summary>
             public ushort dsm;
             /// <summary>
-            /// <see cref="DiscParameterBlock.drm"/> 
+            /// <see cref="DiscParameterBlock.drm"/>
             /// </summary>
             public ushort drm;
             /// <summary>
-            /// <see cref="DiscParameterBlock.al0"/> 
+            /// <see cref="DiscParameterBlock.al0"/>
             /// </summary>
             public ushort al0;
             /// <summary>
-            /// <see cref="DiscParameterBlock.al1"/> 
+            /// <see cref="DiscParameterBlock.al1"/>
             /// </summary>
             public ushort al1;
             /// <summary>
-            /// <see cref="DiscParameterBlock.cks"/> 
+            /// <see cref="DiscParameterBlock.cks"/>
             /// </summary>
             public ushort cks;
             /// <summary>
-            /// <see cref="DiscParameterBlock.off"/> 
+            /// <see cref="DiscParameterBlock.off"/>
             /// </summary>
             public ushort off;
             /// <summary>
@@ -302,7 +302,7 @@ namespace DiscImageChef.Filesystems.CPM
             /// </summary>
             public ushort reserved;
             /// <summary>
-            /// Password XOR'ed with <see cref="passwordDecoder"/> 
+            /// Password XOR'ed with <see cref="passwordDecoder"/>
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] password;
             /// <summary>
@@ -395,7 +395,7 @@ namespace DiscImageChef.Filesystems.CPM
             public byte passwordDecoder;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] reserved;
             /// <summary>
-            /// Password XOR'ed with <see cref="passwordDecoder"/> 
+            /// Password XOR'ed with <see cref="passwordDecoder"/>
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] password;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] reserved2;
@@ -451,7 +451,7 @@ namespace DiscImageChef.Filesystems.CPM
         }
 
         /// <summary>
-        /// Directory entry for &lt;256 allocation blocks 
+        /// Directory entry for &lt;256 allocation blocks
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DirectoryEntry
@@ -492,7 +492,7 @@ namespace DiscImageChef.Filesystems.CPM
         }
 
         /// <summary>
-        /// Directory entry for &bt;256 allocation blocks 
+        /// Directory entry for &bt;256 allocation blocks
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DirectoryEntry16

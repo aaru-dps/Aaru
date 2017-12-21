@@ -88,7 +88,7 @@ namespace DiscImageChef.Decoders.SCSI
         {
             return PrettifyModeHeader(DecodeModeHeader6(modeResponse, deviceType), deviceType);
         }
-        
+
         public static DecodedMode? DecodeMode6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
             ModeHeader? hdr = DecodeModeHeader6(modeResponse, deviceType);

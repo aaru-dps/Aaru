@@ -129,7 +129,7 @@ namespace DiscImageChef.Filters
         void GuessSize()
         {
             decompressedSize = 0;
-            // Seek to footer backwards size field 
+            // Seek to footer backwards size field
             dataStream.Seek(-8, SeekOrigin.End);
             byte[] tmp = new byte[4];
             dataStream.Read(tmp, 0, 4);

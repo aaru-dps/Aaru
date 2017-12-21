@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Handles definitions of known CP/M disks. 
+//     Handles definitions of known CP/M disks.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -154,7 +154,7 @@ namespace DiscImageChef.Filesystems.CPM
         /// </summary>
         public int bsh;
         /// <summary>
-        /// Block mask for <see cref="bsh"/> 
+        /// Block mask for <see cref="bsh"/>
         /// </summary>
         public int blm;
         /// <summary>

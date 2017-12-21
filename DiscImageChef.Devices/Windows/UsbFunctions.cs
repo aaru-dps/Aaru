@@ -38,13 +38,13 @@ using System.Runtime.InteropServices;
 namespace DiscImageChef.Devices.Windows
 {
     // 
-    // A place for "higher level" related functions 
-    // You might not want to keep these in the USB class... your choice 
+    // A place for "higher level" related functions
+    // You might not want to keep these in the USB class... your choice
     // 
     partial class Usb
     {
         // 
-        // Get a list of all connected devices 
+        // Get a list of all connected devices
         // 
         static internal List<UsbDevice> GetConnectedDevices()
         {
@@ -55,7 +55,7 @@ namespace DiscImageChef.Devices.Windows
             return devList;
         }
 
-        // private routine for enumerating a hub 
+        // private routine for enumerating a hub
         static void ListHub(UsbHub hub, List<UsbDevice> devList)
         {
             foreach(UsbPort port in hub.GetPorts())
@@ -64,7 +64,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         // 
-        // Find a device based upon it's DriverKeyName 
+        // Find a device based upon it's DriverKeyName
         // 
         static internal UsbDevice FindDeviceByDriverKeyName(string driverKeyName)
         {
@@ -79,7 +79,7 @@ namespace DiscImageChef.Devices.Windows
             return foundDevice;
         }
 
-        // private routine for enumerating a hub 
+        // private routine for enumerating a hub
         static void SearchHubDriverKeyName(UsbHub hub, ref UsbDevice foundDevice, string driverKeyName)
         {
             foreach(UsbPort port in hub.GetPorts())
@@ -97,7 +97,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         // 
-        // Find a device based upon it's Instance ID 
+        // Find a device based upon it's Instance ID
         // 
         static internal UsbDevice FindDeviceByInstanceId(string instanceId)
         {
@@ -112,7 +112,7 @@ namespace DiscImageChef.Devices.Windows
             return foundDevice;
         }
 
-        // private routine for enumerating a hub 
+        // private routine for enumerating a hub
         static void SearchHubInstanceId(UsbHub hub, ref UsbDevice foundDevice, string instanceId)
         {
             foreach(UsbPort port in hub.GetPorts())
@@ -134,11 +134,11 @@ namespace DiscImageChef.Devices.Windows
         internal const string GuidDevinterfaceCdrom = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
         internal const string GuidDevinterfaceFloppy = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
 
-        //typedef struct _STORAGE_DEVICE_NUMBER { 
-        //  DEVICE_TYPE  DeviceType; 
-        //  ULONG  DeviceNumber; 
-        //  ULONG  PartitionNumber; 
-        //} STORAGE_DEVICE_NUMBER, *PSTORAGE_DEVICE_NUMBER; 
+        //typedef struct _STORAGE_DEVICE_NUMBER {
+        //  DEVICE_TYPE  DeviceType;
+        //  ULONG  DeviceNumber;
+        //  ULONG  PartitionNumber;
+        //} STORAGE_DEVICE_NUMBER, *PSTORAGE_DEVICE_NUMBER;
         [StructLayout(LayoutKind.Sequential)]
         struct StorageDeviceNumber
         {
@@ -147,34 +147,34 @@ namespace DiscImageChef.Devices.Windows
             internal int PartitionNumber;
         }
 
-        //CMAPI CONFIGRET WINAPI  CM_Get_Parent( 
-        //   OUT PDEVINST  pdnDevInst, 
-        //   IN DEVINST  dnDevInst, 
-        //   IN ULONG  ulFlags 
-        //); 
+        //CMAPI CONFIGRET WINAPI  CM_Get_Parent(
+        //   OUT PDEVINST  pdnDevInst,
+        //   IN DEVINST  dnDevInst,
+        //   IN ULONG  ulFlags
+        //);
         [DllImport("setupapi.dll")]
         static extern int CM_Get_Parent(out IntPtr pdnDevInst, IntPtr dnDevInst, int ulFlags);
 
-        //CMAPI CONFIGRET WINAPI  CM_Get_Device_ID( 
-        //    IN DEVINST  dnDevInst, 
-        //    OUT PTCHAR  Buffer, 
-        //    IN ULONG  BufferLen, 
-        //    IN ULONG  ulFlags 
-        //); 
+        //CMAPI CONFIGRET WINAPI  CM_Get_Device_ID(
+        //    IN DEVINST  dnDevInst,
+        //    OUT PTCHAR  Buffer,
+        //    IN ULONG  BufferLen,
+        //    IN ULONG  ulFlags
+        //);
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
         static extern int CM_Get_Device_ID(IntPtr dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
 
         // 
-        // Find a device based upon a Drive Letter 
+        // Find a device based upon a Drive Letter
         // 
         static internal UsbDevice FindDriveLetter(string driveLetter, string deviceGuid)
         {
             UsbDevice foundDevice = null;
             string instanceId = "";
 
-            // We start by getting the unique DeviceNumber of the given 
-            // DriveLetter.  We'll use this later to find a matching 
-            // DevicePath "symbolic name" 
+            // We start by getting the unique DeviceNumber of the given
+            // DriveLetter.  We'll use this later to find a matching
+            // DevicePath "symbolic name"
             int devNum = GetDeviceNumber(@"\\.\" + driveLetter.TrimEnd('\\'));
             if(devNum < 0) return null;
 
@@ -186,9 +186,9 @@ namespace DiscImageChef.Devices.Windows
             UsbDevice foundDevice = null;
             string instanceId = "";
 
-            // We start by getting the unique DeviceNumber of the given 
-            // DriveLetter.  We'll use this later to find a matching 
-            // DevicePath "symbolic name" 
+            // We start by getting the unique DeviceNumber of the given
+            // DriveLetter.  We'll use this later to find a matching
+            // DevicePath "symbolic name"
             int devNum = GetDeviceNumber(drivePath);
             if(devNum < 0) return null;
 
@@ -196,7 +196,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         // 
-        // Find a device based upon a Drive Letter 
+        // Find a device based upon a Drive Letter
         // 
         static internal UsbDevice FindDeviceNumber(int devNum, string deviceGuid)
         {
@@ -205,8 +205,8 @@ namespace DiscImageChef.Devices.Windows
 
             Guid diskGuid = new Guid(deviceGuid);
 
-            // We start at the "root" of the device tree and look for all 
-            // devices that match the interface GUID of a disk 
+            // We start at the "root" of the device tree and look for all
+            // devices that match the interface GUID of a disk
             IntPtr h = SetupDiGetClassDevs(ref diskGuid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
             if(h.ToInt32() != INVALID_HANDLE_VALUE)
             {
@@ -214,34 +214,34 @@ namespace DiscImageChef.Devices.Windows
                 int i = 0;
                 do
                 {
-                    // create a Device Interface Data structure 
+                    // create a Device Interface Data structure
                     SpDeviceInterfaceData dia = new SpDeviceInterfaceData();
                     dia.cbSize = Marshal.SizeOf(dia);
 
-                    // start the enumeration  
+                    // start the enumeration
                     success = SetupDiEnumDeviceInterfaces(h, IntPtr.Zero, ref diskGuid, i, ref dia);
                     if(success)
                     {
-                        // build a DevInfo Data structure 
+                        // build a DevInfo Data structure
                         SpDevinfoData da = new SpDevinfoData();
                         da.cbSize = Marshal.SizeOf(da);
 
-                        // build a Device Interface Detail Data structure 
+                        // build a Device Interface Detail Data structure
                         SpDeviceInterfaceDetailData didd = new SpDeviceInterfaceDetailData();
-                        didd.cbSize = 4 + Marshal.SystemDefaultCharSize; // trust me :) 
+                        didd.cbSize = 4 + Marshal.SystemDefaultCharSize; // trust me :)
 
-                        // now we can get some more detailed information 
+                        // now we can get some more detailed information
                         int nRequiredSize = 0;
                         int nBytes = BUFFER_SIZE;
                         if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, nBytes, ref nRequiredSize, ref da))
                             if(GetDeviceNumber(didd.DevicePath) == devNum)
                             {
-                                // current InstanceID is at the "USBSTOR" level, so we 
-                                // need up "move up" one level to get to the "USB" level 
+                                // current InstanceID is at the "USBSTOR" level, so we
+                                // need up "move up" one level to get to the "USB" level
                                 IntPtr ptrPrevious;
                                 CM_Get_Parent(out ptrPrevious, da.DevInst, 0);
 
-                                // Now we get the InstanceID of the USB level device 
+                                // Now we get the InstanceID of the USB level device
                                 IntPtr ptrInstanceBuf = Marshal.AllocHGlobal(nBytes);
                                 CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, nBytes, 0);
                                 instanceId = Marshal.PtrToStringAuto(ptrInstanceBuf);
@@ -258,12 +258,12 @@ namespace DiscImageChef.Devices.Windows
                 SetupDiDestroyDeviceInfoList(h);
             }
 
-            // Did we find an InterfaceID of a USB device? 
+            // Did we find an InterfaceID of a USB device?
             if(instanceId.StartsWith("USB\\")) foundDevice = FindDeviceByInstanceId(instanceId);
             return foundDevice;
         }
 
-        // return a unique device number for the given device path 
+        // return a unique device number for the given device path
         static int GetDeviceNumber(string devicePath)
         {
             int ans = -1;
@@ -280,8 +280,8 @@ namespace DiscImageChef.Devices.Windows
                                IntPtr.Zero))
             {
                 sdn = (StorageDeviceNumber)Marshal.PtrToStructure(ptrSdn, typeof(StorageDeviceNumber));
-                // just my way of combining the relevant parts of the 
-                // STORAGE_DEVICE_NUMBER into a single number 
+                // just my way of combining the relevant parts of the
+                // STORAGE_DEVICE_NUMBER into a single number
                 ans = (sdn.DeviceType << 8) + sdn.DeviceNumber;
             }
             Marshal.FreeHGlobal(ptrSdn);

@@ -77,7 +77,7 @@ namespace DiscImageChef.DiscImages
         struct QedHeader
         {
             /// <summary>
-            /// <see cref="Qed.QED_MAGIC"/> 
+            /// <see cref="Qed.QED_MAGIC"/>
             /// </summary>
             public uint magic;
             /// <summary>
@@ -117,7 +117,7 @@ namespace DiscImageChef.DiscImages
             /// </summary>
             public ulong backing_file_offset;
             /// <summary>
-            /// Size of <see cref="backing_file_offset"/> 
+            /// Size of <see cref="backing_file_offset"/>
             /// </summary>
             public uint backing_file_size;
         }
