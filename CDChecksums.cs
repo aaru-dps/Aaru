@@ -59,7 +59,6 @@ namespace DiscImageChef.Checksums
                     bool? subchannelStatus = CheckCdSectorSubChannel(subchannel);
                     bool? status = null;
 
-                    if(channelStatus == null && subchannelStatus == null) status = null;
                     if(channelStatus == false || subchannelStatus == false) status = false;
                     switch(channelStatus) {
                         case null when subchannelStatus == true: status = true;
@@ -67,8 +66,6 @@ namespace DiscImageChef.Checksums
                         case true when subchannelStatus == null: status = true;
                             break;
                     }
-
-                    if(channelStatus == true && subchannelStatus == true) status = true;
 
                     return status;
                 }
