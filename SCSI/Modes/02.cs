@@ -65,7 +65,7 @@ namespace DiscImageChef.Decoders.SCSI
             /// </summary>
             public ushort DisconnectTimeLimit;
             /// <summary>
-            /// Max. time in 100 µs increments allowed to use the bus before disconnecting, if granted the privilege and not restricted by <see cref="DTDC"/> 
+            /// Max. time in 100 µs increments allowed to use the bus before disconnecting, if granted the privilege and not restricted by <see cref="DTDC"/>
             /// </summary>
             public ushort ConnectTimeLimit;
             /// <summary>

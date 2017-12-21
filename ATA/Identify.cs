@@ -825,7 +825,7 @@ namespace DiscImageChef.Decoders.ATA
             /// </summary>
             UltraFastIDE = 0x0400,
             /// <summary>
-            /// Disk transfer rate is  &gt; 5 Mb/s but &lt;= 10 Mb/s 
+            /// Disk transfer rate is  &gt; 5 Mb/s but &lt;= 10 Mb/s
             /// Obsoleted in ATA-2
             /// </summary>
             FastIDE = 0x0200,

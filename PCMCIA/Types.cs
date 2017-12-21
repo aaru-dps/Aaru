@@ -48,7 +48,7 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class ChecksumTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_CHECKSUM"/> 
+        /// <see cref="TupleCodes.CISTPL_CHECKSUM"/>
         /// </summary>
         public TupleCodes Code;
         /// <summary>
@@ -75,7 +75,7 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class IndirectTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_INDIRECT"/> 
+        /// <see cref="TupleCodes.CISTPL_INDIRECT"/>
         /// </summary>
         public TupleCodes Code;
         /// <summary>
@@ -90,7 +90,7 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class LinkTargetTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_LINKTARGET"/> 
+        /// <see cref="TupleCodes.CISTPL_LINKTARGET"/>
         /// </summary>
         public TupleCodes Code;
         /// <summary>
@@ -140,7 +140,7 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class MultipleFunctionLinkTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_LONGLINK_MFC"/> 
+        /// <see cref="TupleCodes.CISTPL_LONGLINK_MFC"/>
         /// </summary>
         public TupleCodes Code;
         /// <summary>
@@ -160,7 +160,7 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class NoLinkTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_NO_LINK"/> 
+        /// <see cref="TupleCodes.CISTPL_NO_LINK"/>
         /// </summary>
         public TupleCodes Code;
         /// <summary>
@@ -172,7 +172,7 @@ namespace DiscImageChef.Decoders.PCMCIA
     public class AlternateStringTuple
     {
         /// <summary>
-        /// <see cref="TupleCodes.CISTPL_ALTSTR"/> 
+        /// <see cref="TupleCodes.CISTPL_ALTSTR"/>
         /// </summary>
         public TupleCodes Code;
         /// <summary>

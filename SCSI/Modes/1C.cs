@@ -199,7 +199,7 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x1C: Informational exceptions control page
-    
+
         #region Mode Page 0x1C subpage 0x01: Background Control mode page
         /// <summary>
         /// Background Control mode page

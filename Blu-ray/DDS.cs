@@ -247,7 +247,7 @@ namespace DiscImageChef.Decoders.Bluray
             /// </summary>
             public byte SpareAreaFullFlags;
             /// <summary>
-            /// Byte 57 
+            /// Byte 57
             /// Reserved
             /// </summary>
             public byte Reserved7;

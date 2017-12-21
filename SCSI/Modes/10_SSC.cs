@@ -49,11 +49,11 @@ namespace DiscImageChef.Decoders.SCSI
             /// </summary>
             public bool PS;
             /// <summary>
-            /// Used in mode select to change partition to one specified in <see cref="ActivePartition"/> 
+            /// Used in mode select to change partition to one specified in <see cref="ActivePartition"/>
             /// </summary>
             public bool CAP;
             /// <summary>
-            /// Used in mode select to change format to one specified in <see cref="ActiveFormat"/> 
+            /// Used in mode select to change format to one specified in <see cref="ActiveFormat"/>
             /// </summary>
             public bool CAF;
             /// <summary>

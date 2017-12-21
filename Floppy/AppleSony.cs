@@ -126,7 +126,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] prologue;
             /// <summary>
-            /// Spare, usually <see cref="RawAddressField.sector"/> 
+            /// Spare, usually <see cref="RawAddressField.sector"/>
             /// </summary>
             public byte spare;
             /// <summary>
