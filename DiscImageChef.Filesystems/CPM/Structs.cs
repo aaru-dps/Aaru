@@ -491,7 +491,7 @@ namespace DiscImageChef.Filesystems.CPM
         }
 
         /// <summary>
-        /// Directory entry for &bt;256 allocation blocks
+        /// Directory entry for &gt;256 allocation blocks
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DirectoryEntry16

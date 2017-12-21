@@ -81,7 +81,7 @@ namespace DiscImageChef.DiscImages
         const byte kSonyFormat720K = 0x02;
         /// <summary>3.5", double side, high density, MFM</summary>
         const byte kSonyFormat1440K = 0x03;
-        /// <summary>3.5", double side, high density, MFM, 21 sectors/track (aka, Microsoft DMF)
+        /// <summary>3.5", double side, high density, MFM, 21 sectors/track (aka, Microsoft DMF)</summary>
         // Unchecked value</summary>
         const byte kSonyFormat1680K = 0x04;
         /// <summary>Defined by Sigma Seven's BLU</summary>

@@ -1381,7 +1381,7 @@ namespace DiscImageChef.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public byte[] jump;
             /// <summary>OEM Name, 6 bytes, space-padded, "Loader" for Atari ST boot loader</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] oem_name;
-            /// <summary>Volume serial number<summary>
+            /// <summary>Volume serial number</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] public byte[] serial_no;
             /// <summary>Bytes per sector</summary>
             public ushort bps;
@@ -1469,9 +1469,9 @@ namespace DiscImageChef.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] vol_id;
             /// <summary>Bigger than 0 if there are deleted files (MSX-DOS 2)</summary>
             public byte undelete_flag;
-            /// <summary>Volume serial number (MSX-DOS 2)<summary>
+            /// <summary>Volume serial number (MSX-DOS 2)</summary>
             public uint serial_no;
-            /// <summary>Reserved (MSX-DOS 2)<summary>
+            /// <summary>Reserved (MSX-DOS 2)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] reserved;
             /// <summary>Jump for MSX-DOS 2 boot code (MSX-DOS 2)</summary>
             public ushort msxdos2_jmp;
@@ -1655,13 +1655,13 @@ namespace DiscImageChef.Filesystems
             public uint hsectors;
             /// <summary>Sectors in volume if > 65535</summary>
             public uint big_sectors;
-            /// <summary>Drive number<summary>
+            /// <summary>Drive number</summary>
             public byte drive_no;
-            /// <summary>Volume flags<summary>
+            /// <summary>Volume flags</summary>
             public byte flags;
-            /// <summary>EPB signature, 0x28<summary>
+            /// <summary>EPB signature, 0x28</summary>
             public byte signature;
-            /// <summary>Volume serial number<summary>
+            /// <summary>Volume serial number</summary>
             public uint serial_no;
             /// <summary>Boot code.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 467)] public byte[] boot_code;
@@ -1701,17 +1701,17 @@ namespace DiscImageChef.Filesystems
             public uint hsectors;
             /// <summary>Sectors in volume if > 65535</summary>
             public uint big_sectors;
-            /// <summary>Drive number<summary>
+            /// <summary>Drive number</summary>
             public byte drive_no;
-            /// <summary>Volume flags<summary>
+            /// <summary>Volume flags</summary>
             public byte flags;
-            /// <summary>EPB signature, 0x29<summary>
+            /// <summary>EPB signature, 0x29</summary>
             public byte signature;
-            /// <summary>Volume serial number<summary>
+            /// <summary>Volume serial number</summary>
             public uint serial_no;
-            /// <summary>Volume label, 11 bytes, space-padded
+            /// <summary>Volume label, 11 bytes, space-padded</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] public byte[] volume_label;
-            /// <summary>Filesystem type, 8 bytes, space-padded
+            /// <summary>Filesystem type, 8 bytes, space-padded</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] fs_type;
             /// <summary>Boot code.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 448)] public byte[] boot_code;
