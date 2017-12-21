@@ -69,13 +69,13 @@ namespace DiscImageChef.Devices
         /// Gets a value indicating whether this <see cref="Device"/> is in error.
         /// </summary>
         /// <value><c>true</c> if error; otherwise, <c>false</c>.</value>
-        public bool Error { get; }
+        public bool Error { get; private set; }
 
         /// <summary>
         /// Gets the last error number.
         /// </summary>
         /// <value>The last error.</value>
-        public int LastError { get; }
+        public int LastError { get; private set; }
 
         /// <summary>
         /// Gets the device type.
