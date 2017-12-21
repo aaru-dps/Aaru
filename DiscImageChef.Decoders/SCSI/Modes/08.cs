@@ -269,14 +269,12 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.Size)
             {
                 if(page.CacheSegmentSize > 0)
-                {
                     if(page.LBCSS)
                         sb.AppendFormat("\tDrive cache segments should be {0} blocks long", page.CacheSegmentSize)
                           .AppendLine();
                     else
                         sb.AppendFormat("\tDrive cache segments should be {0} bytes long", page.CacheSegmentSize)
                           .AppendLine();
-                }
             }
             else
             {

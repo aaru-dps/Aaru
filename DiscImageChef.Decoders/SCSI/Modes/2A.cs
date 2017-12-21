@@ -377,22 +377,16 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(page.ReadCDRW)
-            {
                 if(page.WriteCDRW) sb.AppendLine("\tDrive can read and write CD-RW");
                 else sb.AppendLine("\tDrive can read CD-RW");
-            }
 
             if(page.ReadDVDROM) sb.AppendLine("\tDrive can read DVD-ROM");
             if(page.ReadDVDR)
-            {
                 if(page.WriteDVDR) sb.AppendLine("\tDrive can read and write DVD-R");
                 else sb.AppendLine("\tDrive can read DVD-R");
-            }
             if(page.ReadDVDRAM)
-            {
                 if(page.WriteDVDRAM) sb.AppendLine("\tDrive can read and write DVD-RAM");
                 else sb.AppendLine("\tDrive can read DVD-RAM");
-            }
 
             if(page.Composite) sb.AppendLine("\tDrive can deliver a composite audio and video data stream");
             if(page.DigitalPort1) sb.AppendLine("\tDrive supports IEC-958 digital output on port 1");
@@ -419,20 +413,14 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(page.WriteSpeedPerformanceDescriptors != null)
-            {
                 foreach(ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors)
-                {
                     if(descriptor.WriteSpeed > 0)
-                    {
                         if(descriptor.RotationControl == 0)
                             sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode",
                                             descriptor.WriteSpeed).AppendLine();
                         else if(descriptor.RotationControl == 1)
                             sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode",
                                             descriptor.WriteSpeed).AppendLine();
-                    }
-                }
-            }
 
             if(page.TestWrite) sb.AppendLine("\tDrive supports test writing");
 
