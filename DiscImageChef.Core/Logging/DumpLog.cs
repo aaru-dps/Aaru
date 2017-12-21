@@ -124,11 +124,9 @@ namespace DiscImageChef.Core.Logging
 
         public void Close()
         {
-            if(logSw == null) return;
-
-            logSw.WriteLine("######################################################");
-            logSw.WriteLine("End logging at {0}", DateTime.Now);
-            logSw.Close();
+            logSw?.WriteLine("######################################################");
+            logSw?.WriteLine("End logging at {0}", DateTime.Now);
+            logSw?.Close();
         }
     }
 }

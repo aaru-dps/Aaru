@@ -68,11 +68,9 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_00_SFF? DecodeModePage_00_SFF(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
+            if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40) return null;
-
-            if((pageResponse[0] & 0x3F) != 0x00) return null;
+            if((pageResponse?[0] & 0x3F) != 0x00) return null;
 
             if(pageResponse[1] + 2 != pageResponse.Length) return null;
 

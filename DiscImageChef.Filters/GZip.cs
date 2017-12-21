@@ -221,10 +221,9 @@ namespace DiscImageChef.Filters
 
         public override string GetFilename()
         {
-            if(basePath == null) return null;
-            if(basePath.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase))
+            if(basePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 3);
-            if(basePath.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase))
+            if(basePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 5);
 
             return basePath;

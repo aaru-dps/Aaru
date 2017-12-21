@@ -359,18 +359,15 @@ namespace DiscImageChef.DiscImages
                     if(rsrcFork.ContainsKey(0x434B534D))
                     {
                         Resource cksmRsrc = rsrcFork.GetResource(0x434B534D);
-                        if(cksmRsrc != null)
+                        if(cksmRsrc?.ContainsId(1) == true)
                         {
-                            if(cksmRsrc.ContainsId(1))
-                            {
-                                byte[] tagChk = cksmRsrc.GetResource(1);
-                                tagChecksum = BigEndianBitConverter.ToUInt32(tagChk, 0);
-                            }
-                            if(cksmRsrc.ContainsId(2))
-                            {
-                                byte[] dataChk = cksmRsrc.GetResource(1);
-                                dataChecksum = BigEndianBitConverter.ToUInt32(dataChk, 0);
-                            }
+                            byte[] tagChk = cksmRsrc.GetResource(1);
+                            tagChecksum = BigEndianBitConverter.ToUInt32(tagChk, 0);
+                        }
+                        if(cksmRsrc?.ContainsId(2) == true)
+                        {
+                            byte[] dataChk = cksmRsrc.GetResource(1);
+                            dataChecksum = BigEndianBitConverter.ToUInt32(dataChk, 0);
                         }
                     }
                 }

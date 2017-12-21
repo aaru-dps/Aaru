@@ -55,11 +55,9 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Certance_ModePage_21? DecodeCertanceModePage_21(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
+            if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40) return null;
-
-            if((pageResponse[0] & 0x3F) != 0x21) return null;
+            if((pageResponse?[0] & 0x3F) != 0x21) return null;
 
             if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
