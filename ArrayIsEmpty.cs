@@ -30,6 +30,8 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Linq;
+
 namespace DiscImageChef
 {
     public static partial class ArrayHelpers
@@ -38,18 +40,14 @@ namespace DiscImageChef
         {
             if(array == null) return true;
 
-            foreach(byte b in array) if(b != 0x00 && b != 0x20) return false;
-
-            return true;
+            return array.All(b => b == 0x00 || b == 0x20);
         }
 
         public static bool ArrayIsNullOrEmpty(byte[] array)
         {
             if(array == null) return true;
 
-            foreach(byte b in array) if(b != 0x00) return false;
-
-            return true;
+            return array.All(b => b == 0x00);
         }
     }
 }
