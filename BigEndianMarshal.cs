@@ -66,7 +66,6 @@ namespace DiscImageChef
             Type t = str.GetType();
             FieldInfo[] fieldInfo = t.GetFields();
             foreach(FieldInfo fi in fieldInfo)
-            {
                 if(fi.FieldType == typeof(short))
                 {
                     short int16 = (short)fi.GetValue(str);
@@ -123,7 +122,6 @@ namespace DiscImageChef
                     byte[] dbl_r = dbl_b.Reverse().ToArray();
                     fi.SetValueDirect(__makeref(str), BitConverter.ToDouble(dbl_r, 0));
                 }
-            }
 
             return str;
         }

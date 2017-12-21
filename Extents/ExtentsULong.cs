@@ -199,13 +199,11 @@ namespace Extents
         {
             start = 0;
             foreach(Tuple<ulong, ulong> extent in backend)
-            {
                 if(item >= extent.Item1 && item <= extent.Item2)
                 {
                     start = extent.Item1;
                     return true;
                 }
-            }
 
             return false;
         }
