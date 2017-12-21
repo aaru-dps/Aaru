@@ -274,7 +274,7 @@ namespace DiscImageChef.DiscImages
                 {
                     line = tocStream.ReadLine();
 
-                    dm = dr.Match(line);
+                    dm = dr.Match(line ?? throw new InvalidOperationException());
                     cm = cr.Match(line);
 
                     // Skip comments at start of file
@@ -390,7 +390,7 @@ namespace DiscImageChef.DiscImages
                     line++;
                     _line = tocStream.ReadLine();
 
-                    matchDiskType = regexDiskType.Match(_line);
+                    matchDiskType = regexDiskType.Match(_line ?? throw new InvalidOperationException());
                     matchComment = regexComment.Match(_line);
 
                     // Skip comments at start of file
@@ -416,7 +416,7 @@ namespace DiscImageChef.DiscImages
                     line++;
                     _line = tocStream.ReadLine();
 
-                    matchComment = regexComment.Match(_line);
+                    matchComment = regexComment.Match(_line ?? throw new ());
                     matchDiskType = regexDiskType.Match(_line);
                     matchMcn = regexMcn.Match(_line);
                     matchTrack = regexTrack.Match(_line);

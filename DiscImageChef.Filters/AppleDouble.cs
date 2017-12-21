@@ -256,11 +256,11 @@ namespace DiscImageChef.Filters
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
             string parentFolder = Path.GetDirectoryName(path);
 
-            ProDosAppleDouble = Path.Combine(parentFolder, "R." + filename);
+            ProDosAppleDouble = Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
             UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
             DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
             DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
-            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
+            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename ?? throw new InvalidOperationException());
             DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
             UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
@@ -426,11 +426,11 @@ namespace DiscImageChef.Filters
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
             string parentFolder = Path.GetDirectoryName(path);
 
-            ProDosAppleDouble = Path.Combine(parentFolder, "R." + filename);
+            ProDosAppleDouble = Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
             UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
             DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
             DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
-            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
+            NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename ?? throw new InvalidOperationException());
             DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
             UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");

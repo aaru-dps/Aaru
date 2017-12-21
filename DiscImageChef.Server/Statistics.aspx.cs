@@ -77,12 +77,12 @@ namespace DiscImageChef.Server
 
             try
             {
-                if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics",
+                if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics",
                                              "Statistics.xml")))
                 {
 #if DEBUG
                     content.InnerHtml = string.Format("<b>Sorry, cannot load data file \"{0}\"</b>",
-                                                      Path.Combine(HostingEnvironment.MapPath("~"),
+                                                      Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
                                                                    "Statistics", "Statistics.xml"));
 #else
                     content.InnerHtml = "<b>Sorry, cannot load data file</b>";
@@ -94,7 +94,7 @@ namespace DiscImageChef.Server
 
                 XmlSerializer xs = new XmlSerializer(statistics.GetType());
                 FileStream fs =
-                    WaitForFile(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics", "Statistics.xml"),
+                    WaitForFile(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml"),
                                 FileMode.Open, FileAccess.Read, FileShare.Read);
                 statistics = (Stats)xs.Deserialize(fs);
                 fs.Close();

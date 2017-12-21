@@ -45,7 +45,7 @@ namespace DiscImageChef.Server
         {
             MarkdownContent mkdown = new MarkdownContent();
             StreamReader sr =
-                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~"), "docs", "README.md"));
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "docs", "README.md"));
             string mdcontent = sr.ReadToEnd();
             sr.Close();
 

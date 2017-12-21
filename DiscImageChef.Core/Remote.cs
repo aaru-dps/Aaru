@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -71,7 +72,7 @@ namespace DiscImageChef.Core
                     if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
 
                     Stream data = response.GetResponseStream();
-                    StreamReader reader = new StreamReader(data);
+                    StreamReader reader = new StreamReader(data ?? throw new InvalidOperationException());
 
                     string responseFromServer = reader.ReadToEnd();
                     data.Close();

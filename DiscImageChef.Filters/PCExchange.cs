@@ -200,7 +200,7 @@ namespace DiscImageChef.Filters
         {
             string parentFolder = Path.GetDirectoryName(path);
 
-            if(!File.Exists(Path.Combine(parentFolder, FinderInfo))) return false;
+            if(!File.Exists(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FinderInfo))) return false;
 
             if(!Directory.Exists(Path.Combine(parentFolder, Resources))) return false;
 
@@ -230,7 +230,7 @@ namespace DiscImageChef.Filters
 
                 if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
-                dataFound |= File.Exists(Path.Combine(parentFolder, macName)) ||
+                dataFound |= File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())) ||
                              File.Exists(Path.Combine(parentFolder, dosName)) ||
                              File.Exists(Path.Combine(parentFolder, dosNameLow));
 
@@ -266,7 +266,7 @@ namespace DiscImageChef.Filters
             string baseFilename = Path.GetFileName(path);
 
             FileStream finderDatStream =
-                new FileStream(Path.Combine(parentFolder, FinderInfo), FileMode.Open, FileAccess.Read);
+                new FileStream(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FinderInfo), FileMode.Open, FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
@@ -285,7 +285,7 @@ namespace DiscImageChef.Filters
 
                 if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
-                if(File.Exists(Path.Combine(parentFolder, macName))) dataPath = Path.Combine(parentFolder, macName);
+                if(File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException()))) dataPath = Path.Combine(parentFolder, macName);
                 else if(File.Exists(Path.Combine(parentFolder, dosName)))
                     dataPath = Path.Combine(parentFolder, dosName);
                 else if(File.Exists(Path.Combine(parentFolder, dosNameLow)))
@@ -304,8 +304,8 @@ namespace DiscImageChef.Filters
                 break;
             }
 
-            dataLen = new FileInfo(dataPath).Length;
-            rsrcLen = new FileInfo(rsrcPath).Length;
+            dataLen = new FileInfo(dataPath ?? throw new InvalidOperationException()).Length;
+            rsrcLen = new FileInfo(rsrcPath ?? throw new InvalidOperationException()).Length;
 
             basePath = path;
             opened = true;

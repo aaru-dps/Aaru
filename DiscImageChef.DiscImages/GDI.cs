@@ -167,7 +167,7 @@ namespace DiscImageChef.DiscImages
                     {
                         Regex regexTrack = new Regex(TRACK_REGEX);
 
-                        Match trackMatch = regexTrack.Match(_line);
+                        Match trackMatch = regexTrack.Match(_line ?? throw new InvalidOperationException());
 
                         if(!trackMatch.Success) return false;
 
@@ -231,7 +231,7 @@ namespace DiscImageChef.DiscImages
                     }
                     else
                     {
-                        trackMatch = regexTrack.Match(_line);
+                        trackMatch = regexTrack.Match(_line ?? throw new InvalidOperationException());
 
                         if(!trackMatch.Success)
                             throw new ImageNotSupportedException(string.Format("Unknown line \"{0}\" at line {1}",

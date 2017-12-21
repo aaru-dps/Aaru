@@ -133,7 +133,7 @@ namespace DiscImageChef.Commands
 
                     FileStream xmlFs =
                         new
-                            FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
+                            FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
                                        FileMode.CreateNew);
 
                     XmlSerializer xmlSer =
@@ -169,7 +169,7 @@ namespace DiscImageChef.Commands
 
                 FileStream xmlFs =
                     new
-                        FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
+                        FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
                                    FileMode.CreateNew);
 
                 XmlSerializer xmlSer =

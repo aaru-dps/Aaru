@@ -50,7 +50,7 @@ namespace DiscImageChef.Filesystems.CPM
             {
                 XmlReader defsReader =
                     XmlReader.Create(Assembly.GetExecutingAssembly()
-                                             .GetManifestResourceStream("DiscImageChef.Filesystems.CPM.cpmdefs.xml"));
+                                             .GetManifestResourceStream("DiscImageChef.Filesystems.CPM.cpmdefs.xml") ?? throw new InvalidOperationException());
                 XmlSerializer defsSerializer = new XmlSerializer(typeof(CpmDefinitions));
                 definitions = (CpmDefinitions)defsSerializer.Deserialize(defsReader);
 

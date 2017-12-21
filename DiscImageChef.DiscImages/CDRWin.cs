@@ -351,7 +351,7 @@ namespace DiscImageChef.DiscImages
                     Match tm;
 
                     // First line must be SESSION, REM, CATALOG,  FILE or CDTEXTFILE.
-                    sm = sr.Match(_line);
+                    sm = sr.Match(_line ?? throw new InvalidOperationException());
                     rm = rr.Match(_line);
                     cm = cr.Match(_line);
                     fm = fr.Match(_line);

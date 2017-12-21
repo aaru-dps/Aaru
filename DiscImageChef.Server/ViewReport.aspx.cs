@@ -82,7 +82,7 @@ namespace DiscImageChef.Server
                 else if(!string.IsNullOrWhiteSpace(model)) xmlFile = model + ".xml";
 
                 if(xmlFile == null ||
-                   !File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Reports", xmlFile)))
+                   !File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Reports", xmlFile)))
                 {
                     content.InnerHtml = "<b>Could not find the specified report</b>";
                     return;
@@ -95,7 +95,7 @@ namespace DiscImageChef.Server
                 DeviceReport report = new DeviceReport();
                 XmlSerializer xs = new XmlSerializer(report.GetType());
                 StreamReader sr =
-                    new StreamReader(Path.Combine(HostingEnvironment.MapPath("~"), "Reports",
+                    new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Reports",
                                                   xmlFile));
                 report = (DeviceReport)xs.Deserialize(sr);
                 sr.Close();
@@ -567,10 +567,10 @@ namespace DiscImageChef.Server
             vendorDescription = null;
             productDescription = null;
 
-            if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "usb.ids"))) return;
+            if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "usb.ids"))) return;
 
             StreamReader tocStream =
-                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~"), "usb.ids"));
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "usb.ids"));
             string _line;
             bool inManufacturer = false;
             ushort number;

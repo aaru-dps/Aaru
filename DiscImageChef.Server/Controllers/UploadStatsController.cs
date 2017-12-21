@@ -76,7 +76,7 @@ namespace DiscImageChef.Server.Controllers
                 }
 
                 FileStream fs =
-                    WaitForFile(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics", "Statistics.xml"),
+                    WaitForFile(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml"),
                                 FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
                 if(fs == null)

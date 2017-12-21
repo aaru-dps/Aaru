@@ -74,10 +74,10 @@ namespace DiscImageChef.Server.Controllers
 
                 Random rng = new Random();
                 string filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
-                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Upload", filename))) filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
+                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename))) filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
 
                 FileStream newFile =
-                    new FileStream(Path.Combine(HostingEnvironment.MapPath("~"), "Upload", filename),
+                    new FileStream(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename),
                                    FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
                 xs.Serialize(newFile, newReport);
                 newFile.Close();

@@ -153,7 +153,7 @@ namespace DiscImageChef.DiscImages
 
                 Match hdm;
 
-                hdm = hdr.Match(_line);
+                hdm = hdr.Match(_line ?? throw new InvalidOperationException());
 
                 return hdm.Success;
             }
