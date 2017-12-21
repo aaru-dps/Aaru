@@ -215,6 +215,7 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         /// <param name="buffer">The SS sector.</param>
+        /// <param name="requestNumber">Request number.</param>
         public bool KreonExtractSs(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration,
                                    byte requestNumber = 0x00)
         {

@@ -41,6 +41,7 @@ namespace DiscImageChef.Devices
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="lba">Address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout,

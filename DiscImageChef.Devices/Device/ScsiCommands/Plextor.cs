@@ -347,6 +347,7 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c>, if VariRec is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="dvd">Set if request is for DVD.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool PlextorGetVariRec(out byte[] buffer, out byte[] senseBuffer, bool dvd, uint timeout,
@@ -466,6 +467,7 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c>, if DVD+ book bitsetting is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="dualLayer">Set if bitset is for dual layer discs.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool PlextorGetBitsetting(out byte[] buffer, out byte[] senseBuffer, bool dualLayer, uint timeout,

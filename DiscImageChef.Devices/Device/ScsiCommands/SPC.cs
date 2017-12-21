@@ -725,8 +725,10 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer with the data to be sent to the device</param>
         /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="savePages">Set to save pages between resets.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="pageFormat">Set if page is formatted.</param>
         public bool ModeSelect(byte[] buffer, out byte[] senseBuffer, bool pageFormat, bool savePages, uint timeout,
                                out double duration)
         {
@@ -767,9 +769,11 @@ namespace DiscImageChef.Devices
         /// </summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer with the data to be sent to the device</param>
+        /// <param name="savePages">Set to save pages between resets.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="pageFormat">Set if page is formatted.</param>
         public bool ModeSelect10(byte[] buffer, out byte[] senseBuffer, bool pageFormat, bool savePages, uint timeout,
                                  out double duration)
         {
