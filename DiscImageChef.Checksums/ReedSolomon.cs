@@ -268,7 +268,7 @@ namespace DiscImageChef.Checksums
          */
         void gen_poly()
         {
-            int i, j;
+            int i;
 
             gg[0] = alpha_to[B0];
             gg[1] = 1; /* g(x) = (X+@**B0) initially */
@@ -279,7 +279,7 @@ namespace DiscImageChef.Checksums
                  * Below multiply (Gg[0]+Gg[1]*x + ... +Gg[i]x^i) by
                  * (@**(B0+i-1) + x)
                  */
-                for(j = i - 1; j > 0; j--)
+                for(int j = i - 1; j > 0; j--)
                     if(gg[j] != 0) gg[j] = gg[j - 1] ^ alpha_to[Modnn(index_of[gg[j]] + B0 + i - 1)];
                     else gg[j] = gg[j - 1];
                 /* Gg[0] can never be zero */
@@ -307,8 +307,7 @@ namespace DiscImageChef.Checksums
         {
             if(!initialized) throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
 
-            int i, j;
-            int feedback;
+            int i;
             bb = new int[nn - kk];
 
             Clear(ref bb, nn - kk);
@@ -316,11 +315,11 @@ namespace DiscImageChef.Checksums
             {
                 if(mm != 8) if(data[i] > nn) return -1; /* Illegal symbol */
 
-                feedback = index_of[data[i] ^ bb[nn - kk - 1]];
+                int feedback = index_of[data[i] ^ bb[nn - kk - 1]];
                 if(feedback != a0)
                 {
                     /* feedback term is non-zero */
-                    for(j = nn - kk - 1; j > 0; j--)
+                    for(int j = nn - kk - 1; j > 0; j--)
                         if(gg[j] != a0) bb[j] = bb[j - 1] ^ alpha_to[Modnn(gg[j] + feedback)];
                         else bb[j] = bb[j - 1];
 
@@ -330,7 +329,7 @@ namespace DiscImageChef.Checksums
                 {
                     /* feedback term is zero. encoder becomes a
                                      * single-byte shifter */
-                    for(j = nn - kk - 1; j > 0; j--) bb[j] = bb[j - 1];
+                    for(int j = nn - kk - 1; j > 0; j--) bb[j] = bb[j - 1];
 
                     bb[0] = 0;
                 }
@@ -366,7 +365,7 @@ namespace DiscImageChef.Checksums
             erasPos = new int[nn - kk];
             int degLambda, el, degOmega;
             int i, j, r;
-            int u, q, tmp, num1, num2, den, discrR;
+            int q, tmp;
             int[] recd = new int[nn];
             int[] lambda = new int[nn - kk + 1]; /* Err+Eras Locator poly */
             int[] s = new int[nn - kk + 1]; /* syndrome poly */
@@ -412,7 +411,7 @@ namespace DiscImageChef.Checksums
                 lambda[1] = alpha_to[erasPos[0]];
                 for(i = 1; i < noEras; i++)
                 {
-                    u = erasPos[i];
+                    int u = erasPos[i];
                     for(j = i + 1; j > 0; j--)
                     {
                         tmp = index_of[lambda[j - 1]];
@@ -470,7 +469,7 @@ namespace DiscImageChef.Checksums
             {
                 /* r is the step number */
                 /* Compute discrepancy at the r-th step in poly-form */
-                discrR = 0;
+                int discrR = 0;
                 for(i = 0; i < r; i++) if(lambda[i] != 0 && s[r - i] != a0) discrR ^= alpha_to[Modnn(index_of[lambda[i]] + s[r - i])];
 
                 discrR = index_of[discrR]; /* Index form */
@@ -572,11 +571,11 @@ namespace DiscImageChef.Checksums
              */
             for(j = count - 1; j >= 0; j--)
             {
-                num1 = 0;
+                int num1 = 0;
                 for(i = degOmega; i >= 0; i--) if(omega[i] != a0) num1 ^= alpha_to[Modnn(omega[i] + i * root[j])];
 
-                num2 = alpha_to[Modnn(root[j] * (B0 - 1) + nn)];
-                den = 0;
+                int num2 = alpha_to[Modnn(root[j] * (B0 - 1) + nn)];
+                int den = 0;
 
                 /* lambda[i+1] for i even is the formal derivative lambda_pr of lambda[i] */
                 for(i = Min(degLambda, nn - kk - 1) & ~1; i >= 0; i -= 2) if(lambda[i + 1] != a0) den ^= alpha_to[Modnn(lambda[i + 1] + i * root[j])];

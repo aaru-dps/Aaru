@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Checksums
@@ -101,8 +102,7 @@ namespace DiscImageChef.Checksums
                 for(minor = 0; minor < minorCount; minor++)
                 {
                     byte temp;
-                    if(index < 4) temp = address[index];
-                    else temp = data[index - 4];
+                    temp = index < 4 ? address[index] : data[index - 4];
                     index += minorInc;
                     if(index >= size) index -= size;
                     eccA ^= temp;
@@ -185,7 +185,7 @@ namespace DiscImageChef.Checksums
                                               "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
                                               channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                if(failedEccP || failedEccQ) return false;
+                return !failedEccP && !failedEccQ;
 
                 /* TODO: This is not working
                     byte[] SectorForCheck = new byte[0x810];
@@ -200,8 +200,6 @@ namespace DiscImageChef.Checksums
                         DicConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}", channel[0x00C], channel[0x00D], channel[0x00E], CalculatedEDC, StoredEDC);
                         return false;
                     }*/
-
-                return true;
             }
 
             if(channel[0x00F] == 0x02) // mode (1 byte)
@@ -266,7 +264,7 @@ namespace DiscImageChef.Checksums
                                                   "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
                                                   channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                    if(failedEccP || failedEccQ) return false;
+                    return !failedEccP && !failedEccQ;
 
                     /* TODO: This is not working
                         byte[] SectorForCheck = new byte[0x808];
@@ -515,8 +513,7 @@ namespace DiscImageChef.Checksums
 
         static ushort CalculateCCITT_CRC16(byte[] buffer)
         {
-            ushort crc16 = 0;
-            for(int i = 0; i < buffer.Length; i++) crc16 = (ushort)(CcittCrc16Table[(crc16 >> 8) ^ buffer[i]] ^ (crc16 << 8));
+            ushort crc16 = buffer.Aggregate<byte, ushort>(0, (current, t) => (ushort)(CcittCrc16Table[(current >> 8) ^ t] ^ (current << 8)));
 
             crc16 = (ushort)~crc16;
 

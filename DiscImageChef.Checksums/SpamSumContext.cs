@@ -104,8 +104,7 @@ namespace DiscImageChef.Checksums
 
         void roll_init()
         {
-            self.Roll = new RollState();
-            self.Roll.Window = new byte[ROLLING_WINDOW];
+            self.Roll = new RollState {Window = new byte[ROLLING_WINDOW]};
         }
 
         /// <summary>
@@ -113,8 +112,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public void Init()
         {
-            self = new FuzzyState();
-            self.Bh = new BlockhashContext[NUM_BLOCKHASHES];
+            self = new FuzzyState {Bh = new BlockhashContext[NUM_BLOCKHASHES]};
             for(int i = 0; i < NUM_BLOCKHASHES; i++) self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
 
             self.Bhstart = 0;
@@ -276,7 +274,7 @@ namespace DiscImageChef.Checksums
         }
 
         // CLAUNIA: Flags seems to never be used in ssdeep, so I just removed it for code simplicity
-        uint fuzzy_digest(out byte[] result)
+        uint FuzzyDigest(out byte[] result)
         {
             StringBuilder sb = new StringBuilder();
             uint bi = self.Bhstart;
@@ -418,8 +416,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            byte[] result;
-            fuzzy_digest(out result);
+            FuzzyDigest(out byte[] result);
 
             return CToString(result);
         }
@@ -452,7 +449,7 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of the data buffer to hash.</param>
         /// <param name="hash">null</param>
         /// <returns>Base64 representation of SpamSum $blocksize:$hash:$hash</returns>
-        public string Data(byte[] data, uint len, out byte[] hash)
+        public static string Data(byte[] data, uint len, out byte[] hash)
         {
             SpamSumContext fuzzyContext = new SpamSumContext();
             fuzzyContext.Init();
@@ -470,13 +467,13 @@ namespace DiscImageChef.Checksums
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">null</param>
         /// <returns>Base64 representation of SpamSum $blocksize:$hash:$hash</returns>
-        public string Data(byte[] data, out byte[] hash)
+        public static string Data(byte[] data, out byte[] hash)
         {
             return Data(data, (uint)data.Length, out hash);
         }
 
         // Converts an ASCII null-terminated string to .NET string
-        string CToString(byte[] cString)
+        static string CToString(byte[] cString)
         {
             StringBuilder sb = new StringBuilder();
 
