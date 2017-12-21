@@ -1078,138 +1078,135 @@ namespace DiscImageChef.Decoders.DVD
             pfi.Layer0EndPSN = (uint)((response[16] << 24) + (response[17] << 16) + (response[18] << 8) + response[19]);
             pfi.BCA |= (response[20] & 0x80) == 0x80;
 
-            // UMD
-            if(pfi.DiskCategory == DiskCategory.UMD) pfi.MediaAttribute = (ushort)((response[21] << 8) + response[22]);
+            switch(pfi.DiskCategory) {
+                // UMD
+                case DiskCategory.UMD: pfi.MediaAttribute = (ushort)((response[21] << 8) + response[22]);
+                    break;
+                // DVD-RAM
+                case DiskCategory.DVDRAM:
+                    pfi.DiscType = (DVDRAMDiscType)response[36];
 
-            // DVD-RAM
-            if(pfi.DiskCategory == DiskCategory.DVDRAM)
-            {
-                pfi.DiscType = (DVDRAMDiscType)response[36];
-
-                if(pfi.PartVersion == 1)
-                {
-                    pfi.Velocity = response[52];
-                    pfi.ReadPower = response[53];
-                    pfi.PeakPower = response[54];
-                    pfi.BiasPower = response[55];
-                    pfi.FirstPulseStart = response[56];
-                    pfi.FirstPulseEnd = response[57];
-                    pfi.MultiPulseDuration = response[58];
-                    pfi.LastPulseStart = response[59];
-                    pfi.LastPulseEnd = response[60];
-                    pfi.BiasPowerDuration = response[61];
-                    pfi.PeakPowerGroove = response[62];
-                    pfi.BiasPowerGroove = response[63];
-                    pfi.FirstPulseStartGroove = response[64];
-                    pfi.FirstPulseEndGroove = response[65];
-                    pfi.MultiplePulseDurationGroove = response[66];
-                    pfi.LastPulseStartGroove = response[67];
-                    pfi.LastPulseEndGroove = response[68];
-                    pfi.BiasPowerDurationGroove = response[69];
-                }
-                else if(pfi.PartVersion == 6)
-                {
-                    pfi.Velocity = response[504];
-                    pfi.ReadPower = response[505];
-                    pfi.AdaptativeWritePulseControlFlag |= (response[506] & 0x80) == 0x80;
-                    pfi.PeakPower = response[507];
-                    pfi.BiasPower1 = response[508];
-                    pfi.BiasPower2 = response[509];
-                    pfi.BiasPower3 = response[510];
-                    pfi.PeakPowerGroove = response[511];
-                    pfi.BiasPower1Groove = response[512];
-                    pfi.BiasPower2Groove = response[513];
-                    pfi.BiasPower3Groove = response[514];
-                    pfi.FirstPulseEnd = response[515];
-                    pfi.FirstPulseDuration = response[516];
-                    pfi.MultiPulseDuration = response[518];
-                    pfi.LastPulseStart = response[519];
-                    pfi.BiasPower2Duration = response[520];
-                    pfi.FirstPulseStart3TSpace3T = response[521];
-                    pfi.FirstPulseStart4TSpace3T = response[522];
-                    pfi.FirstPulseStart5TSpace3T = response[523];
-                    pfi.FirstPulseStartSpace3T = response[524];
-                    pfi.FirstPulseStart3TSpace4T = response[525];
-                    pfi.FirstPulseStart4TSpace4T = response[526];
-                    pfi.FirstPulseStart5TSpace4T = response[527];
-                    pfi.FirstPulseStartSpace4T = response[528];
-                    pfi.FirstPulseStart3TSpace5T = response[529];
-                    pfi.FirstPulseStart4TSpace5T = response[530];
-                    pfi.FirstPulseStart5TSpace5T = response[531];
-                    pfi.FirstPulseStartSpace5T = response[532];
-                    pfi.FirstPulseStart3TSpace = response[533];
-                    pfi.FirstPulseStart4TSpace = response[534];
-                    pfi.FirstPulseStart5TSpace = response[535];
-                    pfi.FirstPulseStartSpace = response[536];
-                    pfi.FirstPulse3TStartTSpace3T = response[537];
-                    pfi.FirstPulse4TStartTSpace3T = response[538];
-                    pfi.FirstPulse5TStartTSpace3T = response[539];
-                    pfi.FirstPulseStartTSpace3T = response[540];
-                    pfi.FirstPulse3TStartTSpace4T = response[541];
-                    pfi.FirstPulse4TStartTSpace4T = response[542];
-                    pfi.FirstPulse5TStartTSpace4T = response[543];
-                    pfi.FirstPulseStartTSpace4T = response[544];
-                    pfi.FirstPulse3TStartTSpace5T = response[545];
-                    pfi.FirstPulse4TStartTSpace5T = response[546];
-                    pfi.FirstPulse5TStartTSpace5T = response[547];
-                    pfi.FirstPulseStartTSpace5T = response[548];
-                    pfi.FirstPulse3TStartTSpace = response[549];
-                    pfi.FirstPulse4TStartTSpace = response[550];
-                    pfi.FirstPulse5TStartTSpace = response[551];
-                    pfi.FirstPulseStartTSpace = response[552];
-                    tmp = new byte[48];
-                    Array.Copy(response, 553, tmp, 0, 48);
-                    pfi.DiskManufacturer = StringHandlers.SpacePaddedToString(tmp);
-                    tmp = new byte[16];
-                    Array.Copy(response, 601, tmp, 0, 16);
-                    pfi.DiskManufacturerSupplementary = StringHandlers.SpacePaddedToString(tmp);
-                    pfi.WritePowerControlParams = new byte[2];
-                    pfi.WritePowerControlParams[0] = response[617];
-                    pfi.WritePowerControlParams[1] = response[618];
-                    pfi.PowerRatioLandThreshold = response[619];
-                    pfi.TargetAsymmetry = response[620];
-                    pfi.TemporaryPeakPower = response[621];
-                    pfi.TemporaryBiasPower1 = response[622];
-                    pfi.TemporaryBiasPower2 = response[623];
-                    pfi.TemporaryBiasPower3 = response[624];
-                    pfi.PowerRatioGrooveThreshold = response[625];
-                    pfi.PowerRatioLandThreshold6T = response[626];
-                    pfi.PowerRatioGrooveThreshold6T = response[627];
-                }
-            }
-
-            // DVD-R and DVD-RW
-            if(pfi.DiskCategory == DiskCategory.DVDR && pfi.PartVersion < 6 ||
-               pfi.DiskCategory == DiskCategory.DVDRW && pfi.PartVersion < 3)
-            {
-                pfi.CurrentBorderOutSector =
-                    (uint)((response[36] << 24) + (response[37] << 16) + (response[38] << 8) + response[39]);
-                pfi.NextBorderInSector =
-                    (uint)((response[40] << 24) + (response[41] << 16) + (response[42] << 8) + response[43]);
-            }
-
-            // DVD+RW
-            if(pfi.DiskCategory == DiskCategory.DVDPRW)
-            {
-                pfi.RecordingVelocity = response[36];
-                pfi.ReadPowerMaxVelocity = response[37];
-                pfi.PIndMaxVelocity = response[38];
-                pfi.PMaxVelocity = response[39];
-                pfi.E1MaxVelocity = response[40];
-                pfi.E2MaxVelocity = response[41];
-                pfi.YTargetMaxVelocity = response[42];
-                pfi.ReadPowerRefVelocity = response[43];
-                pfi.PIndRefVelocity = response[44];
-                pfi.PRefVelocity = response[45];
-                pfi.E1RefVelocity = response[46];
-                pfi.E2RefVelocity = response[47];
-                pfi.YTargetRefVelocity = response[48];
-                pfi.ReadPowerMinVelocity = response[49];
-                pfi.PIndMinVelocity = response[50];
-                pfi.PMinVelocity = response[51];
-                pfi.E1MinVelocity = response[52];
-                pfi.E2MinVelocity = response[53];
-                pfi.YTargetMinVelocity = response[54];
+                    if(pfi.PartVersion == 1)
+                    {
+                        pfi.Velocity = response[52];
+                        pfi.ReadPower = response[53];
+                        pfi.PeakPower = response[54];
+                        pfi.BiasPower = response[55];
+                        pfi.FirstPulseStart = response[56];
+                        pfi.FirstPulseEnd = response[57];
+                        pfi.MultiPulseDuration = response[58];
+                        pfi.LastPulseStart = response[59];
+                        pfi.LastPulseEnd = response[60];
+                        pfi.BiasPowerDuration = response[61];
+                        pfi.PeakPowerGroove = response[62];
+                        pfi.BiasPowerGroove = response[63];
+                        pfi.FirstPulseStartGroove = response[64];
+                        pfi.FirstPulseEndGroove = response[65];
+                        pfi.MultiplePulseDurationGroove = response[66];
+                        pfi.LastPulseStartGroove = response[67];
+                        pfi.LastPulseEndGroove = response[68];
+                        pfi.BiasPowerDurationGroove = response[69];
+                    }
+                    else if(pfi.PartVersion == 6)
+                    {
+                        pfi.Velocity = response[504];
+                        pfi.ReadPower = response[505];
+                        pfi.AdaptativeWritePulseControlFlag |= (response[506] & 0x80) == 0x80;
+                        pfi.PeakPower = response[507];
+                        pfi.BiasPower1 = response[508];
+                        pfi.BiasPower2 = response[509];
+                        pfi.BiasPower3 = response[510];
+                        pfi.PeakPowerGroove = response[511];
+                        pfi.BiasPower1Groove = response[512];
+                        pfi.BiasPower2Groove = response[513];
+                        pfi.BiasPower3Groove = response[514];
+                        pfi.FirstPulseEnd = response[515];
+                        pfi.FirstPulseDuration = response[516];
+                        pfi.MultiPulseDuration = response[518];
+                        pfi.LastPulseStart = response[519];
+                        pfi.BiasPower2Duration = response[520];
+                        pfi.FirstPulseStart3TSpace3T = response[521];
+                        pfi.FirstPulseStart4TSpace3T = response[522];
+                        pfi.FirstPulseStart5TSpace3T = response[523];
+                        pfi.FirstPulseStartSpace3T = response[524];
+                        pfi.FirstPulseStart3TSpace4T = response[525];
+                        pfi.FirstPulseStart4TSpace4T = response[526];
+                        pfi.FirstPulseStart5TSpace4T = response[527];
+                        pfi.FirstPulseStartSpace4T = response[528];
+                        pfi.FirstPulseStart3TSpace5T = response[529];
+                        pfi.FirstPulseStart4TSpace5T = response[530];
+                        pfi.FirstPulseStart5TSpace5T = response[531];
+                        pfi.FirstPulseStartSpace5T = response[532];
+                        pfi.FirstPulseStart3TSpace = response[533];
+                        pfi.FirstPulseStart4TSpace = response[534];
+                        pfi.FirstPulseStart5TSpace = response[535];
+                        pfi.FirstPulseStartSpace = response[536];
+                        pfi.FirstPulse3TStartTSpace3T = response[537];
+                        pfi.FirstPulse4TStartTSpace3T = response[538];
+                        pfi.FirstPulse5TStartTSpace3T = response[539];
+                        pfi.FirstPulseStartTSpace3T = response[540];
+                        pfi.FirstPulse3TStartTSpace4T = response[541];
+                        pfi.FirstPulse4TStartTSpace4T = response[542];
+                        pfi.FirstPulse5TStartTSpace4T = response[543];
+                        pfi.FirstPulseStartTSpace4T = response[544];
+                        pfi.FirstPulse3TStartTSpace5T = response[545];
+                        pfi.FirstPulse4TStartTSpace5T = response[546];
+                        pfi.FirstPulse5TStartTSpace5T = response[547];
+                        pfi.FirstPulseStartTSpace5T = response[548];
+                        pfi.FirstPulse3TStartTSpace = response[549];
+                        pfi.FirstPulse4TStartTSpace = response[550];
+                        pfi.FirstPulse5TStartTSpace = response[551];
+                        pfi.FirstPulseStartTSpace = response[552];
+                        tmp = new byte[48];
+                        Array.Copy(response, 553, tmp, 0, 48);
+                        pfi.DiskManufacturer = StringHandlers.SpacePaddedToString(tmp);
+                        tmp = new byte[16];
+                        Array.Copy(response, 601, tmp, 0, 16);
+                        pfi.DiskManufacturerSupplementary = StringHandlers.SpacePaddedToString(tmp);
+                        pfi.WritePowerControlParams = new byte[2];
+                        pfi.WritePowerControlParams[0] = response[617];
+                        pfi.WritePowerControlParams[1] = response[618];
+                        pfi.PowerRatioLandThreshold = response[619];
+                        pfi.TargetAsymmetry = response[620];
+                        pfi.TemporaryPeakPower = response[621];
+                        pfi.TemporaryBiasPower1 = response[622];
+                        pfi.TemporaryBiasPower2 = response[623];
+                        pfi.TemporaryBiasPower3 = response[624];
+                        pfi.PowerRatioGrooveThreshold = response[625];
+                        pfi.PowerRatioLandThreshold6T = response[626];
+                        pfi.PowerRatioGrooveThreshold6T = response[627];
+                    }
+                    break;
+                // DVD-R and DVD-RW
+                case DiskCategory.DVDR when pfi.PartVersion < 6:
+                case DiskCategory.DVDRW when pfi.PartVersion < 3:
+                    pfi.CurrentBorderOutSector =
+                        (uint)((response[36] << 24) + (response[37] << 16) + (response[38] << 8) + response[39]);
+                    pfi.NextBorderInSector =
+                        (uint)((response[40] << 24) + (response[41] << 16) + (response[42] << 8) + response[43]);
+                    break;
+                // DVD+RW
+                case DiskCategory.DVDPRW:
+                    pfi.RecordingVelocity = response[36];
+                    pfi.ReadPowerMaxVelocity = response[37];
+                    pfi.PIndMaxVelocity = response[38];
+                    pfi.PMaxVelocity = response[39];
+                    pfi.E1MaxVelocity = response[40];
+                    pfi.E2MaxVelocity = response[41];
+                    pfi.YTargetMaxVelocity = response[42];
+                    pfi.ReadPowerRefVelocity = response[43];
+                    pfi.PIndRefVelocity = response[44];
+                    pfi.PRefVelocity = response[45];
+                    pfi.E1RefVelocity = response[46];
+                    pfi.E2RefVelocity = response[47];
+                    pfi.YTargetRefVelocity = response[48];
+                    pfi.ReadPowerMinVelocity = response[49];
+                    pfi.PIndMinVelocity = response[50];
+                    pfi.PMinVelocity = response[51];
+                    pfi.E1MinVelocity = response[52];
+                    pfi.E2MinVelocity = response[53];
+                    pfi.YTargetMinVelocity = response[54];
+                    break;
             }
 
             // DVD+R, DVD+RW, DVD+R DL and DVD+RW DL
@@ -1230,95 +1227,94 @@ namespace DiscImageChef.Decoders.DVD
                 pfi.PFIUsedInADIP = response[35];
             }
 
-            // DVD+RW
-            if(pfi.DiskCategory == DiskCategory.DVDPRW && pfi.PartVersion == 2)
-            {
-                pfi.TopFirstPulseDuration = response[55];
-                pfi.MultiPulseDuration = response[56];
-                pfi.FirstPulseLeadTime = response[57];
-                pfi.EraseLeadTimeRefVelocity = response[58];
-                pfi.EraseLeadTimeUppVelocity = response[59];
+            switch(pfi.DiskCategory) {
+                // DVD+RW
+                case DiskCategory.DVDPRW when pfi.PartVersion == 2:
+                    pfi.TopFirstPulseDuration = response[55];
+                    pfi.MultiPulseDuration = response[56];
+                    pfi.FirstPulseLeadTime = response[57];
+                    pfi.EraseLeadTimeRefVelocity = response[58];
+                    pfi.EraseLeadTimeUppVelocity = response[59];
+                    break;
+                // DVD+R and DVD+R DL
+                case DiskCategory.DVDPR:
+                case DiskCategory.DVDPRDL:
+                    pfi.PrimaryVelocity = response[36];
+                    pfi.UpperVelocity = response[37];
+                    pfi.Wavelength = response[38];
+                    pfi.NormalizedPowerDependency = response[39];
+                    pfi.MaximumPowerAtPrimaryVelocity = response[40];
+                    pfi.PindAtPrimaryVelocity = response[41];
+                    pfi.BtargetAtPrimaryVelocity = response[42];
+                    pfi.MaximumPowerAtUpperVelocity = response[43];
+                    pfi.PindAtUpperVelocity = response[44];
+                    pfi.BtargetAtUpperVelocity = response[45];
+                    pfi.FirstPulseDuration4TPrimaryVelocity = response[46];
+                    pfi.FirstPulseDuration3TPrimaryVelocity = response[47];
+                    pfi.MultiPulseDurationPrimaryVelocity = response[48];
+                    pfi.LastPulseDurationPrimaryVelocity = response[49];
+                    pfi.FirstPulseLeadTime4TPrimaryVelocity = response[50];
+                    pfi.FirstPulseLeadTime3TPrimaryVelocity = response[51];
+                    pfi.FirstPulseLeadingEdgePrimaryVelocity = response[52];
+                    pfi.FirstPulseDuration4TUpperVelocity = response[53];
+                    pfi.FirstPulseDuration3TUpperVelocity = response[54];
+                    pfi.MultiPulseDurationUpperVelocity = response[55];
+                    pfi.LastPulseDurationUpperVelocity = response[56];
+                    pfi.FirstPulseLeadTime4TUpperVelocity = response[57];
+                    pfi.FirstPulseLeadTime3TUpperVelocity = response[58];
+                    pfi.FirstPulseLeadingEdgeUpperVelocity = response[59];
+                    break;
             }
 
-            // DVD+R and DVD+R DL
-            if(pfi.DiskCategory == DiskCategory.DVDPR || pfi.DiskCategory == DiskCategory.DVDPRDL)
-            {
-                pfi.PrimaryVelocity = response[36];
-                pfi.UpperVelocity = response[37];
-                pfi.Wavelength = response[38];
-                pfi.NormalizedPowerDependency = response[39];
-                pfi.MaximumPowerAtPrimaryVelocity = response[40];
-                pfi.PindAtPrimaryVelocity = response[41];
-                pfi.BtargetAtPrimaryVelocity = response[42];
-                pfi.MaximumPowerAtUpperVelocity = response[43];
-                pfi.PindAtUpperVelocity = response[44];
-                pfi.BtargetAtUpperVelocity = response[45];
-                pfi.FirstPulseDuration4TPrimaryVelocity = response[46];
-                pfi.FirstPulseDuration3TPrimaryVelocity = response[47];
-                pfi.MultiPulseDurationPrimaryVelocity = response[48];
-                pfi.LastPulseDurationPrimaryVelocity = response[49];
-                pfi.FirstPulseLeadTime4TPrimaryVelocity = response[50];
-                pfi.FirstPulseLeadTime3TPrimaryVelocity = response[51];
-                pfi.FirstPulseLeadingEdgePrimaryVelocity = response[52];
-                pfi.FirstPulseDuration4TUpperVelocity = response[53];
-                pfi.FirstPulseDuration3TUpperVelocity = response[54];
-                pfi.MultiPulseDurationUpperVelocity = response[55];
-                pfi.LastPulseDurationUpperVelocity = response[56];
-                pfi.FirstPulseLeadTime4TUpperVelocity = response[57];
-                pfi.FirstPulseLeadTime3TUpperVelocity = response[58];
-                pfi.FirstPulseLeadingEdgeUpperVelocity = response[59];
-            }
-
-            // DVD+R DL
-            if(pfi.DiskCategory == DiskCategory.DVDPRDL) pfi.LayerStructure = (DVDLayerStructure)((response[34] & 0xC0) >> 6);
-
-            // DVD+RW DL
-            if(pfi.DiskCategory == DiskCategory.DVDPRWDL)
-            {
-                pfi.BasicPrimaryVelocity = response[36];
-                pfi.MaxReadPowerPrimaryVelocity = response[37];
-                pfi.PindPrimaryVelocity = response[38];
-                pfi.PPrimaryVelocity = response[39];
-                pfi.E1PrimaryVelocity = response[40];
-                pfi.E2PrimaryVelocity = response[41];
-                pfi.YtargetPrimaryVelocity = response[42];
-                pfi.BOptimumPrimaryVelocity = response[43];
-                pfi.TFirstPulseDuration = response[46];
-                pfi.TMultiPulseDuration = response[47];
-                pfi.FirstPulseLeadTimeAnyRun = response[48];
-                pfi.FirstPulseLeadTimeRun3T = response[49];
-                pfi.LastPulseLeadTimeAnyRun = response[50];
-                pfi.LastPulseLeadTime3T = response[51];
-                pfi.LastPulseLeadTime4T = response[52];
-                pfi.ErasePulseLeadTimeAny = response[53];
-                pfi.ErasePulseLeadTime3T = response[54];
-                pfi.ErasePulseLeadTime4T = response[55];
-            }
-
-            // DVD-R DL and DVD-RW DL
-            if(pfi.DiskCategory == DiskCategory.DVDR && pfi.PartVersion == 6 ||
-               pfi.DiskCategory == DiskCategory.DVDRW && pfi.PartVersion == 3)
-            {
-                pfi.MaxRecordingSpeed = (DVDRecordingSpeed)response[21];
-                pfi.MinRecordingSpeed = (DVDRecordingSpeed)response[22];
-                pfi.RecordingSpeed1 = (DVDRecordingSpeed)response[23];
-                pfi.RecordingSpeed2 = (DVDRecordingSpeed)response[24];
-                pfi.RecordingSpeed3 = (DVDRecordingSpeed)response[25];
-                pfi.RecordingSpeed4 = (DVDRecordingSpeed)response[26];
-                pfi.RecordingSpeed5 = (DVDRecordingSpeed)response[27];
-                pfi.RecordingSpeed6 = (DVDRecordingSpeed)response[28];
-                pfi.RecordingSpeed7 = (DVDRecordingSpeed)response[29];
-                pfi.Class = response[30];
-                pfi.ExtendedVersion = response[31];
-                pfi.CurrentBorderOutSector =
-                    (uint)((response[36] << 24) + (response[37] << 16) + (response[38] << 8) + response[39]);
-                pfi.NextBorderInSector =
-                    (uint)((response[40] << 24) + (response[41] << 16) + (response[42] << 8) + response[43]);
-                pfi.PreRecordedControlDataInv |= (response[44] & 0x01) == 0x01;
-                pfi.PreRecordedLeadIn |= (response[44] & 0x02) == 0x02;
-                pfi.PreRecordedLeadOut |= (response[44] & 0x08) == 0x08;
-                pfi.ARCharLayer1 = (byte)(response[45] & 0x0F);
-                pfi.TrackPolarityLayer1 = (byte)((response[45] & 0xF0) >> 4);
+            switch(pfi.DiskCategory) {
+                // DVD+R DL
+                case DiskCategory.DVDPRDL: pfi.LayerStructure = (DVDLayerStructure)((response[34] & 0xC0) >> 6);
+                    break;
+                // DVD+RW DL
+                case DiskCategory.DVDPRWDL:
+                    pfi.BasicPrimaryVelocity = response[36];
+                    pfi.MaxReadPowerPrimaryVelocity = response[37];
+                    pfi.PindPrimaryVelocity = response[38];
+                    pfi.PPrimaryVelocity = response[39];
+                    pfi.E1PrimaryVelocity = response[40];
+                    pfi.E2PrimaryVelocity = response[41];
+                    pfi.YtargetPrimaryVelocity = response[42];
+                    pfi.BOptimumPrimaryVelocity = response[43];
+                    pfi.TFirstPulseDuration = response[46];
+                    pfi.TMultiPulseDuration = response[47];
+                    pfi.FirstPulseLeadTimeAnyRun = response[48];
+                    pfi.FirstPulseLeadTimeRun3T = response[49];
+                    pfi.LastPulseLeadTimeAnyRun = response[50];
+                    pfi.LastPulseLeadTime3T = response[51];
+                    pfi.LastPulseLeadTime4T = response[52];
+                    pfi.ErasePulseLeadTimeAny = response[53];
+                    pfi.ErasePulseLeadTime3T = response[54];
+                    pfi.ErasePulseLeadTime4T = response[55];
+                    break;
+                // DVD-R DL and DVD-RW DL
+                case DiskCategory.DVDR when pfi.PartVersion == 6:
+                case DiskCategory.DVDRW when pfi.PartVersion == 3:
+                    pfi.MaxRecordingSpeed = (DVDRecordingSpeed)response[21];
+                    pfi.MinRecordingSpeed = (DVDRecordingSpeed)response[22];
+                    pfi.RecordingSpeed1 = (DVDRecordingSpeed)response[23];
+                    pfi.RecordingSpeed2 = (DVDRecordingSpeed)response[24];
+                    pfi.RecordingSpeed3 = (DVDRecordingSpeed)response[25];
+                    pfi.RecordingSpeed4 = (DVDRecordingSpeed)response[26];
+                    pfi.RecordingSpeed5 = (DVDRecordingSpeed)response[27];
+                    pfi.RecordingSpeed6 = (DVDRecordingSpeed)response[28];
+                    pfi.RecordingSpeed7 = (DVDRecordingSpeed)response[29];
+                    pfi.Class = response[30];
+                    pfi.ExtendedVersion = response[31];
+                    pfi.CurrentBorderOutSector =
+                        (uint)((response[36] << 24) + (response[37] << 16) + (response[38] << 8) + response[39]);
+                    pfi.NextBorderInSector =
+                        (uint)((response[40] << 24) + (response[41] << 16) + (response[42] << 8) + response[43]);
+                    pfi.PreRecordedControlDataInv |= (response[44] & 0x01) == 0x01;
+                    pfi.PreRecordedLeadIn |= (response[44] & 0x02) == 0x02;
+                    pfi.PreRecordedLeadOut |= (response[44] & 0x08) == 0x08;
+                    pfi.ARCharLayer1 = (byte)(response[45] & 0x0F);
+                    pfi.TrackPolarityLayer1 = (byte)((response[45] & 0xF0) >> 4);
+                    break;
             }
 
             return pfi;
@@ -1351,10 +1347,13 @@ namespace DiscImageChef.Decoders.DVD
             {
                 case DiskCategory.DVDROM:
                     sb.AppendFormat(categorySentence, sizeString, "DVD-ROM", decoded.PartVersion).AppendLine();
-                    if(decoded.DiscSize == DVDSize.OneTwenty && decoded.PartVersion == 1)
-                        sb.AppendLine("Disc claims conformation to ECMA-267");
-                    if(decoded.DiscSize == DVDSize.Eighty && decoded.PartVersion == 1)
-                        sb.AppendLine("Disc claims conformation to ECMA-268");
+                    switch(decoded.DiscSize) {
+                        case DVDSize.OneTwenty when decoded.PartVersion == 1: sb.AppendLine("Disc claims conformation to ECMA-267");
+                            break;
+                        case DVDSize.Eighty when decoded.PartVersion == 1: sb.AppendLine("Disc claims conformation to ECMA-268");
+                            break;
+                    }
+
                     break;
                 case DiskCategory.DVDRAM:
                     sb.AppendFormat(categorySentence, sizeString, "DVD-RAM", decoded.PartVersion).AppendLine();
@@ -1580,61 +1579,58 @@ namespace DiscImageChef.Decoders.DVD
 
             if(decoded.BCA) sb.AppendLine("Disc has a burst cutting area");
 
-            if(decoded.DiskCategory == DiskCategory.UMD)
-                sb.AppendFormat("Media attribute is {0}", decoded.MediaAttribute).AppendLine();
+            switch(decoded.DiskCategory) {
+                case DiskCategory.UMD: sb.AppendFormat("Media attribute is {0}", decoded.MediaAttribute).AppendLine();
+                    break;
+                case DiskCategory.DVDRAM:
+                    switch(decoded.DiscType)
+                    {
+                        case DVDRAMDiscType.Cased:
+                            sb.AppendLine("Disc shall be recorded with a case");
+                            break;
+                        case DVDRAMDiscType.Uncased:
+                            sb.AppendLine("Disc can be recorded with or without a case");
+                            break;
+                        default:
+                            sb.AppendFormat("Unknown DVD-RAM case type key {0}", decoded.DiscType).AppendLine();
+                            break;
+                    }
 
-            if(decoded.DiskCategory == DiskCategory.DVDRAM)
-            {
-                switch(decoded.DiscType)
-                {
-                    case DVDRAMDiscType.Cased:
-                        sb.AppendLine("Disc shall be recorded with a case");
-                        break;
-                    case DVDRAMDiscType.Uncased:
-                        sb.AppendLine("Disc can be recorded with or without a case");
-                        break;
-                    default:
-                        sb.AppendFormat("Unknown DVD-RAM case type key {0}", decoded.DiscType).AppendLine();
-                        break;
-                }
-
-                if(decoded.PartVersion == 6)
-                {
-                    sb.AppendFormat("Disc manufacturer is {0}", decoded.DiskManufacturer).AppendLine();
-                    sb.AppendFormat("Disc manufacturer supplementary information is {0}",
-                                    decoded.DiskManufacturerSupplementary).AppendLine();
-                }
+                    if(decoded.PartVersion == 6)
+                    {
+                        sb.AppendFormat("Disc manufacturer is {0}", decoded.DiskManufacturer).AppendLine();
+                        sb.AppendFormat("Disc manufacturer supplementary information is {0}",
+                                        decoded.DiskManufacturerSupplementary).AppendLine();
+                    }
+                    break;
+                case DiskCategory.DVDR when decoded.PartVersion < 6:
+                case DiskCategory.DVDRW when decoded.PartVersion < 3:
+                    sb.AppendFormat("Current Border-Out first sector is PSN {0:X}h", decoded.CurrentBorderOutSector)
+                      .AppendLine();
+                    sb.AppendFormat("Next Border-In first sector is PSN {0:X}h", decoded.NextBorderInSector).AppendLine();
+                    break;
+                case DiskCategory.DVDPR:
+                case DiskCategory.DVDPRW:
+                case DiskCategory.DVDPRDL:
+                case DiskCategory.DVDPRWDL:
+                    if(decoded.VCPS) sb.AppendLine("Disc contains extended information for VCPS");
+                    sb.AppendFormat("Disc application code is {0}", decoded.ApplicationCode).AppendLine();
+                    sb.AppendFormat("Disc manufacturer is {0}", decoded.DiskManufacturerID).AppendLine();
+                    sb.AppendFormat("Disc media type is {0}", decoded.MediaTypeID).AppendLine();
+                    sb.AppendFormat("Disc product revision is {0}", decoded.ProductRevision).AppendLine();
+                    break;
             }
 
-            if(decoded.DiskCategory == DiskCategory.DVDR && decoded.PartVersion < 6 ||
-               decoded.DiskCategory == DiskCategory.DVDRW && decoded.PartVersion < 3)
-            {
-                sb.AppendFormat("Current Border-Out first sector is PSN {0:X}h", decoded.CurrentBorderOutSector)
-                  .AppendLine();
-                sb.AppendFormat("Next Border-In first sector is PSN {0:X}h", decoded.NextBorderInSector).AppendLine();
-            }
+            if((decoded.DiskCategory != DiskCategory.DVDR || decoded.PartVersion < 6) &&
+               (decoded.DiskCategory != DiskCategory.DVDRW || decoded.PartVersion < 3)) return sb.ToString();
 
-            if(decoded.DiskCategory == DiskCategory.DVDPR || decoded.DiskCategory == DiskCategory.DVDPRW ||
-               decoded.DiskCategory == DiskCategory.DVDPRDL || decoded.DiskCategory == DiskCategory.DVDPRWDL)
-            {
-                if(decoded.VCPS) sb.AppendLine("Disc contains extended information for VCPS");
-                sb.AppendFormat("Disc application code is {0}", decoded.ApplicationCode).AppendLine();
-                sb.AppendFormat("Disc manufacturer is {0}", decoded.DiskManufacturerID).AppendLine();
-                sb.AppendFormat("Disc media type is {0}", decoded.MediaTypeID).AppendLine();
-                sb.AppendFormat("Disc product revision is {0}", decoded.ProductRevision).AppendLine();
-            }
-
-            if(decoded.DiskCategory == DiskCategory.DVDR && decoded.PartVersion >= 6 ||
-               decoded.DiskCategory == DiskCategory.DVDRW && decoded.PartVersion >= 3)
-            {
-                sb.AppendFormat("Current RMD in extra Border zone starts at PSN {0:X}h",
-                                decoded.CurrentRMDExtraBorderPSN).AppendLine();
-                sb.AppendFormat("PFI in extra Border zone starts at PSN {0:X}h", decoded.PFIExtraBorderPSN)
-                  .AppendLine();
-                if(!decoded.PreRecordedControlDataInv) sb.AppendLine("Control Data Zone is pre-recorded");
-                if(decoded.PreRecordedLeadIn) sb.AppendLine("Lead-In is pre-recorded");
-                if(decoded.PreRecordedLeadOut) sb.AppendLine("Lead-Out is pre-recorded");
-            }
+            sb.AppendFormat("Current RMD in extra Border zone starts at PSN {0:X}h",
+                            decoded.CurrentRMDExtraBorderPSN).AppendLine();
+            sb.AppendFormat("PFI in extra Border zone starts at PSN {0:X}h", decoded.PFIExtraBorderPSN)
+              .AppendLine();
+            if(!decoded.PreRecordedControlDataInv) sb.AppendLine("Control Data Zone is pre-recorded");
+            if(decoded.PreRecordedLeadIn) sb.AppendLine("Lead-In is pre-recorded");
+            if(decoded.PreRecordedLeadOut) sb.AppendLine("Lead-Out is pre-recorded");
 
             return sb.ToString();
         }

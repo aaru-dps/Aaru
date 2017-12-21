@@ -407,11 +407,14 @@ namespace DiscImageChef.Decoders.SCSI
                 if(descriptor.Length + position + 4 >= pageResponse.Length)
                     descriptor.Length = (byte)(pageResponse.Length - position - 4);
                 Array.Copy(pageResponse, position + 4, descriptor.Binary, 0, descriptor.Length);
-                if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
-                    descriptor.ASCII = StringHandlers.CToString(descriptor.Binary);
-                else if(descriptor.CodeSet == IdentificationCodeSet.UTF8)
-                    descriptor.ASCII = Encoding.UTF8.GetString(descriptor.Binary);
-                else descriptor.ASCII = "";
+                switch(descriptor.CodeSet) {
+                    case IdentificationCodeSet.ASCII: descriptor.ASCII = StringHandlers.CToString(descriptor.Binary);
+                        break;
+                    case IdentificationCodeSet.UTF8: descriptor.ASCII = Encoding.UTF8.GetString(descriptor.Binary);
+                        break;
+                    default: descriptor.ASCII = "";
+                        break;
+                }
 
                 position += 4 + descriptor.Length;
                 descriptors.Add(descriptor);
@@ -516,28 +519,36 @@ namespace DiscImageChef.Decoders.SCSI
                 switch(descriptor.Type)
                 {
                     case IdentificationTypes.NoAuthority:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
-                            sb.AppendFormat("\tVendor descriptor contains: {0}", descriptor.ASCII).AppendLine();
-                        else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
-                            sb.AppendFormat("\tVendor descriptor contains binary data (hex): {0}",
-                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                        else
-                            sb.AppendFormat("\tVendor descriptor contains unknown kind {1} of data (hex): {0}",
-                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                            (byte)descriptor.CodeSet).AppendLine();
+                        switch(descriptor.CodeSet) {
+                            case IdentificationCodeSet.ASCII:
+                            case IdentificationCodeSet.UTF8: sb.AppendFormat("\tVendor descriptor contains: {0}", descriptor.ASCII).AppendLine();
+                                break;
+                            case IdentificationCodeSet.Binary:
+                                sb.AppendFormat("\tVendor descriptor contains binary data (hex): {0}",
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                break;
+                            default:
+                                sb.AppendFormat("\tVendor descriptor contains unknown kind {1} of data (hex): {0}",
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                                (byte)descriptor.CodeSet).AppendLine();
+                                break;
+                        }
                         break;
                     case IdentificationTypes.Inquiry:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
-                            sb.AppendFormat("\tInquiry descriptor contains: {0}", descriptor.ASCII).AppendLine();
-                        else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
-                            sb.AppendFormat("\tInquiry descriptor contains binary data (hex): {0}",
-                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
-                        else
-                            sb.AppendFormat("\tInquiry descriptor contains unknown kind {1} of data (hex): {0}",
-                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                            (byte)descriptor.CodeSet).AppendLine();
+                        switch(descriptor.CodeSet) {
+                            case IdentificationCodeSet.ASCII:
+                            case IdentificationCodeSet.UTF8: sb.AppendFormat("\tInquiry descriptor contains: {0}", descriptor.ASCII).AppendLine();
+                                break;
+                            case IdentificationCodeSet.Binary:
+                                sb.AppendFormat("\tInquiry descriptor contains binary data (hex): {0}",
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                break;
+                            default:
+                                sb.AppendFormat("\tInquiry descriptor contains unknown kind {1} of data (hex): {0}",
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                                (byte)descriptor.CodeSet).AppendLine();
+                                break;
+                        }
                         break;
                     case IdentificationTypes.EUI:
                         if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
@@ -705,18 +716,24 @@ namespace DiscImageChef.Decoders.SCSI
 
                         break;
                     default:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                           descriptor.CodeSet == IdentificationCodeSet.UTF8)
-                            sb.AppendFormat("\tUnknown descriptor type {1} contains: {0}", descriptor.ASCII,
-                                            (byte)descriptor.Type).AppendLine();
-                        else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
-                            sb.AppendFormat("\tUnknown descriptor type {1} contains binary data (hex): {0}",
-                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                            (byte)descriptor.Type).AppendLine();
-                        else
-                            sb.AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}",
-                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                            (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
+                        switch(descriptor.CodeSet) {
+                            case IdentificationCodeSet.ASCII:
+                            case IdentificationCodeSet.UTF8:
+                                sb.AppendFormat("\tUnknown descriptor type {1} contains: {0}", descriptor.ASCII,
+                                                (byte)descriptor.Type).AppendLine();
+                                break;
+                            case IdentificationCodeSet.Binary:
+                                sb.AppendFormat("\tUnknown descriptor type {1} contains binary data (hex): {0}",
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                                (byte)descriptor.Type).AppendLine();
+                                break;
+                            default:
+                                sb.AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}",
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                                (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
+                                break;
+                        }
+
                         break;
                 }
             }
@@ -1205,38 +1222,41 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Extended INQUIRY Data:");
 
-            if(page.PeripheralDeviceType == PeripheralDeviceTypes.DirectAccess ||
-               page.PeripheralDeviceType == PeripheralDeviceTypes.SCSIZonedBlockDevice)
-                switch(page.SPT)
-                {
-                    case 0:
-                        sb.AppendLine("Logical unit supports type 1 protection");
-                        break;
-                    case 1:
-                        sb.AppendLine("Logical unit supports types 1 and 2 protection");
-                        break;
-                    case 2:
-                        sb.AppendLine("Logical unit supports type 2 protection");
-                        break;
-                    case 3:
-                        sb.AppendLine("Logical unit supports types 1 and 3 protection");
-                        break;
-                    case 4:
-                        sb.AppendLine("Logical unit supports type 3 protection");
-                        break;
-                    case 5:
-                        sb.AppendLine("Logical unit supports types 2 and 3 protection");
-                        break;
-                    case 7:
-                        sb.AppendLine("Logical unit supports types 1, 2 and 3 protection");
-                        break;
-                    default:
-                        sb.AppendFormat("Logical unit supports unknown protection defined by code {0}", (byte)page.SPT)
-                          .AppendLine();
-                        break;
-                }
-            else if(page.PeripheralDeviceType == PeripheralDeviceTypes.SequentialAccess && page.SPT == 1)
-                sb.AppendLine("Logical unit supports logical block protection");
+            switch(page.PeripheralDeviceType) {
+                case PeripheralDeviceTypes.DirectAccess:
+                case PeripheralDeviceTypes.SCSIZonedBlockDevice:
+                    switch(page.SPT)
+                    {
+                        case 0:
+                            sb.AppendLine("Logical unit supports type 1 protection");
+                            break;
+                        case 1:
+                            sb.AppendLine("Logical unit supports types 1 and 2 protection");
+                            break;
+                        case 2:
+                            sb.AppendLine("Logical unit supports type 2 protection");
+                            break;
+                        case 3:
+                            sb.AppendLine("Logical unit supports types 1 and 3 protection");
+                            break;
+                        case 4:
+                            sb.AppendLine("Logical unit supports type 3 protection");
+                            break;
+                        case 5:
+                            sb.AppendLine("Logical unit supports types 2 and 3 protection");
+                            break;
+                        case 7:
+                            sb.AppendLine("Logical unit supports types 1, 2 and 3 protection");
+                            break;
+                        default:
+                            sb.AppendFormat("Logical unit supports unknown protection defined by code {0}", (byte)page.SPT)
+                              .AppendLine();
+                            break;
+                    }
+                    break;
+                case PeripheralDeviceTypes.SequentialAccess when page.SPT == 1: sb.AppendLine("Logical unit supports logical block protection");
+                    break;
+            }
 
             if(page.GRD_CHK) sb.AppendLine("Device checks the logical block guard");
             if(page.APP_CHK) sb.AppendLine("Device checks the logical block application tag");

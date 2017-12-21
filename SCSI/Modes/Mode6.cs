@@ -60,27 +60,24 @@ namespace DiscImageChef.Decoders.SCSI
                 }
             }
 
-            if(deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
-            {
-                header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
-                header.DPOFUA = (modeResponse[2] & 0x10) == 0x10;
-            }
-
-            if(deviceType == PeripheralDeviceTypes.SequentialAccess)
-            {
-                header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
-                header.Speed = (byte)(modeResponse[2] & 0x0F);
-                header.BufferedMode = (byte)((modeResponse[2] & 0x70) >> 4);
-            }
-
-            if(deviceType == PeripheralDeviceTypes.PrinterDevice)
-                header.BufferedMode = (byte)((modeResponse[2] & 0x70) >> 4);
-
-            if(deviceType == PeripheralDeviceTypes.OpticalDevice)
-            {
-                header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
-                header.EBC = (modeResponse[2] & 0x01) == 0x01;
-                header.DPOFUA = (modeResponse[2] & 0x10) == 0x10;
+            switch(deviceType) {
+                case PeripheralDeviceTypes.DirectAccess:
+                case PeripheralDeviceTypes.MultiMediaDevice:
+                    header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
+                    header.DPOFUA = (modeResponse[2] & 0x10) == 0x10;
+                    break;
+                case PeripheralDeviceTypes.SequentialAccess:
+                    header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
+                    header.Speed = (byte)(modeResponse[2] & 0x0F);
+                    header.BufferedMode = (byte)((modeResponse[2] & 0x70) >> 4);
+                    break;
+                case PeripheralDeviceTypes.PrinterDevice: header.BufferedMode = (byte)((modeResponse[2] & 0x70) >> 4);
+                    break;
+                case PeripheralDeviceTypes.OpticalDevice:
+                    header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
+                    header.EBC = (modeResponse[2] & 0x01) == 0x01;
+                    header.DPOFUA = (modeResponse[2] & 0x10) == 0x10;
+                    break;
             }
 
             return header;
@@ -157,7 +154,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             return decoded;
         }
-        
+
         public static byte[] EncodeModeHeader6(ModeHeader header, PeripheralDeviceTypes deviceType)
         {
             byte[] hdr;
@@ -167,26 +164,24 @@ namespace DiscImageChef.Decoders.SCSI
 
             hdr[1] = (byte)header.MediumType;
 
-            if(deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
-            {
-                if(header.WriteProtected) hdr[2] += 0x80;
-                if(header.DPOFUA) hdr[2] += 0x10;
-            }
-
-            if(deviceType == PeripheralDeviceTypes.SequentialAccess)
-            {
-                if(header.WriteProtected) hdr[2] += 0x80;
-                hdr[2] += (byte)(header.Speed & 0x0F);
-                hdr[2] += (byte)((header.BufferedMode << 4) & 0x70);
-            }
-
-            if(deviceType == PeripheralDeviceTypes.PrinterDevice) hdr[2] += (byte)((header.BufferedMode << 4) & 0x70);
-
-            if(deviceType == PeripheralDeviceTypes.OpticalDevice)
-            {
-                if(header.WriteProtected) hdr[2] += 0x80;
-                if(header.EBC) hdr[2] += 0x01;
-                if(header.DPOFUA) hdr[2] += 0x10;
+            switch(deviceType) {
+                case PeripheralDeviceTypes.DirectAccess:
+                case PeripheralDeviceTypes.MultiMediaDevice:
+                    if(header.WriteProtected) hdr[2] += 0x80;
+                    if(header.DPOFUA) hdr[2] += 0x10;
+                    break;
+                case PeripheralDeviceTypes.SequentialAccess:
+                    if(header.WriteProtected) hdr[2] += 0x80;
+                    hdr[2] += (byte)(header.Speed & 0x0F);
+                    hdr[2] += (byte)((header.BufferedMode << 4) & 0x70);
+                    break;
+                case PeripheralDeviceTypes.PrinterDevice: hdr[2] += (byte)((header.BufferedMode << 4) & 0x70);
+                    break;
+                case PeripheralDeviceTypes.OpticalDevice:
+                    if(header.WriteProtected) hdr[2] += 0x80;
+                    if(header.EBC) hdr[2] += 0x01;
+                    if(header.DPOFUA) hdr[2] += 0x10;
+                    break;
             }
 
             if(header.BlockDescriptors != null)

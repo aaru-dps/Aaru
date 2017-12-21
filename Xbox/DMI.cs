@@ -234,28 +234,30 @@ namespace DiscImageChef.Decoders.Xbox
 
             sb.Append("-");
 
-            if(decoded.CatalogNumber.Length == 13)
-            {
-                for(int i = 8; i < 10; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            switch(decoded.CatalogNumber.Length) {
+                case 13:
+                    for(int i = 8; i < 10; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
-                sb.Append("-");
-                for(int i = 10; i < 13; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
-            }
-            else if(decoded.CatalogNumber.Length == 14)
-            {
-                for(int i = 8; i < 11; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    sb.Append("-");
+                    for(int i = 10; i < 13; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
-                sb.Append("-");
-                for(int i = 11; i < 14; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
-            }
-            else
-            {
-                for(int i = 8; i < decoded.CatalogNumber.Length - 3; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    break;
+                case 14:
+                    for(int i = 8; i < 11; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
-                sb.Append("-");
-                for(int i = decoded.CatalogNumber.Length - 3; i < decoded.CatalogNumber.Length; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    sb.Append("-");
+                    for(int i = 11; i < 14; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+                    break;
+                default:
+                    for(int i = 8; i < decoded.CatalogNumber.Length - 3; i++)
+                        sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+                    sb.Append("-");
+                    for(int i = decoded.CatalogNumber.Length - 3; i < decoded.CatalogNumber.Length; i++)
+                        sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+                    break;
             }
 
             sb.AppendLine();
