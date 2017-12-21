@@ -60,11 +60,9 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static HP_ModePage_3C? DecodeHPModePage_3C(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
+            if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40) return null;
-
-            if((pageResponse[0] & 0x3F) != 0x3C) return null;
+            if((pageResponse?[0] & 0x3F) != 0x3C) return null;
 
             if(pageResponse[1] + 2 != pageResponse.Length) return null;
 

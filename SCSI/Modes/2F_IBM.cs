@@ -58,11 +58,9 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static IBM_ModePage_2F? DecodeIBMModePage_2F(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
+            if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-            if((pageResponse[0] & 0x40) == 0x40) return null;
-
-            if((pageResponse[0] & 0x3F) != 0x2F) return null;
+            if((pageResponse?[0] & 0x3F) != 0x2F) return null;
 
             if(pageResponse[1] + 2 != pageResponse.Length) return null;
 

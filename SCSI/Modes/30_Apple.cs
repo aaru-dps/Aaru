@@ -46,11 +46,9 @@ namespace DiscImageChef.Decoders.SCSI
 
     public static bool IsAppleModePage_30(byte[] pageResponse)
     {
-        if(pageResponse == null) return false;
+        if((pageResponse?[0] & 0x40) == 0x40) return false;
 
-        if((pageResponse[0] & 0x40) == 0x40) return false;
-
-        if((pageResponse[0] & 0x3F) != 0x30) return false;
+        if((pageResponse?[0] & 0x3F) != 0x30) return false;
 
         if(pageResponse[1] + 2 != pageResponse.Length) return false;
 
