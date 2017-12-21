@@ -58,7 +58,7 @@ namespace DiscImageChef.CommonTypes
         /// <summary>LBA of last partition sector</summary>
         public ulong End
         {
-            get { return Start + Length - 1; }
+            get => Start + Length - 1;
         }
         /// <summary>Name of partition scheme that contains this partition</summary>
         public string Scheme;
@@ -70,7 +70,8 @@ namespace DiscImageChef.CommonTypes
 
         public override bool Equals(object obj)
         {
-            if(obj == null || !(obj is Partition)) return false;
+            if(!(obj is Partition)) return false;
+
             return Equals((Partition)obj);
         }
 
