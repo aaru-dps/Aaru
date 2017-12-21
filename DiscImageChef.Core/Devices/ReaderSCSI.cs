@@ -93,15 +93,11 @@ namespace DiscImageChef.Core.Devices
                 return true;
             }
 
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
             if(!read16 && Blocks > 0xFFFFFFFF + (long)1)
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
             {
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
                 ErrorMessage =
                     string.Format("Device only supports SCSI READ (10) but has more than {0} blocks ({1} blocks total)",
                                   0xFFFFFFFF + (long)1, Blocks);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
                 return true;
             }
 

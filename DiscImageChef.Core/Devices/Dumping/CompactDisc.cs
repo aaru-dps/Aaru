@@ -437,9 +437,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
 
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     currentSpeed = blockSize / (double)1048576 / (cmdDuration / 1000);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
                 }
 
                 dumpFile.Close();
@@ -629,9 +627,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             }
                     }
 
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     currentSpeed = (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
                     resume.NextBlock = i + blocksToRead;
                 }
 
@@ -672,10 +668,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine();
             end = DateTime.UtcNow;
             mhddLog.Close();
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                          blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), devicePath);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
@@ -860,9 +854,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                     totalChkDuration += chkDuration;
 
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     currentSpeed = (double)blockSize * blocksToRead / 1048576 / (chkDuration / 1000);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
                 }
 
                 tracks[t].Checksums = trkChk.End().ToArray();

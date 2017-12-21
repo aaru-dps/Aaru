@@ -917,9 +917,7 @@ namespace DiscImageChef.Devices
 
             if(sense) return true;
 
-#pragma warning disable IDE0004 // Cast is necessary or an invalid bitshift happens
             ushort availableLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
-#pragma warning restore IDE0004 // Cast is necessary or an invalid bitshift happens
             buffer = new byte[availableLength];
             cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[8] = (byte)(buffer.Length & 0xFF);

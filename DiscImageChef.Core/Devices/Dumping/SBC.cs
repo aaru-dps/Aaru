@@ -396,19 +396,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, i);
                 }
 
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
                 currentSpeed = (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
                 resume.NextBlock = i + blocksToRead;
             }
 
             end = DateTime.UtcNow;
             DicConsole.WriteLine();
             mhddLog.Close();
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                          blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), devicePath);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
@@ -592,9 +588,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                 totalChkDuration += chkDuration;
 
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                 currentSpeed = (double)blockSize * blocksToRead / 1048576 / (chkDuration / 1000);
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
             }
 
             DicConsole.WriteLine();
@@ -831,10 +825,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming).",
                                  (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000);
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
             DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",
                                  (double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
             DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
             DicConsole.WriteLine("{0} sectors could not be read.", resume.BadBlocks.Count);

@@ -344,9 +344,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, i);
                 }
 
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                 currentSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                 GC.Collect();
                 resume.NextBlock = i + blocksToRead;
             }
@@ -354,10 +352,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             end = DateTime.Now;
             DicConsole.WriteLine();
             mhddLog.Close();
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                          blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), devicePath);
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));

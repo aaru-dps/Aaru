@@ -437,9 +437,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         foreach(string senseLine in senseLines) dumpLog.WriteLine(senseLine);
                     }
 
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     currentSpeed = (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
                     blocksToRead = saveBlocksToRead;
                     currentSector = i + 1;
                     resume.NextBlock = currentSector;
@@ -568,9 +566,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     foreach(string senseLine in senseLines) dumpLog.WriteLine(senseLine);
                 }
 
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
                 currentSpeed = (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
                 currentSector += blocksToRead;
                 resume.NextBlock = currentSector;
             }
@@ -594,10 +590,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             end = DateTime.UtcNow;
             DicConsole.WriteLine();
             mhddLog.Close();
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
             ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                          blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), devicePath);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
@@ -792,9 +786,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                 totalChkDuration += chkDuration;
 
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                 currentSpeed = (double)blockSize * blocksToRead / 1048576 / (chkDuration / 1000);
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
             }
 
             DicConsole.WriteLine();

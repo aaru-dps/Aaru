@@ -603,10 +603,8 @@ namespace DiscImageChef.Core.Devices.Report
 
                             if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
                             {
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                                 physicalsectorsize =
                                     (uint)(logicalsectorsize * ((1 << ataId.PhysLogSectorSize) & 0xF));
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                             }
                             else physicalsectorsize = logicalsectorsize;
                         }
@@ -973,10 +971,8 @@ namespace DiscImageChef.Core.Devices.Report
 
                     if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
                     {
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                         physicalsectorsize = logicalsectorsize *
                                              (uint)Math.Pow(2, ataId.PhysLogSectorSize & 0xF);
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                     }
                     else physicalsectorsize = logicalsectorsize;
                 }

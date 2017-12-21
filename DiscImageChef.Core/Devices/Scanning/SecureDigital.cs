@@ -204,20 +204,16 @@ namespace DiscImageChef.Core.Devices.Scanning
                     ibgLog.Write(i, 0);
                 }
 
-#pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
                 currentSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
-#pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                 GC.Collect();
             }
 
             end = DateTime.UtcNow;
             DicConsole.WriteLine();
             mhddLog.Close();
-#pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
             ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                          blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                          devicePath);
-#pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
 
             for(int i = 0; i < SEEK_TIMES; i++)
             {
@@ -243,9 +239,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             results.ProcessingTime /= 1000;
             results.TotalTime = (end - start).TotalSeconds;
-#pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
             results.AvgSpeed = blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
-#pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
             results.SeekTimes = SEEK_TIMES;
 
             return results;
