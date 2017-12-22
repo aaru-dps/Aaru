@@ -37,7 +37,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class PFS3_RDB
+    public class Pfs3Rdb
     {
         readonly string[] testfiles = {"uae.vdi.lz"};
 
@@ -79,7 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out string information);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("PFS v3", fs.XmlFSType.Type, testfiles[i]);

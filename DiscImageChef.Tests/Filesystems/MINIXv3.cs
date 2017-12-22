@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class MINIXv3
+    public class MinixV3
     {
         readonly string[] testfiles =
         {
@@ -78,7 +78,7 @@ namespace DiscImageChef.Tests.Filesystems
                     Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
-                fs.GetInformation(image, wholePart, out string information);
+                fs.GetInformation(image, wholePart, out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual(types[i], fs.XmlFSType.Type, testfiles[i]);

@@ -37,7 +37,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class HPFS
+    public class Hpfs
     {
         readonly string[] testfiles =
         {
@@ -87,9 +87,9 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new DiscImageChef.Filesystems.HPFS();
+                Filesystem fs = new HPFS();
                 Assert.AreEqual(true, fs.Identify(image, partitions[0]), testfiles[i]);
-                fs.GetInformation(image, partitions[0], out string information);
+                fs.GetInformation(image, partitions[0], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("HPFS", fs.XmlFSType.Type, testfiles[i]);

@@ -56,7 +56,7 @@ namespace DiscImageChef.Tests.Images
             MediaType.NEC_525_HD, MediaType.NEC_525_HD, MediaType.NEC_525_HD
         };
 
-        readonly string[] md5s =
+        readonly string[] md5S =
         {
             "1c5387e38e58165c517c059e5d48905d", "a84366658c1c3bd09af4d0d42fbf716e", "919c9eecf1b65b10870f617cb976668a",
             "02d35af02581afb2e56792dcaba2c1af", "b8c3f858f1a9d300d3e74f36eea04354", "c348bbbaf99fcb8c8e66de157aef62f4",
@@ -79,7 +79,7 @@ namespace DiscImageChef.Tests.Images
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
 
                 // How many sectors to read at once
-                const uint sectorsToRead = 256;
+                const uint SECTORS_TO_READ = 256;
                 ulong doneSectors = 0;
 
                 Md5Context ctx = new Md5Context();
@@ -89,10 +89,10 @@ namespace DiscImageChef.Tests.Images
                 {
                     byte[] sector;
 
-                    if(image.ImageInfo.Sectors - doneSectors >= sectorsToRead)
+                    if(image.ImageInfo.Sectors - doneSectors >= SECTORS_TO_READ)
                     {
-                        sector = image.ReadSectors(doneSectors, sectorsToRead);
-                        doneSectors += sectorsToRead;
+                        sector = image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                        doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {
@@ -103,7 +103,7 @@ namespace DiscImageChef.Tests.Images
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(md5s[i], ctx.End(), testfiles[i]);
+                Assert.AreEqual(md5S[i], ctx.End(), testfiles[i]);
             }
         }
     }

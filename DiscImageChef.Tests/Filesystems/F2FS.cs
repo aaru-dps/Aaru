@@ -38,7 +38,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class F2FS
+    public class F2Fs
     {
         readonly string[] testfiles = {"linux.vdi.lz"};
 
@@ -68,7 +68,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 PartitionPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions, 0), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.F2FS();
+                Filesystem fs = new F2FS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x83")
@@ -79,7 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out string information);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("F2FS filesystem", fs.XmlFSType.Type, testfiles[i]);

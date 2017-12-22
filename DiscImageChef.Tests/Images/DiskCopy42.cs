@@ -70,7 +70,7 @@ namespace DiscImageChef.Tests.Images
             MediaType.DOS_35_DS_DD_9, MediaType.AppleSonyDS
         };
 
-        readonly string[] md5s =
+        readonly string[] md5S =
         {
             "eae3a95671d077deb702b3549a769f56", "c5d92544c3e78b7f0a9b4baaa9a64eec", "a99744348a70b62b57bce2dec9132ced",
             "93e71b9ecdb39d3ec9245b4f451856d4", "3160038ca028ccf52ad7863790072145", "5e255c4bc0f6a26ecd27845b37e65aaa",
@@ -96,7 +96,7 @@ namespace DiscImageChef.Tests.Images
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
 
                 // How many sectors to read at once
-                const uint sectorsToRead = 256;
+                const uint SECTORS_TO_READ = 256;
                 ulong doneSectors = 0;
 
                 Md5Context ctx = new Md5Context();
@@ -106,10 +106,10 @@ namespace DiscImageChef.Tests.Images
                 {
                     byte[] sector;
 
-                    if(image.ImageInfo.Sectors - doneSectors >= sectorsToRead)
+                    if(image.ImageInfo.Sectors - doneSectors >= SECTORS_TO_READ)
                     {
-                        sector = image.ReadSectors(doneSectors, sectorsToRead);
-                        doneSectors += sectorsToRead;
+                        sector = image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                        doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {
@@ -120,7 +120,7 @@ namespace DiscImageChef.Tests.Images
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(md5s[i], ctx.End(), testfiles[i]);
+                Assert.AreEqual(md5S[i], ctx.End(), testfiles[i]);
             }
         }
     }

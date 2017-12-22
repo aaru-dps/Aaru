@@ -36,10 +36,10 @@ namespace DiscImageChef.Tests.Filters
     [TestFixture]
     public class AppleDoubleDave
     {
-        const string ExpectedFile = "c2be571406cf6353269faa59a4a8c0a4";
-        const string ExpectedSidecar = "7b0c25bf8cb70f6fb1a15eca31585250";
-        const string ExpectedContents = "c2be571406cf6353269faa59a4a8c0a4";
-        const string ExpectedResource = "a972d27c44193a7587b21416c0953cc3";
+        const string EXPECTED_FILE = "c2be571406cf6353269faa59a4a8c0a4";
+        const string EXPECTED_SIDECAR = "7b0c25bf8cb70f6fb1a15eca31585250";
+        const string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
+        const string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
         readonly string location;
         readonly string sidecar;
 
@@ -55,13 +55,13 @@ namespace DiscImageChef.Tests.Filters
         {
             Md5Context ctx = new Md5Context();
             ctx.Init();
-            string result = ctx.File(location, out byte[] tmp);
-            Assert.AreEqual(ExpectedFile, result);
+            string result = ctx.File(location, out _);
+            Assert.AreEqual(EXPECTED_FILE, result);
 
             ctx = new Md5Context();
             ctx.Init();
-            result = ctx.File(sidecar, out tmp);
-            Assert.AreEqual(ExpectedSidecar, result);
+            result = ctx.File(sidecar, out _);
+            Assert.AreEqual(EXPECTED_SIDECAR, result);
         }
 
         [Test]
@@ -98,8 +98,8 @@ namespace DiscImageChef.Tests.Filters
             filter.Close();
             Md5Context ctx = new Md5Context();
             ctx.Init();
-            string result = ctx.Data(data, out byte[] tmp);
-            Assert.AreEqual(ExpectedContents, result);
+            string result = ctx.Data(data, out _);
+            Assert.AreEqual(EXPECTED_CONTENTS, result);
         }
 
         [Test]
@@ -115,8 +115,8 @@ namespace DiscImageChef.Tests.Filters
             filter.Close();
             Md5Context ctx = new Md5Context();
             ctx.Init();
-            string result = ctx.Data(data, out byte[] tmp);
-            Assert.AreEqual(ExpectedResource, result);
+            string result = ctx.Data(data, out _);
+            Assert.AreEqual(EXPECTED_RESOURCE, result);
         }
     }
 }

@@ -37,7 +37,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AFFS_RDB
+    public class AffsRdb
     {
         readonly string[] testfiles =
         {
@@ -87,7 +87,7 @@ namespace DiscImageChef.Tests.Filesystems
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out string information);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);

@@ -38,7 +38,7 @@ namespace DiscImageChef.Tests.Filesystems
 {
     // Mising Darwin 6.0.2 wrapped
     [TestFixture]
-    public class HFSPlus_MBR
+    public class HfsPlusMbr
     {
         readonly string[] testfiles =
         {
@@ -92,7 +92,7 @@ namespace DiscImageChef.Tests.Filesystems
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out string information);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("HFS+", fs.XmlFSType.Type, testfiles[i]);

@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class BSD
+    public class Bsd
     {
         readonly string[] testfiles =
             {"parted.vdi.lz", "netbsd_1.6.vdi.lz", "netbsd_6.1.5.vdi.lz", "netbsd_7.1.vdi.lz"};

@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class VTOC
+    public class Vtoc
     {
         readonly string[] testfiles = {"att_unix_vtoc.vdi.lz"};
 

@@ -33,7 +33,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class SHA1
+    public class Sha1
     {
         static readonly byte[] ExpectedEmpty =
         {
@@ -47,7 +47,7 @@ namespace DiscImageChef.Tests.Checksums
         };
 
         [Test]
-        public void SHA1EmptyFile()
+        public void Sha1EmptyFile()
         {
             Sha1Context ctx = new Sha1Context();
             ctx.Init();
@@ -56,7 +56,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA1EmptyData()
+        public void Sha1EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -71,7 +71,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA1EmptyInstance()
+        public void Sha1EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -87,7 +87,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA1RandomFile()
+        public void Sha1RandomFile()
         {
             Sha1Context ctx = new Sha1Context();
             ctx.Init();
@@ -96,7 +96,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA1RandomData()
+        public void Sha1RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
@@ -111,7 +111,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA1RandomInstance()
+        public void Sha1RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,

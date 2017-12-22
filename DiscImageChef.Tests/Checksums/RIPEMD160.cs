@@ -33,7 +33,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class RIPEMD160
+    public class Ripemd160
     {
         static readonly byte[] ExpectedEmpty =
         {
@@ -47,7 +47,7 @@ namespace DiscImageChef.Tests.Checksums
         };
 
         [Test]
-        public void RIPEMD160EmptyFile()
+        public void Ripemd160EmptyFile()
         {
             Ripemd160Context ctx = new Ripemd160Context();
             ctx.Init();
@@ -56,7 +56,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void RIPEMD160EmptyData()
+        public void Ripemd160EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -71,7 +71,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void RIPEMD160EmptyInstance()
+        public void Ripemd160EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -87,7 +87,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void RIPEMD160RandomFile()
+        public void Ripemd160RandomFile()
         {
             Ripemd160Context ctx = new Ripemd160Context();
             ctx.Init();
@@ -96,7 +96,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void RIPEMD160RandomData()
+        public void Ripemd160RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
@@ -111,7 +111,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void RIPEMD160RandomInstance()
+        public void Ripemd160RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,

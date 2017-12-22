@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class GPT
+    public class Gpt
     {
         readonly string[] testfiles = {"linux.vdi.lz", "parted.vdi.lz"};
 

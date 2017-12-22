@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class QNX4
+    public class Qnx4
     {
         readonly string[] testfiles =
             {"qnx_4.24_dsdd.img.lz", "qnx_4.24_dshd.img.lz", "qnx_4.24_mf2dd.img.lz", "qnx_4.24_mf2hd.img.lz"};
@@ -65,7 +65,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.QNX4();
+                Filesystem fs = new QNX4();
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
@@ -73,7 +73,7 @@ namespace DiscImageChef.Tests.Filesystems
                     Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
-                fs.GetInformation(image, wholePart, out string information);
+                fs.GetInformation(image, wholePart, out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("QNX4 filesystem", fs.XmlFSType.Type, testfiles[i]);

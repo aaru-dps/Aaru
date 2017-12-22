@@ -36,9 +36,9 @@ namespace DiscImageChef.Tests.Filters
     [TestFixture]
     public class AppleSingle
     {
-        const string ExpectedFile = "7497a3b156dcd0c1046a1ab12e188ab7";
-        const string ExpectedContents = "c2be571406cf6353269faa59a4a8c0a4";
-        const string ExpectedResource = "a972d27c44193a7587b21416c0953cc3";
+        const string EXPECTED_FILE = "7497a3b156dcd0c1046a1ab12e188ab7";
+        const string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
+        const string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
         readonly string location;
 
         public AppleSingle()
@@ -51,8 +51,8 @@ namespace DiscImageChef.Tests.Filters
         {
             Md5Context ctx = new Md5Context();
             ctx.Init();
-            string result = ctx.File(location, out byte[] tmp);
-            Assert.AreEqual(ExpectedFile, result);
+            string result = ctx.File(location, out _);
+            Assert.AreEqual(EXPECTED_FILE, result);
         }
 
         [Test]
@@ -89,8 +89,8 @@ namespace DiscImageChef.Tests.Filters
             filter.Close();
             Md5Context ctx = new Md5Context();
             ctx.Init();
-            string result = ctx.Data(data, out byte[] tmp);
-            Assert.AreEqual(ExpectedContents, result);
+            string result = ctx.Data(data, out _);
+            Assert.AreEqual(EXPECTED_CONTENTS, result);
         }
 
         [Test]
@@ -106,8 +106,8 @@ namespace DiscImageChef.Tests.Filters
             filter.Close();
             Md5Context ctx = new Md5Context();
             ctx.Init();
-            string result = ctx.Data(data, out byte[] tmp);
-            Assert.AreEqual(ExpectedResource, result);
+            string result = ctx.Data(data, out _);
+            Assert.AreEqual(EXPECTED_RESOURCE, result);
         }
     }
 }

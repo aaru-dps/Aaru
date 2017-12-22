@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Devices
 {
     [TestFixture]
-    public class LS120
+    public class Ls120
     {
         readonly string[] testfiles = {"ls120.bin.lz", "mf2dd.bin.lz", "mf2hd.bin.lz"};
 

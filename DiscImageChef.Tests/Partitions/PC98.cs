@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class PC98
+    public class Pc98
     {
         readonly string[] testfiles =
             {"msdos330.thd.lz", "msdos330_alt.thd.lz", "msdos500_epson.thd.lz", "msdos500.thd.lz", "msdos620.thd.lz"};

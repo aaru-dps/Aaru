@@ -37,7 +37,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class QNX4_MBR
+    public class Qnx4Mbr
     {
         readonly string[] testfiles = {"qnx_4.24.vdi.lz"};
 
@@ -62,7 +62,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new DiscImageChef.Filesystems.QNX4();
+                Filesystem fs = new QNX4();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x4D")
@@ -73,7 +73,7 @@ namespace DiscImageChef.Tests.Filesystems
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out string information);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("QNX4 filesystem", fs.XmlFSType.Type, testfiles[i]);

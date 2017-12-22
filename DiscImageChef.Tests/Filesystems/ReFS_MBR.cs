@@ -37,7 +37,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class ReFS_MBR
+    public class ReFsMbr
     {
         readonly string[] testfiles = {"win10.vdi.lz"};
 
@@ -81,7 +81,7 @@ namespace DiscImageChef.Tests.Filesystems
                 /*
                 Filesystem fs = new DiscImageChef.Filesystems.ReFS();
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out string information);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("ReFS", fs.XmlFSType.Type, testfiles[i]);

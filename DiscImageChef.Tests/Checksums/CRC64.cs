@@ -33,20 +33,20 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class CRC64
+    public class Crc64
     {
         static readonly byte[] ExpectedEmpty = {0x60, 0x6b, 0x70, 0xa2, 0x3e, 0xba, 0xf6, 0xc2};
         static readonly byte[] ExpectedRandom = {0xbf, 0x09, 0x99, 0x2c, 0xc5, 0xed, 0xe3, 0x8e};
 
         [Test]
-        public void CRC64EmptyFile()
+        public void Crc64EmptyFile()
         {
             byte[] result = Crc64Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC64EmptyData()
+        public void Crc64EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -59,7 +59,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void CRC64EmptyInstance()
+        public void Crc64EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -75,14 +75,14 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void CRC64RandomFile()
+        public void Crc64RandomFile()
         {
             byte[] result = Crc64Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void CRC64RandomData()
+        public void Crc64RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
@@ -95,7 +95,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void CRC64RandomInstance()
+        public void Crc64RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,

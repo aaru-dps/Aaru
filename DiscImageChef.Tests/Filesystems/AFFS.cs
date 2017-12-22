@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AFFS
+    public class Affs
     {
         readonly string[] testfiles = {"amigaos_3.9.adf.lz", "amigaos_3.9_intl.adf.lz"};
 
@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
                     Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
-                fs.GetInformation(image, wholePart, out string information);
+                fs.GetInformation(image, wholePart, out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);

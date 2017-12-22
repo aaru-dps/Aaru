@@ -35,8 +35,8 @@ namespace DiscImageChef.Tests.Checksums
     [TestFixture]
     public class SpamSum
     {
-        static readonly string ExpectedEmpty = "3::";
-        static readonly string ExpectedRandom = "24576:3dvzuAsHTQ16pc7O1Q/gS9qze+Swwn9s6IX:8/TQQpaVqze+JN6IX";
+        const string EXPECTED_EMPTY = "3::";
+        const string EXPECTED_RANDOM = "24576:3dvzuAsHTQ16pc7O1Q/gS9qze+Swwn9s6IX:8/TQQpaVqze+JN6IX";
 
         [Test]
         public void SpamSumEmptyData()
@@ -47,9 +47,8 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SpamSumContext ctx = new SpamSumContext();
-            string result = SpamSumContext.Data(data, out byte[] tmp);
-            Assert.AreEqual(ExpectedEmpty, result);
+            string result = SpamSumContext.Data(data, out _);
+            Assert.AreEqual(EXPECTED_EMPTY, result);
         }
 
         [Test]
@@ -65,7 +64,7 @@ namespace DiscImageChef.Tests.Checksums
             ctx.Init();
             ctx.Update(data);
             string result = ctx.End();
-            Assert.AreEqual(ExpectedEmpty, result);
+            Assert.AreEqual(EXPECTED_EMPTY, result);
         }
 
         [Test]
@@ -77,9 +76,8 @@ namespace DiscImageChef.Tests.Checksums
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SpamSumContext ctx = new SpamSumContext();
-            string result = SpamSumContext.Data(data, out byte[] tmp);
-            Assert.AreEqual(ExpectedRandom, result);
+            string result = SpamSumContext.Data(data, out _);
+            Assert.AreEqual(EXPECTED_RANDOM, result);
         }
 
         [Test]
@@ -95,7 +93,7 @@ namespace DiscImageChef.Tests.Checksums
             ctx.Init();
             ctx.Update(data);
             string result = ctx.End();
-            Assert.AreEqual(ExpectedRandom, result);
+            Assert.AreEqual(EXPECTED_RANDOM, result);
         }
     }
 }

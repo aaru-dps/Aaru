@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class BeFS
+    public class BeFs
     {
         readonly string[] testfiles = {"beos_r3.1.img.lz", "beos_r4.5.img.lz"};
 
@@ -69,7 +69,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.BeFS();
+                Filesystem fs = new BeFS();
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
@@ -77,7 +77,7 @@ namespace DiscImageChef.Tests.Filesystems
                     Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
-                fs.GetInformation(image, wholePart, out string information);
+                fs.GetInformation(image, wholePart, out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("BeFS", fs.XmlFSType.Type, testfiles[i]);

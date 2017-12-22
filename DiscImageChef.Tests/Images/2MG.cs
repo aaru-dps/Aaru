@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Images
 {
     [TestFixture]
-    public class Apple2MG
+    public class Apple2Mg
     {
         readonly string[] testfiles =
         {
@@ -54,7 +54,7 @@ namespace DiscImageChef.Tests.Images
             MediaType.DOS_35_HD
         };
 
-        readonly string[] md5s =
+        readonly string[] md5S =
         {
             "7db5d585270ab858043d50e60068d45f", "c62ee4dac8835f9acc999e7531d3b5f8", "86bc7879bb477917aab3976057a6a7b2",
             "32b8f8163238d4f3ea2a3db95ad1a812", "a5acba4cbaddd9c53ea0e8210f4aba55", "eb9b60c78b30d2b6541ed0781944b6da"
@@ -68,14 +68,14 @@ namespace DiscImageChef.Tests.Images
                 string location = Path.Combine(Consts.TestFilesRoot, "images", "2mg", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new Apple2Mg();
+                ImagePlugin image = new DiscImages.Apple2Mg();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.MediaType, testfiles[i]);
 
                 // How many sectors to read at once
-                const uint sectorsToRead = 256;
+                const uint SECTORS_TO_READ = 256;
                 ulong doneSectors = 0;
 
                 Md5Context ctx = new Md5Context();
@@ -85,10 +85,10 @@ namespace DiscImageChef.Tests.Images
                 {
                     byte[] sector;
 
-                    if(image.ImageInfo.Sectors - doneSectors >= sectorsToRead)
+                    if(image.ImageInfo.Sectors - doneSectors >= SECTORS_TO_READ)
                     {
-                        sector = image.ReadSectors(doneSectors, sectorsToRead);
-                        doneSectors += sectorsToRead;
+                        sector = image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                        doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {
@@ -99,7 +99,7 @@ namespace DiscImageChef.Tests.Images
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(md5s[i], ctx.End(), testfiles[i]);
+                Assert.AreEqual(md5S[i], ctx.End(), testfiles[i]);
             }
         }
     }

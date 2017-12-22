@@ -37,7 +37,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class FAT32_MBR
+    public class Fat32Mbr
     {
         readonly string[] testfiles =
         {
@@ -104,7 +104,7 @@ namespace DiscImageChef.Tests.Filesystems
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Filesystem fs = new FAT();
                 Assert.AreEqual(true, fs.Identify(image, partitions[0]), testfiles[i]);
-                fs.GetInformation(image, partitions[0], out string information);
+                fs.GetInformation(image, partitions[0], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("FAT32", fs.XmlFSType.Type, testfiles[i]);

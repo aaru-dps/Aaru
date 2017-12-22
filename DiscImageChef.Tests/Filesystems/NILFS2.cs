@@ -37,7 +37,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class NILFS2
+    public class Nilfs2
     {
         readonly string[] testfiles = {"linux.vdi.lz"};
 
@@ -66,7 +66,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new DiscImageChef.Filesystems.NILFS2();
+                Filesystem fs = new NILFS2();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x83")
@@ -77,7 +77,7 @@ namespace DiscImageChef.Tests.Filesystems
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out string information);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("NILFS2 filesystem", fs.XmlFSType.Type, testfiles[i]);

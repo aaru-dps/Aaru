@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class LFS_MBR
+    public class LfsMbr
     {
         readonly string[] testfiles = {"netbsd_1.6.vdi.lz"};
 
@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
                 }
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out string information);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("LFS", fs.XmlFSType.Type, testfiles[i]);

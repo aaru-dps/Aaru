@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class RDB
+    public class Rdb
     {
         readonly string[] testfiles = {"amigaos_3.9.vdi.lz", "amigaos_4.0.vdi.lz", "parted.vdi.lz"};
 

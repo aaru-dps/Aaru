@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class NWFS386
+    public class Nwfs386
     {
         readonly string[] testfiles = {"netware_3.12.vdi.lz"};
 
@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
                 }
                 Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
-                fs.GetInformation(image, partitions[part], out string information);
+                fs.GetInformation(image, partitions[part], out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("NWFS386", fs.XmlFSType.Type, testfiles[i]);

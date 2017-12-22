@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class UDF
+    public class Udf
     {
         readonly string[] testfiles =
         {
@@ -105,7 +105,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.SectorSize, testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.UDF();
+                Filesystem fs = new UDF();
                 Partition wholePart = new Partition
                 {
                     Name = "Whole device",
@@ -113,7 +113,7 @@ namespace DiscImageChef.Tests.Filesystems
                     Size = image.ImageInfo.Sectors * image.ImageInfo.SectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
-                fs.GetInformation(image, wholePart, out string information);
+                fs.GetInformation(image, wholePart, out _);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual(udfversion[i], fs.XmlFSType.Type, testfiles[i]);

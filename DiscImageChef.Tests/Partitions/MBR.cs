@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class MBR
+    public class Mbr
     {
         readonly string[] testfiles =
         {

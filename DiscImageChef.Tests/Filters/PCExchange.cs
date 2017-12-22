@@ -34,14 +34,14 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filters
 {
     [TestFixture]
-    public class PCExchange
+    public class PcExchange
     {
-        const string ExpectedFile = "348825a08fa84766d20b91ed917012b9";
-        const string ExpectedContents = "c2be571406cf6353269faa59a4a8c0a4";
-        const string ExpectedResource = "5cb168d60ce8b2b1b3133c2faaf47165";
+        const string EXPECTED_FILE = "348825a08fa84766d20b91ed917012b9";
+        const string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
+        const string EXPECTED_RESOURCE = "5cb168d60ce8b2b1b3133c2faaf47165";
         readonly string location;
 
-        public PCExchange()
+        public PcExchange()
         {
             location = Path.Combine(Consts.TestFilesRoot, "filters", "pcexchange", "DC6_RW_DOS_720.img");
         }
@@ -52,21 +52,21 @@ namespace DiscImageChef.Tests.Filters
             Md5Context ctx = new Md5Context();
             ctx.Init();
             string result = ctx.File(Path.Combine(Consts.TestFilesRoot, "filters", "pcexchange", "FINDER.DAT"),
-                                     out byte[] tmp);
-            Assert.AreEqual(ExpectedFile, result);
+                                     out _);
+            Assert.AreEqual(EXPECTED_FILE, result);
         }
 
         [Test]
         public void CheckFilterId()
         {
-            Filter filter = new DiscImageChef.Filters.PCExchange();
+            Filter filter = new PCExchange();
             Assert.AreEqual(true, filter.Identify(location));
         }
 
         [Test]
         public void Test()
         {
-            Filter filter = new DiscImageChef.Filters.PCExchange();
+            Filter filter = new PCExchange();
             filter.Open(location);
             Assert.AreEqual(true, filter.IsOpened());
             Assert.AreEqual(737280, filter.GetDataForkLength());
@@ -80,7 +80,7 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckContents()
         {
-            Filter filter = new DiscImageChef.Filters.PCExchange();
+            Filter filter = new PCExchange();
             filter.Open(location);
             Stream str = filter.GetDataForkStream();
             byte[] data = new byte[737280];
@@ -90,14 +90,14 @@ namespace DiscImageChef.Tests.Filters
             filter.Close();
             Md5Context ctx = new Md5Context();
             ctx.Init();
-            string result = ctx.Data(data, out byte[] tmp);
-            Assert.AreEqual(ExpectedContents, result);
+            string result = ctx.Data(data, out _);
+            Assert.AreEqual(EXPECTED_CONTENTS, result);
         }
 
         [Test]
         public void CheckResource()
         {
-            Filter filter = new DiscImageChef.Filters.PCExchange();
+            Filter filter = new PCExchange();
             filter.Open(location);
             Stream str = filter.GetResourceForkStream();
             byte[] data = new byte[546];
@@ -107,8 +107,8 @@ namespace DiscImageChef.Tests.Filters
             filter.Close();
             Md5Context ctx = new Md5Context();
             ctx.Init();
-            string result = ctx.Data(data, out byte[] tmp);
-            Assert.AreEqual(ExpectedResource, result);
+            string result = ctx.Data(data, out _);
+            Assert.AreEqual(EXPECTED_RESOURCE, result);
         }
     }
 }

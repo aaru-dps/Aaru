@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class MINIX
+    public class Minix
     {
         readonly string[] testfiles = {"minix_3.1.2a.vdi.lz"};
 

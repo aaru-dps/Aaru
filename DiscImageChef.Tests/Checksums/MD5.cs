@@ -33,7 +33,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class MD5
+    public class Md5
     {
         static readonly byte[] ExpectedEmpty =
             {0xb6, 0xd8, 0x1b, 0x36, 0x0a, 0x56, 0x72, 0xd8, 0x0c, 0x27, 0x43, 0x0f, 0x39, 0x15, 0x3e, 0x2c};
@@ -41,7 +41,7 @@ namespace DiscImageChef.Tests.Checksums
             {0xd7, 0x8f, 0x0e, 0xec, 0x41, 0x7b, 0xe3, 0x86, 0x21, 0x9b, 0x21, 0xb7, 0x00, 0x04, 0x4b, 0x95};
 
         [Test]
-        public void MD5EmptyFile()
+        public void Md5EmptyFile()
         {
             Md5Context ctx = new Md5Context();
             ctx.Init();
@@ -50,7 +50,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void MD5EmptyData()
+        public void Md5EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -65,7 +65,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void MD5EmptyInstance()
+        public void Md5EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -81,7 +81,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void MD5RandomFile()
+        public void Md5RandomFile()
         {
             Md5Context ctx = new Md5Context();
             ctx.Init();
@@ -90,7 +90,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void MD5RandomData()
+        public void Md5RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
@@ -105,7 +105,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void MD5RandomInstance()
+        public void Md5RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,

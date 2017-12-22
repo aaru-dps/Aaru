@@ -33,7 +33,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class SHA384
+    public class Sha384
     {
         static readonly byte[] ExpectedEmpty =
         {
@@ -49,7 +49,7 @@ namespace DiscImageChef.Tests.Checksums
         };
 
         [Test]
-        public void SHA384EmptyFile()
+        public void Sha384EmptyFile()
         {
             Sha384Context ctx = new Sha384Context();
             ctx.Init();
@@ -58,7 +58,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA384EmptyData()
+        public void Sha384EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -73,7 +73,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA384EmptyInstance()
+        public void Sha384EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
@@ -89,7 +89,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA384RandomFile()
+        public void Sha384RandomFile()
         {
             Sha384Context ctx = new Sha384Context();
             ctx.Init();
@@ -98,7 +98,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA384RandomData()
+        public void Sha384RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
@@ -113,7 +113,7 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA384RandomInstance()
+        public void Sha384RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
