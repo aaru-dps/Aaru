@@ -137,27 +137,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "QEMU Copy-On-Write disk image";
             PluginUuid = new Guid("A5C35765-9FE2-469D-BBBF-ACDEBDB7B954");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = "1";
-            ImageInfo.ImageApplication = "QEMU";
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = "1",
+                ImageApplication = "QEMU",
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -279,8 +281,7 @@ namespace DiscImageChef.DiscImages
             clusterCache = new Dictionary<ulong, byte[]>();
 
             ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            if(qHdr.mtime > 0) ImageInfo.ImageLastModificationTime = DateHandlers.UNIXUnsignedToDateTime(qHdr.mtime);
-            else ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.ImageLastModificationTime = qHdr.mtime > 0 ? DateHandlers.UNIXUnsignedToDateTime(qHdr.mtime) : imageFilter.GetLastWriteTime();
             ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.Sectors = qHdr.size / 512;
             ImageInfo.SectorSize = 512;
@@ -301,10 +302,8 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
-
             // Check cache
-            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             ulong byteAddress = sectorAddress * 512;
 
@@ -317,9 +316,7 @@ namespace DiscImageChef.DiscImages
             // TODO: Implement differential images
             if(l1Table[l1Off] == 0) return new byte[512];
 
-            ulong[] l2Table;
-
-            if(!l2TableCache.TryGetValue(l1Off, out l2Table))
+            if(!l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
             {
                 l2Table = new ulong[l2Size];
                 imageStream.Seek((long)l1Table[l1Off], SeekOrigin.Begin);
@@ -342,8 +339,7 @@ namespace DiscImageChef.DiscImages
 
             if(offset != 0)
             {
-                byte[] cluster;
-                if(!clusterCache.TryGetValue(offset, out cluster))
+                if(!clusterCache.TryGetValue(offset, out byte[] cluster))
                 {
                     if((offset & QCOW_COMPRESSED) == QCOW_COMPRESSED)
                     {

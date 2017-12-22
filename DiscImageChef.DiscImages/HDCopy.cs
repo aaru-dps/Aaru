@@ -172,33 +172,33 @@ namespace DiscImageChef.DiscImages
         {
             Name = "HD-Copy disk image";
             PluginUuid = new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
         {
-            HdcpFileHeader fheader;
-
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
@@ -209,7 +209,7 @@ namespace DiscImageChef.DiscImages
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
             Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
-            fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
+            HdcpFileHeader fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
             /* Some sanity checks on the values we just read.
@@ -233,7 +233,6 @@ namespace DiscImageChef.DiscImages
 
         public override bool OpenImage(Filter imageFilter)
         {
-            HdcpFileHeader fheader;
             long currentOffset;
 
             Stream stream = imageFilter.GetDataForkStream();
@@ -244,7 +243,7 @@ namespace DiscImageChef.DiscImages
 
             IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
             Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
-            fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
+            HdcpFileHeader fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
             Marshal.FreeHGlobal(hdrPtr);
             DicConsole.DebugWriteLine("HDCP plugin",
                                       "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
@@ -376,9 +375,6 @@ namespace DiscImageChef.DiscImages
             byte[] trackData = new byte[ImageInfo.SectorSize * ImageInfo.SectorsPerTrack];
             byte[] blkHeader = new byte[3];
             byte escapeByte;
-            byte fillByte;
-            byte fillCount;
-            byte[] cBuffer;
             short compressedLength;
 
             // check that track is present
@@ -392,7 +388,7 @@ namespace DiscImageChef.DiscImages
             compressedLength = (short)(BitConverter.ToInt16(blkHeader, 0) - 1);
             escapeByte = blkHeader[2];
 
-            cBuffer = new byte[compressedLength];
+            byte[] cBuffer = new byte[compressedLength];
             stream.Read(cBuffer, 0, compressedLength);
 
             // decompress the data
@@ -402,8 +398,8 @@ namespace DiscImageChef.DiscImages
                 if(cBuffer[sIndex] == escapeByte)
                 {
                     sIndex++; // skip over escape byte
-                    fillByte = cBuffer[sIndex++]; // read fill byte
-                    fillCount = cBuffer[sIndex++]; // read fill count
+                    byte fillByte = cBuffer[sIndex++];
+                    byte fillCount = cBuffer[sIndex++];
                     // fill destination buffer
                     for(int i = 0; i < fillCount; i++) trackData[dIndex++] = fillByte;
                 }
@@ -421,7 +417,6 @@ namespace DiscImageChef.DiscImages
         {
             int trackNum = (int)(sectorAddress / ImageInfo.SectorsPerTrack);
             int sectorOffset = (int)(sectorAddress % (ImageInfo.SectorsPerTrack * ImageInfo.SectorSize));
-            byte[] result;
 
             if(sectorAddress > ImageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -429,7 +424,7 @@ namespace DiscImageChef.DiscImages
             if(trackNum > 2 * ImageInfo.Cylinders)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            result = new byte[ImageInfo.SectorSize];
+            byte[] result = new byte[ImageInfo.SectorSize];
             if(trackOffset[trackNum] == -1) Array.Clear(result, 0, (int)ImageInfo.SectorSize);
             else
             {

@@ -82,25 +82,27 @@ namespace DiscImageChef.DiscImages
         {
             Name = "MAXI Disk image";
             PluginUuid = new Guid("D27D924A-7034-466E-ADE1-B81EF37E469E");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageApplication = "MAXI Disk";
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageApplication = "MAXI Disk",
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -113,38 +115,37 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            HdkHeader tmp_header;
             IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
-            tmp_header = (HdkHeader)Marshal.PtrToStructure(ftrPtr, typeof(HdkHeader));
+            HdkHeader tmpHeader = (HdkHeader)Marshal.PtrToStructure(ftrPtr, typeof(HdkHeader));
             Marshal.FreeHGlobal(ftrPtr);
 
-            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown = {0}", tmp_header.unknown);
-            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.diskType = {0}", tmp_header.diskType);
-            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.heads = {0}", tmp_header.heads);
-            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.cylinders = {0}", tmp_header.cylinders);
-            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.bytesPerSector = {0}", tmp_header.bytesPerSector);
+            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown = {0}", tmpHeader.unknown);
+            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.diskType = {0}", tmpHeader.diskType);
+            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.heads = {0}", tmpHeader.heads);
+            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.cylinders = {0}", tmpHeader.cylinders);
+            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.bytesPerSector = {0}", tmpHeader.bytesPerSector);
             DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.sectorsPerTrack = {0}",
-                                      tmp_header.sectorsPerTrack);
-            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown2 = {0}", tmp_header.unknown2);
-            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown3 = {0}", tmp_header.unknown3);
+                                      tmpHeader.sectorsPerTrack);
+            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown2 = {0}", tmpHeader.unknown2);
+            DicConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown3 = {0}", tmpHeader.unknown3);
 
             // This is hardcoded
             // But its possible values are unknown...
             //if(tmp_header.diskType > 11)
-            //	return false;
+            //    return false;
 
             // Only floppies supported
-            if(tmp_header.heads == 0 || tmp_header.heads > 2) return false;
+            if(tmpHeader.heads == 0 || tmpHeader.heads > 2) return false;
 
             // No floppies with more than this?
-            if(tmp_header.cylinders > 90) return false;
+            if(tmpHeader.cylinders > 90) return false;
 
             // Maximum supported bps is 16384
-            if(tmp_header.bytesPerSector > 7) return false;
+            if(tmpHeader.bytesPerSector > 7) return false;
 
-            int expectedFileSize = tmp_header.heads * tmp_header.cylinders * tmp_header.sectorsPerTrack *
-                                   (128 << tmp_header.bytesPerSector) + 8;
+            int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
+                                   (128 << tmpHeader.bytesPerSector) + 8;
 
             return expectedFileSize == stream.Length;
         }
@@ -159,36 +160,35 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            HdkHeader tmp_header;
             IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
-            tmp_header = (HdkHeader)Marshal.PtrToStructure(ftrPtr, typeof(HdkHeader));
+            HdkHeader tmpHeader = (HdkHeader)Marshal.PtrToStructure(ftrPtr, typeof(HdkHeader));
             Marshal.FreeHGlobal(ftrPtr);
 
             // This is hardcoded
             // But its possible values are unknown...
             //if(tmp_header.diskType > 11)
-            //	return false;
+            //    return false;
 
             // Only floppies supported
-            if(tmp_header.heads == 0 || tmp_header.heads > 2) return false;
+            if(tmpHeader.heads == 0 || tmpHeader.heads > 2) return false;
 
             // No floppies with more than this?
-            if(tmp_header.cylinders > 90) return false;
+            if(tmpHeader.cylinders > 90) return false;
 
             // Maximum supported bps is 16384
-            if(tmp_header.bytesPerSector > 7) return false;
+            if(tmpHeader.bytesPerSector > 7) return false;
 
-            int expectedFileSize = tmp_header.heads * tmp_header.cylinders * tmp_header.sectorsPerTrack *
-                                   (128 << tmp_header.bytesPerSector) + 8;
+            int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
+                                   (128 << tmpHeader.bytesPerSector) + 8;
 
             if(expectedFileSize != stream.Length) return false;
 
-            ImageInfo.Cylinders = tmp_header.cylinders;
-            ImageInfo.Heads = tmp_header.heads;
-            ImageInfo.SectorsPerTrack = tmp_header.sectorsPerTrack;
-            ImageInfo.Sectors = (ulong)(tmp_header.heads * tmp_header.cylinders * tmp_header.sectorsPerTrack);
-            ImageInfo.SectorSize = (uint)(128 << tmp_header.bytesPerSector);
+            ImageInfo.Cylinders = tmpHeader.cylinders;
+            ImageInfo.Heads = tmpHeader.heads;
+            ImageInfo.SectorsPerTrack = tmpHeader.sectorsPerTrack;
+            ImageInfo.Sectors = (ulong)(tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack);
+            ImageInfo.SectorSize = (uint)(128 << tmpHeader.bytesPerSector);
 
             hdkImageFilter = imageFilter;
 

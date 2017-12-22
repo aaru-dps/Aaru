@@ -159,7 +159,6 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
 
             byte[] hdr = new byte[40];
-            byte[] cmt;
 
             stream.Read(hdr, 0, 40);
             header = new SaveDskFHeader();
@@ -190,7 +189,7 @@ namespace DiscImageChef.DiscImages
 
             if(header.dataOffset == 0 && header.magic == SDF_MAGIC_OLD) header.dataOffset = 512;
 
-            cmt = new byte[header.dataOffset - header.commentOffset];
+            byte[] cmt = new byte[header.dataOffset - header.commentOffset];
             stream.Seek(header.commentOffset, SeekOrigin.Begin);
             stream.Read(cmt, 0, cmt.Length);
             if(cmt.Length > 1) ImageInfo.ImageComments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));

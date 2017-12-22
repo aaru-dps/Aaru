@@ -58,6 +58,8 @@ namespace DiscImageChef.DiscImages
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] public byte[] creator;
         }
 
+#pragma warning disable 649
+#pragma warning disable 169
         struct VhdxHeader
         {
             /// <summary>
@@ -102,6 +104,8 @@ namespace DiscImageChef.DiscImages
             public ulong LogOffset;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4016)] public byte[] Reserved;
         }
+#pragma warning restore 649
+#pragma warning restore 169
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VhdxRegionTableHeader
@@ -332,27 +336,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Microsoft VHDX";
             PluginUuid = new Guid("536B141B-D09C-4799-AB70-34631286EB9D");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         #region public methods
@@ -502,9 +508,11 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(fileParamsOff + metadataOffset, SeekOrigin.Begin);
                 tmp = new byte[8];
                 stream.Read(tmp, 0, 8);
-                vFileParms = new VhdxFileParameters();
-                vFileParms.blockSize = BitConverter.ToUInt32(tmp, 0);
-                vFileParms.flags = BitConverter.ToUInt32(tmp, 4);
+                vFileParms = new VhdxFileParameters
+                {
+                    blockSize = BitConverter.ToUInt32(tmp, 0),
+                    flags = BitConverter.ToUInt32(tmp, 4)
+                };
             }
             else throw new Exception("File parameters not found.");
 
@@ -578,7 +586,6 @@ namespace DiscImageChef.DiscImages
             {
                 parentImage = new Vhdx();
                 bool parentWorks = false;
-                Filter parentFilter;
 
                 foreach(VhdxParentLocatorEntry parentEntry in vPars)
                 {
@@ -587,6 +594,7 @@ namespace DiscImageChef.DiscImages
                     stream.Read(tmpKey, 0, tmpKey.Length);
                     string entryType = Encoding.Unicode.GetString(tmpKey);
 
+                    Filter parentFilter;
                     if(string.Compare(entryType, RELATIVE_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         stream.Seek(parentEntry.valueOffset + metadataOffset, SeekOrigin.Begin);
@@ -617,7 +625,8 @@ namespace DiscImageChef.DiscImages
                             parentWorks = true;
                             break;
                         }
-                        catch { }
+                        catch { // ignored
+ }
                     }
                     else if(string.Compare(entryType, VOLUME_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(entryType, ABSOLUTE_WIN32_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0)
@@ -636,7 +645,8 @@ namespace DiscImageChef.DiscImages
                             parentWorks = true;
                             break;
                         }
-                        catch { }
+                        catch { // ignored
+ }
                     }
                 }
 
@@ -820,9 +830,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
-
-            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             ulong index = sectorAddress * logicalSectorSize / vFileParms.blockSize;
             ulong secOff = sectorAddress * logicalSectorSize % vFileParms.blockSize;
@@ -845,9 +853,7 @@ namespace DiscImageChef.DiscImages
 
             if(partialBlock && hasParent && !CheckBitmap(sectorAddress)) return parentImage.ReadSector(sectorAddress);
 
-            byte[] block;
-
-            if(!blockCache.TryGetValue(blkPtr & BAT_FILE_OFFSET_MASK, out block))
+            if(!blockCache.TryGetValue(blkPtr & BAT_FILE_OFFSET_MASK, out byte[] block))
             {
                 block = new byte[vFileParms.blockSize];
                 imageStream.Seek((long)(blkPtr & BAT_FILE_OFFSET_MASK), SeekOrigin.Begin);

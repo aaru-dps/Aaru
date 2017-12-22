@@ -363,27 +363,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "VirtualPC";
             PluginUuid = new Guid("8014d88f-64cd-4484-9441-7635c632958a");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         #region public methods
@@ -473,23 +475,25 @@ namespace DiscImageChef.DiscImages
                 throw new
                     ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
 
-            thisFooter = new HardDiskFooter();
-            thisFooter.Cookie = BigEndianBitConverter.ToUInt64(usableHeader, 0x00);
-            thisFooter.Features = BigEndianBitConverter.ToUInt32(usableHeader, 0x08);
-            thisFooter.Version = BigEndianBitConverter.ToUInt32(usableHeader, 0x0C);
-            thisFooter.Offset = BigEndianBitConverter.ToUInt64(usableHeader, 0x10);
-            thisFooter.Timestamp = BigEndianBitConverter.ToUInt32(usableHeader, 0x18);
-            thisFooter.CreatorApplication = BigEndianBitConverter.ToUInt32(usableHeader, 0x1C);
-            thisFooter.CreatorVersion = BigEndianBitConverter.ToUInt32(usableHeader, 0x20);
-            thisFooter.CreatorHostOs = BigEndianBitConverter.ToUInt32(usableHeader, 0x24);
-            thisFooter.OriginalSize = BigEndianBitConverter.ToUInt64(usableHeader, 0x28);
-            thisFooter.CurrentSize = BigEndianBitConverter.ToUInt64(usableHeader, 0x30);
-            thisFooter.DiskGeometry = BigEndianBitConverter.ToUInt32(usableHeader, 0x38);
-            thisFooter.DiskType = BigEndianBitConverter.ToUInt32(usableHeader, 0x3C);
-            thisFooter.Checksum = usableChecksum;
-            thisFooter.UniqueId = BigEndianBitConverter.ToGuid(usableHeader, 0x44);
-            thisFooter.SavedState = usableHeader[0x54];
-            thisFooter.Reserved = new byte[usableHeader.Length - 0x55];
+            thisFooter = new HardDiskFooter
+            {
+                Cookie = BigEndianBitConverter.ToUInt64(usableHeader, 0x00),
+                Features = BigEndianBitConverter.ToUInt32(usableHeader, 0x08),
+                Version = BigEndianBitConverter.ToUInt32(usableHeader, 0x0C),
+                Offset = BigEndianBitConverter.ToUInt64(usableHeader, 0x10),
+                Timestamp = BigEndianBitConverter.ToUInt32(usableHeader, 0x18),
+                CreatorApplication = BigEndianBitConverter.ToUInt32(usableHeader, 0x1C),
+                CreatorVersion = BigEndianBitConverter.ToUInt32(usableHeader, 0x20),
+                CreatorHostOs = BigEndianBitConverter.ToUInt32(usableHeader, 0x24),
+                OriginalSize = BigEndianBitConverter.ToUInt64(usableHeader, 0x28),
+                CurrentSize = BigEndianBitConverter.ToUInt64(usableHeader, 0x30),
+                DiskGeometry = BigEndianBitConverter.ToUInt32(usableHeader, 0x38),
+                DiskType = BigEndianBitConverter.ToUInt32(usableHeader, 0x3C),
+                Checksum = usableChecksum,
+                UniqueId = BigEndianBitConverter.ToGuid(usableHeader, 0x44),
+                SavedState = usableHeader[0x54],
+                Reserved = new byte[usableHeader.Length - 0x55]
+            };
             Array.Copy(usableHeader, 0x55, thisFooter.Reserved, 0, usableHeader.Length - 0x55);
 
             thisDateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -673,9 +677,8 @@ namespace DiscImageChef.DiscImages
                     throw new
                         ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
 
-                thisDynamic = new DynamicDiskHeader();
-                thisDynamic.LocatorEntries = new ParentLocatorEntry[8];
-                thisDynamic.Reserved2 = new byte[256];
+                thisDynamic =
+                    new DynamicDiskHeader {LocatorEntries = new ParentLocatorEntry[8], Reserved2 = new byte[256]};
 
                 for(int i = 0; i < 8; i++) thisDynamic.LocatorEntries[i] = new ParentLocatorEntry();
 
@@ -775,7 +778,6 @@ namespace DiscImageChef.DiscImages
                 uint batSectorCount = (uint)Math.Ceiling((double)thisDynamic.MaxTableEntries * 4 / 512);
 
                 byte[] batSectorBytes = new byte[512];
-                BatSector batSector;
 
                 // Unsafe and fast code. It takes 4 ms to fill a 30720 entries BAT
                 for(int i = 0; i < batSectorCount; i++)
@@ -785,7 +787,7 @@ namespace DiscImageChef.DiscImages
                     // This does the big-endian trick but reverses the order of elements also
                     Array.Reverse(batSectorBytes);
                     GCHandle handle = GCHandle.Alloc(batSectorBytes, GCHandleType.Pinned);
-                    batSector = (BatSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BatSector));
+                    BatSector batSector = (BatSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BatSector));
                     handle.Free();
                     // This restores the order of elements
                     Array.Reverse(batSector.blockPointer);
@@ -1053,7 +1055,7 @@ namespace DiscImageChef.DiscImages
                     thisStream.Read(bitmap, 0, (int)bitmapSize * 512);
 
                     byte mask = (byte)(1 << (7 - bitmapBit));
-                    bool dirty = false || (bitmap[bitmapByte] & mask) == mask;
+                    bool dirty = (bitmap[bitmapByte] & mask) == mask;
 
                     /*
                     DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapSize = {0}", bitmapSize);
@@ -1099,10 +1101,8 @@ namespace DiscImageChef.DiscImages
             {
                 case TYPE_FIXED:
                 {
-                    Stream thisStream;
-
                     byte[] data = new byte[512 * length];
-                    thisStream = thisFilter.GetDataForkStream();
+                    Stream thisStream = thisFilter.GetDataForkStream();
 
                     thisStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
                     thisStream.Read(data, 0, (int)(512 * length));
@@ -1115,8 +1115,6 @@ namespace DiscImageChef.DiscImages
                 // as long as it is in the block.
                 case TYPE_DYNAMIC:
                 {
-                    Stream thisStream;
-
                     // Block number for BAT searching
                     uint blockNumber = (uint)Math.Floor((sectorAddress / (thisDynamic.BlockSize / 512.0)));
                     // Sector number inside of block
@@ -1124,8 +1122,6 @@ namespace DiscImageChef.DiscImages
                     // How many sectors before reaching end of block
                     uint remainingInBlock = thisDynamic.BlockSize / 512 - sectorInBlock;
 
-                    // Data that can be read in this block
-                    byte[] prefix;
                     // Data that needs to be read from another block
                     byte[] suffix = null;
 
@@ -1142,12 +1138,13 @@ namespace DiscImageChef.DiscImages
 
                     // Offset of sector in file
                     uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
-                    prefix = new byte[sectorsToReadHere * 512];
+                    // Data that can be read in this block
+                    byte[] prefix = new byte[sectorsToReadHere * 512];
 
                     // 0xFFFFFFFF means unallocated
                     if(sectorOffset != 0xFFFFFFFF)
                     {
-                        thisStream = thisFilter.GetDataForkStream();
+                        Stream thisStream = thisFilter.GetDataForkStream();
                         thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
                         thisStream.Read(prefix, 0, (int)(512 * sectorsToReadHere));
                     }
@@ -1192,7 +1189,7 @@ namespace DiscImageChef.DiscImages
         #endregion
 
         #region private methods
-        static uint VhdChecksum(byte[] data)
+        static uint VhdChecksum(IEnumerable<byte> data)
         {
             uint checksum = data.Aggregate<byte, uint>(0, (current, b) => current + b);
 

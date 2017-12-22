@@ -172,27 +172,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Sydex CopyQM";
             PluginUuid = new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         #region Public methods
@@ -218,7 +220,6 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
 
             byte[] hdr = new byte[133];
-            byte[] cmt;
 
             stream.Read(hdr, 0, 133);
             header = new CopyQmHeader();
@@ -257,7 +258,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("CopyQM plugin", "header.skew = {0}", header.skew);
             DicConsole.DebugWriteLine("CopyQM plugin", "header.drive = {0}", header.drive);
 
-            cmt = new byte[header.commentLength];
+            byte[] cmt = new byte[header.commentLength];
             stream.Read(cmt, 0, header.commentLength);
             ImageInfo.ImageComments = StringHandlers.CToString(cmt);
             decodedImage = new MemoryStream();
@@ -290,9 +291,8 @@ namespace DiscImageChef.DiscImages
                     stream.Read(nonRepeated, 0, runLength);
                     decodedImage.Write(nonRepeated, 0, runLength);
 
-                    for(int i = 0; i < nonRepeated.Length; i++)
-                        calculatedDataCrc = copyQmCrcTable[(nonRepeated[i] ^ calculatedDataCrc) & 0x3F] ^
-                                            (calculatedDataCrc >> 8);
+                    foreach(byte c in nonRepeated) calculatedDataCrc = copyQmCrcTable[(c ^ calculatedDataCrc) & 0x3F] ^
+                                                                       (calculatedDataCrc >> 8);
                 }
             }
 
@@ -312,7 +312,7 @@ namespace DiscImageChef.DiscImages
             FileStream debugStream = new FileStream("debug.img", FileMode.CreateNew, FileAccess.ReadWrite);
             debugStream.Write(decodedImage.ToArray(), 0, (int)decodedImage.Length);
             debugStream.Close();
-			*/
+            */
 
             int sum = 0;
             for(int i = 0; i < hdr.Length - 1; i++) sum += hdr[i];

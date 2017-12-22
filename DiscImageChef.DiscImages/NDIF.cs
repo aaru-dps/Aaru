@@ -194,7 +194,7 @@ namespace DiscImageChef.DiscImages
         Dictionary<ulong, byte[]> chunkCache;
         const uint MAX_CACHE_SIZE = 16777216;
         const uint SECTOR_SIZE = 512;
-        uint maxCachedSectors = MAX_CACHE_SIZE / SECTOR_SIZE;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
         uint currentChunkCacheSize;
         uint buffersize;
 
@@ -204,38 +204,38 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Apple New Disk Image Format";
             PluginUuid = new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
         {
             if(!imageFilter.HasResourceFork() || imageFilter.GetResourceForkLength() == 0) return false;
 
-            ResourceFork rsrcFork;
-
             try
             {
-                rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+                ResourceFork rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
                 if(!rsrcFork.ContainsKey(NDIF_RESOURCE)) return false;
 
                 Resource rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
@@ -375,14 +375,12 @@ namespace DiscImageChef.DiscImages
 
                     Version version = new Version(vers);
 
-                    string major;
-                    string minor;
                     string release = null;
                     string dev = null;
                     string pre = null;
 
-                    major = $"{version.MajorVersion}";
-                    minor = $".{version.MinorVersion / 10}";
+                    string major = $"{version.MajorVersion}";
+                    string minor = $".{version.MinorVersion / 10}";
                     if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
                     switch(version.DevStage)
                     {
@@ -467,9 +465,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
-
-            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             BlockChunk currentChunk = new BlockChunk();
             bool chunkFound = false;
@@ -493,8 +489,7 @@ namespace DiscImageChef.DiscImages
 
             if((currentChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
             {
-                byte[] buffer;
-                if(!chunkCache.TryGetValue(chunkStartSector, out buffer))
+                if(!chunkCache.TryGetValue(chunkStartSector, out byte[] buffer))
                 {
                     byte[] cmpBuffer = new byte[currentChunk.length];
                     imageStream.Seek(currentChunk.offset, SeekOrigin.Begin);
@@ -502,7 +497,7 @@ namespace DiscImageChef.DiscImages
                     MemoryStream cmpMs = new MemoryStream(cmpBuffer);
                     Stream decStream;
 
-                    if(currentChunk.type == CHUNK_TYPE_ADC) decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
+                    if(currentChunk.type == CHUNK_TYPE_ADC) decStream = new ADCStream(cmpMs);
                     else
                         throw new ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
 
@@ -524,7 +519,7 @@ namespace DiscImageChef.DiscImages
                 sector = new byte[SECTOR_SIZE];
                 Array.Copy(buffer, relOff, sector, 0, SECTOR_SIZE);
 
-                if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
                 sectorCache.Add(sectorAddress, sector);
 
@@ -535,7 +530,7 @@ namespace DiscImageChef.DiscImages
                 case CHUNK_TYPE_NOCOPY:
                     sector = new byte[SECTOR_SIZE];
 
-                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                    if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
                     sectorCache.Add(sectorAddress, sector);
                     return sector;
@@ -544,7 +539,7 @@ namespace DiscImageChef.DiscImages
                     sector = new byte[SECTOR_SIZE];
                     imageStream.Read(sector, 0, sector.Length);
 
-                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                    if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
                     sectorCache.Add(sectorAddress, sector);
                     return sector;

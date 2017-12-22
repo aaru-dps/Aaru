@@ -259,9 +259,8 @@ namespace DiscImageChef.DiscImages
                 if(t >= Header.offsets.Length) break;
 
                 scpStream.Position = Header.offsets[t];
-                TrackHeader trk = new TrackHeader();
-                trk.Signature = new byte[3];
-                trk.Entries = new TrackEntry[Header.revolutions];
+                TrackHeader trk =
+                    new TrackHeader {Signature = new byte[3], Entries = new TrackEntry[Header.revolutions]};
                 scpStream.Read(trk.Signature, 0, trk.Signature.Length);
                 trk.TrackNumber = (byte)scpStream.ReadByte();
 
@@ -370,13 +369,9 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageComments = \"{0}\"",
                                                   ImageInfo.ImageComments);
 
-                        if(footer.creationTime != 0)
-                            ImageInfo.ImageCreationTime = DateHandlers.UNIXToDateTime(footer.creationTime);
-                        else ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
+                        ImageInfo.ImageCreationTime = footer.creationTime != 0 ? DateHandlers.UNIXToDateTime(footer.creationTime) : imageFilter.GetCreationTime();
 
-                        if(footer.modificationTime != 0)
-                            ImageInfo.ImageLastModificationTime = DateHandlers.UNIXToDateTime(footer.modificationTime);
-                        else ImageInfo.ImageLastModificationTime = imageFilter.GetLastWriteTime();
+                        ImageInfo.ImageLastModificationTime = footer.modificationTime != 0 ? DateHandlers.UNIXToDateTime(footer.modificationTime) : imageFilter.GetLastWriteTime();
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}",
                                                   ImageInfo.ImageCreationTime);
@@ -407,7 +402,7 @@ namespace DiscImageChef.DiscImages
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        string ReadPStringUtf8(Stream stream, uint position)
+        static string ReadPStringUtf8(Stream stream, uint position)
         {
             if(position == 0) return null;
 

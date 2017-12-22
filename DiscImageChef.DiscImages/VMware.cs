@@ -175,7 +175,7 @@ namespace DiscImageChef.DiscImages
 
         const uint MAX_CACHE_SIZE = 16777216;
         const uint SECTOR_SIZE = 512;
-        uint maxCachedSectors = MAX_CACHE_SIZE / SECTOR_SIZE;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
         uint maxCachedGrains;
 
         ImagePlugin parentImage;
@@ -189,27 +189,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "VMware disk image";
             PluginUuid = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = "VMware";
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = "VMware",
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -358,13 +360,15 @@ namespace DiscImageChef.DiscImages
 
                         if(extHdrCow.magic != VMWARE_COW_MAGIC) break;
 
-                        VMwareExtent newExtent = new VMwareExtent();
-                        newExtent.Access = "RW";
-                        newExtent.Filter = extentFilter;
-                        newExtent.Filename = extentFilter.GetFilename();
-                        newExtent.Offset = 0;
-                        newExtent.Sectors = extHdrCow.sectors;
-                        newExtent.Type = "SPARSE";
+                        VMwareExtent newExtent = new VMwareExtent
+                        {
+                            Access = "RW",
+                            Filter = extentFilter,
+                            Filename = extentFilter.GetFilename(),
+                            Offset = 0,
+                            Sectors = extHdrCow.sectors,
+                            Type = "SPARSE"
+                        };
 
                         DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
                                                   newExtent.Sectors, newExtent.Type, newExtent.Filename,
@@ -394,31 +398,21 @@ namespace DiscImageChef.DiscImages
                 Regex regexHeads = new Regex(DDB_HEADS_REGEX);
                 Regex regexSectors = new Regex(DDB_SECTORS_REGEX);
 
-                Match matchVersion;
-                Match matchCid;
-                Match matchParentCid;
-                Match matchType;
-                Match matchExtent;
-                Match matchParent;
-                Match matchCylinders;
-                Match matchHeads;
-                Match matchSectors;
-
                 StreamReader ddfStreamRdr = new StreamReader(ddfStream);
 
                 while(ddfStreamRdr.Peek() >= 0)
                 {
                     string line = ddfStreamRdr.ReadLine();
 
-                    matchVersion = regexVersion.Match(line);
-                    matchCid = regexCid.Match(line);
-                    matchParentCid = regexParentCid.Match(line);
-                    matchType = regexType.Match(line);
-                    matchExtent = regexExtent.Match(line);
-                    matchParent = regexParent.Match(line);
-                    matchCylinders = regexCylinders.Match(line);
-                    matchHeads = regexHeads.Match(line);
-                    matchSectors = regexSectors.Match(line);
+                    Match matchVersion = regexVersion.Match(line);
+                    Match matchCid = regexCid.Match(line);
+                    Match matchParentCid = regexParentCid.Match(line);
+                    Match matchType = regexType.Match(line);
+                    Match matchExtent = regexExtent.Match(line);
+                    Match matchParent = regexParent.Match(line);
+                    Match matchCylinders = regexCylinders.Match(line);
+                    Match matchHeads = regexHeads.Match(line);
+                    Match matchSectors = regexSectors.Match(line);
 
                     if(matchVersion.Success)
                     {
@@ -442,8 +436,7 @@ namespace DiscImageChef.DiscImages
                     }
                     else if(matchExtent.Success)
                     {
-                        VMwareExtent newExtent = new VMwareExtent();
-                        newExtent.Access = matchExtent.Groups["access"].Value;
+                        VMwareExtent newExtent = new VMwareExtent {Access = matchExtent.Groups["access"].Value};
                         if(!embedded)
                             newExtent.Filter =
                                 new FiltersList()
@@ -512,7 +505,7 @@ namespace DiscImageChef.DiscImages
                     throw new ImageNotSupportedException($"Dunno how to handle \"{imageType}\" extents.");
             }
 
-            bool oneNoFlat = false || cowD;
+            bool oneNoFlat = cowD;
 
             foreach(VMwareExtent extent in extents.Values)
             {
@@ -689,8 +682,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.MediaType = MediaType.GENERIC_HDD;
             ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
             // VMDK version 1 started on VMware 4, so there is a previous version, "COWD"
-            if(cowD) ImageInfo.ImageVersion = $"{version}";
-            else ImageInfo.ImageVersion = $"{version + 3}";
+            ImageInfo.ImageVersion = cowD ? $"{version}" : $"{version + 3}";
 
             if(cowD)
             {
@@ -714,9 +706,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
-
-            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             VMwareExtent currentExtent = new VMwareExtent();
             bool extentFound = false;
@@ -738,7 +728,7 @@ namespace DiscImageChef.DiscImages
                 case "ZERO":
                     sector = new byte[SECTOR_SIZE];
 
-                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                    if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
                     sectorCache.Add(sectorAddress, sector);
                     return sector;
@@ -750,7 +740,7 @@ namespace DiscImageChef.DiscImages
                     sector = new byte[SECTOR_SIZE];
                     dataStream.Read(sector, 0, sector.Length);
 
-                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                    if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
                     sectorCache.Add(sectorAddress, sector);
                     return sector;
@@ -767,15 +757,13 @@ namespace DiscImageChef.DiscImages
             {
                 sector = new byte[SECTOR_SIZE];
 
-                if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
                 sectorCache.Add(sectorAddress, sector);
                 return sector;
             }
 
-            byte[] grain;
-
-            if(!grainCache.TryGetValue(grainOff, out grain))
+            if(!grainCache.TryGetValue(grainOff, out byte[] grain))
             {
                 grain = new byte[SECTOR_SIZE * grainSize];
                 dataStream = currentExtent.Filter.GetDataForkStream();
@@ -790,7 +778,7 @@ namespace DiscImageChef.DiscImages
             sector = new byte[SECTOR_SIZE];
             Array.Copy(grain, (int)secOff, sector, 0, SECTOR_SIZE);
 
-            if(sectorCache.Count > maxCachedSectors) sectorCache.Clear();
+            if(sectorCache.Count > MAX_CACHED_SECTORS) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 

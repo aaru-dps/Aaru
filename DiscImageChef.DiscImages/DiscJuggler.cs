@@ -57,24 +57,26 @@ namespace DiscImageChef.DiscImages
         {
             Name = "DiscJuggler";
             PluginUuid = new Guid("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = true;
-            ImageInfo.ImageHasSessions = true;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageName = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = true,
+                ImageHasSessions = true,
+                ImageVersion = null,
+                ImageApplicationVersion = null,
+                ImageName = null,
+                ImageCreator = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -163,10 +165,12 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("DiscJuggler plugin", "maxT = {0}", maxT);
 
                 sessionSequence++;
-                Session session = new Session();
-                session.SessionSequence = sessionSequence;
-                session.EndTrack = uint.MinValue;
-                session.StartTrack = uint.MaxValue;
+                Session session = new Session
+                {
+                    SessionSequence = sessionSequence,
+                    EndTrack = uint.MinValue,
+                    StartTrack = uint.MaxValue
+                };
 
                 position += 15;
                 bool addedATrack = false;
@@ -496,15 +500,17 @@ namespace DiscImageChef.DiscImages
                             ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                     }
 
-                    Partition partition = new Partition();
-                    partition.Description = track.TrackDescription;
-                    partition.Size = (ulong)(trackLen * track.TrackBytesPerSector);
-                    partition.Length = trackLen;
+                    Partition partition = new Partition
+                    {
+                        Description = track.TrackDescription,
+                        Size = (ulong)(trackLen * track.TrackBytesPerSector),
+                        Length = trackLen,
+                        Sequence = track.TrackSequence,
+                        Offset = track.TrackFileOffset,
+                        Start = track.TrackStartSector,
+                        Type = track.TrackType.ToString()
+                    };
                     ImageInfo.Sectors += partition.Length;
-                    partition.Sequence = track.TrackSequence;
-                    partition.Offset = track.TrackFileOffset;
-                    partition.Start = track.TrackStartSector;
-                    partition.Type = track.TrackType.ToString();
                     partitions.Add(partition);
                     offsetmap.Add(track.TrackSequence, track.TrackStartSector);
                     tracks.Add(track);
@@ -695,41 +701,39 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in tracks where _track.TrackSequence == kvp.Key where sectorAddress < _track.TrackEndSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress < track.TrackEndSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap.Where(kvp => sectorAddress >= kvp.Value).Where(kvp => tracks.Where(_track => _track.TrackSequence == kvp.Key).Any(_track => sectorAddress < _track.TrackEndSector))) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in offsetmap.Where(kvp => sectorAddress >= kvp.Value).Where(kvp => tracks.Where(track => track.TrackSequence == kvp.Key).Any(track => sectorAddress < track.TrackEndSector))) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            Track _track = new Track();
+            Track dicTrack = new Track {TrackSequence = 0};
 
-            _track.TrackSequence = 0;
-
-            foreach(Track __track in tracks.Where(__track => __track.TrackSequence == track)) {
-                _track = __track;
+            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track)) {
+                dicTrack = linqTrack;
                 break;
             }
 
-            if(_track.TrackSequence == 0)
+            if(dicTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > _track.TrackEndSector)
+            if(length + sectorAddress > dicTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip;
 
-            switch(_track.TrackType)
+            switch(dicTrack.TrackType)
             {
                 case TrackType.Audio:
                 {
@@ -739,7 +743,7 @@ namespace DiscImageChef.DiscImages
                     break;
                 }
                 case TrackType.CdMode1:
-                    if(_track.TrackRawBytesPerSector == 2352)
+                    if(dicTrack.TrackRawBytesPerSector == 2352)
                     {
                         sectorOffset = 16;
                         sectorSize = 2048;
@@ -753,7 +757,7 @@ namespace DiscImageChef.DiscImages
                     }
                     break;
                 case TrackType.CdMode2Formless:
-                    if(_track.TrackRawBytesPerSector == 2352)
+                    if(dicTrack.TrackRawBytesPerSector == 2352)
                     {
                         sectorOffset = 16;
                         sectorSize = 2336;
@@ -769,7 +773,7 @@ namespace DiscImageChef.DiscImages
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            switch(_track.TrackSubchannelType)
+            switch(dicTrack.TrackSubchannelType)
             {
                 case TrackSubchannelType.None:
                     sectorSkip += 0;
@@ -785,7 +789,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream.Seek((long)(_track.TrackFileOffset + sectorAddress * (ulong)_track.TrackRawBytesPerSector),
+            imageStream.Seek((long)(dicTrack.TrackFileOffset + sectorAddress * (ulong)dicTrack.TrackRawBytesPerSector),
                              SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) imageStream.Read(buffer, 0, buffer.Length);
             else
@@ -803,26 +807,23 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            Track _track = new Track();
+            Track dicTrack = new Track {TrackSequence = 0};
 
-            _track.TrackSequence = 0;
 
-            foreach(Track __track in tracks.Where(__track => __track.TrackSequence == track)) {
-                _track = __track;
+            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track)) {
+                dicTrack = linqTrack;
                 break;
             }
 
-            if(_track.TrackSequence == 0)
+            if(dicTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > _track.TrackEndSector)
+            if(length + sectorAddress > dicTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
-            if(_track.TrackType == TrackType.Data)
+            if(dicTrack.TrackType == TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
-
-            byte[] buffer;
 
             switch(tag)
             {
@@ -835,8 +836,7 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    byte flag;
-                    if(trackFlags.TryGetValue(track, out flag)) return new[] {flag};
+                    if(trackFlags.TryGetValue(track, out byte flag)) return new[] {flag};
 
                     throw new ArgumentException("Unsupported tag requested", nameof(tag));
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -846,10 +846,10 @@ namespace DiscImageChef.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(_track.TrackType)
+            switch(dicTrack.TrackType)
             {
                 case TrackType.CdMode1:
-                    if(_track.TrackRawBytesPerSector != 2352)
+                    if(dicTrack.TrackRawBytesPerSector != 2352)
                         throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
 
                     switch(tag)
@@ -899,7 +899,7 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            switch(_track.TrackSubchannelType) {
+                            switch(dicTrack.TrackSubchannelType) {
                                 case TrackSubchannelType.None: throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                                 case TrackSubchannelType.Q16Interleaved: throw new ArgumentException("Q16 subchannel not yet supported");
                             }
@@ -913,7 +913,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 case TrackType.CdMode2Formless:
-                    if(_track.TrackRawBytesPerSector != 2352)
+                    if(dicTrack.TrackRawBytesPerSector != 2352)
                         throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
 
                 {
@@ -940,7 +940,7 @@ namespace DiscImageChef.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            switch(_track.TrackSubchannelType) {
+                            switch(dicTrack.TrackSubchannelType) {
                                 case TrackSubchannelType.None: throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                                 case TrackSubchannelType.Q16Interleaved: throw new ArgumentException("Q16 subchannel not yet supported");
                             }
@@ -959,7 +959,7 @@ namespace DiscImageChef.DiscImages
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSubchannel:
-                            switch(_track.TrackSubchannelType) {
+                            switch(dicTrack.TrackSubchannelType) {
                                 case TrackSubchannelType.None: throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                                 case TrackSubchannelType.Q16Interleaved: throw new ArgumentException("Q16 subchannel not yet supported");
                             }
@@ -976,7 +976,7 @@ namespace DiscImageChef.DiscImages
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            switch(_track.TrackSubchannelType)
+            switch(dicTrack.TrackSubchannelType)
             {
                 case TrackSubchannelType.None:
                     sectorSkip += 0;
@@ -990,9 +990,9 @@ namespace DiscImageChef.DiscImages
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported subchannel type");
             }
 
-            buffer = new byte[sectorSize * length];
+            byte[] buffer = new byte[sectorSize * length];
 
-            imageStream.Seek((long)(_track.TrackFileOffset + sectorAddress * (ulong)_track.TrackRawBytesPerSector),
+            imageStream.Seek((long)(dicTrack.TrackFileOffset + sectorAddress * (ulong)dicTrack.TrackRawBytesPerSector),
                              SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) imageStream.Read(buffer, 0, buffer.Length);
             else
@@ -1027,27 +1027,25 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            Track _track = new Track();
+            Track dicTrack = new Track {TrackSequence = 0};
 
-            _track.TrackSequence = 0;
 
-            foreach(Track __track in tracks.Where(__track => __track.TrackSequence == track)) {
-                _track = __track;
+            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track)) {
+                dicTrack = linqTrack;
                 break;
             }
 
-            if(_track.TrackSequence == 0)
+            if(dicTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > _track.TrackEndSector)
+            if(length + sectorAddress > dicTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
-            uint sectorOffset = 0;
-            uint sectorSize = (uint)_track.TrackRawBytesPerSector;
+            uint sectorSize = (uint)dicTrack.TrackRawBytesPerSector;
             uint sectorSkip = 0;
 
-            switch(_track.TrackSubchannelType)
+            switch(dicTrack.TrackSubchannelType)
             {
                 case TrackSubchannelType.None:
                     sectorSkip += 0;
@@ -1063,14 +1061,13 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream.Seek((long)(_track.TrackFileOffset + sectorAddress * (ulong)_track.TrackRawBytesPerSector),
+            imageStream.Seek((long)(dicTrack.TrackFileOffset + sectorAddress * (ulong)dicTrack.TrackRawBytesPerSector),
                              SeekOrigin.Begin);
-            if(sectorOffset == 0 && sectorSkip == 0) imageStream.Read(buffer, 0, buffer.Length);
+            if(sectorSkip == 0) imageStream.Read(buffer, 0, buffer.Length);
             else
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector = new byte[sectorSize];
-                    imageStream.Seek(sectorOffset, SeekOrigin.Current);
                     imageStream.Read(sector, 0, sector.Length);
                     imageStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
@@ -1198,7 +1195,7 @@ namespace DiscImageChef.DiscImages
 
         public override List<Track> GetSessionTracks(ushort session)
         {
-            return tracks.Where(_track => _track.TrackSession == session).ToList();
+            return tracks.Where(track => track.TrackSession == session).ToList();
         }
 
         public override List<Session> GetSessions()

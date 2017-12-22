@@ -151,6 +151,7 @@ namespace DiscImageChef.DiscImages
                                         case 2: ImageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
                                             break;
                                     }
+
                                     break;
                                 case 9:
                                     switch(fdihdr.heads) {
@@ -159,6 +160,7 @@ namespace DiscImageChef.DiscImages
                                         case 2: ImageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
                                             break;
                                     }
+
                                     break;
                             }
 
@@ -236,6 +238,7 @@ namespace DiscImageChef.DiscImages
                                         case 2: ImageInfo.MediaType = MediaType.NEC_525_DS;
                                             break;
                                     }
+
                                     break;
                             }
 
@@ -250,6 +253,7 @@ namespace DiscImageChef.DiscImages
                                         case 2: ImageInfo.MediaType = MediaType.DOS_35_DS_DD_8;
                                             break;
                                     }
+
                                     break;
                                 case 9:
                                     switch(fdihdr.heads) {
@@ -258,6 +262,7 @@ namespace DiscImageChef.DiscImages
                                         case 2: ImageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
                                             break;
                                     }
+
                                     break;
                                 case 15:
                                     if(fdihdr.heads == 2) ImageInfo.MediaType = MediaType.NEC_35_HD_15;

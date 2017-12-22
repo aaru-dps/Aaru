@@ -52,27 +52,29 @@ namespace DiscImageChef.DiscImages
             Name = "Raw Disk Image";
             // Non-random UUID to recognize this specific plugin
             PluginUuid = new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -761,20 +763,21 @@ namespace DiscImageChef.DiscImages
             if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            Track trk = new Track();
-            trk.TrackBytesPerSector = (int)ImageInfo.SectorSize;
-            trk.TrackEndSector = ImageInfo.Sectors - 1;
-            trk.TrackFile = rawImageFilter.GetFilename();
-            trk.TrackFileOffset = 0;
-            trk.TrackFileType = "BINARY";
-            trk.TrackRawBytesPerSector = (int)ImageInfo.SectorSize;
-            trk.TrackSequence = 1;
-            trk.TrackStartSector = 0;
-            trk.TrackSubchannelType = TrackSubchannelType.None;
-            trk.TrackType = TrackType.Data;
-            trk.TrackSession = 1;
-            List<Track> lst = new List<Track>();
-            lst.Add(trk);
+            Track trk = new Track
+            {
+                TrackBytesPerSector = (int)ImageInfo.SectorSize,
+                TrackEndSector = ImageInfo.Sectors - 1,
+                TrackFile = rawImageFilter.GetFilename(),
+                TrackFileOffset = 0,
+                TrackFileType = "BINARY",
+                TrackRawBytesPerSector = (int)ImageInfo.SectorSize,
+                TrackSequence = 1,
+                TrackStartSector = 0,
+                TrackSubchannelType = TrackSubchannelType.None,
+                TrackType = TrackType.Data,
+                TrackSession = 1
+            };
+            List<Track> lst = new List<Track> {trk};
             return lst;
         }
 
@@ -786,21 +789,22 @@ namespace DiscImageChef.DiscImages
             if(session.SessionSequence != 1)
                 throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
 
-            Track trk = new Track();
-            trk.TrackBytesPerSector = (int)ImageInfo.SectorSize;
-            trk.TrackEndSector = ImageInfo.Sectors - 1;
-            trk.TrackFilter = rawImageFilter;
-            trk.TrackFile = rawImageFilter.GetFilename();
-            trk.TrackFileOffset = 0;
-            trk.TrackFileType = "BINARY";
-            trk.TrackRawBytesPerSector = (int)ImageInfo.SectorSize;
-            trk.TrackSequence = 1;
-            trk.TrackStartSector = 0;
-            trk.TrackSubchannelType = TrackSubchannelType.None;
-            trk.TrackType = TrackType.Data;
-            trk.TrackSession = 1;
-            List<Track> lst = new List<Track>();
-            lst.Add(trk);
+            Track trk = new Track
+            {
+                TrackBytesPerSector = (int)ImageInfo.SectorSize,
+                TrackEndSector = ImageInfo.Sectors - 1,
+                TrackFilter = rawImageFilter,
+                TrackFile = rawImageFilter.GetFilename(),
+                TrackFileOffset = 0,
+                TrackFileType = "BINARY",
+                TrackRawBytesPerSector = (int)ImageInfo.SectorSize,
+                TrackSequence = 1,
+                TrackStartSector = 0,
+                TrackSubchannelType = TrackSubchannelType.None,
+                TrackType = TrackType.Data,
+                TrackSession = 1
+            };
+            List<Track> lst = new List<Track> {trk};
             return lst;
         }
 
@@ -812,21 +816,22 @@ namespace DiscImageChef.DiscImages
             if(session != 1)
                 throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
 
-            Track trk = new Track();
-            trk.TrackBytesPerSector = (int)ImageInfo.SectorSize;
-            trk.TrackEndSector = ImageInfo.Sectors - 1;
-            trk.TrackFilter = rawImageFilter;
-            trk.TrackFile = rawImageFilter.GetFilename();
-            trk.TrackFileOffset = 0;
-            trk.TrackFileType = "BINARY";
-            trk.TrackRawBytesPerSector = (int)ImageInfo.SectorSize;
-            trk.TrackSequence = 1;
-            trk.TrackStartSector = 0;
-            trk.TrackSubchannelType = TrackSubchannelType.None;
-            trk.TrackType = TrackType.Data;
-            trk.TrackSession = 1;
-            List<Track> lst = new List<Track>();
-            lst.Add(trk);
+            Track trk = new Track
+            {
+                TrackBytesPerSector = (int)ImageInfo.SectorSize,
+                TrackEndSector = ImageInfo.Sectors - 1,
+                TrackFilter = rawImageFilter,
+                TrackFile = rawImageFilter.GetFilename(),
+                TrackFileOffset = 0,
+                TrackFileType = "BINARY",
+                TrackRawBytesPerSector = (int)ImageInfo.SectorSize,
+                TrackSequence = 1,
+                TrackStartSector = 0,
+                TrackSubchannelType = TrackSubchannelType.None,
+                TrackType = TrackType.Data,
+                TrackSession = 1
+            };
+            List<Track> lst = new List<Track> {trk};
             return lst;
         }
 
@@ -835,14 +840,15 @@ namespace DiscImageChef.DiscImages
             if(ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            Session sess = new Session();
-            sess.EndSector = ImageInfo.Sectors - 1;
-            sess.EndTrack = 1;
-            sess.SessionSequence = 1;
-            sess.StartSector = 0;
-            sess.StartTrack = 1;
-            List<Session> lst = new List<Session>();
-            lst.Add(sess);
+            Session sess = new Session
+            {
+                EndSector = ImageInfo.Sectors - 1,
+                EndTrack = 1,
+                SessionSequence = 1,
+                StartSector = 0,
+                StartTrack = 1
+            };
+            List<Session> lst = new List<Session> {sess};
             return lst;
         }
 

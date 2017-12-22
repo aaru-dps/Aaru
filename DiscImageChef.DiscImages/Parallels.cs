@@ -122,33 +122,35 @@ namespace DiscImageChef.DiscImages
         Dictionary<ulong, byte[]> sectorCache;
 
         const uint MAX_CACHE_SIZE = 16777216;
-        uint maxCachedSectors = MAX_CACHE_SIZE / 512;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
 
         public Parallels()
         {
             Name = "Parallels disk image";
             PluginUuid = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = "2";
-            ImageInfo.ImageApplication = "Parallels";
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = "2",
+                ImageApplication = "Parallels",
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -237,9 +239,7 @@ namespace DiscImageChef.DiscImages
 
             if(empty) return new byte[512];
 
-            byte[] sector;
-
-            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             ulong index = sectorAddress / pHdr.cluster_size;
             ulong secOff = sectorAddress % pHdr.cluster_size;
@@ -258,7 +258,7 @@ namespace DiscImageChef.DiscImages
             sector = new byte[512];
             Array.Copy(cluster, (int)(secOff * 512), sector, 0, 512);
 
-            if(sectorCache.Count > maxCachedSectors) sectorCache.Clear();
+            if(sectorCache.Count > MAX_CACHED_SECTORS) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 

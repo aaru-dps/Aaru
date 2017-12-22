@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -44,6 +45,7 @@ using Version = Resources.Version;
 namespace DiscImageChef.DiscImages
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class DiskCopy42 : ImagePlugin
     {
         #region Internal Structures
@@ -135,27 +137,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Apple DiskCopy 4.2";
             PluginUuid = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = "4.2";
-            ImageInfo.ImageApplication = "Apple DiskCopy";
-            ImageInfo.ImageApplicationVersion = "4.2";
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = "4.2",
+                ImageApplication = "Apple DiskCopy",
+                ImageApplicationVersion = "4.2",
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -346,8 +350,7 @@ namespace DiscImageChef.DiscImages
             switch(header.Format)
             {
                 case kSonyFormat400K:
-                    if(ImageInfo.Sectors == 1600) ImageInfo.MediaType = MediaType.AppleSonyDS;
-                    else ImageInfo.MediaType = MediaType.AppleSonySS;
+                    ImageInfo.MediaType = ImageInfo.Sectors == 1600 ? MediaType.AppleSonyDS : MediaType.AppleSonySS;
                     break;
                 case kSonyFormat800K:
                     ImageInfo.MediaType = MediaType.AppleSonyDS;
@@ -458,45 +461,41 @@ namespace DiscImageChef.DiscImages
                     if(rsrcFork.ContainsKey(0x76657273))
                     {
                         Resource versRsrc = rsrcFork.GetResource(0x76657273);
-                        if(versRsrc != null)
+
+                        byte[] vers = versRsrc?.GetResource(versRsrc.GetIds()[0]);
+
+                        if(vers != null)
                         {
-                            byte[] vers = versRsrc.GetResource(versRsrc.GetIds()[0]);
+                            Version version = new Version(vers);
 
-                            if(vers != null)
+                            string release = null;
+                            string dev = null;
+                            string pre = null;
+
+                            string major = $"{version.MajorVersion}";
+                            string minor = $".{version.MinorVersion / 10}";
+                            if(version.MinorVersion % 10 > 0)
+                                release = $".{version.MinorVersion % 10}";
+                            switch(version.DevStage)
                             {
-                                Version version = new Version(vers);
-
-                                string major;
-                                string minor;
-                                string release = null;
-                                string dev = null;
-                                string pre = null;
-
-                                major = $"{version.MajorVersion}";
-                                minor = $".{version.MinorVersion / 10}";
-                                if(version.MinorVersion % 10 > 0)
-                                    release = $".{version.MinorVersion % 10}";
-                                switch(version.DevStage)
-                                {
-                                    case Version.DevelopmentStage.Alpha:
-                                        dev = "a";
-                                        break;
-                                    case Version.DevelopmentStage.Beta:
-                                        dev = "b";
-                                        break;
-                                    case Version.DevelopmentStage.PreAlpha:
-                                        dev = "d";
-                                        break;
-                                }
-
-                                if(dev == null && version.PreReleaseVersion > 0) dev = "f";
-
-                                if(dev != null) pre = $"{version.PreReleaseVersion}";
-
-                                ImageInfo.ImageApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                                ImageInfo.ImageApplication = version.VersionString;
-                                ImageInfo.ImageComments = version.VersionMessage;
+                                case Version.DevelopmentStage.Alpha:
+                                    dev = "a";
+                                    break;
+                                case Version.DevelopmentStage.Beta:
+                                    dev = "b";
+                                    break;
+                                case Version.DevelopmentStage.PreAlpha:
+                                    dev = "d";
+                                    break;
                             }
+
+                            if(dev == null && version.PreReleaseVersion > 0) dev = "f";
+
+                            if(dev != null) pre = $"{version.PreReleaseVersion}";
+
+                            ImageInfo.ImageApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
+                            ImageInfo.ImageApplication = version.VersionString;
+                            ImageInfo.ImageComments = version.VersionMessage;
                         }
                     }
 

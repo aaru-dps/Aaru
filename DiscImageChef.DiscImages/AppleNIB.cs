@@ -69,27 +69,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Apple NIB";
             PluginUuid = new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -325,8 +327,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] temp;
-            cookedSectors.TryGetValue(sectorAddress, out temp);
+            cookedSectors.TryGetValue(sectorAddress, out byte[] temp);
             return temp;
         }
 
@@ -359,8 +360,7 @@ namespace DiscImageChef.DiscImages
             if(tag != SectorTagType.FloppyAddressMark)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            byte[] temp;
-            addressFields.TryGetValue(sectorAddress, out temp);
+            addressFields.TryGetValue(sectorAddress, out byte[] temp);
             return temp;
         }
 
@@ -393,8 +393,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] temp;
-            longSectors.TryGetValue(sectorAddress, out temp);
+            longSectors.TryGetValue(sectorAddress, out byte[] temp);
             return temp;
         }
 

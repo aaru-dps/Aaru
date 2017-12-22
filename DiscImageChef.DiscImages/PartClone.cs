@@ -107,7 +107,7 @@ namespace DiscImageChef.DiscImages
         Dictionary<ulong, byte[]> sectorCache;
 
         const uint MAX_CACHE_SIZE = 16777216;
-        uint maxCachedSectors = MAX_CACHE_SIZE / 512;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
 
         ExtentsULong extents;
         Dictionary<ulong, ulong> extentsOff;
@@ -116,26 +116,28 @@ namespace DiscImageChef.DiscImages
         {
             Name = "PartClone disk image";
             PluginUuid = new Guid("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageApplication = "PartClone";
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageApplication = "PartClone",
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -224,7 +226,7 @@ namespace DiscImageChef.DiscImages
                     else
                     {
                         extents.Add(extentStart, i);
-                        extentsOff.TryGetValue(extentStart, out ulong foo);
+                        extentsOff.TryGetValue(extentStart, out _);
                     }
 
                 if(next && current) blockOff++;
@@ -266,9 +268,7 @@ namespace DiscImageChef.DiscImages
 
             if(byteMap[sectorAddress] == 0) return new byte[pHdr.blockSize];
 
-            byte[] sector;
-
-            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             long imageOff = dataOff + (long)(BlockOffset(sectorAddress) * (pHdr.blockSize + CRC_SIZE));
 
@@ -276,7 +276,7 @@ namespace DiscImageChef.DiscImages
             imageStream.Seek(imageOff, SeekOrigin.Begin);
             imageStream.Read(sector, 0, (int)pHdr.blockSize);
 
-            if(sectorCache.Count > maxCachedSectors) sectorCache.Clear();
+            if(sectorCache.Count > MAX_CACHED_SECTORS) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 

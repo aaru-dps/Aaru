@@ -581,25 +581,27 @@ namespace DiscImageChef.DiscImages
         {
             Name = "MAME Compressed Hunks of Data";
             PluginUuid = new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageApplication = "MAME";
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageApplication = "MAME",
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -616,12 +618,11 @@ namespace DiscImageChef.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] buffer;
             byte[] magic = new byte[8];
             stream.Read(magic, 0, 8);
             if(!chdTag.SequenceEqual(magic)) return false;
             // Read length
-            buffer = new byte[4];
+            byte[] buffer = new byte[4];
             stream.Read(buffer, 0, 4);
             uint length = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
             buffer = new byte[4];
@@ -665,7 +666,6 @@ namespace DiscImageChef.DiscImages
                     uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
 
                     byte[] hunkSectorBytes = new byte[512];
-                    HunkSector hunkSector;
 
                     for(int i = 0; i < hunkSectorCount; i++)
                     {
@@ -673,8 +673,7 @@ namespace DiscImageChef.DiscImages
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
                         GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
-                        hunkSector =
-                            (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
+                        HunkSector hunkSector = (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
                         handle.Free();
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
@@ -738,7 +737,6 @@ namespace DiscImageChef.DiscImages
                     uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV2.totalhunks * 8 / 512);
 
                     byte[] hunkSectorBytes = new byte[512];
-                    HunkSector hunkSector;
 
                     for(int i = 0; i < hunkSectorCount; i++)
                     {
@@ -746,8 +744,7 @@ namespace DiscImageChef.DiscImages
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
                         GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
-                        hunkSector =
-                            (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
+                        HunkSector hunkSector = (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
                         handle.Free();
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
@@ -915,7 +912,6 @@ namespace DiscImageChef.DiscImages
                         uint hunkSectorCount = (uint)Math.Ceiling((double)hunkTableSmall.Length * 4 / 512);
 
                         byte[] hunkSectorBytes = new byte[512];
-                        HunkSectorSmall hunkSector;
 
                         stream.Seek((long)hdrV5.mapoffset, SeekOrigin.Begin);
 
@@ -925,9 +921,8 @@ namespace DiscImageChef.DiscImages
                             // This does the big-endian trick but reverses the order of elements also
                             Array.Reverse(hunkSectorBytes);
                             GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
-                            hunkSector =
-                                (HunkSectorSmall)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                        typeof(HunkSectorSmall));
+                            HunkSectorSmall hunkSector = (HunkSectorSmall)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                                                 typeof(HunkSectorSmall));
                             handle.Free();
                             // This restores the order of elements
                             Array.Reverse(hunkSector.hunkEntry);
@@ -963,7 +958,6 @@ namespace DiscImageChef.DiscImages
 
             if(mapVersion >= 3)
             {
-                byte[] meta;
                 isCdrom = false;
                 isHdd = false;
                 isGdrom = false;
@@ -982,7 +976,7 @@ namespace DiscImageChef.DiscImages
                     stream.Read(hdrBytes, 0, hdrBytes.Length);
                     ChdMetadataHeader header =
                         BigEndianMarshal.ByteArrayToStructureBigEndian<ChdMetadataHeader>(hdrBytes);
-                    meta = new byte[header.flagsAndLength & 0xFFFFFF];
+                    byte[] meta = new byte[header.flagsAndLength & 0xFFFFFF];
                     stream.Read(meta, 0, meta.Length);
                     DicConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
                                               Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(header.tag)));
@@ -1017,101 +1011,103 @@ namespace DiscImageChef.DiscImages
                                 throw new
                                     ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
 
-                            uint _tracks = BigEndianBitConverter.ToUInt32(meta, 0);
+                            uint chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                             // Byteswapped
-                            if(_tracks > 99)
+                            if(chdTracksNumber > 99)
                             {
                                 BigEndianBitConverter.IsLittleEndian = !BitConverter.IsLittleEndian;
-                                _tracks = BigEndianBitConverter.ToUInt32(meta, 0);
+                                chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
                             }
 
                             currentSector = 0;
 
-                            for(uint i = 0; i < _tracks; i++)
+                            for(uint i = 0; i < chdTracksNumber; i++)
                             {
-                                ChdTrackOld _trk = new ChdTrackOld();
-                                _trk.type = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 0));
-                                _trk.subType = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 4));
-                                _trk.dataSize = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 8));
-                                _trk.subSize = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 12));
-                                _trk.frames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 16));
-                                _trk.extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 20));
+                                ChdTrackOld chdTrack = new ChdTrackOld
+                                {
+                                    type = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 0)),
+                                    subType = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 4)),
+                                    dataSize = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 8)),
+                                    subSize = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 12)),
+                                    frames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 16)),
+                                    extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 20))
+                                };
 
-                                Track _track = new Track();
-                                switch((ChdOldTrackType)_trk.type)
+                                Track dicTrack = new Track();
+                                switch((ChdOldTrackType)chdTrack.type)
                                 {
                                     case ChdOldTrackType.Audio:
-                                        _track.TrackBytesPerSector = 2352;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.Audio;
+                                        dicTrack.TrackBytesPerSector = 2352;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.Audio;
                                         break;
                                     case ChdOldTrackType.Mode1:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2048;
-                                        _track.TrackType = TrackType.CdMode1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2048;
+                                        dicTrack.TrackType = TrackType.CdMode1;
                                         break;
                                     case ChdOldTrackType.Mode1Raw:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.CdMode1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.CdMode1;
                                         break;
                                     case ChdOldTrackType.Mode2:
                                     case ChdOldTrackType.Mode2FormMix:
-                                        _track.TrackBytesPerSector = 2336;
-                                        _track.TrackRawBytesPerSector = 2336;
-                                        _track.TrackType = TrackType.CdMode2Formless;
+                                        dicTrack.TrackBytesPerSector = 2336;
+                                        dicTrack.TrackRawBytesPerSector = 2336;
+                                        dicTrack.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     case ChdOldTrackType.Mode2Form1:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2048;
-                                        _track.TrackType = TrackType.CdMode2Form1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2048;
+                                        dicTrack.TrackType = TrackType.CdMode2Form1;
                                         break;
                                     case ChdOldTrackType.Mode2Form2:
-                                        _track.TrackBytesPerSector = 2324;
-                                        _track.TrackRawBytesPerSector = 2324;
-                                        _track.TrackType = TrackType.CdMode2Form2;
+                                        dicTrack.TrackBytesPerSector = 2324;
+                                        dicTrack.TrackRawBytesPerSector = 2324;
+                                        dicTrack.TrackType = TrackType.CdMode2Form2;
                                         break;
                                     case ChdOldTrackType.Mode2Raw:
-                                        _track.TrackBytesPerSector = 2336;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.CdMode2Formless;
+                                        dicTrack.TrackBytesPerSector = 2336;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported track type {_trk.type}");
+                                        throw new ImageNotSupportedException($"Unsupported track type {chdTrack.type}");
                                 }
 
-                                switch((ChdOldSubType)_trk.subType)
+                                switch((ChdOldSubType)chdTrack.subType)
                                 {
                                     case ChdOldSubType.Cooked:
-                                        _track.TrackSubchannelFile = imageFilter.GetFilename();
-                                        _track.TrackSubchannelType = TrackSubchannelType.PackedInterleaved;
-                                        _track.TrackSubchannelFilter = imageFilter;
+                                        dicTrack.TrackSubchannelFile = imageFilter.GetFilename();
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.PackedInterleaved;
+                                        dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     case ChdOldSubType.None:
-                                        _track.TrackSubchannelType = TrackSubchannelType.None;
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
                                         break;
                                     case ChdOldSubType.Raw:
-                                        _track.TrackSubchannelFile = imageFilter.GetFilename();
-                                        _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                        _track.TrackSubchannelFilter = imageFilter;
+                                        dicTrack.TrackSubchannelFile = imageFilter.GetFilename();
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                                        dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     default:
                                         throw new
-                                            ImageNotSupportedException($"Unsupported subchannel type {_trk.type}");
+                                            ImageNotSupportedException($"Unsupported subchannel type {chdTrack.type}");
                                 }
 
-                                _track.Indexes = new Dictionary<int, ulong>();
-                                _track.TrackDescription = $"Track {i + 1}";
-                                _track.TrackEndSector = currentSector + _trk.frames - 1;
-                                _track.TrackFile = imageFilter.GetFilename();
-                                _track.TrackFileType = "BINARY";
-                                _track.TrackFilter = imageFilter;
-                                _track.TrackStartSector = currentSector;
-                                _track.TrackSequence = i + 1;
-                                _track.TrackSession = 1;
-                                currentSector += _trk.frames + _trk.extraFrames;
-                                tracks.Add(_track.TrackSequence, _track);
+                                dicTrack.Indexes = new Dictionary<int, ulong>();
+                                dicTrack.TrackDescription = $"Track {i + 1}";
+                                dicTrack.TrackEndSector = currentSector + chdTrack.frames - 1;
+                                dicTrack.TrackFile = imageFilter.GetFilename();
+                                dicTrack.TrackFileType = "BINARY";
+                                dicTrack.TrackFilter = imageFilter;
+                                dicTrack.TrackStartSector = currentSector;
+                                dicTrack.TrackSequence = i + 1;
+                                dicTrack.TrackSession = 1;
+                                currentSector += chdTrack.frames + chdTrack.extraFrames;
+                                tracks.Add(dicTrack.TrackSequence, dicTrack);
                             }
 
                             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -1143,50 +1139,50 @@ namespace DiscImageChef.DiscImages
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
 
-                                Track _track = new Track();
+                                Track dicTrack = new Track();
                                 switch(tracktype)
                                 {
                                     case TRACK_TYPE_AUDIO:
-                                        _track.TrackBytesPerSector = 2352;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.Audio;
+                                        dicTrack.TrackBytesPerSector = 2352;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.Audio;
                                         break;
                                     case TRACK_TYPE_MODE1:
                                     case TRACK_TYPE_MODE1_2K:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2048;
-                                        _track.TrackType = TrackType.CdMode1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2048;
+                                        dicTrack.TrackType = TrackType.CdMode1;
                                         break;
                                     case TRACK_TYPE_MODE1_RAW:
                                     case TRACK_TYPE_MODE1_RAW_2K:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.CdMode1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.CdMode1;
                                         break;
                                     case TRACK_TYPE_MODE2:
                                     case TRACK_TYPE_MODE2_2K:
                                     case TRACK_TYPE_MODE2_FM:
-                                        _track.TrackBytesPerSector = 2336;
-                                        _track.TrackRawBytesPerSector = 2336;
-                                        _track.TrackType = TrackType.CdMode2Formless;
+                                        dicTrack.TrackBytesPerSector = 2336;
+                                        dicTrack.TrackRawBytesPerSector = 2336;
+                                        dicTrack.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     case TRACK_TYPE_MODE2_F1:
                                     case TRACK_TYPE_MODE2_F1_2K:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2048;
-                                        _track.TrackType = TrackType.CdMode2Form1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2048;
+                                        dicTrack.TrackType = TrackType.CdMode2Form1;
                                         break;
                                     case TRACK_TYPE_MODE2_F2:
                                     case TRACK_TYPE_MODE2_F2_2K:
-                                        _track.TrackBytesPerSector = 2324;
-                                        _track.TrackRawBytesPerSector = 2324;
-                                        _track.TrackType = TrackType.CdMode2Form2;
+                                        dicTrack.TrackBytesPerSector = 2324;
+                                        dicTrack.TrackRawBytesPerSector = 2324;
+                                        dicTrack.TrackType = TrackType.CdMode2Form2;
                                         break;
                                     case TRACK_TYPE_MODE2_RAW:
                                     case TRACK_TYPE_MODE2_RAW_2K:
-                                        _track.TrackBytesPerSector = 2336;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.CdMode2Formless;
+                                        dicTrack.TrackBytesPerSector = 2336;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
@@ -1195,35 +1191,35 @@ namespace DiscImageChef.DiscImages
                                 switch(subtype)
                                 {
                                     case SUB_TYPE_COOKED:
-                                        _track.TrackSubchannelFile = imageFilter.GetFilename();
-                                        _track.TrackSubchannelType = TrackSubchannelType.PackedInterleaved;
-                                        _track.TrackSubchannelFilter = imageFilter;
+                                        dicTrack.TrackSubchannelFile = imageFilter.GetFilename();
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.PackedInterleaved;
+                                        dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     case SUB_TYPE_NONE:
-                                        _track.TrackSubchannelType = TrackSubchannelType.None;
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
                                         break;
                                     case SUB_TYPE_RAW:
-                                        _track.TrackSubchannelFile = imageFilter.GetFilename();
-                                        _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                        _track.TrackSubchannelFilter = imageFilter;
+                                        dicTrack.TrackSubchannelFile = imageFilter.GetFilename();
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                                        dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     default:
                                         throw new
                                             ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                _track.Indexes = new Dictionary<int, ulong>();
-                                _track.TrackDescription = $"Track {trackNo}";
-                                _track.TrackEndSector = currentSector + frames - 1;
-                                _track.TrackFile = imageFilter.GetFilename();
-                                _track.TrackFileType = "BINARY";
-                                _track.TrackFilter = imageFilter;
-                                _track.TrackStartSector = currentSector;
-                                _track.TrackSequence = trackNo;
-                                _track.TrackSession = 1;
+                                dicTrack.Indexes = new Dictionary<int, ulong>();
+                                dicTrack.TrackDescription = $"Track {trackNo}";
+                                dicTrack.TrackEndSector = currentSector + frames - 1;
+                                dicTrack.TrackFile = imageFilter.GetFilename();
+                                dicTrack.TrackFileType = "BINARY";
+                                dicTrack.TrackFilter = imageFilter;
+                                dicTrack.TrackStartSector = currentSector;
+                                dicTrack.TrackSequence = trackNo;
+                                dicTrack.TrackSession = 1;
                                 currentSector += frames;
                                 currentTrack++;
-                                tracks.Add(_track.TrackSequence, _track);
+                                tracks.Add(dicTrack.TrackSequence, dicTrack);
                             }
 
                             break;
@@ -1257,50 +1253,50 @@ namespace DiscImageChef.DiscImages
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
 
-                                Track _track = new Track();
+                                Track dicTrack = new Track();
                                 switch(tracktype)
                                 {
                                     case TRACK_TYPE_AUDIO:
-                                        _track.TrackBytesPerSector = 2352;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.Audio;
+                                        dicTrack.TrackBytesPerSector = 2352;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.Audio;
                                         break;
                                     case TRACK_TYPE_MODE1:
                                     case TRACK_TYPE_MODE1_2K:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2048;
-                                        _track.TrackType = TrackType.CdMode1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2048;
+                                        dicTrack.TrackType = TrackType.CdMode1;
                                         break;
                                     case TRACK_TYPE_MODE1_RAW:
                                     case TRACK_TYPE_MODE1_RAW_2K:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.CdMode1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.CdMode1;
                                         break;
                                     case TRACK_TYPE_MODE2:
                                     case TRACK_TYPE_MODE2_2K:
                                     case TRACK_TYPE_MODE2_FM:
-                                        _track.TrackBytesPerSector = 2336;
-                                        _track.TrackRawBytesPerSector = 2336;
-                                        _track.TrackType = TrackType.CdMode2Formless;
+                                        dicTrack.TrackBytesPerSector = 2336;
+                                        dicTrack.TrackRawBytesPerSector = 2336;
+                                        dicTrack.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     case TRACK_TYPE_MODE2_F1:
                                     case TRACK_TYPE_MODE2_F1_2K:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2048;
-                                        _track.TrackType = TrackType.CdMode2Form1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2048;
+                                        dicTrack.TrackType = TrackType.CdMode2Form1;
                                         break;
                                     case TRACK_TYPE_MODE2_F2:
                                     case TRACK_TYPE_MODE2_F2_2K:
-                                        _track.TrackBytesPerSector = 2324;
-                                        _track.TrackRawBytesPerSector = 2324;
-                                        _track.TrackType = TrackType.CdMode2Form2;
+                                        dicTrack.TrackBytesPerSector = 2324;
+                                        dicTrack.TrackRawBytesPerSector = 2324;
+                                        dicTrack.TrackType = TrackType.CdMode2Form2;
                                         break;
                                     case TRACK_TYPE_MODE2_RAW:
                                     case TRACK_TYPE_MODE2_RAW_2K:
-                                        _track.TrackBytesPerSector = 2336;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.CdMode2Formless;
+                                        dicTrack.TrackBytesPerSector = 2336;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
@@ -1309,35 +1305,35 @@ namespace DiscImageChef.DiscImages
                                 switch(subtype)
                                 {
                                     case SUB_TYPE_COOKED:
-                                        _track.TrackSubchannelFile = imageFilter.GetFilename();
-                                        _track.TrackSubchannelType = TrackSubchannelType.PackedInterleaved;
-                                        _track.TrackSubchannelFilter = imageFilter;
+                                        dicTrack.TrackSubchannelFile = imageFilter.GetFilename();
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.PackedInterleaved;
+                                        dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     case SUB_TYPE_NONE:
-                                        _track.TrackSubchannelType = TrackSubchannelType.None;
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
                                         break;
                                     case SUB_TYPE_RAW:
-                                        _track.TrackSubchannelFile = imageFilter.GetFilename();
-                                        _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                        _track.TrackSubchannelFilter = imageFilter;
+                                        dicTrack.TrackSubchannelFile = imageFilter.GetFilename();
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                                        dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     default:
                                         throw new
                                             ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                _track.Indexes = new Dictionary<int, ulong>();
-                                _track.TrackDescription = $"Track {trackNo}";
-                                _track.TrackEndSector = currentSector + frames - 1;
-                                _track.TrackFile = imageFilter.GetFilename();
-                                _track.TrackFileType = "BINARY";
-                                _track.TrackFilter = imageFilter;
-                                _track.TrackStartSector = currentSector;
-                                _track.TrackSequence = trackNo;
-                                _track.TrackSession = 1;
+                                dicTrack.Indexes = new Dictionary<int, ulong>();
+                                dicTrack.TrackDescription = $"Track {trackNo}";
+                                dicTrack.TrackEndSector = currentSector + frames - 1;
+                                dicTrack.TrackFile = imageFilter.GetFilename();
+                                dicTrack.TrackFileType = "BINARY";
+                                dicTrack.TrackFilter = imageFilter;
+                                dicTrack.TrackStartSector = currentSector;
+                                dicTrack.TrackSequence = trackNo;
+                                dicTrack.TrackSession = 1;
                                 currentSector += frames;
                                 currentTrack++;
-                                tracks.Add(_track.TrackSequence, _track);
+                                tracks.Add(dicTrack.TrackSequence, dicTrack);
                             }
 
                             break;
@@ -1376,50 +1372,50 @@ namespace DiscImageChef.DiscImages
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
 
-                                Track _track = new Track();
+                                Track dicTrack = new Track();
                                 switch(tracktype)
                                 {
                                     case TRACK_TYPE_AUDIO:
-                                        _track.TrackBytesPerSector = 2352;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.Audio;
+                                        dicTrack.TrackBytesPerSector = 2352;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.Audio;
                                         break;
                                     case TRACK_TYPE_MODE1:
                                     case TRACK_TYPE_MODE1_2K:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2048;
-                                        _track.TrackType = TrackType.CdMode1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2048;
+                                        dicTrack.TrackType = TrackType.CdMode1;
                                         break;
                                     case TRACK_TYPE_MODE1_RAW:
                                     case TRACK_TYPE_MODE1_RAW_2K:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.CdMode1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.CdMode1;
                                         break;
                                     case TRACK_TYPE_MODE2:
                                     case TRACK_TYPE_MODE2_2K:
                                     case TRACK_TYPE_MODE2_FM:
-                                        _track.TrackBytesPerSector = 2336;
-                                        _track.TrackRawBytesPerSector = 2336;
-                                        _track.TrackType = TrackType.CdMode2Formless;
+                                        dicTrack.TrackBytesPerSector = 2336;
+                                        dicTrack.TrackRawBytesPerSector = 2336;
+                                        dicTrack.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     case TRACK_TYPE_MODE2_F1:
                                     case TRACK_TYPE_MODE2_F1_2K:
-                                        _track.TrackBytesPerSector = 2048;
-                                        _track.TrackRawBytesPerSector = 2048;
-                                        _track.TrackType = TrackType.CdMode2Form1;
+                                        dicTrack.TrackBytesPerSector = 2048;
+                                        dicTrack.TrackRawBytesPerSector = 2048;
+                                        dicTrack.TrackType = TrackType.CdMode2Form1;
                                         break;
                                     case TRACK_TYPE_MODE2_F2:
                                     case TRACK_TYPE_MODE2_F2_2K:
-                                        _track.TrackBytesPerSector = 2324;
-                                        _track.TrackRawBytesPerSector = 2324;
-                                        _track.TrackType = TrackType.CdMode2Form2;
+                                        dicTrack.TrackBytesPerSector = 2324;
+                                        dicTrack.TrackRawBytesPerSector = 2324;
+                                        dicTrack.TrackType = TrackType.CdMode2Form2;
                                         break;
                                     case TRACK_TYPE_MODE2_RAW:
                                     case TRACK_TYPE_MODE2_RAW_2K:
-                                        _track.TrackBytesPerSector = 2336;
-                                        _track.TrackRawBytesPerSector = 2352;
-                                        _track.TrackType = TrackType.CdMode2Formless;
+                                        dicTrack.TrackBytesPerSector = 2336;
+                                        dicTrack.TrackRawBytesPerSector = 2352;
+                                        dicTrack.TrackType = TrackType.CdMode2Formless;
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
@@ -1428,35 +1424,35 @@ namespace DiscImageChef.DiscImages
                                 switch(subtype)
                                 {
                                     case SUB_TYPE_COOKED:
-                                        _track.TrackSubchannelFile = imageFilter.GetFilename();
-                                        _track.TrackSubchannelType = TrackSubchannelType.PackedInterleaved;
-                                        _track.TrackSubchannelFilter = imageFilter;
+                                        dicTrack.TrackSubchannelFile = imageFilter.GetFilename();
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.PackedInterleaved;
+                                        dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     case SUB_TYPE_NONE:
-                                        _track.TrackSubchannelType = TrackSubchannelType.None;
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
                                         break;
                                     case SUB_TYPE_RAW:
-                                        _track.TrackSubchannelFile = imageFilter.GetFilename();
-                                        _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                                        _track.TrackSubchannelFilter = imageFilter;
+                                        dicTrack.TrackSubchannelFile = imageFilter.GetFilename();
+                                        dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                                        dicTrack.TrackSubchannelFilter = imageFilter;
                                         break;
                                     default:
                                         throw new
                                             ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                _track.Indexes = new Dictionary<int, ulong>();
-                                _track.TrackDescription = $"Track {trackNo}";
-                                _track.TrackEndSector = currentSector + frames - 1;
-                                _track.TrackFile = imageFilter.GetFilename();
-                                _track.TrackFileType = "BINARY";
-                                _track.TrackFilter = imageFilter;
-                                _track.TrackStartSector = currentSector;
-                                _track.TrackSequence = trackNo;
-                                _track.TrackSession = (ushort)(trackNo > 2 ? 2 : 1);
+                                dicTrack.Indexes = new Dictionary<int, ulong>();
+                                dicTrack.TrackDescription = $"Track {trackNo}";
+                                dicTrack.TrackEndSector = currentSector + frames - 1;
+                                dicTrack.TrackFile = imageFilter.GetFilename();
+                                dicTrack.TrackFileType = "BINARY";
+                                dicTrack.TrackFilter = imageFilter;
+                                dicTrack.TrackStartSector = currentSector;
+                                dicTrack.TrackSequence = trackNo;
+                                dicTrack.TrackSession = (ushort)(trackNo > 2 ? 2 : 1);
                                 currentSector += frames;
                                 currentTrack++;
-                                tracks.Add(_track.TrackSequence, _track);
+                                tracks.Add(dicTrack.TrackSequence, dicTrack);
                             }
 
                             break;
@@ -1512,8 +1508,8 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.MediaType = MediaType.CDROM;
                     ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                    foreach(Track _trk in tracks.Values)
-                        ImageInfo.Sectors += _trk.TrackEndSector - _trk.TrackStartSector + 1;
+                    foreach(Track dicTrack in tracks.Values)
+                        ImageInfo.Sectors += dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1;
                 }
                 else if(isGdrom)
                 {
@@ -1522,8 +1518,8 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.MediaType = MediaType.GDROM;
                     ImageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                    foreach(Track _trk in tracks.Values)
-                        ImageInfo.Sectors += _trk.TrackEndSector - _trk.TrackStartSector + 1;
+                    foreach(Track dicTrack in tracks.Values)
+                        ImageInfo.Sectors += dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1;
                 }
                 else throw new ImageNotSupportedException("Image does not represent a known media, aborting");
             }
@@ -1533,29 +1529,32 @@ namespace DiscImageChef.DiscImages
                 offsetmap = new Dictionary<ulong, uint>();
                 partitions = new List<Partition>();
                 ulong partPos = 0;
-                foreach(Track _track in tracks.Values)
+                foreach(Track dicTrack in tracks.Values)
                 {
-                    Partition partition = new Partition();
-                    partition.Description = _track.TrackDescription;
-                    partition.Size = (_track.TrackEndSector - _track.TrackStartSector + 1) *
-                                     (ulong)_track.TrackRawBytesPerSector;
-                    partition.Length = _track.TrackEndSector - _track.TrackStartSector + 1;
-                    partition.Sequence = _track.TrackSequence;
-                    partition.Offset = partPos;
-                    partition.Start = _track.TrackStartSector;
-                    partition.Type = _track.TrackType.ToString();
+                    Partition partition = new Partition
+                    {
+                        Description = dicTrack.TrackDescription,
+                        Size =
+                            (dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1) *
+                            (ulong)dicTrack.TrackRawBytesPerSector,
+                        Length = dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1,
+                        Sequence = dicTrack.TrackSequence,
+                        Offset = partPos,
+                        Start = dicTrack.TrackStartSector,
+                        Type = dicTrack.TrackType.ToString()
+                    };
                     partPos += partition.Length;
-                    offsetmap.Add(_track.TrackStartSector, _track.TrackSequence);
+                    offsetmap.Add(dicTrack.TrackStartSector, dicTrack.TrackSequence);
 
-                    if(_track.TrackSubchannelType != TrackSubchannelType.None)
+                    if(dicTrack.TrackSubchannelType != TrackSubchannelType.None)
                         if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                             ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
-                    switch(_track.TrackType)
+                    switch(dicTrack.TrackType)
                     {
                         case TrackType.CdMode1:
                         case TrackType.CdMode2Form1:
-                            if(_track.TrackRawBytesPerSector == 2352)
+                            if(dicTrack.TrackRawBytesPerSector == 2352)
                             {
                                 if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -1574,7 +1573,7 @@ namespace DiscImageChef.DiscImages
                             }
                             break;
                         case TrackType.CdMode2Form2:
-                            if(_track.TrackRawBytesPerSector == 2352)
+                            if(dicTrack.TrackRawBytesPerSector == 2352)
                             {
                                 if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -1587,7 +1586,7 @@ namespace DiscImageChef.DiscImages
                             }
                             break;
                         case TrackType.CdMode2Formless:
-                            if(_track.TrackRawBytesPerSector == 2352)
+                            if(dicTrack.TrackRawBytesPerSector == 2352)
                             {
                                 if(!ImageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -1597,8 +1596,8 @@ namespace DiscImageChef.DiscImages
                             break;
                     }
 
-                    if(_track.TrackBytesPerSector > ImageInfo.SectorSize)
-                        ImageInfo.SectorSize = (uint)_track.TrackBytesPerSector;
+                    if(dicTrack.TrackBytesPerSector > ImageInfo.SectorSize)
+                        ImageInfo.SectorSize = (uint)dicTrack.TrackBytesPerSector;
 
                     partitions.Add(partition);
                 }
@@ -1632,16 +1631,13 @@ namespace DiscImageChef.DiscImages
 
         ulong GetAbsoluteSector(ulong relativeSector, uint track)
         {
-            Track _track;
-            tracks.TryGetValue(track, out _track);
-            return _track.TrackStartSector + relativeSector;
+            tracks.TryGetValue(track, out Track dicTrack);
+            return dicTrack.TrackStartSector + relativeSector;
         }
 
         byte[] GetHunk(ulong hunkNo)
         {
-            byte[] hunk;
-
-            if(hunkCache.TryGetValue(hunkNo, out hunk)) return hunk;
+            if(hunkCache.TryGetValue(hunkNo, out byte[] hunk)) return hunk;
 
             switch(mapVersion)
             {
@@ -1885,13 +1881,11 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
             Track track = new Track();
+            uint sectorSize;
 
-            if(!sectorCache.TryGetValue(sectorAddress, out sector))
+            if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
-                uint sectorSize;
-
                 if(isHdd) sectorSize = ImageInfo.SectorSize;
                 else
                 {
@@ -1914,8 +1908,7 @@ namespace DiscImageChef.DiscImages
 
             if(isHdd) return sector;
 
-            uint sector_offset;
-            uint sector_size;
+            uint sectorOffset;
 
             switch(track.TrackType)
             {
@@ -1924,13 +1917,13 @@ namespace DiscImageChef.DiscImages
                 {
                     if(track.TrackRawBytesPerSector == 2352)
                     {
-                        sector_offset = 16;
-                        sector_size = 2048;
+                        sectorOffset = 16;
+                        sectorSize = 2048;
                     }
                     else
                     {
-                        sector_offset = 0;
-                        sector_size = 2048;
+                        sectorOffset = 0;
+                        sectorSize = 2048;
                     }
                     break;
                 }
@@ -1938,13 +1931,13 @@ namespace DiscImageChef.DiscImages
                 {
                     if(track.TrackRawBytesPerSector == 2352)
                     {
-                        sector_offset = 16;
-                        sector_size = 2324;
+                        sectorOffset = 16;
+                        sectorSize = 2324;
                     }
                     else
                     {
-                        sector_offset = 0;
-                        sector_size = 2324;
+                        sectorOffset = 0;
+                        sectorSize = 2324;
                     }
                     break;
                 }
@@ -1952,26 +1945,26 @@ namespace DiscImageChef.DiscImages
                 {
                     if(track.TrackRawBytesPerSector == 2352)
                     {
-                        sector_offset = 16;
-                        sector_size = 2336;
+                        sectorOffset = 16;
+                        sectorSize = 2336;
                     }
                     else
                     {
-                        sector_offset = 0;
-                        sector_size = 2336;
+                        sectorOffset = 0;
+                        sectorSize = 2336;
                     }
                     break;
                 }
                 case TrackType.Audio:
                 {
-                    sector_offset = 0;
-                    sector_size = 2352;
+                    sectorOffset = 0;
+                    sectorSize = 2352;
                     break;
                 }
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            byte[] buffer = new byte[sector_size];
+            byte[] buffer = new byte[sectorSize];
 
             if(track.TrackType == TrackType.Audio && swapAudio)
                 for(int i = 0; i < 2352; i += 2)
@@ -1979,7 +1972,7 @@ namespace DiscImageChef.DiscImages
                     buffer[i + 1] = sector[i];
                     buffer[i] = sector[i + 1];
                 }
-            else Array.Copy(sector, sector_offset, buffer, 0, sector_size);
+            else Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
             return buffer;
         }
@@ -1992,12 +1985,12 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
             Track track = new Track();
 
-            if(!sectorCache.TryGetValue(sectorAddress, out sector))
+            uint sectorSize;
+
+            if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
-                uint sectorSize;
 
                 track = GetTrack(sectorAddress);
                 sectorSize = (uint)track.TrackRawBytesPerSector;
@@ -2017,15 +2010,14 @@ namespace DiscImageChef.DiscImages
 
             if(isHdd) return sector;
 
-            uint sector_offset;
-            uint sector_size;
+            uint sectorOffset;
 
             if(tag == SectorTagType.CdSectorSubchannel)
                 switch(track.TrackSubchannelType) {
                     case TrackSubchannelType.None: throw new FeatureNotPresentImageException("Requested sector does not contain subchannel");
                     case TrackSubchannelType.RawInterleaved:
-                        sector_offset = (uint)track.TrackRawBytesPerSector;
-                        sector_size = 96;
+                        sectorOffset = (uint)track.TrackRawBytesPerSector;
+                        sectorSize = 96;
                         break;
                     default:
                         throw new
@@ -2042,14 +2034,14 @@ namespace DiscImageChef.DiscImages
                             {
                                 case SectorTagType.CdSectorSync:
                                 {
-                                    sector_offset = 0;
-                                    sector_size = 12;
+                                    sectorOffset = 0;
+                                    sectorSize = 12;
                                     break;
                                 }
                                 case SectorTagType.CdSectorHeader:
                                 {
-                                    sector_offset = 12;
-                                    sector_size = 4;
+                                    sectorOffset = 12;
+                                    sectorSize = 4;
                                     break;
                                 }
                                 case SectorTagType.CdSectorSubHeader:
@@ -2057,26 +2049,26 @@ namespace DiscImageChef.DiscImages
                                                                 nameof(tag));
                                 case SectorTagType.CdSectorEcc:
                                 {
-                                    sector_offset = 2076;
-                                    sector_size = 276;
+                                    sectorOffset = 2076;
+                                    sectorSize = 276;
                                     break;
                                 }
                                 case SectorTagType.CdSectorEccP:
                                 {
-                                    sector_offset = 2076;
-                                    sector_size = 172;
+                                    sectorOffset = 2076;
+                                    sectorSize = 172;
                                     break;
                                 }
                                 case SectorTagType.CdSectorEccQ:
                                 {
-                                    sector_offset = 2248;
-                                    sector_size = 104;
+                                    sectorOffset = 2248;
+                                    sectorSize = 104;
                                     break;
                                 }
                                 case SectorTagType.CdSectorEdc:
                                 {
-                                    sector_offset = 2064;
-                                    sector_size = 4;
+                                    sectorOffset = 2064;
+                                    sectorSize = 4;
                                     break;
                                 }
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -2092,26 +2084,26 @@ namespace DiscImageChef.DiscImages
                             {
                                 case SectorTagType.CdSectorSync:
                                 {
-                                    sector_offset = 0;
-                                    sector_size = 12;
+                                    sectorOffset = 0;
+                                    sectorSize = 12;
                                     break;
                                 }
                                 case SectorTagType.CdSectorHeader:
                                 {
-                                    sector_offset = 12;
-                                    sector_size = 4;
+                                    sectorOffset = 12;
+                                    sectorSize = 4;
                                     break;
                                 }
                                 case SectorTagType.CdSectorSubHeader:
                                 {
-                                    sector_offset = 16;
-                                    sector_size = 8;
+                                    sectorOffset = 16;
+                                    sectorSize = 8;
                                     break;
                                 }
                                 case SectorTagType.CdSectorEdc:
                                 {
-                                    sector_offset = 2348;
-                                    sector_size = 4;
+                                    sectorOffset = 2348;
+                                    sectorSize = 4;
                                     break;
                                 }
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -2129,14 +2121,14 @@ namespace DiscImageChef.DiscImages
                                                                 nameof(tag));
                                 case SectorTagType.CdSectorSubHeader:
                                 {
-                                    sector_offset = 0;
-                                    sector_size = 8;
+                                    sectorOffset = 0;
+                                    sectorSize = 8;
                                     break;
                                 }
                                 case SectorTagType.CdSectorEdc:
                                 {
-                                    sector_offset = 2332;
-                                    sector_size = 4;
+                                    sectorOffset = 2332;
+                                    sectorSize = 4;
                                     break;
                                 }
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -2158,14 +2150,14 @@ namespace DiscImageChef.DiscImages
                                                                 nameof(tag));
                                 case SectorTagType.CdSectorSubHeader:
                                 {
-                                    sector_offset = 0;
-                                    sector_size = 8;
+                                    sectorOffset = 0;
+                                    sectorSize = 8;
                                     break;
                                 }
                                 case SectorTagType.CdSectorEdc:
                                 {
-                                    sector_offset = 2332;
-                                    sector_size = 4;
+                                    sectorOffset = 2332;
+                                    sectorSize = 4;
                                     break;
                                 }
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -2179,7 +2171,7 @@ namespace DiscImageChef.DiscImages
                     default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
                 }
 
-            byte[] buffer = new byte[sector_size];
+            byte[] buffer = new byte[sectorSize];
 
             if(track.TrackType == TrackType.Audio && swapAudio)
                 for(int i = 0; i < 2352; i += 2)
@@ -2187,7 +2179,7 @@ namespace DiscImageChef.DiscImages
                     buffer[i + 1] = sector[i];
                     buffer[i] = sector[i + 1];
                 }
-            else Array.Copy(sector, sector_offset, buffer, 0, sector_size);
+            else Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
             if(track.TrackType == TrackType.Audio && swapAudio)
                 for(int i = 0; i < 2352; i += 2)
@@ -2195,7 +2187,7 @@ namespace DiscImageChef.DiscImages
                     buffer[i + 1] = sector[i];
                     buffer[i] = sector[i + 1];
                 }
-            else Array.Copy(sector, sector_offset, buffer, 0, sector_size);
+            else Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
             return buffer;
         }
@@ -2250,10 +2242,9 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
             Track track = new Track();
 
-            if(!sectorCache.TryGetValue(sectorAddress, out sector))
+            if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
                 uint sectorSize;
 

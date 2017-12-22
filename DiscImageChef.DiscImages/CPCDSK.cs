@@ -207,27 +207,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "CPCEMU Disk-File and Extended CPC Disk-File";
             PluginUuid = new Guid("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -239,10 +241,9 @@ namespace DiscImageChef.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            CpcDiskInfo header;
             IntPtr headerPtr = Marshal.AllocHGlobal(256);
             Marshal.Copy(headerB, 0, headerPtr, 256);
-            header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
+            CpcDiskInfo header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
             Marshal.FreeHGlobal(headerPtr);
 
             DicConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
@@ -261,10 +262,9 @@ namespace DiscImageChef.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            CpcDiskInfo header;
             IntPtr headerPtr = Marshal.AllocHGlobal(256);
             Marshal.Copy(headerB, 0, headerPtr, 256);
-            header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
+            CpcDiskInfo header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
             Marshal.FreeHGlobal(headerPtr);
 
             if(!cpcdskId.SequenceEqual(header.magic) && !edskId.SequenceEqual(header.magic) &&
@@ -309,10 +309,9 @@ namespace DiscImageChef.DiscImages
 
                     byte[] trackB = new byte[256];
                     stream.Read(trackB, 0, 256);
-                    CpcTrackInfo trackInfo;
                     IntPtr trackPtr = Marshal.AllocHGlobal(256);
                     Marshal.Copy(trackB, 0, trackPtr, 256);
-                    trackInfo = (CpcTrackInfo)Marshal.PtrToStructure(trackPtr, typeof(CpcTrackInfo));
+                    CpcTrackInfo trackInfo = (CpcTrackInfo)Marshal.PtrToStructure(trackPtr, typeof(CpcTrackInfo));
                     Marshal.FreeHGlobal(trackPtr);
 
                     if(!trackId.SequenceEqual(trackInfo.magic))
@@ -365,8 +364,7 @@ namespace DiscImageChef.DiscImages
                                                   trackInfo.sectorsInfo[k - 1].track, i, j, k);
 
                         int sectLen;
-                        if(extended) sectLen = trackInfo.sectorsInfo[k - 1].len;
-                        else sectLen = SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
+                        sectLen = extended ? trackInfo.sectorsInfo[k - 1].len : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
 
                         byte[] sector = new byte[sectLen];
                         stream.Read(sector, 0, sectLen);
@@ -395,9 +393,8 @@ namespace DiscImageChef.DiscImages
                         amForCrc[5] = trackInfo.sectorsInfo[k - 1].side;
                         amForCrc[6] = trackInfo.sectorsInfo[k - 1].id;
                         amForCrc[7] = (byte)trackInfo.sectorsInfo[k - 1].size;
-                        byte[] amCrc;
 
-                        Crc16Context.Data(amForCrc, 8, out amCrc);
+                        Crc16Context.Data(amForCrc, 8, out byte[] amCrc);
 
                         byte[] addressMark = new byte[22];
                         Array.Copy(amForCrc, 0, addressMark, 12, 8);
@@ -551,8 +548,7 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            byte[] sector;
-            if(sectors.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectors.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
@@ -582,8 +578,7 @@ namespace DiscImageChef.DiscImages
             if(tag != SectorTagType.FloppyAddressMark)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            byte[] addressMark;
-            if(addressMarks.TryGetValue(sectorAddress, out addressMark)) return addressMark;
+            if(addressMarks.TryGetValue(sectorAddress, out byte[] addressMark)) return addressMark;
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }

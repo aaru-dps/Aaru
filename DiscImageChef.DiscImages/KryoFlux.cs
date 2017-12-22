@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -42,6 +43,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class KryoFlux : ImagePlugin
     {
         #region Internal Structures
@@ -55,7 +57,7 @@ namespace DiscImageChef.DiscImages
         #endregion Internal Structures
 
         #region Internal Constants
-        public enum BlockIds : byte
+        enum BlockIds : byte
         {
             Flux2 = 0x00,
             Flux2_1 = 0x01,
@@ -73,7 +75,7 @@ namespace DiscImageChef.DiscImages
             Oob = 0x0D
         }
 
-        public enum OobTypes : byte
+        enum OobTypes : byte
         {
             Invalid = 0x00,
             StreamInfo = 0x01,

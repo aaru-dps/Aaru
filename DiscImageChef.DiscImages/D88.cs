@@ -263,11 +263,10 @@ namespace DiscImageChef.DiscImages
             if(!d88Hdr.reserved.SequenceEqual(reservedEmpty)) return false;
 
             int counter = 0;
-            for(int i = 0; i < d88Hdr.track_table.Length; i++)
-            {
-                if(d88Hdr.track_table[i] > 0) counter++;
+            foreach(int t in d88Hdr.track_table) {
+                if(t > 0) counter++;
 
-                if(d88Hdr.track_table[i] < 0 || d88Hdr.track_table[i] > stream.Length) return false;
+                if(t < 0 || t > stream.Length) return false;
             }
 
             DicConsole.DebugWriteLine("D88 plugin", "{0} tracks", counter);

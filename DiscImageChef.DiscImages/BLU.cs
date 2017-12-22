@@ -69,27 +69,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Basic Lisa Utility";
             PluginUuid = new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -102,8 +104,7 @@ namespace DiscImageChef.DiscImages
             byte[] header = new byte[0x17];
             stream.Read(header, 0, 0x17);
 
-            BluHeader tmpHdr = new BluHeader();
-            tmpHdr.DeviceName = new byte[0x0D];
+            BluHeader tmpHdr = new BluHeader {DeviceName = new byte[0x0D]};
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             Array.Copy(header, 0, tmpHdr.DeviceName, 0, 0x0D);
@@ -123,8 +124,7 @@ namespace DiscImageChef.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            imageHeader = new BluHeader();
-            imageHeader.DeviceName = new byte[0x0D];
+            imageHeader = new BluHeader {DeviceName = new byte[0x0D]};
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             byte[] header = new byte[0x17];
@@ -159,29 +159,25 @@ namespace DiscImageChef.DiscImages
             switch(StringHandlers.CToString(imageHeader.DeviceName))
             {
                 case PROFILE_NAME:
-                    if(ImageInfo.Sectors == 0x2600) ImageInfo.MediaType = MediaType.AppleProfile;
-                    else ImageInfo.MediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.MediaType = ImageInfo.Sectors == 0x2600 ? MediaType.AppleProfile : MediaType.GENERIC_HDD;
                     ImageInfo.Cylinders = 152;
                     ImageInfo.Heads = 4;
                     ImageInfo.SectorsPerTrack = 16;
                     break;
                 case PROFILE10_NAME:
-                    if(ImageInfo.Sectors == 0x4C00) ImageInfo.MediaType = MediaType.AppleProfile;
-                    else ImageInfo.MediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.MediaType = ImageInfo.Sectors == 0x4C00 ? MediaType.AppleProfile : MediaType.GENERIC_HDD;
                     ImageInfo.Cylinders = 304;
                     ImageInfo.Heads = 4;
                     ImageInfo.SectorsPerTrack = 16;
                     break;
                 case WIDGET_NAME:
-                    if(ImageInfo.Sectors == 0x4C00) ImageInfo.MediaType = MediaType.AppleWidget;
-                    else ImageInfo.MediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.MediaType = ImageInfo.Sectors == 0x4C00 ? MediaType.AppleWidget : MediaType.GENERIC_HDD;
                     ImageInfo.Cylinders = 304;
                     ImageInfo.Heads = 4;
                     ImageInfo.SectorsPerTrack = 16;
                     break;
                 case PRIAM_NAME:
-                    if(ImageInfo.Sectors == 0x022C7C) ImageInfo.MediaType = MediaType.PriamDataTower;
-                    else ImageInfo.MediaType = MediaType.GENERIC_HDD;
+                    ImageInfo.MediaType = ImageInfo.Sectors == 0x022C7C ? MediaType.PriamDataTower : MediaType.GENERIC_HDD;
                     // This values are invented...
                     ImageInfo.Cylinders = 419;
                     ImageInfo.Heads = 4;

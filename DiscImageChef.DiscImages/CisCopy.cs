@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -57,6 +58,7 @@ namespace DiscImageChef.DiscImages
     public class CisCopy : ImagePlugin
     {
         #region Internal enumerations
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum DiskType : byte
         {
             MD1DD8 = 1,
@@ -91,27 +93,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "CisCopy Disk Image (DC-File)";
             PluginUuid = new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         #region Public methods
@@ -189,7 +193,6 @@ namespace DiscImageChef.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            MemoryStream decodedImage;
 
             DiskType type = (DiskType)stream.ReadByte();
             byte tracks;
@@ -242,7 +245,7 @@ namespace DiscImageChef.DiscImages
             int headstep = 1;
             if(type == DiskType.MD1DD || type == DiskType.MD1DD8) headstep = 2;
 
-            decodedImage = new MemoryStream();
+            MemoryStream decodedImage = new MemoryStream();
 
             for(int i = 0; i < tracks; i += headstep)
             {

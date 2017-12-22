@@ -122,10 +122,10 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < Marshal.SizeOf(hdr)) return false;
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(hdr)];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[Marshal.SizeOf(hdr)];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
+            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
             hdr = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
             handle.Free();
 
@@ -141,10 +141,10 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < Marshal.SizeOf(hdr)) return false;
 
-            byte[] hdr_b = new byte[Marshal.SizeOf(hdr)];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[Marshal.SizeOf(hdr)];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
+            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
             hdr = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
             handle.Free();
 
@@ -179,11 +179,11 @@ namespace DiscImageChef.DiscImages
 
                 for(ushort head = 0; head < hdr.heads; head++)
                 {
-                    byte[] sct_b = new byte[4];
-                    stream.Read(sct_b, 0, 4);
+                    byte[] sctB = new byte[4];
+                    stream.Read(sctB, 0, 4);
                     stream.Seek(2, SeekOrigin.Current);
                     byte sectors = (byte)stream.ReadByte();
-                    uint trkOff = BitConverter.ToUInt32(sct_b, 0);
+                    uint trkOff = BitConverter.ToUInt32(sctB, 0);
 
                     DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}", cyl);
                     DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}", head);
@@ -202,9 +202,9 @@ namespace DiscImageChef.DiscImages
                         byte r = (byte)stream.ReadByte();
                         byte n = (byte)stream.ReadByte();
                         SectorFlags f = (SectorFlags)stream.ReadByte();
-                        byte[] off_b = new byte[2];
-                        stream.Read(off_b, 0, 2);
-                        ushort secOff = BitConverter.ToUInt16(off_b, 0);
+                        byte[] offB = new byte[2];
+                        stream.Read(offB, 0, 2);
+                        ushort secOff = BitConverter.ToUInt16(offB, 0);
 
                         DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}", c);
                         DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}", h);

@@ -77,6 +77,7 @@ namespace DiscImageChef.DiscImages
             public byte[] Unknown4;
 
             // On memory only
+#pragma warning disable 649
             public string VolumeIdentifier;
             public string SystemIdentifier;
             public string Comments;
@@ -84,6 +85,7 @@ namespace DiscImageChef.DiscImages
             public Filter SubchannelFilter;
             public string DataFile;
             public string SubchannelFile;
+#pragma warning restore 649
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -190,24 +192,26 @@ namespace DiscImageChef.DiscImages
         {
             Name = "BlindWrite 4";
             PluginUuid = new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = true;
-            ImageInfo.ImageHasSessions = true;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageName = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = true,
+                ImageHasSessions = true,
+                ImageVersion = null,
+                ImageApplicationVersion = null,
+                ImageName = null,
+                ImageCreator = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -237,8 +241,7 @@ namespace DiscImageChef.DiscImages
 
             if(!bw4Signature.SequenceEqual(tmpArray)) return false;
 
-            header = new Bw4Header();
-            header.Signature = tmpArray;
+            header = new Bw4Header {Signature = tmpArray};
 
             // Seems to always be 2
             stream.Read(tmpUInt, 0, 4);
@@ -593,33 +596,28 @@ namespace DiscImageChef.DiscImages
             {
                 filtersList = new FiltersList();
 
-                subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.SubchannelFile));
-                if(subFilter == null)
-                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   header.SubchannelFile.ToLower(CultureInfo
-                                                                                                     .CurrentCulture)));
-                if(subFilter == null)
-                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   header.SubchannelFile.ToUpper(CultureInfo
-                                                                                                     .CurrentCulture)));
-                if(subFilter == null)
-                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   header.SubchannelFile.Split(new[] {'\\'},
-                                                                                               StringSplitOptions
-                                                                                                   .RemoveEmptyEntries)
-                                                                         .Last()));
-                if(subFilter == null)
-                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   header.SubchannelFile.Split(new[] {'\\'},
-                                                                                               StringSplitOptions
-                                                                                                   .RemoveEmptyEntries)
-                                                                         .Last().ToLower(CultureInfo.CurrentCulture)));
-                if(subFilter == null)
-                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   header.SubchannelFile.Split(new[] {'\\'},
-                                                                                               StringSplitOptions
-                                                                                                   .RemoveEmptyEntries)
-                                                                         .Last().ToUpper(CultureInfo.CurrentCulture)));
+                subFilter =
+                    ((((filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.SubchannelFile)) ??
+                        filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                           header.SubchannelFile.ToLower(CultureInfo.CurrentCulture)))
+                       ) ??
+                       filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                          header.SubchannelFile.ToUpper(CultureInfo.CurrentCulture)))
+                      ) ??
+                      filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                         header.SubchannelFile.Split(new[] {'\\'},
+                                                                                     StringSplitOptions
+                                                                                         .RemoveEmptyEntries).Last()))
+                     ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                             header.SubchannelFile.Split(new[] {'\\'},
+                                                                                         StringSplitOptions
+                                                                                             .RemoveEmptyEntries).Last()
+                                                                   .ToLower(CultureInfo.CurrentCulture)))) ??
+                    filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                       header.SubchannelFile.Split(new[] {'\\'},
+                                                                                   StringSplitOptions
+                                                                                       .RemoveEmptyEntries).Last()
+                                                             .ToUpper(CultureInfo.CurrentCulture)));
             }
 
             tracks = new List<Track>();
@@ -631,9 +629,7 @@ namespace DiscImageChef.DiscImages
             foreach(Bw4TrackDescriptor bwTrack in bwTracks)
                 if(bwTrack.point < 0xA0)
                 {
-                    Track track = new Track();
-                    track.TrackDescription = bwTrack.title;
-                    track.TrackEndSector = bwTrack.lastSector;
+                    Track track = new Track {TrackDescription = bwTrack.title, TrackEndSector = bwTrack.lastSector};
 
                     if(!string.IsNullOrEmpty(bwTrack.filename))
                         do
@@ -789,10 +785,12 @@ namespace DiscImageChef.DiscImages
             sessions = new List<Session>();
             for(ushort i = 1; i <= maxSession; i++)
             {
-                Session session = new Session();
-                session.SessionSequence = i;
-                session.StartTrack = uint.MaxValue;
-                session.StartSector = uint.MaxValue;
+                Session session = new Session
+                {
+                    SessionSequence = i,
+                    StartTrack = uint.MaxValue,
+                    StartSector = uint.MaxValue
+                };
 
                 foreach(Track track in tracks.Where(track => track.TrackSession == i))
                 {
@@ -822,21 +820,21 @@ namespace DiscImageChef.DiscImages
             bool firstdata = false;
             bool audio = false;
 
-            foreach(Track _track in tracks)
+            foreach(Track bwTrack in tracks)
             {
                 // First track is audio
-                firstaudio |= _track.TrackSequence == 1 && _track.TrackType == TrackType.Audio;
+                firstaudio |= bwTrack.TrackSequence == 1 && bwTrack.TrackType == TrackType.Audio;
 
                 // First track is data
-                firstdata |= _track.TrackSequence == 1 && _track.TrackType != TrackType.Audio;
+                firstdata |= bwTrack.TrackSequence == 1 && bwTrack.TrackType != TrackType.Audio;
 
                 // Any non first track is data
-                data |= _track.TrackSequence != 1 && _track.TrackType != TrackType.Audio;
+                data |= bwTrack.TrackSequence != 1 && bwTrack.TrackType != TrackType.Audio;
 
                 // Any non first track is audio
-                audio |= _track.TrackSequence != 1 && _track.TrackType == TrackType.Audio;
+                audio |= bwTrack.TrackSequence != 1 && bwTrack.TrackType == TrackType.Audio;
 
-                switch(_track.TrackType)
+                switch(bwTrack.TrackType)
                 {
                     case TrackType.CdMode2Formless:
                         mode2 = true;
@@ -944,28 +942,26 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            Track _track = new Track();
-
-            _track.TrackSequence = 0;
+            Track dicTrack = new Track {TrackSequence = 0};
 
             foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
-                _track = bwTrack;
+                dicTrack = bwTrack;
                 break;
             }
 
-            if(_track.TrackSequence == 0)
+            if(dicTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > _track.TrackEndSector - _track.TrackStartSector + 1)
+            if(length + sectorAddress > dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector - _track.TrackStartSector + 1}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip;
 
-            switch(_track.TrackType)
+            switch(dicTrack.TrackType)
             {
                 case TrackType.CdMode1:
                 {
@@ -1000,18 +996,17 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = _track.TrackFilter.GetDataForkStream();
+            imageStream = dicTrack.TrackFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
-              .Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+              .Seek((long)dicTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
                 {
-                    byte[] sector;
                     br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                    sector = br.ReadBytes((int)sectorSize);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
@@ -1021,28 +1016,27 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            Track _track = new Track();
+            Track dicTrack = new Track {TrackSequence = 0};
 
-            _track.TrackSequence = 0;
 
             foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
-                _track = bwTrack;
+                dicTrack = bwTrack;
                 break;
             }
 
-            if(_track.TrackSequence == 0)
+            if(dicTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > _track.TrackEndSector - _track.TrackStartSector + 1)
+            if(length + sectorAddress > dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector - _track.TrackStartSector + 1}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip;
 
-            if(_track.TrackType == TrackType.Data)
+            if(dicTrack.TrackType == TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
 
             switch(tag)
@@ -1056,14 +1050,13 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    byte flag;
-                    if(trackFlags.TryGetValue(track, out flag)) return new[] {flag};
+                    if(trackFlags.TryGetValue(track, out byte flag)) return new[] {flag};
 
                     throw new ArgumentException("Unsupported tag requested", nameof(tag));
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
-            switch(_track.TrackType)
+            switch(dicTrack.TrackType)
             {
                 case TrackType.CdMode1:
                     switch(tag)
@@ -1163,18 +1156,17 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = _track.TrackFilter.GetDataForkStream();
+            imageStream = dicTrack.TrackFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
-              .Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+              .Seek((long)dicTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
                 {
-                    byte[] sector;
                     br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                    sector = br.ReadBytes((int)sectorSize);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
@@ -1208,28 +1200,27 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            Track _track = new Track();
+            Track dicTrack = new Track {TrackSequence = 0};
 
-            _track.TrackSequence = 0;
 
             foreach(Track bwTrack in tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
-                _track = bwTrack;
+                dicTrack = bwTrack;
                 break;
             }
 
-            if(_track.TrackSequence == 0)
+            if(dicTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > _track.TrackEndSector - _track.TrackStartSector + 1)
+            if(length + sectorAddress > dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector - _track.TrackStartSector + 1}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip;
 
-            switch(_track.TrackType)
+            switch(dicTrack.TrackType)
             {
                 case TrackType.Audio:
                 case TrackType.CdMode1:
@@ -1237,21 +1228,19 @@ namespace DiscImageChef.DiscImages
                 case TrackType.Data:
                 {
                     sectorOffset = 0;
-                    sectorSize = (uint)_track.TrackRawBytesPerSector;
+                    sectorSize = (uint)dicTrack.TrackRawBytesPerSector;
                     sectorSkip = 0;
                     break;
                 }
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            byte[] buffer;
-
-            imageStream = _track.TrackFilter.GetDataForkStream();
+            imageStream = dicTrack.TrackFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
-              .Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+              .Seek((long)dicTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
-            buffer = br.ReadBytes((int)(sectorSize * length));
+            byte[] buffer = br.ReadBytes((int)(sectorSize * length));
 
             return buffer;
         }
@@ -1295,7 +1284,7 @@ namespace DiscImageChef.DiscImages
 
         public override List<Track> GetSessionTracks(ushort session)
         {
-            return tracks.Where(_track => _track.TrackSession == session).ToList();
+            return tracks.Where(track => track.TrackSession == session).ToList();
         }
 
         public override List<Session> GetSessions()

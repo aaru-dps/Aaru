@@ -45,6 +45,7 @@ using SharpCompress.Compressors.ADC;
 using SharpCompress.Compressors.BZip2;
 using CompressionMode = SharpCompress.Compressors.CompressionMode;
 using Version = Resources.Version;
+#pragma warning disable 612
 
 namespace DiscImageChef.DiscImages
 {
@@ -149,7 +150,7 @@ namespace DiscImageChef.DiscImages
         Dictionary<ulong, byte[]> chunkCache;
         const uint MAX_CACHE_SIZE = 16777216;
         const uint SECTOR_SIZE = 512;
-        uint maxCachedSectors = MAX_CACHE_SIZE / SECTOR_SIZE;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
         uint currentChunkCacheSize;
         uint buffersize;
 
@@ -159,27 +160,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Apple Universal Disk Image Format";
             PluginUuid = new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -310,33 +313,25 @@ namespace DiscImageChef.DiscImages
                 NSDictionary plist = (NSDictionary)XmlPropertyListParser.Parse(plistB);
                 if(plist == null) throw new Exception("Could not parse property list.");
 
-                NSObject rsrcObj;
-
-                if(!plist.TryGetValue(RESOURCE_FORK_KEY, out rsrcObj))
+                if(!plist.TryGetValue(RESOURCE_FORK_KEY, out NSObject rsrcObj))
                     throw new Exception("Could not retrieve resource fork.");
 
                 NSDictionary rsrc = (NSDictionary)rsrcObj;
 
-                NSObject blkxObj;
-
-                if(!rsrc.TryGetValue(BLOCK_KEY, out blkxObj))
+                if(!rsrc.TryGetValue(BLOCK_KEY, out NSObject blkxObj))
                     throw new Exception("Could not retrieve block chunks array.");
 
                 NSObject[] blkx = ((NSArray)blkxObj).GetArray();
 
                 foreach(NSDictionary part in blkx.Cast<NSDictionary>()) {
-                    NSObject nameObj, dataObj;
+                    if(!part.TryGetValue("Name", out _)) throw new Exception("Could not retrieve Name");
 
-                    if(!part.TryGetValue("Name", out nameObj)) throw new Exception("Could not retrieve Name");
-
-                    if(!part.TryGetValue("Data", out dataObj)) throw new Exception("Could not retrieve Data");
+                    if(!part.TryGetValue("Data", out NSObject dataObj)) throw new Exception("Could not retrieve Data");
 
                     blkxList.Add(((NSData)dataObj).Bytes);
                 }
 
-                NSObject versObj;
-
-                if(rsrc.TryGetValue("vers", out versObj))
+                if(rsrc.TryGetValue("vers", out NSObject versObj))
                 {
                     NSObject[] versArray = ((NSArray)versObj).GetArray();
                     if(versArray.Length >= 1) vers = ((NSData)versArray[0]).Bytes;
@@ -346,12 +341,14 @@ namespace DiscImageChef.DiscImages
             {
                 // Obsolete read-only UDIF only prepended the header and then put the image without any kind of block references.
                 // So let's falsify a block chunk
-                BlockChunk bChnk = new BlockChunk();
-                bChnk.length = footer.dataForkLen;
-                bChnk.offset = footer.dataForkOff;
-                bChnk.sector = 0;
-                bChnk.sectors = footer.sectorCount;
-                bChnk.type = CHUNK_TYPE_COPY;
+                BlockChunk bChnk = new BlockChunk
+                {
+                    length = footer.dataForkLen,
+                    offset = footer.dataForkOff,
+                    sector = 0,
+                    sectors = footer.sectorCount,
+                    type = CHUNK_TYPE_COPY
+                };
                 ImageInfo.Sectors = footer.sectorCount;
                 chunks.Add(bChnk.sector, bChnk);
                 buffersize = 2048 * SECTOR_SIZE;
@@ -362,14 +359,12 @@ namespace DiscImageChef.DiscImages
             {
                 Version version = new Version(vers);
 
-                string major;
-                string minor;
                 string release = null;
                 string dev = null;
                 string pre = null;
 
-                major = $"{version.MajorVersion}";
-                minor = $".{version.MinorVersion / 10}";
+                string major = $"{version.MajorVersion}";
+                string minor = $".{version.MinorVersion / 10}";
                 if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
                 switch(version.DevStage)
                 {
@@ -509,9 +504,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
-
-            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             BlockChunk currentChunk = new BlockChunk();
             bool chunkFound = false;
@@ -535,8 +528,7 @@ namespace DiscImageChef.DiscImages
 
             if((currentChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
             {
-                byte[] buffer;
-                if(!chunkCache.TryGetValue(chunkStartSector, out buffer))
+                if(!chunkCache.TryGetValue(chunkStartSector, out byte[] buffer))
                 {
                     byte[] cmpBuffer = new byte[currentChunk.length];
                     imageStream.Seek((long)currentChunk.offset, SeekOrigin.Begin);
@@ -545,7 +537,7 @@ namespace DiscImageChef.DiscImages
                     Stream decStream;
 
                     switch(currentChunk.type) {
-                        case CHUNK_TYPE_ADC: decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
+                        case CHUNK_TYPE_ADC: decStream = new ADCStream(cmpMs);
                             break;
                         case CHUNK_TYPE_ZLIB: decStream = new ZlibStream(cmpMs, Ionic.Zlib.CompressionMode.Decompress);
                             break;
@@ -585,7 +577,7 @@ namespace DiscImageChef.DiscImages
                 sector = new byte[SECTOR_SIZE];
                 Array.Copy(buffer, relOff, sector, 0, SECTOR_SIZE);
 
-                if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
                 sectorCache.Add(sectorAddress, sector);
 
@@ -597,7 +589,7 @@ namespace DiscImageChef.DiscImages
                 case CHUNK_TYPE_ZERO:
                     sector = new byte[SECTOR_SIZE];
 
-                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                    if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
                     sectorCache.Add(sectorAddress, sector);
                     return sector;
@@ -606,7 +598,7 @@ namespace DiscImageChef.DiscImages
                     sector = new byte[SECTOR_SIZE];
                     imageStream.Read(sector, 0, sector.Length);
 
-                    if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+                    if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
                     sectorCache.Add(sectorAddress, sector);
                     return sector;

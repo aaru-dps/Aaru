@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -124,6 +125,7 @@ namespace DiscImageChef.DiscImages
         #endregion Internal Structures
 
         #region Internal enumerations
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum AlcoholMediumType : ushort
         {
             CD = 0x00,
@@ -133,6 +135,7 @@ namespace DiscImageChef.DiscImages
             DVDR = 0x12
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum AlcoholTrackMode : byte
         {
             NoData = 0x00,
@@ -175,27 +178,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Alcohol 120% Media Descriptor Structure";
             PluginUuid = new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -206,10 +211,9 @@ namespace DiscImageChef.DiscImages
 
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
-            AlcoholHeader header;
             IntPtr hdrPtr = Marshal.AllocHGlobal(88);
             Marshal.Copy(hdr, 0, hdrPtr, 88);
-            header = (AlcoholHeader)Marshal.PtrToStructure(hdrPtr, typeof(AlcoholHeader));
+            AlcoholHeader header = (AlcoholHeader)Marshal.PtrToStructure(hdrPtr, typeof(AlcoholHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
             return header.signature == "MEDIA DESCRIPTO";
@@ -224,10 +228,9 @@ namespace DiscImageChef.DiscImages
             isDvd = false;
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
-            AlcoholHeader header;
             IntPtr hdrPtr = Marshal.AllocHGlobal(88);
             Marshal.Copy(hdr, 0, hdrPtr, 88);
-            header = (AlcoholHeader)Marshal.PtrToStructure(hdrPtr, typeof(AlcoholHeader));
+            AlcoholHeader header = (AlcoholHeader)Marshal.PtrToStructure(hdrPtr, typeof(AlcoholHeader));
             Marshal.FreeHGlobal(hdrPtr);
 
             DicConsole.DebugWriteLine("Alcohol 120% plugin", "header.signature = {0}", header.signature);
@@ -298,15 +301,11 @@ namespace DiscImageChef.DiscImages
                 Dictionary<int, AlcoholTrack> sesToc = new Dictionary<int, AlcoholTrack>();
                 for(int i = 0; i < session.allBlocks; i++)
                 {
-                    byte[] trkHdr;
-                    AlcoholTrack track;
-                    IntPtr trkPtr;
-
-                    trkHdr = new byte[80];
+                    byte[] trkHdr = new byte[80];
                     stream.Read(trkHdr, 0, 80);
-                    trkPtr = Marshal.AllocHGlobal(80);
+                    IntPtr trkPtr = Marshal.AllocHGlobal(80);
                     Marshal.Copy(trkHdr, 0, trkPtr, 80);
-                    track = (AlcoholTrack)Marshal.PtrToStructure(trkPtr, typeof(AlcoholTrack));
+                    AlcoholTrack track = (AlcoholTrack)Marshal.PtrToStructure(trkPtr, typeof(AlcoholTrack));
                     Marshal.FreeHGlobal(trkPtr);
 
                     DicConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].mode = {0}", track.mode,
@@ -384,8 +383,7 @@ namespace DiscImageChef.DiscImages
                 }
                 else if(isDvd)
                 {
-                    AlcoholTrackExtra extra = new AlcoholTrackExtra();
-                    extra.sectors = track.extraOffset;
+                    AlcoholTrackExtra extra = new AlcoholTrackExtra {sectors = track.extraOffset};
                     alcTrackExtras.Add(track.point, extra);
                 }
 
@@ -412,13 +410,10 @@ namespace DiscImageChef.DiscImages
             if(alcFooter.filenameOffset > 0)
             {
                 stream.Seek(alcFooter.filenameOffset, SeekOrigin.Begin);
-                byte[] filename;
-                if(header.dpmOffset == 0) filename = new byte[stream.Length - stream.Position];
-                else filename = new byte[header.dpmOffset - stream.Position];
+                byte[] filename = header.dpmOffset == 0 ? new byte[stream.Length - stream.Position] : new byte[header.dpmOffset - stream.Position];
 
                 stream.Read(filename, 0, filename.Length);
-                if(alcFooter.widechar == 1) alcFile = Encoding.Unicode.GetString(filename);
-                else alcFile = Encoding.Default.GetString(filename);
+                alcFile = alcFooter.widechar == 1 ? Encoding.Unicode.GetString(filename) : Encoding.Default.GetString(filename);
 
                 DicConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filename = {0}", alcFile);
             }
@@ -485,8 +480,7 @@ namespace DiscImageChef.DiscImages
                                 ImageInfo.MediaType = MediaType.DVDPRWDL;
                                 break;
                             case DiskCategory.DVDR:
-                                if(pfi0.Value.PartVersion == 6) ImageInfo.MediaType = MediaType.DVDRDL;
-                                else ImageInfo.MediaType = MediaType.DVDR;
+                                ImageInfo.MediaType = pfi0.Value.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
                                 break;
                             case DiskCategory.DVDRAM:
                                 ImageInfo.MediaType = MediaType.DVDRAM;
@@ -495,8 +489,7 @@ namespace DiscImageChef.DiscImages
                                 ImageInfo.MediaType = MediaType.DVDROM;
                                 break;
                             case DiskCategory.DVDRW:
-                                if(pfi0.Value.PartVersion == 3) ImageInfo.MediaType = MediaType.DVDRWDL;
-                                else ImageInfo.MediaType = MediaType.DVDRW;
+                                ImageInfo.MediaType = pfi0.Value.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
                                 break;
                             case DiskCategory.HDDVDR:
                                 ImageInfo.MediaType = MediaType.HDDVDR;
@@ -511,9 +504,7 @@ namespace DiscImageChef.DiscImages
                                 ImageInfo.MediaType = MediaType.HDDVDRW;
                                 break;
                             case DiskCategory.Nintendo:
-                                if(pfi0.Value.DiscSize == DVDSize.Eighty)
-                                    ImageInfo.MediaType = MediaType.GOD;
-                                else ImageInfo.MediaType = MediaType.WOD;
+                                ImageInfo.MediaType = pfi0.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
                                 break;
                             case DiskCategory.UMD:
                                 ImageInfo.MediaType = MediaType.UMD;
@@ -536,21 +527,21 @@ namespace DiscImageChef.DiscImages
                 bool firstdata = false;
                 bool audio = false;
 
-                foreach(AlcoholTrack _track in alcTracks.Values)
+                foreach(AlcoholTrack alcoholTrack in alcTracks.Values)
                 {
                     // First track is audio
-                    firstaudio |= _track.point == 1 && _track.mode == AlcoholTrackMode.Audio;
+                    firstaudio |= alcoholTrack.point == 1 && alcoholTrack.mode == AlcoholTrackMode.Audio;
 
                     // First track is data
-                    firstdata |= _track.point == 1 && _track.mode != AlcoholTrackMode.Audio;
+                    firstdata |= alcoholTrack.point == 1 && alcoholTrack.mode != AlcoholTrackMode.Audio;
 
                     // Any non first track is data
-                    data |= _track.point != 1 && _track.mode != AlcoholTrackMode.Audio;
+                    data |= alcoholTrack.point != 1 && alcoholTrack.mode != AlcoholTrackMode.Audio;
 
                     // Any non first track is audio
-                    audio |= _track.point != 1 && _track.mode == AlcoholTrackMode.Audio;
+                    audio |= alcoholTrack.point != 1 && alcoholTrack.mode == AlcoholTrackMode.Audio;
 
-                    switch(_track.mode)
+                    switch(alcoholTrack.mode)
                     {
                         case AlcoholTrackMode.Mode2:
                         case AlcoholTrackMode.Mode2F1:
@@ -573,18 +564,15 @@ namespace DiscImageChef.DiscImages
             foreach(AlcoholSession alcSes in alcSessions.Values)
             {
                 Session session = new Session();
-                AlcoholTrack stTrk;
-                AlcoholTrack enTrk;
-                AlcoholTrackExtra enTrkExt;
 
-                if(!alcTracks.TryGetValue(alcSes.firstTrack, out stTrk)) break;
-                if(!alcTracks.TryGetValue(alcSes.lastTrack, out enTrk)) break;
-                if(!alcTrackExtras.TryGetValue(alcSes.lastTrack, out enTrkExt)) break;
+                if(!alcTracks.TryGetValue(alcSes.firstTrack, out AlcoholTrack startingTrack)) break;
+                if(!alcTracks.TryGetValue(alcSes.lastTrack, out AlcoholTrack endingTrack)) break;
+                if(!alcTrackExtras.TryGetValue(alcSes.lastTrack, out AlcoholTrackExtra endingTrackExtra)) break;
 
-                session.StartSector = stTrk.startLba;
+                session.StartSector = startingTrack.startLba;
                 session.StartTrack = alcSes.firstTrack;
                 session.SessionSequence = alcSes.sessionSequence;
-                session.EndSector = enTrk.startLba + enTrkExt.sectors - 1;
+                session.EndSector = endingTrack.startLba + endingTrackExtra.sectors - 1;
                 session.EndTrack = alcSes.lastTrack;
 
                 sessions.Add(session);
@@ -592,26 +580,27 @@ namespace DiscImageChef.DiscImages
 
             partitions = new List<Partition>();
             offsetmap = new Dictionary<uint, ulong>();
-            ulong byte_offset = 0;
+            ulong byteOffset = 0;
 
             foreach(AlcoholTrack trk in alcTracks.Values)
             {
-                AlcoholTrackExtra extra;
-                if(alcTrackExtras.TryGetValue(trk.point, out extra))
+                if(alcTrackExtras.TryGetValue(trk.point, out AlcoholTrackExtra extra))
                 {
-                    Partition partition = new Partition();
+                    Partition partition = new Partition
+                    {
+                        Description = $"Track {trk.point}.",
+                        Start = trk.startLba,
+                        Size = extra.sectors * trk.sectorSize,
+                        Length = extra.sectors,
+                        Sequence = trk.point,
+                        Offset = byteOffset,
+                        Type = trk.mode.ToString()
+                    };
 
-                    partition.Description = $"Track {trk.point}.";
-                    partition.Start = trk.startLba;
-                    partition.Size = extra.sectors * trk.sectorSize;
-                    partition.Length = extra.sectors;
-                    partition.Sequence = trk.point;
-                    partition.Offset = byte_offset;
-                    partition.Type = trk.mode.ToString();
 
                     partitions.Add(partition);
                     ImageInfo.Sectors += extra.sectors;
-                    byte_offset += partition.Size;
+                    byteOffset += partition.Size;
                 }
 
                 if(!offsetmap.ContainsKey(trk.point)) offsetmap.Add(trk.point, trk.startLba);
@@ -830,9 +819,7 @@ namespace DiscImageChef.DiscImages
                 if(sectorAddress >= kvp.Value)
                     foreach(AlcoholTrack track in alcTracks.Values)
                     {
-                        AlcoholTrackExtra extra;
-
-                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out extra)) continue;
+                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra)) continue;
 
                         if(sectorAddress - kvp.Value < extra.sectors)
                             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
@@ -847,9 +834,7 @@ namespace DiscImageChef.DiscImages
                 if(sectorAddress >= kvp.Value)
                     foreach(AlcoholTrack track in alcTracks.Values)
                     {
-                        AlcoholTrackExtra extra;
-
-                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out extra)) continue;
+                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra)) continue;
 
                         if(sectorAddress - kvp.Value < extra.sectors)
                             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
@@ -860,95 +845,91 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            AlcoholTrack _track;
-            AlcoholTrackExtra _extra;
-
-            if(!alcTracks.TryGetValue((int)track, out _track) || !alcTrackExtras.TryGetValue((int)track, out _extra))
+            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) || !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > _extra.sectors)
+            if(length + sectorAddress > alcExtra.sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_extra.sectors}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({alcExtra.sectors}), won't cross tracks");
 
-            uint sector_offset;
-            uint sector_size;
-            uint sector_skip;
+            uint sectorOffset;
+            uint sectorSize;
+            uint sectorSkip;
 
-            switch(_track.mode)
+            switch(alcTrack.mode)
             {
                 case AlcoholTrackMode.Mode1:
                 {
-                    sector_offset = 16;
-                    sector_size = 2048;
-                    sector_skip = 288;
+                    sectorOffset = 16;
+                    sectorSize = 2048;
+                    sectorSkip = 288;
                     break;
                 }
                 case AlcoholTrackMode.Mode2:
                 {
-                    sector_offset = 16;
-                    sector_size = 2336;
-                    sector_skip = 0;
+                    sectorOffset = 16;
+                    sectorSize = 2336;
+                    sectorSkip = 0;
                     break;
                 }
                 case AlcoholTrackMode.Mode2F1:
                 case AlcoholTrackMode.Mode2F1Alt:
                 {
-                    sector_offset = 24;
-                    sector_size = 2048;
-                    sector_skip = 280;
+                    sectorOffset = 24;
+                    sectorSize = 2048;
+                    sectorSkip = 280;
                     break;
                 }
                 case AlcoholTrackMode.Mode2F2:
                 {
-                    sector_offset = 24;
-                    sector_size = 2324;
-                    sector_skip = 4;
+                    sectorOffset = 24;
+                    sectorSize = 2324;
+                    sectorSkip = 4;
                     break;
                 }
                 case AlcoholTrackMode.Audio:
                 {
-                    sector_offset = 0;
-                    sector_size = 2352;
-                    sector_skip = 0;
+                    sectorOffset = 0;
+                    sectorSize = 2352;
+                    sectorSkip = 0;
                     break;
                 }
                 case AlcoholTrackMode.DVD:
                 {
-                    sector_offset = 0;
-                    sector_size = 2048;
-                    sector_skip = 0;
+                    sectorOffset = 0;
+                    sectorSize = 2048;
+                    sectorSkip = 0;
                     break;
                 }
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            switch(_track.subMode)
+            switch(alcTrack.subMode)
             {
                 case AlcoholSubchannelMode.None:
-                    sector_skip += 0;
+                    sectorSkip += 0;
                     break;
                 case AlcoholSubchannelMode.Interleaved:
-                    sector_skip += 96;
+                    sectorSkip += 96;
                     break;
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported subchannel type");
             }
 
-            byte[] buffer = new byte[sector_size * length];
+            byte[] buffer = new byte[sectorSize * length];
 
             imageStream = alcImage.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
-              .Seek((long)_track.startOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)),
+              .Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
-            if(sector_offset == 0 && sector_skip == 0) buffer = br.ReadBytes((int)(sector_size * length));
+            if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
                 {
-                    byte[] sector;
-                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                    sector = br.ReadBytes((int)sector_size);
-                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
             return buffer;
@@ -956,21 +937,18 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            AlcoholTrack _track;
-            AlcoholTrackExtra _extra;
-
-            if(!alcTracks.TryGetValue((int)track, out _track) || !alcTrackExtras.TryGetValue((int)track, out _extra))
+            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) || !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > _extra.sectors)
+            if(length + sectorAddress > alcExtra.sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length}) than present in track ({_extra.sectors}), won't cross tracks");
+                                                      $"Requested more sectors ({length}) than present in track ({alcExtra.sectors}), won't cross tracks");
 
-            uint sector_offset;
-            uint sector_size;
-            uint sector_skip;
+            uint sectorOffset;
+            uint sectorSize;
+            uint sectorSkip;
 
-            if(_track.mode == AlcoholTrackMode.DVD)
+            if(alcTrack.mode == AlcoholTrackMode.DVD)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
 
             switch(tag)
@@ -983,68 +961,68 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdSectorSubchannel:
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
-                case SectorTagType.CdTrackFlags: return new[] {(byte)(_track.adrCtl & 0x0F)};
+                case SectorTagType.CdTrackFlags: return new[] {(byte)(alcTrack.adrCtl & 0x0F)};
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
-            switch(_track.mode)
+            switch(alcTrack.mode)
             {
                 case AlcoholTrackMode.Mode1:
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSync:
                         {
-                            sector_offset = 0;
-                            sector_size = 12;
-                            sector_skip = 2340;
+                            sectorOffset = 0;
+                            sectorSize = 12;
+                            sectorSkip = 2340;
                             break;
                         }
                         case SectorTagType.CdSectorHeader:
                         {
-                            sector_offset = 12;
-                            sector_size = 4;
-                            sector_skip = 2336;
+                            sectorOffset = 12;
+                            sectorSize = 4;
+                            sectorSkip = 2336;
                             break;
                         }
                         case SectorTagType.CdSectorSubHeader:
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                         case SectorTagType.CdSectorEcc:
                         {
-                            sector_offset = 2076;
-                            sector_size = 276;
-                            sector_skip = 0;
+                            sectorOffset = 2076;
+                            sectorSize = 276;
+                            sectorSkip = 0;
                             break;
                         }
                         case SectorTagType.CdSectorEccP:
                         {
-                            sector_offset = 2076;
-                            sector_size = 172;
-                            sector_skip = 104;
+                            sectorOffset = 2076;
+                            sectorSize = 172;
+                            sectorSkip = 104;
                             break;
                         }
                         case SectorTagType.CdSectorEccQ:
                         {
-                            sector_offset = 2248;
-                            sector_size = 104;
-                            sector_skip = 0;
+                            sectorOffset = 2248;
+                            sectorSize = 104;
+                            sectorSkip = 0;
                             break;
                         }
                         case SectorTagType.CdSectorEdc:
                         {
-                            sector_offset = 2064;
-                            sector_size = 4;
-                            sector_skip = 284;
+                            sectorOffset = 2064;
+                            sectorSize = 4;
+                            sectorSkip = 284;
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
                         {
-                            switch(_track.subMode)
+                            switch(alcTrack.subMode)
                             {
                                 case AlcoholSubchannelMode.Interleaved:
 
-                                    sector_offset = 2352;
-                                    sector_size = 96;
-                                    sector_skip = 0;
+                                    sectorOffset = 2352;
+                                    sectorSize = 96;
+                                    sectorSkip = 0;
                                     break;
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
@@ -1067,27 +1045,27 @@ namespace DiscImageChef.DiscImages
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                         case SectorTagType.CdSectorSubHeader:
                         {
-                            sector_offset = 0;
-                            sector_size = 8;
-                            sector_skip = 2328;
+                            sectorOffset = 0;
+                            sectorSize = 8;
+                            sectorSkip = 2328;
                             break;
                         }
                         case SectorTagType.CdSectorEdc:
                         {
-                            sector_offset = 2332;
-                            sector_size = 4;
-                            sector_skip = 0;
+                            sectorOffset = 2332;
+                            sectorSize = 4;
+                            sectorSkip = 0;
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
                         {
-                            switch(_track.subMode)
+                            switch(alcTrack.subMode)
                             {
                                 case AlcoholSubchannelMode.Interleaved:
 
-                                    sector_offset = 2352;
-                                    sector_size = 96;
-                                    sector_skip = 0;
+                                    sectorOffset = 2352;
+                                    sectorSize = 96;
+                                    sectorSkip = 0;
                                     break;
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
@@ -1105,62 +1083,62 @@ namespace DiscImageChef.DiscImages
                     {
                         case SectorTagType.CdSectorSync:
                         {
-                            sector_offset = 0;
-                            sector_size = 12;
-                            sector_skip = 2340;
+                            sectorOffset = 0;
+                            sectorSize = 12;
+                            sectorSkip = 2340;
                             break;
                         }
                         case SectorTagType.CdSectorHeader:
                         {
-                            sector_offset = 12;
-                            sector_size = 4;
-                            sector_skip = 2336;
+                            sectorOffset = 12;
+                            sectorSize = 4;
+                            sectorSkip = 2336;
                             break;
                         }
                         case SectorTagType.CdSectorSubHeader:
                         {
-                            sector_offset = 16;
-                            sector_size = 8;
-                            sector_skip = 2328;
+                            sectorOffset = 16;
+                            sectorSize = 8;
+                            sectorSkip = 2328;
                             break;
                         }
                         case SectorTagType.CdSectorEcc:
                         {
-                            sector_offset = 2076;
-                            sector_size = 276;
-                            sector_skip = 0;
+                            sectorOffset = 2076;
+                            sectorSize = 276;
+                            sectorSkip = 0;
                             break;
                         }
                         case SectorTagType.CdSectorEccP:
                         {
-                            sector_offset = 2076;
-                            sector_size = 172;
-                            sector_skip = 104;
+                            sectorOffset = 2076;
+                            sectorSize = 172;
+                            sectorSkip = 104;
                             break;
                         }
                         case SectorTagType.CdSectorEccQ:
                         {
-                            sector_offset = 2248;
-                            sector_size = 104;
-                            sector_skip = 0;
+                            sectorOffset = 2248;
+                            sectorSize = 104;
+                            sectorSkip = 0;
                             break;
                         }
                         case SectorTagType.CdSectorEdc:
                         {
-                            sector_offset = 2072;
-                            sector_size = 4;
-                            sector_skip = 276;
+                            sectorOffset = 2072;
+                            sectorSize = 4;
+                            sectorSkip = 276;
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
                         {
-                            switch(_track.subMode)
+                            switch(alcTrack.subMode)
                             {
                                 case AlcoholSubchannelMode.Interleaved:
 
-                                    sector_offset = 2352;
-                                    sector_size = 96;
-                                    sector_skip = 0;
+                                    sectorOffset = 2352;
+                                    sectorSize = 96;
+                                    sectorSkip = 0;
                                     break;
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
@@ -1176,41 +1154,41 @@ namespace DiscImageChef.DiscImages
                     {
                         case SectorTagType.CdSectorSync:
                         {
-                            sector_offset = 0;
-                            sector_size = 12;
-                            sector_skip = 2340;
+                            sectorOffset = 0;
+                            sectorSize = 12;
+                            sectorSkip = 2340;
                             break;
                         }
                         case SectorTagType.CdSectorHeader:
                         {
-                            sector_offset = 12;
-                            sector_size = 4;
-                            sector_skip = 2336;
+                            sectorOffset = 12;
+                            sectorSize = 4;
+                            sectorSkip = 2336;
                             break;
                         }
                         case SectorTagType.CdSectorSubHeader:
                         {
-                            sector_offset = 16;
-                            sector_size = 8;
-                            sector_skip = 2328;
+                            sectorOffset = 16;
+                            sectorSize = 8;
+                            sectorSkip = 2328;
                             break;
                         }
                         case SectorTagType.CdSectorEdc:
                         {
-                            sector_offset = 2348;
-                            sector_size = 4;
-                            sector_skip = 0;
+                            sectorOffset = 2348;
+                            sectorSize = 4;
+                            sectorSkip = 0;
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
                         {
-                            switch(_track.subMode)
+                            switch(alcTrack.subMode)
                             {
                                 case AlcoholSubchannelMode.Interleaved:
 
-                                    sector_offset = 2352;
-                                    sector_size = 96;
-                                    sector_skip = 0;
+                                    sectorOffset = 2352;
+                                    sectorSize = 96;
+                                    sectorSkip = 0;
                                     break;
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
@@ -1227,13 +1205,13 @@ namespace DiscImageChef.DiscImages
                     {
                         case SectorTagType.CdSectorSubchannel:
                         {
-                            switch(_track.subMode)
+                            switch(alcTrack.subMode)
                             {
                                 case AlcoholSubchannelMode.Interleaved:
 
-                                    sector_offset = 2352;
-                                    sector_size = 96;
-                                    sector_skip = 0;
+                                    sectorOffset = 2352;
+                                    sectorSize = 96;
+                                    sectorSkip = 0;
                                     break;
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
@@ -1248,33 +1226,32 @@ namespace DiscImageChef.DiscImages
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            switch(_track.subMode)
+            switch(alcTrack.subMode)
             {
                 case AlcoholSubchannelMode.None:
-                    sector_skip += 0;
+                    sectorSkip += 0;
                     break;
                 case AlcoholSubchannelMode.Interleaved:
-                    if(tag != SectorTagType.CdSectorSubchannel) sector_skip += 96;
+                    if(tag != SectorTagType.CdSectorSubchannel) sectorSkip += 96;
                     break;
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported subchannel type");
             }
 
-            byte[] buffer = new byte[sector_size * length];
+            byte[] buffer = new byte[sectorSize * length];
 
             imageStream = alcImage.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
-              .Seek((long)_track.startOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)),
+              .Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
-            if(sector_offset == 0 && sector_skip == 0) buffer = br.ReadBytes((int)(sector_size * length));
+            if(sectorOffset == 0 && sectorSkip == 0) buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
                 {
-                    byte[] sector;
-                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                    sector = br.ReadBytes((int)sector_size);
-                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
             return buffer;
@@ -1294,13 +1271,11 @@ namespace DiscImageChef.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
                 if(sectorAddress >= kvp.Value)
-                    foreach(AlcoholTrack track in alcTracks.Values)
+                    foreach(AlcoholTrack alcTrack in alcTracks.Values)
                     {
-                        AlcoholTrackExtra extra;
+                        if(alcTrack.point != kvp.Key || !alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra)) continue;
 
-                        if(track.point != kvp.Key || !alcTrackExtras.TryGetValue(track.point, out extra)) continue;
-
-                        if(sectorAddress - kvp.Value < extra.sectors)
+                        if(sectorAddress - kvp.Value < alcExtra.sectors)
                             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                     }
 
@@ -1309,21 +1284,18 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            AlcoholTrack _track;
-            AlcoholTrackExtra _extra;
-
-            if(!alcTracks.TryGetValue((int)track, out _track) || !alcTrackExtras.TryGetValue((int)track, out _extra))
+            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) || !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > _extra.sectors)
+            if(length + sectorAddress > alcExtra.sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length}) than present in track ({_extra.sectors}), won't cross tracks");
+                                                      $"Requested more sectors ({length}) than present in track ({alcExtra.sectors}), won't cross tracks");
 
-            uint sector_offset;
-            uint sector_size;
-            uint sector_skip;
+            uint sectorOffset;
+            uint sectorSize;
+            uint sectorSkip;
 
-            switch(_track.mode)
+            switch(alcTrack.mode)
             {
                 case AlcoholTrackMode.Mode1:
                 case AlcoholTrackMode.Mode2:
@@ -1333,22 +1305,20 @@ namespace DiscImageChef.DiscImages
                 case AlcoholTrackMode.Audio:
                 case AlcoholTrackMode.DVD:
                 {
-                    sector_offset = 0;
-                    sector_size = _track.sectorSize;
-                    sector_skip = 0;
+                    sectorOffset = 0;
+                    sectorSize = alcTrack.sectorSize;
+                    sectorSkip = 0;
                     break;
                 }
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            byte[] buffer;
-
             imageStream = alcImage.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
             br.BaseStream
-              .Seek((long)_track.startOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)),
+              .Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
-            buffer = br.ReadBytes((int)(sector_size * length));
+            byte[] buffer = br.ReadBytes((int)(sectorSize * length));
 
             return buffer;
         }
@@ -1382,44 +1352,44 @@ namespace DiscImageChef.DiscImages
         {
             List<Track> tracks = new List<Track>();
 
-            foreach(AlcoholTrack track in alcTracks.Values)
+            foreach(AlcoholTrack alcTrack in alcTracks.Values)
             {
-                ushort sessionNo = (from session in sessions where track.point >= session.StartTrack || track.point <= session.EndTrack select session.SessionSequence).FirstOrDefault();
+                ushort sessionNo = (from session in sessions where alcTrack.point >= session.StartTrack || alcTrack.point <= session.EndTrack select session.SessionSequence).FirstOrDefault();
 
-                AlcoholTrackExtra extra;
-                if(!alcTrackExtras.TryGetValue(track.point, out extra)) continue;
+                if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra)) continue;
 
-                Track _track = new Track();
+                Track dicTrack = new Track
+                {
+                    Indexes = new Dictionary<int, ulong> {{1, alcTrack.startLba}},
+                    TrackStartSector = alcTrack.startLba,
+                    TrackEndSector = alcExtra.sectors - 1,
+                    TrackPregap = alcExtra.pregap,
+                    TrackSession = sessionNo,
+                    TrackSequence = alcTrack.point,
+                    TrackType = AlcoholTrackTypeToTrackType(alcTrack.mode),
+                    TrackFilter = alcImage,
+                    TrackFile = alcImage.GetFilename(),
+                    TrackFileOffset = alcTrack.startOffset,
+                    TrackFileType = "BINARY",
+                    TrackRawBytesPerSector = alcTrack.sectorSize,
+                    TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
+                };
 
-                _track.Indexes = new Dictionary<int, ulong>();
-                _track.Indexes.Add(1, track.startLba);
-                _track.TrackStartSector = track.startLba;
-                _track.TrackEndSector = extra.sectors - 1;
-                _track.TrackPregap = extra.pregap;
-                _track.TrackSession = sessionNo;
-                _track.TrackSequence = track.point;
-                _track.TrackType = AlcoholTrackTypeToTrackType(track.mode);
-                _track.TrackFilter = alcImage;
-                _track.TrackFile = alcImage.GetFilename();
-                _track.TrackFileOffset = track.startOffset;
-                _track.TrackFileType = "BINARY";
-                _track.TrackRawBytesPerSector = track.sectorSize;
-                _track.TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(track.mode);
-                switch(track.subMode)
+                switch(alcTrack.subMode)
                 {
                     case AlcoholSubchannelMode.Interleaved:
-                        _track.TrackSubchannelFilter = alcImage;
-                        _track.TrackSubchannelFile = alcImage.GetFilename();
-                        _track.TrackSubchannelOffset = track.startOffset;
-                        _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                        _track.TrackRawBytesPerSector += 96;
+                        dicTrack.TrackSubchannelFilter = alcImage;
+                        dicTrack.TrackSubchannelFile = alcImage.GetFilename();
+                        dicTrack.TrackSubchannelOffset = alcTrack.startOffset;
+                        dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                        dicTrack.TrackRawBytesPerSector += 96;
                         break;
                     case AlcoholSubchannelMode.None:
-                        _track.TrackSubchannelType = TrackSubchannelType.None;
+                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
                         break;
                 }
 
-                tracks.Add(_track);
+                tracks.Add(dicTrack);
             }
 
             return tracks;
@@ -1436,44 +1406,44 @@ namespace DiscImageChef.DiscImages
         {
             List<Track> tracks = new List<Track>();
 
-            foreach(AlcoholTrack track in alcTracks.Values)
+            foreach(AlcoholTrack alcTrack in alcTracks.Values)
             {
-                ushort sessionNo = (from ses in sessions where track.point >= ses.StartTrack || track.point <= ses.EndTrack select ses.SessionSequence).FirstOrDefault();
+                ushort sessionNo = (from ses in sessions where alcTrack.point >= ses.StartTrack || alcTrack.point <= ses.EndTrack select ses.SessionSequence).FirstOrDefault();
 
-                AlcoholTrackExtra extra;
-                if(!alcTrackExtras.TryGetValue(track.point, out extra) || session != sessionNo) continue;
+                if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra) || session != sessionNo) continue;
 
-                Track _track = new Track();
+                Track dicTrack = new Track
+                {
+                    Indexes = new Dictionary<int, ulong> {{1, alcTrack.startLba}},
+                    TrackStartSector = alcTrack.startLba,
+                    TrackEndSector = alcExtra.sectors - 1,
+                    TrackPregap = alcExtra.pregap,
+                    TrackSession = sessionNo,
+                    TrackSequence = alcTrack.point,
+                    TrackType = AlcoholTrackTypeToTrackType(alcTrack.mode),
+                    TrackFilter = alcImage,
+                    TrackFile = alcImage.GetFilename(),
+                    TrackFileOffset = alcTrack.startOffset,
+                    TrackFileType = "BINARY",
+                    TrackRawBytesPerSector = alcTrack.sectorSize,
+                    TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
+                };
 
-                _track.Indexes = new Dictionary<int, ulong>();
-                _track.Indexes.Add(1, track.startLba);
-                _track.TrackStartSector = track.startLba;
-                _track.TrackEndSector = extra.sectors - 1;
-                _track.TrackPregap = extra.pregap;
-                _track.TrackSession = sessionNo;
-                _track.TrackSequence = track.point;
-                _track.TrackType = AlcoholTrackTypeToTrackType(track.mode);
-                _track.TrackFilter = alcImage;
-                _track.TrackFile = alcImage.GetFilename();
-                _track.TrackFileOffset = track.startOffset;
-                _track.TrackFileType = "BINARY";
-                _track.TrackRawBytesPerSector = track.sectorSize;
-                _track.TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(track.mode);
-                switch(track.subMode)
+                switch(alcTrack.subMode)
                 {
                     case AlcoholSubchannelMode.Interleaved:
-                        _track.TrackSubchannelFilter = alcImage;
-                        _track.TrackSubchannelFile = alcImage.GetFilename();
-                        _track.TrackSubchannelOffset = track.startOffset;
-                        _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
-                        _track.TrackRawBytesPerSector += 96;
+                        dicTrack.TrackSubchannelFilter = alcImage;
+                        dicTrack.TrackSubchannelFile = alcImage.GetFilename();
+                        dicTrack.TrackSubchannelOffset = alcTrack.startOffset;
+                        dicTrack.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                        dicTrack.TrackRawBytesPerSector += 96;
                         break;
                     case AlcoholSubchannelMode.None:
-                        _track.TrackSubchannelType = TrackSubchannelType.None;
+                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
                         break;
                 }
 
-                tracks.Add(_track);
+                tracks.Add(dicTrack);
             }
 
             return tracks;
@@ -1522,9 +1492,8 @@ namespace DiscImageChef.DiscImages
             }
 
             if(unknownLbas.Count > 0) return null;
-            if(failingLbas.Count > 0) return false;
 
-            return true;
+            return failingLbas.Count <= 0;
         }
 
         public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,

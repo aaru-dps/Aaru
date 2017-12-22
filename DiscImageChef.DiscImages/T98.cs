@@ -79,12 +79,12 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length % 256 != 0) return false;
 
-            byte[] hdr_b = new byte[256];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[256];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            for(int i = 4; i < 256; i++) if(hdr_b[i] != 0) return false;
+            for(int i = 4; i < 256; i++) if(hdrB[i] != 0) return false;
 
-            int cylinders = BitConverter.ToInt32(hdr_b, 0);
+            int cylinders = BitConverter.ToInt32(hdrB, 0);
 
             DicConsole.DebugWriteLine("T98 plugin", "cylinders = {0}", cylinders);
 
@@ -100,12 +100,12 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length % 256 != 0) return false;
 
-            byte[] hdr_b = new byte[256];
-            stream.Read(hdr_b, 0, hdr_b.Length);
+            byte[] hdrB = new byte[256];
+            stream.Read(hdrB, 0, hdrB.Length);
 
-            for(int i = 4; i < 256; i++) if(hdr_b[i] != 0) return false;
+            for(int i = 4; i < 256; i++) if(hdrB[i] != 0) return false;
 
-            int cylinders = BitConverter.ToInt32(hdr_b, 0);
+            int cylinders = BitConverter.ToInt32(hdrB, 0);
 
             ImageInfo.MediaType = MediaType.GENERIC_HDD;
 

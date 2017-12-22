@@ -78,13 +78,13 @@ namespace DiscImageChef.DiscImages
         const string CDTEXT_ENTRY = "^\\s*Entry\\s*(?<number>\\d+)\\s*=\\s*(?<value>([0-9a-fA-F]+\\s*)+)";
         #endregion
 
-        Filter imageFilter;
+        Filter ccdFilter;
         Filter dataFilter;
         Filter subFilter;
         StreamReader cueStream;
         byte[] fulltoc;
         bool scrambled;
-        string catalog;
+        string catalog; // TODO: Use it
         List<Session> sessions;
         List<Partition> partitions;
         List<Track> tracks;
@@ -97,29 +97,31 @@ namespace DiscImageChef.DiscImages
         {
             Name = "CloneCD";
             PluginUuid = new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = true;
-            ImageInfo.ImageHasSessions = true;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageName = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = true,
+                ImageHasSessions = true,
+                ImageVersion = null,
+                ImageApplicationVersion = null,
+                ImageName = null,
+                ImageCreator = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
         {
-            this.imageFilter = imageFilter;
+            ccdFilter = imageFilter;
 
             try
             {
@@ -145,21 +147,19 @@ namespace DiscImageChef.DiscImages
                         return false;
                 }
 
-                cueStream = new StreamReader(this.imageFilter.GetDataForkStream());
+                cueStream = new StreamReader(ccdFilter.GetDataForkStream());
 
-                string _line = cueStream.ReadLine();
+                string line = cueStream.ReadLine();
 
                 Regex hdr = new Regex(CCD_IDENTIFIER);
 
-                Match hdm;
-
-                hdm = hdr.Match(_line ?? throw new InvalidOperationException());
+                Match hdm = hdr.Match(line ?? throw new InvalidOperationException());
 
                 return hdm.Success;
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", this.imageFilter);
+                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", ccdFilter);
                 DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
                 return false;
@@ -170,13 +170,13 @@ namespace DiscImageChef.DiscImages
         {
             if(imageFilter == null) return false;
 
-            this.imageFilter = imageFilter;
+            ccdFilter = imageFilter;
 
             try
             {
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
                 cueStream = new StreamReader(imageFilter.GetDataForkStream());
-                int line = 0;
+                int lineNumber = 0;
 
                 Regex ccdIdRegex = new Regex(CCD_IDENTIFIER);
                 Regex discIdRegex = new Regex(DISC_IDENTIFIER);
@@ -209,37 +209,6 @@ namespace DiscImageChef.DiscImages
                 Regex cdtEntsRegex = new Regex(CDTEXT_ENTRIES);
                 Regex cdtEntRegex = new Regex(CDTEXT_ENTRY);
 
-                Match ccdIdMatch;
-                Match discIdMatch;
-                Match sessIdMatch;
-                Match entryIdMatch;
-                Match trackIdMatch;
-                Match cdtIdMatch;
-                Match ccdVerMatch;
-                Match discEntMatch;
-                Match discSessMatch;
-                Match discScrMatch;
-                Match cdtLenMatch;
-                Match discCatMatch;
-                Match sessPregMatch;
-                Match sessSubcMatch;
-                Match entSessMatch;
-                Match entPointMatch;
-                Match entAdrMatch;
-                Match entCtrlMatch;
-                Match entTnoMatch;
-                Match entAMinMatch;
-                Match entASecMatch;
-                Match entAFrameMatch;
-                Match entAlbaMatch;
-                Match entZeroMatch;
-                Match entPMinMatch;
-                Match entPSecMatch;
-                Match entPFrameMatch;
-                Match entPlbaMatch;
-                Match cdtEntsMatch;
-                Match cdtEntMatch;
-
                 bool inCcd = false;
                 bool inDisk = false;
                 bool inSession = false;
@@ -256,22 +225,22 @@ namespace DiscImageChef.DiscImages
 
                 while(cueStream.Peek() >= 0)
                 {
-                    line++;
-                    string _line = cueStream.ReadLine();
+                    lineNumber++;
+                    string line = cueStream.ReadLine();
 
-                    ccdIdMatch = ccdIdRegex.Match(_line);
-                    discIdMatch = discIdRegex.Match(_line);
-                    sessIdMatch = sessIdRegex.Match(_line);
-                    entryIdMatch = entryIdRegex.Match(_line);
-                    trackIdMatch = trackIdRegex.Match(_line);
-                    cdtIdMatch = cdtIdRegex.Match(_line);
+                    Match ccdIdMatch = ccdIdRegex.Match(line);
+                    Match discIdMatch = discIdRegex.Match(line);
+                    Match sessIdMatch = sessIdRegex.Match(line);
+                    Match entryIdMatch = entryIdRegex.Match(line);
+                    Match trackIdMatch = trackIdRegex.Match(line);
+                    Match cdtIdMatch = cdtIdRegex.Match(line);
 
                     // [CloneCD]
                     if(ccdIdMatch.Success)
                     {
                         if(inDisk || inSession || inEntry || inTrack || inCdText)
                             throw new
-                                FeatureUnsupportedImageException($"Found [CloneCD] out of order in line {line}");
+                                FeatureUnsupportedImageException($"Found [CloneCD] out of order in line {lineNumber}");
 
                         inCcd = true;
                         inDisk = false;
@@ -300,11 +269,11 @@ namespace DiscImageChef.DiscImages
                     {
                         if(inCcd)
                         {
-                            ccdVerMatch = ccdVerRegex.Match(_line);
+                            Match ccdVerMatch = ccdVerRegex.Match(line);
 
                             if(!ccdVerMatch.Success) continue;
 
-                            DicConsole.DebugWriteLine("CloneCD plugin", "Found Version at line {0}", line);
+                            DicConsole.DebugWriteLine("CloneCD plugin", "Found Version at line {0}", lineNumber);
 
                             ImageInfo.ImageVersion = ccdVerMatch.Groups["value"].Value;
                             if(ImageInfo.ImageVersion != "2" && ImageInfo.ImageVersion != "3")
@@ -314,37 +283,37 @@ namespace DiscImageChef.DiscImages
                         }
                         else if(inDisk)
                         {
-                            discEntMatch = discEntRegex.Match(_line);
-                            discSessMatch = discSessRegex.Match(_line);
-                            discScrMatch = discScrRegex.Match(_line);
-                            cdtLenMatch = cdtLenRegex.Match(_line);
-                            discCatMatch = discCatRegex.Match(_line);
+                            Match discEntMatch = discEntRegex.Match(line);
+                            Match discSessMatch = discSessRegex.Match(line);
+                            Match discScrMatch = discScrRegex.Match(line);
+                            Match cdtLenMatch = cdtLenRegex.Match(line);
+                            Match discCatMatch = discCatRegex.Match(line);
 
-                            if(discEntMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found TocEntries at line {0}", line);
-                            else if(discSessMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found Sessions at line {0}", line);
+                            if(discEntMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found TocEntries at line {0}", lineNumber);
+                            else if(discSessMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found Sessions at line {0}", lineNumber);
                             else if(discScrMatch.Success)
                             {
                                 DicConsole.DebugWriteLine("CloneCD plugin", "Found DataTracksScrambled at line {0}",
-                                                          line);
+                                                          lineNumber);
                                 scrambled |= discScrMatch.Groups["value"].Value == "1";
                             }
-                            else if(cdtLenMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found CDTextLength at line {0}", line);
+                            else if(cdtLenMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found CDTextLength at line {0}", lineNumber);
                             else if(discCatMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Catalog at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Catalog at line {0}", lineNumber);
                                 catalog = discCatMatch.Groups["value"].Value;
                             }
                         }
                         // TODO: Do not suppose here entries come sorted
                         else if(inCdText)
                         {
-                            cdtEntsMatch = cdtEntsRegex.Match(_line);
-                            cdtEntMatch = cdtEntRegex.Match(_line);
+                            Match cdtEntsMatch = cdtEntsRegex.Match(line);
+                            Match cdtEntMatch = cdtEntRegex.Match(line);
 
-                            if(cdtEntsMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entries at line {0}", line);
+                            if(cdtEntsMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entries at line {0}", lineNumber);
                             else if(cdtEntMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entry at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entry at line {0}", lineNumber);
                                 string[] bytes = cdtEntMatch.Groups["value"].Value.Split(new[] {' '},
                                                                                           StringSplitOptions
                                                                                               .RemoveEmptyEntries);
@@ -354,95 +323,95 @@ namespace DiscImageChef.DiscImages
                         // Is this useful?
                         else if(inSession)
                         {
-                            sessPregMatch = sessPregRegex.Match(_line);
-                            sessSubcMatch = sessSubcRegex.Match(_line);
+                            Match sessPregMatch = sessPregRegex.Match(line);
+                            Match sessSubcMatch = sessSubcRegex.Match(line);
 
-                            if(sessPregMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found PreGapMode at line {0}", line);
-                            else if(sessSubcMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found PreGapSubC at line {0}", line);
+                            if(sessPregMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found PreGapMode at line {0}", lineNumber);
+                            else if(sessSubcMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found PreGapSubC at line {0}", lineNumber);
                         }
                         else if(inEntry)
                         {
-                            entSessMatch = entSessRegex.Match(_line);
-                            entPointMatch = entPointRegex.Match(_line);
-                            entAdrMatch = entAdrRegex.Match(_line);
-                            entCtrlMatch = entCtrlRegex.Match(_line);
-                            entTnoMatch = entTnoRegex.Match(_line);
-                            entAMinMatch = entAMinRegex.Match(_line);
-                            entASecMatch = entASecRegex.Match(_line);
-                            entAFrameMatch = entAFrameRegex.Match(_line);
-                            entAlbaMatch = entAlbaRegex.Match(_line);
-                            entZeroMatch = entZeroRegex.Match(_line);
-                            entPMinMatch = entPMinRegex.Match(_line);
-                            entPSecMatch = entPSecRegex.Match(_line);
-                            entPFrameMatch = entPFrameRegex.Match(_line);
-                            entPlbaMatch = entPlbaRegex.Match(_line);
+                            Match entSessMatch = entSessRegex.Match(line);
+                            Match entPointMatch = entPointRegex.Match(line);
+                            Match entAdrMatch = entAdrRegex.Match(line);
+                            Match entCtrlMatch = entCtrlRegex.Match(line);
+                            Match entTnoMatch = entTnoRegex.Match(line);
+                            Match entAMinMatch = entAMinRegex.Match(line);
+                            Match entASecMatch = entASecRegex.Match(line);
+                            Match entAFrameMatch = entAFrameRegex.Match(line);
+                            Match entAlbaMatch = entAlbaRegex.Match(line);
+                            Match entZeroMatch = entZeroRegex.Match(line);
+                            Match entPMinMatch = entPMinRegex.Match(line);
+                            Match entPSecMatch = entPSecRegex.Match(line);
+                            Match entPFrameMatch = entPFrameRegex.Match(line);
+                            Match entPlbaMatch = entPlbaRegex.Match(line);
 
                             if(entSessMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Session at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Session at line {0}", lineNumber);
                                 currentEntry.SessionNumber = Convert.ToByte(entSessMatch.Groups["value"].Value, 10);
                                 if(currentEntry.SessionNumber < minSession) minSession = currentEntry.SessionNumber;
                                 if(currentEntry.SessionNumber > maxSession) maxSession = currentEntry.SessionNumber;
                             }
                             else if(entPointMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Point at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Point at line {0}", lineNumber);
                                 currentEntry.POINT = Convert.ToByte(entPointMatch.Groups["value"].Value, 16);
                             }
                             else if(entAdrMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found ADR at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found ADR at line {0}", lineNumber);
                                 currentEntry.ADR = Convert.ToByte(entAdrMatch.Groups["value"].Value, 16);
                             }
                             else if(entCtrlMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Control at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Control at line {0}", lineNumber);
                                 currentEntry.CONTROL = Convert.ToByte(entCtrlMatch.Groups["value"].Value, 16);
                             }
                             else if(entTnoMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found TrackNo at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found TrackNo at line {0}", lineNumber);
                                 currentEntry.TNO = Convert.ToByte(entTnoMatch.Groups["value"].Value, 10);
                             }
                             else if(entAMinMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found AMin at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found AMin at line {0}", lineNumber);
                                 currentEntry.Min = Convert.ToByte(entAMinMatch.Groups["value"].Value, 10);
                             }
                             else if(entASecMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found ASec at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found ASec at line {0}", lineNumber);
                                 currentEntry.Sec = Convert.ToByte(entASecMatch.Groups["value"].Value, 10);
                             }
                             else if(entAFrameMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found AFrame at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found AFrame at line {0}", lineNumber);
                                 currentEntry.Frame = Convert.ToByte(entAFrameMatch.Groups["value"].Value, 10);
                             }
-                            else if(entAlbaMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found ALBA at line {0}", line);
+                            else if(entAlbaMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found ALBA at line {0}", lineNumber);
                             else if(entZeroMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Zero at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Zero at line {0}", lineNumber);
                                 currentEntry.Zero = Convert.ToByte(entZeroMatch.Groups["value"].Value, 10);
                                 currentEntry.HOUR = (byte)((currentEntry.Zero & 0xF0) >> 4);
                                 currentEntry.PHOUR = (byte)(currentEntry.Zero & 0x0F);
                             }
                             else if(entPMinMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PMin at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PMin at line {0}", lineNumber);
                                 currentEntry.PMIN = Convert.ToByte(entPMinMatch.Groups["value"].Value, 10);
                             }
                             else if(entPSecMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PSec at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PSec at line {0}", lineNumber);
                                 currentEntry.PSEC = Convert.ToByte(entPSecMatch.Groups["value"].Value, 10);
                             }
                             else if(entPFrameMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PFrame at line {0}", line);
+                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PFrame at line {0}", lineNumber);
                                 currentEntry.PFRAME = Convert.ToByte(entPFrameMatch.Groups["value"].Value, 10);
                             }
-                            else if(entPlbaMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found PLBA at line {0}", line);
+                            else if(entPlbaMatch.Success) DicConsole.DebugWriteLine("CloneCD plugin", "Found PLBA at line {0}", lineNumber);
                         }
                     }
                 }
@@ -495,7 +464,6 @@ namespace DiscImageChef.DiscImages
                 Track currentTrack = new Track();
                 bool firstTrackInSession = true;
                 tracks = new List<Track>();
-                byte discType;
                 ulong leadOutStart = 0;
 
                 dataStream = dataFilter.GetDataForkStream();
@@ -521,7 +489,7 @@ namespace DiscImageChef.DiscImages
                             switch(descriptor.POINT)
                             {
                                 case 0xA0:
-                                    discType = descriptor.PSEC;
+                                    byte discType = descriptor.PSEC;
                                     DicConsole.DebugWriteLine("CloneCD plugin", "Disc Type: {0}", discType);
                                     break;
                                 case 0xA2:
@@ -540,18 +508,20 @@ namespace DiscImageChef.DiscImages
                                         }
                                         else firstTrackInSession = false;
 
-                                        currentTrack = new Track();
-                                        currentTrack.TrackBytesPerSector = 2352;
-                                        currentTrack.TrackFile = dataFilter.GetFilename();
-                                        currentTrack.TrackFileType = scrambled ? "SCRAMBLED" : "BINARY";
-                                        currentTrack.TrackFilter = dataFilter;
-                                        currentTrack.TrackRawBytesPerSector = 2352;
-                                        currentTrack.TrackSequence = descriptor.POINT;
-                                        currentTrack.TrackStartSector =
-                                            GetLba(descriptor.PHOUR, descriptor.PMIN, descriptor.PSEC,
-                                                   descriptor.PFRAME);
+                                        currentTrack = new Track
+                                        {
+                                            TrackBytesPerSector = 2352,
+                                            TrackFile = dataFilter.GetFilename(),
+                                            TrackFileType = scrambled ? "SCRAMBLED" : "BINARY",
+                                            TrackFilter = dataFilter,
+                                            TrackRawBytesPerSector = 2352,
+                                            TrackSequence = descriptor.POINT,
+                                            TrackStartSector =
+                                                GetLba(descriptor.PHOUR, descriptor.PMIN, descriptor.PSEC,
+                                                       descriptor.PFRAME),
+                                            TrackSession = descriptor.SessionNumber
+                                        };
                                         currentTrack.TrackFileOffset = currentTrack.TrackStartSector * 2352;
-                                        currentTrack.TrackSession = descriptor.SessionNumber;
 
                                         // Need to check exact data type later
                                         if((TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
@@ -738,10 +708,12 @@ namespace DiscImageChef.DiscImages
                     ImageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
                 sessions = new List<Session>();
-                Session currentSession = new Session();
-                currentSession.EndTrack = uint.MinValue;
-                currentSession.StartTrack = uint.MaxValue;
-                currentSession.SessionSequence = 1;
+                Session currentSession = new Session
+                {
+                    EndTrack = uint.MinValue,
+                    StartTrack = uint.MaxValue,
+                    SessionSequence = 1
+                };
                 partitions = new List<Partition>();
                 offsetmap = new Dictionary<uint, ulong>();
 
@@ -764,22 +736,26 @@ namespace DiscImageChef.DiscImages
                     else
                     {
                         sessions.Add(currentSession);
-                        currentSession = new Session();
-                        currentSession.EndTrack = uint.MinValue;
-                        currentSession.StartTrack = uint.MaxValue;
-                        currentSession.SessionSequence = track.TrackSession;
+                        currentSession = new Session
+                        {
+                            EndTrack = uint.MinValue,
+                            StartTrack = uint.MaxValue,
+                            SessionSequence = track.TrackSession
+                        };
                     }
 
-                    Partition partition = new Partition();
-                    partition.Description = track.TrackDescription;
-                    partition.Size = (track.TrackEndSector - track.TrackStartSector + 1) *
-                                     (ulong)track.TrackRawBytesPerSector;
-                    partition.Length = track.TrackEndSector - track.TrackStartSector + 1;
+                    Partition partition = new Partition
+                    {
+                        Description = track.TrackDescription,
+                        Size =
+                            (track.TrackEndSector - track.TrackStartSector + 1) * (ulong)track.TrackRawBytesPerSector,
+                        Length = track.TrackEndSector - track.TrackStartSector + 1,
+                        Sequence = track.TrackSequence,
+                        Offset = track.TrackFileOffset,
+                        Start = track.TrackStartSector,
+                        Type = track.TrackType.ToString()
+                    };
                     ImageInfo.Sectors += partition.Length;
-                    partition.Sequence = track.TrackSequence;
-                    partition.Offset = track.TrackFileOffset;
-                    partition.Start = track.TrackStartSector;
-                    partition.Type = track.TrackType.ToString();
                     partitions.Add(partition);
                     offsetmap.Add(track.TrackSequence, track.TrackStartSector);
                 }
@@ -906,44 +882,42 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in tracks where _track.TrackSequence == kvp.Key where sectorAddress <= _track.TrackEndSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress <= track.TrackEndSector select kvp) return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from _track in tracks where _track.TrackSequence == kvp.Key where sectorAddress <= _track.TrackEndSector select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value from track in tracks where track.TrackSequence == kvp.Key where sectorAddress <= track.TrackEndSector select kvp) return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            Track _track = new Track();
+            Track dicTrack = new Track {TrackSequence = 0};
 
-            _track.TrackSequence = 0;
-
-            foreach(Track __track in tracks.Where(__track => __track.TrackSequence == track)) {
-                _track = __track;
+            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track)) {
+                dicTrack = linqTrack;
                 break;
             }
 
-            if(_track.TrackSequence == 0)
+            if(dicTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress - 1 > _track.TrackEndSector)
+            if(length + sectorAddress - 1 > dicTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string
                                                           .Format("Requested more sectors ({0} {2}) than present in track ({1}), won't cross tracks",
-                                                                  length + sectorAddress, _track.TrackEndSector,
+                                                                  length + sectorAddress, dicTrack.TrackEndSector,
                                                                   sectorAddress));
 
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip;
 
-            switch(_track.TrackType)
+            switch(dicTrack.TrackType)
             {
                 case TrackType.Audio:
                 {
@@ -985,7 +959,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            dataStream.Seek((long)(_track.TrackFileOffset + sectorAddress * 2352), SeekOrigin.Begin);
+            dataStream.Seek((long)(dicTrack.TrackFileOffset + sectorAddress * 2352), SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) dataStream.Read(buffer, 0, buffer.Length);
             else
                 for(int i = 0; i < length; i++)
@@ -1003,23 +977,21 @@ namespace DiscImageChef.DiscImages
         // TODO: Flags
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            Track _track = new Track();
+            Track dicTrack = new Track {TrackSequence = 0};
 
-            _track.TrackSequence = 0;
-
-            foreach(Track __track in tracks.Where(__track => __track.TrackSequence == track)) {
-                _track = __track;
+            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track)) {
+                dicTrack = linqTrack;
                 break;
             }
 
-            if(_track.TrackSequence == 0)
+            if(dicTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress - 1 > _track.TrackEndSector)
+            if(length + sectorAddress - 1 > dicTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
-            if(_track.TrackType == TrackType.Data)
+            if(dicTrack.TrackType == TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
 
             byte[] buffer;
@@ -1035,7 +1007,7 @@ namespace DiscImageChef.DiscImages
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdSectorSubchannel:
                     buffer = new byte[96 * length];
-                    subStream.Seek((long)(_track.TrackSubchannelOffset + sectorAddress * 96), SeekOrigin.Begin);
+                    subStream.Seek((long)(dicTrack.TrackSubchannelOffset + sectorAddress * 96), SeekOrigin.Begin);
                     subStream.Read(buffer, 0, buffer.Length);
                     return buffer;
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -1045,7 +1017,7 @@ namespace DiscImageChef.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(_track.TrackType)
+            switch(dicTrack.TrackType)
             {
                 case TrackType.CdMode1:
                     switch(tag)
@@ -1227,7 +1199,7 @@ namespace DiscImageChef.DiscImages
 
             buffer = new byte[sectorSize * length];
 
-            dataStream.Seek((long)(_track.TrackFileOffset + sectorAddress * 2352), SeekOrigin.Begin);
+            dataStream.Seek((long)(dicTrack.TrackFileOffset + sectorAddress * 2352), SeekOrigin.Begin);
             if(sectorOffset == 0 && sectorSkip == 0) dataStream.Read(buffer, 0, buffer.Length);
             else
                 for(int i = 0; i < length; i++)
@@ -1261,25 +1233,23 @@ namespace DiscImageChef.DiscImages
 
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            Track _track = new Track();
+            Track dicTrack = new Track {TrackSequence = 0};
 
-            _track.TrackSequence = 0;
-
-            foreach(Track __track in tracks.Where(__track => __track.TrackSequence == track)) {
-                _track = __track;
+            foreach(Track linqTrack in tracks.Where(linqTrack => linqTrack.TrackSequence == track)) {
+                dicTrack = linqTrack;
                 break;
             }
 
-            if(_track.TrackSequence == 0)
+            if(dicTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress - 1 > _track.TrackEndSector)
+            if(length + sectorAddress - 1 > dicTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({_track.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
 
             byte[] buffer = new byte[2352 * length];
 
-            dataStream.Seek((long)(_track.TrackFileOffset + sectorAddress * 2352), SeekOrigin.Begin);
+            dataStream.Seek((long)(dicTrack.TrackFileOffset + sectorAddress * 2352), SeekOrigin.Begin);
             dataStream.Read(buffer, 0, buffer.Length);
 
             return buffer;
@@ -1404,7 +1374,7 @@ namespace DiscImageChef.DiscImages
 
         public override List<Track> GetSessionTracks(ushort session)
         {
-            return tracks.Where(_track => _track.TrackSession == session).ToList();
+            return tracks.Where(track => track.TrackSession == session).ToList();
         }
 
         public override List<Session> GetSessions()

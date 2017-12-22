@@ -157,7 +157,7 @@ namespace DiscImageChef.DiscImages
         Dictionary<ulong, byte[]> clusterCache;
         Dictionary<ulong, ulong[]> l2TableCache;
 
-        int maxCachedSectors = MAX_CACHE_SIZE / 512;
+        const int MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
         int maxL2TableCache;
         int maxClusterCache;
 
@@ -167,27 +167,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "QEMU Copy-On-Write disk image v2";
             PluginUuid = new Guid("F20107CB-95B3-4398-894B-975261F1E8C5");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = "QEMU";
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = "QEMU",
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -347,10 +349,8 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
-
             // Check cache
-            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             ulong byteAddress = sectorAddress * 512;
 
@@ -363,9 +363,7 @@ namespace DiscImageChef.DiscImages
             // TODO: Implement differential images
             if(l1Table[l1Off] == 0) return new byte[512];
 
-            ulong[] l2Table;
-
-            if(!l2TableCache.TryGetValue(l1Off, out l2Table))
+            if(!l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
             {
                 l2Table = new ulong[l2Size];
                 imageStream.Seek((long)(l1Table[l1Off] & QCOW_FLAGS_MASK), SeekOrigin.Begin);
@@ -388,8 +386,7 @@ namespace DiscImageChef.DiscImages
 
             if((offset & QCOW_FLAGS_MASK) != 0)
             {
-                byte[] cluster;
-                if(!clusterCache.TryGetValue(offset, out cluster))
+                if(!clusterCache.TryGetValue(offset, out byte[] cluster))
                 {
                     if((offset & QCOW_COMPRESSED) == QCOW_COMPRESSED)
                     {
@@ -432,7 +429,7 @@ namespace DiscImageChef.DiscImages
                 Array.Copy(cluster, (int)(byteAddress & sectorMask), sector, 0, 512);
             }
 
-            if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+            if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 

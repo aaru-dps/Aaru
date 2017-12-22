@@ -126,10 +126,10 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < signature.Length) return false;
 
-            byte[] sig_b = new byte[signature.Length];
-            stream.Read(sig_b, 0, signature.Length);
+            byte[] sigB = new byte[signature.Length];
+            stream.Read(sigB, 0, signature.Length);
 
-            return sig_b.SequenceEqual(signature);
+            return sigB.SequenceEqual(signature);
         }
 
         public override bool OpenImage(Filter imageFilter)
@@ -148,12 +148,11 @@ namespace DiscImageChef.DiscImages
             // Count cylinders
             while(stream.Position < stream.Length)
             {
-                ApridiskRecord record;
-                byte[] rec_b = new byte[recordSize];
-                stream.Read(rec_b, 0, recordSize);
+                byte[] recB = new byte[recordSize];
+                stream.Read(recB, 0, recordSize);
 
-                GCHandle handle = GCHandle.Alloc(rec_b, GCHandleType.Pinned);
-                record = (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
+                GCHandle handle = GCHandle.Alloc(recB, GCHandleType.Pinned);
+                ApridiskRecord record = (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
                 handle.Free();
 
                 switch(record.type)
@@ -166,17 +165,17 @@ namespace DiscImageChef.DiscImages
                     case RecordType.Comment:
                         DicConsole.DebugWriteLine("Apridisk plugin", "Found comment record at {0}", stream.Position);
                         stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
-                        byte[] comment_b = new byte[record.dataSize];
-                        stream.Read(comment_b, 0, comment_b.Length);
-                        ImageInfo.ImageComments = StringHandlers.CToString(comment_b);
+                        byte[] commentB = new byte[record.dataSize];
+                        stream.Read(commentB, 0, commentB.Length);
+                        ImageInfo.ImageComments = StringHandlers.CToString(commentB);
                         DicConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", ImageInfo.ImageComments);
                         break;
                     case RecordType.Creator:
                         DicConsole.DebugWriteLine("Apridisk plugin", "Found creator record at {0}", stream.Position);
                         stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
-                        byte[] creator_b = new byte[record.dataSize];
-                        stream.Read(creator_b, 0, creator_b.Length);
-                        ImageInfo.ImageCreator = StringHandlers.CToString(creator_b);
+                        byte[] creatorB = new byte[record.dataSize];
+                        stream.Read(creatorB, 0, creatorB.Length);
+                        ImageInfo.ImageCreator = StringHandlers.CToString(creatorB);
                         DicConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", ImageInfo.ImageCreator);
                         break;
                     case RecordType.Sector:
@@ -238,12 +237,11 @@ namespace DiscImageChef.DiscImages
             stream.Seek(signature.Length, SeekOrigin.Begin);
             while(stream.Position < stream.Length)
             {
-                ApridiskRecord record;
-                byte[] rec_b = new byte[recordSize];
-                stream.Read(rec_b, 0, recordSize);
+                byte[] recB = new byte[recordSize];
+                stream.Read(recB, 0, recordSize);
 
-                GCHandle handle = GCHandle.Alloc(rec_b, GCHandleType.Pinned);
-                record = (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
+                GCHandle handle = GCHandle.Alloc(recB, GCHandleType.Pinned);
+                ApridiskRecord record = (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
                 handle.Free();
 
                 switch(record.type)
@@ -318,27 +316,25 @@ namespace DiscImageChef.DiscImages
         static uint Decompress(byte[] compressed, out byte[] decompressed)
         {
             int readp = 0;
-            ushort blklen;
-            uint u_len;
-            int c_len = compressed.Length;
+            int cLen = compressed.Length;
             MemoryStream buffer = new MemoryStream();
 
-            u_len = 0;
+            uint uLen = 0;
 
-            while(c_len >= 3)
+            while(cLen >= 3)
             {
-                blklen = BitConverter.ToUInt16(compressed, readp);
+                ushort blklen = BitConverter.ToUInt16(compressed, readp);
                 readp += 2;
 
                 for(int i = 0; i < blklen; i++) buffer.WriteByte(compressed[readp]);
 
-                u_len += blklen;
+                uLen += blklen;
                 readp++;
-                c_len -= 3;
+                cLen -= 3;
             }
 
             decompressed = buffer.ToArray();
-            return u_len;
+            return uLen;
         }
 
         public override bool ImageHasPartitions()

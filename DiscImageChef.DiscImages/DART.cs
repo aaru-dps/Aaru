@@ -104,27 +104,29 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Apple Disk Archival/Retrieval Tool";
             PluginUuid = new Guid("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageVersion = null;
-            ImageInfo.ImageApplication = null;
-            ImageInfo.ImageApplicationVersion = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.ImageComments = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageVersion = null,
+                ImageApplication = null,
+                ImageApplicationVersion = null,
+                ImageCreator = null,
+                ImageComments = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
         }
 
         public override bool IdentifyImage(Filter imageFilter)
@@ -235,43 +237,42 @@ namespace DiscImageChef.DiscImages
             if(header.srcType == DISK_MAC_HD || header.srcType == DISK_DOS_HD) bLength = new short[BLOCK_ARRAY_LEN_HIGH];
             else bLength = new short[BLOCK_ARRAY_LEN_LOW];
 
-            byte[] tmpShort;
             for(int i = 0; i < bLength.Length; i++)
             {
-                tmpShort = new byte[2];
+                byte[] tmpShort = new byte[2];
                 stream.Read(tmpShort, 0, 2);
                 bLength[i] = BigEndianBitConverter.ToInt16(tmpShort, 0);
             }
 
-            byte[] temp;
-            byte[] buffer;
-
             MemoryStream dataMs = new MemoryStream();
             MemoryStream tagMs = new MemoryStream();
 
-            for(int i = 0; i < bLength.Length; i++)
-                if(bLength[i] != 0)
+            foreach(short l in bLength) if(l != 0)
+            {
+                byte[] buffer = new byte[BUFFER_SIZE];
+                if(l == -1)
                 {
-                    buffer = new byte[BUFFER_SIZE];
-                    if(bLength[i] == -1)
+                    stream.Read(buffer, 0, BUFFER_SIZE);
+                    dataMs.Write(buffer, 0, DATA_SIZE);
+                    tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
+                }
+                else
+                {
+                    byte[] temp;
+                    if(header.srcCmp == COMPRESS_RLE)
                     {
-                        stream.Read(buffer, 0, BUFFER_SIZE);
-                        dataMs.Write(buffer, 0, DATA_SIZE);
-                        tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
-                    }
-                    else if(header.srcCmp == COMPRESS_RLE)
-                    {
-                        temp = new byte[bLength[i] * 2];
+                        temp = new byte[l * 2];
                         stream.Read(temp, 0, temp.Length);
                         throw new ImageNotSupportedException("Compressed images not yet supported");
                     }
                     else
                     {
-                        temp = new byte[bLength[i]];
+                        temp = new byte[l];
                         stream.Read(temp, 0, temp.Length);
                         throw new ImageNotSupportedException("Compressed images not yet supported");
                     }
                 }
+            }
 
             dataCache = dataMs.ToArray();
             if(header.srcType == DISK_LISA || header.srcType == DISK_MAC || header.srcType == DISK_APPLE2)
@@ -289,45 +290,41 @@ namespace DiscImageChef.DiscImages
                     if(rsrcFork.ContainsKey(0x76657273))
                     {
                         Resource versRsrc = rsrcFork.GetResource(0x76657273);
-                        if(versRsrc != null)
+
+                        byte[] vers = versRsrc?.GetResource(versRsrc.GetIds()[0]);
+
+                        if(vers != null)
                         {
-                            byte[] vers = versRsrc.GetResource(versRsrc.GetIds()[0]);
+                            Version version = new Version(vers);
 
-                            if(vers != null)
+                            string release = null;
+                            string dev = null;
+                            string pre = null;
+
+                            string major = $"{version.MajorVersion}";
+                            string minor = $".{version.MinorVersion / 10}";
+                            if(version.MinorVersion % 10 > 0)
+                                release = $".{version.MinorVersion % 10}";
+                            switch(version.DevStage)
                             {
-                                Version version = new Version(vers);
-
-                                string major;
-                                string minor;
-                                string release = null;
-                                string dev = null;
-                                string pre = null;
-
-                                major = $"{version.MajorVersion}";
-                                minor = $".{version.MinorVersion / 10}";
-                                if(version.MinorVersion % 10 > 0)
-                                    release = $".{version.MinorVersion % 10}";
-                                switch(version.DevStage)
-                                {
-                                    case Version.DevelopmentStage.Alpha:
-                                        dev = "a";
-                                        break;
-                                    case Version.DevelopmentStage.Beta:
-                                        dev = "b";
-                                        break;
-                                    case Version.DevelopmentStage.PreAlpha:
-                                        dev = "d";
-                                        break;
-                                }
-
-                                if(dev == null && version.PreReleaseVersion > 0) dev = "f";
-
-                                if(dev != null) pre = $"{version.PreReleaseVersion}";
-
-                                ImageInfo.ImageApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                                ImageInfo.ImageApplication = version.VersionString;
-                                ImageInfo.ImageComments = version.VersionMessage;
+                                case Version.DevelopmentStage.Alpha:
+                                    dev = "a";
+                                    break;
+                                case Version.DevelopmentStage.Beta:
+                                    dev = "b";
+                                    break;
+                                case Version.DevelopmentStage.PreAlpha:
+                                    dev = "d";
+                                    break;
                             }
+
+                            if(dev == null && version.PreReleaseVersion > 0) dev = "f";
+
+                            if(dev != null) pre = $"{version.PreReleaseVersion}";
+
+                            ImageInfo.ImageApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
+                            ImageInfo.ImageApplication = version.VersionString;
+                            ImageInfo.ImageComments = version.VersionMessage;
                         }
                     }
 
@@ -339,9 +336,8 @@ namespace DiscImageChef.DiscImages
                         {
                             string dArt = StringHandlers.PascalToString(dartRsrc.GetResource(dartRsrc.GetIds()[0]),
                                                                         Encoding.GetEncoding("macintosh"));
-                            string dArtRegEx =
-                                "(?<version>\\S+), tag checksum=\\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\\$(?<datachk>[0123456789ABCDEF]{8})$";
-                            Regex dArtEx = new Regex(dArtRegEx);
+                            const string DART_REGEX = "(?<version>\\S+), tag checksum=\\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\\$(?<datachk>[0123456789ABCDEF]{8})$";
+                            Regex dArtEx = new Regex(DART_REGEX);
                             Match dArtMatch = dArtEx.Match(dArt);
 
                             if(dArtMatch.Success)
@@ -383,8 +379,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.SectorSize = SECTOR_SIZE;
             ImageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.ImageSize = ImageInfo.Sectors * SECTOR_SIZE;
-            if(header.srcCmp == COMPRESS_NONE) ImageInfo.ImageVersion = "1.4";
-            else ImageInfo.ImageVersion = "1.5";
+            ImageInfo.ImageVersion = header.srcCmp == COMPRESS_NONE ? "1.4" : "1.5";
 
             switch(header.srcSize)
             {

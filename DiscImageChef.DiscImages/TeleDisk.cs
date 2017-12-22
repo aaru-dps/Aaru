@@ -205,25 +205,27 @@ namespace DiscImageChef.DiscImages
         {
             Name = "Sydex TeleDisk";
             PluginUuid = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-            ImageInfo = new ImageInfo();
-            ImageInfo.ReadableSectorTags = new List<SectorTagType>();
-            ImageInfo.ReadableMediaTags = new List<MediaTagType>();
-            ImageInfo.ImageHasPartitions = false;
-            ImageInfo.ImageHasSessions = false;
-            ImageInfo.ImageApplication = "Sydex TeleDisk";
-            ImageInfo.ImageComments = null;
-            ImageInfo.ImageCreator = null;
-            ImageInfo.MediaManufacturer = null;
-            ImageInfo.MediaModel = null;
-            ImageInfo.MediaSerialNumber = null;
-            ImageInfo.MediaBarcode = null;
-            ImageInfo.MediaPartNumber = null;
-            ImageInfo.MediaSequence = 0;
-            ImageInfo.LastMediaSequence = 0;
-            ImageInfo.DriveManufacturer = null;
-            ImageInfo.DriveModel = null;
-            ImageInfo.DriveSerialNumber = null;
-            ImageInfo.DriveFirmwareRevision = null;
+            ImageInfo = new ImageInfo
+            {
+                ReadableSectorTags = new List<SectorTagType>(),
+                ReadableMediaTags = new List<MediaTagType>(),
+                ImageHasPartitions = false,
+                ImageHasSessions = false,
+                ImageApplication = "Sydex TeleDisk",
+                ImageComments = null,
+                ImageCreator = null,
+                MediaManufacturer = null,
+                MediaModel = null,
+                MediaSerialNumber = null,
+                MediaBarcode = null,
+                MediaPartNumber = null,
+                MediaSequence = 0,
+                LastMediaSequence = 0,
+                DriveManufacturer = null,
+                DriveModel = null,
+                DriveSerialNumber = null,
+                DriveFirmwareRevision = null
+            };
             aDiskCrcHasFailed = false;
             sectorsWhereCrcHasFailed = new List<ulong>();
         }
@@ -354,11 +356,10 @@ namespace DiscImageChef.DiscImages
             if(header.Signature == TD_ADV_COMP_MAGIC)
             {
                 int rd;
-                byte[] obuf;
                 inStream.Seek(12, SeekOrigin.Begin);
                 stream.Seek(12, SeekOrigin.Begin);
                 init_Decode();
-                do if((rd = Decode(out obuf, BUFSZ)) > 0) stream.Write(obuf, 0, rd);
+                do if((rd = Decode(out byte[] obuf, BUFSZ)) > 0) stream.Write(obuf, 0, rd);
                 while(rd == BUFSZ);
             }
             else
@@ -380,7 +381,6 @@ namespace DiscImageChef.DiscImages
                 commentHeader = new TeleDiskCommentBlockHeader();
 
                 byte[] commentHeaderBytes = new byte[10];
-                byte[] commentBlockForCrc;
 
                 stream.Read(commentHeaderBytes, 0, 10);
                 commentHeader.Crc = BitConverter.ToUInt16(commentHeaderBytes, 0);
@@ -395,7 +395,7 @@ namespace DiscImageChef.DiscImages
                 commentBlock = new byte[commentHeader.Length];
                 stream.Read(commentBlock, 0, commentHeader.Length);
 
-                commentBlockForCrc = new byte[commentHeader.Length + 8];
+                byte[] commentBlockForCrc = new byte[commentHeader.Length + 8];
                 Array.Copy(commentHeaderBytes, 2, commentBlockForCrc, 0, 8);
                 Array.Copy(commentBlock, 0, commentBlockForCrc, 8, commentHeader.Length);
 
@@ -452,12 +452,14 @@ namespace DiscImageChef.DiscImages
             // Count cylinders
             while(true)
             {
-                TeleDiskTrackHeader teleDiskTrack = new TeleDiskTrackHeader();
+                TeleDiskTrackHeader teleDiskTrack = new TeleDiskTrackHeader
+                {
+                    Sectors = (byte)stream.ReadByte(),
+                    Cylinder = (byte)stream.ReadByte(),
+                    Head = (byte)stream.ReadByte(),
+                    Crc = (byte)stream.ReadByte()
+                };
 
-                teleDiskTrack.Sectors = (byte)stream.ReadByte();
-                teleDiskTrack.Cylinder = (byte)stream.ReadByte();
-                teleDiskTrack.Head = (byte)stream.ReadByte();
-                teleDiskTrack.Crc = (byte)stream.ReadByte();
 
                 if(teleDiskTrack.Cylinder > totalCylinders) totalCylinders = teleDiskTrack.Cylinder;
                 if(teleDiskTrack.Head > totalHeads) totalHeads = teleDiskTrack.Head;
@@ -470,7 +472,6 @@ namespace DiscImageChef.DiscImages
                     TeleDiskSectorHeader teleDiskSector = new TeleDiskSectorHeader();
                     TeleDiskDataHeader teleDiskData = new TeleDiskDataHeader();
                     byte[] dataSizeBytes = new byte[2];
-                    byte[] data;
 
                     teleDiskSector.Cylinder = (byte)stream.ReadByte();
                     teleDiskSector.Head = (byte)stream.ReadByte();
@@ -488,7 +489,7 @@ namespace DiscImageChef.DiscImages
                         teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
                         teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
                         teleDiskData.DataEncoding = (byte)stream.ReadByte();
-                        data = new byte[teleDiskData.DataSize];
+                        byte[] data = new byte[teleDiskData.DataSize];
                         stream.Read(data, 0, teleDiskData.DataSize);
                     }
 
@@ -514,12 +515,14 @@ namespace DiscImageChef.DiscImages
             stream.Seek(currentPos, SeekOrigin.Begin);
             while(true)
             {
-                TeleDiskTrackHeader teleDiskTrack = new TeleDiskTrackHeader();
+                TeleDiskTrackHeader teleDiskTrack = new TeleDiskTrackHeader
+                {
+                    Sectors = (byte)stream.ReadByte(),
+                    Cylinder = (byte)stream.ReadByte(),
+                    Head = (byte)stream.ReadByte(),
+                    Crc = (byte)stream.ReadByte()
+                };
 
-                teleDiskTrack.Sectors = (byte)stream.ReadByte();
-                teleDiskTrack.Cylinder = (byte)stream.ReadByte();
-                teleDiskTrack.Head = (byte)stream.ReadByte();
-                teleDiskTrack.Crc = (byte)stream.ReadByte();
 
                 if(teleDiskTrack.Sectors == 0xFF) // End of disk image
                     break;
@@ -537,7 +540,6 @@ namespace DiscImageChef.DiscImages
                     TeleDiskSectorHeader teleDiskSector = new TeleDiskSectorHeader();
                     TeleDiskDataHeader teleDiskData = new TeleDiskDataHeader();
                     byte[] dataSizeBytes = new byte[2];
-                    byte[] data;
 
                     teleDiskSector.Cylinder = (byte)stream.ReadByte();
                     teleDiskSector.Head = (byte)stream.ReadByte();
@@ -553,7 +555,7 @@ namespace DiscImageChef.DiscImages
                     teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
                     teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
                     teleDiskData.DataEncoding = (byte)stream.ReadByte();
-                    data = new byte[teleDiskData.DataSize];
+                    byte[] data = new byte[teleDiskData.DataSize];
                     stream.Read(data, 0, teleDiskData.DataSize);
                 }
             }
@@ -617,7 +619,6 @@ namespace DiscImageChef.DiscImages
                     TeleDiskSectorHeader teleDiskSector = new TeleDiskSectorHeader();
                     TeleDiskDataHeader teleDiskData = new TeleDiskDataHeader();
                     byte[] dataSizeBytes = new byte[2];
-                    byte[] data;
                     byte[] decodedData;
 
                     teleDiskSector.Cylinder = (byte)stream.ReadByte();
@@ -647,7 +648,7 @@ namespace DiscImageChef.DiscImages
                         teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
                         ImageInfo.ImageSize += teleDiskData.DataSize;
                         teleDiskData.DataEncoding = (byte)stream.ReadByte();
-                        data = new byte[teleDiskData.DataSize];
+                        byte[] data = new byte[teleDiskData.DataSize];
                         stream.Read(data, 0, teleDiskData.DataSize);
                         DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}", teleDiskData.DataSize);
                         DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}",
@@ -673,14 +674,13 @@ namespace DiscImageChef.DiscImages
                     if((teleDiskSector.Flags & FLAGS_SECTOR_NO_ID) == FLAGS_SECTOR_NO_ID) continue;
 
                     if(sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] != null)
-                        if((teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) == FLAGS_SECTOR_DUPLICATE)
-                            DicConsole.DebugWriteLine("TeleDisk plugin",
-                                                      "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
-                                                      teleDiskSector.SectorNumber, teleDiskSector.Cylinder, teleDiskSector.Head);
-                        else
-                            DicConsole.DebugWriteLine("TeleDisk plugin",
-                                                      "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
-                                                      teleDiskSector.SectorNumber, teleDiskSector.Cylinder, teleDiskSector.Head);
+                        DicConsole.DebugWriteLine("TeleDisk plugin",
+                                                  (teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) ==
+                                                  FLAGS_SECTOR_DUPLICATE
+                                                      ? "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so"
+                                                      : "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
+                                                  teleDiskSector.SectorNumber, teleDiskSector.Cylinder,
+                                                  teleDiskSector.Head);
                     else
                     {
                         sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] = decodedData;
@@ -776,8 +776,7 @@ namespace DiscImageChef.DiscImages
             MemoryStream buffer = new MemoryStream();
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i);
-                if(sector == null) sector = new byte[ImageInfo.SectorSize];
+                byte[] sector = ReadSector(sectorAddress + i) ?? new byte[ImageInfo.SectorSize];
                 buffer.Write(sector, 0, sector.Length);
             }
 
@@ -969,10 +968,8 @@ namespace DiscImageChef.DiscImages
                     int outs = 0;
                     while(ins < encodedData.Length)
                     {
-                        byte run;
                         byte length;
                         byte encoding;
-                        byte[] piece;
 
                         encoding = encodedData[ins];
                         if(encoding == 0x00)
@@ -985,10 +982,10 @@ namespace DiscImageChef.DiscImages
                         else
                         {
                             length = (byte)(encoding * 2);
-                            run = encodedData[ins + 1];
+                            byte run = encodedData[ins + 1];
                             byte[] part = new byte[length];
                             Array.Copy(encodedData, ins + 2, part, 0, length);
-                            piece = new byte[length * run];
+                            byte[] piece = new byte[length * run];
                             ArrayHelpers.ArrayFill(piece, part);
                             Array.Copy(piece, 0, decodedData, outs, piece.Length);
                             ins += 2 + length;
@@ -1326,7 +1323,7 @@ namespace DiscImageChef.DiscImages
         const int N_CHAR = 256 - THRESHOLD + F;
         /* character code (= 0..N_CHAR-1) */
         const int T = N_CHAR * 2 - 1; /* Size of table */
-        const int R = T - 1; /* root position */
+        const int ROOT = T - 1; /* root position */
         const int MAX_FREQ = 0x8000;
         /* update when cumulative frequency */
         /* reaches to this value */
@@ -1471,7 +1468,7 @@ namespace DiscImageChef.DiscImages
 
             i = 0;
             j = N_CHAR;
-            while(j <= R)
+            while(j <= ROOT)
             {
                 freq[j] = (ushort)(freq[i] + freq[i + 1]);
                 son[j] = (short)i;
@@ -1481,7 +1478,7 @@ namespace DiscImageChef.DiscImages
             }
 
             freq[T] = 0xffff;
-            prnt[R] = 0;
+            prnt[ROOT] = 0;
         }
 
         /* reconstruct freq tree */
@@ -1489,7 +1486,6 @@ namespace DiscImageChef.DiscImages
         void Reconst()
         {
             short i, j, k;
-            ushort f, l;
 
             /* halven cumulative freq for leaf nodes */
             j = 0;
@@ -1504,12 +1500,11 @@ namespace DiscImageChef.DiscImages
             for(i = 0, j = N_CHAR; j < T; i += 2, j++)
             {
                 k = (short)(i + 1);
-                f = freq[j] = (ushort)(freq[i] + freq[k]);
+                ushort f = freq[j] = (ushort)(freq[i] + freq[k]);
                 for(k = (short)(j - 1); f < freq[k]; k--) { }
 
-                ;
                 k++;
-                l = (ushort)((j - k) * 2);
+                ushort l = (ushort)((j - k) * 2);
 
                 Array.ConstrainedCopy(freq, k, freq, k + 1, l);
                 freq[k] = f;
@@ -1526,15 +1521,14 @@ namespace DiscImageChef.DiscImages
 
         void Update(int c)
         {
-            int i, j, k, l;
-
-            if(freq[R] == MAX_FREQ) Reconst();
+            if(freq[ROOT] == MAX_FREQ) Reconst();
             c = prnt[c + T];
             do
             {
-                k = ++freq[c];
+                int k = ++freq[c];
 
                 /* swap nodes to keep the tree freq-ordered */
+                int l;
                 if(k <= freq[l = c + 1]) continue;
 
                 while(k > freq[++l]) { }
@@ -1543,11 +1537,11 @@ namespace DiscImageChef.DiscImages
                 freq[c] = freq[l];
                 freq[l] = (ushort)k;
 
-                i = son[c];
+                int i = son[c];
                 prnt[i] = (short)l;
                 if(i < T) prnt[i + 1] = (short)l;
 
-                j = son[l];
+                int j = son[l];
                 son[l] = (short)i;
 
                 prnt[j] = (short)c;
@@ -1561,10 +1555,9 @@ namespace DiscImageChef.DiscImages
 
         short DecodeChar()
         {
-            int ret;
             ushort c;
 
-            c = (ushort)son[R];
+            c = (ushort)son[ROOT];
 
             /*
              * start searching tree from the root to leaves.
@@ -1573,6 +1566,7 @@ namespace DiscImageChef.DiscImages
              */
             while(c < T)
             {
+                int ret;
                 if((ret = GetBit()) < 0) return -1;
 
                 c += (ushort)ret;
@@ -1630,7 +1624,7 @@ namespace DiscImageChef.DiscImages
 
         int Decode(out byte[] buf, int len) /* Decoding/Uncompressing */
         {
-            short c, pos;
+            short c;
             buf = new byte[len];
             int count; // was an unsigned long, seems unnecessary
             for(count = 0; count < len;)
@@ -1647,6 +1641,7 @@ namespace DiscImageChef.DiscImages
                     }
                     else
                     {
+                        short pos;
                         if((pos = DecodePosition()) < 0) return count; // fatal error
 
                         tdctl.Bufpos = (ushort)((tdctl.R - pos - 1) & (N - 1));

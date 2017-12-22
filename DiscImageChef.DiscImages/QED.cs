@@ -138,7 +138,7 @@ namespace DiscImageChef.DiscImages
         Dictionary<ulong, byte[]> clusterCache;
         Dictionary<ulong, ulong[]> l2TableCache;
 
-        uint maxCachedSectors = MAX_CACHE_SIZE / 512;
+        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
         uint maxL2TableCache;
         uint maxClusterCache;
 
@@ -309,10 +309,8 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            byte[] sector;
-
             // Check cache
-            if(sectorCache.TryGetValue(sectorAddress, out sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
 
             ulong byteAddress = sectorAddress * 512;
 
@@ -325,9 +323,7 @@ namespace DiscImageChef.DiscImages
             // TODO: Implement differential images
             if(l1Table[l1Off] == 0) return new byte[512];
 
-            ulong[] l2Table;
-
-            if(!l2TableCache.TryGetValue(l1Off, out l2Table))
+            if(!l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
             {
                 l2Table = new ulong[tableSize];
                 imageStream.Seek((long)l1Table[l1Off], SeekOrigin.Begin);
@@ -350,8 +346,7 @@ namespace DiscImageChef.DiscImages
 
             if(offset != 0 && offset != 1)
             {
-                byte[] cluster;
-                if(!clusterCache.TryGetValue(offset, out cluster))
+                if(!clusterCache.TryGetValue(offset, out byte[] cluster))
                 {
                     cluster = new byte[qHdr.cluster_size];
                     imageStream.Seek((long)offset, SeekOrigin.Begin);
@@ -365,7 +360,7 @@ namespace DiscImageChef.DiscImages
                 Array.Copy(cluster, (int)(byteAddress & sectorMask), sector, 0, 512);
             }
 
-            if(sectorCache.Count >= maxCachedSectors) sectorCache.Clear();
+            if(sectorCache.Count >= MAX_CACHED_SECTORS) sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 

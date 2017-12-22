@@ -99,10 +99,7 @@ namespace DiscImageChef.DiscImages
 
             extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            int[] offsets;
-
-            if(extension == ".do") offsets = dosOffsets;
-            else offsets = prodosOffsets;
+            int[] offsets = extension == ".do" ? dosOffsets : prodosOffsets;
 
             for(int t = 0; t < 35; t++)
             {

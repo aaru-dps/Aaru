@@ -123,7 +123,6 @@ namespace DiscImageChef.DiscImages
             TrackLengths = new SortedDictionary<int, long>();
             int t = -1;
             ushort lastCylinder = 0, lastHead = 0;
-            bool endOfTrack = false;
             long offset = 0;
 
             while(stream.Position < stream.Length)
@@ -177,8 +176,7 @@ namespace DiscImageChef.DiscImages
             ImageInfo.Cylinders++;
 
             ImageInfo.ImageApplication = "DiscFerret";
-            if(magic == DFI_MAGIC2) ImageInfo.ImageApplicationVersion = "2.0";
-            else ImageInfo.ImageApplicationVersion = "1.0";
+            ImageInfo.ImageApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
