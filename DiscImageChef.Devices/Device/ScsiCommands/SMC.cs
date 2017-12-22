@@ -57,7 +57,6 @@ namespace DiscImageChef.Devices
             buffer = new byte[256];
             byte[] cdb = new byte[16];
             senseBuffer = new byte[32];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadAttribute;
             cdb[1] = (byte)((byte)action & 0x1F);
@@ -75,7 +74,7 @@ namespace DiscImageChef.Devices
             if(cache) cdb[14] += 0x01;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             if(sense) return true;

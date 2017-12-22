@@ -32,11 +32,13 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Devices.Windows
 {
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct ScsiPassThroughDirect
     {
         public ushort Length;
@@ -62,6 +64,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct AtaPassThroughDirect
     {
         /// <summary>
@@ -115,6 +118,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct AtaPassThroughDirectWithBuffer
     {
         public AtaPassThroughDirect aptd;
@@ -123,6 +127,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Explicit)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct AtaTaskFile
     {
         // Fields for commands sent
@@ -151,6 +156,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct StorageDescriptorHeader
     {
         public uint Version;
@@ -193,6 +199,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct StorageDeviceNumber
     {
         public int deviceType;
@@ -201,6 +208,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct DeviceInfoData
     {
         public int cbSize;
@@ -210,6 +218,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct DeviceInterfaceData
     {
         public int cbSize;
@@ -219,6 +228,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct UsbSetupPacket
     {
         public byte bmRequest;
@@ -229,6 +239,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct UsbDescriptorRequest
     {
         public int ConnectionIndex;
@@ -237,6 +248,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct SffdiskQueryDeviceProtocolData
     {
         public ushort size;
@@ -245,6 +257,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct SffdiskDeviceCommandData
     {
         public ushort size;

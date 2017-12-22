@@ -51,7 +51,6 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.NecReadCdDa;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
@@ -64,7 +63,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[2352 * transferLength];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);

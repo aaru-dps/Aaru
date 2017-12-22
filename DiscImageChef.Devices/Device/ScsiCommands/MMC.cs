@@ -83,7 +83,6 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
             buffer = new byte[8];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.GetConfiguration;
             cdb[1] = (byte)((byte)rt & 0x03);
@@ -94,7 +93,7 @@ namespace DiscImageChef.Devices
             cdb[9] = 0;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             if(sense) return true;
@@ -134,7 +133,6 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
             buffer = new byte[8];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadDiscStructure;
             cdb[1] = (byte)((byte)mediaType & 0x0F);
@@ -149,7 +147,7 @@ namespace DiscImageChef.Devices
             cdb[10] = (byte)((agid & 0x03) << 6);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             if(sense) return true;
@@ -297,11 +295,8 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
-            byte[] tmpBuffer;
-            bool sense;
 
-            if((format & 0x0F) == 5) tmpBuffer = new byte[32768];
-            else tmpBuffer = new byte[1024];
+            byte[] tmpBuffer = (format & 0x0F) == 5 ? new byte[32768] : new byte[1024];
 
             cdb[0] = (byte)ScsiCommands.ReadTocPmaAtip;
             if(msf) cdb[1] = 0x02;
@@ -311,7 +306,7 @@ namespace DiscImageChef.Devices
             cdb[8] = (byte)(tmpBuffer.Length & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref tmpBuffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             uint strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
@@ -364,7 +359,6 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
             byte[] tmpBuffer = new byte[804];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadDiscInformation;
             cdb[1] = (byte)dataType;
@@ -372,7 +366,7 @@ namespace DiscImageChef.Devices
             cdb[8] = (byte)(tmpBuffer.Length & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref tmpBuffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             uint strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
@@ -411,7 +405,6 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadCd;
             cdb[1] = (byte)((byte)expectedSectorType << 2);
@@ -434,7 +427,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[blockSize * transferLength];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ CD took {0} ms.", duration);
@@ -468,7 +461,6 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadCdMsf;
             cdb[1] = (byte)((byte)expectedSectorType << 2);
@@ -491,7 +483,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[blockSize * transferLength];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ CD MSF took {0} ms.", duration);
@@ -515,14 +507,13 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
             byte[] buffer = new byte[0];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
             if(prevent) cdb[4] += 0x01;
             if(persistent) cdb[4] += 0x02;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PREVENT ALLOW MEDIUM REMOVAL took {0} ms.", duration);
@@ -556,7 +547,6 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
             byte[] buffer = new byte[0];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.StartStopUnit;
             if(immediate) cdb[1] += 0x01;
@@ -573,7 +563,7 @@ namespace DiscImageChef.Devices
             cdb[4] += (byte)((powerConditions & 0x0F) << 4);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "START STOP UNIT took {0} ms.", duration);

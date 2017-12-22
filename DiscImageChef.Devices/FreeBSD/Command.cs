@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
@@ -39,6 +40,7 @@ using static DiscImageChef.Devices.FreeBSD.Extern;
 
 namespace DiscImageChef.Devices.FreeBSD
 {
+    [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
     static class Command
     {
         const int CAM_MAX_CDBLEN = 16;

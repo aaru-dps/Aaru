@@ -46,9 +46,7 @@ namespace DiscImageChef.Devices.Linux
             DeviceInfo[] devices = new DeviceInfo[sysdevs.Length];
             bool hasUdev;
 
-            StreamReader sr;
             IntPtr udev = IntPtr.Zero;
-            IntPtr udevDev;
 
             try
             {
@@ -59,13 +57,12 @@ namespace DiscImageChef.Devices.Linux
 
             for(int i = 0; i < sysdevs.Length; i++)
             {
-                devices[i] = new DeviceInfo();
-                devices[i].Path = "/dev/" + Path.GetFileName(sysdevs[i]);
+                devices[i] = new DeviceInfo {Path = "/dev/" + Path.GetFileName(sysdevs[i])};
 
                 if(hasUdev)
                 {
-                    udevDev = Extern.udev_device_new_from_subsystem_sysname(udev, "block",
-                                                                            Path.GetFileName(sysdevs[i]));
+                    IntPtr udevDev = Extern.udev_device_new_from_subsystem_sysname(udev, "block",
+                                                                                   Path.GetFileName(sysdevs[i]));
                     devices[i].Vendor = Extern.udev_device_get_property_value(udevDev, "ID_VENDOR");
                     devices[i].Model = Extern.udev_device_get_property_value(udevDev, "ID_MODEL");
                     if(!string.IsNullOrEmpty(devices[i].Model)) devices[i].Model = devices[i].Model.Replace('_', ' ');
@@ -75,10 +72,11 @@ namespace DiscImageChef.Devices.Linux
                     devices[i].Bus = Extern.udev_device_get_property_value(udevDev, "ID_BUS");
                 }
 
+                StreamReader sr;
                 if(File.Exists(Path.Combine(sysdevs[i], "device/vendor")) && string.IsNullOrEmpty(devices[i].Vendor))
                 {
                     sr = new StreamReader(Path.Combine(sysdevs[i], "device/vendor"), Encoding.ASCII);
-                    devices[i].Vendor = sr.ReadLine().Trim();
+                    devices[i].Vendor = sr.ReadLine()?.Trim();
                 }
                 else if(devices[i].Path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
                     devices[i].Vendor = "Linux";
@@ -87,7 +85,7 @@ namespace DiscImageChef.Devices.Linux
                    (string.IsNullOrEmpty(devices[i].Model) || devices[i].Bus == "ata"))
                 {
                     sr = new StreamReader(Path.Combine(sysdevs[i], "device/model"), Encoding.ASCII);
-                    devices[i].Model = sr.ReadLine().Trim();
+                    devices[i].Model = sr.ReadLine()?.Trim();
                 }
                 else if(devices[i].Path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
                     devices[i].Model = "Linux";
@@ -95,7 +93,7 @@ namespace DiscImageChef.Devices.Linux
                 if(File.Exists(Path.Combine(sysdevs[i], "device/serial")) && string.IsNullOrEmpty(devices[i].Serial))
                 {
                     sr = new StreamReader(Path.Combine(sysdevs[i], "device/serial"), Encoding.ASCII);
-                    devices[i].Serial = sr.ReadLine().Trim();
+                    devices[i].Serial = sr.ReadLine()?.Trim();
                 }
 
                 if(string.IsNullOrEmpty(devices[i].Vendor) || devices[i].Vendor == "ATA")

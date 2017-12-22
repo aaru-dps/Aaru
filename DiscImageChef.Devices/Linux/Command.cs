@@ -92,8 +92,7 @@ namespace DiscImageChef.Devices.Linux
 
             sense |= (ioHdr.info & SgInfo.OkMask) != SgInfo.Ok;
 
-            if(ioHdr.duration > 0) duration = ioHdr.duration;
-            else duration = (end - start).TotalMilliseconds;
+            duration = ioHdr.duration > 0 ? ioHdr.duration : (end - start).TotalMilliseconds;
 
             Marshal.FreeHGlobal(ioHdr.dxferp);
             Marshal.FreeHGlobal(ioHdr.cmdp);
@@ -162,8 +161,7 @@ namespace DiscImageChef.Devices.Linux
             cdb[13] = registers.DeviceHead;
             cdb[14] = registers.Command;
 
-            byte[] senseBuffer;
-            int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout,
+            int error = SendScsiCommand(fd, cdb, ref buffer, out byte[] senseBuffer, timeout,
                                         AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
             if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
@@ -224,8 +222,7 @@ namespace DiscImageChef.Devices.Linux
             cdb[13] = registers.DeviceHead;
             cdb[14] = registers.Command;
 
-            byte[] senseBuffer;
-            int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout,
+            int error = SendScsiCommand(fd, cdb, ref buffer, out byte[] senseBuffer, timeout,
                                         AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
             if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
@@ -292,8 +289,7 @@ namespace DiscImageChef.Devices.Linux
             cdb[13] = registers.DeviceHead;
             cdb[14] = registers.Command;
 
-            byte[] senseBuffer;
-            int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout,
+            int error = SendScsiCommand(fd, cdb, ref buffer, out byte[] senseBuffer, timeout,
                                         AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
             if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;

@@ -54,7 +54,6 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadCdDa;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
@@ -69,7 +68,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[blockSize * transferLength];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA took {0} ms.", duration);
@@ -94,7 +93,6 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadCdDaMsf;
             cdb[3] = (byte)((startMsf & 0xFF0000) >> 16);
@@ -109,7 +107,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[blockSize * transferLength];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA MSF took {0} ms.", duration);
@@ -134,7 +132,6 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadCdXa;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
@@ -162,7 +159,7 @@ namespace DiscImageChef.Devices
             }
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-XA took {0} ms.", duration);

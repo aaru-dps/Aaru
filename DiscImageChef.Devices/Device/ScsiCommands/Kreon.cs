@@ -49,7 +49,6 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
             byte[] buffer = new byte[0];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.KreonCommand;
             cdb[1] = 0x08;
@@ -57,7 +56,7 @@ namespace DiscImageChef.Devices
             cdb[3] = 0x01;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "KREON DEPRECATED UNLOCK took {0} ms.", duration);
@@ -114,7 +113,6 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
             byte[] buffer = new byte[0];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.KreonCommand;
             cdb[1] = 0x08;
@@ -123,7 +121,7 @@ namespace DiscImageChef.Devices
             cdb[4] = (byte)state;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "KREON SET LOCK STATE took {0} ms.", duration);
@@ -145,7 +143,6 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
             byte[] buffer = new byte[26];
-            bool sense;
             features = 0;
 
             cdb[0] = (byte)ScsiCommands.KreonCommand;
@@ -154,7 +151,7 @@ namespace DiscImageChef.Devices
             cdb[3] = 0x10;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "KREON GET FEATURE LIST took {0} ms.", duration);
@@ -222,7 +219,6 @@ namespace DiscImageChef.Devices
             buffer = new byte[2048];
             byte[] cdb = new byte[12];
             senseBuffer = new byte[32];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.KreonSsCommand;
             cdb[1] = 0x00;
@@ -238,7 +234,7 @@ namespace DiscImageChef.Devices
             cdb[11] = 0xC0;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "KREON EXTRACT SS took {0} ms.", duration);

@@ -28,18 +28,20 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
+// Copyright © 2007 Fort Hood TX, herethen, Public Domain
 // ****************************************************************************/
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
-// Copyright "Fort Hood TX", internal domain, 2007
 namespace DiscImageChef.Devices.Windows
 {
-    partial class Usb
+    // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
+    static partial class Usb
     {
         #region "API Region" 
         // ********************** Constants ************************
@@ -276,6 +278,7 @@ namespace DiscImageChef.Devices.Windows
         //    UCHAR  bNumConfigurations;
         //} USB_DEVICE_DESCRIPTOR, *PUSB_DEVICE_DESCRIPTOR ;
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         internal struct UsbDeviceDescriptor
         {
             internal byte bLength;
@@ -487,7 +490,7 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Return a list of USB Host Controllers
         // 
-        static internal ReadOnlyCollection<UsbController> GetHostControllers()
+        static IEnumerable<UsbController> GetHostControllers()
         {
             List<UsbController> hostList = new List<UsbController>();
             Guid hostGuid = new Guid(GUID_DEVINTERFACE_HUBCONTROLLER);
@@ -503,8 +506,7 @@ namespace DiscImageChef.Devices.Windows
             int i = 0;
             do
             {
-                UsbController host = new UsbController();
-                host.ControllerIndex = i;
+                UsbController host = new UsbController {ControllerIndex = i};
 
                 // create a Device Interface Data structure
                 SpDeviceInterfaceData dia = new SpDeviceInterfaceData();
@@ -519,13 +521,14 @@ namespace DiscImageChef.Devices.Windows
                     da.cbSize = Marshal.SizeOf(da);
 
                     // build a Device Interface Detail Data structure
-                    SpDeviceInterfaceDetailData didd = new SpDeviceInterfaceDetailData();
-                    didd.cbSize = 4 + Marshal.SystemDefaultCharSize; // trust me :)
+                    SpDeviceInterfaceDetailData didd =
+                        new SpDeviceInterfaceDetailData {cbSize = 4 + Marshal.SystemDefaultCharSize};
+                    // trust me :)
 
                     // now we can get some more detailed information
                     int nRequiredSize = 0;
-                    int nBytes = BUFFER_SIZE;
-                    if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, nBytes, ref nRequiredSize, ref da))
+                    const int N_BYTES = BUFFER_SIZE;
+                    if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, N_BYTES, ref nRequiredSize, ref da))
                     {
                         host.ControllerDevicePath = didd.DevicePath;
 
@@ -554,7 +557,7 @@ namespace DiscImageChef.Devices.Windows
         // 
         // The USB Host Controller Class
         // 
-        internal class UsbController
+        class UsbController
         {
             internal int ControllerIndex;
             internal string ControllerDriverKeyName, ControllerDevicePath, ControllerDeviceDesc;
@@ -569,50 +572,35 @@ namespace DiscImageChef.Devices.Windows
             }
 
             // Return the index of the instance
-            internal int Index
-            {
-                get { return ControllerIndex; }
-            }
+            internal int Index => ControllerIndex;
 
             // Return the Device Path, such as "\\?\pci#ven_10de&dev_005a&subsys_815a1043&rev_a2#3&267a616a&0&58#{3abf6f2d-71c4-462a-8a92-1e6861e6af27}"
-            internal string DevicePath
-            {
-                get { return ControllerDevicePath; }
-            }
+            internal string DevicePath => ControllerDevicePath;
 
             // The DriverKeyName may be useful as a search key
-            internal string DriverKeyName
-            {
-                get { return ControllerDriverKeyName; }
-            }
+            internal string DriverKeyName => ControllerDriverKeyName;
 
             // Return the Friendly Name, such as "VIA USB Enhanced Host Controller"
-            internal string Name
-            {
-                get { return ControllerDeviceDesc; }
-            }
+            internal string Name => ControllerDeviceDesc;
 
             // Return Root Hub for this Controller
             internal UsbHub GetRootHub()
             {
                 IntPtr h, h2;
-                UsbHub root = new UsbHub();
-                root.HubIsRootHub = true;
-                root.HubDeviceDesc = "Root Hub";
+                UsbHub root = new UsbHub {HubIsRootHub = true, HubDeviceDesc = "Root Hub"};
 
                 // Open a handle to the Host Controller
                 h = CreateFile(ControllerDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
                                IntPtr.Zero);
                 if(h.ToInt32() == INVALID_HANDLE_VALUE) return root;
 
-                int nBytesReturned;
                 UsbRootHubName hubName = new UsbRootHubName();
                 int nBytes = Marshal.SizeOf(hubName);
                 IntPtr ptrHubName = Marshal.AllocHGlobal(nBytes);
 
                 // get the Hub Name
                 if(DeviceIoControl(h, IOCTL_USB_GET_ROOT_HUB_NAME, ptrHubName, nBytes, ptrHubName, nBytes,
-                                   out nBytesReturned, IntPtr.Zero))
+                                   out _, IntPtr.Zero))
                 {
                     hubName = (UsbRootHubName)Marshal.PtrToStructure(ptrHubName, typeof(UsbRootHubName));
                     root.HubDevicePath = @"\\.\" + hubName.RootHubName;
@@ -625,15 +613,14 @@ namespace DiscImageChef.Devices.Windows
                                 IntPtr.Zero);
                 if(h2.ToInt32() != INVALID_HANDLE_VALUE)
                 {
-                    UsbNodeInformation nodeInfo = new UsbNodeInformation();
-                    nodeInfo.NodeType = (int)UsbHubNode.UsbHub;
+                    UsbNodeInformation nodeInfo = new UsbNodeInformation {NodeType = (int)UsbHubNode.UsbHub};
                     nBytes = Marshal.SizeOf(nodeInfo);
                     IntPtr ptrNodeInfo = Marshal.AllocHGlobal(nBytes);
                     Marshal.StructureToPtr(nodeInfo, ptrNodeInfo, true);
 
                     // get the Hub Information
                     if(DeviceIoControl(h2, IOCTL_USB_GET_NODE_INFORMATION, ptrNodeInfo, nBytes, ptrNodeInfo, nBytes,
-                                       out nBytesReturned, IntPtr.Zero))
+                                       out _, IntPtr.Zero))
                     {
                         nodeInfo = (UsbNodeInformation)Marshal.PtrToStructure(ptrNodeInfo,
                                                                               typeof(UsbNodeInformation));
@@ -676,64 +663,34 @@ namespace DiscImageChef.Devices.Windows
             }
 
             // return Port Count
-            internal int PortCount
-            {
-                get { return HubPortCount; }
-            }
+            internal int PortCount => HubPortCount;
 
             // return the Device Path, such as "\\?\pci#ven_10de&dev_005a&subsys_815a1043&rev_a2#3&267a616a&0&58#{3abf6f2d-71c4-462a-8a92-1e6861e6af27}"
-            internal string DevicePath
-            {
-                get { return HubDevicePath; }
-            }
+            internal string DevicePath => HubDevicePath;
 
             // The DriverKey may be useful as a search key
-            internal string DriverKey
-            {
-                get { return HubDriverKey; }
-            }
+            internal string DriverKey => HubDriverKey;
 
             // return the Friendly Name, such as "VIA USB Enhanced Host Controller"
-            internal string Name
-            {
-                get { return HubDeviceDesc; }
-            }
+            internal string Name => HubDeviceDesc;
 
             // the device path of this device
-            internal string InstanceId
-            {
-                get { return HubInstanceId; }
-            }
+            internal string InstanceId => HubInstanceId;
 
             // is is this a self-powered hub?
-            internal bool IsBusPowered
-            {
-                get { return HubIsBusPowered; }
-            }
+            internal bool IsBusPowered => HubIsBusPowered;
 
             // is this a root hub?
-            internal bool IsRootHub
-            {
-                get { return HubIsRootHub; }
-            }
+            internal bool IsRootHub => HubIsRootHub;
 
-            internal string Manufacturer
-            {
-                get { return HubManufacturer; }
-            }
+            internal string Manufacturer => HubManufacturer;
 
-            internal string Product
-            {
-                get { return HubProduct; }
-            }
+            internal string Product => HubProduct;
 
-            internal string SerialNumber
-            {
-                get { return HubSerialNumber; }
-            }
+            internal string SerialNumber => HubSerialNumber;
 
             // return a list of the down stream ports
-            internal ReadOnlyCollection<UsbPort> GetPorts()
+            internal IEnumerable<UsbPort> GetPorts()
             {
                 List<UsbPort> portList = new List<UsbPort>();
 
@@ -750,13 +707,12 @@ namespace DiscImageChef.Devices.Windows
                 // BTW: Ports are numbered starting at 1
                 for(int i = 1; i <= HubPortCount; i++)
                 {
-                    int nBytesReturned;
-                    UsbNodeConnectionInformationEx nodeConnection = new UsbNodeConnectionInformationEx();
-                    nodeConnection.ConnectionIndex = i;
+                    UsbNodeConnectionInformationEx nodeConnection =
+                        new UsbNodeConnectionInformationEx {ConnectionIndex = i};
                     Marshal.StructureToPtr(nodeConnection, ptrNodeConnection, true);
 
                     if(!DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX, ptrNodeConnection, nBytes,
-                                        ptrNodeConnection, nBytes, out nBytesReturned, IntPtr.Zero)) continue;
+                                        ptrNodeConnection, nBytes, out _, IntPtr.Zero)) continue;
 
                     nodeConnection =
                         (UsbNodeConnectionInformationEx)Marshal.PtrToStructure(ptrNodeConnection,
@@ -765,17 +721,17 @@ namespace DiscImageChef.Devices.Windows
                                                                                ));
 
                     // load up the USBPort class
-                    UsbPort port = new UsbPort();
-                    port.PortPortNumber = i;
-                    port.PortHubDevicePath = HubDevicePath;
-                    UsbConnectionStatus status = (UsbConnectionStatus)nodeConnection.ConnectionStatus;
-                    port.PortStatus = status.ToString();
-                    UsbDeviceSpeed speed = (UsbDeviceSpeed)nodeConnection.Speed;
-                    port.PortSpeed = speed.ToString();
-                    port.PortIsDeviceConnected =
-                        nodeConnection.ConnectionStatus == (int)UsbConnectionStatus.DeviceConnected;
-                    port.PortIsHub = Convert.ToBoolean(nodeConnection.DeviceIsHub);
-                    port.PortDeviceDescriptor = nodeConnection.DeviceDescriptor;
+                    UsbPort port = new UsbPort
+                    {
+                        PortPortNumber = i,
+                        PortHubDevicePath = HubDevicePath,
+                        PortStatus = ((UsbConnectionStatus)nodeConnection.ConnectionStatus).ToString(),
+                        PortSpeed = ((UsbDeviceSpeed)nodeConnection.Speed).ToString(),
+                        PortIsDeviceConnected =
+                            nodeConnection.ConnectionStatus == (int)UsbConnectionStatus.DeviceConnected,
+                        PortIsHub = Convert.ToBoolean(nodeConnection.DeviceIsHub),
+                        PortDeviceDescriptor = nodeConnection.DeviceDescriptor
+                    };
 
                     // add it to the list
                     portList.Add(port);
@@ -810,53 +766,36 @@ namespace DiscImageChef.Devices.Windows
             }
 
             // return Port Index of the Hub
-            internal int PortNumber
-            {
-                get { return PortPortNumber; }
-            }
+            internal int PortNumber => PortPortNumber;
 
             // return the Device Path of the Hub
-            internal string HubDevicePath
-            {
-                get { return PortHubDevicePath; }
-            }
+            internal string HubDevicePath => PortHubDevicePath;
 
             // the status (see USB_CONNECTION_STATUS above)
-            internal string Status
-            {
-                get { return PortStatus; }
-            }
+            internal string Status => PortStatus;
 
             // the speed of the connection (see USB_DEVICE_SPEED above)
-            internal string Speed
-            {
-                get { return PortSpeed; }
-            }
+            internal string Speed => PortSpeed;
 
             // is this a downstream external hub?
-            internal bool IsHub
-            {
-                get { return PortIsHub; }
-            }
+            internal bool IsHub => PortIsHub;
 
             // is anybody home?
-            internal bool IsDeviceConnected
-            {
-                get { return PortIsDeviceConnected; }
-            }
+            internal bool IsDeviceConnected => PortIsDeviceConnected;
 
             // return a down stream external hub
             internal UsbDevice GetDevice()
             {
                 if(!PortIsDeviceConnected) return null;
 
-                UsbDevice device = new UsbDevice();
-
                 // Copy over some values from the Port class
                 // Ya know, I've given some thought about making Device a derived class...
-                device.DevicePortNumber = PortPortNumber;
-                device.DeviceHubDevicePath = PortHubDevicePath;
-                device.DeviceDescriptor = PortDeviceDescriptor;
+                UsbDevice device = new UsbDevice
+                {
+                    DevicePortNumber = PortPortNumber,
+                    DeviceHubDevicePath = PortHubDevicePath,
+                    DeviceDescriptor = PortDeviceDescriptor
+                };
 
                 // Open a handle to the Hub device
                 IntPtr h = CreateFile(PortHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
@@ -875,12 +814,17 @@ namespace DiscImageChef.Devices.Windows
                 if(PortDeviceDescriptor.iManufacturer > 0)
                 {
                     // build a request for string descriptor
-                    UsbDescriptorRequest request = new UsbDescriptorRequest();
-                    request.ConnectionIndex = PortPortNumber;
-                    request.SetupPacket.wValue =
-                        (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + PortDeviceDescriptor.iManufacturer);
+                    UsbDescriptorRequest request = new UsbDescriptorRequest
+                    {
+                        ConnectionIndex = PortPortNumber,
+                        SetupPacket =
+                        {
+                            // Language Code
+                            wIndex = 0x409,
+                            wValue = (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + PortDeviceDescriptor.iManufacturer)
+                        }
+                    };
                     request.SetupPacket.wLength = (short)(nBytes - Marshal.SizeOf(request));
-                    request.SetupPacket.wIndex = 0x409; // Language Code
                     // Geez, I wish C# had a Marshal.MemSet() method
                     IntPtr ptrRequest = Marshal.StringToHGlobalAuto(nullString);
                     Marshal.StructureToPtr(request, ptrRequest, true);
@@ -904,12 +848,17 @@ namespace DiscImageChef.Devices.Windows
                 if(PortDeviceDescriptor.iProduct > 0)
                 {
                     // build a request for string descriptor
-                    UsbDescriptorRequest request = new UsbDescriptorRequest();
-                    request.ConnectionIndex = PortPortNumber;
-                    request.SetupPacket.wValue =
-                        (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + PortDeviceDescriptor.iProduct);
+                    UsbDescriptorRequest request = new UsbDescriptorRequest
+                    {
+                        ConnectionIndex = PortPortNumber,
+                        SetupPacket =
+                        {
+                            // Language Code
+                            wIndex = 0x409,
+                            wValue = (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + PortDeviceDescriptor.iProduct)
+                        }
+                    };
                     request.SetupPacket.wLength = (short)(nBytes - Marshal.SizeOf(request));
-                    request.SetupPacket.wIndex = 0x409; // Language Code
                     // Geez, I wish C# had a Marshal.MemSet() method
                     IntPtr ptrRequest = Marshal.StringToHGlobalAuto(nullString);
                     Marshal.StructureToPtr(request, ptrRequest, true);
@@ -930,12 +879,17 @@ namespace DiscImageChef.Devices.Windows
                 if(PortDeviceDescriptor.iSerialNumber > 0)
                 {
                     // build a request for string descriptor
-                    UsbDescriptorRequest request = new UsbDescriptorRequest();
-                    request.ConnectionIndex = PortPortNumber;
-                    request.SetupPacket.wValue =
-                        (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + PortDeviceDescriptor.iSerialNumber);
+                    UsbDescriptorRequest request = new UsbDescriptorRequest
+                    {
+                        ConnectionIndex = PortPortNumber,
+                        SetupPacket =
+                        {
+                            // Language Code
+                            wIndex = 0x409,
+                            wValue = (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + PortDeviceDescriptor.iSerialNumber)
+                        }
+                    };
                     request.SetupPacket.wLength = (short)(nBytes - Marshal.SizeOf(request));
-                    request.SetupPacket.wIndex = 0x409; // Language Code
                     // Geez, I wish C# had a Marshal.MemSet() method
                     IntPtr ptrRequest = Marshal.StringToHGlobalAuto(nullString);
                     Marshal.StructureToPtr(request, ptrRequest, true);
@@ -955,11 +909,12 @@ namespace DiscImageChef.Devices.Windows
                 }
 
                 // build a request for configuration descriptor
-                UsbDescriptorRequest dcrRequest = new UsbDescriptorRequest();
-                dcrRequest.ConnectionIndex = PortPortNumber;
-                dcrRequest.SetupPacket.wValue = USB_CONFIGURATION_DESCRIPTOR_TYPE << 8;
+                UsbDescriptorRequest dcrRequest = new UsbDescriptorRequest
+                {
+                    ConnectionIndex = PortPortNumber,
+                    SetupPacket = {wIndex = 0, wValue = USB_CONFIGURATION_DESCRIPTOR_TYPE << 8}
+                };
                 dcrRequest.SetupPacket.wLength = (short)(nBytes - Marshal.SizeOf(dcrRequest));
-                dcrRequest.SetupPacket.wIndex = 0;
                 // Geez, I wish C# had a Marshal.MemSet() method
                 IntPtr dcrPtrRequest = Marshal.StringToHGlobalAuto(nullString);
                 Marshal.StructureToPtr(dcrRequest, dcrPtrRequest, true);
@@ -975,8 +930,8 @@ namespace DiscImageChef.Devices.Windows
                 Marshal.FreeHGlobal(dcrPtrRequest);
 
                 // Get the Driver Key Name (usefull in locating a device)
-                UsbNodeConnectionDriverkeyName driverKey = new UsbNodeConnectionDriverkeyName();
-                driverKey.ConnectionIndex = PortPortNumber;
+                UsbNodeConnectionDriverkeyName driverKey =
+                    new UsbNodeConnectionDriverkeyName {ConnectionIndex = PortPortNumber};
                 nBytes = Marshal.SizeOf(driverKey);
                 IntPtr ptrDriverKey = Marshal.AllocHGlobal(nBytes);
                 Marshal.StructureToPtr(driverKey, ptrDriverKey, true);
@@ -1015,16 +970,14 @@ namespace DiscImageChef.Devices.Windows
                                IntPtr.Zero);
                 if(h.ToInt32() == INVALID_HANDLE_VALUE) return hub;
                 // Get the DevicePath for downstream hub
-                int nBytesReturned;
-                UsbNodeConnectionName nodeName = new UsbNodeConnectionName();
-                nodeName.ConnectionIndex = PortPortNumber;
+                UsbNodeConnectionName nodeName = new UsbNodeConnectionName {ConnectionIndex = PortPortNumber};
                 int nBytes = Marshal.SizeOf(nodeName);
                 IntPtr ptrNodeName = Marshal.AllocHGlobal(nBytes);
                 Marshal.StructureToPtr(nodeName, ptrNodeName, true);
 
                 // Use an IOCTL call to request the Node Name
                 if(DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_NAME, ptrNodeName, nBytes, ptrNodeName, nBytes,
-                                   out nBytesReturned, IntPtr.Zero))
+                                   out _, IntPtr.Zero))
                 {
                     nodeName = (UsbNodeConnectionName)Marshal.PtrToStructure(ptrNodeName,
                                                                              typeof(UsbNodeConnectionName));
@@ -1036,15 +989,14 @@ namespace DiscImageChef.Devices.Windows
                                 IntPtr.Zero);
                 if(h2.ToInt32() != INVALID_HANDLE_VALUE)
                 {
-                    UsbNodeInformation nodeInfo = new UsbNodeInformation();
-                    nodeInfo.NodeType = (int)UsbHubNode.UsbHub;
+                    UsbNodeInformation nodeInfo = new UsbNodeInformation {NodeType = (int)UsbHubNode.UsbHub};
                     nBytes = Marshal.SizeOf(nodeInfo);
                     IntPtr ptrNodeInfo = Marshal.AllocHGlobal(nBytes);
                     Marshal.StructureToPtr(nodeInfo, ptrNodeInfo, true);
 
                     // get the Hub Information
                     if(DeviceIoControl(h2, IOCTL_USB_GET_NODE_INFORMATION, ptrNodeInfo, nBytes, ptrNodeInfo, nBytes,
-                                       out nBytesReturned, IntPtr.Zero))
+                                       out _, IntPtr.Zero))
                     {
                         nodeInfo = (UsbNodeInformation)Marshal.PtrToStructure(ptrNodeInfo,
                                                                               typeof(UsbNodeInformation));
@@ -1096,54 +1048,27 @@ namespace DiscImageChef.Devices.Windows
             }
 
             // return Port Index of the Hub
-            internal int PortNumber
-            {
-                get { return DevicePortNumber; }
-            }
+            internal int PortNumber => DevicePortNumber;
 
             // return the Device Path of the Hub (the parent device)
-            internal string HubDevicePath
-            {
-                get { return DeviceHubDevicePath; }
-            }
+            internal string HubDevicePath => DeviceHubDevicePath;
 
             // useful as a search key
-            internal string DriverKey
-            {
-                get { return DeviceDriverKey; }
-            }
+            internal string DriverKey => DeviceDriverKey;
 
             // the device path of this device
-            internal string InstanceId
-            {
-                get { return DeviceInstanceId; }
-            }
+            internal string InstanceId => DeviceInstanceId;
 
             // the friendly name
-            internal string Name
-            {
-                get { return DeviceName; }
-            }
+            internal string Name => DeviceName;
 
-            internal string Manufacturer
-            {
-                get { return DeviceManufacturer; }
-            }
+            internal string Manufacturer => DeviceManufacturer;
 
-            internal string Product
-            {
-                get { return DeviceProduct; }
-            }
+            internal string Product => DeviceProduct;
 
-            internal string SerialNumber
-            {
-                get { return DeviceSerialNumber; }
-            }
+            internal string SerialNumber => DeviceSerialNumber;
 
-            internal byte[] BinaryDescriptors
-            {
-                get { return BinaryDeviceDescriptors; }
-            }
+            internal byte[] BinaryDescriptors => BinaryDeviceDescriptors;
         }
 
         // 
@@ -1152,15 +1077,14 @@ namespace DiscImageChef.Devices.Windows
         static string GetDescriptionByKeyName(string driverKeyName)
         {
             string ans = "";
-            string devEnum = REGSTR_KEY_USB;
+            const string DEV_ENUM = REGSTR_KEY_USB;
 
             // Use the "enumerator form" of the SetupDiGetClassDevs API
             // to generate a list of all USB devices
-            IntPtr h = SetupDiGetClassDevs(0, devEnum, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+            IntPtr h = SetupDiGetClassDevs(0, DEV_ENUM, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
             if(h.ToInt32() == INVALID_HANDLE_VALUE) return ans;
 
             IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
-            string keyName;
 
             bool success;
             int i = 0;
@@ -1176,7 +1100,7 @@ namespace DiscImageChef.Devices.Windows
                 {
                     int requiredSize = 0;
                     int regType = REG_SZ;
-                    keyName = "";
+                    string keyName = "";
 
                     if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
                                                         ref requiredSize)) keyName = Marshal.PtrToStringAuto(ptrBuf);
@@ -1206,15 +1130,14 @@ namespace DiscImageChef.Devices.Windows
         static string GetInstanceIdByKeyName(string driverKeyName)
         {
             string ans = "";
-            string devEnum = REGSTR_KEY_USB;
+            const string DEV_ENUM = REGSTR_KEY_USB;
 
             // Use the "enumerator form" of the SetupDiGetClassDevs API
             // to generate a list of all USB devices
-            IntPtr h = SetupDiGetClassDevs(0, devEnum, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+            IntPtr h = SetupDiGetClassDevs(0, DEV_ENUM, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
             if(h.ToInt32() == INVALID_HANDLE_VALUE) return ans;
 
             IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
-            string keyName;
 
             bool success;
             int i = 0;
@@ -1231,16 +1154,16 @@ namespace DiscImageChef.Devices.Windows
                     int requiredSize = 0;
                     int regType = REG_SZ;
 
-                    keyName = "";
+                    string keyName = "";
                     if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
                                                         ref requiredSize)) keyName = Marshal.PtrToStringAuto(ptrBuf);
 
                     // is it a match?
                     if(keyName == driverKeyName)
                     {
-                        int nBytes = BUFFER_SIZE;
-                        StringBuilder sb = new StringBuilder(nBytes);
-                        SetupDiGetDeviceInstanceId(h, ref da, sb, nBytes, out requiredSize);
+                        const int N_BYTES = BUFFER_SIZE;
+                        StringBuilder sb = new StringBuilder(N_BYTES);
+                        SetupDiGetDeviceInstanceId(h, ref da, sb, N_BYTES, out requiredSize);
                         ans = sb.ToString();
                         break;
                     }

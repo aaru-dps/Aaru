@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DiscImageChef.Devices.Windows
 {
@@ -403,6 +404,7 @@ namespace DiscImageChef.Devices.Windows
         Max = 3
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum StorageBusType
     {
         Unknown = 0,
@@ -471,6 +473,7 @@ namespace DiscImageChef.Devices.Windows
         MultiBlockNoCmd12
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum SdResponseType : uint
     {
         Unspecified,

@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Decoders.ATA;
@@ -39,6 +40,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Devices.Windows
 {
+    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
     static class Command
     {
         /// <summary>
@@ -63,19 +65,23 @@ namespace DiscImageChef.Devices.Windows
 
             if(buffer == null) return -1;
 
-            ScsiPassThroughDirectAndSenseBuffer sptdSb = new ScsiPassThroughDirectAndSenseBuffer();
-            sptdSb.sptd = new ScsiPassThroughDirect();
-            sptdSb.SenseBuf = new byte[32];
-            sptdSb.sptd.Cdb = new byte[16];
-            Array.Copy(cdb, sptdSb.sptd.Cdb, cdb.Length);
+            ScsiPassThroughDirectAndSenseBuffer sptdSb = new ScsiPassThroughDirectAndSenseBuffer
+            {
+                SenseBuf = new byte[32],
+                sptd = new ScsiPassThroughDirect
+                {
+                    Cdb = new byte[16],
+                    CdbLength = (byte)cdb.Length,
+                    SenseInfoLength = 32,
+                    DataIn = direction,
+                    DataTransferLength = (uint)buffer.Length,
+                    TimeOutValue = timeout,
+                    DataBuffer = Marshal.AllocHGlobal(buffer.Length)
+                }
+            };
             sptdSb.sptd.Length = (ushort)Marshal.SizeOf(sptdSb.sptd);
-            sptdSb.sptd.CdbLength = (byte)cdb.Length;
-            sptdSb.sptd.SenseInfoLength = (byte)sptdSb.SenseBuf.Length;
-            sptdSb.sptd.DataIn = direction;
-            sptdSb.sptd.DataTransferLength = (uint)buffer.Length;
-            sptdSb.sptd.TimeOutValue = timeout;
-            sptdSb.sptd.DataBuffer = Marshal.AllocHGlobal(buffer.Length);
             sptdSb.sptd.SenseInfoOffset = (uint)Marshal.SizeOf(sptdSb.sptd);
+            Array.Copy(cdb, sptdSb.sptd.Cdb, cdb.Length);
 
             uint k = 0;
             int error = 0;
@@ -454,8 +460,6 @@ namespace DiscImageChef.Devices.Windows
 
             if(buffer == null) return -1;
 
-            uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughDirect)) + Marshal.SizeOf(typeof(uint)));
-
             IdePassThroughDirect iptd = new IdePassThroughDirect
             {
                 CurrentTaskFile = new AtaTaskFile
@@ -504,10 +508,9 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
-        internal static uint GetDeviceNumber(SafeFileHandle deviceHandle)
+        static uint GetDeviceNumber(SafeFileHandle deviceHandle)
         {
-            StorageDeviceNumber sdn = new StorageDeviceNumber();
-            sdn.deviceNumber = -1;
+            StorageDeviceNumber sdn = new StorageDeviceNumber {deviceNumber = -1};
             uint k = 0;
             if(!Extern.DeviceIoControlGetDeviceNumber(deviceHandle, WindowsIoctl.IoctlStorageGetDeviceNumber,
                                                       IntPtr.Zero, 0, ref sdn, (uint)Marshal.SizeOf(sdn), ref k,
@@ -533,11 +536,9 @@ namespace DiscImageChef.Devices.Windows
             DeviceInterfaceData spdid = new DeviceInterfaceData();
             spdid.cbSize = Marshal.SizeOf(spdid);
 
-            byte[] buffer;
-
             while(true)
             {
-                buffer = new byte[2048];
+                byte[] buffer = new byte[2048];
 
                 if(!Extern.SetupDiEnumDeviceInterfaces(hDevInfo, IntPtr.Zero, ref Consts.GuidDevinterfaceDisk, index,
                                                        ref spdid)) break;
@@ -595,9 +596,8 @@ namespace DiscImageChef.Devices.Windows
         {
             SffdiskQueryDeviceProtocolData queryData1 = new SffdiskQueryDeviceProtocolData();
             queryData1.size = (ushort)Marshal.SizeOf(queryData1);
-            uint bytesReturned;
             Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskQueryDeviceProtocol, IntPtr.Zero, 0, ref queryData1,
-                                   queryData1.size, out bytesReturned, IntPtr.Zero);
+                                   queryData1.size, out _, IntPtr.Zero);
             return queryData1.protocolGuid.Equals(Consts.GuidSffProtocolSd);
         }
 
@@ -660,12 +660,11 @@ namespace DiscImageChef.Devices.Windows
             Marshal.Copy(hBuf, commandB, 0, commandB.Length);
             Marshal.FreeHGlobal(hBuf);
 
-            uint bytesReturned;
             int error = 0;
             DateTime start = DateTime.Now;
             sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB,
                                             (uint)commandB.Length, commandB, (uint)commandB.Length,
-                                            out bytesReturned, IntPtr.Zero);
+                                            out _, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
             if(sense) error = Marshal.GetLastWin32Error();

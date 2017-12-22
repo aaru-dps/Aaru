@@ -31,10 +31,12 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public partial class Device
     {
         /// <summary>

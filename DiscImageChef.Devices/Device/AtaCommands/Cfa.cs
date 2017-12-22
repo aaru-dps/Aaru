@@ -41,19 +41,20 @@ namespace DiscImageChef.Devices
                                     uint timeout, out double duration)
         {
             buffer = new byte[512];
-            AtaRegistersLba28 registers = new AtaRegistersLba28();
-            bool sense;
+            AtaRegistersLba28 registers = new AtaRegistersLba28
+            {
+                Command = (byte)AtaCommands.TranslateSector,
+                DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
+                LbaHigh = (byte)((lba & 0xFF0000) / 0x10000),
+                LbaMid = (byte)((lba & 0xFF00) / 0x100),
+                LbaLow = (byte)((lba & 0xFF) / 0x1)
+            };
 
-            registers.Command = (byte)AtaCommands.TranslateSector;
-            registers.DeviceHead = (byte)((lba & 0xF000000) / 0x1000000);
-            registers.LbaHigh = (byte)((lba & 0xFF0000) / 0x10000);
-            registers.LbaMid = (byte)((lba & 0xFF00) / 0x100);
-            registers.LbaLow = (byte)((lba & 0xFF) / 0x1);
             registers.DeviceHead += 0x40;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out sense);
+                                       out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
@@ -65,18 +66,19 @@ namespace DiscImageChef.Devices
                                     byte head, byte sector, uint timeout, out double duration)
         {
             buffer = new byte[512];
-            AtaRegistersChs registers = new AtaRegistersChs();
-            bool sense;
+            AtaRegistersChs registers = new AtaRegistersChs
+            {
+                Command = (byte)AtaCommands.TranslateSector,
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
+                CylinderLow = (byte)((cylinder & 0xFF) / 0x1),
+                Sector = sector,
+                DeviceHead = (byte)(head & 0x0F)
+            };
 
-            registers.Command = (byte)AtaCommands.TranslateSector;
-            registers.CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100);
-            registers.CylinderLow = (byte)((cylinder & 0xFF) / 0x1);
-            registers.Sector = sector;
-            registers.DeviceHead = (byte)(head & 0x0F);
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out sense);
+                                       out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
@@ -88,14 +90,12 @@ namespace DiscImageChef.Devices
                                              uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLba28 registers = new AtaRegistersLba28();
-            bool sense;
+            AtaRegistersLba28 registers = new AtaRegistersLba28 {Command = (byte)AtaCommands.RequestSense};
 
-            registers.Command = (byte)AtaCommands.RequestSense;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out sense);
+                                       out bool sense);
             Error = LastError != 0;
 
             errorCode = statusRegisters.Error;

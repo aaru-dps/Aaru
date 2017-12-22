@@ -48,7 +48,6 @@ namespace DiscImageChef.Devices
             bool displayLen = false;
             bool halfMsg = false;
             byte[] cdb = new byte[10];
-            bool sense;
 
             if(!string.IsNullOrWhiteSpace(firstHalf))
             {
@@ -67,10 +66,7 @@ namespace DiscImageChef.Devices
                     displayLen = true;
                 else if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                         ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
-                {
-                    displayLen = false;
                     halfMsg = true;
-                }
 
             buffer[0] = (byte)((byte)mode << 5);
             if(displayLen) buffer[0] += 0x10;
@@ -85,7 +81,7 @@ namespace DiscImageChef.Devices
             cdb[6] = (byte)buffer.Length;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "FUJITSU DISPLAY took {0} ms.", duration);

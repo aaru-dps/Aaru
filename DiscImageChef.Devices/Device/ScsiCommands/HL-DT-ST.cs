@@ -52,7 +52,6 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
             buffer = new byte[2064 * transferLength];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.HlDtStVendor;
             cdb[1] = 0x48;
@@ -67,7 +66,7 @@ namespace DiscImageChef.Devices
             cdb[11] = (byte)(buffer.Length & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "HL-DT-ST READ DVD (RAW) took {0} ms.", duration);

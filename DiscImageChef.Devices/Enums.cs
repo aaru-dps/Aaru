@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System;
+// ReSharper disable MemberCanBeInternal
+// ReSharper disable InconsistentNaming
 
 namespace DiscImageChef.Devices
 {

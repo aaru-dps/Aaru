@@ -41,16 +41,14 @@ namespace DiscImageChef.Devices
                                            out double duration)
         {
             lba = 0;
-            AtaRegistersLba48 registers = new AtaRegistersLba48();
-            bool sense;
             byte[] buffer = new byte[0];
+            AtaRegistersLba48 registers =
+                new AtaRegistersLba48 {Command = (byte)AtaCommands.NativeMaxAddress, Feature = 0x0000};
 
-            registers.Command = (byte)AtaCommands.NativeMaxAddress;
-            registers.Feature = 0x0000;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out sense);
+                                       out bool sense);
             Error = LastError != 0;
 
             if((statusRegisters.Status & 0x23) == 0)
@@ -69,20 +67,20 @@ namespace DiscImageChef.Devices
         public bool ReadDma(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
                             uint timeout, out double duration)
         {
-            if(count == 0) buffer = new byte[512 * 65536];
-            else buffer = new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48();
-            bool sense;
+            buffer = count == 0 ? new byte[512 * 65536] : new byte[512 * count];
+            AtaRegistersLba48 registers = new AtaRegistersLba48
+            {
+                Command = (byte)AtaCommands.ReadDmaExt,
+                SectorCount = count,
+                LbaHigh = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
+                LbaMid = (ushort)((lba & 0xFFFF0000) / 0x10000),
+                LbaLow = (ushort)((lba & 0xFFFF) / 0x1)
+            };
 
-            registers.Command = (byte)AtaCommands.ReadDmaExt;
-            registers.SectorCount = count;
-            registers.LbaHigh = (ushort)((lba & 0xFFFF00000000) / 0x100000000);
-            registers.LbaMid = (ushort)((lba & 0xFFFF0000) / 0x10000);
-            registers.LbaLow = (ushort)((lba & 0xFFFF) / 0x1);
             registers.DeviceHead += 0x40;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
-                                       ref buffer, timeout, true, out duration, out sense);
+                                       ref buffer, timeout, true, out duration, out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ DMA EXT took {0} ms.", duration);
@@ -94,18 +92,19 @@ namespace DiscImageChef.Devices
                             ushort pageNumber, ushort count, uint timeout, out double duration)
         {
             buffer = new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48();
-            bool sense;
+            AtaRegistersLba48 registers = new AtaRegistersLba48
+            {
+                Command = (byte)AtaCommands.ReadLogExt,
+                SectorCount = count,
+                LbaLow = (ushort)((pageNumber & 0xFF) * 0x100),
+                LbaHigh = (ushort)((pageNumber & 0xFF00) / 0x100)
+            };
 
-            registers.Command = (byte)AtaCommands.ReadLogExt;
-            registers.SectorCount = count;
-            registers.LbaLow = (ushort)((pageNumber & 0xFF) * 0x100);
             registers.LbaLow += logAddress;
-            registers.LbaHigh = (ushort)((pageNumber & 0xFF00) / 0x100);
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
-                                       out sense);
+                                       out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ LOG EXT took {0} ms.", duration);
@@ -117,17 +116,18 @@ namespace DiscImageChef.Devices
                                ushort pageNumber, ushort count, uint timeout, out double duration)
         {
             buffer = new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48();
-            bool sense;
+            AtaRegistersLba48 registers = new AtaRegistersLba48
+            {
+                Command = (byte)AtaCommands.ReadLogDmaExt,
+                SectorCount = count,
+                LbaLow = (ushort)((pageNumber & 0xFF) * 0x100),
+                LbaHigh = (ushort)((pageNumber & 0xFF00) / 0x100)
+            };
 
-            registers.Command = (byte)AtaCommands.ReadLogDmaExt;
-            registers.SectorCount = count;
-            registers.LbaLow = (ushort)((pageNumber & 0xFF) * 0x100);
             registers.LbaLow += logAddress;
-            registers.LbaHigh = (ushort)((pageNumber & 0xFF00) / 0x100);
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
-                                       ref buffer, timeout, true, out duration, out sense);
+                                       ref buffer, timeout, true, out duration, out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ LOG DMA EXT took {0} ms.", duration);
@@ -138,21 +138,21 @@ namespace DiscImageChef.Devices
         public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
                                  uint timeout, out double duration)
         {
-            if(count == 0) buffer = new byte[512 * 65536];
-            else buffer = new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48();
-            bool sense;
+            buffer = count == 0 ? new byte[512 * 65536] : new byte[512 * count];
+            AtaRegistersLba48 registers = new AtaRegistersLba48
+            {
+                Command = (byte)AtaCommands.ReadMultipleExt,
+                SectorCount = count,
+                LbaHigh = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
+                LbaMid = (ushort)((lba & 0xFFFF0000) / 0x10000),
+                LbaLow = (ushort)((lba & 0xFFFF) / 0x1)
+            };
 
-            registers.Command = (byte)AtaCommands.ReadMultipleExt;
-            registers.SectorCount = count;
-            registers.LbaHigh = (ushort)((lba & 0xFFFF00000000) / 0x100000000);
-            registers.LbaMid = (ushort)((lba & 0xFFFF0000) / 0x10000);
-            registers.LbaLow = (ushort)((lba & 0xFFFF) / 0x1);
             registers.DeviceHead += 0x40;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
-                                       out sense);
+                                       out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ MULTIPLE EXT took {0} ms.", duration);
@@ -165,15 +165,13 @@ namespace DiscImageChef.Devices
         {
             lba = 0;
             byte[] buffer = new byte[0];
-            AtaRegistersLba48 registers = new AtaRegistersLba48();
-            bool sense;
+            AtaRegistersLba48 registers = new AtaRegistersLba48 {Command = (byte)AtaCommands.ReadNativeMaxAddressExt};
 
-            registers.Command = (byte)AtaCommands.ReadNativeMaxAddressExt;
             registers.DeviceHead += 0x40;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out sense);
+                                       out bool sense);
             Error = LastError != 0;
 
             if((statusRegisters.Status & 0x23) == 0)
@@ -192,21 +190,21 @@ namespace DiscImageChef.Devices
         public bool Read(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
                          uint timeout, out double duration)
         {
-            if(count == 0) buffer = new byte[512 * 65536];
-            else buffer = new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48();
-            bool sense;
+            buffer = count == 0 ? new byte[512 * 65536] : new byte[512 * count];
+            AtaRegistersLba48 registers = new AtaRegistersLba48
+            {
+                Command = (byte)AtaCommands.ReadExt,
+                SectorCount = count,
+                LbaHigh = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
+                LbaMid = (ushort)((lba & 0xFFFF0000) / 0x10000),
+                LbaLow = (ushort)((lba & 0xFFFF) / 0x1)
+            };
 
-            registers.Command = (byte)AtaCommands.ReadExt;
-            registers.SectorCount = count;
-            registers.LbaHigh = (ushort)((lba & 0xFFFF00000000) / 0x100000000);
-            registers.LbaMid = (ushort)((lba & 0xFFFF0000) / 0x10000);
-            registers.LbaLow = (ushort)((lba & 0xFFFF) / 0x1);
             registers.DeviceHead += 0x40;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
-                                       out sense);
+                                       out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("ATA Device", "READ SECTORS EXT took {0} ms.", duration);

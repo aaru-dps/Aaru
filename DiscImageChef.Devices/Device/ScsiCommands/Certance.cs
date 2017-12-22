@@ -30,10 +30,12 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Devices
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public partial class Device
     {
         /// <summary>
@@ -70,13 +72,12 @@ namespace DiscImageChef.Devices
             byte[] buffer = new byte[0];
             byte[] cdb = new byte[6];
             senseBuffer = new byte[32];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;
             if(park) cdb[4] = 1;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "CERTANCE PARK UNPARK took {0} ms.", duration);

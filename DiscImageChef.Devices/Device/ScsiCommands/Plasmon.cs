@@ -92,7 +92,6 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.PlasmonReadSectorLocation;
             cdb[2] = (byte)((address & 0xFF000000) >> 24);
@@ -104,7 +103,7 @@ namespace DiscImageChef.Devices
             buffer = new byte[8];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLASMON READ SECTOR LOCATION took {0} ms.", duration);

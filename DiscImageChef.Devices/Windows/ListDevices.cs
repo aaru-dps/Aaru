@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
@@ -42,16 +43,17 @@ namespace DiscImageChef.Devices.Windows
 {
     static class ListDevices
     {
-        internal static string HexStringToString(string hex)
+        static string HexStringToString(string hex)
         {
             StringBuilder result = new StringBuilder();
-            const string hextable = "0123456789abcdef";
+            const string HEXTABLE = "0123456789abcdef";
 
-            for(int i = 0; i < hex.Length / 2; i++) result.Append((char)(16 * hextable.IndexOf(hex[2 * i]) + hextable.IndexOf(hex[2 * i + 1])));
+            for(int i = 0; i < hex.Length / 2; i++) result.Append((char)(16 * HEXTABLE.IndexOf(hex[2 * i]) + HEXTABLE.IndexOf(hex[2 * i + 1])));
 
             return result.ToString();
         }
 
+        [SuppressMessage("ReSharper", "RedundantCatchClause")]
         internal static DeviceInfo[] GetList()
         {
             List<string> deviceIDs = new List<string>();
@@ -74,7 +76,7 @@ namespace DiscImageChef.Devices.Windows
 
                 deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["Drive"]);
             }
-            catch(Exception ex)
+            catch(Exception)
             {
 #if DEBUG
                 throw;
@@ -94,10 +96,12 @@ namespace DiscImageChef.Devices.Windows
                                                       FileMode.OpenExisting, 0, IntPtr.Zero);
                 if(fd.IsInvalid) continue;
 
-                StoragePropertyQuery query = new StoragePropertyQuery();
-                query.PropertyId = StoragePropertyId.Device;
-                query.QueryType = StorageQueryType.Standard;
-                query.AdditionalParameters = new byte[1];
+                StoragePropertyQuery query = new StoragePropertyQuery
+                {
+                    PropertyId = StoragePropertyId.Device,
+                    QueryType = StorageQueryType.Standard,
+                    AdditionalParameters = new byte[1]
+                };
 
                 //StorageDeviceDescriptor descriptor = new StorageDeviceDescriptor();
                 //descriptor.RawDeviceProperties = new byte[16384];
@@ -118,19 +122,21 @@ namespace DiscImageChef.Devices.Windows
 
                 if(hasError && error != 0) continue;
 
-                StorageDeviceDescriptor descriptor = new StorageDeviceDescriptor();
-                descriptor.Version = BitConverter.ToUInt32(descriptorB, 0);
-                descriptor.Size = BitConverter.ToUInt32(descriptorB, 4);
-                descriptor.DeviceType = descriptorB[8];
-                descriptor.DeviceTypeModifier = descriptorB[9];
-                descriptor.RemovableMedia = BitConverter.ToBoolean(descriptorB, 10);
-                descriptor.CommandQueueing = BitConverter.ToBoolean(descriptorB, 11);
-                descriptor.VendorIdOffset = BitConverter.ToInt32(descriptorB, 12);
-                descriptor.ProductIdOffset = BitConverter.ToInt32(descriptorB, 16);
-                descriptor.ProductRevisionOffset = BitConverter.ToInt32(descriptorB, 20);
-                descriptor.SerialNumberOffset = BitConverter.ToInt32(descriptorB, 24);
-                descriptor.BusType = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28);
-                descriptor.RawPropertiesLength = BitConverter.ToUInt32(descriptorB, 32);
+                StorageDeviceDescriptor descriptor = new StorageDeviceDescriptor
+                {
+                    Version = BitConverter.ToUInt32(descriptorB, 0),
+                    Size = BitConverter.ToUInt32(descriptorB, 4),
+                    DeviceType = descriptorB[8],
+                    DeviceTypeModifier = descriptorB[9],
+                    RemovableMedia = BitConverter.ToBoolean(descriptorB, 10),
+                    CommandQueueing = BitConverter.ToBoolean(descriptorB, 11),
+                    VendorIdOffset = BitConverter.ToInt32(descriptorB, 12),
+                    ProductIdOffset = BitConverter.ToInt32(descriptorB, 16),
+                    ProductRevisionOffset = BitConverter.ToInt32(descriptorB, 20),
+                    SerialNumberOffset = BitConverter.ToInt32(descriptorB, 24),
+                    BusType = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28),
+                    RawPropertiesLength = BitConverter.ToUInt32(descriptorB, 32)
+                };
 
                 DeviceInfo info = new DeviceInfo {Path = physId, Bus = descriptor.BusType.ToString()};
 

@@ -28,25 +28,26 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2018 Natalia Portillo
+// Copyright © 2007 Fort Hood TX, herethen, Public Domain
 // ****************************************************************************/
 
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-// Copyright "Fort Hood TX", internal domain, 2007
 namespace DiscImageChef.Devices.Windows
 {
     // 
     // A place for "higher level" related functions
     // You might not want to keep these in the USB class... your choice
     // 
-    partial class Usb
+    // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
+    static partial class Usb
     {
         // 
         // Get a list of all connected devices
         // 
-        static internal List<UsbDevice> GetConnectedDevices()
+        internal static List<UsbDevice> GetConnectedDevices()
         {
             List<UsbDevice> devList = new List<UsbDevice>();
 
@@ -56,7 +57,7 @@ namespace DiscImageChef.Devices.Windows
         }
 
         // private routine for enumerating a hub
-        static void ListHub(UsbHub hub, List<UsbDevice> devList)
+        static void ListHub(UsbHub hub, ICollection<UsbDevice> devList)
         {
             foreach(UsbPort port in hub.GetPorts())
                 if(port.IsHub) ListHub(port.GetHub(), devList);
@@ -66,7 +67,7 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Find a device based upon it's DriverKeyName
         // 
-        static internal UsbDevice FindDeviceByDriverKeyName(string driverKeyName)
+        internal static UsbDevice FindDeviceByDriverKeyName(string driverKeyName)
         {
             UsbDevice foundDevice = null;
 
@@ -99,7 +100,7 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Find a device based upon it's Instance ID
         // 
-        static internal UsbDevice FindDeviceByInstanceId(string instanceId)
+        static UsbDevice FindDeviceByInstanceId(string instanceId)
         {
             UsbDevice foundDevice = null;
 
@@ -167,38 +168,28 @@ namespace DiscImageChef.Devices.Windows
         // 
         // Find a device based upon a Drive Letter
         // 
-        static internal UsbDevice FindDriveLetter(string driveLetter, string deviceGuid)
+        internal static UsbDevice FindDriveLetter(string driveLetter, string deviceGuid)
         {
-            UsbDevice foundDevice = null;
-            string instanceId = "";
-
             // We start by getting the unique DeviceNumber of the given
             // DriveLetter.  We'll use this later to find a matching
             // DevicePath "symbolic name"
             int devNum = GetDeviceNumber(@"\\.\" + driveLetter.TrimEnd('\\'));
-            if(devNum < 0) return null;
-
-            return FindDeviceNumber(devNum, deviceGuid);
+            return devNum < 0 ? null : FindDeviceNumber(devNum, deviceGuid);
         }
 
-        static internal UsbDevice FindDrivePath(string drivePath, string deviceGuid)
+        internal static UsbDevice FindDrivePath(string drivePath, string deviceGuid)
         {
-            UsbDevice foundDevice = null;
-            string instanceId = "";
-
             // We start by getting the unique DeviceNumber of the given
             // DriveLetter.  We'll use this later to find a matching
             // DevicePath "symbolic name"
             int devNum = GetDeviceNumber(drivePath);
-            if(devNum < 0) return null;
-
-            return FindDeviceNumber(devNum, deviceGuid);
+            return devNum < 0 ? null : FindDeviceNumber(devNum, deviceGuid);
         }
 
         // 
         // Find a device based upon a Drive Letter
         // 
-        static internal UsbDevice FindDeviceNumber(int devNum, string deviceGuid)
+        static UsbDevice FindDeviceNumber(int devNum, string deviceGuid)
         {
             UsbDevice foundDevice = null;
             string instanceId = "";
@@ -227,23 +218,22 @@ namespace DiscImageChef.Devices.Windows
                         da.cbSize = Marshal.SizeOf(da);
 
                         // build a Device Interface Detail Data structure
-                        SpDeviceInterfaceDetailData didd = new SpDeviceInterfaceDetailData();
-                        didd.cbSize = 4 + Marshal.SystemDefaultCharSize; // trust me :)
+                        SpDeviceInterfaceDetailData didd =
+                            new SpDeviceInterfaceDetailData {cbSize = 4 + Marshal.SystemDefaultCharSize}; // trust me :)
 
                         // now we can get some more detailed information
                         int nRequiredSize = 0;
-                        int nBytes = BUFFER_SIZE;
-                        if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, nBytes, ref nRequiredSize, ref da))
+                        const int N_BYTES = BUFFER_SIZE;
+                        if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, N_BYTES, ref nRequiredSize, ref da))
                             if(GetDeviceNumber(didd.DevicePath) == devNum)
                             {
                                 // current InstanceID is at the "USBSTOR" level, so we
                                 // need up "move up" one level to get to the "USB" level
-                                IntPtr ptrPrevious;
-                                CM_Get_Parent(out ptrPrevious, da.DevInst, 0);
+                                CM_Get_Parent(out IntPtr ptrPrevious, da.DevInst, 0);
 
                                 // Now we get the InstanceID of the USB level device
-                                IntPtr ptrInstanceBuf = Marshal.AllocHGlobal(nBytes);
-                                CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, nBytes, 0);
+                                IntPtr ptrInstanceBuf = Marshal.AllocHGlobal(N_BYTES);
+                                CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, N_BYTES, 0);
                                 instanceId = Marshal.PtrToStringAuto(ptrInstanceBuf);
 
                                 Marshal.FreeHGlobal(ptrInstanceBuf);
@@ -271,12 +261,11 @@ namespace DiscImageChef.Devices.Windows
             IntPtr h = CreateFile(devicePath.TrimEnd('\\'), 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
             if(h.ToInt32() == INVALID_HANDLE_VALUE) return ans;
 
-            int requiredSize;
             StorageDeviceNumber sdn = new StorageDeviceNumber();
             int nBytes = Marshal.SizeOf(sdn);
             IntPtr ptrSdn = Marshal.AllocHGlobal(nBytes);
 
-            if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out requiredSize,
+            if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out _,
                                IntPtr.Zero))
             {
                 sdn = (StorageDeviceNumber)Marshal.PtrToStructure(ptrSdn, typeof(StorageDeviceNumber));

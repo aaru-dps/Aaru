@@ -75,7 +75,6 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
-            bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadLong;
             if(relAddr) cdb[1] += 0x01;
@@ -88,11 +87,10 @@ namespace DiscImageChef.Devices
             if(pba) cdb[9] += 0x80;
             if(sectorCount) cdb[9] += 0x40;
 
-            if(sectorCount) buffer = new byte[blockBytes * transferLen];
-            else buffer = new byte[transferLen];
+            buffer = sectorCount ? new byte[blockBytes * transferLen] : new byte[transferLen];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out sense);
+                                        out bool sense);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "HP READ LONG took {0} ms.", duration);

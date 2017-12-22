@@ -39,11 +39,10 @@ namespace DiscImageChef.Devices
         public bool ReadSdStatus(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[64];
-            bool sense = false;
 
             LastError = SendMmcCommand((MmcCommands)SecureDigitalCommands.SendStatus, false, true,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0, 64, 1,
-                                       ref buffer, out response, out duration, out sense, timeout);
+                                       ref buffer, out response, out duration, out bool sense, timeout);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SecureDigital Device", "SD_STATUS took {0} ms.", duration);
@@ -54,11 +53,10 @@ namespace DiscImageChef.Devices
         public bool ReadSdocr(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[4];
-            bool sense = false;
 
             LastError = SendMmcCommand((MmcCommands)SecureDigitalCommands.SendOperatingCondition, false, true,
                                        MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0, 4, 1,
-                                       ref buffer, out response, out duration, out sense, timeout);
+                                       ref buffer, out response, out duration, out bool sense, timeout);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SecureDigital Device", "SD_SEND_OP_COND took {0} ms.", duration);
@@ -69,11 +67,10 @@ namespace DiscImageChef.Devices
         public bool ReadScr(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[8];
-            bool sense = false;
 
             LastError = SendMmcCommand((MmcCommands)SecureDigitalCommands.SendScr, false, true,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0, 8, 1,
-                                       ref buffer, out response, out duration, out sense, timeout);
+                                       ref buffer, out response, out duration, out bool sense, timeout);
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SecureDigital Device", "SEND_SCR took {0} ms.", duration);

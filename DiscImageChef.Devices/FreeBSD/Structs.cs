@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains structures necessary for directly interfacing devices under
+//     Contains [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] structures necessary for directly interfacing devices under
 //     FreeBSD.
 //
 // --[ License ] --------------------------------------------------------------
@@ -32,15 +32,18 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using lun_id_t = System.UInt32;
 using path_id_t = System.UInt32;
 using target_id_t = System.UInt32;
+#pragma warning disable 649
+#pragma warning disable 169
 
 namespace DiscImageChef.Devices.FreeBSD
 {
     [StructLayout(LayoutKind.Sequential)]
-    struct AtaCmd
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct AtaCmd
     {
         public CamAtaIoFlags flags;
         public byte command;
@@ -59,7 +62,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct AtaRes
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct AtaRes
     {
         public CamAtaIoFlags flags;
         public byte status;
@@ -76,14 +79,14 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CamPinfo
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CamPinfo
     {
         public uint priority;
         public uint generation;
         public int index;
     }
 
-    struct ListEntry
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct ListEntry
     {
         /// <summary>
         /// LIST_ENTRY(ccb_hdr)=le->*le_next
@@ -95,7 +98,7 @@ namespace DiscImageChef.Devices.FreeBSD
         public IntPtr LePrev;
     }
 
-    struct SlistEntry
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct SlistEntry
     {
         /// <summary>
         /// SLIST_ENTRY(ccb_hdr)=sle->*sle_next
@@ -103,7 +106,7 @@ namespace DiscImageChef.Devices.FreeBSD
         public IntPtr SleNext;
     }
 
-    struct TailqEntry
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct TailqEntry
     {
         /// <summary>
         /// TAILQ_ENTRY(ccb_hdr)=tqe->*tqe_next
@@ -115,7 +118,7 @@ namespace DiscImageChef.Devices.FreeBSD
         public IntPtr TqePrev;
     }
 
-    struct StailqEntry
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct StailqEntry
     {
         /// <summary>
         /// STAILQ_ENTRY(ccb_hdr)=stqe->*stqe_next
@@ -124,7 +127,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    struct CamqEntry
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CamqEntry
     {
         [FieldOffset(0)] public ListEntry le;
         [FieldOffset(0)] public SlistEntry sle;
@@ -133,7 +136,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct Timeval
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct Timeval
     {
         public long tv_sec;
         /// <summary>long</summary>
@@ -141,7 +144,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbQosArea
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbQosArea
     {
         public Timeval etime;
         public UIntPtr sim_data;
@@ -149,7 +152,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbHdr
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbHdr
     {
         public CamPinfo pinfo;
         public CamqEntry xpt_links;
@@ -173,7 +176,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct ScsiSenseData
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct ScsiSenseData
     {
         const int SSD_FULL_SIZE = 252;
         public byte error_code;
@@ -184,7 +187,7 @@ namespace DiscImageChef.Devices.FreeBSD
     /// SCSI I/O Request CCB used for the XPT_SCSI_IO and XPT_CONT_TARGET_IO function codes.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbScsiio
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbScsiio
     {
         public CcbHdr ccb_h;
         /// <summary>Ptr for next CCB for action</summary>
@@ -230,7 +233,7 @@ namespace DiscImageChef.Devices.FreeBSD
     /// SCSI I/O Request CCB used for the XPT_SCSI_IO and XPT_CONT_TARGET_IO function codes.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbScsiio64
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbScsiio64
     {
         public CcbHdr ccb_h;
         /// <summary>Ptr for next CCB for action</summary>
@@ -277,7 +280,7 @@ namespace DiscImageChef.Devices.FreeBSD
     /// ATA I/O Request CCB used for the XPT_ATA_IO function code.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbAtaio
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbAtaio
     {
         public CcbHdr ccb_h;
         /// <summary>Ptr for next CCB for action</summary>
@@ -299,7 +302,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct NvmeCommand
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct NvmeCommand
     {
         ushort opc_fuse_rsvd1;
         /// <summary>
@@ -370,7 +373,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct NvmeStatus
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct NvmeStatus
     {
         ushort status;
 
@@ -406,7 +409,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct NvmeCompletion
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct NvmeCompletion
     {
         /// <summary>
         /// command-specific
@@ -440,7 +443,7 @@ namespace DiscImageChef.Devices.FreeBSD
     /// NVMe I/O Request CCB used for the XPT_NVME_IO and XPT_NVME_ADMIN function codes.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbNvmeio
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbNvmeio
     {
         public CcbHdr ccb_h;
         /// <summary>Ptr for next CCB for action</summary>
@@ -460,7 +463,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct PeriphMatchPattern
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct PeriphMatchPattern
     {
         const int DEV_IDLEN = 16;
 
@@ -473,14 +476,14 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct DeviceIdMatchPattern
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct DeviceIdMatchPattern
     {
         public byte id_len;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] id;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct ScsiStaticInquiryPattern
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct ScsiStaticInquiryPattern
     {
         const int SID_VENDOR_SIZE = 8;
         const int SID_PRODUCT_SIZE = 16;
@@ -493,14 +496,14 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    struct DeviceMatchPatternData
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct DeviceMatchPatternData
     {
         [FieldOffset(0)] public ScsiStaticInquiryPattern inq_pat;
         [FieldOffset(0)] public DeviceIdMatchPattern devid_pat;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct DeviceMatchPattern
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct DeviceMatchPattern
     {
         public path_id_t path_id;
         public target_id_t target_id;
@@ -510,7 +513,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct BusMatchPattern
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct BusMatchPattern
     {
         const int DEV_IDLEN = 16;
 
@@ -522,7 +525,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    struct MatchPattern
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct MatchPattern
     {
         [FieldOffset(0)] public PeriphMatchPattern periph_pattern;
         [FieldOffset(0)] public DeviceMatchPattern device_pattern;
@@ -530,14 +533,14 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct DevMatchPattern
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct DevMatchPattern
     {
         public DevMatchType type;
         public MatchPattern pattern;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct PeriphMatchResult
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct PeriphMatchResult
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] periph_name;
         public uint unit_number;
@@ -547,7 +550,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct MmcCid
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct MmcCid
     {
         public uint mid;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] pnm;
@@ -560,7 +563,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct MmcParams
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct MmcParams
     {
         /// <summary>
         /// Card model
@@ -606,7 +609,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct DeviceMatchResult
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct DeviceMatchResult
     {
         public path_id_t path_id;
         public target_id_t target_id;
@@ -619,7 +622,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct BusMatchResult
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct BusMatchResult
     {
         public path_id_t path_id;
         const int DEV_IDLEN = 16;
@@ -629,7 +632,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    struct MatchResult
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct MatchResult
     {
         [FieldOffset(0)] public PeriphMatchResult periph_result;
         [FieldOffset(0)] public DeviceMatchResult device_result;
@@ -637,14 +640,14 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct DevMatchResult
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct DevMatchResult
     {
         public DevMatchType type;
         public MatchResult result;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbDmCookie
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbDmCookie
     {
         public IntPtr bus;
         public IntPtr target;
@@ -654,7 +657,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbDevPosition
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbDevPosition
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public CamGenerations[] generations;
         DevPosType position_type;
@@ -662,7 +665,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbDevMatch
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbDevMatch
     {
         public CcbHdr ccb_h;
         CcbDevMatchStatus status;
@@ -685,6 +688,8 @@ namespace DiscImageChef.Devices.FreeBSD
         public CcbDevPosition pos;
     }
 
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
     struct CamDevice
     {
         const int MAXPATHLEN = 1024;
@@ -769,7 +774,7 @@ namespace DiscImageChef.Devices.FreeBSD
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CcbGetdev
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] struct CcbGetdev
     {
         public CcbHdr ccb_h;
         public CamProto protocol;

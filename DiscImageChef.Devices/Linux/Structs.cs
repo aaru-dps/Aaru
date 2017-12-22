@@ -32,11 +32,13 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Devices.Linux
 {
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct SgIoHdrT
     {
         /// <summary>
@@ -67,6 +69,7 @@ namespace DiscImageChef.Devices.Linux
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct MmcIocCmd
     {
         /// <summary>
