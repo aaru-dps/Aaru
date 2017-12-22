@@ -30,10 +30,15 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x07: Verify error recovery page

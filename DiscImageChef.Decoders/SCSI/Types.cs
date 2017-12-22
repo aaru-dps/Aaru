@@ -30,8 +30,11 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum MediumTypes : byte
     {
         Default = 0x00,
@@ -585,6 +588,7 @@ namespace DiscImageChef.Decoders.SCSI
         #endregion Medium Types found in vendor documents
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum DensityType : byte
     {
         Default = 0x00,

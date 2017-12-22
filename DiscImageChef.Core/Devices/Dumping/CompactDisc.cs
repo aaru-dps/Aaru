@@ -166,12 +166,12 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         foreach(FullTOC.TrackDataDescriptor track in toc.Value.TrackDescriptors)
                         {
-                            if(track.TNO == 1 && ((TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
-                                                  (TOC_CONTROL)(track.CONTROL & 0x0D) ==
-                                                  TOC_CONTROL.DataTrackIncremental)) allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
+                            if(track.TNO == 1 && ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                                  (TocControl)(track.CONTROL & 0x0D) ==
+                                                  TocControl.DataTrackIncremental)) allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
 
-                            if((TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
-                               (TOC_CONTROL)(track.CONTROL & 0x0D) == TOC_CONTROL.DataTrackIncremental)
+                            if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
+                               (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
                             {
                                 hasDataTrack = true;
                                 allFirstSessionTracksAreAudio &= track.TNO >= firstTrackLastSession;
@@ -265,8 +265,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         Sequence = new TrackSequenceType {Session = trk.SessionNumber, TrackNumber = trk.POINT}
                     };
-                    if((TOC_CONTROL)(trk.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
-                       (TOC_CONTROL)(trk.CONTROL & 0x0D) == TOC_CONTROL.DataTrackIncremental)
+                    if((TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                       (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
                         track.TrackType1 = TrackTypeTrackType.mode1;
                     else track.TrackType1 = TrackTypeTrackType.audio;
                     if(trk.PHOUR > 0)

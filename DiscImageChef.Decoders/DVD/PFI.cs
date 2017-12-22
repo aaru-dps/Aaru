@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.DVD
@@ -66,6 +67,9 @@ namespace DiscImageChef.Decoders.DVD
     /// ECMA 382: 120 mm (8,54 Gbytes per side) and 80 mm (2,66 Gbytes per side) DVD Recordable Disk for Dual Layer (DVD-R for DL)
     /// ECMA 384: 120 mm (8,54 Gbytes per side) and 80 mm (2,66 Gbytes per side) DVD Re-recordable Disk for Dual Layer (DVD-RW for DL)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class PFI
     {
         public struct PhysicalFormatInformation

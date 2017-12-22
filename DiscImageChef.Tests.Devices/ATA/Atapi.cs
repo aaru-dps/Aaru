@@ -73,7 +73,7 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters,
+            bool sense = dev.AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs errorRegisters,
                                            out double duration);
 
             menu:

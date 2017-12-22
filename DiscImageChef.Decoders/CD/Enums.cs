@@ -30,9 +30,12 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.CD
 {
-    public enum TOC_ADR : byte
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    public enum TocAdr : byte
     {
         /// <summary>
         /// Q Sub-channel mode information not supplied
@@ -60,7 +63,7 @@ namespace DiscImageChef.Decoders.CD
         VideoTrackPointer = 0x04
     }
 
-    public enum TOC_CONTROL : byte
+    public enum TocControl : byte
     {
         /// <summary>
         /// Stereo audio, no pre-emphasis

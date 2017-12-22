@@ -158,7 +158,7 @@ namespace DiscImageChef.Devices
             }
         }
 
-        internal static int SendAtaCommand(object fd, AtaRegistersCHS registers, out AtaErrorRegistersCHS errorRegisters,
+        internal static int SendAtaCommand(object fd, AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
                                          AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                          uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
@@ -168,8 +168,8 @@ namespace DiscImageChef.Devices
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersCHS registers,
-                                         out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersChs registers,
+                                         out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
@@ -205,8 +205,8 @@ namespace DiscImageChef.Devices
             }
         }
 
-        internal static int SendAtaCommand(object fd, AtaRegistersLBA28 registers,
-                                         out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(object fd, AtaRegistersLba28 registers,
+                                         out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
@@ -216,8 +216,8 @@ namespace DiscImageChef.Devices
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLBA28 registers,
-                                         out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba28 registers,
+                                         out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
@@ -253,8 +253,8 @@ namespace DiscImageChef.Devices
             }
         }
 
-        internal static int SendAtaCommand(object fd, AtaRegistersLBA48 registers,
-                                         out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(object fd, AtaRegistersLba48 registers,
+                                         out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {
@@ -264,8 +264,8 @@ namespace DiscImageChef.Devices
                                   timeout, transferBlocks, out duration, out sense);
         }
 
-        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLBA48 registers,
-                                         out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba48 registers,
+                                         out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                          AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
                                          bool transferBlocks, out double duration, out bool sense)
         {

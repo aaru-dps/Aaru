@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -42,6 +43,9 @@ namespace DiscImageChef.Decoders.Floppy
     /// <summary>
     /// Methods and structures for Apple ][ floppy decoding
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Apple2
     {
         /// <summary>
@@ -295,17 +299,15 @@ namespace DiscImageChef.Decoders.Floppy
             // Pre DOS 3.3
             if(sector.addressField.prologue[2] == 0xB5) return Decode5and3(sector.dataField.data);
             // DOS 3.3
-            if(sector.addressField.prologue[2] == 0x96) return Decode6and2(sector.dataField.data);
+            return sector.addressField.prologue[2] == 0x96 ? Decode6and2(sector.dataField.data) : null;
             // Unknown
-            return null;
 
             // Not Apple ][ GCR?
         }
 
         public static RawSector MarshalSector(byte[] data, int offset = 0)
         {
-            int temp;
-            return MarshalSector(data, out temp, offset);
+            return MarshalSector(data, out _, offset);
         }
 
         public static RawSector MarshalSector(byte[] data, out int endOffset, int offset = 0)
@@ -315,11 +317,7 @@ namespace DiscImageChef.Decoders.Floppy
             // Not an Apple ][ GCR sector
             if(data == null || data.Length < 363) return null;
 
-            RawSector sector;
             int position = offset;
-            MemoryStream gaps;
-            bool onSync;
-            int syncCount;
 
             try
             {
@@ -333,28 +331,18 @@ namespace DiscImageChef.Decoders.Floppy
                         // Epilogue not in correct position
                         if(data[position + 11] != 0xDE || data[position + 12] != 0xAA) return null;
 
-                        sector = new RawSector();
-                        sector.addressField = new RawAddressField();
-                        sector.addressField.prologue = new byte[3];
-                        sector.addressField.prologue[0] = data[position];
-                        sector.addressField.prologue[1] = data[position + 1];
-                        sector.addressField.prologue[2] = data[position + 2];
-                        sector.addressField.volume = new byte[2];
-                        sector.addressField.volume[0] = data[position + 3];
-                        sector.addressField.volume[1] = data[position + 4];
-                        sector.addressField.track = new byte[2];
-                        sector.addressField.track[0] = data[position + 5];
-                        sector.addressField.track[1] = data[position + 6];
-                        sector.addressField.sector = new byte[2];
-                        sector.addressField.sector[0] = data[position + 7];
-                        sector.addressField.sector[1] = data[position + 8];
-                        sector.addressField.checksum = new byte[2];
-                        sector.addressField.checksum[0] = data[position + 9];
-                        sector.addressField.checksum[1] = data[position + 10];
-                        sector.addressField.epilogue = new byte[3];
-                        sector.addressField.epilogue[0] = data[position + 11];
-                        sector.addressField.epilogue[1] = data[position + 12];
-                        sector.addressField.epilogue[2] = data[position + 13];
+                        RawSector sector = new RawSector
+                        {
+                            addressField = new RawAddressField
+                            {
+                                prologue = new[] {data[position], data[position + 1], data[position + 2]},
+                                volume = new[] {data[position + 3], data[position + 4]},
+                                track = new[] {data[position + 5], data[position + 6]},
+                                sector = new[] {data[position + 7], data[position + 8]},
+                                checksum = new[] {data[position + 9], data[position + 10]},
+                                epilogue = new[] {data[position + 11], data[position + 12], data[position + 13]}
+                            }
+                        };
 
                         DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Volume {0}",
                                                   (((sector.addressField.volume[0] & 0x55) << 1) |
@@ -373,9 +361,9 @@ namespace DiscImageChef.Decoders.Floppy
                                                   sector.addressField.epilogue[2]);
 
                         position += 14;
-                        syncCount = 0;
-                        onSync = false;
-                        gaps = new MemoryStream();
+                        int syncCount = 0;
+                        bool onSync = false;
+                        MemoryStream gaps = new MemoryStream();
 
                         while(data[position] == 0xFF)
                         {
@@ -495,8 +483,7 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static RawTrack MarshalTrack(byte[] data, int offset = 0)
         {
-            int temp;
-            return MarshalTrack(data, out temp, offset);
+            return MarshalTrack(data, out _, offset);
         }
 
         public static RawTrack MarshalTrack(byte[] data, out int endOffset, int offset = 0)
@@ -551,9 +538,7 @@ namespace DiscImageChef.Decoders.Floppy
 
             if(sectors.Count == 0) return null;
 
-            RawTrack track = new RawTrack();
-            track.gap = gaps.ToArray();
-            track.sectors = sectors.ToArray();
+            RawTrack track = new RawTrack {gap = gaps.ToArray(), sectors = sectors.ToArray()};
             endOffset = position;
             return track;
         }
@@ -564,7 +549,7 @@ namespace DiscImageChef.Decoders.Floppy
 
             MemoryStream raw = new MemoryStream();
             raw.Write(track.gap, 0, track.gap.Length);
-            foreach(byte[] rawSector in track.sectors.Select(sector => MarshalSector(sector)))
+            foreach(byte[] rawSector in track.sectors.Select(MarshalSector))
             { raw.Write(rawSector, 0, rawSector.Length); }
 
             return raw.ToArray();
@@ -572,8 +557,7 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static List<RawTrack> MarshalDisk(byte[] data, int offset = 0)
         {
-            int temp;
-            return MarshalDisk(data, out temp, offset);
+            return MarshalDisk(data, out _, offset);
         }
 
         public static List<RawTrack> MarshalDisk(byte[] data, out int endOffset, int offset = 0)
@@ -605,15 +589,14 @@ namespace DiscImageChef.Decoders.Floppy
             if(disk == null) return null;
 
             MemoryStream raw = new MemoryStream();
-            foreach(byte[] rawTrack in disk.Select(track => MarshalTrack(track))) { raw.Write(rawTrack, 0, rawTrack.Length); }
+            foreach(byte[] rawTrack in disk.Select(MarshalTrack)) { raw.Write(rawTrack, 0, rawTrack.Length); }
 
             return raw.ToArray();
         }
 
         public static bool IsApple2GCR(byte[] data)
         {
-            int position;
-            RawSector sector = MarshalSector(data, out position, 0);
+            RawSector sector = MarshalSector(data, out int position);
 
             return sector != null && position != 0;
         }

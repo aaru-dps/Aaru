@@ -30,10 +30,14 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x0E: CD-ROM audio control parameters page
@@ -147,8 +151,9 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendLine("SCSI CD-ROM audio control parameters page:");
 
             if(page.PS) sb.AppendLine("\tParameters can be saved");
-            if(page.Immed) sb.AppendLine("\tDrive will return from playback command immediately");
-            else sb.AppendLine("\tDrive will return from playback command when playback ends");
+            sb.AppendLine(page.Immed
+                              ? "\tDrive will return from playback command immediately"
+                              : "\tDrive will return from playback command when playback ends");
             if(page.SOTC) sb.AppendLine("\tDrive will stop playback on track end");
 
             if(page.APRVal)

@@ -554,8 +554,8 @@ namespace DiscImageChef.DiscImages
                                         currentTrack.TrackSession = descriptor.SessionNumber;
 
                                         // Need to check exact data type later
-                                        if((TOC_CONTROL)(descriptor.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
-                                           (TOC_CONTROL)(descriptor.CONTROL & 0x0D) == TOC_CONTROL.DataTrackIncremental)
+                                        if((TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                           (TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
                                             currentTrack.TrackType = TrackType.Data;
                                         else currentTrack.TrackType = TrackType.Audio;
 

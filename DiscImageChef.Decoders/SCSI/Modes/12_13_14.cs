@@ -30,10 +30,14 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)

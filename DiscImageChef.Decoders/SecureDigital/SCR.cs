@@ -31,10 +31,15 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SecureDigital
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public class SCR
     {
         public byte Structure;
@@ -50,18 +55,17 @@ namespace DiscImageChef.Decoders.SecureDigital
         public byte[] ManufacturerReserved;
     }
 
-    public partial class Decoders
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public static partial class Decoders
     {
         public static SCR DecodeSCR(uint[] response)
         {
-            if(response == null) return null;
-
-            if(response.Length != 2) return null;
+            if(response?.Length != 2) return null;
 
             byte[] data = new byte[8];
-            byte[] tmp;
 
-            tmp = BitConverter.GetBytes(response[0]);
+            byte[] tmp = BitConverter.GetBytes(response[0]);
             Array.Copy(tmp, 0, data, 0, 4);
             tmp = BitConverter.GetBytes(response[1]);
             Array.Copy(tmp, 0, data, 4, 4);
@@ -71,22 +75,22 @@ namespace DiscImageChef.Decoders.SecureDigital
 
         public static SCR DecodeSCR(byte[] response)
         {
-            if(response == null) return null;
+            if(response?.Length != 8) return null;
 
-            if(response.Length != 8) return null;
-
-            SCR scr = new SCR();
-            scr.Structure = (byte)((response[0] & 0xF0) >> 4);
-            scr.Spec = (byte)(response[0] & 0x0F);
-            scr.DataStatusAfterErase = (response[1] & 0x80) == 0x80;
-            scr.Security = (byte)((response[1] & 0x70) >> 4);
-            scr.BusWidth = (byte)(response[1] & 0x0F);
-            scr.Spec3 = (response[2] & 0x80) == 0x80;
-            scr.ExtendedSecurity = (byte)((response[2] & 0x78) >> 3);
-            scr.Spec4 = (response[2] & 0x04) == 0x04;
-            scr.SpecX = (byte)(((response[2] & 0x03) << 2) + ((response[3] & 0xC0) >> 6));
-            scr.CommandSupport = (byte)(response[3] & 0x0F);
-            scr.ManufacturerReserved = new byte[4];
+            SCR scr = new SCR
+            {
+                Structure = (byte)((response[0] & 0xF0) >> 4),
+                Spec = (byte)(response[0] & 0x0F),
+                DataStatusAfterErase = (response[1] & 0x80) == 0x80,
+                Security = (byte)((response[1] & 0x70) >> 4),
+                BusWidth = (byte)(response[1] & 0x0F),
+                Spec3 = (response[2] & 0x80) == 0x80,
+                ExtendedSecurity = (byte)((response[2] & 0x78) >> 3),
+                Spec4 = (response[2] & 0x04) == 0x04,
+                SpecX = (byte)(((response[2] & 0x03) << 2) + ((response[3] & 0xC0) >> 6)),
+                CommandSupport = (byte)(response[3] & 0x0F),
+                ManufacturerReserved = new byte[4]
+            };
             Array.Copy(response, 4, scr.ManufacturerReserved, 0, 4);
 
             return scr;

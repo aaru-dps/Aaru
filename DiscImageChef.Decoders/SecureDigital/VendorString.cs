@@ -34,12 +34,12 @@ namespace DiscImageChef.Decoders.SecureDigital
 {
     public static class VendorString
     {
-        public static string Prettify(byte SDVendorID)
+        public static string Prettify(byte sdVendorId)
         {
-            switch(SDVendorID)
+            switch(sdVendorId)
             {
                 case 0xAA: return "QEMU";
-                default: return $"Unknown manufacturer ID 0x{SDVendorID:X2}";
+                default: return $"Unknown manufacturer ID 0x{sdVendorId:X2}";
             }
         }
     }

@@ -104,13 +104,13 @@ namespace DiscImageChef.Devices.Windows
             return error;
         }
 
-        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersCHS registers,
-                                           out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersChs registers,
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new AtaErrorRegistersCHS();
+            errorRegisters = new AtaErrorRegistersChs();
 
             if(buffer == null) return -1;
 
@@ -127,13 +127,13 @@ namespace DiscImageChef.Devices.Windows
                     PreviousTaskFile = new AtaTaskFile(),
                     CurrentTaskFile = new AtaTaskFile
                     {
-                        Command = registers.command,
-                        CylinderHigh = registers.cylinderHigh,
-                        CylinderLow = registers.cylinderLow,
-                        DeviceHead = registers.deviceHead,
-                        Features = registers.feature,
-                        SectorCount = registers.sectorCount,
-                        SectorNumber = registers.sector
+                        Command = registers.Command,
+                        CylinderHigh = registers.CylinderHigh,
+                        CylinderLow = registers.CylinderLow,
+                        DeviceHead = registers.DeviceHead,
+                        Features = registers.Feature,
+                        SectorCount = registers.SectorCount,
+                        SectorNumber = registers.Sector
                     }
                 },
                 dataBuffer = new byte[64 * 512]
@@ -180,27 +180,27 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.command = aptdBuf.aptd.CurrentTaskFile.Command;
-            errorRegisters.cylinderHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.cylinderLow = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.deviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.error = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.sector = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.sectorCount = aptdBuf.aptd.CurrentTaskFile.SectorCount;
-            errorRegisters.status = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.Command = aptdBuf.aptd.CurrentTaskFile.Command;
+            errorRegisters.CylinderHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.CylinderLow = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.Sector = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.SectorCount = aptdBuf.aptd.CurrentTaskFile.SectorCount;
+            errorRegisters.Status = aptdBuf.aptd.CurrentTaskFile.Status;
 
-            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
+            sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
             return error;
         }
 
-        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLBA28 registers,
-                                           out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLba28 registers,
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new AtaErrorRegistersLBA28();
+            errorRegisters = new AtaErrorRegistersLba28();
 
             if(buffer == null) return -1;
 
@@ -217,13 +217,13 @@ namespace DiscImageChef.Devices.Windows
                     PreviousTaskFile = new AtaTaskFile(),
                     CurrentTaskFile = new AtaTaskFile
                     {
-                        Command = registers.command,
-                        CylinderHigh = registers.lbaHigh,
-                        CylinderLow = registers.lbaMid,
-                        DeviceHead = registers.deviceHead,
-                        Features = registers.feature,
-                        SectorCount = registers.sectorCount,
-                        SectorNumber = registers.lbaLow
+                        Command = registers.Command,
+                        CylinderHigh = registers.LbaHigh,
+                        CylinderLow = registers.LbaMid,
+                        DeviceHead = registers.DeviceHead,
+                        Features = registers.Feature,
+                        SectorCount = registers.SectorCount,
+                        SectorNumber = registers.LbaLow
                     }
                 },
                 dataBuffer = new byte[64 * 512]
@@ -270,27 +270,27 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.command = aptdBuf.aptd.CurrentTaskFile.Command;
-            errorRegisters.lbaHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.lbaMid = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.deviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.error = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.lbaLow = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.sectorCount = aptdBuf.aptd.CurrentTaskFile.SectorCount;
-            errorRegisters.status = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.Command = aptdBuf.aptd.CurrentTaskFile.Command;
+            errorRegisters.LbaHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.LbaMid = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.LbaLow = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.SectorCount = aptdBuf.aptd.CurrentTaskFile.SectorCount;
+            errorRegisters.Status = aptdBuf.aptd.CurrentTaskFile.Status;
 
-            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
+            sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
             return error;
         }
 
-        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLBA48 registers,
-                                           out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLba48 registers,
+                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new AtaErrorRegistersLBA48();
+            errorRegisters = new AtaErrorRegistersLba48();
 
             if(buffer == null) return -1;
 
@@ -307,21 +307,21 @@ namespace DiscImageChef.Devices.Windows
                     PreviousTaskFile =
                         new AtaTaskFile
                         {
-                            CylinderHigh = (byte)((registers.lbaHigh & 0xFF00) >> 8),
-                            CylinderLow = (byte)((registers.lbaMid & 0xFF00) >> 8),
-                            Features = (byte)((registers.feature & 0xFF00) >> 8),
-                            SectorCount = (byte)((registers.sectorCount & 0xFF00) >> 8),
-                            SectorNumber = (byte)((registers.lbaLow & 0xFF00) >> 8)
+                            CylinderHigh = (byte)((registers.LbaHigh & 0xFF00) >> 8),
+                            CylinderLow = (byte)((registers.LbaMid & 0xFF00) >> 8),
+                            Features = (byte)((registers.Feature & 0xFF00) >> 8),
+                            SectorCount = (byte)((registers.SectorCount & 0xFF00) >> 8),
+                            SectorNumber = (byte)((registers.LbaLow & 0xFF00) >> 8)
                         },
                     CurrentTaskFile = new AtaTaskFile
                     {
-                        Command = registers.command,
-                        CylinderHigh = (byte)(registers.lbaHigh & 0xFF),
-                        CylinderLow = (byte)(registers.lbaMid & 0xFF),
-                        DeviceHead = registers.deviceHead,
-                        Features = (byte)(registers.feature & 0xFF),
-                        SectorCount = (byte)(registers.sectorCount & 0xFF),
-                        SectorNumber = (byte)(registers.lbaLow & 0xFF)
+                        Command = registers.Command,
+                        CylinderHigh = (byte)(registers.LbaHigh & 0xFF),
+                        CylinderLow = (byte)(registers.LbaMid & 0xFF),
+                        DeviceHead = registers.DeviceHead,
+                        Features = (byte)(registers.Feature & 0xFF),
+                        SectorCount = (byte)(registers.SectorCount & 0xFF),
+                        SectorNumber = (byte)(registers.LbaLow & 0xFF)
                     }
                 },
                 dataBuffer = new byte[64 * 512]
@@ -368,31 +368,31 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.sectorCount = (ushort)((aptdBuf.aptd.PreviousTaskFile.SectorCount << 8) +
+            errorRegisters.SectorCount = (ushort)((aptdBuf.aptd.PreviousTaskFile.SectorCount << 8) +
                                                   aptdBuf.aptd.CurrentTaskFile.SectorCount);
-            errorRegisters.lbaLow = (ushort)((aptdBuf.aptd.PreviousTaskFile.SectorNumber << 8) +
+            errorRegisters.LbaLow = (ushort)((aptdBuf.aptd.PreviousTaskFile.SectorNumber << 8) +
                                              aptdBuf.aptd.CurrentTaskFile.SectorNumber);
-            errorRegisters.lbaMid = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderLow << 8) +
+            errorRegisters.LbaMid = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderLow << 8) +
                                              aptdBuf.aptd.CurrentTaskFile.CylinderLow);
-            errorRegisters.lbaHigh = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderHigh << 8) +
+            errorRegisters.LbaHigh = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderHigh << 8) +
                                               aptdBuf.aptd.CurrentTaskFile.CylinderHigh);
-            errorRegisters.command = aptdBuf.aptd.CurrentTaskFile.Command;
-            errorRegisters.deviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.error = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.status = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.Command = aptdBuf.aptd.CurrentTaskFile.Command;
+            errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.Status = aptdBuf.aptd.CurrentTaskFile.Status;
 
-            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
+            sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
             return error;
         }
 
-        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersCHS registers,
-                                           out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersChs registers,
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new AtaErrorRegistersCHS();
+            errorRegisters = new AtaErrorRegistersChs();
 
             if(buffer == null || buffer.Length > 512) return -1;
 
@@ -400,13 +400,13 @@ namespace DiscImageChef.Devices.Windows
             {
                 CurrentTaskFile = new AtaTaskFile
                 {
-                    Command = registers.command,
-                    CylinderHigh = registers.cylinderHigh,
-                    CylinderLow = registers.cylinderLow,
-                    DeviceHead = registers.deviceHead,
-                    Features = registers.feature,
-                    SectorCount = registers.sectorCount,
-                    SectorNumber = registers.sector
+                    Command = registers.Command,
+                    CylinderHigh = registers.CylinderHigh,
+                    CylinderLow = registers.CylinderLow,
+                    DeviceHead = registers.DeviceHead,
+                    Features = registers.Feature,
+                    SectorCount = registers.SectorCount,
+                    SectorNumber = registers.Sector
                 },
                 DataBufferSize = 512,
                 DataBuffer = new byte[512]
@@ -430,27 +430,27 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.command = iptd.CurrentTaskFile.Command;
-            errorRegisters.cylinderHigh = iptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.cylinderLow = iptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.deviceHead = iptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.error = iptd.CurrentTaskFile.Error;
-            errorRegisters.sector = iptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.sectorCount = iptd.CurrentTaskFile.SectorCount;
-            errorRegisters.status = iptd.CurrentTaskFile.Status;
+            errorRegisters.Command = iptd.CurrentTaskFile.Command;
+            errorRegisters.CylinderHigh = iptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.CylinderLow = iptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead = iptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error = iptd.CurrentTaskFile.Error;
+            errorRegisters.Sector = iptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.SectorCount = iptd.CurrentTaskFile.SectorCount;
+            errorRegisters.Status = iptd.CurrentTaskFile.Status;
 
-            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
+            sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
             return error;
         }
 
-        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersLBA28 registers,
-                                           out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+        internal static int SendIdeCommand(SafeFileHandle fd, AtaRegistersLba28 registers,
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new AtaErrorRegistersLBA28();
+            errorRegisters = new AtaErrorRegistersLba28();
 
             if(buffer == null) return -1;
 
@@ -460,13 +460,13 @@ namespace DiscImageChef.Devices.Windows
             {
                 CurrentTaskFile = new AtaTaskFile
                 {
-                    Command = registers.command,
-                    CylinderHigh = registers.lbaHigh,
-                    CylinderLow = registers.lbaMid,
-                    DeviceHead = registers.deviceHead,
-                    Features = registers.feature,
-                    SectorCount = registers.sectorCount,
-                    SectorNumber = registers.lbaLow
+                    Command = registers.Command,
+                    CylinderHigh = registers.LbaHigh,
+                    CylinderLow = registers.LbaMid,
+                    DeviceHead = registers.DeviceHead,
+                    Features = registers.Feature,
+                    SectorCount = registers.SectorCount,
+                    SectorNumber = registers.LbaLow
                 },
                 DataBufferSize = 512,
                 DataBuffer = new byte[512]
@@ -490,16 +490,16 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.command = iptd.CurrentTaskFile.Command;
-            errorRegisters.lbaHigh = iptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.lbaMid = iptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.deviceHead = iptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.error = iptd.CurrentTaskFile.Error;
-            errorRegisters.lbaLow = iptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.sectorCount = iptd.CurrentTaskFile.SectorCount;
-            errorRegisters.status = iptd.CurrentTaskFile.Status;
+            errorRegisters.Command = iptd.CurrentTaskFile.Command;
+            errorRegisters.LbaHigh = iptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.LbaMid = iptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead = iptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error = iptd.CurrentTaskFile.Error;
+            errorRegisters.LbaLow = iptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.SectorCount = iptd.CurrentTaskFile.SectorCount;
+            errorRegisters.Status = iptd.CurrentTaskFile.Status;
 
-            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
+            sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
             return error;
         }

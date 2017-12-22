@@ -68,7 +68,7 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in bytes.</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
-        public int SendAtaCommand(AtaRegistersCHS registers, out AtaErrorRegistersCHS errorRegisters,
+        public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
@@ -89,7 +89,7 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in bytes.</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
-        public int SendAtaCommand(AtaRegistersLBA28 registers, out AtaErrorRegistersLBA28 errorRegisters,
+        public int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
@@ -110,7 +110,7 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in bytes.</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
-        public int SendAtaCommand(AtaRegistersLBA48 registers, out AtaErrorRegistersLBA48 errorRegisters,
+        public int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {

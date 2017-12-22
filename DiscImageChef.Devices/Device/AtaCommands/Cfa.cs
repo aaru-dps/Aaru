@@ -37,19 +37,19 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersLBA28 statusRegisters, uint lba,
+        public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint lba,
                                     uint timeout, out double duration)
         {
             buffer = new byte[512];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.TranslateSector;
-            registers.deviceHead = (byte)((lba & 0xF000000) / 0x1000000);
-            registers.lbaHigh = (byte)((lba & 0xFF0000) / 0x10000);
-            registers.lbaMid = (byte)((lba & 0xFF00) / 0x100);
-            registers.lbaLow = (byte)((lba & 0xFF) / 0x1);
-            registers.deviceHead += 0x40;
+            registers.Command = (byte)AtaCommands.TranslateSector;
+            registers.DeviceHead = (byte)((lba & 0xF000000) / 0x1000000);
+            registers.LbaHigh = (byte)((lba & 0xFF0000) / 0x10000);
+            registers.LbaMid = (byte)((lba & 0xFF00) / 0x100);
+            registers.LbaLow = (byte)((lba & 0xFF) / 0x1);
+            registers.DeviceHead += 0x40;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -61,18 +61,18 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder,
+        public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder,
                                     byte head, byte sector, uint timeout, out double duration)
         {
             buffer = new byte[512];
-            AtaRegistersCHS registers = new AtaRegistersCHS();
+            AtaRegistersChs registers = new AtaRegistersChs();
             bool sense;
 
-            registers.command = (byte)AtaCommands.TranslateSector;
-            registers.cylinderHigh = (byte)((cylinder & 0xFF00) / 0x100);
-            registers.cylinderLow = (byte)((cylinder & 0xFF) / 0x1);
-            registers.sector = sector;
-            registers.deviceHead = (byte)(head & 0x0F);
+            registers.Command = (byte)AtaCommands.TranslateSector;
+            registers.CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100);
+            registers.CylinderLow = (byte)((cylinder & 0xFF) / 0x1);
+            registers.Sector = sector;
+            registers.DeviceHead = (byte)(head & 0x0F);
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -84,21 +84,21 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLBA28 statusRegisters,
+        public bool RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLba28 statusRegisters,
                                              uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.RequestSense;
+            registers.Command = (byte)AtaCommands.RequestSense;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out sense);
             Error = LastError != 0;
 
-            errorCode = statusRegisters.error;
+            errorCode = statusRegisters.Error;
 
             DicConsole.DebugWriteLine("ATA Device", "CFA REQUEST EXTENDED ERROR CODE took {0} ms.", duration);
 

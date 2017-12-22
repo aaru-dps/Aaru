@@ -30,6 +30,8 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.DVD
 {
     /// <summary>
@@ -48,6 +50,9 @@ namespace DiscImageChef.Decoders.DVD
     /// T10/1836-D revision 2g
     /// ECMA 365
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class BCA
     {
         public struct BurstCuttingArea

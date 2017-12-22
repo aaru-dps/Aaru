@@ -85,12 +85,12 @@ namespace DiscImageChef.Filesystems.LisaFS
                     LisaTag.PriamTag searchTag;
                     DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out searchTag);
 
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
 
-                    if(volumePrefix == device.ImageInfo.Sectors && searchTag.fileID == FILEID_LOADER_SIGNED)
+                    if(volumePrefix == device.ImageInfo.Sectors && searchTag.FileId == FILEID_LOADER_SIGNED)
                         volumePrefix = i - 1;
 
-                    if(searchTag.fileID != FILEID_MDDF) continue;
+                    if(searchTag.FileId != FILEID_MDDF) continue;
 
                     devTagSize = device.ReadSectorTag(i, SectorTagType.AppleSectorTag).Length;
 

@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.DVD
@@ -49,6 +50,10 @@ namespace DiscImageChef.Decoders.DVD
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class Cartridge
     {
         public struct MediumStatus
@@ -122,27 +127,24 @@ namespace DiscImageChef.Decoders.DVD
 
         public static MediumStatus? Decode(byte[] response)
         {
-            if(response == null) return null;
+            if(response?.Length != 8) return null;
 
-            if(response.Length != 8) return null;
-
-            MediumStatus status = new MediumStatus();
-
-            status.DataLength = (ushort)((response[0] << 8) + response[1]);
-            status.Reserved1 = response[2];
-            status.Reserved2 = response[3];
-            status.Cartridge |= (response[4] & 0x80) == 0x80;
-            status.OUT |= (response[4] & 0x40) == 0x40;
-            status.Reserved3 = (byte)((response[4] & 0x30) >> 4);
-            status.MSWI |= (response[4] & 0x08) == 0x08;
-            status.CWP |= (response[4] & 0x04) == 0x04;
-            status.PWP |= (response[4] & 0x02) == 0x02;
-            status.Reserved4 |= (response[4] & 0x01) == 0x01;
-            status.DiscType = response[5];
-            status.Reserved5 = response[6];
-            status.RAMSWI = response[7];
-
-            return status;
+            return new MediumStatus
+            {
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1 = response[2],
+                Reserved2 = response[3],
+                Cartridge = (response[4] & 0x80) == 0x80,
+                OUT = (response[4] & 0x40) == 0x40,
+                Reserved3 = (byte)((response[4] & 0x30) >> 4),
+                MSWI = (response[4] & 0x08) == 0x08,
+                CWP = (response[4] & 0x04) == 0x04,
+                PWP = (response[4] & 0x02) == 0x02,
+                Reserved4 = (response[4] & 0x01) == 0x01,
+                DiscType = response[5],
+                Reserved5 = response[6],
+                RAMSWI = response[7]
+            };
         }
 
         public static string Prettify(MediumStatus? status)

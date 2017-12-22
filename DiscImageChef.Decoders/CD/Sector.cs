@@ -31,10 +31,14 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace DiscImageChef.Decoders.CD
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Sector
     {
         public static readonly byte[] ScrambleTable =

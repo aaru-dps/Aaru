@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,6 +39,9 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Decoders.Sega
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Dreamcast
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -91,10 +95,9 @@ namespace DiscImageChef.Decoders.Sega
 
             if(ipbin_sector.Length < 512) return null;
 
-            IPBin ipbin;
             IntPtr ptr = Marshal.AllocHGlobal(512);
             Marshal.Copy(ipbin_sector, 0, ptr, 512);
-            ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));
+            IPBin ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));
             Marshal.FreeHGlobal(ptr);
 
             DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.maker_id = \"{0}\"",

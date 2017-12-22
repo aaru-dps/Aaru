@@ -102,7 +102,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             start:
             System.Console.Clear();
             bool sense =
-                dev.SmartDisableAttributeAutosave(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+                dev.SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                                   out double duration);
 
             menu:
@@ -145,7 +145,7 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.SmartDisable(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense = dev.SmartDisable(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout, out double duration);
 
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
@@ -188,7 +188,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             start:
             System.Console.Clear();
             bool sense =
-                dev.SmartEnableAttributeAutosave(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+                dev.SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                                  out double duration);
 
             menu:
@@ -231,7 +231,7 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.SmartEnable(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout, out double duration);
+            bool sense = dev.SmartEnable(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout, out double duration);
 
             menu:
             DicConsole.WriteLine("Device: {0}", devPath);
@@ -318,7 +318,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.SmartExecuteOffLineImmediate(out AtaErrorRegistersLBA28 errorRegisters, subcommand,
+            bool sense = dev.SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 errorRegisters, subcommand,
                                                           dev.Timeout, out double duration);
 
             menu:
@@ -363,7 +363,7 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.SmartReadData(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+            bool sense = dev.SmartReadData(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                            out double duration);
 
             menu:
@@ -473,7 +473,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.SmartReadLog(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, address,
+            bool sense = dev.SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, address,
                                           dev.Timeout, out double duration);
 
             menu:
@@ -540,7 +540,7 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.SmartReturnStatus(out AtaErrorRegistersLBA28 errorRegisters, dev.Timeout,
+            bool sense = dev.SmartReturnStatus(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                                out double duration);
 
             menu:

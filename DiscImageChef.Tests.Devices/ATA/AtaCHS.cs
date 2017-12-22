@@ -105,7 +105,7 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.AtaIdentify(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters,
+            bool sense = dev.AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs errorRegisters,
                                          out double duration);
 
             menu:
@@ -267,7 +267,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters, retries, cylinder,
+            bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, retries, cylinder,
                                      head, sector, count, dev.Timeout, out double duration);
 
             menu:
@@ -420,7 +420,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.ReadLong(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters, retries, cylinder,
+            bool sense = dev.ReadLong(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, retries, cylinder,
                                       head, sector, blockSize, dev.Timeout, out double duration);
 
             menu:
@@ -573,7 +573,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters, cylinder, head,
+            bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, cylinder, head,
                                           sector, count, dev.Timeout, out double duration);
 
             menu:
@@ -726,7 +726,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters, retries, cylinder, head,
+            bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, retries, cylinder, head,
                                   sector, count, dev.Timeout, out double duration);
 
             menu:
@@ -867,7 +867,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.Seek(out AtaErrorRegistersCHS errorRegisters, cylinder, head, sector, dev.Timeout,
+            bool sense = dev.Seek(out AtaErrorRegistersChs errorRegisters, cylinder, head, sector, dev.Timeout,
                                   out double duration);
 
             menu:

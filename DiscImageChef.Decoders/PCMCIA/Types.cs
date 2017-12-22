@@ -30,11 +30,16 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.PCMCIA
 {
     /// <summary>
     /// Basic classure of a PCMCIA tuple
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Tuple
     {
         public TupleCodes Code;
@@ -45,6 +50,9 @@ namespace DiscImageChef.Decoders.PCMCIA
     /// <summary>
     /// Checksum tuple
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class ChecksumTuple
     {
         /// <summary>
@@ -72,6 +80,9 @@ namespace DiscImageChef.Decoders.PCMCIA
     /// <summary>
     /// Indirect Access PC Card Memory
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class IndirectTuple
     {
         /// <summary>
@@ -87,6 +98,9 @@ namespace DiscImageChef.Decoders.PCMCIA
     /// <summary>
     /// Link target tuple
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class LinkTargetTuple
     {
         /// <summary>
@@ -106,6 +120,9 @@ namespace DiscImageChef.Decoders.PCMCIA
     /// <summary>
     /// 16-bit PC Card Long Link Tuple
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class LongLinkTuple
     {
         /// <summary>
@@ -122,6 +139,10 @@ namespace DiscImageChef.Decoders.PCMCIA
         public uint Address;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class ConfigurationAddress
     {
         /// <summary>
@@ -137,6 +158,9 @@ namespace DiscImageChef.Decoders.PCMCIA
     /// <summary>
     /// Multiple function link tuple
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class MultipleFunctionLinkTuple
     {
         /// <summary>
@@ -157,6 +181,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public ConfigurationAddress[] Addresses;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class NoLinkTuple
     {
         /// <summary>
@@ -169,6 +196,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public byte Link;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class AlternateStringTuple
     {
         /// <summary>
@@ -185,6 +215,10 @@ namespace DiscImageChef.Decoders.PCMCIA
         public string[] Strings;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class ExtendedDeviceSpeed
     {
         /// <summary>
@@ -201,6 +235,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public byte Exponent;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public struct DeviceInfo
     {
         /// <summary>
@@ -233,6 +270,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public byte SizeCode;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class DeviceTuple
     {
         /// <summary>
@@ -249,6 +289,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public DeviceInfo[] Infos;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public struct OtherConditionInfo
     {
         /// <summary>
@@ -265,6 +308,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public bool MWAIT;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class OtherConditionTuple
     {
         /// <summary>
@@ -285,6 +331,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public DeviceInfo[] Infos;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public struct DeviceGeometry
     {
         /// <summary>
@@ -317,6 +366,10 @@ namespace DiscImageChef.Decoders.PCMCIA
         public byte Interleaving;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public class DeviceGeometryTuple
     {
         /// <summary>
@@ -333,6 +386,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public DeviceGeometry[] Geometries;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class FunctionIdentificationTuple
     {
         /// <summary>
@@ -357,6 +413,10 @@ namespace DiscImageChef.Decoders.PCMCIA
         public bool POST;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public class ManufacturerIdentificationTuple
     {
         /// <summary>
@@ -377,6 +437,10 @@ namespace DiscImageChef.Decoders.PCMCIA
         public ushort CardID;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public class Level1VersionTuple
     {
         /// <summary>
@@ -409,6 +473,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public string[] AdditionalInformation;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Level2VersionTuple
     {
         /// <summary>
@@ -453,6 +520,9 @@ namespace DiscImageChef.Decoders.PCMCIA
         public string Information;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class GeometryTuple
     {
         /// <summary>

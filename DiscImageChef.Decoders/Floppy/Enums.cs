@@ -30,11 +30,14 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.Floppy
 {
     /// <summary>
     /// In-sector code for sector size
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum IBMSectorSizeCode : byte
     {
         /// <summary>
@@ -71,6 +74,7 @@ namespace DiscImageChef.Decoders.Floppy
         FricelyFriceKilo = 7
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum IBMIdType : byte
     {
         IndexMark = 0xFC,
@@ -79,6 +83,7 @@ namespace DiscImageChef.Decoders.Floppy
         DeletedDataMark = 0xF8
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum AppleEncodedFormat : byte
     {
         /// <summary>

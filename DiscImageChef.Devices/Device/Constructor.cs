@@ -125,7 +125,7 @@ namespace DiscImageChef.Devices
             Type = DeviceType.Unknown;
             ScsiType = PeripheralDeviceTypes.UnknownDevice;
 
-            AtaErrorRegistersCHS errorRegisters;
+            AtaErrorRegistersChs errorRegisters;
 
             byte[] ataBuf;
             byte[] senseBuf;

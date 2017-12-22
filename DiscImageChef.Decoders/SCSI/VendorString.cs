@@ -34,9 +34,9 @@ namespace DiscImageChef.Decoders.SCSI
 {
     public static class VendorString
     {
-        public static string Prettify(string SCSIVendorString)
+        public static string Prettify(string scsiVendorString)
         {
-            switch(SCSIVendorString)
+            switch(scsiVendorString)
             {
                 case "0B4C": return "MOOSIK Ltd.";
                 case "13FE": return "PHISON";
@@ -836,7 +836,7 @@ namespace DiscImageChef.Decoders.SCSI
                 case "ZETTA": return "Zetta Systems, Inc.";
                 case "ZTE": return "ZTE Corporation";
                 case "ZVAULT": return "Zetavault";
-                default: return SCSIVendorString;
+                default: return scsiVendorString;
             }
         }
     }

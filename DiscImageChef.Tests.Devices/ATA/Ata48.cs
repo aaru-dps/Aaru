@@ -97,7 +97,7 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.GetNativeMaxAddressExt(out ulong lba, out AtaErrorRegistersLBA48 errorRegisters,
+            bool sense = dev.GetNativeMaxAddressExt(out ulong lba, out AtaErrorRegistersLba48 errorRegisters,
                                                     dev.Timeout, out double duration);
 
             menu:
@@ -214,7 +214,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersLBA48 errorRegisters, lba, count,
+            bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, lba, count,
                                      dev.Timeout, out double duration);
 
             menu:
@@ -350,7 +350,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.ReadLog(out byte[] buffer, out AtaErrorRegistersLBA48 errorRegisters, address, page, count,
+            bool sense = dev.ReadLog(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, address, page, count,
                                      dev.Timeout, out double duration);
 
             menu:
@@ -486,7 +486,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.ReadLogDma(out byte[] buffer, out AtaErrorRegistersLBA48 errorRegisters, address, page,
+            bool sense = dev.ReadLogDma(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, address, page,
                                         count, dev.Timeout, out double duration);
 
             menu:
@@ -617,7 +617,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersLBA48 errorRegisters, lba, count,
+            bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, lba, count,
                                           dev.Timeout, out double duration);
 
             menu:
@@ -684,7 +684,7 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.ReadNativeMaxAddress(out ulong lba, out AtaErrorRegistersLBA48 errorRegisters, dev.Timeout,
+            bool sense = dev.ReadNativeMaxAddress(out ulong lba, out AtaErrorRegistersLba48 errorRegisters, dev.Timeout,
                                                   out double duration);
 
             menu:
@@ -801,7 +801,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersLBA48 errorRegisters, lba, count, dev.Timeout,
+            bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, lba, count, dev.Timeout,
                                   out double duration);
 
             menu:

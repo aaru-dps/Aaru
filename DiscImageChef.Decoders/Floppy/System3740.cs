@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
@@ -47,6 +48,9 @@ namespace DiscImageChef.Decoders.Floppy
     /// <summary>
     /// Methods and structures for IBM System 3740 floppy decoding
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class System3740
     {
         /// <summary>

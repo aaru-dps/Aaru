@@ -118,7 +118,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.CheckMediaCardType(feature, out AtaErrorRegistersCHS errorRegisters, dev.Timeout,
+            bool sense = dev.CheckMediaCardType(feature, out AtaErrorRegistersChs errorRegisters, dev.Timeout,
                                                 out double duration);
 
             menu:

@@ -37,16 +37,16 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        public bool SmartDisable(out AtaErrorRegistersLBA28 statusRegisters, uint timeout, out double duration)
+        public bool SmartDisable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.Smart;
-            registers.feature = (byte)AtaSmartSubCommands.Disable;
-            registers.lbaHigh = 0xC2;
-            registers.lbaMid = 0x4F;
+            registers.Command = (byte)AtaCommands.Smart;
+            registers.Feature = (byte)AtaSmartSubCommands.Disable;
+            registers.LbaHigh = 0xC2;
+            registers.LbaMid = 0x4F;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -58,18 +58,18 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool SmartEnableAttributeAutosave(out AtaErrorRegistersLBA28 statusRegisters, uint timeout,
+        public bool SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                                  out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.Smart;
-            registers.feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave;
-            registers.lbaHigh = 0xC2;
-            registers.lbaMid = 0x4F;
-            registers.sectorCount = 0xF1;
+            registers.Command = (byte)AtaCommands.Smart;
+            registers.Feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave;
+            registers.LbaHigh = 0xC2;
+            registers.LbaMid = 0x4F;
+            registers.SectorCount = 0xF1;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -81,17 +81,17 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool SmartDisableAttributeAutosave(out AtaErrorRegistersLBA28 statusRegisters, uint timeout,
+        public bool SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                                   out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.Smart;
-            registers.feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave;
-            registers.lbaHigh = 0xC2;
-            registers.lbaMid = 0x4F;
+            registers.Command = (byte)AtaCommands.Smart;
+            registers.Feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave;
+            registers.LbaHigh = 0xC2;
+            registers.LbaMid = 0x4F;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -103,16 +103,16 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool SmartEnable(out AtaErrorRegistersLBA28 statusRegisters, uint timeout, out double duration)
+        public bool SmartEnable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.Smart;
-            registers.feature = (byte)AtaSmartSubCommands.Enable;
-            registers.lbaHigh = 0xC2;
-            registers.lbaMid = 0x4F;
+            registers.Command = (byte)AtaCommands.Smart;
+            registers.Feature = (byte)AtaSmartSubCommands.Enable;
+            registers.LbaHigh = 0xC2;
+            registers.LbaMid = 0x4F;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -124,18 +124,18 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLBA28 statusRegisters, byte subcommand,
+        public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 statusRegisters, byte subcommand,
                                                  uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.Smart;
-            registers.feature = (byte)AtaSmartSubCommands.ExecuteOfflineImmediate;
-            registers.lbaHigh = 0xC2;
-            registers.lbaMid = 0x4F;
-            registers.lbaLow = subcommand;
+            registers.Command = (byte)AtaCommands.Smart;
+            registers.Feature = (byte)AtaSmartSubCommands.ExecuteOfflineImmediate;
+            registers.LbaHigh = 0xC2;
+            registers.LbaMid = 0x4F;
+            registers.LbaLow = subcommand;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -147,17 +147,17 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool SmartReadData(out byte[] buffer, out AtaErrorRegistersLBA28 statusRegisters, uint timeout,
+        public bool SmartReadData(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                   out double duration)
         {
             buffer = new byte[512];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.Smart;
-            registers.feature = (byte)AtaSmartSubCommands.ReadData;
-            registers.lbaHigh = 0xC2;
-            registers.lbaMid = 0x4F;
+            registers.Command = (byte)AtaCommands.Smart;
+            registers.Feature = (byte)AtaSmartSubCommands.ReadData;
+            registers.LbaHigh = 0xC2;
+            registers.LbaMid = 0x4F;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -169,18 +169,18 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool SmartReadLog(out byte[] buffer, out AtaErrorRegistersLBA28 statusRegisters, byte logAddress,
+        public bool SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, byte logAddress,
                                  uint timeout, out double duration)
         {
             buffer = new byte[512];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.Smart;
-            registers.feature = (byte)AtaSmartSubCommands.ReadLog;
-            registers.lbaHigh = 0xC2;
-            registers.lbaMid = 0x4F;
-            registers.lbaLow = logAddress;
+            registers.Command = (byte)AtaCommands.Smart;
+            registers.Feature = (byte)AtaSmartSubCommands.ReadLog;
+            registers.LbaHigh = 0xC2;
+            registers.LbaMid = 0x4F;
+            registers.LbaLow = logAddress;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
@@ -192,16 +192,16 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool SmartReturnStatus(out AtaErrorRegistersLBA28 statusRegisters, uint timeout, out double duration)
+        public bool SmartReturnStatus(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersLba28 registers = new AtaRegistersLba28();
             bool sense;
 
-            registers.command = (byte)AtaCommands.Smart;
-            registers.feature = (byte)AtaSmartSubCommands.ReturnStatus;
-            registers.lbaHigh = 0xC2;
-            registers.lbaMid = 0x4F;
+            registers.Command = (byte)AtaCommands.Smart;
+            registers.Feature = (byte)AtaSmartSubCommands.ReturnStatus;
+            registers.LbaHigh = 0xC2;
+            registers.LbaMid = 0x4F;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,

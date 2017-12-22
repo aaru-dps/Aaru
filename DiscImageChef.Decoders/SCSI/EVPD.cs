@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -39,6 +40,11 @@ using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+    [SuppressMessage("ReSharper", "UnassignedField.Global")]
     public static class EVPD
     {
         /// <summary>
@@ -48,9 +54,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x00.</param>
         public static byte[] DecodePage00(byte[] page)
         {
-            if(page == null) return null;
-
-            if(page[1] != 0) return null;
+            if(page?[1] != 0) return null;
 
             if(page.Length != page[3] + 4) return null;
 
@@ -88,9 +92,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x80.</param>
         public static string DecodePage80(byte[] page)
         {
-            if(page == null) return null;
-
-            if(page[1] != 0x80) return null;
+            if(page?[1] != 0x80) return null;
 
             if(page.Length != page[3] + 4) return null;
 
@@ -140,21 +142,20 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_81? DecodePage_81(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0x81) return null;
+            if(pageResponse?[1] != 0x81) return null;
 
             if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 6) return null;
 
-            Page_81 decoded = new Page_81();
-
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
-            decoded.Current = (ScsiDefinitions)(pageResponse[4] & 0x7F);
-            decoded.Default = (ScsiDefinitions)(pageResponse[5] & 0x7F);
+            Page_81 decoded = new Page_81
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                Current = (ScsiDefinitions)(pageResponse[4] & 0x7F),
+                Default = (ScsiDefinitions)(pageResponse[5] & 0x7F)
+            };
 
             int position = 6;
             List<ScsiDefinitions> definitions = new List<ScsiDefinitions>();
@@ -222,9 +223,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x82.</param>
         public static string DecodePage82(byte[] page)
         {
-            if(page == null) return null;
-
-            if(page[1] != 0x82) return null;
+            if(page?[1] != 0x82) return null;
 
             if(page.Length != page[3] + 4) return null;
 
@@ -378,32 +377,34 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_83? DecodePage_83(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0x83) return null;
+            if(pageResponse?[1] != 0x83) return null;
 
             if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 6) return null;
 
-            Page_83 decoded = new Page_83();
+            Page_83 decoded = new Page_83
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4)
+            };
 
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
 
             int position = 4;
             List<IdentificatonDescriptor> descriptors = new List<IdentificatonDescriptor>();
 
             while(position < pageResponse.Length)
             {
-                IdentificatonDescriptor descriptor = new IdentificatonDescriptor();
-                descriptor.ProtocolIdentifier = (ProtocolIdentifiers)((pageResponse[position] & 0xF0) >> 4);
-                descriptor.CodeSet = (IdentificationCodeSet)(pageResponse[position] & 0x0F);
-                descriptor.PIV |= (pageResponse[position + 1] & 0x80) == 0x80;
-                descriptor.Association = (IdentificationAssociation)((pageResponse[position + 1] & 0x30) >> 4);
-                descriptor.Type = (IdentificationTypes)(pageResponse[position + 1] & 0x0F);
-                descriptor.Length = pageResponse[position + 3];
+                IdentificatonDescriptor descriptor = new IdentificatonDescriptor
+                {
+                    ProtocolIdentifier = (ProtocolIdentifiers)((pageResponse[position] & 0xF0) >> 4),
+                    CodeSet = (IdentificationCodeSet)(pageResponse[position] & 0x0F),
+                    PIV = (pageResponse[position + 1] & 0x80) == 0x80,
+                    Association = (IdentificationAssociation)((pageResponse[position + 1] & 0x30) >> 4),
+                    Type = (IdentificationTypes)(pageResponse[position + 1] & 0x0F),
+                    Length = pageResponse[position + 3]
+                };
                 descriptor.Binary = new byte[descriptor.Length];
                 if(descriptor.Length + position + 4 >= pageResponse.Length)
                     descriptor.Length = (byte)(pageResponse.Length - position - 4);
@@ -534,6 +535,7 @@ namespace DiscImageChef.Decoders.SCSI
                                                 (byte)descriptor.CodeSet).AppendLine();
                                 break;
                         }
+
                         break;
                     case IdentificationTypes.Inquiry:
                         switch(descriptor.CodeSet) {
@@ -550,6 +552,7 @@ namespace DiscImageChef.Decoders.SCSI
                                                 (byte)descriptor.CodeSet).AppendLine();
                                 break;
                         }
+
                         break;
                     case IdentificationTypes.EUI:
                         if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
@@ -782,27 +785,26 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_84? DecodePage_84(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0x84) return null;
+            if(pageResponse?[1] != 0x84) return null;
 
             if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 10) return null;
 
-            Page_84 decoded = new Page_84();
+            Page_84 decoded = new Page_84
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4)
+            };
 
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
 
             int position = 4;
             List<SoftwareIdentifier> identifiers = new List<SoftwareIdentifier>();
 
             while(position < pageResponse.Length)
             {
-                SoftwareIdentifier identifier = new SoftwareIdentifier();
-                identifier.Identifier = new byte[6];
+                SoftwareIdentifier identifier = new SoftwareIdentifier {Identifier = new byte[6]};
                 Array.Copy(pageResponse, position, identifier.Identifier, 0, 6);
                 identifiers.Add(identifier);
                 position += 6;
@@ -909,29 +911,31 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_85? DecodePage_85(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0x85) return null;
+            if(pageResponse?[1] != 0x85) return null;
 
             if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 4) return null;
 
-            Page_85 decoded = new Page_85();
+            Page_85 decoded = new Page_85
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4)
+            };
 
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4);
 
             int position = 4;
             List<NetworkDescriptor> descriptors = new List<NetworkDescriptor>();
 
             while(position < pageResponse.Length)
             {
-                NetworkDescriptor descriptor = new NetworkDescriptor();
-                descriptor.Association = (IdentificationAssociation)((pageResponse[position] & 0x60) >> 5);
-                descriptor.Type = (NetworkServiceTypes)(pageResponse[position] & 0x1F);
-                descriptor.Length = (ushort)((pageResponse[position + 2] << 8) + pageResponse[position + 3]);
+                NetworkDescriptor descriptor = new NetworkDescriptor
+                {
+                    Association = (IdentificationAssociation)((pageResponse[position] & 0x60) >> 5),
+                    Type = (NetworkServiceTypes)(pageResponse[position] & 0x1F),
+                    Length = (ushort)((pageResponse[position + 2] << 8) + pageResponse[position + 3])
+                };
                 descriptor.Address = new byte[descriptor.Length];
                 Array.Copy(pageResponse, position + 4, descriptor.Address, 0, descriptor.Length);
 
@@ -1164,49 +1168,45 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_86? DecodePage_86(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0x86) return null;
+            if(pageResponse?[1] != 0x86) return null;
 
             if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 64) return null;
 
-            Page_86 decoded = new Page_86();
-
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
-
-            decoded.ActivateMicrocode = (byte)((pageResponse[4] & 0xC0) >> 6);
-            decoded.SPT = (byte)((pageResponse[4] & 0x38) >> 3);
-            decoded.GRD_CHK |= (pageResponse[4] & 0x04) == 0x04;
-            decoded.APP_CHK |= (pageResponse[4] & 0x02) == 0x02;
-            decoded.REF_CHK |= (pageResponse[4] & 0x01) == 0x01;
-            decoded.UASK_SUP |= (pageResponse[5] & 0x20) == 0x20;
-            decoded.GROUP_SUP |= (pageResponse[5] & 0x10) == 0x10;
-            decoded.PRIOR_SUP |= (pageResponse[5] & 0x08) == 0x08;
-            decoded.HEADSUP |= (pageResponse[5] & 0x04) == 0x04;
-            decoded.ORDSUP |= (pageResponse[5] & 0x02) == 0x02;
-            decoded.SIMPSUP |= (pageResponse[5] & 0x01) == 0x01;
-            decoded.WU_SUP |= (pageResponse[6] & 0x08) == 0x08;
-            decoded.CRD_SUP |= (pageResponse[6] & 0x04) == 0x04;
-            decoded.NV_SUP |= (pageResponse[6] & 0x02) == 0x02;
-            decoded.V_SUP |= (pageResponse[6] & 0x01) == 0x01;
-            decoded.NO_PI_CHK |= (pageResponse[7] & 0x20) == 0x20;
-            decoded.P_I_I_SUP |= (pageResponse[7] & 0x10) == 0x10;
-            decoded.LUICLR |= (pageResponse[7] & 0x01) == 0x01;
-            decoded.R_SUP |= (pageResponse[8] & 0x10) == 0x10;
-            decoded.HSSRELEF |= (pageResponse[8] & 0x02) == 0x02;
-            decoded.CBCS |= (pageResponse[8] & 0x01) == 0x01;
-            decoded.Nexus = (byte)(pageResponse[9] & 0x0F);
-            decoded.ExtendedTestMinutes = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
-            decoded.POA_SUP |= (pageResponse[12] & 0x80) == 0x80;
-            decoded.HRA_SUP |= (pageResponse[12] & 0x40) == 0x40;
-            decoded.VSA_SUP |= (pageResponse[12] & 0x20) == 0x20;
-            decoded.MaximumSenseLength = pageResponse[13];
-
-            return decoded;
+            return new Page_86
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                ActivateMicrocode = (byte)((pageResponse[4] & 0xC0) >> 6),
+                SPT = (byte)((pageResponse[4] & 0x38) >> 3),
+                GRD_CHK = (pageResponse[4] & 0x04) == 0x04,
+                APP_CHK = (pageResponse[4] & 0x02) == 0x02,
+                REF_CHK = (pageResponse[4] & 0x01) == 0x01,
+                UASK_SUP = (pageResponse[5] & 0x20) == 0x20,
+                GROUP_SUP = (pageResponse[5] & 0x10) == 0x10,
+                PRIOR_SUP = (pageResponse[5] & 0x08) == 0x08,
+                HEADSUP = (pageResponse[5] & 0x04) == 0x04,
+                ORDSUP = (pageResponse[5] & 0x02) == 0x02,
+                SIMPSUP = (pageResponse[5] & 0x01) == 0x01,
+                WU_SUP = (pageResponse[6] & 0x08) == 0x08,
+                CRD_SUP = (pageResponse[6] & 0x04) == 0x04,
+                NV_SUP = (pageResponse[6] & 0x02) == 0x02,
+                V_SUP = (pageResponse[6] & 0x01) == 0x01,
+                NO_PI_CHK = (pageResponse[7] & 0x20) == 0x20,
+                P_I_I_SUP = (pageResponse[7] & 0x10) == 0x10,
+                LUICLR = (pageResponse[7] & 0x01) == 0x01,
+                R_SUP = (pageResponse[8] & 0x10) == 0x10,
+                HSSRELEF = (pageResponse[8] & 0x02) == 0x02,
+                CBCS = (pageResponse[8] & 0x01) == 0x01,
+                Nexus = (byte)(pageResponse[9] & 0x0F),
+                ExtendedTestMinutes = (ushort)((pageResponse[10] << 8) + pageResponse[11]),
+                POA_SUP = (pageResponse[12] & 0x80) == 0x80,
+                HRA_SUP = (pageResponse[12] & 0x40) == 0x40,
+                VSA_SUP = (pageResponse[12] & 0x20) == 0x20,
+                MaximumSenseLength = pageResponse[13]
+            };
         }
 
         public static string PrettifyPage_86(byte[] pageResponse)
@@ -1254,6 +1254,7 @@ namespace DiscImageChef.Decoders.SCSI
                               .AppendLine();
                             break;
                     }
+
                     break;
                 case PeripheralDeviceTypes.SequentialAccess when page.SPT == 1: sb.AppendLine("Logical unit supports logical block protection");
                     break;
@@ -1346,25 +1347,23 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_89? DecodePage_89(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0x89) return null;
+            if(pageResponse?[1] != 0x89) return null;
 
             if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 572) return null;
 
-            Page_89 decoded = new Page_89();
-
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4);
-
-            decoded.VendorIdentification = new byte[8];
-            decoded.ProductIdentification = new byte[16];
-            decoded.ProductRevisionLevel = new byte[4];
-            decoded.Signature = new byte[20];
-            decoded.IdentifyData = new byte[512];
+            Page_89 decoded = new Page_89
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4),
+                VendorIdentification = new byte[8],
+                ProductIdentification = new byte[16],
+                ProductRevisionLevel = new byte[4],
+                Signature = new byte[20],
+                IdentifyData = new byte[512]
+            };
 
             Array.Copy(pageResponse, 8, decoded.VendorIdentification, 0, 8);
             Array.Copy(pageResponse, 8, decoded.ProductIdentification, 0, 16);
@@ -1478,25 +1477,25 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C0_Quantum? DecodePage_C0_Quantum(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0xC0) return null;
+            if(pageResponse?[1] != 0xC0) return null;
 
             if(pageResponse[3] != 20) return null;
 
             if(pageResponse.Length != 36) return null;
 
-            Page_C0_Quantum decoded = new Page_C0_Quantum();
+            Page_C0_Quantum decoded = new Page_C0_Quantum
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                ServoFirmwareChecksum = (ushort)((pageResponse[4] << 8) + pageResponse[5]),
+                ServoEEPROMChecksum = (ushort)((pageResponse[6] << 8) + pageResponse[7]),
+                ReadWriteFirmwareChecksum =
+                    (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
+                           pageResponse[11]),
+                ReadWriteFirmwareBuildData = new byte[24]
+            };
 
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
-
-            decoded.ServoFirmwareChecksum = (ushort)((pageResponse[4] << 8) + pageResponse[5]);
-            decoded.ServoEEPROMChecksum = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
-            decoded.ReadWriteFirmwareChecksum = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) +
-                                                       (pageResponse[10] << 8) + pageResponse[11]);
-            decoded.ReadWriteFirmwareBuildData = new byte[24];
             Array.Copy(pageResponse, 12, decoded.ReadWriteFirmwareBuildData, 0, 24);
 
             return decoded;
@@ -1565,16 +1564,16 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(pageResponse.Length != 96) return null;
 
-            Page_C0_C1_Certance decoded = new Page_C0_C1_Certance();
-
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
-
-            decoded.Component = new byte[26];
-            decoded.Version = new byte[19];
-            decoded.Date = new byte[24];
-            decoded.Variant = new byte[23];
+            Page_C0_C1_Certance decoded = new Page_C0_C1_Certance
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                Component = new byte[26],
+                Version = new byte[19],
+                Date = new byte[24],
+                Variant = new byte[23]
+            };
 
             Array.Copy(pageResponse, 4, decoded.Component, 0, 26);
             Array.Copy(pageResponse, 30, decoded.Version, 0, 19);
@@ -1644,13 +1643,14 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(pageResponse.Length != 16) return null;
 
-            Page_C2_C3_C4_C5_C6_Certance decoded = new Page_C2_C3_C4_C5_C6_Certance();
+            Page_C2_C3_C4_C5_C6_Certance decoded = new Page_C2_C3_C4_C5_C6_Certance
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                SerialNumber = new byte[12]
+            };
 
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
-
-            decoded.SerialNumber = new byte[12];
             Array.Copy(pageResponse, 4, decoded.SerialNumber, 0, 12);
 
             return decoded;
@@ -1789,41 +1789,38 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_DF_Certance? DecodePage_DF_Certance(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0xDF) return null;
+            if(pageResponse?[1] != 0xDF) return null;
 
             if(pageResponse[3] != 60) return null;
 
             if(pageResponse.Length != 64) return null;
 
-            Page_DF_Certance decoded = new Page_DF_Certance();
-
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
-
-            decoded.CmdFwd = (byte)((pageResponse[5] & 0xC0) >> 5);
-            decoded.Alerts |= (pageResponse[5] & 0x20) == 0x20;
-            decoded.NoRemov |= (pageResponse[5] & 0x08) == 0x08;
-            decoded.UnitRsvd |= (pageResponse[5] & 0x04) == 0x04;
-            decoded.Clean |= (pageResponse[5] & 0x01) == 0x01;
-            decoded.Threaded |= (pageResponse[6] & 0x10) == 0x10;
-            decoded.Lun1Cmd |= (pageResponse[6] & 0x08) == 0x08;
-            decoded.AutoloadMode = (byte)(pageResponse[6] & 0x07);
-            decoded.CartridgeType = pageResponse[8];
-            decoded.CartridgeFormat = pageResponse[9];
-            decoded.CartridgeCapacity = (ushort)((pageResponse[10] << 8) + pageResponse[11] + 4);
-            decoded.PortATransportType = pageResponse[12];
-            decoded.PortASelectionID = pageResponse[15];
-            decoded.OperatingHours = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) +
-                                            (pageResponse[22] << 8) + pageResponse[23]);
+            Page_DF_Certance decoded = new Page_DF_Certance
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                CmdFwd = (byte)((pageResponse[5] & 0xC0) >> 5),
+                Alerts = (pageResponse[5] & 0x20) == 0x20,
+                NoRemov = (pageResponse[5] & 0x08) == 0x08,
+                UnitRsvd = (pageResponse[5] & 0x04) == 0x04,
+                Clean = (pageResponse[5] & 0x01) == 0x01,
+                Threaded = (pageResponse[6] & 0x10) == 0x10,
+                Lun1Cmd = (pageResponse[6] & 0x08) == 0x08,
+                AutoloadMode = (byte)(pageResponse[6] & 0x07),
+                CartridgeType = pageResponse[8],
+                CartridgeFormat = pageResponse[9],
+                CartridgeCapacity = (ushort)((pageResponse[10] << 8) + pageResponse[11] + 4),
+                PortATransportType = pageResponse[12],
+                PortASelectionID = pageResponse[15],
+                OperatingHours = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) +
+                                        pageResponse[23]),
+                CartridgeSerialNumber = new byte[32]
+            };
 
             byte[] buf = new byte[8];
             Array.Copy(pageResponse, 24, buf, 0, 8);
             decoded.InitiatorID = BitConverter.ToUInt64(buf.Reverse().ToArray(), 0);
-
-            decoded.CartridgeSerialNumber = new byte[32];
             Array.Copy(pageResponse, 32, decoded.CartridgeSerialNumber, 0, 32);
 
             return decoded;
@@ -1984,22 +1981,22 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C0_IBM? DecodePage_C0_IBM(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0xC0) return null;
+            if(pageResponse?[1] != 0xC0) return null;
 
             if(pageResponse[3] != 39) return null;
 
             if(pageResponse.Length != 43) return null;
 
-            Page_C0_IBM decoded = new Page_C0_IBM();
+            Page_C0_IBM decoded = new Page_C0_IBM
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                CodeName = new byte[12],
+                Date = new byte[8]
+            };
 
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
 
-            decoded.CodeName = new byte[12];
-            decoded.Date = new byte[8];
 
             Array.Copy(pageResponse, 4, decoded.CodeName, 0, 12);
             Array.Copy(pageResponse, 23, decoded.Date, 0, 8);
@@ -2057,22 +2054,20 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C1_IBM? DecodePage_C1_IBM(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0xC1) return null;
+            if(pageResponse?[1] != 0xC1) return null;
 
             if(pageResponse[3] != 24) return null;
 
             if(pageResponse.Length != 28) return null;
 
-            Page_C1_IBM decoded = new Page_C1_IBM();
-
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
-
-            decoded.ManufacturingSerial = new byte[12];
-            decoded.ReportedSerial = new byte[12];
+            Page_C1_IBM decoded = new Page_C1_IBM
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                ManufacturingSerial = new byte[12],
+                ReportedSerial = new byte[12]
+            };
 
             Array.Copy(pageResponse, 4, decoded.ManufacturingSerial, 0, 12);
             Array.Copy(pageResponse, 16, decoded.ReportedSerial, 0, 12);
@@ -2132,22 +2127,20 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_B0? DecodePage_B0(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0xB0) return null;
+            if(pageResponse?[1] != 0xB0) return null;
 
             if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
             if(pageResponse.Length < 5) return null;
 
-            Page_B0 decoded = new Page_B0();
-
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4);
-
-            decoded.TSMC = (pageResponse[4] & 0x02) == 0x02;
-            decoded.WORM = (pageResponse[4] & 0x01) == 0x01;
+            Page_B0 decoded = new Page_B0
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4),
+                TSMC = (pageResponse[4] & 0x02) == 0x02,
+                WORM = (pageResponse[4] & 0x01) == 0x01
+            };
 
             return decoded;
         }
@@ -2176,9 +2169,7 @@ namespace DiscImageChef.Decoders.SCSI
         #region EVPD Page 0xB1: Manufacturer-assigned Serial Number page
         public static string DecodePageB1(byte[] page)
         {
-            if(page == null) return null;
-
-            if(page[1] != 0xB1) return null;
+            if(page?[1] != 0xB1) return null;
 
             if(page.Length != page[3] + 4) return null;
 
@@ -2193,9 +2184,7 @@ namespace DiscImageChef.Decoders.SCSI
         #region EVPD Page 0xB2: TapeAlert Supported Flags page
         public static ulong DecodePageB2(byte[] page)
         {
-            if(page == null) return 0;
-
-            if(page[1] != 0xB2) return 0;
+            if(page?[1] != 0xB2) return 0;
 
             if(page.Length != 12) return 0;
 
@@ -2210,9 +2199,7 @@ namespace DiscImageChef.Decoders.SCSI
         #region EVPD Page 0xB3: Automation Device Serial Number page
         public static string DecodePageB3(byte[] page)
         {
-            if(page == null) return null;
-
-            if(page[1] != 0xB3) return null;
+            if(page?[1] != 0xB3) return null;
 
             if(page.Length != page[3] + 4) return null;
 
@@ -2227,9 +2214,7 @@ namespace DiscImageChef.Decoders.SCSI
         #region EVPD Page 0xB4: Data Transfer Device Element Address page
         public static string DecodePageB4(byte[] page)
         {
-            if(page == null) return null;
-
-            if(page[1] != 0xB3) return null;
+            if(page?[1] != 0xB3) return null;
 
             if(page.Length != page[3] + 4) return null;
 
@@ -2280,12 +2265,13 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(pageResponse.Length < 4) return null;
 
-            Page_C0_to_C5_HP decoded = new Page_C0_to_C5_HP();
-
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
-            decoded.PageCode = pageResponse[1];
+            Page_C0_to_C5_HP decoded = new Page_C0_to_C5_HP
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                PageCode = pageResponse[1]
+            };
 
             if(pageResponse[3] == 92 && pageResponse.Length >= 96)
             {
@@ -2305,24 +2291,20 @@ namespace DiscImageChef.Decoders.SCSI
             if(pageResponse[4] != pageResponse[3] - 1) return null;
 
             List<byte> array = new List<byte>();
-            string fwRegExStr =
-                "Firmware Rev\\s+=\\s+(?<fw>\\d+\\.\\d+)\\s+Build date\\s+=\\s+(?<date>(\\w|\\d|\\s*.)*)\\s*$";
-            string fwcRegExStr = "FW_CONF\\s+=\\s+(?<value>0x[0-9A-Fa-f]{8})\\s*$";
-            string servoRegExStr = "Servo\\s+Rev\\s+=\\s+(?<version>\\d+\\.\\d+)\\s*$";
+            const string fwRegExStr = @"Firmware Rev\s+=\s+(?<fw>\d+\.\d+)\s+Build date\s+=\s+(?<date>(\w|\d|\s*.)*)\s*$";
+            const string fwcRegExStr = @"FW_CONF\s+=\s+(?<value>0x[0-9A-Fa-f]{8})\s*$";
+            const string servoRegExStr = @"Servo\s+Rev\s+=\s+(?<version>\d+\.\d+)\s*$";
             Regex fwRegEx = new Regex(fwRegExStr);
             Regex fwcRegEx = new Regex(fwcRegExStr);
             Regex servoRegEx = new Regex(servoRegExStr);
-            Match fwMatch;
-            Match fwcMatch;
-            Match servoMatch;
 
             for(int pos = 5; pos < pageResponse.Length; pos++)
                 if(pageResponse[pos] == 0x00)
                 {
                     string str = StringHandlers.CToString(array.ToArray());
-                    fwMatch = fwRegEx.Match(str);
-                    fwcMatch = fwcRegEx.Match(str);
-                    servoMatch = servoRegEx.Match(str);
+                    Match fwMatch = fwRegEx.Match(str);
+                    Match fwcMatch = fwcRegEx.Match(str);
+                    Match servoMatch = servoRegEx.Match(str);
 
                     if(str.ToLowerInvariant().StartsWith("copyright", StringComparison.Ordinal))
                         decoded.Copyright = Encoding.ASCII.GetBytes(str);
@@ -2426,24 +2408,24 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Page_C0_Seagate? DecodePage_C0_Seagate(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if(pageResponse[1] != 0xC0) return null;
+            if(pageResponse?[1] != 0xC0) return null;
 
             if(pageResponse[3] != 12) return null;
 
             if(pageResponse.Length != 16) return null;
 
-            Page_C0_Seagate decoded = new Page_C0_Seagate();
+            Page_C0_Seagate decoded = new Page_C0_Seagate
+            {
+                PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength = (byte)(pageResponse[3] + 4),
+                PageCode = pageResponse[1],
+                ControllerFirmware = new byte[4],
+                BootFirmware = new byte[4],
+                ServoFirmware = new byte[4]
+            };
 
-            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
-            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)(pageResponse[3] + 4);
-            decoded.PageCode = pageResponse[1];
 
-            decoded.ControllerFirmware = new byte[4];
-            decoded.BootFirmware = new byte[4];
-            decoded.ServoFirmware = new byte[4];
 
             Array.Copy(pageResponse, 4, decoded.ControllerFirmware, 0, 4);
             Array.Copy(pageResponse, 8, decoded.BootFirmware, 0, 4);

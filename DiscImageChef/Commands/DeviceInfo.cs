@@ -161,22 +161,22 @@ namespace DiscImageChef.Commands
             {
                 case DeviceType.ATA:
                 {
-                    bool sense = dev.AtaIdentify(out byte[] ataBuf, out AtaErrorRegistersCHS errorRegisters);
+                    bool sense = dev.AtaIdentify(out byte[] ataBuf, out AtaErrorRegistersChs errorRegisters);
 
                     if(sense)
                     {
-                        DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
-                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
+                        DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
+                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
                         DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
-                                                  errorRegisters.sectorCount);
-                        DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.sector);
+                                                  errorRegisters.SectorCount);
+                        DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
                         DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
-                                                  errorRegisters.cylinderHigh);
+                                                  errorRegisters.CylinderHigh);
                         DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
-                                                  errorRegisters.cylinderLow);
+                                                  errorRegisters.CylinderLow);
                         DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
-                                                  errorRegisters.deviceHead);
-                        DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.command);
+                                                  errorRegisters.DeviceHead);
+                        DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.Command);
                         DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
                         break;
                     }
@@ -188,10 +188,10 @@ namespace DiscImageChef.Commands
 
                     dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out _);
 
-                    if(errorRegisters.sector == 0xAA && errorRegisters.sectorCount == 0x55)
+                    if(errorRegisters.Sector == 0xAA && errorRegisters.SectorCount == 0x55)
                     {
                         DicConsole.WriteLine("Device supports the Media Card Pass Through Command Set");
-                        switch(errorRegisters.deviceHead & 0x7)
+                        switch(errorRegisters.DeviceHead & 0x7)
                         {
                             case 0:
                                 DicConsole.WriteLine("Device reports incorrect media card type");
@@ -210,15 +210,15 @@ namespace DiscImageChef.Commands
                                 break;
                             default:
                                 DicConsole.WriteLine("Device contains unknown media card type {0}",
-                                                     errorRegisters.deviceHead & 0x07);
+                                                     errorRegisters.DeviceHead & 0x07);
                                 break;
                         }
 
-                        if((errorRegisters.deviceHead & 0x08) == 0x08)
+                        if((errorRegisters.DeviceHead & 0x08) == 0x08)
                             DicConsole.WriteLine("Media card is write protected");
 
                         ushort specificData =
-                            (ushort)(errorRegisters.cylinderHigh * 0x100 + errorRegisters.cylinderLow);
+                            (ushort)(errorRegisters.CylinderHigh * 0x100 + errorRegisters.CylinderLow);
                         if(specificData != 0) DicConsole.WriteLine("Card specific data: 0x{0:X4}", specificData);
                     }
 
@@ -226,22 +226,22 @@ namespace DiscImageChef.Commands
                 }
                 case DeviceType.ATAPI:
                 {
-                    bool sense = dev.AtapiIdentify(out byte[] ataBuf, out AtaErrorRegistersCHS errorRegisters);
+                    bool sense = dev.AtapiIdentify(out byte[] ataBuf, out AtaErrorRegistersChs errorRegisters);
 
                     if(sense)
                     {
-                        DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
-                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
+                        DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
+                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
                         DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
-                                                  errorRegisters.sectorCount);
-                        DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.sector);
+                                                  errorRegisters.SectorCount);
+                        DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
                         DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
-                                                  errorRegisters.cylinderHigh);
+                                                  errorRegisters.CylinderHigh);
                         DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
-                                                  errorRegisters.cylinderLow);
+                                                  errorRegisters.CylinderLow);
                         DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
-                                                  errorRegisters.deviceHead);
-                        DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.command);
+                                                  errorRegisters.DeviceHead);
+                        DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.Command);
                         DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
                         break;
                     }

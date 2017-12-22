@@ -64,11 +64,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                     LisaTag.PriamTag searchTag;
                     DecodeTag(imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag), out searchTag);
 
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
 
-                    if(before_mddf == -1 && searchTag.fileID == FILEID_LOADER_SIGNED) before_mddf = i - 1;
+                    if(before_mddf == -1 && searchTag.FileId == FILEID_LOADER_SIGNED) before_mddf = i - 1;
 
-                    if(searchTag.fileID != FILEID_MDDF) continue;
+                    if(searchTag.FileId != FILEID_MDDF) continue;
 
                     byte[] sector = imagePlugin.ReadSector((ulong)i);
                     MDDF info_mddf = new MDDF();
@@ -142,11 +142,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                     LisaTag.PriamTag searchTag;
                     DecodeTag(imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag), out searchTag);
 
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
 
-                    if(before_mddf == -1 && searchTag.fileID == FILEID_LOADER_SIGNED) before_mddf = i - 1;
+                    if(before_mddf == -1 && searchTag.FileId == FILEID_LOADER_SIGNED) before_mddf = i - 1;
 
-                    if(searchTag.fileID != FILEID_MDDF) continue;
+                    if(searchTag.FileId != FILEID_MDDF) continue;
 
                     byte[] sector = imagePlugin.ReadSector((ulong)i);
                     MDDF info_mddf = new MDDF();

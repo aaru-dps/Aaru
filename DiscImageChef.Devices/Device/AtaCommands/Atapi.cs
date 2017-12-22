@@ -43,7 +43,7 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
-        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters)
+        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters)
         {
             return AtapiIdentify(out buffer, out statusRegisters, Timeout);
         }
@@ -55,7 +55,7 @@ namespace DiscImageChef.Devices
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="duration">Duration.</param>
-        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, out double duration)
+        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, out double duration)
         {
             return AtapiIdentify(out buffer, out statusRegisters, Timeout, out duration);
         }
@@ -67,7 +67,7 @@ namespace DiscImageChef.Devices
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout.</param>
-        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, uint timeout)
+        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, uint timeout)
         {
             double duration;
             return AtapiIdentify(out buffer, out statusRegisters, timeout, out duration);
@@ -81,14 +81,14 @@ namespace DiscImageChef.Devices
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, uint timeout,
+        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, uint timeout,
                                   out double duration)
         {
             buffer = new byte[512];
-            AtaRegistersCHS registers = new AtaRegistersCHS();
+            AtaRegistersChs registers = new AtaRegistersChs();
             bool sense;
 
-            registers.command = (byte)AtaCommands.IdentifyPacketDevice;
+            registers.Command = (byte)AtaCommands.IdentifyPacketDevice;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,

@@ -81,7 +81,7 @@ namespace DiscImageChef.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
-            bool sense = dev.RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLBA28 errorRegisters,
+            bool sense = dev.RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLba28 errorRegisters,
                                                       dev.Timeout, out double duration);
 
             menu:
@@ -208,7 +208,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersCHS errorRegisters, cylinder, head,
+            bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, cylinder, head,
                                              sector, dev.Timeout, out double duration);
 
             menu:
@@ -328,7 +328,7 @@ namespace DiscImageChef.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
-            bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersLBA28 errorRegisters, lba,
+            bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, lba,
                                              dev.Timeout, out double duration);
 
             menu:

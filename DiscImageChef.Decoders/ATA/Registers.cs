@@ -32,72 +32,72 @@
 
 namespace DiscImageChef.Decoders.ATA
 {
-    public struct AtaRegistersCHS
+    public struct AtaRegistersChs
     {
-        public byte feature;
-        public byte sectorCount;
-        public byte sector;
-        public byte cylinderLow;
-        public byte cylinderHigh;
-        public byte deviceHead;
-        public byte command;
+        public byte Feature;
+        public byte SectorCount;
+        public byte Sector;
+        public byte CylinderLow;
+        public byte CylinderHigh;
+        public byte DeviceHead;
+        public byte Command;
     }
 
-    public struct AtaRegistersLBA28
+    public struct AtaRegistersLba28
     {
-        public byte feature;
-        public byte sectorCount;
-        public byte lbaLow;
-        public byte lbaMid;
-        public byte lbaHigh;
-        public byte deviceHead;
-        public byte command;
+        public byte Feature;
+        public byte SectorCount;
+        public byte LbaLow;
+        public byte LbaMid;
+        public byte LbaHigh;
+        public byte DeviceHead;
+        public byte Command;
     }
 
-    public struct AtaRegistersLBA48
+    public struct AtaRegistersLba48
     {
-        public ushort feature;
-        public ushort sectorCount;
-        public ushort lbaLow;
-        public ushort lbaMid;
-        public ushort lbaHigh;
-        public byte deviceHead;
-        public byte command;
+        public ushort Feature;
+        public ushort SectorCount;
+        public ushort LbaLow;
+        public ushort LbaMid;
+        public ushort LbaHigh;
+        public byte DeviceHead;
+        public byte Command;
     }
 
-    public struct AtaErrorRegistersCHS
+    public struct AtaErrorRegistersChs
     {
-        public byte status;
-        public byte error;
-        public byte sectorCount;
-        public byte sector;
-        public byte cylinderLow;
-        public byte cylinderHigh;
-        public byte deviceHead;
-        public byte command;
+        public byte Status;
+        public byte Error;
+        public byte SectorCount;
+        public byte Sector;
+        public byte CylinderLow;
+        public byte CylinderHigh;
+        public byte DeviceHead;
+        public byte Command;
     }
 
-    public struct AtaErrorRegistersLBA28
+    public struct AtaErrorRegistersLba28
     {
-        public byte status;
-        public byte error;
-        public byte sectorCount;
-        public byte lbaLow;
-        public byte lbaMid;
-        public byte lbaHigh;
-        public byte deviceHead;
-        public byte command;
+        public byte Status;
+        public byte Error;
+        public byte SectorCount;
+        public byte LbaLow;
+        public byte LbaMid;
+        public byte LbaHigh;
+        public byte DeviceHead;
+        public byte Command;
     }
 
-    public struct AtaErrorRegistersLBA48
+    public struct AtaErrorRegistersLba48
     {
-        public byte status;
-        public byte error;
-        public ushort sectorCount;
-        public ushort lbaLow;
-        public ushort lbaMid;
-        public ushort lbaHigh;
-        public byte deviceHead;
-        public byte command;
+        public byte Status;
+        public byte Error;
+        public ushort SectorCount;
+        public ushort LbaLow;
+        public ushort LbaMid;
+        public ushort LbaHigh;
+        public byte DeviceHead;
+        public byte Command;
     }
 }

@@ -85,7 +85,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 for(ulong i = 0; i < device.ImageInfo.Sectors; i++)
                 {
                     DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out extTag);
-                    if(extTag.fileID != fileId * -1) continue;
+                    if(extTag.FileId != fileId * -1) continue;
 
                     ptr = i;
                     found = true;
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // Checks that the sector tag indicates its the Extents File we are searching for
             DecodeTag(device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag), out extTag);
 
-            if(extTag.fileID != (short)(-1 * fileId)) return Errno.NoSuchFile;
+            if(extTag.FileId != (short)(-1 * fileId)) return Errno.NoSuchFile;
 
             byte[] sector;
 

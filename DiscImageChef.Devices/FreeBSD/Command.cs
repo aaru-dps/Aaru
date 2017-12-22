@@ -271,13 +271,13 @@ namespace DiscImageChef.Devices.FreeBSD
             }
         }
 
-        internal static int SendAtaCommand(IntPtr dev, AtaRegistersCHS registers,
-                                           out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(IntPtr dev, AtaRegistersChs registers,
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new AtaErrorRegistersCHS();
+            errorRegisters = new AtaErrorRegistersChs();
 
             if(buffer == null) return -1;
 
@@ -307,13 +307,13 @@ namespace DiscImageChef.Devices.FreeBSD
                     break;
             }
 
-            ataio.cmd.command = registers.command;
-            ataio.cmd.lba_high = registers.cylinderHigh;
-            ataio.cmd.lba_mid = registers.cylinderLow;
-            ataio.cmd.device = (byte)(0x40 | registers.deviceHead);
-            ataio.cmd.features = registers.feature;
-            ataio.cmd.sector_count = registers.sectorCount;
-            ataio.cmd.lba_low = registers.sector;
+            ataio.cmd.command = registers.Command;
+            ataio.cmd.lba_high = registers.CylinderHigh;
+            ataio.cmd.lba_mid = registers.CylinderLow;
+            ataio.cmd.device = (byte)(0x40 | registers.DeviceHead);
+            ataio.cmd.features = registers.Feature;
+            ataio.cmd.sector_count = registers.SectorCount;
+            ataio.cmd.lba_low = registers.Sector;
 
             Marshal.Copy(buffer, 0, ataio.data_ptr, buffer.Length);
             Marshal.StructureToPtr(ataio, ccbPtr, false);
@@ -336,13 +336,13 @@ namespace DiscImageChef.Devices.FreeBSD
 
             if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError) sense = true;
 
-            errorRegisters.cylinderHigh = ataio.res.lba_high;
-            errorRegisters.cylinderLow = ataio.res.lba_mid;
-            errorRegisters.deviceHead = ataio.res.device;
-            errorRegisters.error = ataio.res.error;
-            errorRegisters.sector = ataio.res.lba_low;
-            errorRegisters.sectorCount = ataio.res.sector_count;
-            errorRegisters.status = ataio.res.status;
+            errorRegisters.CylinderHigh = ataio.res.lba_high;
+            errorRegisters.CylinderLow = ataio.res.lba_mid;
+            errorRegisters.DeviceHead = ataio.res.device;
+            errorRegisters.Error = ataio.res.error;
+            errorRegisters.Sector = ataio.res.lba_low;
+            errorRegisters.SectorCount = ataio.res.sector_count;
+            errorRegisters.Status = ataio.res.status;
 
             buffer = new byte[ataio.dxfer_len];
 
@@ -352,18 +352,18 @@ namespace DiscImageChef.Devices.FreeBSD
             Marshal.FreeHGlobal(ataio.data_ptr);
             cam_freeccb(ccbPtr);
 
-            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0 || error != 0;
+            sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0 || error != 0;
 
             return error;
         }
 
-        internal static int SendAtaCommand(IntPtr dev, AtaRegistersLBA28 registers,
-                                           out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(IntPtr dev, AtaRegistersLba28 registers,
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new AtaErrorRegistersLBA28();
+            errorRegisters = new AtaErrorRegistersLba28();
 
             if(buffer == null) return -1;
 
@@ -393,13 +393,13 @@ namespace DiscImageChef.Devices.FreeBSD
                     break;
             }
 
-            ataio.cmd.command = registers.command;
-            ataio.cmd.lba_high = registers.lbaHigh;
-            ataio.cmd.lba_mid = registers.lbaMid;
-            ataio.cmd.device = (byte)(0x40 | registers.deviceHead);
-            ataio.cmd.features = registers.feature;
-            ataio.cmd.sector_count = registers.sectorCount;
-            ataio.cmd.lba_low = registers.lbaLow;
+            ataio.cmd.command = registers.Command;
+            ataio.cmd.lba_high = registers.LbaHigh;
+            ataio.cmd.lba_mid = registers.LbaMid;
+            ataio.cmd.device = (byte)(0x40 | registers.DeviceHead);
+            ataio.cmd.features = registers.Feature;
+            ataio.cmd.sector_count = registers.SectorCount;
+            ataio.cmd.lba_low = registers.LbaLow;
 
             Marshal.Copy(buffer, 0, ataio.data_ptr, buffer.Length);
             Marshal.StructureToPtr(ataio, ccbPtr, false);
@@ -422,13 +422,13 @@ namespace DiscImageChef.Devices.FreeBSD
 
             if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError) sense = true;
 
-            errorRegisters.lbaHigh = ataio.res.lba_high;
-            errorRegisters.lbaMid = ataio.res.lba_mid;
-            errorRegisters.deviceHead = ataio.res.device;
-            errorRegisters.error = ataio.res.error;
-            errorRegisters.lbaLow = ataio.res.lba_low;
-            errorRegisters.sectorCount = ataio.res.sector_count;
-            errorRegisters.status = ataio.res.status;
+            errorRegisters.LbaHigh = ataio.res.lba_high;
+            errorRegisters.LbaMid = ataio.res.lba_mid;
+            errorRegisters.DeviceHead = ataio.res.device;
+            errorRegisters.Error = ataio.res.error;
+            errorRegisters.LbaLow = ataio.res.lba_low;
+            errorRegisters.SectorCount = ataio.res.sector_count;
+            errorRegisters.Status = ataio.res.status;
 
             buffer = new byte[ataio.dxfer_len];
 
@@ -438,18 +438,18 @@ namespace DiscImageChef.Devices.FreeBSD
             Marshal.FreeHGlobal(ataio.data_ptr);
             cam_freeccb(ccbPtr);
 
-            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0 || error != 0;
+            sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0 || error != 0;
 
             return error;
         }
 
-        internal static int SendAtaCommand(IntPtr dev, AtaRegistersLBA48 registers,
-                                           out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+        internal static int SendAtaCommand(IntPtr dev, AtaRegistersLba48 registers,
+                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new AtaErrorRegistersLBA48();
+            errorRegisters = new AtaErrorRegistersLba48();
 
             // 48-bit ATA CAM commands can crash FreeBSD < 9.2-RELEASE
             if(Environment.Version.Major == 9 && Environment.Version.Minor < 2 ||
@@ -483,18 +483,18 @@ namespace DiscImageChef.Devices.FreeBSD
                     break;
             }
 
-            ataio.cmd.lba_high_exp = (byte)((registers.lbaHigh & 0xFF00) >> 8);
-            ataio.cmd.lba_mid_exp = (byte)((registers.lbaMid & 0xFF00) >> 8);
-            ataio.cmd.features_exp = (byte)((registers.feature & 0xFF00) >> 8);
-            ataio.cmd.sector_count_exp = (byte)((registers.sectorCount & 0xFF00) >> 8);
-            ataio.cmd.lba_low_exp = (byte)((registers.lbaLow & 0xFF00) >> 8);
-            ataio.cmd.lba_high = (byte)(registers.lbaHigh & 0xFF);
-            ataio.cmd.lba_mid = (byte)(registers.lbaMid & 0xFF);
-            ataio.cmd.features = (byte)(registers.feature & 0xFF);
-            ataio.cmd.sector_count = (byte)(registers.sectorCount & 0xFF);
-            ataio.cmd.lba_low = (byte)(registers.lbaLow & 0xFF);
-            ataio.cmd.command = registers.command;
-            ataio.cmd.device = (byte)(0x40 | registers.deviceHead);
+            ataio.cmd.lba_high_exp = (byte)((registers.LbaHigh & 0xFF00) >> 8);
+            ataio.cmd.lba_mid_exp = (byte)((registers.LbaMid & 0xFF00) >> 8);
+            ataio.cmd.features_exp = (byte)((registers.Feature & 0xFF00) >> 8);
+            ataio.cmd.sector_count_exp = (byte)((registers.SectorCount & 0xFF00) >> 8);
+            ataio.cmd.lba_low_exp = (byte)((registers.LbaLow & 0xFF00) >> 8);
+            ataio.cmd.lba_high = (byte)(registers.LbaHigh & 0xFF);
+            ataio.cmd.lba_mid = (byte)(registers.LbaMid & 0xFF);
+            ataio.cmd.features = (byte)(registers.Feature & 0xFF);
+            ataio.cmd.sector_count = (byte)(registers.SectorCount & 0xFF);
+            ataio.cmd.lba_low = (byte)(registers.LbaLow & 0xFF);
+            ataio.cmd.command = registers.Command;
+            ataio.cmd.device = (byte)(0x40 | registers.DeviceHead);
 
             Marshal.Copy(buffer, 0, ataio.data_ptr, buffer.Length);
             Marshal.StructureToPtr(ataio, ccbPtr, false);
@@ -517,13 +517,13 @@ namespace DiscImageChef.Devices.FreeBSD
 
             if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError) sense = true;
 
-            errorRegisters.sectorCount = (ushort)((ataio.res.sector_count_exp << 8) + ataio.res.sector_count);
-            errorRegisters.lbaLow = (ushort)((ataio.res.lba_low_exp << 8) + ataio.res.lba_low);
-            errorRegisters.lbaMid = (ushort)((ataio.res.lba_mid_exp << 8) + ataio.res.lba_mid);
-            errorRegisters.lbaHigh = (ushort)((ataio.res.lba_high_exp << 8) + ataio.res.lba_high);
-            errorRegisters.deviceHead = ataio.res.device;
-            errorRegisters.error = ataio.res.error;
-            errorRegisters.status = ataio.res.status;
+            errorRegisters.SectorCount = (ushort)((ataio.res.sector_count_exp << 8) + ataio.res.sector_count);
+            errorRegisters.LbaLow = (ushort)((ataio.res.lba_low_exp << 8) + ataio.res.lba_low);
+            errorRegisters.LbaMid = (ushort)((ataio.res.lba_mid_exp << 8) + ataio.res.lba_mid);
+            errorRegisters.LbaHigh = (ushort)((ataio.res.lba_high_exp << 8) + ataio.res.lba_high);
+            errorRegisters.DeviceHead = ataio.res.device;
+            errorRegisters.Error = ataio.res.error;
+            errorRegisters.Status = ataio.res.status;
 
             buffer = new byte[ataio.dxfer_len];
 
@@ -533,7 +533,7 @@ namespace DiscImageChef.Devices.FreeBSD
             Marshal.FreeHGlobal(ataio.data_ptr);
             cam_freeccb(ccbPtr);
 
-            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0 || error != 0;
+            sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0 || error != 0;
 
             return error;
         }

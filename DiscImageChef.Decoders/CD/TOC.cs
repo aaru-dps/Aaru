@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
 
@@ -53,6 +54,9 @@ namespace DiscImageChef.Decoders.CD
     /// ISO/IEC 61104: Compact disc video system - 12 cm CD-V
     /// ISO/IEC 60908: Audio recording - Compact disc digital audio system
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class TOC
     {
         public struct CDTOC
@@ -163,21 +167,21 @@ namespace DiscImageChef.Decoders.CD
                                 (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
                                 (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
 
-                switch((TOC_ADR)descriptor.ADR)
+                switch((TocAdr)descriptor.ADR)
                 {
-                    case TOC_ADR.NoInformation:
+                    case TocAdr.NoInformation:
                         sb.AppendLine("Q subchannel mode not given");
                         break;
-                    case TOC_ADR.TrackPointer:
+                    case TocAdr.TrackPointer:
                         sb.AppendLine("Q subchannel stores track pointer");
                         break;
-                    case TOC_ADR.VideoTrackPointer:
+                    case TocAdr.VideoTrackPointer:
                         sb.AppendLine("Q subchannel stores video track pointer");
                         break;
-                    case TOC_ADR.ISRC:
+                    case TocAdr.ISRC:
                         sb.AppendLine("Q subchannel stores ISRC");
                         break;
-                    case TOC_ADR.MediaCatalogNumber:
+                    case TocAdr.MediaCatalogNumber:
                         sb.AppendLine("Q subchannel stores media catalog number");
                         break;
                     default:
@@ -185,35 +189,36 @@ namespace DiscImageChef.Decoders.CD
                         break;
                 }
 
-                if((descriptor.CONTROL & (byte)TOC_CONTROL.ReservedMask) == (byte)TOC_CONTROL.ReservedMask)
+                if((descriptor.CONTROL & (byte)TocControl.ReservedMask) == (byte)TocControl.ReservedMask)
                     sb.AppendFormat("Reserved flags 0x{0:X2} set", descriptor.CONTROL).AppendLine();
                 else
                 {
-                    switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                    switch((TocControl)(descriptor.CONTROL & 0x0D))
                     {
-                        case TOC_CONTROL.TwoChanNoPreEmph:
+                        case TocControl.TwoChanNoPreEmph:
                             sb.AppendLine("Stereo audio track with no pre-emphasis");
                             break;
-                        case TOC_CONTROL.TwoChanPreEmph:
+                        case TocControl.TwoChanPreEmph:
                             sb.AppendLine("Stereo audio track with 50/15 μs pre-emphasis");
                             break;
-                        case TOC_CONTROL.FourChanNoPreEmph:
+                        case TocControl.FourChanNoPreEmph:
                             sb.AppendLine("Quadraphonic audio track with no pre-emphasis");
                             break;
-                        case TOC_CONTROL.FourChanPreEmph:
+                        case TocControl.FourChanPreEmph:
                             sb.AppendLine("Quadraphonic audio track with 50/15 μs pre-emphasis");
                             break;
-                        case TOC_CONTROL.DataTrack:
+                        case TocControl.DataTrack:
                             sb.AppendLine("Data track, recorded uninterrupted");
                             break;
-                        case TOC_CONTROL.DataTrackIncremental:
+                        case TocControl.DataTrackIncremental:
                             sb.AppendLine("Data track, recorded incrementally");
                             break;
                     }
 
-                    if((descriptor.CONTROL & (byte)TOC_CONTROL.CopyPermissionMask) ==
-                       (byte)TOC_CONTROL.CopyPermissionMask) sb.AppendLine("Digital copy of track is permitted");
-                    else sb.AppendLine("Digital copy of track is prohibited");
+                    sb.AppendLine((descriptor.CONTROL & (byte)TocControl.CopyPermissionMask) ==
+                                  (byte)TocControl.CopyPermissionMask
+                                      ? "Digital copy of track is permitted"
+                                      : "Digital copy of track is prohibited");
 
 #if DEBUG
                     if(descriptor.Reserved1 != 0)

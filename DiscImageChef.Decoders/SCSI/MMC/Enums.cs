@@ -30,8 +30,12 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.SCSI.MMC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum FormatLayerTypeCodes : ushort
     {
         CDLayer = 0x0008,
@@ -40,6 +44,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         HDDVDLayer = 0x0050
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum SessionStatusCodes : byte
     {
         Empty = 0x00,
@@ -48,6 +54,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         Complete = 0x03
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum DiscStatusCodes : byte
     {
         Empty = 0x00,
@@ -56,6 +64,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         Others = 0x03
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum BGFormatStatusCodes : byte
     {
         NoFormattable = 0x00,
@@ -64,6 +74,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         FormatComplete = 0x03
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum DiscTypeCodes : byte
     {
         /// <summary>

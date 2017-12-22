@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -41,6 +42,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// MMC Feature enumeration
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum FeatureNumber : ushort
     {
         /// <summary>
@@ -285,6 +287,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// MMC Profile enumeration
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ProfileNumber : ushort
     {
         /// <summary>
@@ -445,6 +448,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         Unconforming = 0xFFFF
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum PhysicalInterfaces : uint
     {
         /// <summary>
@@ -489,6 +493,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         Vendor = 0xFFFF
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Profile
     {
         public ProfileNumber Number;
@@ -498,6 +505,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Profile List Feature (0000h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0000
     {
         /// <summary>
@@ -521,6 +531,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Core Feature (0001h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0001
     {
         /// <summary>
@@ -552,6 +565,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Morphing Feature (0002h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0002
     {
         /// <summary>
@@ -580,6 +596,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Removable Medium Feature (0003h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0003
     {
         /// <summary>
@@ -623,6 +642,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Write Protect Feature (0004h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0004
     {
         /// <summary>
@@ -658,6 +680,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Random Readable Feature (0010h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0010
     {
         /// <summary>
@@ -689,6 +714,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Multi-Read Feature (001Dh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_001D
     {
         /// <summary>
@@ -708,6 +736,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// CD Read Feature (001Eh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_001E
     {
         /// <summary>
@@ -739,6 +770,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// DVD Read Feature (001Fh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_001F
     {
         /// <summary>
@@ -770,6 +804,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Random Writable Feature (0020h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0020
     {
         /// <summary>
@@ -805,6 +842,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Incremental Streaming Writable Feature (0021h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0021
     {
         /// <summary>
@@ -844,6 +884,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Sector Erasable Feature (0022h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0022
     {
         /// <summary>
@@ -863,6 +906,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Formattable Feature (0023h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0023
     {
         /// <summary>
@@ -906,6 +952,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Hardware Defect Management Feature (0024h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0024
     {
         /// <summary>
@@ -929,6 +978,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Write Once Feature (0025h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0025
     {
         /// <summary>
@@ -960,6 +1012,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Restricted Overwrite Feature (0026h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0026
     {
         /// <summary>
@@ -979,6 +1034,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// CD-RW CAV Write Feature (0027h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0027
     {
         /// <summary>
@@ -998,6 +1056,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// MRW Feature (0028h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0028
     {
         /// <summary>
@@ -1029,6 +1090,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Enhanced Defect Reporting Feature (0029h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0029
     {
         /// <summary>
@@ -1060,6 +1124,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// DVD+RW Feature (002Ah)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_002A
     {
         /// <summary>
@@ -1091,6 +1158,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// DVD+R Feature (002Bh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_002B
     {
         /// <summary>
@@ -1114,6 +1184,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Rigid Restricted Overwrite Feature (002Ch)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_002C
     {
         /// <summary>
@@ -1149,6 +1222,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// CD Track at Once Feature (002Dh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_002D
     {
         /// <summary>
@@ -1196,6 +1272,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// CD Mastering (Session at Once) Feature (002Eh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_002E
     {
         /// <summary>
@@ -1247,6 +1326,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// DVD-R/-RW Write Feature (002Fh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_002F
     {
         /// <summary>
@@ -1282,6 +1364,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Double Density CD Read Feature (0030h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0030
     {
         /// <summary>
@@ -1301,6 +1386,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Double Density CD-R Write Feature (0031h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0031
     {
         /// <summary>
@@ -1324,6 +1412,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Double Density CD-RW Write Feature (0032h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0032
     {
         /// <summary>
@@ -1351,6 +1442,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Layer Jump Recording Feature (0033h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0033
     {
         /// <summary>
@@ -1371,6 +1465,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Stop Long Operation Feature (0035h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0035
     {
         /// <summary>
@@ -1390,6 +1487,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// CD-RW Media Write Support Feature (0037h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0037
     {
         /// <summary>
@@ -1413,6 +1513,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// BD-R Pseudo-Overwrite (POW) Feature (0038h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0038
     {
         /// <summary>
@@ -1432,6 +1535,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// DVD+RW Dual Layer Feature (003Ah)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_003A
     {
         /// <summary>
@@ -1463,6 +1569,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// DVD+R Dual Layer Feature (003Bh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_003B
     {
         /// <summary>
@@ -1494,6 +1603,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// BD Read Feature (0040h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0040
     {
         /// <summary>
@@ -1545,6 +1657,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// BD Write Feature (0041h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0041
     {
         /// <summary>
@@ -1588,6 +1703,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// TSR Feature (0042h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0042
     {
         /// <summary>
@@ -1607,6 +1725,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// HD DVD Read Feature (0050h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0050
     {
         /// <summary>
@@ -1634,6 +1755,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// HD DVD Write Feature (0051h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0051
     {
         /// <summary>
@@ -1661,6 +1785,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Hybrid Disc Feature (0080h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0080
     {
         /// <summary>
@@ -1684,6 +1811,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Power Management Feature (0100h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0100
     {
         /// <summary>
@@ -1703,6 +1833,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// S.M.A.R.T. Feature (0101h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0101
     {
         /// <summary>
@@ -1726,6 +1859,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Embedded Changer Feature (0102h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0102
     {
         /// <summary>
@@ -1757,6 +1893,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// CD Audio External Play Feature (0103h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0103
     {
         /// <summary>
@@ -1792,6 +1931,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Microcode Upgrade Feature (0104h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0104
     {
         /// <summary>
@@ -1815,6 +1957,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Time-Out Feature (0105h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0105
     {
         /// <summary>
@@ -1842,6 +1987,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// DVD-CSS Feature (0106h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0106
     {
         /// <summary>
@@ -1865,6 +2013,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Real Time Streaming Feature (0107h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0107
     {
         /// <summary>
@@ -1908,6 +2059,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Drive serial number (0108h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0108
     {
         /// <summary>
@@ -1931,6 +2085,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Media Serial Number Feature (0109h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0109
     {
         /// <summary>
@@ -1950,6 +2107,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Disc Control Blocks Feature (010Ah)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_010A
     {
         /// <summary>
@@ -1970,6 +2130,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// DVD CPRM Feature (010Bh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_010B
     {
         /// <summary>
@@ -1993,6 +2156,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// Firmware Information Feature (010Ch)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_010C
     {
         /// <summary>
@@ -2019,6 +2185,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// AACS Feature (010Dh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_010D
     {
         /// <summary>
@@ -2070,6 +2239,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// DVD CSS Managed Recording Feature (010Eh)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_010E
     {
         /// <summary>
@@ -2093,6 +2265,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// SecurDisc Feature (0113h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0113
     {
         /// <summary>
@@ -2112,6 +2287,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// OSSC Feature (0142h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0142
     {
         /// <summary>
@@ -2144,6 +2322,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// <summary>
     /// VCPS Feature (0110h)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct Feature_0110
     {
         /// <summary>
@@ -2184,8 +2365,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             List<Profile> listProfiles = new List<Profile>();
             while(offset < feature.Length)
             {
-                Profile prof = new Profile();
-                prof.Number = (ProfileNumber)((feature[offset] << 8) + feature[offset + 1]);
+                Profile prof = new Profile {Number = (ProfileNumber)((feature[offset] << 8) + feature[offset + 1])};
                 prof.Current |= (feature[offset + 2] & 0x01) == 0x01;
                 listProfiles.Add(prof);
                 offset += 4;
@@ -3861,8 +4041,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             sb.AppendLine("MMC Morphing:");
 
-            if(ftr.Async) sb.AppendLine("\tDrive supports polling and asynchronous GET EVENT STATUS NOTIFICATION");
-            else sb.AppendLine("\tDrive supports only polling GET EVENT STATUS NOTIFICATION");
+            sb.AppendLine(ftr.Async
+                              ? "\tDrive supports polling and asynchronous GET EVENT STATUS NOTIFICATION"
+                              : "\tDrive supports only polling GET EVENT STATUS NOTIFICATION");
 
             if(ftr.OCEvent) sb.AppendLine("\tDrive supports operational change request / notification class events");
 
@@ -4159,8 +4340,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             sb.AppendLine("MMC Enhanced Defect Reporting Feature:");
 
-            if(ftr.DRTDM) sb.AppendLine("\tDrive supports DRT-DM mode");
-            else sb.AppendLine("\tDrive supports Persistent-DM mode");
+            sb.AppendLine(ftr.DRTDM ? "\tDrive supports DRT-DM mode" : "\tDrive supports Persistent-DM mode");
 
             if(ftr.DBICacheZones > 0)
                 sb.AppendFormat("\tDrive has {0} DBI cache zones", ftr.DBICacheZones).AppendLine();
@@ -4181,8 +4361,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 sb.Append("Drive can read and write DVD+RW");
                 if(ftr.Current) sb.AppendLine(" (current)");
                 else sb.AppendLine();
-                if(ftr.CloseOnly) sb.AppendLine("\tDrive supports only the read compatibility stop");
-                else sb.AppendLine("\tDrive supports both forms of background format stopping");
+                sb.AppendLine(ftr.CloseOnly
+                                  ? "\tDrive supports only the read compatibility stop"
+                                  : "\tDrive supports both forms of background format stopping");
                 if(ftr.QuickStart) sb.AppendLine("\tDrive can do a quick start formatting");
             }
             else
@@ -4226,8 +4407,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             StringBuilder sb = new StringBuilder();
 
             sb.Append("MMC Rigid Restricted Overwrite");
-            if(ftr.Current) sb.AppendLine(" (current):");
-            else sb.AppendLine(":");
+            sb.AppendLine(ftr.Current ? " (current):" : ":");
 
             if(ftr.Blank) sb.AppendLine("\tDrive supports the BLANK command");
             if(ftr.Intermediate)
@@ -4423,8 +4603,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 sb.Append("Drive can read and write DVD+RW DL");
                 if(ftr.Current) sb.AppendLine(" (current)");
                 else sb.AppendLine();
-                if(ftr.CloseOnly) sb.AppendLine("\tDrive supports only the read compatibility stop");
-                else sb.AppendLine("\tDrive supports both forms of background format stopping");
+                sb.AppendLine(ftr.CloseOnly
+                                  ? "\tDrive supports only the read compatibility stop"
+                                  : "\tDrive supports both forms of background format stopping");
                 if(ftr.QuickStart) sb.AppendLine("\tDrive can do a quick start formatting");
             }
             else
@@ -4468,8 +4649,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             StringBuilder sb = new StringBuilder();
 
             sb.Append("MMC BD Read");
-            if(ftr.Current) sb.AppendLine(" (current):");
-            else sb.AppendLine(":");
+            sb.AppendLine(ftr.Current ? " (current):" : ":");
 
             if(ftr.OldROM) sb.AppendLine("\tDrive can read BD-ROM pre-1.0");
             if(ftr.ROM) sb.AppendLine("\tDrive can read BD-ROM Ver.1");
@@ -4492,8 +4672,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             StringBuilder sb = new StringBuilder();
 
             sb.Append("MMC BD Write");
-            if(ftr.Current) sb.AppendLine(" (current):");
-            else sb.AppendLine(":");
+            sb.AppendLine(ftr.Current ? " (current):" : ":");
 
             if(ftr.OldR) sb.AppendLine("\tDrive can write BD-R pre-1.0");
             if(ftr.R) sb.AppendLine("\tDrive can write BD-R Ver.1");
@@ -4712,7 +4891,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(ftr.DCBs == null) return sb.ToString();
 
-            foreach(uint DCB in ftr.DCBs) sb.AppendFormat("Drive supports DCB {0:X8}h", DCB).AppendLine();
+            foreach(uint dcb in ftr.DCBs) sb.AppendFormat("Drive supports DCB {0:X8}h", dcb).AppendLine();
 
             return sb.ToString();
         }
@@ -4738,35 +4917,32 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             Feature_010C ftr = feature.Value;
             StringBuilder sb = new StringBuilder();
 
-            string syear, smonth, sday, shour, sminute, ssecond;
-            byte[] temp;
-
-            temp = new byte[4];
+            byte[] temp = new byte[4];
             temp[0] = (byte)((ftr.Century & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Century & 0xFF);
             temp[2] = (byte)((ftr.Year & 0xFF00) >> 8);
             temp[3] = (byte)(ftr.Year & 0xFF);
-            syear = Encoding.ASCII.GetString(temp);
+            string syear = Encoding.ASCII.GetString(temp);
             temp = new byte[2];
             temp[0] = (byte)((ftr.Month & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Month & 0xFF);
-            smonth = Encoding.ASCII.GetString(temp);
+            string smonth = Encoding.ASCII.GetString(temp);
             temp = new byte[2];
             temp[0] = (byte)((ftr.Day & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Day & 0xFF);
-            sday = Encoding.ASCII.GetString(temp);
+            string sday = Encoding.ASCII.GetString(temp);
             temp = new byte[2];
             temp[0] = (byte)((ftr.Hour & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Hour & 0xFF);
-            shour = Encoding.ASCII.GetString(temp);
+            string shour = Encoding.ASCII.GetString(temp);
             temp = new byte[2];
             temp[0] = (byte)((ftr.Minute & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Minute & 0xFF);
-            sminute = Encoding.ASCII.GetString(temp);
+            string sminute = Encoding.ASCII.GetString(temp);
             temp = new byte[2];
             temp[0] = (byte)((ftr.Second & 0xFF00) >> 8);
             temp[1] = (byte)(ftr.Second & 0xFF);
-            ssecond = Encoding.ASCII.GetString(temp);
+            string ssecond = Encoding.ASCII.GetString(temp);
 
             try
             {
@@ -4776,7 +4952,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 sb.AppendFormat("Drive firmware is dated {0}", fwDate).AppendLine();
             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-            catch { }
+            catch
+            {
+                // ignored
+            }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
 
             return sb.ToString();
@@ -4834,8 +5013,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             Feature_0110 ftr = feature.Value;
             StringBuilder sb = new StringBuilder();
 
-            if(ftr.Current) sb.AppendLine("Drive and currently inserted media support VCPS");
-            else sb.AppendLine("Drive supports VCPS");
+            sb.AppendLine(ftr.Current ? "Drive and currently inserted media support VCPS" : "Drive supports VCPS");
 
             return sb.ToString();
         }
@@ -4847,8 +5025,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             Feature_0113 ftr = feature.Value;
             StringBuilder sb = new StringBuilder();
 
-            if(ftr.Current) sb.AppendLine("Drive and currently inserted media support SecurDisc");
-            else sb.AppendLine("Drive supports SecurDisc");
+            sb.AppendLine(ftr.Current
+                              ? "Drive and currently inserted media support SecurDisc"
+                              : "Drive supports SecurDisc");
 
             return sb.ToString();
         }
@@ -5165,12 +5344,18 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return Prettify_0142(Decode_0142(feature));
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+        [SuppressMessage("ReSharper", "NotAccessedField.Global")]
         public struct FeatureDescriptor
         {
             public ushort Code;
             public byte[] Data;
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+        [SuppressMessage("ReSharper", "NotAccessedField.Global")]
         public struct SeparatedFeatures
         {
             public uint DataLength;
@@ -5180,17 +5365,21 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static SeparatedFeatures Separate(byte[] response)
         {
-            SeparatedFeatures dec = new SeparatedFeatures();
-            dec.DataLength = (uint)((response[0] << 24) + (response[1] << 16) + (response[2] << 8) + response[4]);
-            dec.CurrentProfile = (ushort)((response[6] << 8) + response[7]);
+            SeparatedFeatures dec = new SeparatedFeatures
+            {
+                DataLength = (uint)((response[0] << 24) + (response[1] << 16) + (response[2] << 8) + response[4]),
+                CurrentProfile = (ushort)((response[6] << 8) + response[7])
+            };
             uint offset = 8;
             List<FeatureDescriptor> descLst = new List<FeatureDescriptor>();
 
             while(offset + 4 < response.Length)
             {
-                FeatureDescriptor desc = new FeatureDescriptor();
-                desc.Code = (ushort)((response[offset + 0] << 8) + response[offset + 1]);
-                desc.Data = new byte[response[offset + 3] + 4];
+                FeatureDescriptor desc = new FeatureDescriptor
+                {
+                    Code = (ushort)((response[offset + 0] << 8) + response[offset + 1]),
+                    Data = new byte[response[offset + 3] + 4]
+                };
                 if(desc.Data.Length + offset > response.Length) desc.Data = new byte[response.Length - offset];
                 Array.Copy(response, offset, desc.Data, 0, desc.Data.Length);
                 offset += (uint)desc.Data.Length;

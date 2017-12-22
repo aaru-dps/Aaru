@@ -31,11 +31,16 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace DiscImageChef.Decoders.MMC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnassignedField.Global")]
     [StructLayout(LayoutKind.Sequential)]
     public class ExtendedCSD
     {
@@ -197,7 +202,10 @@ namespace DiscImageChef.Decoders.MMC
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)] public byte[] Reserved18;
     }
 
-    public partial class Decoders
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public static partial class Decoders
     {
         public static ExtendedCSD DecodeExtendedCSD(byte[] response)
         {

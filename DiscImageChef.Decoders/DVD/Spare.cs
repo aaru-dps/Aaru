@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.DVD
@@ -49,6 +50,10 @@ namespace DiscImageChef.Decoders.DVD
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class Spare
     {
         public struct SpareAreaInformation
@@ -87,23 +92,20 @@ namespace DiscImageChef.Decoders.DVD
 
         public static SpareAreaInformation? Decode(byte[] response)
         {
-            if(response == null) return null;
+            if(response?.Length != 16) return null;
 
-            if(response.Length != 16) return null;
-
-            SpareAreaInformation sai = new SpareAreaInformation();
-
-            sai.DataLength = (ushort)((response[0] << 8) + response[1]);
-            sai.Reserved1 = response[2];
-            sai.Reserved2 = response[3];
-            sai.UnusedPrimaryBlocks =
-                (uint)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]);
-            sai.UnusedSupplementaryBlocks =
-                (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
-            sai.AllocatedSupplementaryBlocks =
-                (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
-
-            return sai;
+            return new SpareAreaInformation
+            {
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1 = response[2],
+                Reserved2 = response[3],
+                UnusedPrimaryBlocks =
+                    (uint)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]),
+                UnusedSupplementaryBlocks =
+                    (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]),
+                AllocatedSupplementaryBlocks =
+                    (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15])
+            };
         }
 
         public static string Prettify(SpareAreaInformation? sai)

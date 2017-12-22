@@ -195,7 +195,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             {
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
 
-                if(sysTag.fileID == fileId) count++;
+                if(sysTag.FileId == fileId) count++;
             }
 
             if(count == 0) return Errno.NoSuchFile;
@@ -208,7 +208,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             {
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
 
-                if(sysTag.fileID != fileId) continue;
+                if(sysTag.FileId != fileId) continue;
 
                 byte[] sector;
 
@@ -216,9 +216,9 @@ namespace DiscImageChef.Filesystems.LisaFS
                 else sector = device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
 
                 // Relative block for $Loader starts at $Boot block
-                if(sysTag.fileID == FILEID_LOADER_SIGNED) sysTag.relPage--;
+                if(sysTag.FileId == FILEID_LOADER_SIGNED) sysTag.RelPage--;
 
-                Array.Copy(sector, 0, buf, sector.Length * sysTag.relPage, sector.Length);
+                Array.Copy(sector, 0, buf, sector.Length * sysTag.RelPage, sector.Length);
             }
 
             if(!tags) systemFileCache.Add(fileId, buf);

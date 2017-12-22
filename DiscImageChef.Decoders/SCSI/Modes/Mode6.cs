@@ -32,10 +32,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         public static ModeHeader? DecodeModeHeader6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
@@ -43,8 +47,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(modeResponse == null || modeResponse.Length < 4 || modeResponse.Length < modeResponse[0] + 1)
                 return null;
 
-            ModeHeader header = new ModeHeader();
-            header.MediumType = (MediumTypes)modeResponse[1];
+            ModeHeader header = new ModeHeader {MediumType = (MediumTypes)modeResponse[1]};
 
             if(modeResponse[3] > 0)
             {
@@ -94,8 +97,7 @@ namespace DiscImageChef.Decoders.SCSI
             ModeHeader? hdr = DecodeModeHeader6(modeResponse, deviceType);
             if(!hdr.HasValue) return null;
 
-            DecodedMode decoded = new DecodedMode();
-            decoded.Header = hdr.Value;
+            DecodedMode decoded = new DecodedMode {Header = hdr.Value};
             int blkDrLength = 0;
             if(decoded.Header.BlockDescriptors != null) blkDrLength = decoded.Header.BlockDescriptors.Length;
 
@@ -158,10 +160,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static byte[] EncodeModeHeader6(ModeHeader header, PeripheralDeviceTypes deviceType)
         {
-            byte[] hdr;
-
-            if(header.BlockDescriptors != null) hdr = new byte[4 + header.BlockDescriptors.Length * 8];
-            else hdr = new byte[4];
+            byte[] hdr = header.BlockDescriptors != null ? new byte[4 + header.BlockDescriptors.Length * 8] : new byte[4];
 
             hdr[1] = (byte)header.MediumType;
 

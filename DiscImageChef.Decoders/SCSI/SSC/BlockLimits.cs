@@ -31,10 +31,14 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI.SSC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class BlockLimits
     {
         public struct BlockLimitsData
@@ -55,17 +59,14 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
         public static BlockLimitsData? Decode(byte[] response)
         {
-            if(response == null) return null;
+            if(response?.Length != 6) return null;
 
-            if(response.Length != 6) return null;
-
-            BlockLimitsData dec = new BlockLimitsData();
-
-            dec.granularity = (byte)(response[0] & 0x1F);
-            dec.maxBlockLen = (uint)((response[1] << 16) + (response[2] << 8) + response[3]);
-            dec.minBlockLen = (ushort)((response[4] << 8) + response[5]);
-
-            return dec;
+            return new BlockLimitsData
+            {
+                granularity = (byte)(response[0] & 0x1F),
+                maxBlockLen = (uint)((response[1] << 16) + (response[2] << 8) + response[3]),
+                minBlockLen = (ushort)((response[4] << 8) + response[5])
+            };
         }
 
         public static string Prettify(BlockLimitsData? decoded)

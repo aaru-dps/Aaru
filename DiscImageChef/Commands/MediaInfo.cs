@@ -1127,15 +1127,15 @@ namespace DiscImageChef.Commands
                                     foreach(TOC.CDTOCTrackDataDescriptor track in toc.Value.TrackDescriptors)
                                     {
                                         if(track.TrackNumber == 1 &&
-                                           ((TOC_CONTROL)(track.CONTROL & 0x0D) ==
-                                            TOC_CONTROL.DataTrack ||
-                                            (TOC_CONTROL)(track.CONTROL & 0x0D) ==
-                                            TOC_CONTROL.DataTrackIncremental)) allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
+                                           ((TocControl)(track.CONTROL & 0x0D) ==
+                                            TocControl.DataTrack ||
+                                            (TocControl)(track.CONTROL & 0x0D) ==
+                                            TocControl.DataTrackIncremental)) allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
 
-                                        if((TOC_CONTROL)(track.CONTROL & 0x0D) ==
-                                           TOC_CONTROL.DataTrack ||
-                                           (TOC_CONTROL)(track.CONTROL & 0x0D) ==
-                                           TOC_CONTROL.DataTrackIncremental)
+                                        if((TocControl)(track.CONTROL & 0x0D) ==
+                                           TocControl.DataTrack ||
+                                           (TocControl)(track.CONTROL & 0x0D) ==
+                                           TocControl.DataTrackIncremental)
                                         {
                                             hasDataTrack = true;
                                             allFirstSessionTracksAreAudio &= track.TrackNumber >= firstTrackLastSession;

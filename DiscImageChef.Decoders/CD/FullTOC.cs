@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
 
@@ -53,6 +54,9 @@ namespace DiscImageChef.Decoders.CD
     /// ISO/IEC 61104: Compact disc video system - 12 cm CD-V
     /// ISO/IEC 60908: Audio recording - Compact disc digital audio system
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class FullTOC
     {
         const string StereoNoPre = "Stereo audio track with no pre-emphasis";
@@ -270,24 +274,24 @@ namespace DiscImageChef.Decoders.CD
                                     else
                                     {
                                         sb.AppendFormat("First track number: {0} (", descriptor.PMIN);
-                                        switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                                        switch((TocControl)(descriptor.CONTROL & 0x0D))
                                         {
-                                            case TOC_CONTROL.TwoChanNoPreEmph:
+                                            case TocControl.TwoChanNoPreEmph:
                                                 sb.Append(StereoNoPre);
                                                 break;
-                                            case TOC_CONTROL.TwoChanPreEmph:
+                                            case TocControl.TwoChanPreEmph:
                                                 sb.Append(StereoPreEm);
                                                 break;
-                                            case TOC_CONTROL.FourChanNoPreEmph:
+                                            case TocControl.FourChanNoPreEmph:
                                                 sb.Append(QuadNoPreEm);
                                                 break;
-                                            case TOC_CONTROL.FourChanPreEmph:
+                                            case TocControl.FourChanPreEmph:
                                                 sb.Append(QuadPreEmph);
                                                 break;
-                                            case TOC_CONTROL.DataTrack:
+                                            case TocControl.DataTrack:
                                                 sb.Append(DataUnintrp);
                                                 break;
-                                            case TOC_CONTROL.DataTrackIncremental:
+                                            case TocControl.DataTrackIncremental:
                                                 sb.Append(DataIncrtly);
                                                 break;
                                         }
@@ -306,24 +310,24 @@ namespace DiscImageChef.Decoders.CD
                                     else
                                     {
                                         sb.AppendFormat("Last track number: {0} (", descriptor.PMIN);
-                                        switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                                        switch((TocControl)(descriptor.CONTROL & 0x0D))
                                         {
-                                            case TOC_CONTROL.TwoChanNoPreEmph:
+                                            case TocControl.TwoChanNoPreEmph:
                                                 sb.Append(StereoNoPre);
                                                 break;
-                                            case TOC_CONTROL.TwoChanPreEmph:
+                                            case TocControl.TwoChanPreEmph:
                                                 sb.Append(StereoPreEm);
                                                 break;
-                                            case TOC_CONTROL.FourChanNoPreEmph:
+                                            case TocControl.FourChanNoPreEmph:
                                                 sb.Append(QuadNoPreEm);
                                                 break;
-                                            case TOC_CONTROL.FourChanPreEmph:
+                                            case TocControl.FourChanPreEmph:
                                                 sb.Append(QuadPreEmph);
                                                 break;
-                                            case TOC_CONTROL.DataTrack:
+                                            case TocControl.DataTrack:
                                                 sb.Append(DataUnintrp);
                                                 break;
-                                            case TOC_CONTROL.DataTrackIncremental:
+                                            case TocControl.DataTrackIncremental:
                                                 sb.Append(DataIncrtly);
                                                 break;
                                         }
@@ -345,16 +349,16 @@ namespace DiscImageChef.Decoders.CD
                                           .AppendLine();
                                     //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
 
-                                    switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                                    switch((TocControl)(descriptor.CONTROL & 0x0D))
                                     {
-                                        case TOC_CONTROL.TwoChanNoPreEmph:
-                                        case TOC_CONTROL.TwoChanPreEmph:
-                                        case TOC_CONTROL.FourChanNoPreEmph:
-                                        case TOC_CONTROL.FourChanPreEmph:
+                                        case TocControl.TwoChanNoPreEmph:
+                                        case TocControl.TwoChanPreEmph:
+                                        case TocControl.FourChanNoPreEmph:
+                                        case TocControl.FourChanPreEmph:
                                             sb.AppendLine("Lead-out is audio type");
                                             break;
-                                        case TOC_CONTROL.DataTrack:
-                                        case TOC_CONTROL.DataTrackIncremental:
+                                        case TocControl.DataTrack:
+                                        case TocControl.DataTrackIncremental:
                                             sb.AppendLine("Lead-out is data type");
                                             break;
                                     }
@@ -385,9 +389,9 @@ namespace DiscImageChef.Decoders.CD
                                         {
                                             string type = "Audio";
 
-                                            if((TOC_CONTROL)(descriptor.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
-                                               (TOC_CONTROL)(descriptor.CONTROL & 0x0D) ==
-                                               TOC_CONTROL.DataTrackIncremental) type = "Data";
+                                            if((TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                               (TocControl)(descriptor.CONTROL & 0x0D) ==
+                                               TocControl.DataTrackIncremental) type = "Data";
 
                                             if(descriptor.PHOUR > 0)
                                                 sb.AppendFormat("{5} track {3} starts at: {4:D2}:{0:D2}:{1:D2}:{2:D2} (",
@@ -398,24 +402,24 @@ namespace DiscImageChef.Decoders.CD
                                                                 descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
                                                                 descriptor.POINT, type);
 
-                                            switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                                            switch((TocControl)(descriptor.CONTROL & 0x0D))
                                             {
-                                                case TOC_CONTROL.TwoChanNoPreEmph:
+                                                case TocControl.TwoChanNoPreEmph:
                                                     sb.Append(StereoNoPre);
                                                     break;
-                                                case TOC_CONTROL.TwoChanPreEmph:
+                                                case TocControl.TwoChanPreEmph:
                                                     sb.Append(StereoPreEm);
                                                     break;
-                                                case TOC_CONTROL.FourChanNoPreEmph:
+                                                case TocControl.FourChanNoPreEmph:
                                                     sb.Append(QuadNoPreEm);
                                                     break;
-                                                case TOC_CONTROL.FourChanPreEmph:
+                                                case TocControl.FourChanPreEmph:
                                                     sb.Append(QuadPreEmph);
                                                     break;
-                                                case TOC_CONTROL.DataTrack:
+                                                case TocControl.DataTrack:
                                                     sb.Append(DataUnintrp);
                                                     break;
-                                                case TOC_CONTROL.DataTrackIncremental:
+                                                case TocControl.DataTrackIncremental:
                                                     sb.Append(DataIncrtly);
                                                     break;
                                             }

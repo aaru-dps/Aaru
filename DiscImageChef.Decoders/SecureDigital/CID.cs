@@ -31,10 +31,14 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SecureDigital
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class CID
     {
         public byte Manufacturer;
@@ -46,18 +50,18 @@ namespace DiscImageChef.Decoders.SecureDigital
         public byte CRC;
     }
 
-    public partial class Decoders
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public static partial class Decoders
     {
         public static CID DecodeCID(uint[] response)
         {
-            if(response == null) return null;
-
-            if(response.Length != 4) return null;
+            if(response?.Length != 4) return null;
 
             byte[] data = new byte[16];
-            byte[] tmp;
 
-            tmp = BitConverter.GetBytes(response[0]);
+            byte[] tmp = BitConverter.GetBytes(response[0]);
             Array.Copy(tmp, 0, data, 0, 4);
             tmp = BitConverter.GetBytes(response[1]);
             Array.Copy(tmp, 0, data, 4, 4);
@@ -71,24 +75,22 @@ namespace DiscImageChef.Decoders.SecureDigital
 
         public static CID DecodeCID(byte[] response)
         {
-            if(response == null) return null;
+            if(response?.Length != 16) return null;
 
-            if(response.Length != 16) return null;
-
-            byte[] tmp;
-
-            CID cid = new CID();
-            cid.Manufacturer = response[0];
-            tmp = new byte[2];
+            CID cid = new CID
+            {
+                Manufacturer = response[0],
+                ProductRevision = response[8],
+                ProductSerialNumber = BitConverter.ToUInt32(response, 9),
+                ManufacturingDate = (ushort)(((response[13] & 0x0F) << 4) + response[14]),
+                CRC = (byte)((response[15] & 0xFE) >> 1)
+            };
+            byte[] tmp = new byte[2];
             Array.Copy(response, 1, tmp, 0, 2);
             cid.ApplicationID = StringHandlers.CToString(tmp);
             tmp = new byte[5];
             Array.Copy(response, 3, tmp, 0, 5);
             cid.ProductName = StringHandlers.CToString(tmp);
-            cid.ProductRevision = response[8];
-            cid.ProductSerialNumber = BitConverter.ToUInt32(response, 9);
-            cid.ManufacturingDate = (ushort)(((response[13] & 0x0F) << 4) + response[14]);
-            cid.CRC = (byte)((response[15] & 0xFE) >> 1);
 
             return cid;
         }

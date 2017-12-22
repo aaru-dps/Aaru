@@ -171,7 +171,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 LisaTag.PriamTag catTag;
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out catTag);
 
-                if(catTag.fileID != FILEID_CATALOG || catTag.relPage != 0) continue;
+                if(catTag.FileId != FILEID_CATALOG || catTag.RelPage != 0) continue;
 
                 firstCatalogBlock = device.ReadSectors(i, 4);
                 break;
@@ -190,7 +190,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 DecodeTag(device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
                           out prevTag);
 
-                if(prevTag.fileID != FILEID_CATALOG) return Errno.InvalidArgument;
+                if(prevTag.FileId != FILEID_CATALOG) return Errno.InvalidArgument;
 
                 firstCatalogBlock = device.ReadSectors(prevCatalogPointer + mddf.mddf_block + volumePrefix, 4);
                 prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
@@ -209,7 +209,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 DecodeTag(device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
                           out nextTag);
 
-                if(nextTag.fileID != FILEID_CATALOG) return Errno.InvalidArgument;
+                if(nextTag.FileId != FILEID_CATALOG) return Errno.InvalidArgument;
 
                 byte[] nextCatalogBlock = device.ReadSectors(nextCatalogPointer + mddf.mddf_block + volumePrefix, 4);
                 nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);

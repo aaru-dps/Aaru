@@ -30,11 +30,14 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.PCMCIA
 {
     /// <summary>
     /// Tuple codes.
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum TupleCodes : byte
     {
         /// <summary>
@@ -199,6 +202,7 @@ namespace DiscImageChef.Decoders.PCMCIA
         CISTPL_SPCL = 0x90
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum DeviceTypeCodes : byte
     {
         /// <summary>
@@ -243,6 +247,7 @@ namespace DiscImageChef.Decoders.PCMCIA
         DTYPE_EXTEND = 14
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum DeviceSpeedCodes : byte
     {
         /// <summary>
@@ -271,6 +276,7 @@ namespace DiscImageChef.Decoders.PCMCIA
         DSPEED_EXT = 7
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum FunctionCodes : byte
     {
         MultiFunction = 0x00,
