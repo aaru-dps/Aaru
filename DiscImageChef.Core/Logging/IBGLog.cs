@@ -40,25 +40,25 @@ namespace DiscImageChef.Core.Logging
 {
     class IbgLog
     {
-        static FileStream ibgFs;
-        static StringBuilder ibgSb;
-        static DateTime ibgDatePoint;
-        static CultureInfo ibgCulture;
-        static double ibgStartSpeed;
-        static string ibgMediaType;
-        static double ibgDivider;
-        static bool ibgStartSet;
-        static double ibgMaxSpeed;
-        static double ibgIntSpeed;
-        static int ibgSnaps;
-        static ulong ibgIntSector;
-        static int ibgSampleRate;
+        StringBuilder ibgSb;
+        DateTime ibgDatePoint;
+        CultureInfo ibgCulture;
+        double ibgStartSpeed;
+        string ibgMediaType;
+        double ibgDivider;
+        bool ibgStartSet;
+        double ibgMaxSpeed;
+        double ibgIntSpeed;
+        int ibgSnaps;
+        ulong ibgIntSector;
+        int ibgSampleRate;
+        string logFile;
 
         internal IbgLog(string outputFile, ushort currentProfile)
         {
             if(string.IsNullOrEmpty(outputFile)) return;
 
-            ibgFs = new FileStream(outputFile, FileMode.Create);
+            logFile = outputFile;
             ibgSb = new StringBuilder();
             ibgDatePoint = DateTime.Now;
             ibgCulture = new CultureInfo("en-US");
@@ -194,7 +194,7 @@ namespace DiscImageChef.Core.Logging
 
         internal void Write(ulong sector, double currentSpeed)
         {
-            if(ibgFs == null) return;
+            if(logFile == null) return;
 
             ibgIntSpeed += currentSpeed;
             ibgSampleRate += (int)Math.Floor((DateTime.Now - ibgDatePoint).TotalMilliseconds);
@@ -222,8 +222,8 @@ namespace DiscImageChef.Core.Logging
         internal void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed,
                           double averageSpeed, string devicePath)
         {
-            if(ibgFs == null) return;
-
+            if(logFile == null) return;
+            FileStream ibgFs = new FileStream(logFile, FileMode.Create);
             StringBuilder ibgHeader = new StringBuilder();
             string ibgBusType;
 

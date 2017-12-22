@@ -40,14 +40,16 @@ namespace DiscImageChef.Core.Logging
 {
     class MhddLog
     {
-        FileStream mhddFs;
+        MemoryStream mhddFs;
+        string logFile;
 
         internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
         {
             if(dev == null || string.IsNullOrEmpty(outputFile)) return;
 
-            mhddFs = new FileStream(outputFile, FileMode.Create);
-
+            mhddFs = new MemoryStream();
+            logFile = outputFile;
+            
             string mode;
 
             switch(dev.Type)
@@ -123,7 +125,7 @@ namespace DiscImageChef.Core.Logging
 
         internal void Write(ulong sector, double duration)
         {
-            if(mhddFs == null) return;
+            if(logFile == null) return;
 
             byte[] sectorBytes = BitConverter.GetBytes(sector);
             byte[] durationBytes = BitConverter.GetBytes((ulong)(duration * 1000));
@@ -134,7 +136,12 @@ namespace DiscImageChef.Core.Logging
 
         internal void Close()
         {
-            if(mhddFs != null) mhddFs.Close();
+            if(logFile == null) return;
+
+            FileStream fs = new FileStream(logFile, FileMode.Create);
+            mhddFs.WriteTo(fs);
+            mhddFs.Close();
+            fs.Close();
         }
     }
 }
