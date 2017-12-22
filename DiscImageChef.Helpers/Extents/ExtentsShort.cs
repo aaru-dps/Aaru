@@ -45,15 +45,12 @@ namespace Extents
             backend = new List<Tuple<short, short>>();
         }
 
-        public ExtentsShort(List<Tuple<short, short>> list)
+        public ExtentsShort(IEnumerable<Tuple<short, short>> list)
         {
             backend = list.OrderBy(t => t.Item1).ToList();
         }
 
-        public int Count
-        {
-            get { return backend.Count; }
-        }
+        public int Count => backend.Count;
 
         public void Add(short item)
         {
@@ -108,12 +105,7 @@ namespace Extents
             backend = backend.OrderBy(t => t.Item1).ToList();
         }
 
-        public void Add(short start, short end)
-        {
-            Add(start, end, false);
-        }
-
-        public void Add(short start, short end, bool run)
+        public void Add(short start, short end, bool run = false)
         {
             short realEnd;
             if(run) realEnd = (short)(start + end - 1);
