@@ -36,7 +36,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        const ushort XaMagic = 0x5841; // "XA"
+        const ushort XA_MAGIC = 0x5841; // "XA"
 
         [Flags]
         enum XaAttributes : ushort

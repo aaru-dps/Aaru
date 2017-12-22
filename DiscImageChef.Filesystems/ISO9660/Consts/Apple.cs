@@ -34,8 +34,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        const ushort AppleMagic = 0x4141; // "AA"
-        const ushort AppleMagicOld = 0x4241; // "BA"
+        const ushort APPLE_MAGIC = 0x4141; // "AA"
+        const ushort APPLE_MAGIC_OLD = 0x4241; // "BA"
 
         enum AppleId : byte
         {

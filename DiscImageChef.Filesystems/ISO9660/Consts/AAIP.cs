@@ -36,8 +36,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        const ushort AAIP_Magic = 0x414C; // "AL"
-        const ushort AAIP_OldMagic = 0x4141; // "AA"
+        const ushort AAIP_MAGIC = 0x414C; // "AL"
+        const ushort AAIP_MAGIC_OLD = 0x4141; // "AA"
 
         [Flags]
         enum AAIPFlags : byte

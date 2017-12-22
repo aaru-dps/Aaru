@@ -47,8 +47,6 @@ namespace DiscImageChef.Filesystems.ISO9660
     {
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            byte VDType;
-
             // ISO9660 is designed for 2048 bytes/sector devices
             if(imagePlugin.GetSectorSize() < 2048) return false;
 
@@ -56,42 +54,38 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(partition.End <= 16 + partition.Start) return false;
 
             // Read to Volume Descriptor
-            byte[] vd_sector = imagePlugin.ReadSector(16 + partition.Start);
+            byte[] vdSector = imagePlugin.ReadSector(16 + partition.Start);
 
-            int xa_off = 0;
-            if(vd_sector.Length == 2336) xa_off = 8;
+            int xaOff = 0;
+            if(vdSector.Length == 2336) xaOff = 8;
 
-            VDType = vd_sector[0 + xa_off];
-            byte[] VDMagic = new byte[5];
-            byte[] HSMagic = new byte[5];
+            byte vdType = vdSector[0 + xaOff];
+            byte[] vdMagic = new byte[5];
+            byte[] hsMagic = new byte[5];
 
             // This indicates the end of a volume descriptor. HighSierra here would have 16 so no problem
-            if(VDType == 255) return false;
+            if(vdType == 255) return false;
 
-            Array.Copy(vd_sector, 0x001 + xa_off, VDMagic, 0, 5);
-            Array.Copy(vd_sector, 0x009 + xa_off, HSMagic, 0, 5);
+            Array.Copy(vdSector, 0x001 + xaOff, vdMagic, 0, 5);
+            Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
 
-            DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", CurrentEncoding.GetString(VDMagic));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", CurrentEncoding.GetString(HSMagic));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", CurrentEncoding.GetString(vdMagic));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", CurrentEncoding.GetString(hsMagic));
 
-            return CurrentEncoding.GetString(VDMagic) == IsoMagic ||
-                   CurrentEncoding.GetString(HSMagic) == HighSierraMagic ||
-                   CurrentEncoding.GetString(VDMagic) == CdiMagic;
+            return CurrentEncoding.GetString(vdMagic) == ISO_MAGIC ||
+                   CurrentEncoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC ||
+                   CurrentEncoding.GetString(vdMagic) == CDI_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
-            StringBuilder ISOMetadata = new StringBuilder();
-            byte VDType; // Volume Descriptor Type, should be 1 or 2.
-            byte[] VDMagic = new byte[5]; // Volume Descriptor magic "CD001"
-            byte[] HSMagic = new byte[5]; // Volume Descriptor magic "CDROM"
+            StringBuilder isoMetadata = new StringBuilder();
+            byte[] vdMagic = new byte[5]; // Volume Descriptor magic "CD001"
+            byte[] hsMagic = new byte[5]; // Volume Descriptor magic "CDROM"
 
-            string BootSpec = "";
-
-            byte[] VDPathTableStart = new byte[4];
-            byte[] RootDirectoryLocation = new byte[4];
+            string bootSpec = "";
 
             PrimaryVolumeDescriptor? pvd = null;
             PrimaryVolumeDescriptor? jolietvd = null;
@@ -108,39 +102,39 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             ulong counter = 0;
 
-            byte[] vd_sector = imagePlugin.ReadSector(16 + counter + partition.Start);
-            int xa_off = vd_sector.Length == 2336 ? 8 : 0;
-            Array.Copy(vd_sector, 0x009 + xa_off, HSMagic, 0, 5);
-            bool HighSierra = CurrentEncoding.GetString(HSMagic) == HighSierraMagic;
-            int hs_off = 0;
-            if(HighSierra) hs_off = 8;
-            bool CDi = false;
+            byte[] vdSector = imagePlugin.ReadSector(16 + counter + partition.Start);
+            int xaOff = vdSector.Length == 2336 ? 8 : 0;
+            Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
+            bool highSierra = CurrentEncoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
+            int hsOff = 0;
+            if(highSierra) hsOff = 8;
+            bool cdi = false;
 
             while(true)
             {
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
                 // Seek to Volume Descriptor
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
-                byte[] vd_sector_tmp = imagePlugin.ReadSector(16 + counter + partition.Start);
-                vd_sector = new byte[vd_sector_tmp.Length - xa_off];
-                Array.Copy(vd_sector_tmp, xa_off, vd_sector, 0, vd_sector.Length);
+                byte[] vdSectorTmp = imagePlugin.ReadSector(16 + counter + partition.Start);
+                vdSector = new byte[vdSectorTmp.Length - xaOff];
+                Array.Copy(vdSectorTmp, xaOff, vdSector, 0, vdSector.Length);
 
-                VDType = vd_sector[0 + hs_off];
-                DicConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", VDType);
+                byte vdType = vdSector[0 + hsOff]; // Volume Descriptor Type, should be 1 or 2.
+                DicConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", vdType);
 
-                if(VDType == 255) // Supposedly we are in the PVD.
+                if(vdType == 255) // Supposedly we are in the PVD.
                 {
                     if(counter == 0) return;
 
                     break;
                 }
 
-                Array.Copy(vd_sector, 0x001, VDMagic, 0, 5);
-                Array.Copy(vd_sector, 0x009, HSMagic, 0, 5);
+                Array.Copy(vdSector, 0x001, vdMagic, 0, 5);
+                Array.Copy(vdSector, 0x009, hsMagic, 0, 5);
 
-                if(CurrentEncoding.GetString(VDMagic) != IsoMagic &&
-                   CurrentEncoding.GetString(HSMagic) != HighSierraMagic &&
-                   CurrentEncoding.GetString(VDMagic) != CdiMagic
+                if(CurrentEncoding.GetString(vdMagic) != ISO_MAGIC &&
+                   CurrentEncoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
+                   CurrentEncoding.GetString(vdMagic) != CDI_MAGIC
                 ) // Recognized, it is an ISO9660, now check for rest of data.
                 {
                     if(counter == 0) return;
@@ -148,24 +142,24 @@ namespace DiscImageChef.Filesystems.ISO9660
                     break;
                 }
 
-                CDi |= CurrentEncoding.GetString(VDMagic) == CdiMagic;
+                cdi |= CurrentEncoding.GetString(vdMagic) == CDI_MAGIC;
 
-                switch(VDType)
+                switch(vdType)
                 {
                     case 0:
                     {
                         IntPtr ptr = Marshal.AllocHGlobal(2048);
-                        Marshal.Copy(vd_sector, hs_off, ptr, 2048 - hs_off);
+                        Marshal.Copy(vdSector, hsOff, ptr, 2048 - hsOff);
                         bvd = (BootRecord)Marshal.PtrToStructure(ptr, typeof(BootRecord));
                         Marshal.FreeHGlobal(ptr);
 
-                        BootSpec = "Unknown";
+                        bootSpec = "Unknown";
 
                         if(CurrentEncoding.GetString(bvd.Value.system_id).Substring(0, 23) == "EL TORITO SPECIFICATION")
                         {
-                            BootSpec = "El Torito";
+                            bootSpec = "El Torito";
                             ptr = Marshal.AllocHGlobal(2048);
-                            Marshal.Copy(vd_sector, hs_off, ptr, 2048 - hs_off);
+                            Marshal.Copy(vdSector, hsOff, ptr, 2048 - hsOff);
                             torito = (ElToritoBootRecord)Marshal.PtrToStructure(ptr, typeof(ElToritoBootRecord));
                             Marshal.FreeHGlobal(ptr);
                         }
@@ -174,23 +168,23 @@ namespace DiscImageChef.Filesystems.ISO9660
                     }
                     case 1:
                     {
-                        if(HighSierra)
+                        if(highSierra)
                         {
                             IntPtr ptr = Marshal.AllocHGlobal(2048);
-                            Marshal.Copy(vd_sector, 0, ptr, 2048);
+                            Marshal.Copy(vdSector, 0, ptr, 2048);
                             hsvd =
                                 (HighSierraPrimaryVolumeDescriptor)
                                 Marshal.PtrToStructure(ptr, typeof(HighSierraPrimaryVolumeDescriptor));
                             Marshal.FreeHGlobal(ptr);
                         }
-                        else if(CDi)
+                        else if(cdi)
                             fsvd =
                                 BigEndianMarshal
-                                    .ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vd_sector);
+                                    .ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vdSector);
                         else
                         {
                             IntPtr ptr = Marshal.AllocHGlobal(2048);
-                            Marshal.Copy(vd_sector, 0, ptr, 2048);
+                            Marshal.Copy(vdSector, 0, ptr, 2048);
                             pvd = (PrimaryVolumeDescriptor)Marshal.PtrToStructure(ptr, typeof(PrimaryVolumeDescriptor));
                             Marshal.FreeHGlobal(ptr);
                         }
@@ -198,17 +192,15 @@ namespace DiscImageChef.Filesystems.ISO9660
                     }
                     case 2:
                     {
-                        PrimaryVolumeDescriptor svd;
                         IntPtr ptr = Marshal.AllocHGlobal(2048);
-                        Marshal.Copy(vd_sector, 0, ptr, 2048);
-                        svd = (PrimaryVolumeDescriptor)Marshal.PtrToStructure(ptr, typeof(PrimaryVolumeDescriptor));
+                        Marshal.Copy(vdSector, 0, ptr, 2048);
+                        PrimaryVolumeDescriptor svd = (PrimaryVolumeDescriptor)Marshal.PtrToStructure(ptr, typeof(PrimaryVolumeDescriptor));
                         Marshal.FreeHGlobal(ptr);
 
                         // Check if this is Joliet
                         if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
                             if(svd.escape_sequences[2] == '@' || svd.escape_sequences[2] == 'C' ||
                                svd.escape_sequences[2] == 'E') jolietvd = svd;
-                            else break;
                         else DicConsole.WriteLine("ISO9660 plugin", "Found unknown supplementary volume descriptor");
 
                         break;
@@ -218,8 +210,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 counter++;
             }
 
-            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
-            DecodedVolumeDescriptor decodedJolietVD = new DecodedVolumeDescriptor();
+            DecodedVolumeDescriptor decodedVd;
+            DecodedVolumeDescriptor decodedJolietVd = new DecodedVolumeDescriptor();
 
             xmlFSType = new FileSystemType();
 
@@ -229,23 +221,23 @@ namespace DiscImageChef.Filesystems.ISO9660
                 return;
             }
 
-            if(HighSierra) decodedVD = DecodeVolumeDescriptor(hsvd.Value);
-            else if(CDi) decodedVD = DecodeVolumeDescriptor(fsvd.Value);
-            else decodedVD = DecodeVolumeDescriptor(pvd.Value);
+            if(highSierra) decodedVd = DecodeVolumeDescriptor(hsvd.Value);
+            else if(cdi) decodedVd = DecodeVolumeDescriptor(fsvd.Value);
+            else decodedVd = DecodeVolumeDescriptor(pvd.Value);
 
-            if(jolietvd != null) decodedJolietVD = DecodeJolietDescriptor(jolietvd.Value);
+            if(jolietvd != null) decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
 
             uint rootLocation = 0;
             uint rootSize = 0;
 
             // No need to read root on CD-i, as extensions are not supported...
-            if(!CDi)
+            if(!cdi)
             {
-                rootLocation = HighSierra
+                rootLocation = highSierra
                                    ? hsvd.Value.root_directory_record.extent
                                    : pvd.Value.root_directory_record.extent;
 
-                if(HighSierra)
+                if(highSierra)
                 {
                     rootSize = hsvd.Value.root_directory_record.size / hsvd.Value.logical_block_size;
                     if(hsvd.Value.root_directory_record.size % hsvd.Value.logical_block_size > 0) rootSize++;
@@ -257,15 +249,15 @@ namespace DiscImageChef.Filesystems.ISO9660
                 }
             }
 
-            byte[] root_dir = imagePlugin.ReadSectors(rootLocation + partition.Start, rootSize);
+            byte[] rootDir = imagePlugin.ReadSectors(rootLocation + partition.Start, rootSize);
             int rootOff = 0;
-            bool XA = false;
-            bool Apple = false;
-            bool SUSP = false;
-            bool RRIP = false;
+            bool xaExtensions = false;
+            bool apple = false;
+            bool susp = false;
+            bool rrip = false;
             bool ziso = false;
-            bool Amiga = false;
-            bool AAIP = false;
+            bool amiga = false;
+            bool aaip = false;
             List<ContinuationArea> contareas = new List<ContinuationArea>();
             List<byte[]> refareas = new List<byte[]>();
             StringBuilder suspInformation = new StringBuilder();
@@ -273,118 +265,118 @@ namespace DiscImageChef.Filesystems.ISO9660
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             // Walk thru root directory to see system area extensions in use
-            while(rootOff + Marshal.SizeOf(typeof(DirectoryRecord)) < root_dir.Length && !CDi)
+            while(rootOff + Marshal.SizeOf(typeof(DirectoryRecord)) < rootDir.Length && !cdi)
             {
                 DirectoryRecord record = new DirectoryRecord();
                 IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(record));
-                Marshal.Copy(root_dir, rootOff, ptr, Marshal.SizeOf(record));
+                Marshal.Copy(rootDir, rootOff, ptr, Marshal.SizeOf(record));
                 record = (DirectoryRecord)Marshal.PtrToStructure(ptr, typeof(DirectoryRecord));
                 Marshal.FreeHGlobal(ptr);
 
-                int sa_off = Marshal.SizeOf(record) + record.name_len;
-                sa_off += sa_off % 2;
-                int sa_len = record.length - sa_off;
+                int saOff = Marshal.SizeOf(record) + record.name_len;
+                saOff += saOff % 2;
+                int saLen = record.length - saOff;
 
-                if(sa_len > 0 && rootOff + sa_off + sa_len <= root_dir.Length)
+                if(saLen > 0 && rootOff + saOff + saLen <= rootDir.Length)
                 {
-                    byte[] sa = new byte[sa_len];
-                    Array.Copy(root_dir, rootOff + sa_off, sa, 0, sa_len);
-                    sa_off = 0;
+                    byte[] sa = new byte[saLen];
+                    Array.Copy(rootDir, rootOff + saOff, sa, 0, saLen);
+                    saOff = 0;
 
-                    while(sa_off < sa_len)
+                    while(saOff < saLen)
                     {
                         bool noneFound = true;
 
-                        if(Marshal.SizeOf(typeof(CdromXa)) + sa_off <= sa_len)
+                        if(Marshal.SizeOf(typeof(CdromXa)) + saOff <= saLen)
                         {
                             CdromXa xa = BigEndianMarshal.ByteArrayToStructureBigEndian<CdromXa>(sa);
-                            if(xa.signature == XaMagic)
+                            if(xa.signature == XA_MAGIC)
                             {
-                                XA = true;
-                                sa_off += Marshal.SizeOf(typeof(CdromXa));
+                                xaExtensions = true;
+                                saOff += Marshal.SizeOf(typeof(CdromXa));
                                 noneFound = false;
                             }
                         }
 
-                        if(sa_off + 2 >= sa_len) break;
+                        if(saOff + 2 >= saLen) break;
 
-                        ushort nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
+                        ushort nextSignature = BigEndianBitConverter.ToUInt16(sa, saOff);
 
                         switch(nextSignature) {
                             // Easy, contains size field
-                            case AppleMagic:
-                                Apple = true;
-                                sa_off += sa[sa_off + 2];
+                            case APPLE_MAGIC:
+                                apple = true;
+                                saOff += sa[saOff + 2];
                                 noneFound = false;
                                 break;
                             // Not easy, contains size field
-                            case AppleMagicOld:
-                                Apple = true;
-                                AppleOldId apple_id = (AppleOldId)sa[sa_off + 2];
+                            case APPLE_MAGIC_OLD:
+                                apple = true;
+                                AppleOldId appleId = (AppleOldId)sa[saOff + 2];
                                 noneFound = false;
 
-                                switch(apple_id)
+                                switch(appleId)
                                 {
                                     case AppleOldId.ProDOS:
-                                        sa_off += Marshal.SizeOf(typeof(AppleProDOSOldSystemUse));
+                                        saOff += Marshal.SizeOf(typeof(AppleProDOSOldSystemUse));
                                         break;
                                     case AppleOldId.TypeCreator:
                                     case AppleOldId.TypeCreatorBundle:
-                                        sa_off += Marshal.SizeOf(typeof(AppleHFSTypeCreatorSystemUse));
+                                        saOff += Marshal.SizeOf(typeof(AppleHFSTypeCreatorSystemUse));
                                         break;
                                     case AppleOldId.TypeCreatorIcon:
                                     case AppleOldId.TypeCreatorIconBundle:
-                                        sa_off += Marshal.SizeOf(typeof(AppleHFSIconSystemUse));
+                                        saOff += Marshal.SizeOf(typeof(AppleHFSIconSystemUse));
                                         break;
                                     case AppleOldId.HFS:
-                                        sa_off += Marshal.SizeOf(typeof(AppleHFSOldSystemUse));
+                                        saOff += Marshal.SizeOf(typeof(AppleHFSOldSystemUse));
                                         break;
                                 }
 
                                 break;
                             // IEEE-P1281 aka SUSP 1.12
-                            case SUSP_Indicator:
-                                SUSP = true;
-                                sa_off += sa[sa_off + 2];
+                            case SUSP_INDICATOR:
+                                susp = true;
+                                saOff += sa[saOff + 2];
                                 noneFound = false;
 
-                                while(sa_off + 2 < sa_len)
+                                while(saOff + 2 < saLen)
                                 {
-                                    nextSignature = BigEndianBitConverter.ToUInt16(sa, sa_off);
+                                    nextSignature = BigEndianBitConverter.ToUInt16(sa, saOff);
 
                                     switch(nextSignature) {
-                                        case AppleMagic:
-                                            if(sa[sa_off + 3] == 1 && sa[sa_off + 2] == 7) Apple = true;
-                                            else Apple |= sa[sa_off + 3] != 1;
+                                        case APPLE_MAGIC:
+                                            if(sa[saOff + 3] == 1 && sa[saOff + 2] == 7) apple = true;
+                                            else apple |= sa[saOff + 3] != 1;
                                             break;
-                                        case SUSP_Continuation when sa_off + sa[sa_off + 2] <= sa_len:
-                                            byte[] ce = new byte[sa[sa_off + 2]];
-                                            Array.Copy(sa, sa_off, ce, 0, ce.Length);
+                                        case SUSP_CONTINUATION when saOff + sa[saOff + 2] <= saLen:
+                                            byte[] ce = new byte[sa[saOff + 2]];
+                                            Array.Copy(sa, saOff, ce, 0, ce.Length);
                                             ContinuationArea ca =
                                                 BigEndianMarshal.ByteArrayToStructureBigEndian<ContinuationArea>(ce);
                                             contareas.Add(ca);
                                             break;
-                                        case SUSP_Reference when sa_off + sa[sa_off + 2] <= sa_len:
-                                            byte[] er = new byte[sa[sa_off + 2]];
-                                            Array.Copy(sa, sa_off, er, 0, er.Length);
+                                        case SUSP_REFERENCE when saOff + sa[saOff + 2] <= saLen:
+                                            byte[] er = new byte[sa[saOff + 2]];
+                                            Array.Copy(sa, saOff, er, 0, er.Length);
                                             refareas.Add(er);
                                             break;
                                     }
 
-                                    RRIP |= nextSignature == RRIP_Magic || nextSignature == RRIP_PosixAttributes ||
-                                            nextSignature == RRIP_PosixDevNo || nextSignature == RRIP_Symlink ||
-                                            nextSignature == RRIP_Name || nextSignature == RRIP_Childlink ||
-                                            nextSignature == RRIP_Parentlink || nextSignature == RRIP_RelocatedDir ||
-                                            nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
+                                    rrip |= nextSignature == RRIP_MAGIC || nextSignature == RRIP_POSIX_ATTRIBUTES ||
+                                            nextSignature == RRIP_POSIX_DEV_NO || nextSignature == RRIP_SYMLINK ||
+                                            nextSignature == RRIP_NAME || nextSignature == RRIP_CHILDLINK ||
+                                            nextSignature == RRIP_PARENTLINK || nextSignature == RRIP_RELOCATED_DIR ||
+                                            nextSignature == RRIP_TIMESTAMPS || nextSignature == RRIP_SPARSE;
 
-                                    ziso |= nextSignature == ziso_Magic;
-                                    Amiga |= nextSignature == Amiga_Magic;
-                                    AAIP |= nextSignature == AAIP_Magic ||
-                                            nextSignature == AAIP_OldMagic && sa[sa_off + 3] == 1 && sa[sa_off + 2] >= 9;
+                                    ziso |= nextSignature == ZISO_MAGIC;
+                                    amiga |= nextSignature == AMIGA_MAGIC;
+                                    aaip |= nextSignature == AAIP_MAGIC ||
+                                            nextSignature == AAIP_MAGIC_OLD && sa[saOff + 3] == 1 && sa[saOff + 2] >= 9;
 
-                                    sa_off += sa[sa_off + 2];
+                                    saOff += sa[saOff + 2];
 
-                                    if(nextSignature == SUSP_Terminator) break;
+                                    if(nextSignature == SUSP_TERMINATOR) break;
                                 }
 
                                 break;
@@ -401,45 +393,45 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             foreach(ContinuationArea ca in contareas)
             {
-                uint ca_len = (ca.ca_length_be + ca.offset_be) /
-                              (HighSierra ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size);
+                uint caLen = (ca.ca_length_be + ca.offset_be) /
+                              (highSierra ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size);
                 if((ca.ca_length_be + ca.offset_be) %
-                   (HighSierra ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size) > 0) ca_len++;
+                   (highSierra ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size) > 0) caLen++;
 
-                byte[] ca_sectors = imagePlugin.ReadSectors(ca.block_be, ca_len);
-                byte[] ca_data = new byte[ca.ca_length_be];
-                Array.Copy(ca_sectors, ca.offset_be, ca_data, 0, ca.ca_length_be);
-                int ca_off = 0;
+                byte[] caSectors = imagePlugin.ReadSectors(ca.block_be, caLen);
+                byte[] caData = new byte[ca.ca_length_be];
+                Array.Copy(caSectors, ca.offset_be, caData, 0, ca.ca_length_be);
+                int caOff = 0;
 
-                while(ca_off < ca.ca_length_be)
+                while(caOff < ca.ca_length_be)
                 {
-                    ushort nextSignature = BigEndianBitConverter.ToUInt16(ca_data, ca_off);
+                    ushort nextSignature = BigEndianBitConverter.ToUInt16(caData, caOff);
 
                     switch(nextSignature) {
                         // Apple never said to include its extensions inside a continuation area, but just in case
-                        case AppleMagic:
-                            if(ca_data[ca_off + 3] == 1 && ca_data[ca_off + 2] == 7) Apple = true;
-                            else Apple |= ca_data[ca_off + 3] != 1;
+                        case APPLE_MAGIC:
+                            if(caData[caOff + 3] == 1 && caData[caOff + 2] == 7) apple = true;
+                            else apple |= caData[caOff + 3] != 1;
                             break;
-                        case SUSP_Reference when ca_off + ca_data[ca_off + 2] <= ca.ca_length_be:
-                            byte[] er = new byte[ca_data[ca_off + 2]];
-                            Array.Copy(ca_data, ca_off, er, 0, er.Length);
+                        case SUSP_REFERENCE when caOff + caData[caOff + 2] <= ca.ca_length_be:
+                            byte[] er = new byte[caData[caOff + 2]];
+                            Array.Copy(caData, caOff, er, 0, er.Length);
                             refareas.Add(er);
                             break;
                     }
 
-                    RRIP |= nextSignature == RRIP_Magic || nextSignature == RRIP_PosixAttributes ||
-                            nextSignature == RRIP_PosixDevNo || nextSignature == RRIP_Symlink ||
-                            nextSignature == RRIP_Name || nextSignature == RRIP_Childlink ||
-                            nextSignature == RRIP_Parentlink || nextSignature == RRIP_RelocatedDir ||
-                            nextSignature == RRIP_Timestamps || nextSignature == RRIP_Sparse;
+                    rrip |= nextSignature == RRIP_MAGIC || nextSignature == RRIP_POSIX_ATTRIBUTES ||
+                            nextSignature == RRIP_POSIX_DEV_NO || nextSignature == RRIP_SYMLINK ||
+                            nextSignature == RRIP_NAME || nextSignature == RRIP_CHILDLINK ||
+                            nextSignature == RRIP_PARENTLINK || nextSignature == RRIP_RELOCATED_DIR ||
+                            nextSignature == RRIP_TIMESTAMPS || nextSignature == RRIP_SPARSE;
 
-                    ziso |= nextSignature == ziso_Magic;
-                    Amiga |= nextSignature == Amiga_Magic;
-                    AAIP |= nextSignature == AAIP_Magic ||
-                            nextSignature == AAIP_OldMagic && ca_data[ca_off + 3] == 1 && ca_data[ca_off + 2] >= 9;
+                    ziso |= nextSignature == ZISO_MAGIC;
+                    amiga |= nextSignature == AMIGA_MAGIC;
+                    aaip |= nextSignature == AAIP_MAGIC ||
+                            nextSignature == AAIP_MAGIC_OLD && caData[caOff + 3] == 1 && caData[caOff + 2] >= 9;
 
-                    ca_off += ca_data[ca_off + 2];
+                    caOff += caData[caOff + 2];
                 }
             }
 
@@ -453,366 +445,358 @@ namespace DiscImageChef.Filesystems.ISO9660
                 foreach(byte[] erb in refareas)
                 {
                     ReferenceArea er = BigEndianMarshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
-                    string ext_id = CurrentEncoding.GetString(erb, Marshal.SizeOf(er), er.id_len);
-                    string ext_des = CurrentEncoding.GetString(erb, Marshal.SizeOf(er) + er.id_len, er.des_len);
-                    string ext_src =
+                    string extId = CurrentEncoding.GetString(erb, Marshal.SizeOf(er), er.id_len);
+                    string extDes = CurrentEncoding.GetString(erb, Marshal.SizeOf(er) + er.id_len, er.des_len);
+                    string extSrc =
                         CurrentEncoding.GetString(erb, Marshal.SizeOf(er) + er.id_len + er.des_len, er.src_len);
                     suspInformation.AppendFormat("Extension: {0}", counter).AppendLine();
-                    suspInformation.AppendFormat("\tID: {0}, version {1}", ext_id, er.ext_ver).AppendLine();
-                    suspInformation.AppendFormat("\tDescription: {0}", ext_des).AppendLine();
-                    suspInformation.AppendFormat("\tSource: {0}", ext_src).AppendLine();
+                    suspInformation.AppendFormat("\tID: {0}, version {1}", extId, er.ext_ver).AppendLine();
+                    suspInformation.AppendFormat("\tDescription: {0}", extDes).AppendLine();
+                    suspInformation.AppendFormat("\tSource: {0}", extSrc).AppendLine();
                     counter++;
                 }
             }
 
-            byte[] ipbin_sector = imagePlugin.ReadSector(0 + partition.Start);
-            CD.IPBin? SegaCD = CD.DecodeIPBin(ipbin_sector);
-            Saturn.IPBin? Saturn = Decoders.Sega.Saturn.DecodeIPBin(ipbin_sector);
-            Dreamcast.IPBin? Dreamcast = Decoders.Sega.Dreamcast.DecodeIPBin(ipbin_sector);
+            byte[] ipbinSector = imagePlugin.ReadSector(0 + partition.Start);
+            CD.IPBin? segaCd = CD.DecodeIPBin(ipbinSector);
+            Saturn.IPBin? saturn = Saturn.DecodeIPBin(ipbinSector);
+            Dreamcast.IPBin? dreamcast = Dreamcast.DecodeIPBin(ipbinSector);
 
             string fsFormat;
-            if(HighSierra) fsFormat = "High Sierra Format";
-            else if(CDi) fsFormat = "CD-i";
+            if(highSierra) fsFormat = "High Sierra Format";
+            else if(cdi) fsFormat = "CD-i";
             else fsFormat = "ISO9660";
 
-            ISOMetadata.AppendFormat("{0} file system", fsFormat).AppendLine();
-            if(XA) ISOMetadata.AppendLine("CD-ROM XA extensions present.");
-            if(Apple) ISOMetadata.AppendLine("Apple extensions present.");
-            if(jolietvd != null) ISOMetadata.AppendLine("Joliet extensions present.");
-            if(SUSP) ISOMetadata.AppendLine("System Use Sharing Protocol present.");
-            if(RRIP) ISOMetadata.AppendLine("Rock Ridge Interchange Protocol present.");
-            if(AAIP) ISOMetadata.AppendLine("Arbitrary Attribute Interchange Protocol present.");
-            if(ziso) ISOMetadata.AppendLine("zisofs compression present.");
+            isoMetadata.AppendFormat("{0} file system", fsFormat).AppendLine();
+            if(xaExtensions) isoMetadata.AppendLine("CD-ROM XA extensions present.");
+            if(amiga) isoMetadata.AppendLine("Amiga extensions present.");
+            if(apple) isoMetadata.AppendLine("Apple extensions present.");
+            if(jolietvd != null) isoMetadata.AppendLine("Joliet extensions present.");
+            if(susp) isoMetadata.AppendLine("System Use Sharing Protocol present.");
+            if(rrip) isoMetadata.AppendLine("Rock Ridge Interchange Protocol present.");
+            if(aaip) isoMetadata.AppendLine("Arbitrary Attribute Interchange Protocol present.");
+            if(ziso) isoMetadata.AppendLine("zisofs compression present.");
             if(bvd != null)
-                ISOMetadata.AppendFormat("Disc bootable following {0} specifications.", BootSpec).AppendLine();
-            if(SegaCD != null)
+                isoMetadata.AppendFormat("Disc bootable following {0} specifications.", bootSpec).AppendLine();
+            if(segaCd != null)
             {
-                ISOMetadata.AppendLine("This is a SegaCD / MegaCD disc.");
-                ISOMetadata.AppendLine(CD.Prettify(SegaCD));
+                isoMetadata.AppendLine("This is a SegaCD / MegaCD disc.");
+                isoMetadata.AppendLine(CD.Prettify(segaCd));
             }
-            if(Saturn != null)
+            if(saturn != null)
             {
-                ISOMetadata.AppendLine("This is a Sega Saturn disc.");
-                ISOMetadata.AppendLine(Decoders.Sega.Saturn.Prettify(Saturn));
+                isoMetadata.AppendLine("This is a Sega Saturn disc.");
+                isoMetadata.AppendLine(Saturn.Prettify(saturn));
             }
-            if(Dreamcast != null)
+            if(dreamcast != null)
             {
-                ISOMetadata.AppendLine("This is a Sega Dreamcast disc.");
-                ISOMetadata.AppendLine(Decoders.Sega.Dreamcast.Prettify(Dreamcast));
+                isoMetadata.AppendLine("This is a Sega Dreamcast disc.");
+                isoMetadata.AppendLine(Dreamcast.Prettify(dreamcast));
             }
-            ISOMetadata.AppendFormat("{0}------------------------------", CDi ? "---------------" : "").AppendLine();
-            ISOMetadata.AppendFormat("{0}VOLUME DESCRIPTOR INFORMATION:", CDi ? "FILE STRUCTURE " : "").AppendLine();
-            ISOMetadata.AppendFormat("{0}------------------------------", CDi ? "---------------" : "").AppendLine();
-            ISOMetadata.AppendFormat("System identifier: {0}", decodedVD.SystemIdentifier).AppendLine();
-            ISOMetadata.AppendFormat("Volume identifier: {0}", decodedVD.VolumeIdentifier).AppendLine();
-            ISOMetadata.AppendFormat("Volume set identifier: {0}", decodedVD.VolumeSetIdentifier).AppendLine();
-            ISOMetadata.AppendFormat("Publisher identifier: {0}", decodedVD.PublisherIdentifier).AppendLine();
-            ISOMetadata.AppendFormat("Data preparer identifier: {0}", decodedVD.DataPreparerIdentifier).AppendLine();
-            ISOMetadata.AppendFormat("Application identifier: {0}", decodedVD.ApplicationIdentifier).AppendLine();
-            ISOMetadata.AppendFormat("Volume creation date: {0}", decodedVD.CreationTime).AppendLine();
-            if(decodedVD.HasModificationTime)
-                ISOMetadata.AppendFormat("Volume modification date: {0}", decodedVD.ModificationTime).AppendLine();
-            else ISOMetadata.AppendFormat("Volume has not been modified.").AppendLine();
-            if(decodedVD.HasExpirationTime)
-                ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedVD.ExpirationTime).AppendLine();
-            else ISOMetadata.AppendFormat("Volume does not expire.").AppendLine();
-            if(decodedVD.HasEffectiveTime)
-                ISOMetadata.AppendFormat("Volume effective date: {0}", decodedVD.EffectiveTime).AppendLine();
-            else ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
-            ISOMetadata.AppendFormat("Volume has {0} blocks of {1} bytes each", decodedVD.Blocks, decodedVD.BlockSize)
+            isoMetadata.AppendFormat("{0}------------------------------", cdi ? "---------------" : "").AppendLine();
+            isoMetadata.AppendFormat("{0}VOLUME DESCRIPTOR INFORMATION:", cdi ? "FILE STRUCTURE " : "").AppendLine();
+            isoMetadata.AppendFormat("{0}------------------------------", cdi ? "---------------" : "").AppendLine();
+            isoMetadata.AppendFormat("System identifier: {0}", decodedVd.SystemIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Volume identifier: {0}", decodedVd.VolumeIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Volume set identifier: {0}", decodedVd.VolumeSetIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Publisher identifier: {0}", decodedVd.PublisherIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Data preparer identifier: {0}", decodedVd.DataPreparerIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Application identifier: {0}", decodedVd.ApplicationIdentifier).AppendLine();
+            isoMetadata.AppendFormat("Volume creation date: {0}", decodedVd.CreationTime).AppendLine();
+            if(decodedVd.HasModificationTime)
+                isoMetadata.AppendFormat("Volume modification date: {0}", decodedVd.ModificationTime).AppendLine();
+            else isoMetadata.AppendFormat("Volume has not been modified.").AppendLine();
+            if(decodedVd.HasExpirationTime)
+                isoMetadata.AppendFormat("Volume expiration date: {0}", decodedVd.ExpirationTime).AppendLine();
+            else isoMetadata.AppendFormat("Volume does not expire.").AppendLine();
+            if(decodedVd.HasEffectiveTime)
+                isoMetadata.AppendFormat("Volume effective date: {0}", decodedVd.EffectiveTime).AppendLine();
+            else isoMetadata.AppendFormat("Volume has always been effective.").AppendLine();
+            isoMetadata.AppendFormat("Volume has {0} blocks of {1} bytes each", decodedVd.Blocks, decodedVd.BlockSize)
                        .AppendLine();
 
             if(jolietvd != null)
             {
-                ISOMetadata.AppendLine("-------------------------------------");
-                ISOMetadata.AppendLine("JOLIET VOLUME DESCRIPTOR INFORMATION:");
-                ISOMetadata.AppendLine("-------------------------------------");
-                ISOMetadata.AppendFormat("System identifier: {0}", decodedJolietVD.SystemIdentifier).AppendLine();
-                ISOMetadata.AppendFormat("Volume identifier: {0}", decodedJolietVD.VolumeIdentifier).AppendLine();
-                ISOMetadata.AppendFormat("Volume set identifier: {0}", decodedJolietVD.VolumeSetIdentifier)
+                isoMetadata.AppendLine("-------------------------------------");
+                isoMetadata.AppendLine("JOLIET VOLUME DESCRIPTOR INFORMATION:");
+                isoMetadata.AppendLine("-------------------------------------");
+                isoMetadata.AppendFormat("System identifier: {0}", decodedJolietVd.SystemIdentifier).AppendLine();
+                isoMetadata.AppendFormat("Volume identifier: {0}", decodedJolietVd.VolumeIdentifier).AppendLine();
+                isoMetadata.AppendFormat("Volume set identifier: {0}", decodedJolietVd.VolumeSetIdentifier)
                            .AppendLine();
-                ISOMetadata.AppendFormat("Publisher identifier: {0}", decodedJolietVD.PublisherIdentifier).AppendLine();
-                ISOMetadata.AppendFormat("Data preparer identifier: {0}", decodedJolietVD.DataPreparerIdentifier)
+                isoMetadata.AppendFormat("Publisher identifier: {0}", decodedJolietVd.PublisherIdentifier).AppendLine();
+                isoMetadata.AppendFormat("Data preparer identifier: {0}", decodedJolietVd.DataPreparerIdentifier)
                            .AppendLine();
-                ISOMetadata.AppendFormat("Application identifier: {0}", decodedJolietVD.ApplicationIdentifier)
+                isoMetadata.AppendFormat("Application identifier: {0}", decodedJolietVd.ApplicationIdentifier)
                            .AppendLine();
-                ISOMetadata.AppendFormat("Volume creation date: {0}", decodedJolietVD.CreationTime).AppendLine();
-                if(decodedJolietVD.HasModificationTime)
-                    ISOMetadata.AppendFormat("Volume modification date: {0}", decodedJolietVD.ModificationTime)
+                isoMetadata.AppendFormat("Volume creation date: {0}", decodedJolietVd.CreationTime).AppendLine();
+                if(decodedJolietVd.HasModificationTime)
+                    isoMetadata.AppendFormat("Volume modification date: {0}", decodedJolietVd.ModificationTime)
                                .AppendLine();
-                else ISOMetadata.AppendFormat("Volume has not been modified.").AppendLine();
-                if(decodedJolietVD.HasExpirationTime)
-                    ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedJolietVD.ExpirationTime)
+                else isoMetadata.AppendFormat("Volume has not been modified.").AppendLine();
+                if(decodedJolietVd.HasExpirationTime)
+                    isoMetadata.AppendFormat("Volume expiration date: {0}", decodedJolietVd.ExpirationTime)
                                .AppendLine();
-                else ISOMetadata.AppendFormat("Volume does not expire.").AppendLine();
-                if(decodedJolietVD.HasEffectiveTime)
-                    ISOMetadata.AppendFormat("Volume effective date: {0}", decodedJolietVD.EffectiveTime).AppendLine();
-                else ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
+                else isoMetadata.AppendFormat("Volume does not expire.").AppendLine();
+                if(decodedJolietVd.HasEffectiveTime)
+                    isoMetadata.AppendFormat("Volume effective date: {0}", decodedJolietVd.EffectiveTime).AppendLine();
+                else isoMetadata.AppendFormat("Volume has always been effective.").AppendLine();
             }
 
             if(torito != null)
             {
-                vd_sector = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start);
+                vdSector = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start);
                 Sha1Context sha1Ctx = new Sha1Context();
                 sha1Ctx.Init();
-                byte[] boot_image;
 
-                int torito_off = 0;
+                int toritoOff = 0;
 
-                if(vd_sector[torito_off] != 1) goto exit_torito;
+                if(vdSector[toritoOff] != 1) goto exit_torito;
 
-                ElToritoValidationEntry valentry;
-                IntPtr ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
-                Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
-                valentry = (ElToritoValidationEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoValidationEntry));
+                IntPtr ptr = Marshal.AllocHGlobal(EL_TORITO_ENTRY_SIZE);
+                Marshal.Copy(vdSector, toritoOff, ptr, EL_TORITO_ENTRY_SIZE);
+                ElToritoValidationEntry valentry = (ElToritoValidationEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoValidationEntry));
                 Marshal.FreeHGlobal(ptr);
 
-                if(valentry.signature != ElToritoMagic) goto exit_torito;
+                if(valentry.signature != EL_TORITO_MAGIC) goto exit_torito;
 
-                torito_off += ElToritoEntrySize;
+                toritoOff += EL_TORITO_ENTRY_SIZE;
 
-                ElToritoInitialEntry initial_entry;
-                ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
-                Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
-                initial_entry = (ElToritoInitialEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoInitialEntry));
+                ptr = Marshal.AllocHGlobal(EL_TORITO_ENTRY_SIZE);
+                Marshal.Copy(vdSector, toritoOff, ptr, EL_TORITO_ENTRY_SIZE);
+                ElToritoInitialEntry initialEntry = (ElToritoInitialEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoInitialEntry));
                 Marshal.FreeHGlobal(ptr);
-                initial_entry.boot_type = (ElToritoEmulation)((byte)initial_entry.boot_type & 0xF);
+                initialEntry.boot_type = (ElToritoEmulation)((byte)initialEntry.boot_type & 0xF);
 
-                boot_image =
-                    imagePlugin.ReadSectors(initial_entry.load_rba + partition.Start, initial_entry.sector_count);
+                byte[] bootImage = imagePlugin.ReadSectors(initialEntry.load_rba + partition.Start, initialEntry.sector_count);
 
-                ISOMetadata.AppendLine("----------------------");
-                ISOMetadata.AppendLine("EL TORITO INFORMATION:");
-                ISOMetadata.AppendLine("----------------------");
+                isoMetadata.AppendLine("----------------------");
+                isoMetadata.AppendLine("EL TORITO INFORMATION:");
+                isoMetadata.AppendLine("----------------------");
 
-                ISOMetadata.AppendLine("Initial entry:");
-                ISOMetadata.AppendFormat("\tDeveloper ID: {0}", CurrentEncoding.GetString(valentry.developer_id))
+                isoMetadata.AppendLine("Initial entry:");
+                isoMetadata.AppendFormat("\tDeveloper ID: {0}", CurrentEncoding.GetString(valentry.developer_id))
                            .AppendLine();
-                if(initial_entry.bootable == ElToritoIndicator.Bootable)
+                if(initialEntry.bootable == ElToritoIndicator.Bootable)
                 {
-                    ISOMetadata.AppendFormat("\tBootable on {0}", valentry.platform_id).AppendLine();
-                    ISOMetadata.AppendFormat("\tBootable image starts at sector {0} and runs for {1} sectors",
-                                             initial_entry.load_rba, initial_entry.sector_count).AppendLine();
+                    isoMetadata.AppendFormat("\tBootable on {0}", valentry.platform_id).AppendLine();
+                    isoMetadata.AppendFormat("\tBootable image starts at sector {0} and runs for {1} sectors",
+                                             initialEntry.load_rba, initialEntry.sector_count).AppendLine();
                     if(valentry.platform_id == ElToritoPlatform.x86)
-                        ISOMetadata.AppendFormat("\tBootable image will be loaded at segment {0:X4}h",
-                                                 initial_entry.load_seg == 0 ? 0x7C0 : initial_entry.load_seg)
+                        isoMetadata.AppendFormat("\tBootable image will be loaded at segment {0:X4}h",
+                                                 initialEntry.load_seg == 0 ? 0x7C0 : initialEntry.load_seg)
                                    .AppendLine();
                     else
-                        ISOMetadata.AppendFormat("\tBootable image will be loaded at 0x{0:X8}",
-                                                 (uint)initial_entry.load_seg * 10).AppendLine();
-                    switch(initial_entry.boot_type)
+                        isoMetadata.AppendFormat("\tBootable image will be loaded at 0x{0:X8}",
+                                                 (uint)initialEntry.load_seg * 10).AppendLine();
+                    switch(initialEntry.boot_type)
                     {
                         case ElToritoEmulation.None:
-                            ISOMetadata.AppendLine("\tImage uses no emulation");
+                            isoMetadata.AppendLine("\tImage uses no emulation");
                             break;
                         case ElToritoEmulation.Md2hd:
-                            ISOMetadata.AppendLine("\tImage emulates a 5.25\" high-density (MD2HD, 1.2Mb) floppy");
+                            isoMetadata.AppendLine("\tImage emulates a 5.25\" high-density (MD2HD, 1.2Mb) floppy");
                             break;
                         case ElToritoEmulation.Mf2hd:
-                            ISOMetadata.AppendLine("\tImage emulates a 3.5\" high-density (MF2HD, 1.44Mb) floppy");
+                            isoMetadata.AppendLine("\tImage emulates a 3.5\" high-density (MF2HD, 1.44Mb) floppy");
                             break;
                         case ElToritoEmulation.Mf2ed:
-                            ISOMetadata.AppendLine("\tImage emulates a 3.5\" extra-density (MF2ED, 2.88Mb) floppy");
+                            isoMetadata.AppendLine("\tImage emulates a 3.5\" extra-density (MF2ED, 2.88Mb) floppy");
                             break;
                         default:
-                            ISOMetadata.AppendFormat("\tImage uses unknown emulation type {0}",
-                                                     (byte)initial_entry.boot_type).AppendLine();
+                            isoMetadata.AppendFormat("\tImage uses unknown emulation type {0}",
+                                                     (byte)initialEntry.boot_type).AppendLine();
                             break;
                     }
 
-                    ISOMetadata.AppendFormat("\tSystem type: 0x{0:X2}", initial_entry.system_type).AppendLine();
-                    ISOMetadata.AppendFormat("\tBootable image's SHA1: {0}", sha1Ctx.Data(boot_image, out byte[] hash))
+                    isoMetadata.AppendFormat("\tSystem type: 0x{0:X2}", initialEntry.system_type).AppendLine();
+                    isoMetadata.AppendFormat("\tBootable image's SHA1: {0}", sha1Ctx.Data(bootImage, out _))
                                .AppendLine();
                 }
-                else ISOMetadata.AppendLine("\tNot bootable");
+                else isoMetadata.AppendLine("\tNot bootable");
 
-                torito_off += ElToritoEntrySize;
+                toritoOff += EL_TORITO_ENTRY_SIZE;
 
-                int section_counter = 2;
+                const int SECTION_COUNTER = 2;
 
-                while(torito_off < vd_sector.Length && (vd_sector[torito_off] == (byte)ElToritoIndicator.Header ||
-                                                        vd_sector[torito_off] == (byte)ElToritoIndicator.LastHeader))
+                while(toritoOff < vdSector.Length && (vdSector[toritoOff] == (byte)ElToritoIndicator.Header ||
+                                                        vdSector[toritoOff] == (byte)ElToritoIndicator.LastHeader))
                 {
-                    ElToritoSectionHeaderEntry section_header;
-                    ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
-                    Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
-                    section_header =
-                        (ElToritoSectionHeaderEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoSectionHeaderEntry));
+                    ptr = Marshal.AllocHGlobal(EL_TORITO_ENTRY_SIZE);
+                    Marshal.Copy(vdSector, toritoOff, ptr, EL_TORITO_ENTRY_SIZE);
+                    ElToritoSectionHeaderEntry sectionHeader = (ElToritoSectionHeaderEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoSectionHeaderEntry));
                     Marshal.FreeHGlobal(ptr);
-                    torito_off += ElToritoEntrySize;
+                    toritoOff += EL_TORITO_ENTRY_SIZE;
 
-                    ISOMetadata.AppendFormat("Boot section {0}:", section_counter);
-                    ISOMetadata.AppendFormat("\tSection ID: {0}", CurrentEncoding.GetString(section_header.identifier))
+                    isoMetadata.AppendFormat("Boot section {0}:", SECTION_COUNTER);
+                    isoMetadata.AppendFormat("\tSection ID: {0}", CurrentEncoding.GetString(sectionHeader.identifier))
                                .AppendLine();
 
-                    for(int entry_counter = 1; entry_counter <= section_header.entries && torito_off < vd_sector.Length;
-                        entry_counter++)
+                    for(int entryCounter = 1; entryCounter <= sectionHeader.entries && toritoOff < vdSector.Length;
+                        entryCounter++)
                     {
-                        ElToritoSectionEntry section_entry;
-                        ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
-                        Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
-                        section_entry = (ElToritoSectionEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoSectionEntry));
+                        ptr = Marshal.AllocHGlobal(EL_TORITO_ENTRY_SIZE);
+                        Marshal.Copy(vdSector, toritoOff, ptr, EL_TORITO_ENTRY_SIZE);
+                        ElToritoSectionEntry sectionEntry = (ElToritoSectionEntry)Marshal.PtrToStructure(ptr, typeof(ElToritoSectionEntry));
                         Marshal.FreeHGlobal(ptr);
-                        torito_off += ElToritoEntrySize;
+                        toritoOff += EL_TORITO_ENTRY_SIZE;
 
-                        ISOMetadata.AppendFormat("\tEntry {0}:", entry_counter);
-                        if(section_entry.bootable == ElToritoIndicator.Bootable)
+                        isoMetadata.AppendFormat("\tEntry {0}:", entryCounter);
+                        if(sectionEntry.bootable == ElToritoIndicator.Bootable)
                         {
-                            boot_image =
-                                imagePlugin.ReadSectors(section_entry.load_rba + partition.Start,
-                                                        section_entry.sector_count);
-                            ISOMetadata.AppendFormat("\t\tBootable on {0}", section_header.platform_id).AppendLine();
-                            ISOMetadata.AppendFormat("\t\tBootable image starts at sector {0} and runs for {1} sectors",
-                                                     section_entry.load_rba, section_entry.sector_count).AppendLine();
+                            bootImage =
+                                imagePlugin.ReadSectors(sectionEntry.load_rba + partition.Start,
+                                                        sectionEntry.sector_count);
+                            isoMetadata.AppendFormat("\t\tBootable on {0}", sectionHeader.platform_id).AppendLine();
+                            isoMetadata.AppendFormat("\t\tBootable image starts at sector {0} and runs for {1} sectors",
+                                                     sectionEntry.load_rba, sectionEntry.sector_count).AppendLine();
                             if(valentry.platform_id == ElToritoPlatform.x86)
-                                ISOMetadata.AppendFormat("\t\tBootable image will be loaded at segment {0:X4}h",
-                                                         section_entry.load_seg == 0 ? 0x7C0 : section_entry.load_seg)
+                                isoMetadata.AppendFormat("\t\tBootable image will be loaded at segment {0:X4}h",
+                                                         sectionEntry.load_seg == 0 ? 0x7C0 : sectionEntry.load_seg)
                                            .AppendLine();
                             else
-                                ISOMetadata.AppendFormat("\t\tBootable image will be loaded at 0x{0:X8}",
-                                                         (uint)section_entry.load_seg * 10).AppendLine();
-                            switch((ElToritoEmulation)((byte)section_entry.boot_type & 0xF))
+                                isoMetadata.AppendFormat("\t\tBootable image will be loaded at 0x{0:X8}",
+                                                         (uint)sectionEntry.load_seg * 10).AppendLine();
+                            switch((ElToritoEmulation)((byte)sectionEntry.boot_type & 0xF))
                             {
                                 case ElToritoEmulation.None:
-                                    ISOMetadata.AppendLine("\t\tImage uses no emulation");
+                                    isoMetadata.AppendLine("\t\tImage uses no emulation");
                                     break;
                                 case ElToritoEmulation.Md2hd:
-                                    ISOMetadata
+                                    isoMetadata
                                         .AppendLine("\t\tImage emulates a 5.25\" high-density (MD2HD, 1.2Mb) floppy");
                                     break;
                                 case ElToritoEmulation.Mf2hd:
-                                    ISOMetadata
+                                    isoMetadata
                                         .AppendLine("\t\tImage emulates a 3.5\" high-density (MF2HD, 1.44Mb) floppy");
                                     break;
                                 case ElToritoEmulation.Mf2ed:
-                                    ISOMetadata
+                                    isoMetadata
                                         .AppendLine("\t\tImage emulates a 3.5\" extra-density (MF2ED, 2.88Mb) floppy");
                                     break;
                                 default:
-                                    ISOMetadata.AppendFormat("\t\tImage uses unknown emulation type {0}",
-                                                             (byte)initial_entry.boot_type).AppendLine();
+                                    isoMetadata.AppendFormat("\t\tImage uses unknown emulation type {0}",
+                                                             (byte)initialEntry.boot_type).AppendLine();
                                     break;
                             }
 
-                            ISOMetadata.AppendFormat("\t\tSelection criteria type: {0}",
-                                                     section_entry.selection_criteria_type).AppendLine();
-                            ISOMetadata.AppendFormat("\t\tSystem type: 0x{0:X2}", section_entry.system_type)
+                            isoMetadata.AppendFormat("\t\tSelection criteria type: {0}",
+                                                     sectionEntry.selection_criteria_type).AppendLine();
+                            isoMetadata.AppendFormat("\t\tSystem type: 0x{0:X2}", sectionEntry.system_type)
                                        .AppendLine();
-                            ISOMetadata.AppendFormat("\t\tBootable image's SHA1: {0}",
-                                                     sha1Ctx.Data(boot_image, out byte[] hash)).AppendLine();
+                            isoMetadata.AppendFormat("\t\tBootable image's SHA1: {0}",
+                                                     sha1Ctx.Data(bootImage, out _)).AppendLine();
                         }
-                        else ISOMetadata.AppendLine("\t\tNot bootable");
+                        else isoMetadata.AppendLine("\t\tNot bootable");
 
-                        ElToritoFlags flags = (ElToritoFlags)((byte)section_entry.boot_type & 0xF0);
+                        ElToritoFlags flags = (ElToritoFlags)((byte)sectionEntry.boot_type & 0xF0);
                         if(flags.HasFlag(ElToritoFlags.ATAPI))
-                            ISOMetadata.AppendLine("\t\tImage contains ATAPI drivers");
-                        if(flags.HasFlag(ElToritoFlags.SCSI)) ISOMetadata.AppendLine("\t\tImage contains SCSI drivers");
+                            isoMetadata.AppendLine("\t\tImage contains ATAPI drivers");
+                        if(flags.HasFlag(ElToritoFlags.SCSI)) isoMetadata.AppendLine("\t\tImage contains SCSI drivers");
 
                         if(!flags.HasFlag(ElToritoFlags.Continued)) continue;
 
-                        while(true && torito_off < vd_sector.Length)
+                        while(toritoOff < vdSector.Length)
                         {
-                            ElToritoSectionEntryExtension section_extension;
-                            ptr = Marshal.AllocHGlobal(ElToritoEntrySize);
-                            Marshal.Copy(vd_sector, torito_off, ptr, ElToritoEntrySize);
-                            section_extension =
-                                (ElToritoSectionEntryExtension)
+                            ptr = Marshal.AllocHGlobal(EL_TORITO_ENTRY_SIZE);
+                            Marshal.Copy(vdSector, toritoOff, ptr, EL_TORITO_ENTRY_SIZE);
+                            ElToritoSectionEntryExtension sectionExtension = (ElToritoSectionEntryExtension)
                                 Marshal.PtrToStructure(ptr, typeof(ElToritoSectionEntryExtension));
                             Marshal.FreeHGlobal(ptr);
-                            torito_off += ElToritoEntrySize;
+                            toritoOff += EL_TORITO_ENTRY_SIZE;
 
-                            if(!section_extension.extension_flags.HasFlag(ElToritoFlags.Continued)) break;
+                            if(!sectionExtension.extension_flags.HasFlag(ElToritoFlags.Continued)) break;
                         }
                     }
 
-                    if(section_header.header_id == ElToritoIndicator.LastHeader) break;
+                    if(sectionHeader.header_id == ElToritoIndicator.LastHeader) break;
                 }
             }
 
             exit_torito:
-            if(refareas.Count > 0) ISOMetadata.Append(suspInformation);
+            if(refareas.Count > 0) isoMetadata.Append(suspInformation);
 
             xmlFSType.Type = fsFormat;
 
             if(jolietvd != null)
             {
-                xmlFSType.VolumeName = decodedJolietVD.VolumeIdentifier;
+                xmlFSType.VolumeName = decodedJolietVd.VolumeIdentifier;
 
-                if(decodedJolietVD.SystemIdentifier == null ||
-                   decodedVD.SystemIdentifier.Length > decodedJolietVD.SystemIdentifier.Length)
-                    xmlFSType.SystemIdentifier = decodedVD.SystemIdentifier;
-                else xmlFSType.SystemIdentifier = decodedJolietVD.SystemIdentifier;
+                if(decodedJolietVd.SystemIdentifier == null ||
+                   decodedVd.SystemIdentifier.Length > decodedJolietVd.SystemIdentifier.Length)
+                    xmlFSType.SystemIdentifier = decodedVd.SystemIdentifier;
+                else xmlFSType.SystemIdentifier = decodedJolietVd.SystemIdentifier;
 
-                if(decodedJolietVD.VolumeSetIdentifier == null || decodedVD.VolumeSetIdentifier.Length >
-                   decodedJolietVD.VolumeSetIdentifier.Length)
-                    xmlFSType.VolumeSetIdentifier = decodedVD.VolumeSetIdentifier;
-                else xmlFSType.VolumeSetIdentifier = decodedJolietVD.VolumeSetIdentifier;
+                if(decodedJolietVd.VolumeSetIdentifier == null || decodedVd.VolumeSetIdentifier.Length >
+                   decodedJolietVd.VolumeSetIdentifier.Length)
+                    xmlFSType.VolumeSetIdentifier = decodedVd.VolumeSetIdentifier;
+                else xmlFSType.VolumeSetIdentifier = decodedJolietVd.VolumeSetIdentifier;
 
-                if(decodedJolietVD.PublisherIdentifier == null || decodedVD.PublisherIdentifier.Length >
-                   decodedJolietVD.PublisherIdentifier.Length)
-                    xmlFSType.PublisherIdentifier = decodedVD.PublisherIdentifier;
-                else xmlFSType.PublisherIdentifier = decodedJolietVD.PublisherIdentifier;
+                if(decodedJolietVd.PublisherIdentifier == null || decodedVd.PublisherIdentifier.Length >
+                   decodedJolietVd.PublisherIdentifier.Length)
+                    xmlFSType.PublisherIdentifier = decodedVd.PublisherIdentifier;
+                else xmlFSType.PublisherIdentifier = decodedJolietVd.PublisherIdentifier;
 
-                if(decodedJolietVD.DataPreparerIdentifier == null || decodedVD.DataPreparerIdentifier.Length >
-                   decodedJolietVD.DataPreparerIdentifier.Length)
-                    xmlFSType.DataPreparerIdentifier = decodedVD.DataPreparerIdentifier;
-                else xmlFSType.DataPreparerIdentifier = decodedJolietVD.SystemIdentifier;
+                if(decodedJolietVd.DataPreparerIdentifier == null || decodedVd.DataPreparerIdentifier.Length >
+                   decodedJolietVd.DataPreparerIdentifier.Length)
+                    xmlFSType.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
+                else xmlFSType.DataPreparerIdentifier = decodedJolietVd.SystemIdentifier;
 
-                if(decodedJolietVD.ApplicationIdentifier == null || decodedVD.ApplicationIdentifier.Length >
-                   decodedJolietVD.ApplicationIdentifier.Length)
-                    xmlFSType.ApplicationIdentifier = decodedVD.ApplicationIdentifier;
-                else xmlFSType.ApplicationIdentifier = decodedJolietVD.SystemIdentifier;
+                if(decodedJolietVd.ApplicationIdentifier == null || decodedVd.ApplicationIdentifier.Length >
+                   decodedJolietVd.ApplicationIdentifier.Length)
+                    xmlFSType.ApplicationIdentifier = decodedVd.ApplicationIdentifier;
+                else xmlFSType.ApplicationIdentifier = decodedJolietVd.SystemIdentifier;
 
-                xmlFSType.CreationDate = decodedJolietVD.CreationTime;
+                xmlFSType.CreationDate = decodedJolietVd.CreationTime;
                 xmlFSType.CreationDateSpecified = true;
-                if(decodedJolietVD.HasModificationTime)
+                if(decodedJolietVd.HasModificationTime)
                 {
-                    xmlFSType.ModificationDate = decodedJolietVD.ModificationTime;
+                    xmlFSType.ModificationDate = decodedJolietVd.ModificationTime;
                     xmlFSType.ModificationDateSpecified = true;
                 }
-                if(decodedJolietVD.HasExpirationTime)
+                if(decodedJolietVd.HasExpirationTime)
                 {
-                    xmlFSType.ExpirationDate = decodedJolietVD.ExpirationTime;
+                    xmlFSType.ExpirationDate = decodedJolietVd.ExpirationTime;
                     xmlFSType.ExpirationDateSpecified = true;
                 }
-                if(decodedJolietVD.HasEffectiveTime)
+                if(decodedJolietVd.HasEffectiveTime)
                 {
-                    xmlFSType.EffectiveDate = decodedJolietVD.EffectiveTime;
+                    xmlFSType.EffectiveDate = decodedJolietVd.EffectiveTime;
                     xmlFSType.EffectiveDateSpecified = true;
                 }
             }
             else
             {
-                xmlFSType.SystemIdentifier = decodedVD.SystemIdentifier;
-                xmlFSType.VolumeName = decodedVD.VolumeIdentifier;
-                xmlFSType.VolumeSetIdentifier = decodedVD.VolumeSetIdentifier;
-                xmlFSType.PublisherIdentifier = decodedVD.PublisherIdentifier;
-                xmlFSType.DataPreparerIdentifier = decodedVD.DataPreparerIdentifier;
-                xmlFSType.ApplicationIdentifier = decodedVD.ApplicationIdentifier;
-                xmlFSType.CreationDate = decodedVD.CreationTime;
+                xmlFSType.SystemIdentifier = decodedVd.SystemIdentifier;
+                xmlFSType.VolumeName = decodedVd.VolumeIdentifier;
+                xmlFSType.VolumeSetIdentifier = decodedVd.VolumeSetIdentifier;
+                xmlFSType.PublisherIdentifier = decodedVd.PublisherIdentifier;
+                xmlFSType.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
+                xmlFSType.ApplicationIdentifier = decodedVd.ApplicationIdentifier;
+                xmlFSType.CreationDate = decodedVd.CreationTime;
                 xmlFSType.CreationDateSpecified = true;
-                if(decodedVD.HasModificationTime)
+                if(decodedVd.HasModificationTime)
                 {
-                    xmlFSType.ModificationDate = decodedVD.ModificationTime;
+                    xmlFSType.ModificationDate = decodedVd.ModificationTime;
                     xmlFSType.ModificationDateSpecified = true;
                 }
-                if(decodedVD.HasExpirationTime)
+                if(decodedVd.HasExpirationTime)
                 {
-                    xmlFSType.ExpirationDate = decodedVD.ExpirationTime;
+                    xmlFSType.ExpirationDate = decodedVd.ExpirationTime;
                     xmlFSType.ExpirationDateSpecified = true;
                 }
-                if(decodedVD.HasEffectiveTime)
+                if(decodedVd.HasEffectiveTime)
                 {
-                    xmlFSType.EffectiveDate = decodedVD.EffectiveTime;
+                    xmlFSType.EffectiveDate = decodedVd.EffectiveTime;
                     xmlFSType.EffectiveDateSpecified = true;
                 }
             }
 
-            xmlFSType.Bootable |= bvd != null || SegaCD != null || Saturn != null || Dreamcast != null;
-            xmlFSType.Clusters = decodedVD.Blocks;
-            xmlFSType.ClusterSize = decodedVD.BlockSize;
+            xmlFSType.Bootable |= bvd != null || segaCd != null || saturn != null || dreamcast != null;
+            xmlFSType.Clusters = decodedVd.Blocks;
+            xmlFSType.ClusterSize = decodedVd.BlockSize;
 
-            information = ISOMetadata.ToString();
+            information = isoMetadata.ToString();
         }
     }
 }

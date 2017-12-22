@@ -36,7 +36,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        readonly string CdiMagic = "CD-I ";
+        const string CDI_MAGIC = "CD-I ";
 
         [Flags]
         enum CdiVolumeFlags : byte

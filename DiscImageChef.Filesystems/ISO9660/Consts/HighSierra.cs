@@ -34,6 +34,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        readonly string HighSierraMagic = "CDROM";
+        const string HIGH_SIERRA_MAGIC = "CDROM";
     }
 }

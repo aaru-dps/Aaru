@@ -34,9 +34,9 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        const ulong ziso_header_magic = 0x37E45396C9DBD607;
-        const ulong ziso_header_cigam = 0x07D6DBC99653E437;
-        const ushort ziso_Magic = 0x5A46; // "ZF"
-        const ushort ziso_PagedZlib = 0x707A; // "pz"
+        const ulong ZISO_HEADER_MAGIC = 0x37E45396C9DBD607;
+        const ulong ZISO_HEADER_CIGAM = 0x07D6DBC99653E437;
+        const ushort ZISO_MAGIC = 0x5A46; // "ZF"
+        const ushort ZISO_PAGED_ZLIB = 0x707A; // "pz"
     }
 }

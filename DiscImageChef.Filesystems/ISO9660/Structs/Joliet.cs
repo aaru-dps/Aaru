@@ -39,20 +39,20 @@ namespace DiscImageChef.Filesystems.ISO9660
     {
         static DecodedVolumeDescriptor DecodeJolietDescriptor(PrimaryVolumeDescriptor jolietvd)
         {
-            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
+            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor
+            {
+                SystemIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.system_id).TrimEnd().Trim('\u0000'),
+                VolumeIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.volume_id).TrimEnd().Trim('\u0000'),
+                VolumeSetIdentifier =
+                    Encoding.BigEndianUnicode.GetString(jolietvd.volume_set_id).TrimEnd().Trim('\u0000'),
+                PublisherIdentifier =
+                    Encoding.BigEndianUnicode.GetString(jolietvd.publisher_id).TrimEnd().Trim('\u0000'),
+                DataPreparerIdentifier =
+                    Encoding.BigEndianUnicode.GetString(jolietvd.preparer_id).TrimEnd().Trim('\u0000'),
+                ApplicationIdentifier =
+                    Encoding.BigEndianUnicode.GetString(jolietvd.application_id).TrimEnd().Trim('\u0000')
+            };
 
-            decodedVD.SystemIdentifier =
-                Encoding.BigEndianUnicode.GetString(jolietvd.system_id).TrimEnd().Trim('\u0000');
-            decodedVD.VolumeIdentifier =
-                Encoding.BigEndianUnicode.GetString(jolietvd.volume_id).TrimEnd().Trim('\u0000');
-            decodedVD.VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.volume_set_id).TrimEnd()
-                                                    .Trim('\u0000');
-            decodedVD.PublisherIdentifier =
-                Encoding.BigEndianUnicode.GetString(jolietvd.publisher_id).TrimEnd().Trim('\u0000');
-            decodedVD.DataPreparerIdentifier =
-                Encoding.BigEndianUnicode.GetString(jolietvd.preparer_id).TrimEnd().Trim('\u0000');
-            decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.application_id).TrimEnd()
-                                                      .Trim('\u0000');
             if(jolietvd.creation_date[0] < 0x31 || jolietvd.creation_date[0] > 0x39)
                 decodedVD.CreationTime = DateTime.MinValue;
             else decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(jolietvd.creation_date);

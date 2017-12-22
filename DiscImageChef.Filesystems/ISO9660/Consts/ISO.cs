@@ -36,7 +36,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        readonly string IsoMagic = "CD001";
+        const string ISO_MAGIC = "CD001";
 
         [Flags]
         enum FileFlags : byte

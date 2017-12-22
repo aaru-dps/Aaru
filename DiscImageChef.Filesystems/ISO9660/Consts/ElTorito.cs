@@ -36,8 +36,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        const ushort ElToritoMagic = 0xAA55;
-        const int ElToritoEntrySize = 32;
+        const ushort EL_TORITO_MAGIC = 0xAA55;
+        const int EL_TORITO_ENTRY_SIZE = 32;
 
         enum ElToritoIndicator : byte
         {

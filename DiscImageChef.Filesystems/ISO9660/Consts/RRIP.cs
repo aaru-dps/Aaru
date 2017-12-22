@@ -36,16 +36,16 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        const ushort RRIP_Magic = 0x5252; // "RR"
-        const ushort RRIP_PosixAttributes = 0x5058; // "PX"
-        const ushort RRIP_PosixDevNo = 0x504E; // "PN"
-        const ushort RRIP_Symlink = 0x534C; // "SL"
-        const ushort RRIP_Name = 0x4E4D; // "NM"
-        const ushort RRIP_Childlink = 0x434C; // "CL"
-        const ushort RRIP_Parentlink = 0x504C; // "PL"
-        const ushort RRIP_RelocatedDir = 0x5245; // "RE"
-        const ushort RRIP_Timestamps = 0x5446; // "TF"
-        const ushort RRIP_Sparse = 0x5346; // "SF"
+        const ushort RRIP_MAGIC = 0x5252; // "RR"
+        const ushort RRIP_POSIX_ATTRIBUTES = 0x5058; // "PX"
+        const ushort RRIP_POSIX_DEV_NO = 0x504E; // "PN"
+        const ushort RRIP_SYMLINK = 0x534C; // "SL"
+        const ushort RRIP_NAME = 0x4E4D; // "NM"
+        const ushort RRIP_CHILDLINK = 0x434C; // "CL"
+        const ushort RRIP_PARENTLINK = 0x504C; // "PL"
+        const ushort RRIP_RELOCATED_DIR = 0x5245; // "RE"
+        const ushort RRIP_TIMESTAMPS = 0x5446; // "TF"
+        const ushort RRIP_SPARSE = 0x5346; // "SF"
 
         [Flags]
         enum PosixMode : uint
