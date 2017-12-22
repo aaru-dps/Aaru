@@ -111,7 +111,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("DISABLE ATTRIBUTE AUTOSAVE status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Send command again.");
@@ -153,7 +153,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("DISABLE OPERATIONS status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Send command again.");
@@ -197,7 +197,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("ENABLE ATTRIBUTE AUTOSAVE status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Send command again.");
@@ -239,7 +239,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("ENABLE OPERATIONS status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Send command again.");
@@ -327,7 +327,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("EXECUTE OFF-LINE IMMEDIATE status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Send command again.");
@@ -371,7 +371,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Sending READ DATA to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -409,7 +409,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ DATA status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -481,7 +481,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Sending READ LOG to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -520,7 +520,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ LOG status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -549,7 +549,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("RETURN STATUS status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Send command again.");

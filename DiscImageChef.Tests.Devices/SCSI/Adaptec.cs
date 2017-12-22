@@ -138,10 +138,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sending READ/RESET USAGE COUNTER to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+                                 senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -219,10 +219,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sending READ DATA BUFFER to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+                                 senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -357,7 +357,7 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+                                 senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine("SET ERROR THRESHOLD decoded sense:");
             DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
@@ -472,10 +472,10 @@ namespace DiscImageChef.Tests.Devices.SCSI
             DicConsole.WriteLine("Sending TRANSLATE to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine("Sense buffer is {0} bytes.",
-                                 senseBuffer == null ? "null" : senseBuffer.Length.ToString());
+                                 senseBuffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");

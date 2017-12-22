@@ -52,9 +52,6 @@ namespace DiscImageChef.Tests.Devices
 
             devices = devices.OrderBy(d => d.Path).ToArray();
 
-            int item;
-            string strDev;
-
             while(true)
             {
                 System.Console.Clear();
@@ -72,8 +69,8 @@ namespace DiscImageChef.Tests.Devices
                                          devices[i].Supported, i + 1);
 
                 DicConsole.Write("Please choose which drive to test (0 to exit): ");
-                strDev = System.Console.ReadLine();
-                if(!int.TryParse(strDev, out item))
+                string strDev = System.Console.ReadLine();
+                if(!int.TryParse(strDev, out int item))
                 {
                     DicConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();

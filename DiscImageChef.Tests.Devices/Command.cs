@@ -61,10 +61,10 @@ namespace DiscImageChef.Tests.Devices
                         DicConsole.WriteLine("Returning to device menu...");
                         return;
                     case 1:
-                        SCSI(devPath, dev);
+                        Scsi(devPath, dev);
                         continue;
                     case 2:
-                        ATA(devPath, dev);
+                        Ata(devPath, dev);
                         continue;
                     case 3:
                         SecureDigital(devPath, dev);

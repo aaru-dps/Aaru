@@ -131,7 +131,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("GET NATIVE MAX ADDRESS EXT status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -222,7 +222,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Sending READ DMA EXT to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -261,7 +261,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ DMA EXT status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -358,7 +358,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Sending READ LOG EXT to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -397,7 +397,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ LOG EXT status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -494,7 +494,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Sending READ LOG DMA EXT to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -533,7 +533,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ LOG DMA EXT status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -625,7 +625,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Sending READ MULTIPLE EXT to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -664,7 +664,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ MULTIPLE EXT status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -718,7 +718,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ NATIVE MAX ADDRESS status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
@@ -809,7 +809,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Sending READ SECTORS EXT to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
@@ -848,7 +848,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ SECTORS EXT status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();

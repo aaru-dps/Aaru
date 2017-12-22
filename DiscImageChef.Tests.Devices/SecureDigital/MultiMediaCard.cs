@@ -71,13 +71,13 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
                         Read(devPath, dev, false);
                         continue;
                     case 3:
-                        SendCID(devPath, dev);
+                        SendCid(devPath, dev);
                         continue;
                     case 4:
-                        SendCSD(devPath, dev);
+                        SendCsd(devPath, dev);
                         continue;
                     case 5:
-                        SendExtendedCSD(devPath, dev);
+                        SendExtendedCsd(devPath, dev);
                         continue;
                     case 6:
                         SendOpCond(devPath, dev);
@@ -191,9 +191,9 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             DicConsole.WriteLine("Sending READ_{0}_BLOCK to the device:", multiple ? "MULTIPLE" : "SINGLE");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
+            DicConsole.WriteLine("Response has {0} elements.", response?.Length.ToString() ?? "null");
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
@@ -264,9 +264,9 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             DicConsole.WriteLine("Sending SEND_OP_COND to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
+            DicConsole.WriteLine("Response has {0} elements.", response?.Length.ToString() ?? "null");
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
@@ -346,9 +346,9 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             DicConsole.WriteLine("Sending SEND_STATUS to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
+            DicConsole.WriteLine("Response has {0} elements.", response?.Length.ToString() ?? "null");
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
@@ -406,7 +406,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             }
         }
 
-        static void SendCID(string devPath, Device dev)
+        static void SendCid(string devPath, Device dev)
         {
             start:
             System.Console.Clear();
@@ -417,9 +417,9 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             DicConsole.WriteLine("Sending SEND_CID to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
+            DicConsole.WriteLine("Response has {0} elements.", response?.Length.ToString() ?? "null");
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
@@ -488,7 +488,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             }
         }
 
-        static void SendCSD(string devPath, Device dev)
+        static void SendCsd(string devPath, Device dev)
         {
             start:
             System.Console.Clear();
@@ -499,9 +499,9 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             DicConsole.WriteLine("Sending SEND_CSD to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
+            DicConsole.WriteLine("Response has {0} elements.", response?.Length.ToString() ?? "null");
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
@@ -570,7 +570,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             }
         }
 
-        static void SendExtendedCSD(string devPath, Device dev)
+        static void SendExtendedCsd(string devPath, Device dev)
         {
             start:
             System.Console.Clear();
@@ -581,9 +581,9 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             DicConsole.WriteLine("Sending SEND_EXT_CSD to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.", buffer == null ? "null" : buffer.Length.ToString());
+            DicConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
             DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
+            DicConsole.WriteLine("Response has {0} elements.", response?.Length.ToString() ?? "null");
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
@@ -708,7 +708,7 @@ namespace DiscImageChef.Tests.Devices.SecureDigital
             DicConsole.WriteLine("Sending SET_BLOCKLEN to the device:");
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
-            DicConsole.WriteLine("Response has {0} elements.", response == null ? "null" : response.Length.ToString());
+            DicConsole.WriteLine("Response has {0} elements.", response?.Length.ToString() ?? "null");
             DicConsole.WriteLine("SET_BLOCKLEN response:");
             if(response != null)
             {

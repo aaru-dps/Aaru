@@ -58,7 +58,7 @@ namespace DiscImageChef.Tests.Devices
                 DicConsole.WriteLine("dev.USBVendorID = 0x{0:X4}", dev.UsbVendorId);
                 DicConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.UsbProductId);
                 DicConsole.WriteLine("dev.USBDescriptors.Length = {0}",
-                                     dev.UsbDescriptors == null ? "null" : dev.UsbDescriptors.Length.ToString());
+                                     dev.UsbDescriptors?.Length.ToString() ?? "null");
                 DicConsole.WriteLine("dev.USBManufacturerString = \"{0}\"", dev.UsbManufacturerString);
                 DicConsole.WriteLine("dev.USBProductString = \"{0}\"", dev.UsbProductString);
                 DicConsole.WriteLine("dev.USBSerialString = \"{0}\"", dev.UsbSerialString);
@@ -70,7 +70,7 @@ namespace DiscImageChef.Tests.Devices
                 DicConsole.WriteLine("dev.FireWireVendorName = \"{0}\"", dev.FireWireVendorName);
                 DicConsole.WriteLine("dev.IsCompactFlash = {0}", dev.IsCompactFlash);
                 DicConsole.WriteLine("dev.IsPCMCIA = {0}", dev.IsPcmcia);
-                DicConsole.WriteLine("dev.CIS.Length = {0}", dev.Cis == null ? "null" : dev.Cis.Length.ToString());
+                DicConsole.WriteLine("dev.CIS.Length = {0}", dev.Cis?.Length.ToString() ?? "null");
 
                 DicConsole.WriteLine("Press any key to continue...", devPath);
                 System.Console.ReadKey();

@@ -34,7 +34,7 @@ namespace DiscImageChef.Tests.Devices
 {
     partial class MainClass
     {
-        public static string DecodeATAStatus(byte status)
+        static string DecodeAtaStatus(byte status)
         {
             string ret = "";
 
@@ -50,7 +50,7 @@ namespace DiscImageChef.Tests.Devices
             return ret;
         }
 
-        public static string DecodeATAError(byte status)
+        static string DecodeAtaError(byte status)
         {
             string ret = "";
 
@@ -66,11 +66,11 @@ namespace DiscImageChef.Tests.Devices
             return ret;
         }
 
-        public static string DecodeATARegisters(AtaErrorRegistersChs registers)
+        public static string DecodeAtaRegisters(AtaErrorRegistersChs registers)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Status: {0}", DecodeATAStatus(registers.Status)).AppendLine();
-            sb.AppendFormat("Error: {0}", DecodeATAStatus(registers.Error)).AppendLine();
+            sb.AppendFormat("Status: {0}", DecodeAtaStatus(registers.Status)).AppendLine();
+            sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
             sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
             sb.AppendFormat("Cylinder: {0}", registers.CylinderHigh << (8 + registers.CylinderLow)).AppendLine();
             sb.AppendFormat("Head: {0}", registers.DeviceHead & 0xF).AppendLine();
@@ -82,11 +82,11 @@ namespace DiscImageChef.Tests.Devices
             return sb.ToString();
         }
 
-        public static string DecodeATARegisters(AtaErrorRegistersLba28 registers)
+        public static string DecodeAtaRegisters(AtaErrorRegistersLba28 registers)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Status: {0}", DecodeATAStatus(registers.Status)).AppendLine();
-            sb.AppendFormat("Error: {0}", DecodeATAStatus(registers.Error)).AppendLine();
+            sb.AppendFormat("Status: {0}", DecodeAtaStatus(registers.Status)).AppendLine();
+            sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
             sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
             sb.AppendFormat("LBA: {0}",
                             ((registers.DeviceHead & 0xF) << 24) + (registers.LbaHigh << 16) + (registers.LbaMid << 8) +
@@ -98,11 +98,11 @@ namespace DiscImageChef.Tests.Devices
             return sb.ToString();
         }
 
-        public static string DecodeATARegisters(AtaErrorRegistersLba48 registers)
+        public static string DecodeAtaRegisters(AtaErrorRegistersLba48 registers)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Status: {0}", DecodeATAStatus(registers.Status)).AppendLine();
-            sb.AppendFormat("Error: {0}", DecodeATAStatus(registers.Error)).AppendLine();
+            sb.AppendFormat("Status: {0}", DecodeAtaStatus(registers.Status)).AppendLine();
+            sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
             sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
             sb.AppendFormat("LBA: {0}",
                             (ulong)(registers.DeviceHead & 0xF) * 0x100000000000 +

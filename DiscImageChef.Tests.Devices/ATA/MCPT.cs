@@ -32,7 +32,7 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Tests.Devices.ATA
 {
-     static class MCPT
+     static class Mcpt
     {
         internal static void Menu(string devPath, Device dev)
         {
@@ -127,7 +127,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine("Command took {0} ms.", duration);
             DicConsole.WriteLine("Sense is {0}.", sense);
             DicConsole.WriteLine("CHECK MEDIA CARD TYPE status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
+            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Send command again.");

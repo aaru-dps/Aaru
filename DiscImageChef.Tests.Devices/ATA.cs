@@ -34,7 +34,7 @@ namespace DiscImageChef.Tests.Devices
 {
     partial class MainClass
     {
-        public static void ATA(string devPath, Device dev)
+        public static void Ata(string devPath, Device dev)
         {
             while(true)
             {
@@ -65,7 +65,7 @@ namespace DiscImageChef.Tests.Devices
                         DicConsole.WriteLine("Returning to command class menu...");
                         return;
                     case 1:
-                        AtaCHS.Menu(devPath, dev);
+                        AtaChs.Menu(devPath, dev);
                         continue;
                     case 2:
                         Ata28.Menu(devPath, dev);
@@ -80,7 +80,7 @@ namespace DiscImageChef.Tests.Devices
                         Cfa.Menu(devPath, dev);
                         continue;
                     case 6:
-                        MCPT.Menu(devPath, dev);
+                        Mcpt.Menu(devPath, dev);
                         continue;
                     case 7:
                         Smart.Menu(devPath, dev);

@@ -34,7 +34,7 @@ namespace DiscImageChef.Tests.Devices
 {
     partial class MainClass
     {
-        public static void SCSI(string devPath, Device dev)
+        public static void Scsi(string devPath, Device dev)
         {
             while(true)
             {
@@ -87,19 +87,19 @@ namespace DiscImageChef.Tests.Devices
                         Fujitsu.Menu(devPath, dev);
                         continue;
                     case 5:
-                        HL_DT_ST.Menu(devPath, dev);
+                        HlDtSt.Menu(devPath, dev);
                         continue;
                     case 6:
-                        HP.Menu(devPath, dev);
+                        Hp.Menu(devPath, dev);
                         continue;
                     case 7:
                         Kreon.Menu(devPath, dev);
                         continue;
                     case 8:
-                        MMC.Menu(devPath, dev);
+                        Mmc.Menu(devPath, dev);
                         continue;
                     case 9:
-                        NEC.Menu(devPath, dev);
+                        Nec.Menu(devPath, dev);
                         continue;
                     case 10:
                         Pioneer.Menu(devPath, dev);
@@ -111,16 +111,16 @@ namespace DiscImageChef.Tests.Devices
                         Plextor.Menu(devPath, dev);
                         continue;
                     case 13:
-                        SBC.Menu(devPath, dev);
+                        Sbc.Menu(devPath, dev);
                         continue;
                     case 14:
-                        SMC.Menu(devPath, dev);
+                        Smc.Menu(devPath, dev);
                         continue;
                     case 15:
-                        SPC.Menu(devPath, dev);
+                        Spc.Menu(devPath, dev);
                         continue;
                     case 16:
-                        SSC.Menu(devPath, dev);
+                        Ssc.Menu(devPath, dev);
                         continue;
                     case 17:
                         SyQuest.Menu(devPath, dev);
