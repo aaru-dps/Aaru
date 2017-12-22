@@ -38,6 +38,15 @@
 <head runat="server">
     <link href="dos.css" rel="stylesheet" type="text/css"/>
     <title>DiscImageChef Device Report</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-111466173-1');
+    </script>
 </head>
 <body id="content" runat="server">
 DiscImageChef Report for <asp:Label id="lblManufacturer" runat="server"/> <asp:Label id="lblModel" runat="server"/> <asp:Label id="lblRevision" runat="server"/>
