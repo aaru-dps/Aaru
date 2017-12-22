@@ -45,15 +45,12 @@ namespace Extents
             backend = new List<Tuple<sbyte, sbyte>>();
         }
 
-        public ExtentsSByte(List<Tuple<sbyte, sbyte>> list)
+        public ExtentsSByte(IEnumerable<Tuple<sbyte, sbyte>> list)
         {
             backend = list.OrderBy(t => t.Item1).ToList();
         }
 
-        public int Count
-        {
-            get { return backend.Count; }
-        }
+        public int Count => backend.Count;
 
         public void Add(sbyte item)
         {
@@ -108,12 +105,7 @@ namespace Extents
             backend = backend.OrderBy(t => t.Item1).ToList();
         }
 
-        public void Add(sbyte start, sbyte end)
-        {
-            Add(start, end, false);
-        }
-
-        public void Add(sbyte start, sbyte end, bool run)
+        public void Add(sbyte start, sbyte end, bool run = false)
         {
             sbyte realEnd;
             if(run) realEnd = (sbyte)(start + end - 1);

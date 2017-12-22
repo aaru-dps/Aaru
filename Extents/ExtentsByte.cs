@@ -45,15 +45,12 @@ namespace Extents
             backend = new List<Tuple<byte, byte>>();
         }
 
-        public ExtentsByte(List<Tuple<byte, byte>> list)
+        public ExtentsByte(IEnumerable<Tuple<byte, byte>> list)
         {
             backend = list.OrderBy(t => t.Item1).ToList();
         }
 
-        public int Count
-        {
-            get { return backend.Count; }
-        }
+        public int Count => backend.Count;
 
         public void Add(byte item)
         {
@@ -108,12 +105,7 @@ namespace Extents
             backend = backend.OrderBy(t => t.Item1).ToList();
         }
 
-        public void Add(byte start, byte end)
-        {
-            Add(start, end, false);
-        }
-
-        public void Add(byte start, byte end, bool run)
+        public void Add(byte start, byte end, bool run = false)
         {
             byte realEnd;
             if(run) realEnd = (byte)(start + end - 1);

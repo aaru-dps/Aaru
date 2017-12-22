@@ -38,16 +38,12 @@ namespace DiscImageChef
     {
         public static bool ArrayIsNullOrWhiteSpace(byte[] array)
         {
-            if(array == null) return true;
-
-            return array.All(b => b == 0x00 || b == 0x20);
+            return array == null || array.All(b => b == 0x00 || b == 0x20);
         }
 
         public static bool ArrayIsNullOrEmpty(byte[] array)
         {
-            if(array == null) return true;
-
-            return array.All(b => b == 0x00);
+            return array == null || array.All(b => b == 0x00);
         }
     }
 }

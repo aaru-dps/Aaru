@@ -45,15 +45,12 @@ namespace Extents
             backend = new List<Tuple<int, int>>();
         }
 
-        public ExtentsInt(List<Tuple<int, int>> list)
+        public ExtentsInt(IEnumerable<Tuple<int, int>> list)
         {
             backend = list.OrderBy(t => t.Item1).ToList();
         }
 
-        public int Count
-        {
-            get { return backend.Count; }
-        }
+        public int Count => backend.Count;
 
         public void Add(int item)
         {
@@ -108,12 +105,7 @@ namespace Extents
             backend = backend.OrderBy(t => t.Item1).ToList();
         }
 
-        public void Add(int start, int end)
-        {
-            Add(start, end, false);
-        }
-
-        public void Add(int start, int end, bool run)
+        public void Add(int start, int end, bool run = false)
         {
             int realEnd;
             if(run) realEnd = start + end - 1;
