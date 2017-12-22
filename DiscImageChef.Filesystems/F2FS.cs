@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -43,6 +44,7 @@ namespace DiscImageChef.Filesystems
     public class F2FS : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct F2FS_Superblock
         {
             public uint magic;
@@ -92,39 +94,39 @@ namespace DiscImageChef.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 871)] public byte[] reserved;
         }
 
-        const uint F2FS_Magic = 0xF2F52010;
-        const uint F2FS_SuperOffset = 1024;
-        const uint F2FS_MinSector = 512;
-        const uint F2FS_MaxSector = 4096;
-        const uint F2FS_BlockSize = 4096;
+        const uint F2FS_MAGIC = 0xF2F52010;
+        const uint F2FS_SUPER_OFFSET = 1024;
+        const uint F2FS_MIN_SECTOR = 512;
+        const uint F2FS_MAX_SECTOR = 4096;
+        const uint F2FS_BLOCK_SIZE = 4096;
 
         public F2FS()
         {
             Name = "F2FS Plugin";
-            PluginUUID = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+            PluginUuid = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
             CurrentEncoding = Encoding.Unicode;
         }
 
         public F2FS(Encoding encoding)
         {
             Name = "F2FS Plugin";
-            PluginUUID = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+            PluginUuid = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
             CurrentEncoding = Encoding.Unicode;
         }
 
         public F2FS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "F2FS Plugin";
-            PluginUUID = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+            PluginUuid = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
             CurrentEncoding = Encoding.Unicode;
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectorSize() < F2FS_MinSector || imagePlugin.GetSectorSize() > F2FS_MaxSector)
+            if(imagePlugin.GetSectorSize() < F2FS_MIN_SECTOR || imagePlugin.GetSectorSize() > F2FS_MAX_SECTOR)
                 return false;
 
-            uint sbAddr = F2FS_SuperOffset / imagePlugin.GetSectorSize();
+            uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.GetSectorSize();
             if(sbAddr == 0) sbAddr = 1;
 
             F2FS_Superblock f2fsSb = new F2FS_Superblock();
@@ -142,16 +144,16 @@ namespace DiscImageChef.Filesystems
             f2fsSb = (F2FS_Superblock)Marshal.PtrToStructure(sbPtr, typeof(F2FS_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            return f2fsSb.magic == F2FS_Magic;
+            return f2fsSb.magic == F2FS_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
-            if(imagePlugin.GetSectorSize() < F2FS_MinSector || imagePlugin.GetSectorSize() > F2FS_MaxSector) return;
+            if(imagePlugin.GetSectorSize() < F2FS_MIN_SECTOR || imagePlugin.GetSectorSize() > F2FS_MAX_SECTOR) return;
 
-            uint sbAddr = F2FS_SuperOffset / imagePlugin.GetSectorSize();
+            uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.GetSectorSize();
             if(sbAddr == 0) sbAddr = 1;
 
             F2FS_Superblock f2fsSb = new F2FS_Superblock();
@@ -167,7 +169,7 @@ namespace DiscImageChef.Filesystems
             f2fsSb = (F2FS_Superblock)Marshal.PtrToStructure(sbPtr, typeof(F2FS_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            if(f2fsSb.magic != F2FS_Magic) return;
+            if(f2fsSb.magic != F2FS_MAGIC) return;
 
             StringBuilder sb = new StringBuilder();
 
@@ -193,14 +195,16 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "F2FS filesystem";
-            xmlFSType.SystemIdentifier = Encoding.ASCII.GetString(f2fsSb.version);
-            xmlFSType.Clusters = (long)f2fsSb.block_count;
-            xmlFSType.ClusterSize = 1 << (int)f2fsSb.log_blocksize;
-            xmlFSType.DataPreparerIdentifier = Encoding.ASCII.GetString(f2fsSb.init_version);
-            xmlFSType.VolumeName = StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true);
-            xmlFSType.VolumeSerial = f2fsSb.uuid.ToString();
+            XmlFsType = new FileSystemType
+            {
+                Type = "F2FS filesystem",
+                SystemIdentifier = Encoding.ASCII.GetString(f2fsSb.version),
+                Clusters = (long)f2fsSb.block_count,
+                ClusterSize = 1 << (int)f2fsSb.log_blocksize,
+                DataPreparerIdentifier = Encoding.ASCII.GetString(f2fsSb.init_version),
+                VolumeName = StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true),
+                VolumeSerial = f2fsSb.uuid.ToString()
+            };
         }
 
         public override Errno Mount()

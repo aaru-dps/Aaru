@@ -46,24 +46,22 @@ namespace DiscImageChef.Filesystems
         public ECMA67()
         {
             Name = "ECMA-67";
-            PluginUUID = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+            PluginUuid = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         public ECMA67(Encoding encoding)
         {
             Name = "ECMA-67";
-            PluginUUID = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         public ECMA67(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "ECMA-67";
-            PluginUUID = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         readonly byte[] ECMA67_Magic = {0x56, 0x4F, 0x4C};
@@ -123,11 +121,13 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(vol.volumeIdentifier)).AppendLine();
             sbInformation.AppendFormat("Volume owner: {0}", Encoding.ASCII.GetString(vol.owner)).AppendLine();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "ECMA-67";
-            xmlFSType.ClusterSize = 256;
-            xmlFSType.Clusters = (long)(partition.End - partition.Start + 1);
-            xmlFSType.VolumeName = Encoding.ASCII.GetString(vol.volumeIdentifier);
+            XmlFsType = new FileSystemType
+            {
+                Type = "ECMA-67",
+                ClusterSize = 256,
+                Clusters = (long)(partition.End - partition.Start + 1),
+                VolumeName = Encoding.ASCII.GetString(vol.volumeIdentifier)
+            };
 
             information = sbInformation.ToString();
         }

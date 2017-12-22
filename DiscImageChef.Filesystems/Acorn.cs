@@ -46,49 +46,47 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Location for boot block, in bytes
         /// </summary>
-        const ulong bootBlockLocation = 0xC00;
+        const ulong BOOT_BLOCK_LOCATION = 0xC00;
         /// <summary>
         /// Size of boot block, in bytes
         /// </summary>
-        const uint bootBlockSize = 0x200;
+        const uint BOOT_BLOCK_SIZE = 0x200;
         /// <summary>
         /// Location of new directory, in bytes
         /// </summary>
-        const ulong newDirectoryLocation = 0x400;
+        const ulong NEW_DIRECTORY_LOCATION = 0x400;
         /// <summary>
         /// Location of old directory, in bytes
         /// </summary>
-        const ulong oldDirectoryLocation = 0x200;
+        const ulong OLD_DIRECTORY_LOCATION = 0x200;
         /// <summary>
         /// Size of old directory
         /// </summary>
-        const uint oldDirectorySize = 1280;
+        const uint OLD_DIRECTORY_SIZE = 1280;
         /// <summary>
         /// Size of new directory
         /// </summary>
-        const uint newDirectorySize = 2048;
+        const uint NEW_DIRECTORY_SIZE = 2048;
 
         public AcornADFS()
         {
             Name = "Acorn Advanced Disc Filing System";
-            PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+            PluginUuid = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         public AcornADFS(Encoding encoding)
         {
             Name = "Acorn Advanced Disc Filing System";
-            PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         public AcornADFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Acorn Advanced Disc Filing System";
-            PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         /// <summary>
@@ -186,11 +184,11 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// New directory format magic number, "Nick"
         /// </summary>
-        const uint newDirMagic = 0x6B63694E;
+        const uint NEW_DIR_MAGIC = 0x6B63694E;
         /// <summary>
         /// Old directory format magic number, "Hugo"
         /// </summary>
-        const uint oldDirMagic = 0x6F677548;
+        const uint OLD_DIR_MAGIC = 0x6F677548;
 
         /// <summary>
         /// Directory header, common to "old" and "new" directories
@@ -276,22 +274,15 @@ namespace DiscImageChef.Filesystems
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
             if(partition.Start == 0)
             {
-                OldMapSector0 oldMap0;
-                OldMapSector1 oldMap1;
-                OldDirectory oldRoot;
-                byte oldChk0;
-                byte oldChk1;
-                byte dirChk;
-
                 sector = imagePlugin.ReadSector(0);
-                oldChk0 = AcornMapChecksum(sector, 255);
+                byte oldChk0 = AcornMapChecksum(sector, 255);
                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                oldMap0 = (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
+                OldMapSector0 oldMap0 = (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
 
                 sector = imagePlugin.ReadSector(1);
-                oldChk1 = AcornMapChecksum(sector, 255);
+                byte oldChk1 = AcornMapChecksum(sector, 255);
                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                oldMap1 = (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
+                OldMapSector1 oldMap1 = (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
 
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldMap0.checksum = {0}", oldMap0.checksum);
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldChk0 = {0}", oldChk0);
@@ -313,21 +304,21 @@ namespace DiscImageChef.Filesystems
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum == oldChk1 && oldMap0.checksum != 0 &&
                    oldMap1.checksum != 0)
                 {
-                    sbSector = oldDirectoryLocation / imagePlugin.ImageInfo.SectorSize;
-                    sectorsToRead = oldDirectorySize / imagePlugin.ImageInfo.SectorSize;
-                    if(oldDirectorySize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+                    sbSector = OLD_DIRECTORY_LOCATION / imagePlugin.ImageInfo.SectorSize;
+                    sectorsToRead = OLD_DIRECTORY_SIZE / imagePlugin.ImageInfo.SectorSize;
+                    if(OLD_DIRECTORY_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
                     sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
-                    if(sector.Length > oldDirectorySize)
+                    if(sector.Length > OLD_DIRECTORY_SIZE)
                     {
-                        byte[] tmp = new byte[oldDirectorySize];
-                        Array.Copy(sector, 0, tmp, 0, oldDirectorySize - 53);
-                        Array.Copy(sector, sector.Length - 54, tmp, oldDirectorySize - 54, 53);
+                        byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
+                        Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
+                        Array.Copy(sector, sector.Length - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                         sector = tmp;
                     }
                     ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                    oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
-                    dirChk = AcornDirectoryChecksum(sector, (int)oldDirectorySize - 1);
+                    OldDirectory oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
+                    byte dirChk = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
 
                     DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x200 = {0}",
                                               oldRoot.header.magic);
@@ -336,25 +327,25 @@ namespace DiscImageChef.Filesystems
                                               oldRoot.tail.checkByte);
                     DicConsole.DebugWriteLine("ADFS Plugin", "dirChk at 0x200 = {0}", dirChk);
 
-                    if(oldRoot.header.magic == oldDirMagic && oldRoot.tail.magic == oldDirMagic ||
-                       oldRoot.header.magic == newDirMagic && oldRoot.tail.magic == newDirMagic) return true;
+                    if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC ||
+                       oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC) return true;
 
                     // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
-                    sbSector = newDirectoryLocation / imagePlugin.ImageInfo.SectorSize;
-                    sectorsToRead = newDirectorySize / imagePlugin.ImageInfo.SectorSize;
-                    if(newDirectorySize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+                    sbSector = NEW_DIRECTORY_LOCATION / imagePlugin.ImageInfo.SectorSize;
+                    sectorsToRead = NEW_DIRECTORY_SIZE / imagePlugin.ImageInfo.SectorSize;
+                    if(NEW_DIRECTORY_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
                     sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
-                    if(sector.Length > oldDirectorySize)
+                    if(sector.Length > OLD_DIRECTORY_SIZE)
                     {
-                        byte[] tmp = new byte[oldDirectorySize];
-                        Array.Copy(sector, 0, tmp, 0, oldDirectorySize - 53);
-                        Array.Copy(sector, sector.Length - 54, tmp, oldDirectorySize - 54, 53);
+                        byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
+                        Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
+                        Array.Copy(sector, sector.Length - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                         sector = tmp;
                     }
                     ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
                     oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
-                    dirChk = AcornDirectoryChecksum(sector, (int)oldDirectorySize - 1);
+                    dirChk = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
 
                     DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x400 = {0}",
                                               oldRoot.header.magic);
@@ -363,8 +354,8 @@ namespace DiscImageChef.Filesystems
                                               oldRoot.tail.checkByte);
                     DicConsole.DebugWriteLine("ADFS Plugin", "dirChk at 0x400 = {0}", dirChk);
 
-                    if(oldRoot.header.magic == oldDirMagic && oldRoot.tail.magic == oldDirMagic ||
-                       oldRoot.header.magic == newDirMagic && oldRoot.tail.magic == newDirMagic) return true;
+                    if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC ||
+                       oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC) return true;
                 }
             }
 
@@ -376,9 +367,9 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
 
-            sbSector = bootBlockLocation / imagePlugin.ImageInfo.SectorSize;
-            sectorsToRead = bootBlockSize / imagePlugin.ImageInfo.SectorSize;
-            if(bootBlockSize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+            sbSector = BOOT_BLOCK_LOCATION / imagePlugin.ImageInfo.SectorSize;
+            sectorsToRead = BOOT_BLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
+            if(BOOT_BLOCK_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
             if(sbSector + partition.Start + sectorsToRead >= partition.End) return false;
 
@@ -424,9 +415,7 @@ namespace DiscImageChef.Filesystems
             bytes *= 0x100000000;
             bytes += drSb.disc_size;
 
-            if(bytes > imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) return false;
-
-            return true;
+            return bytes <= imagePlugin.GetSectors() * imagePlugin.GetSectorSize();
         }
 
         // TODO: Find root directory on volumes with DiscRecord
@@ -436,7 +425,7 @@ namespace DiscImageChef.Filesystems
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             information = "";
 
             ulong sbSector;
@@ -444,27 +433,19 @@ namespace DiscImageChef.Filesystems
             uint sectorsToRead;
             GCHandle ptr;
             ulong bytes;
-            string discname;
 
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
             if(partition.Start == 0)
             {
-                OldMapSector0 oldMap0;
-                OldMapSector1 oldMap1;
-                OldDirectory oldRoot;
-                NewDirectory newRoot;
-                byte oldChk0;
-                byte oldChk1;
-
                 sector = imagePlugin.ReadSector(0);
-                oldChk0 = AcornMapChecksum(sector, 255);
+                byte oldChk0 = AcornMapChecksum(sector, 255);
                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                oldMap0 = (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
+                OldMapSector0 oldMap0 = (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
 
                 sector = imagePlugin.ReadSector(1);
-                oldChk1 = AcornMapChecksum(sector, 255);
+                byte oldChk1 = AcornMapChecksum(sector, 255);
                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                oldMap1 = (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
+                OldMapSector1 oldMap1 = (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
 
                 // According to documentation map1 MUST start on sector 1. On ADFS-D it starts at 0x100, not on sector 1 (0x400)
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum != oldChk1 && sector.Length >= 512)
@@ -488,7 +469,7 @@ namespace DiscImageChef.Filesystems
                         namebytes[i * 2 + 1] = oldMap1.name[i];
                     }
 
-                    xmlFSType = new FileSystemType
+                    XmlFsType = new FileSystemType
                     {
                         Bootable = oldMap1.boot != 0, // Or not?
                         Clusters = (long)(bytes / imagePlugin.ImageInfo.SectorSize),
@@ -498,56 +479,56 @@ namespace DiscImageChef.Filesystems
 
                     if(ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
                     {
-                        sbSector = oldDirectoryLocation / imagePlugin.ImageInfo.SectorSize;
-                        sectorsToRead = oldDirectorySize / imagePlugin.ImageInfo.SectorSize;
-                        if(oldDirectorySize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+                        sbSector = OLD_DIRECTORY_LOCATION / imagePlugin.ImageInfo.SectorSize;
+                        sectorsToRead = OLD_DIRECTORY_SIZE / imagePlugin.ImageInfo.SectorSize;
+                        if(OLD_DIRECTORY_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
                         sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
-                        if(sector.Length > oldDirectorySize)
+                        if(sector.Length > OLD_DIRECTORY_SIZE)
                         {
-                            byte[] tmp = new byte[oldDirectorySize];
-                            Array.Copy(sector, 0, tmp, 0, oldDirectorySize - 53);
-                            Array.Copy(sector, sector.Length - 54, tmp, oldDirectorySize - 54, 53);
+                            byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
+                            Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
+                            Array.Copy(sector, sector.Length - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                             sector = tmp;
                         }
                         ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                        oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
+                        OldDirectory oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
 
-                        if(oldRoot.header.magic == oldDirMagic && oldRoot.tail.magic == oldDirMagic) namebytes = oldRoot.tail.name;
+                        if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC) namebytes = oldRoot.tail.name;
                         else
                         {
                             // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
-                            sbSector = newDirectoryLocation / imagePlugin.ImageInfo.SectorSize;
-                            sectorsToRead = newDirectorySize / imagePlugin.ImageInfo.SectorSize;
-                            if(newDirectorySize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+                            sbSector = NEW_DIRECTORY_LOCATION / imagePlugin.ImageInfo.SectorSize;
+                            sectorsToRead = NEW_DIRECTORY_SIZE / imagePlugin.ImageInfo.SectorSize;
+                            if(NEW_DIRECTORY_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
                             sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
-                            if(sector.Length > oldDirectorySize)
+                            if(sector.Length > OLD_DIRECTORY_SIZE)
                             {
-                                byte[] tmp = new byte[oldDirectorySize];
-                                Array.Copy(sector, 0, tmp, 0, oldDirectorySize - 53);
-                                Array.Copy(sector, sector.Length - 54, tmp, oldDirectorySize - 54, 53);
+                                byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
+                                Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
+                                Array.Copy(sector, sector.Length - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                                 sector = tmp;
                             }
                             ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
                             oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
                                                                            typeof(OldDirectory));
 
-                            if(oldRoot.header.magic == oldDirMagic && oldRoot.tail.magic == oldDirMagic) namebytes = oldRoot.tail.name;
+                            if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC) namebytes = oldRoot.tail.name;
                             else
                             {
                                 sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
-                                if(sector.Length > newDirectorySize)
+                                if(sector.Length > NEW_DIRECTORY_SIZE)
                                 {
-                                    byte[] tmp = new byte[newDirectorySize];
-                                    Array.Copy(sector, 0, tmp, 0, newDirectorySize - 41);
-                                    Array.Copy(sector, sector.Length - 42, tmp, newDirectorySize - 42, 41);
+                                    byte[] tmp = new byte[NEW_DIRECTORY_SIZE];
+                                    Array.Copy(sector, 0, tmp, 0, NEW_DIRECTORY_SIZE - 41);
+                                    Array.Copy(sector, sector.Length - 42, tmp, NEW_DIRECTORY_SIZE - 42, 41);
                                     sector = tmp;
                                 }
                                 ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                                newRoot = (NewDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
-                                                                               typeof(NewDirectory));
-                                if(newRoot.header.magic == newDirMagic && newRoot.tail.magic == newDirMagic) namebytes = newRoot.tail.title;
+                                NewDirectory newRoot = (NewDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
+                                                                                            typeof(NewDirectory));
+                                if(newRoot.header.magic == NEW_DIR_MAGIC && newRoot.tail.magic == NEW_DIR_MAGIC) namebytes = newRoot.tail.title;
                             }
                         }
                     }
@@ -560,11 +541,11 @@ namespace DiscImageChef.Filesystems
                                  .AppendLine();
                     if(oldMap1.discId > 0)
                     {
-                        xmlFSType.VolumeSerial = $"{oldMap1.discId:X4}";
+                        XmlFsType.VolumeSerial = $"{oldMap1.discId:X4}";
                         sbInformation.AppendFormat("Volume ID: {0:X4}", oldMap1.discId).AppendLine();
                     }
                     if(!ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
-                        xmlFSType.VolumeName = StringHandlers.CToString(namebytes, CurrentEncoding);
+                        XmlFsType.VolumeName = StringHandlers.CToString(namebytes, CurrentEncoding);
 
                     information = sbInformation.ToString();
 
@@ -580,9 +561,9 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
 
-            sbSector = bootBlockLocation / imagePlugin.ImageInfo.SectorSize;
-            sectorsToRead = bootBlockSize / imagePlugin.ImageInfo.SectorSize;
-            if(bootBlockSize % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
+            sbSector = BOOT_BLOCK_LOCATION / imagePlugin.ImageInfo.SectorSize;
+            sectorsToRead = BOOT_BLOCK_SIZE / imagePlugin.ImageInfo.SectorSize;
+            if(BOOT_BLOCK_SIZE % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
             byte[] bootSector = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead);
             int bootChk = 0;
@@ -648,7 +629,7 @@ namespace DiscImageChef.Filesystems
 
             if(bytes > imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) return;
 
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             sbInformation.AppendLine("Acorn Advanced Disc Filing System");
             sbInformation.AppendLine();
@@ -666,22 +647,22 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume flags: 0x{0:X4}", drSb.flags).AppendLine();
             if(drSb.disc_id > 0)
             {
-                xmlFSType.VolumeSerial = $"{drSb.disc_id:X4}";
+                XmlFsType.VolumeSerial = $"{drSb.disc_id:X4}";
                 sbInformation.AppendFormat("Volume ID: {0:X4}", drSb.disc_id).AppendLine();
             }
             if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.disc_name))
             {
-                discname = StringHandlers.CToString(drSb.disc_name, CurrentEncoding);
-                xmlFSType.VolumeName = discname;
+                string discname = StringHandlers.CToString(drSb.disc_name, CurrentEncoding);
+                XmlFsType.VolumeName = discname;
                 sbInformation.AppendFormat("Volume name: {0}", discname).AppendLine();
             }
 
             information = sbInformation.ToString();
 
-            xmlFSType.Bootable |= drSb.bootoption != 0; // Or not?
-            xmlFSType.Clusters = (long)(bytes / (ulong)(1 << drSb.log2secsize));
-            xmlFSType.ClusterSize = 1 << drSb.log2secsize;
-            xmlFSType.Type = "Acorn Advanced Disc Filing System";
+            XmlFsType.Bootable |= drSb.bootoption != 0; // Or not?
+            XmlFsType.Clusters = (long)(bytes / (ulong)(1 << drSb.log2secsize));
+            XmlFsType.ClusterSize = 1 << drSb.log2secsize;
+            XmlFsType.Type = "Acorn Advanced Disc Filing System";
         }
 
         public override Errno Mount()
@@ -768,48 +749,43 @@ namespace DiscImageChef.Filesystems
             return (byte)(sum & 0xFF);
         }
 
-        byte NewMapChecksum(byte[] map_base)
+        static byte NewMapChecksum(byte[] mapBase)
         {
-            uint sum_vector0;
-            uint sum_vector1;
-            uint sum_vector2;
-            uint sum_vector3;
             uint rover;
+            uint sumVector0 = 0;
+            uint sumVector1 = 0;
+            uint sumVector2 = 0;
+            uint sumVector3 = 0;
 
-            sum_vector0 = 0;
-            sum_vector1 = 0;
-            sum_vector2 = 0;
-            sum_vector3 = 0;
-
-            for(rover = (uint)(map_base.Length - 4); rover > 0; rover -= 4)
+            for(rover = (uint)(mapBase.Length - 4); rover > 0; rover -= 4)
             {
-                sum_vector0 += map_base[rover + 0] + (sum_vector3 >> 8);
-                sum_vector3 &= 0xff;
-                sum_vector1 += map_base[rover + 1] + (sum_vector0 >> 8);
-                sum_vector0 &= 0xff;
-                sum_vector2 += map_base[rover + 2] + (sum_vector1 >> 8);
-                sum_vector1 &= 0xff;
-                sum_vector3 += map_base[rover + 3] + (sum_vector2 >> 8);
-                sum_vector2 &= 0xff;
+                sumVector0 += mapBase[rover + 0] + (sumVector3 >> 8);
+                sumVector3 &= 0xff;
+                sumVector1 += mapBase[rover + 1] + (sumVector0 >> 8);
+                sumVector0 &= 0xff;
+                sumVector2 += mapBase[rover + 2] + (sumVector1 >> 8);
+                sumVector1 &= 0xff;
+                sumVector3 += mapBase[rover + 3] + (sumVector2 >> 8);
+                sumVector2 &= 0xff;
             }
 
             /*
                     Don't add the check byte when calculating its value
             */
-            sum_vector0 += sum_vector3 >> 8;
-            sum_vector1 += map_base[rover + 1] + (sum_vector0 >> 8);
-            sum_vector2 += map_base[rover + 2] + (sum_vector1 >> 8);
-            sum_vector3 += map_base[rover + 3] + (sum_vector2 >> 8);
+            sumVector0 += sumVector3 >> 8;
+            sumVector1 += mapBase[rover + 1] + (sumVector0 >> 8);
+            sumVector2 += mapBase[rover + 2] + (sumVector1 >> 8);
+            sumVector3 += mapBase[rover + 3] + (sumVector2 >> 8);
 
-            return (byte)((sum_vector0 ^ sum_vector1 ^ sum_vector2 ^ sum_vector3) & 0xff);
+            return (byte)((sumVector0 ^ sumVector1 ^ sumVector2 ^ sumVector3) & 0xff);
         }
 
         // TODO: This is not correct...
-        byte AcornDirectoryChecksum(byte[] data, int length)
+        static byte AcornDirectoryChecksum(IList<byte> data, int length)
         {
             uint sum = 0;
 
-            if(length > data.Length) length = data.Length;
+            if(length > data.Count) length = data.Count;
 
             // EOR r0, r1, r0, ROR #13
             for(int i = 0; i < length; i++)

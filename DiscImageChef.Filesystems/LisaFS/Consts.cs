@@ -38,13 +38,13 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// Lisa FS v1, from Lisa OS 1.0 (Workshop or Office)
         /// Never seen on Sony floppies.
         /// </summary>
-        const byte LisaFSv1 = 0x0E;
+        const byte LISA_V1 = 0x0E;
         /// <summary>
         /// Lisa FS v2, from Lisa OS 2.0 (Workshop or Office)
         /// Contrary to what most information online says the only difference with V1
         /// is the Extents File size. Catalog format is the same
         /// </summary>
-        const byte LisaFSv2 = 0x0F;
+        const byte LISA_V2 = 0x0F;
         /// <summary>
         /// Lisa FS v3, from Lisa OS 3.0 (Workshop or Office)
         /// Adds support for user catalogs (aka subdirectories),
@@ -52,7 +52,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// Uses '-' as path separator (so people that created Lisa/FILE.TEXT just
         /// created a file named like that :p)
         /// </summary>
-        const byte LisaFSv3 = 0x11;
+        const byte LISA_V3 = 0x11;
         /// <summary>Maximum string size in LisaFS</summary>
         const uint E_NAME = 32;
         /// <summary>

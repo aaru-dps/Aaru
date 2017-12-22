@@ -61,42 +61,38 @@ namespace DiscImageChef.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] creationDate;
         }
 
-        const uint LIF_Magic = 0x8000;
+        const uint LIF_MAGIC = 0x8000;
 
         public LIF()
         {
             Name = "HP Logical Interchange Format Plugin";
-            PluginUUID = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
+            PluginUuid = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public LIF(Encoding encoding)
         {
             Name = "HP Logical Interchange Format Plugin";
-            PluginUUID = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public LIF(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "HP Logical Interchange Format Plugin";
-            PluginUUID = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("41535647-77A5-477B-9206-DA727ACDC704");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 256) return false;
 
-            LIF_SystemBlock LIFSb;
-
             byte[] sector = imagePlugin.ReadSector(partition.Start);
-            LIFSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
-            DicConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", LIFSb.magic, LIF_Magic);
+            LIF_SystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
+            DicConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", lifSb.magic, LIF_MAGIC);
 
-            return LIFSb.magic == LIF_Magic;
+            return lifSb.magic == LIF_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -106,38 +102,36 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.GetSectorSize() < 256) return;
 
-            LIF_SystemBlock LIFSb;
-
             byte[] sector = imagePlugin.ReadSector(partition.Start);
-            LIFSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
+            LIF_SystemBlock lifSb = BigEndianMarshal.ByteArrayToStructureBigEndian<LIF_SystemBlock>(sector);
 
-            if(LIFSb.magic != LIF_Magic) return;
+            if(lifSb.magic != LIF_MAGIC) return;
 
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("HP Logical Interchange Format");
-            sb.AppendFormat("Directory starts at cluster {0}", LIFSb.directoryStart).AppendLine();
-            sb.AppendFormat("LIF identifier: {0}", LIFSb.lifId).AppendLine();
-            sb.AppendFormat("Directory size: {0} clusters", LIFSb.directorySize).AppendLine();
-            sb.AppendFormat("LIF version: {0}", LIFSb.lifVersion).AppendLine();
+            sb.AppendFormat("Directory starts at cluster {0}", lifSb.directoryStart).AppendLine();
+            sb.AppendFormat("LIF identifier: {0}", lifSb.lifId).AppendLine();
+            sb.AppendFormat("Directory size: {0} clusters", lifSb.directorySize).AppendLine();
+            sb.AppendFormat("LIF version: {0}", lifSb.lifVersion).AppendLine();
             // How is this related to volume size? I have only CDs to test and makes no sense there
-            sb.AppendFormat("{0} tracks", LIFSb.tracks).AppendLine();
-            sb.AppendFormat("{0} heads", LIFSb.heads).AppendLine();
-            sb.AppendFormat("{0} sectors", LIFSb.sectors).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(LIFSb.volumeLabel, CurrentEncoding))
+            sb.AppendFormat("{0} tracks", lifSb.tracks).AppendLine();
+            sb.AppendFormat("{0} heads", lifSb.heads).AppendLine();
+            sb.AppendFormat("{0} sectors", lifSb.sectors).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(lifSb.volumeLabel, CurrentEncoding))
               .AppendLine();
-            sb.AppendFormat("Volume created on {0}", DateHandlers.LifToDateTime(LIFSb.creationDate)).AppendLine();
+            sb.AppendFormat("Volume created on {0}", DateHandlers.LifToDateTime(lifSb.creationDate)).AppendLine();
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "HP Logical Interchange Format",
                 ClusterSize = 256,
                 Clusters = (long)(partition.Size / 256),
-                CreationDate = DateHandlers.LifToDateTime(LIFSb.creationDate),
+                CreationDate = DateHandlers.LifToDateTime(lifSb.creationDate),
                 CreationDateSpecified = true,
-                VolumeName = StringHandlers.CToString(LIFSb.volumeLabel, CurrentEncoding)
+                VolumeName = StringHandlers.CToString(lifSb.volumeLabel, CurrentEncoding)
             };
         }
 

@@ -58,24 +58,22 @@ namespace DiscImageChef.Filesystems
         public BeFS()
         {
             Name = "Be Filesystem";
-            PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+            PluginUuid = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public BeFS(Encoding encoding)
         {
             Name = "Be Filesystem";
-            PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public BeFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Be Filesystem";
-            PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -83,58 +81,55 @@ namespace DiscImageChef.Filesystems
             if(2 + partition.Start >= partition.End) return false;
 
             uint magic;
-            uint magic_be;
+            uint magicBe;
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
+            byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            magic = BitConverter.ToUInt32(sb_sector, 0x20);
-            magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
+            magic = BitConverter.ToUInt32(sbSector, 0x20);
+            magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
-            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1) return true;
+            if(magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1) return true;
 
-            if(sb_sector.Length >= 0x400)
+            if(sbSector.Length >= 0x400)
             {
-                magic = BitConverter.ToUInt32(sb_sector, 0x220);
-                magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x220);
+                magic = BitConverter.ToUInt32(sbSector, 0x220);
+                magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x220);
             }
 
-            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1) return true;
+            if(magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1) return true;
 
-            sb_sector = imagePlugin.ReadSector(1 + partition.Start);
+            sbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            magic = BitConverter.ToUInt32(sb_sector, 0x20);
-            magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
+            magic = BitConverter.ToUInt32(sbSector, 0x20);
+            magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
-            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1) return true;
-
-            return false;
+            return magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
-            byte[] name_bytes = new byte[32];
 
             StringBuilder sb = new StringBuilder();
 
             BeSuperBlock besb = new BeSuperBlock();
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
+            byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
             bool littleEndian;
 
-            besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
+            besb.magic1 = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
             if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // Magic is at offset
                 littleEndian = besb.magic1 == BEFS_CIGAM1;
             else
             {
-                sb_sector = imagePlugin.ReadSector(1 + partition.Start);
-                besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
+                sbSector = imagePlugin.ReadSector(1 + partition.Start);
+                besb.magic1 = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
                 if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
                     littleEndian = besb.magic1 == BEFS_CIGAM1;
-                else if(sb_sector.Length >= 0x400)
+                else if(sbSector.Length >= 0x400)
                 {
                     byte[] temp = imagePlugin.ReadSector(0 + partition.Start);
                     besb.magic1 = BigEndianBitConverter.ToUInt32(temp, 0x220);
@@ -142,8 +137,8 @@ namespace DiscImageChef.Filesystems
                     if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
                     {
                         littleEndian = besb.magic1 == BEFS_CIGAM1;
-                        sb_sector = new byte[0x200];
-                        Array.Copy(temp, 0x200, sb_sector, 0, 0x200);
+                        sbSector = new byte[0x200];
+                        Array.Copy(temp, 0x200, sbSector, 0, 0x200);
                     }
                     else return;
                 }
@@ -152,15 +147,13 @@ namespace DiscImageChef.Filesystems
 
             if(littleEndian)
             {
-                GCHandle handle = GCHandle.Alloc(sb_sector, GCHandleType.Pinned);
+                GCHandle handle = GCHandle.Alloc(sbSector, GCHandleType.Pinned);
                 besb = (BeSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BeSuperBlock));
                 handle.Free();
             }
-            else besb = BigEndianMarshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sb_sector);
+            else besb = BigEndianMarshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sbSector);
 
-            if(littleEndian) // Big-endian filesystem
-                sb.AppendLine("Little-endian BeFS");
-            else sb.AppendLine("Big-endian BeFS");
+            sb.AppendLine(littleEndian ? "Little-endian BeFS" : "Big-endian BeFS");
 
             if(besb.magic1 != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN || besb.magic2 != BEFS_MAGIC2 ||
                besb.magic3 != BEFS_MAGIC3 || besb.root_dir_len != 1 || besb.indices_len != 1 ||
@@ -180,8 +173,7 @@ namespace DiscImageChef.Filesystems
 
             switch(besb.flags) {
                 case BEFS_CLEAN:
-                    if(besb.log_start == besb.log_end) sb.AppendLine("Filesystem is clean");
-                    else sb.AppendLine("Filesystem is dirty");
+                    sb.AppendLine(besb.log_start == besb.log_end ? "Filesystem is clean" : "Filesystem is dirty");
                     break;
                 case BEFS_DIRTY: sb.AppendLine("Filesystem is dirty");
                     break;
@@ -215,14 +207,16 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Clusters = besb.num_blocks;
-            xmlFSType.ClusterSize = (int)besb.block_size;
-            xmlFSType.Dirty = besb.flags == BEFS_DIRTY;
-            xmlFSType.FreeClusters = besb.num_blocks - besb.used_blocks;
-            xmlFSType.FreeClustersSpecified = true;
-            xmlFSType.Type = "BeFS";
-            xmlFSType.VolumeName = StringHandlers.CToString(besb.name, CurrentEncoding);
+            XmlFsType = new FileSystemType
+            {
+                Clusters = besb.num_blocks,
+                ClusterSize = (int)besb.block_size,
+                Dirty = besb.flags == BEFS_DIRTY,
+                FreeClusters = besb.num_blocks - besb.used_blocks,
+                FreeClustersSpecified = true,
+                Type = "BeFS",
+                VolumeName = StringHandlers.CToString(besb.name, CurrentEncoding)
+            };
         }
 
         /// <summary>

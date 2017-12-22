@@ -113,16 +113,15 @@ namespace DiscImageChef.Filesystems.CPM
         public CPM()
         {
             Name = "CP/M File System";
-            PluginUUID = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+            PluginUuid = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
             CurrentEncoding = Encoding.GetEncoding("IBM437");
         }
 
         public CPM(Encoding encoding)
         {
             Name = "CP/M File System";
-            PluginUUID = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("IBM437");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
         }
 
         public CPM(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
@@ -130,9 +129,8 @@ namespace DiscImageChef.Filesystems.CPM
             device = imagePlugin;
             this.partition = partition;
             Name = "CP/M File System";
-            PluginUUID = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("IBM437");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("IBM437");
         }
     }
 }

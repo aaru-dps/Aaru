@@ -54,14 +54,14 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         public PascalPlugin()
         {
             Name = "U.C.S.D. Pascal filesystem";
-            PluginUUID = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+            PluginUuid = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
             CurrentEncoding = new LisaRoman();
         }
 
         public PascalPlugin(Encoding encoding)
         {
             Name = "U.C.S.D. Pascal filesystem";
-            PluginUUID = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+            PluginUuid = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
             // TODO: Until Apple ][ encoding is implemented
             CurrentEncoding = new LisaRoman();
         }
@@ -70,7 +70,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             device = imagePlugin;
             Name = "U.C.S.D. Pascal filesystem";
-            PluginUUID = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+            PluginUuid = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
             // TODO: Until Apple ][ encoding is implemented
             CurrentEncoding = new LisaRoman();
         }

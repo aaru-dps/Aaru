@@ -48,9 +48,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
         public override Errno ListXAttr(string path, ref List<string> xattrs)
         {
-            short fileId;
-            bool isDir;
-            Errno error = LookupFileId(path, out fileId, out isDir);
+            Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
 
             return isDir ? Errno.InvalidArgument : ListXAttr(fileId, ref xattrs);
@@ -65,9 +63,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <param name="buf">Buffer.</param>
         public override Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            short fileId;
-            bool isDir;
-            Errno error = LookupFileId(path, out fileId, out isDir);
+            Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
 
             return isDir ? Errno.InvalidArgument : GetXattr(fileId, xattr, out buf);
@@ -104,8 +100,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             else
             {
                 // Search for the file
-                ExtentFile file;
-                Errno error = ReadExtentsFile(fileId, out file);
+                Errno error = ReadExtentsFile(fileId, out ExtentFile file);
 
                 if(error != Errno.NoError) return error;
 
@@ -162,8 +157,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
 
             // Search for the file
-            ExtentFile file;
-            Errno error = ReadExtentsFile(fileId, out file);
+            Errno error = ReadExtentsFile(fileId, out ExtentFile file);
 
             if(error != Errno.NoError) return error;
 

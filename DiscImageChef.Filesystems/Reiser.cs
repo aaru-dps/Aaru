@@ -88,36 +88,34 @@ namespace DiscImageChef.Filesystems
         readonly byte[] Reiser35_Magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x46, 0x73, 0x00, 0x00};
         readonly byte[] Reiser36_Magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x32, 0x46, 0x73, 0x00};
         readonly byte[] ReiserJr_Magic = {0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x33, 0x46, 0x73, 0x00};
-        const uint Reiser_SuperOffset = 0x10000;
+        const uint REISER_SUPER_OFFSET = 0x10000;
 
         public Reiser()
         {
             Name = "Reiser Filesystem Plugin";
-            PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            PluginUuid = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public Reiser(Encoding encoding)
         {
             Name = "Reiser Filesystem Plugin";
-            PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public Reiser(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Reiser Filesystem Plugin";
-            PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
-            uint sbAddr = Reiser_SuperOffset / imagePlugin.GetSectorSize();
+            uint sbAddr = REISER_SUPER_OFFSET / imagePlugin.GetSectorSize();
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser_Superblock reiserSb = new Reiser_Superblock();
@@ -145,7 +143,7 @@ namespace DiscImageChef.Filesystems
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
 
-            uint sbAddr = Reiser_SuperOffset / imagePlugin.GetSectorSize();
+            uint sbAddr = REISER_SUPER_OFFSET / imagePlugin.GetSectorSize();
             if(sbAddr == 0) sbAddr = 1;
 
             Reiser_Superblock reiserSb = new Reiser_Superblock();
@@ -184,19 +182,19 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType();
-            if(Reiser35_Magic.SequenceEqual(reiserSb.magic)) xmlFSType.Type = "Reiser 3.5 filesystem";
-            else if(Reiser36_Magic.SequenceEqual(reiserSb.magic)) xmlFSType.Type = "Reiser 3.6 filesystem";
-            else if(ReiserJr_Magic.SequenceEqual(reiserSb.magic)) xmlFSType.Type = "Reiser Jr. filesystem";
-            xmlFSType.ClusterSize = reiserSb.blocksize;
-            xmlFSType.Clusters = reiserSb.block_count;
-            xmlFSType.FreeClusters = reiserSb.free_blocks;
-            xmlFSType.FreeClustersSpecified = true;
-            xmlFSType.Dirty = reiserSb.umount_state == 2;
+            XmlFsType = new FileSystemType();
+            if(Reiser35_Magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser 3.5 filesystem";
+            else if(Reiser36_Magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser 3.6 filesystem";
+            else if(ReiserJr_Magic.SequenceEqual(reiserSb.magic)) XmlFsType.Type = "Reiser Jr. filesystem";
+            XmlFsType.ClusterSize = reiserSb.blocksize;
+            XmlFsType.Clusters = reiserSb.block_count;
+            XmlFsType.FreeClusters = reiserSb.free_blocks;
+            XmlFsType.FreeClustersSpecified = true;
+            XmlFsType.Dirty = reiserSb.umount_state == 2;
             if(reiserSb.version < 2) return;
 
-            xmlFSType.VolumeName = CurrentEncoding.GetString(reiserSb.label);
-            xmlFSType.VolumeSerial = reiserSb.uuid.ToString();
+            XmlFsType.VolumeName = CurrentEncoding.GetString(reiserSb.label);
+            XmlFsType.VolumeSerial = reiserSb.uuid.ToString();
         }
 
         public override Errno Mount()

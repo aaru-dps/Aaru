@@ -60,58 +60,56 @@ namespace DiscImageChef.Filesystems
         public AppleHFS()
         {
             Name = "Apple Hierarchical File System";
-            PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+            PluginUuid = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
             CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
 
         public AppleHFS(Encoding encoding)
         {
             Name = "Apple Hierarchical File System";
-            PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("macintosh");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
         }
 
         public AppleHFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple Hierarchical File System";
-            PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("macintosh");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
-            byte[] mdb_sector;
+            byte[] mdbSector;
             ushort drSigWord;
 
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 ||
                imagePlugin.GetSectorSize() == 2048)
             {
-                mdb_sector = imagePlugin.ReadSectors(partition.Start, 2);
+                mdbSector = imagePlugin.ReadSectors(partition.Start, 2);
 
                 foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00})
                 {
-                    drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, offset);
+                    drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset);
                     if(drSigWord != HFS_MAGIC) continue;
 
                     drSigWord =
                         BigEndianBitConverter
-                            .ToUInt16(mdb_sector, offset + 0x7C); // Seek to embedded HFS+ signature
+                            .ToUInt16(mdbSector, offset + 0x7C); // Seek to embedded HFS+ signature
 
                     return drSigWord != HFSP_MAGIC;
                 }
             }
             else
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partition.Start);
-                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+                mdbSector = imagePlugin.ReadSector(2 + partition.Start);
+                drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
                 if(drSigWord != HFS_MAGIC) return false;
 
-                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
+                drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x7C); // Seek to embedded HFS+ signature
 
                 return drSigWord != HFSP_MAGIC;
             }
@@ -126,11 +124,8 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            HFS_MasterDirectoryBlock MDB;
-            HFS_BootBlock BB;
-
-            byte[] bb_sector = null;
-            byte[] mdb_sector = null;
+            byte[] bbSector = null;
+            byte[] mdbSector = null;
             ushort drSigWord;
 
             bool APMFromHDDOnCD = false;
@@ -138,17 +133,17 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 ||
                imagePlugin.GetSectorSize() == 2048)
             {
-                byte[] tmp_sector = imagePlugin.ReadSectors(partition.Start, 2);
+                byte[] tmpSector = imagePlugin.ReadSectors(partition.Start, 2);
 
                 foreach(int offset in new[] {0, 0x200, 0x400, 0x600, 0x800, 0xA00})
                 {
-                    drSigWord = BigEndianBitConverter.ToUInt16(tmp_sector, offset);
+                    drSigWord = BigEndianBitConverter.ToUInt16(tmpSector, offset);
                     if(drSigWord != HFS_MAGIC) continue;
 
-                    bb_sector = new byte[1024];
-                    mdb_sector = new byte[512];
-                    if(offset >= 0x400) Array.Copy(tmp_sector, offset - 0x400, bb_sector, 0, 1024);
-                    Array.Copy(tmp_sector, offset, mdb_sector, 0, 512);
+                    bbSector = new byte[1024];
+                    mdbSector = new byte[512];
+                    if(offset >= 0x400) Array.Copy(tmpSector, offset - 0x400, bbSector, 0, 1024);
+                    Array.Copy(tmpSector, offset, mdbSector, 0, 512);
                     APMFromHDDOnCD = true;
                     break;
                 }
@@ -157,15 +152,15 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partition.Start);
-                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+                mdbSector = imagePlugin.ReadSector(2 + partition.Start);
+                drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
-                if(drSigWord == HFS_MAGIC) bb_sector = imagePlugin.ReadSector(partition.Start);
+                if(drSigWord == HFS_MAGIC) bbSector = imagePlugin.ReadSector(partition.Start);
                 else return;
             }
 
-            MDB = BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_MasterDirectoryBlock>(mdb_sector);
-            BB = BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_BootBlock>(bb_sector);
+            HFS_MasterDirectoryBlock MDB = BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_MasterDirectoryBlock>(mdbSector);
+            HFS_BootBlock BB = BigEndianMarshal.ByteArrayToStructureBigEndian<HFS_BootBlock>(bbSector);
 
             sb.AppendLine("Apple Hierarchical File System");
             sb.AppendLine();
@@ -182,8 +177,7 @@ namespace DiscImageChef.Filesystems
             else sb.AppendLine("Volume has never been backed up");
 
             if((MDB.drAtrb & 0x80) == 0x80) sb.AppendLine("Volume is locked by hardware.");
-            if((MDB.drAtrb & 0x100) == 0x100) sb.AppendLine("Volume was unmonted.");
-            else sb.AppendLine("Volume is mounted.");
+            sb.AppendLine((MDB.drAtrb & 0x100) == 0x100 ? "Volume was unmonted." : "Volume is mounted.");
             if((MDB.drAtrb & 0x200) == 0x200) sb.AppendLine("Volume has spared bad blocks.");
             if((MDB.drAtrb & 0x400) == 0x400) sb.AppendLine("Volume does not need cache.");
             if((MDB.drAtrb & 0x800) == 0x800) sb.AppendLine("Boot volume is inconsistent.");
@@ -275,45 +269,45 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             if(MDB.drVolBkUp > 0)
             {
-                xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
-                xmlFSType.BackupDateSpecified = true;
+                XmlFsType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
+                XmlFsType.BackupDateSpecified = true;
             }
-            xmlFSType.Bootable = BB.signature == HFSBB_MAGIC || MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0;
-            xmlFSType.Clusters = MDB.drNmAlBlks;
-            xmlFSType.ClusterSize = (int)MDB.drAlBlkSiz;
+            XmlFsType.Bootable = BB.signature == HFSBB_MAGIC || MDB.drFndrInfo0 != 0 || MDB.drFndrInfo3 != 0 || MDB.drFndrInfo5 != 0;
+            XmlFsType.Clusters = MDB.drNmAlBlks;
+            XmlFsType.ClusterSize = (int)MDB.drAlBlkSiz;
             if(MDB.drCrDate > 0)
             {
-                xmlFSType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
-                xmlFSType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+                XmlFsType.CreationDateSpecified = true;
             }
-            xmlFSType.Dirty = (MDB.drAtrb & 0x100) != 0x100;
-            xmlFSType.Files = MDB.drFilCnt;
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.FreeClusters = MDB.drFreeBks;
-            xmlFSType.FreeClustersSpecified = true;
+            XmlFsType.Dirty = (MDB.drAtrb & 0x100) != 0x100;
+            XmlFsType.Files = MDB.drFilCnt;
+            XmlFsType.FilesSpecified = true;
+            XmlFsType.FreeClusters = MDB.drFreeBks;
+            XmlFsType.FreeClustersSpecified = true;
             if(MDB.drLsMod > 0)
             {
-                xmlFSType.ModificationDate = DateHandlers.MacToDateTime(MDB.drLsMod);
-                xmlFSType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.MacToDateTime(MDB.drLsMod);
+                XmlFsType.ModificationDateSpecified = true;
             }
-            xmlFSType.Type = "HFS";
-            xmlFSType.VolumeName = StringHandlers.PascalToString(MDB.drVN, CurrentEncoding);
+            XmlFsType.Type = "HFS";
+            XmlFsType.VolumeName = StringHandlers.PascalToString(MDB.drVN, CurrentEncoding);
             if(MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
-                xmlFSType.VolumeSerial = $"{MDB.drFndrInfo6:X8}{MDB.drFndrInfo7:X8}";
+                XmlFsType.VolumeSerial = $"{MDB.drFndrInfo6:X8}{MDB.drFndrInfo7:X8}";
         }
 
-        static byte[] Read2048SectorAs512(ImagePlugin imagePlugin, ulong LBA)
+        static byte[] Read2048SectorAs512(ImagePlugin imagePlugin, ulong lba)
         {
-            ulong LBA2k = LBA / 4;
-            int Remainder = (int)(LBA % 4);
+            ulong lba2K = lba / 4;
+            int remainder = (int)(lba % 4);
 
-            byte[] buffer = imagePlugin.ReadSector(LBA2k);
+            byte[] buffer = imagePlugin.ReadSector(lba2K);
             byte[] sector = new byte[512];
 
-            Array.Copy(buffer, Remainder * 512, sector, 0, 512);
+            Array.Copy(buffer, remainder * 512, sector, 0, 512);
 
             return sector;
         }

@@ -67,7 +67,7 @@ namespace DiscImageChef.Commands
             if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
             foreach(KeyValuePair<string, Filesystem> kvp in plugins.PluginsList)
                 if(formatsOptions.Verbose)
-                    DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.PluginUUID, kvp.Value.Name);
+                    DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.PluginUuid, kvp.Value.Name);
                 else DicConsole.WriteLine(kvp.Value.Name);
 
             DicConsole.WriteLine();

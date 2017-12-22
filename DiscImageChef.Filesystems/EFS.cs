@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -44,6 +45,7 @@ namespace DiscImageChef.Filesystems
     public class EFS : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct EFS_Superblock
         {
             /* 0:   fs size incl. bb 0 (in bb) */
@@ -90,30 +92,28 @@ namespace DiscImageChef.Filesystems
             public uint sb_checksum;
         }
 
-        const uint EFS_Magic = 0x00072959;
-        const uint EFS_Magic_New = 0x0007295A;
+        const uint EFS_MAGIC = 0x00072959;
+        const uint EFS_MAGIC_NEW = 0x0007295A;
 
         public EFS()
         {
             Name = "Extent File System Plugin";
-            PluginUUID = new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+            PluginUuid = new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public EFS(Encoding encoding)
         {
             Name = "Extent File System Plugin";
-            PluginUUID = new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public EFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Extent File System Plugin";
-            PluginUUID = new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -123,24 +123,24 @@ namespace DiscImageChef.Filesystems
             // Misaligned
             if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                EFS_Superblock efs_sb = new EFS_Superblock();
+                EFS_Superblock efsSb = new EFS_Superblock();
 
-                uint sbSize = (uint)((Marshal.SizeOf(efs_sb) + 0x200) / imagePlugin.GetSectorSize());
-                if((Marshal.SizeOf(efs_sb) + 0x200) % imagePlugin.GetSectorSize() != 0) sbSize++;
+                uint sbSize = (uint)((Marshal.SizeOf(efsSb) + 0x200) / imagePlugin.GetSectorSize());
+                if((Marshal.SizeOf(efsSb) + 0x200) % imagePlugin.GetSectorSize() != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-                if(sector.Length < Marshal.SizeOf(efs_sb)) return false;
+                if(sector.Length < Marshal.SizeOf(efsSb)) return false;
 
-                byte[] sbpiece = new byte[Marshal.SizeOf(efs_sb)];
+                byte[] sbpiece = new byte[Marshal.SizeOf(efsSb)];
 
-                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf(efs_sb));
+                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf(efsSb));
 
-                efs_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
+                efsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
-                                          0x200, efs_sb.sb_magic, EFS_Magic, EFS_Magic_New);
+                                          0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
-                if(efs_sb.sb_magic == EFS_Magic || efs_sb.sb_magic == EFS_Magic_New) return true;
+                if(efsSb.sb_magic == EFS_MAGIC || efsSb.sb_magic == EFS_MAGIC_NEW) return true;
             }
             else
             {
@@ -155,9 +155,9 @@ namespace DiscImageChef.Filesystems
                 efsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
-                                          efsSb.sb_magic, EFS_Magic, EFS_Magic_New);
+                                          efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
-                if(efsSb.sb_magic == EFS_Magic || efsSb.sb_magic == EFS_Magic_New) return true;
+                if(efsSb.sb_magic == EFS_MAGIC || efsSb.sb_magic == EFS_MAGIC_NEW) return true;
             }
 
             return false;
@@ -187,7 +187,7 @@ namespace DiscImageChef.Filesystems
                 efsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
-                                          0x200, efsSb.sb_magic, EFS_Magic, EFS_Magic_New);
+                                          0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
             }
             else
             {
@@ -200,15 +200,15 @@ namespace DiscImageChef.Filesystems
                 efsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
-                                          efsSb.sb_magic, EFS_Magic, EFS_Magic_New);
+                                          efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
             }
 
-            if(efsSb.sb_magic != EFS_Magic && efsSb.sb_magic != EFS_Magic_New) return;
+            if(efsSb.sb_magic != EFS_MAGIC && efsSb.sb_magic != EFS_MAGIC_NEW) return;
 
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SGI extent filesystem");
-            if(efsSb.sb_magic == EFS_Magic_New) sb.AppendLine("New version");
+            if(efsSb.sb_magic == EFS_MAGIC_NEW) sb.AppendLine("New version");
             sb.AppendFormat("Filesystem size: {0} basic blocks", efsSb.sb_size).AppendLine();
             sb.AppendFormat("First cylinder group starts at block {0}", efsSb.sb_firstcg).AppendLine();
             sb.AppendFormat("Cylinder group size: {0} basic blocks", efsSb.sb_cgfsize).AppendLine();
@@ -231,7 +231,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Extent File System",
                 ClusterSize = 512,

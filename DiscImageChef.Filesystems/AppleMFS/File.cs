@@ -49,12 +49,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
-            uint fileID;
-            MFS_FileEntry entry;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
-
-            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
 
             if(fileBlock > entry.flPyLen / volMDB.drAlBlkSiz) return Errno.InvalidArgument;
 
@@ -85,12 +82,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
-            uint fileID;
-            MFS_FileEntry entry;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
-
-            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
 
             attributes = new FileAttributes();
             MFS_FinderFlags fdFlags = (MFS_FinderFlags)BigEndianBitConverter.ToUInt16(entry.flUsrWds, 0x08);
@@ -161,16 +155,17 @@ namespace DiscImageChef.Filesystems.AppleMFS
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                 {
-                    stat = new FileEntryInfo();
-                    stat.Attributes = new FileAttributes();
-                    stat.Attributes = FileAttributes.System;
-                    stat.BlockSize = device.GetSectorSize();
-                    stat.DeviceNo = 0;
-                    stat.GID = 0;
-                    stat.Inode = 0;
-                    stat.Links = 1;
-                    stat.Mode = 0x124;
-                    stat.UID = 0;
+                    stat = new FileEntryInfo
+                    {
+                        BlockSize = device.GetSectorSize(),
+                        DeviceNo = 0,
+                        GID = 0,
+                        Inode = 0,
+                        Links = 1,
+                        Mode = 0x124,
+                        UID = 0,
+                        Attributes = FileAttributes.System
+                    };
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                     {
@@ -198,30 +193,29 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     return Errno.NoError;
                 }
 
-            uint fileID;
-            MFS_FileEntry entry;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
-
-            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
 
             FileAttributes attr = new FileAttributes();
             Errno error = GetAttributes(path, ref attr);
             if(error != Errno.NoError) return error;
 
-            stat = new FileEntryInfo();
-            stat.Attributes = attr;
-            stat.Blocks = entry.flLgLen / volMDB.drAlBlkSiz;
-            stat.BlockSize = volMDB.drAlBlkSiz;
-            stat.CreationTime = DateHandlers.MacToDateTime(entry.flCrDat);
-            stat.DeviceNo = 0;
-            stat.GID = 0;
-            stat.Inode = entry.flFlNum;
-            stat.LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat);
-            stat.Length = entry.flPyLen;
-            stat.Links = 1;
-            stat.Mode = 0x124;
-            stat.UID = 0;
+            stat = new FileEntryInfo
+            {
+                Attributes = attr,
+                Blocks = entry.flLgLen / volMDB.drAlBlkSiz,
+                BlockSize = volMDB.drAlBlkSiz,
+                CreationTime = DateHandlers.MacToDateTime(entry.flCrDat),
+                DeviceNo = 0,
+                GID = 0,
+                Inode = entry.flFlNum,
+                LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat),
+                Length = entry.flPyLen,
+                Links = 1,
+                Mode = 0x124,
+                UID = 0
+            };
 
             return Errno.NoError;
         }
@@ -240,12 +234,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
-            uint fileID;
-            MFS_FileEntry entry;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
-
-            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
 
             uint nextBlock;
 
@@ -271,10 +262,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
             }
 
             MemoryStream ms = new MemoryStream();
-            byte[] sectors;
 
             do
             {
+                byte[] sectors;
                 if(tags)
                     sectors =
                         device.ReadSectorsTag((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart,

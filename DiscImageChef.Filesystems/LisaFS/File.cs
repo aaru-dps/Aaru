@@ -41,9 +41,7 @@ namespace DiscImageChef.Filesystems.LisaFS
     {
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {
-            short fileId;
-            bool isDir;
-            Errno error = LookupFileId(path, out fileId, out isDir);
+            Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
 
             if(!isDir) return GetAttributes(fileId, ref attributes);
@@ -64,9 +62,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(offset < 0) return Errno.InvalidArgument;
 
-            short fileId;
-            bool isDir;
-            Errno error = LookupFileId(path, out fileId, out isDir);
+            Errno error = LookupFileId(path, out short fileId, out _);
             if(error != Errno.NoError) return error;
 
             byte[] tmp;
@@ -100,9 +96,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         public override Errno Stat(string path, ref FileEntryInfo stat)
         {
-            short fileId;
-            bool isDir;
-            Errno error = LookupFileId(path, out fileId, out isDir);
+            Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
 
             return isDir ? StatDir(fileId, out stat) : Stat(fileId, out stat);
@@ -125,8 +119,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 return Errno.NoError;
             }
 
-            ExtentFile extFile;
-            Errno error = ReadExtentsFile(fileId, out extFile);
+            Errno error = ReadExtentsFile(fileId, out ExtentFile extFile);
 
             if(error != Errno.NoError) return error;
 
@@ -200,8 +193,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(count == 0) return Errno.NoSuchFile;
 
-            if(!tags) buf = new byte[count * device.GetSectorSize()];
-            else buf = new byte[count * devTagSize];
+            buf = !tags ? new byte[count * device.GetSectorSize()] : new byte[count * devTagSize];
 
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
@@ -210,10 +202,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 if(sysTag.FileId != fileId) continue;
 
-                byte[] sector;
-
-                if(!tags) sector = device.ReadSector(i);
-                else sector = device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
+                byte[] sector = !tags ? device.ReadSector(i) : device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
 
                 // Relative block for $Loader starts at $Boot block
                 if(sysTag.FileId == FILEID_LOADER_SIGNED) sysTag.RelPage--;
@@ -239,8 +228,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 if(!debug || fileId == 0) return Errno.NoSuchFile;
                 else
                 {
-                    stat = new FileEntryInfo();
-                    stat.Attributes = new FileAttributes();
+                    stat = new FileEntryInfo {Attributes = new FileAttributes()};
 
                     error = GetAttributes(fileId, ref stat.Attributes);
                     if(error != Errno.NoError) return error;
@@ -267,12 +255,10 @@ namespace DiscImageChef.Filesystems.LisaFS
                     }
                     else
                     {
-                        byte[] buf;
-                        error = ReadSystemFile(fileId, out buf);
+                        error = ReadSystemFile(fileId, out byte[] buf);
                         if(error != Errno.NoError) return error;
 
-                        if(fileId != 4) stat.CreationTime = mddf.dtvc;
-                        else stat.CreationTime = mddf.dtcc;
+                        stat.CreationTime = fileId != 4 ? mddf.dtvc : mddf.dtcc;
 
                         stat.BackupTime = mddf.dtvb;
 
@@ -290,8 +276,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     return Errno.NoError;
                 }
 
-            stat = new FileEntryInfo();
-            stat.Attributes = new FileAttributes();
+            stat = new FileEntryInfo {Attributes = new FileAttributes()};
             error = GetAttributes(fileId, ref stat.Attributes);
             if(error != Errno.NoError) return error;
 
@@ -309,8 +294,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             stat.UID = 0;
             stat.GID = 0;
             stat.DeviceNo = 0;
-            int len;
-            if(!fileSizeCache.TryGetValue(fileId, out len)) stat.Length = srecords[fileId].filesize;
+            if(!fileSizeCache.TryGetValue(fileId, out int len)) stat.Length = srecords[fileId].filesize;
             else stat.Length = len;
             stat.BlockSize = mddf.datasize;
             stat.Blocks = file.length;
@@ -330,15 +314,12 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             tags &= debug;
 
-            if(fileId < 4 || fileId == 4 && mddf.fsversion != LisaFSv2 && mddf.fsversion != LisaFSv1)
+            if(fileId < 4 || fileId == 4 && mddf.fsversion != LISA_V2 && mddf.fsversion != LISA_V1)
                 return Errno.InvalidArgument;
 
             if(!tags && fileCache.TryGetValue(fileId, out buf)) return Errno.NoError;
 
-            Errno error;
-            ExtentFile file;
-
-            error = ReadExtentsFile(fileId, out file);
+            Errno error = ReadExtentsFile(fileId, out ExtentFile file);
             if(error != Errno.NoError) return error;
 
             int sectorSize;
@@ -365,8 +346,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(!tags)
             {
-                int realSize;
-                if(fileSizeCache.TryGetValue(fileId, out realSize)) if(realSize > temp.Length) DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
+                if(fileSizeCache.TryGetValue(fileId, out int realSize)) if(realSize > temp.Length) DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
                 buf = temp;
 
                 fileCache.Add(fileId, buf);
@@ -393,7 +373,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
 
             // Only V3 supports subdirectories
-            if(pathElements.Length > 1 && mddf.fsversion != LisaFSv3) return Errno.NotSupported;
+            if(pathElements.Length > 1 && mddf.fsversion != LISA_V3) return Errno.NotSupported;
 
             if(debug && pathElements.Length == 1)
             {

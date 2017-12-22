@@ -78,14 +78,16 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             fileEntries = new List<PascalFileEntry>();
             while(offset + 26 < catalogBlocks.Length)
             {
-                PascalFileEntry entry = new PascalFileEntry();
-                entry.filename = new byte[16];
-                entry.firstBlock = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x00);
-                entry.lastBlock = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x02);
-                entry.entryType = (PascalFileKind)BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x04);
+                PascalFileEntry entry = new PascalFileEntry
+                {
+                    filename = new byte[16],
+                    firstBlock = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x00),
+                    lastBlock = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x02),
+                    entryType = (PascalFileKind)BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x04),
+                    lastBytes = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x16),
+                    mtime = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x18)
+                };
                 Array.Copy(catalogBlocks, offset + 0x06, entry.filename, 0, 16);
-                entry.lastBytes = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x16);
-                entry.mtime = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x18);
 
                 if(entry.filename[0] <= 15 && entry.filename[0] > 0) fileEntries.Add(entry);
 
@@ -94,14 +96,16 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             bootBlocks = device.ReadSectors(0, 2);
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks);
-            xmlFSType.Clusters = mountedVolEntry.blocks;
-            xmlFSType.ClusterSize = (int)device.GetSectorSize();
-            xmlFSType.Files = mountedVolEntry.files;
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.Type = "UCSD Pascal";
-            xmlFSType.VolumeName = StringHandlers.PascalToString(mountedVolEntry.volumeName, CurrentEncoding);
+            XmlFsType = new FileSystemType
+            {
+                Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks),
+                Clusters = mountedVolEntry.blocks,
+                ClusterSize = (int)device.GetSectorSize(),
+                Files = mountedVolEntry.files,
+                FilesSpecified = true,
+                Type = "UCSD Pascal",
+                VolumeName = StringHandlers.PascalToString(mountedVolEntry.volumeName, CurrentEncoding)
+            };
 
             mounted = true;
 
@@ -122,7 +126,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             stat.FilenameLength = 16;
             stat.Files = (ulong)mountedVolEntry.files;
             stat.FreeBlocks = 0;
-            stat.PluginId = PluginUUID;
+            stat.PluginId = PluginUuid;
             stat.Type = "UCSD Pascal";
 
             stat.FreeBlocks = mountedVolEntry.blocks - (mountedVolEntry.lastBlock - mountedVolEntry.firstBlock);

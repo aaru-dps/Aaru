@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -55,6 +56,8 @@ using time_t = System.Int32;
 
 namespace DiscImageChef.Filesystems
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
     public class Locus : Filesystem
     {
         const int NICINOD = 325;
@@ -195,24 +198,22 @@ namespace DiscImageChef.Filesystems
         public Locus()
         {
             Name = "Locus Filesystem Plugin";
-            PluginUUID = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
+            PluginUuid = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public Locus(Encoding encoding)
         {
             Name = "Locus Filesystem Plugin";
-            PluginUUID = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public Locus(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Locus Filesystem Plugin";
-            PluginUUID = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -284,12 +285,9 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            if(LocusSb.s_magic == Locus_OldMagic) sb.AppendLine("Locus filesystem (old)");
-            else sb.AppendLine("Locus filesystem");
+            sb.AppendLine(LocusSb.s_magic == Locus_OldMagic ? "Locus filesystem (old)" : "Locus filesystem");
 
-            int blockSize;
-            if(LocusSb.s_version == LocusVersion.SB_SB4096) blockSize = 4096;
-            else blockSize = 1024;
+            int blockSize = LocusSb.s_version == LocusVersion.SB_SB4096 ? 4096 : 1024;
 
             string s_fsmnt = StringHandlers.CToString(LocusSb.s_fsmnt, CurrentEncoding);
             string s_fpack = StringHandlers.CToString(LocusSb.s_fpack, CurrentEncoding);
@@ -345,7 +343,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Locus filesystem",
                 ClusterSize = blockSize,

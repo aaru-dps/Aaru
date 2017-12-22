@@ -45,24 +45,22 @@ namespace DiscImageChef.Filesystems
         public Squash()
         {
             Name = "Squash filesystem";
-            PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public Squash(Encoding encoding)
         {
             Name = "Squash filesystem";
-            PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            if(encoding == null) CurrentEncoding = Encoding.UTF8;
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
         public Squash(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Squash filesystem";
-            PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            if(encoding == null) CurrentEncoding = Encoding.UTF8;
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
         enum SquashCompression : ushort
@@ -102,8 +100,8 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Identifier for Squash
         /// </summary>
-        const uint Squash_MAGIC = 0x73717368;
-        const uint Squash_CIGAM = 0x68737173;
+        const uint SQUASH_MAGIC = 0x73717368;
+        const uint SQUASH_CIGAM = 0x68737173;
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
@@ -113,7 +111,7 @@ namespace DiscImageChef.Filesystems
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
-            return magic == Squash_MAGIC || magic == Squash_CIGAM;
+            return magic == SQUASH_MAGIC || magic == SQUASH_CIGAM;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -126,13 +124,13 @@ namespace DiscImageChef.Filesystems
             bool littleEndian = true;
 
             switch(magic) {
-                case Squash_MAGIC:
+                case SQUASH_MAGIC:
                     IntPtr sqSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(sqSb));
                     Marshal.Copy(sector, 0, sqSbPtr, Marshal.SizeOf(sqSb));
                     sqSb = (SquashSuperBlock)Marshal.PtrToStructure(sqSbPtr, typeof(SquashSuperBlock));
                     Marshal.FreeHGlobal(sqSbPtr);
                     break;
-                case Squash_CIGAM:
+                case SQUASH_CIGAM:
                     sqSb = BigEndianMarshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
                     littleEndian = false;
                     break;
@@ -141,8 +139,7 @@ namespace DiscImageChef.Filesystems
             StringBuilder sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Squash file system");
-            if(littleEndian) sbInformation.AppendLine("Little-endian");
-            else sbInformation.AppendLine("Big-endian");
+            sbInformation.AppendLine(littleEndian ? "Little-endian" : "Big-endian");
             sbInformation.AppendFormat("Volume version {0}.{1}", sqSb.s_major, sqSb.s_minor).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes", sqSb.bytes_used).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes per block", sqSb.block_size).AppendLine();
@@ -177,17 +174,19 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "Squash file system";
-            xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time);
-            xmlFSType.CreationDateSpecified = true;
-            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
-                                        sqSb.block_size);
-            xmlFSType.ClusterSize = (int)sqSb.block_size;
-            xmlFSType.Files = sqSb.inodes;
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.FreeClusters = 0;
-            xmlFSType.FreeClustersSpecified = true;
+            XmlFsType = new FileSystemType
+            {
+                Type = "Squash file system",
+                CreationDate = DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time),
+                CreationDateSpecified = true,
+                Clusters =
+                    (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize / sqSb.block_size),
+                ClusterSize = (int)sqSb.block_size,
+                Files = sqSb.inodes,
+                FilesSpecified = true,
+                FreeClusters = 0,
+                FreeClustersSpecified = true
+            };
         }
 
         public override Errno Mount()

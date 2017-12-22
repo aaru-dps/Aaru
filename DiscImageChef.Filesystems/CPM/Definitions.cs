@@ -59,18 +59,14 @@ namespace DiscImageChef.Filesystems.CPM
                 {
                     if(def.side1 == null)
                     {
-                        def.side1 = new Side();
-                        def.side1.sideId = 0;
-                        def.side1.sectorIds = new int[def.sectorsPerTrack];
+                        def.side1 = new Side {sideId = 0, sectorIds = new int[def.sectorsPerTrack]};
                         for(int i = 0; i < def.sectorsPerTrack; i++) def.side1.sectorIds[i] = i + 1;
                     }
 
                     if(def.sides != 2 || def.side2 != null) continue;
 
                     {
-                        def.side2 = new Side();
-                        def.side2.sideId = 1;
-                        def.side2.sectorIds = new int[def.sectorsPerTrack];
+                        def.side2 = new Side {sideId = 1, sectorIds = new int[def.sectorsPerTrack]};
                         for(int i = 0; i < def.sectorsPerTrack; i++) def.side2.sectorIds[i] = i + 1;
                     }
                 }

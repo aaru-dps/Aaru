@@ -47,24 +47,22 @@ namespace DiscImageChef.Filesystems
         public RT11()
         {
             Name = "RT-11 file system";
-            PluginUUID = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
+            PluginUuid = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         public RT11(Encoding encoding)
         {
             Name = "RT-11 file system";
-            PluginUUID = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         public RT11(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "RT-11 file system";
-            PluginUUID = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -73,12 +71,11 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.GetSectorSize() < 512) return false;
 
-            byte[] magic_b = new byte[12];
-            string magic;
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.Start);
+            byte[] magicB = new byte[12];
+            byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            Array.Copy(hb_sector, 0x1F0, magic_b, 0, 12);
-            magic = Encoding.ASCII.GetString(magic_b);
+            Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
+            string magic = Encoding.ASCII.GetString(magicB);
 
             return magic == "DECRT11A    ";
         }
@@ -89,12 +86,11 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            RT11HomeBlock homeblock;
 
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.Start);
+            byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            GCHandle handle = GCHandle.Alloc(hb_sector, GCHandleType.Pinned);
-            homeblock = (RT11HomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(RT11HomeBlock));
+            GCHandle handle = GCHandle.Alloc(hbSector, GCHandleType.Pinned);
+            RT11HomeBlock homeblock = (RT11HomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(RT11HomeBlock));
             handle.Free();
 
             /* TODO: Is this correct?
@@ -107,7 +103,7 @@ namespace DiscImageChef.Filesystems
              *      MOV 1,@R0
              */
             ushort check = 0;
-            for(int i = 0; i < 512; i += 2) check += BitConverter.ToUInt16(hb_sector, i);
+            for(int i = 0; i < 512; i += 2) check += BitConverter.ToUInt16(hbSector, i);
 
             sb.AppendFormat("Volume format is {0}",
                             StringHandlers.SpacePaddedToString(homeblock.format, CurrentEncoding)).AppendLine();
@@ -122,7 +118,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] bootBlock = imagePlugin.ReadSector(0);
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "RT-11",
                 ClusterSize = homeblock.cluster * 512,

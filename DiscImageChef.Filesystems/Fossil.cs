@@ -121,22 +121,22 @@ namespace DiscImageChef.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] public byte[] name;
         }
 
-        const uint Fossil_HdrMagic = 0x3776AE89;
-        const uint Fossil_SbMagic = 0x2340A3B1;
+        const uint FOSSIL_HDR_MAGIC = 0x3776AE89;
+        const uint FOSSIL_SB_MAGIC = 0x2340A3B1;
         // Fossil header starts at 128KiB
-        const ulong HeaderPos = 128 * 1024;
+        const ulong HEADER_POS = 128 * 1024;
 
         public Fossil()
         {
             Name = "Fossil Filesystem Plugin";
-            PluginUUID = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+            PluginUuid = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public Fossil(Encoding encoding)
         {
             Name = "Fossil Filesystem Plugin";
-            PluginUUID = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+            PluginUuid = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
             // Technically everything on Plan 9 from Bell Labs is in UTF-8
             CurrentEncoding = Encoding.UTF8;
         }
@@ -144,14 +144,14 @@ namespace DiscImageChef.Filesystems
         public Fossil(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Fossil Filesystem Plugin";
-            PluginUUID = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+            PluginUuid = new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
             // Technically everything on Plan 9 from Bell Labs is in UTF-8
             CurrentEncoding = Encoding.UTF8;
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            ulong hdrSector = HeaderPos / imagePlugin.GetSectorSize();
+            ulong hdrSector = HEADER_POS / imagePlugin.GetSectorSize();
 
             FossilHeader hdr;
 
@@ -161,9 +161,9 @@ namespace DiscImageChef.Filesystems
             hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
-                                      Fossil_HdrMagic);
+                                      FOSSIL_HDR_MAGIC);
 
-            return hdr.magic == Fossil_HdrMagic;
+            return hdr.magic == FOSSIL_HDR_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -172,7 +172,7 @@ namespace DiscImageChef.Filesystems
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
 
-            ulong hdrSector = HeaderPos / imagePlugin.GetSectorSize();
+            ulong hdrSector = HEADER_POS / imagePlugin.GetSectorSize();
 
             FossilHeader hdr;
 
@@ -180,7 +180,7 @@ namespace DiscImageChef.Filesystems
             hdr = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
-                                      Fossil_HdrMagic);
+                                      FOSSIL_HDR_MAGIC);
 
             StringBuilder sb = new StringBuilder();
 
@@ -194,7 +194,7 @@ namespace DiscImageChef.Filesystems
 
             ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.GetSectorSize()) + partition.Start;
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Fossil filesystem",
                 ClusterSize = hdr.blockSize,
@@ -207,9 +207,9 @@ namespace DiscImageChef.Filesystems
                 FossilSuperBlock fsb = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilSuperBlock>(sector);
 
                 DicConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,
-                                          Fossil_SbMagic);
+                                          FOSSIL_SB_MAGIC);
 
-                if(fsb.magic == Fossil_SbMagic)
+                if(fsb.magic == FOSSIL_SB_MAGIC)
                 {
                     sb.AppendFormat("Epoch low {0}", fsb.epochLow).AppendLine();
                     sb.AppendFormat("Epoch high {0}", fsb.epochHigh).AppendLine();
@@ -219,7 +219,7 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("Curren root block {0}", fsb.current).AppendLine();
                     sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.CToString(fsb.name, CurrentEncoding))
                       .AppendLine();
-                    xmlFSType.VolumeName = StringHandlers.CToString(fsb.name, CurrentEncoding);
+                    XmlFsType.VolumeName = StringHandlers.CToString(fsb.name, CurrentEncoding);
                 }
             }
 

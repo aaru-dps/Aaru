@@ -91,7 +91,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Bootable = true,
                 Clusters = (long)imagePlugin.ImageInfo.Sectors,

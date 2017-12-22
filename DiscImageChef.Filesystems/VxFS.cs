@@ -45,24 +45,22 @@ namespace DiscImageChef.Filesystems
         public VxFS()
         {
             Name = "Veritas filesystem";
-            PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+            PluginUuid = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public VxFS(Encoding encoding)
         {
             Name = "Veritas filesystem";
-            PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
-            if(encoding == null) CurrentEncoding = Encoding.UTF8;
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+            CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
         public VxFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Veritas filesystem";
-            PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
-            if(encoding == null) CurrentEncoding = Encoding.UTF8;
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+            CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -211,12 +209,12 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Identifier for VxFS
         /// </summary>
-        const uint VxFS_MAGIC = 0xA501FCF5;
-        const uint VxFS_Base = 0x400;
+        const uint VXFS_MAGIC = 0xA501FCF5;
+        const uint VXFS_Base = 0x400;
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.SectorSize;
+            ulong vmfsSuperOff = VXFS_Base / imagePlugin.ImageInfo.SectorSize;
 
             if(partition.Start + vmfsSuperOff >= partition.End) return false;
 
@@ -224,13 +222,13 @@ namespace DiscImageChef.Filesystems
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
-            return magic == VxFS_MAGIC;
+            return magic == VXFS_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
-            ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.SectorSize;
+            ulong vmfsSuperOff = VXFS_Base / imagePlugin.ImageInfo.SectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             VxSuperBlock vxSb = new VxSuperBlock();
@@ -259,17 +257,19 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "Veritas file system";
-            xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime);
-            xmlFSType.CreationDateSpecified = true;
-            xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime);
-            xmlFSType.ModificationDateSpecified = true;
-            xmlFSType.Clusters = vxSb.vs_size;
-            xmlFSType.ClusterSize = vxSb.vs_bsize;
-            xmlFSType.Dirty = vxSb.vs_clean != 0;
-            xmlFSType.FreeClusters = vxSb.vs_free;
-            xmlFSType.FreeClustersSpecified = true;
+            XmlFsType = new FileSystemType
+            {
+                Type = "Veritas file system",
+                CreationDate = DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
+                CreationDateSpecified = true,
+                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
+                ModificationDateSpecified = true,
+                Clusters = vxSb.vs_size,
+                ClusterSize = vxSb.vs_bsize,
+                Dirty = vxSb.vs_clean != 0,
+                FreeClusters = vxSb.vs_free,
+                FreeClustersSpecified = true
+            };
         }
 
         public override Errno Mount()

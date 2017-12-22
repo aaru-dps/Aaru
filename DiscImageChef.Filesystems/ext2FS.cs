@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -43,51 +44,47 @@ namespace DiscImageChef.Filesystems
     // Information from the Linux kernel
     public class ext2FS : Filesystem
     {
-        const int sbPos = 0x400;
+        const int SB_POS = 0x400;
 
         public ext2FS()
         {
             Name = "Linux extended Filesystem 2, 3 and 4";
-            PluginUUID = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+            PluginUuid = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public ext2FS(Encoding encoding)
         {
             Name = "Linux extended Filesystem 2, 3 and 4";
-            PluginUUID = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public ext2FS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Linux extended Filesystem 2, 3 and 4";
-            PluginUUID = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            ulong sbSector = sbPos / imagePlugin.GetSectorSize();
-            uint sbOff = sbPos % imagePlugin.GetSectorSize();
+            ulong sbSectorOff = SB_POS / imagePlugin.GetSectorSize();
+            uint sbOff = SB_POS % imagePlugin.GetSectorSize();
 
-            if(sbSector + partition.Start >= partition.End) return false;
+            if(sbSectorOff + partition.Start >= partition.End) return false;
 
-            int sb_size_in_bytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
-            uint sb_size_in_sectors = (uint)(sb_size_in_bytes / imagePlugin.GetSectorSize());
-            if(sb_size_in_bytes % imagePlugin.GetSectorSize() > 0) sb_size_in_sectors++;
+            int sbSizeInBytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
+            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.GetSectorSize());
+            if(sbSizeInBytes % imagePlugin.GetSectorSize() > 0) sbSizeInSectors++;
 
-            byte[] sb_sector = imagePlugin.ReadSectors(sbSector + partition.Start, sb_size_in_sectors);
-            byte[] sb = new byte[sb_size_in_bytes];
-            Array.Copy(sb_sector, sbOff, sb, 0, sb_size_in_bytes);
+            byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
+            byte[] sb = new byte[sbSizeInBytes];
+            Array.Copy(sbSector, sbOff, sb, 0, sbSizeInBytes);
 
             ushort magic = BitConverter.ToUInt16(sb, 0x038);
 
-            if(magic == ext2FSMagic || magic == ext2OldFSMagic) return true;
-
-            return false;
+            return magic == EXT2_MAGIC || magic == EXT2_MAGIC_OLD;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -97,34 +94,33 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            ext2FSSuperBlock supblk = new ext2FSSuperBlock();
-            bool new_ext2 = false;
+            bool newExt2 = false;
             bool ext3 = false;
             bool ext4 = false;
 
-            int sb_size_in_bytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
-            uint sb_size_in_sectors = (uint)(sb_size_in_bytes / imagePlugin.GetSectorSize());
-            if(sb_size_in_bytes % imagePlugin.GetSectorSize() > 0) sb_size_in_sectors++;
+            int sbSizeInBytes = Marshal.SizeOf(typeof(ext2FSSuperBlock));
+            uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.GetSectorSize());
+            if(sbSizeInBytes % imagePlugin.GetSectorSize() > 0) sbSizeInSectors++;
 
-            ulong sbSector = sbPos / imagePlugin.GetSectorSize();
-            uint sbOff = sbPos % imagePlugin.GetSectorSize();
+            ulong sbSectorOff = SB_POS / imagePlugin.GetSectorSize();
+            uint sbOff = SB_POS % imagePlugin.GetSectorSize();
 
-            byte[] sb_sector = imagePlugin.ReadSectors(sbSector + partition.Start, sb_size_in_sectors);
-            byte[] sblock = new byte[sb_size_in_bytes];
-            Array.Copy(sb_sector, sbOff, sblock, 0, sb_size_in_bytes);
-            IntPtr sbPtr = Marshal.AllocHGlobal(sb_size_in_bytes);
-            Marshal.Copy(sblock, 0, sbPtr, sb_size_in_bytes);
-            supblk = (ext2FSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(ext2FSSuperBlock));
+            byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
+            byte[] sblock = new byte[sbSizeInBytes];
+            Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
+            IntPtr sbPtr = Marshal.AllocHGlobal(sbSizeInBytes);
+            Marshal.Copy(sblock, 0, sbPtr, sbSizeInBytes);
+            ext2FSSuperBlock supblk = (ext2FSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(ext2FSSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
 
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             switch(supblk.magic) {
-                case ext2OldFSMagic:
+                case EXT2_MAGIC_OLD:
                     sb.AppendLine("ext2 (old) filesystem");
-                    xmlFSType.Type = "ext2";
+                    XmlFsType.Type = "ext2";
                     break;
-                case ext2FSMagic:
+                case EXT2_MAGIC:
                     ext3 |= (supblk.ftr_compat & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
                             (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_RECOVER) == EXT3_FEATURE_INCOMPAT_RECOVER ||
                             (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) == EXT3_FEATURE_INCOMPAT_JOURNAL_DEV;
@@ -143,22 +139,22 @@ namespace DiscImageChef.Filesystems
                         ext4 = true;
                     }
 
-                    new_ext2 |= !ext3 && !ext4;
+                    newExt2 |= !ext3 && !ext4;
 
-                    if(new_ext2)
+                    if(newExt2)
                     {
                         sb.AppendLine("ext2 filesystem");
-                        xmlFSType.Type = "ext2";
+                        XmlFsType.Type = "ext2";
                     }
                     if(ext3)
                     {
                         sb.AppendLine("ext3 filesystem");
-                        xmlFSType.Type = "ext3";
+                        XmlFsType.Type = "ext3";
                     }
                     if(ext4)
                     {
                         sb.AppendLine("ext4 filesystem");
-                        xmlFSType.Type = "ext4";
+                        XmlFsType.Type = "ext4";
                     }
                     break;
                 default:
@@ -166,81 +162,80 @@ namespace DiscImageChef.Filesystems
                     return;
             }
 
-            string ext_os;
+            string extOs;
             switch(supblk.creator_os)
             {
                 case EXT2_OS_FREEBSD:
-                    ext_os = "FreeBSD";
+                    extOs = "FreeBSD";
                     break;
                 case EXT2_OS_HURD:
-                    ext_os = "Hurd";
+                    extOs = "Hurd";
                     break;
                 case EXT2_OS_LINUX:
-                    ext_os = "Linux";
+                    extOs = "Linux";
                     break;
                 case EXT2_OS_LITES:
-                    ext_os = "Lites";
+                    extOs = "Lites";
                     break;
                 case EXT2_OS_MASIX:
-                    ext_os = "MasIX";
+                    extOs = "MasIX";
                     break;
                 default:
-                    ext_os = $"Unknown OS ({supblk.creator_os})";
+                    extOs = $"Unknown OS ({supblk.creator_os})";
                     break;
             }
 
-            xmlFSType.SystemIdentifier = ext_os;
+            XmlFsType.SystemIdentifier = extOs;
 
             if(supblk.mkfs_t > 0)
             {
                 sb.AppendFormat("Volume was created on {0} for {1}", DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t),
-                                ext_os).AppendLine();
-                xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t);
-                xmlFSType.CreationDateSpecified = true;
+                                extOs).AppendLine();
+                XmlFsType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t);
+                XmlFsType.CreationDateSpecified = true;
             }
-            else sb.AppendFormat("Volume was created for {0}", ext_os).AppendLine();
+            else sb.AppendFormat("Volume was created for {0}", extOs).AppendLine();
 
-            byte[] temp_lo, temp_hi;
-            byte[] temp_bytes = new byte[8];
+            byte[] tempBytes = new byte[8];
             ulong blocks, reserved, free;
 
             if((supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT) == EXT4_FEATURE_INCOMPAT_64BIT)
             {
-                temp_lo = BitConverter.GetBytes(supblk.blocks);
-                temp_hi = BitConverter.GetBytes(supblk.blocks_hi);
-                temp_bytes[0] = temp_lo[0];
-                temp_bytes[1] = temp_lo[1];
-                temp_bytes[2] = temp_lo[2];
-                temp_bytes[3] = temp_lo[3];
-                temp_bytes[4] = temp_hi[0];
-                temp_bytes[5] = temp_hi[1];
-                temp_bytes[6] = temp_hi[2];
-                temp_bytes[7] = temp_hi[3];
-                blocks = BitConverter.ToUInt64(temp_bytes, 0);
+                byte[] tempLo = BitConverter.GetBytes(supblk.blocks);
+                byte[] tempHi = BitConverter.GetBytes(supblk.blocks_hi);
+                tempBytes[0] = tempLo[0];
+                tempBytes[1] = tempLo[1];
+                tempBytes[2] = tempLo[2];
+                tempBytes[3] = tempLo[3];
+                tempBytes[4] = tempHi[0];
+                tempBytes[5] = tempHi[1];
+                tempBytes[6] = tempHi[2];
+                tempBytes[7] = tempHi[3];
+                blocks = BitConverter.ToUInt64(tempBytes, 0);
 
-                temp_lo = BitConverter.GetBytes(supblk.reserved_blocks);
-                temp_hi = BitConverter.GetBytes(supblk.reserved_blocks_hi);
-                temp_bytes[0] = temp_lo[0];
-                temp_bytes[1] = temp_lo[1];
-                temp_bytes[2] = temp_lo[2];
-                temp_bytes[3] = temp_lo[3];
-                temp_bytes[4] = temp_hi[0];
-                temp_bytes[5] = temp_hi[1];
-                temp_bytes[6] = temp_hi[2];
-                temp_bytes[7] = temp_hi[3];
-                reserved = BitConverter.ToUInt64(temp_bytes, 0);
+                tempLo = BitConverter.GetBytes(supblk.reserved_blocks);
+                tempHi = BitConverter.GetBytes(supblk.reserved_blocks_hi);
+                tempBytes[0] = tempLo[0];
+                tempBytes[1] = tempLo[1];
+                tempBytes[2] = tempLo[2];
+                tempBytes[3] = tempLo[3];
+                tempBytes[4] = tempHi[0];
+                tempBytes[5] = tempHi[1];
+                tempBytes[6] = tempHi[2];
+                tempBytes[7] = tempHi[3];
+                reserved = BitConverter.ToUInt64(tempBytes, 0);
 
-                temp_lo = BitConverter.GetBytes(supblk.free_blocks);
-                temp_hi = BitConverter.GetBytes(supblk.free_blocks_hi);
-                temp_bytes[0] = temp_lo[0];
-                temp_bytes[1] = temp_lo[1];
-                temp_bytes[2] = temp_lo[2];
-                temp_bytes[3] = temp_lo[3];
-                temp_bytes[4] = temp_hi[0];
-                temp_bytes[5] = temp_hi[1];
-                temp_bytes[6] = temp_hi[2];
-                temp_bytes[7] = temp_hi[3];
-                free = BitConverter.ToUInt64(temp_bytes, 0);
+                tempLo = BitConverter.GetBytes(supblk.free_blocks);
+                tempHi = BitConverter.GetBytes(supblk.free_blocks_hi);
+                tempBytes[0] = tempLo[0];
+                tempBytes[1] = tempLo[1];
+                tempBytes[2] = tempLo[2];
+                tempBytes[3] = tempLo[3];
+                tempBytes[4] = tempHi[0];
+                tempBytes[5] = tempHi[1];
+                tempBytes[6] = tempHi[2];
+                tempBytes[7] = tempHi[3];
+                free = BitConverter.ToUInt64(tempBytes, 0);
             }
             else
             {
@@ -255,8 +250,8 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume has {0} blocks of {1} bytes, for a total of {2} bytes", blocks,
                             1024 << (int)supblk.block_size, blocks * (ulong)(1024 << (int)supblk.block_size))
               .AppendLine();
-            xmlFSType.Clusters = (long)blocks;
-            xmlFSType.ClusterSize = 1024 << (int)supblk.block_size;
+            XmlFsType.Clusters = (long)blocks;
+            XmlFsType.ClusterSize = 1024 << (int)supblk.block_size;
             if(supblk.mount_t > 0 || supblk.mount_c > 0)
             {
                 if(supblk.mount_t > 0)
@@ -302,17 +297,17 @@ namespace DiscImageChef.Filesystems
             {
                 sb.AppendFormat("Last written on {0}", DateHandlers.UNIXUnsignedToDateTime(supblk.write_t))
                   .AppendLine();
-                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.write_t);
-                xmlFSType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.write_t);
+                XmlFsType.ModificationDateSpecified = true;
             }
             else sb.AppendLine("Volume has never been written");
 
-            xmlFSType.Dirty = true;
+            XmlFsType.Dirty = true;
             switch(supblk.state)
             {
                 case EXT2_VALID_FS:
                     sb.AppendLine("Volume is clean");
-                    xmlFSType.Dirty = false;
+                    XmlFsType.Dirty = false;
                     break;
                 case EXT2_ERROR_FS:
                     sb.AppendLine("Volume is dirty");
@@ -329,7 +324,7 @@ namespace DiscImageChef.Filesystems
             {
                 sb.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(supblk.volume_name, CurrentEncoding))
                   .AppendLine();
-                xmlFSType.VolumeName = StringHandlers.CToString(supblk.volume_name, CurrentEncoding);
+                XmlFsType.VolumeName = StringHandlers.CToString(supblk.volume_name, CurrentEncoding);
             }
 
             switch(supblk.err_behaviour)
@@ -355,15 +350,15 @@ namespace DiscImageChef.Filesystems
             if(supblk.uuid != Guid.Empty)
             {
                 sb.AppendFormat("Volume UUID: {0}", supblk.uuid).AppendLine();
-                xmlFSType.VolumeSerial = supblk.uuid.ToString();
+                XmlFsType.VolumeSerial = supblk.uuid.ToString();
             }
 
             if(supblk.kbytes_written > 0)
                 sb.AppendFormat("{0} KiB has been written on volume", supblk.kbytes_written).AppendLine();
 
             sb.AppendFormat("{0} reserved and {1} free blocks", reserved, free).AppendLine();
-            xmlFSType.FreeClusters = (long)free;
-            xmlFSType.FreeClustersSpecified = true;
+            XmlFsType.FreeClusters = (long)free;
+            XmlFsType.FreeClustersSpecified = true;
             sb.AppendFormat("{0} inodes with {1} free inodes ({2}%)", supblk.inodes, supblk.free_inodes,
                             supblk.free_inodes * 100 / supblk.inodes).AppendLine();
             if(supblk.first_inode > 0) sb.AppendFormat("First inode is {0}", supblk.first_inode).AppendLine();
@@ -533,14 +528,15 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Same magic for ext2, ext3 and ext4
         /// </summary>
-        const ushort ext2FSMagic = 0xEF53;
+        const ushort EXT2_MAGIC = 0xEF53;
 
-        const ushort ext2OldFSMagic = 0xEF51;
+        const ushort EXT2_MAGIC_OLD = 0xEF51;
 
         /// <summary>
         /// ext2/3/4 superblock
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct ext2FSSuperBlock
         {
             /// <summary>0x000, inodes on volume</summary>

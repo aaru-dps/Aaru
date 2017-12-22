@@ -61,7 +61,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return Errno.NoError;
         }
 
-        public bool FillDirectory()
+        bool FillDirectory()
         {
             idToFilename = new Dictionary<uint, string>();
             idToEntry = new Dictionary<uint, MFS_FileEntry>();
@@ -70,11 +70,12 @@ namespace DiscImageChef.Filesystems.AppleMFS
             int offset = 0;
             while(offset + 51 < directoryBlocks.Length)
             {
-                MFS_FileEntry entry = new MFS_FileEntry();
-                string lowerFilename;
-                entry.flUsrWds = new byte[16];
+                MFS_FileEntry entry = new MFS_FileEntry
+                {
+                    flUsrWds = new byte[16],
+                    flFlags = (MFS_FileFlags)directoryBlocks[offset + 0]
+                };
 
-                entry.flFlags = (MFS_FileFlags)directoryBlocks[offset + 0];
                 if(!entry.flFlags.HasFlag(MFS_FileFlags.Used)) break;
 
                 entry.flTyp = directoryBlocks[offset + 1];
@@ -90,8 +91,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 entry.flMdDat = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 46);
                 entry.flNam = new byte[directoryBlocks[offset + 50] + 1];
                 Array.Copy(directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
-                lowerFilename = StringHandlers.PascalToString(entry.flNam, CurrentEncoding).ToLowerInvariant()
-                                              .Replace('/', ':');
+                string lowerFilename = StringHandlers.PascalToString(entry.flNam, CurrentEncoding).ToLowerInvariant()
+                                                     .Replace('/', ':');
 
                 if(entry.flFlags.HasFlag(MFS_FileFlags.Used) && !idToFilename.ContainsKey(entry.flFlNum) &&
                    !idToEntry.ContainsKey(entry.flFlNum) && !filenameToId.ContainsKey(lowerFilename) &&

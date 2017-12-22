@@ -51,24 +51,22 @@ namespace DiscImageChef.Filesystems
         public BTRFS()
         {
             Name = "B-tree file system";
-            PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+            PluginUuid = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public BTRFS(Encoding encoding)
         {
             Name = "B-tree file system";
-            PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public BTRFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "B-tree file system";
-            PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -159,17 +157,16 @@ namespace DiscImageChef.Filesystems
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             information = "";
 
             ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
             uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
 
             byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
-            SuperBlock btrfsSb;
 
             GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-            btrfsSb = (SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SuperBlock));
+            SuperBlock btrfsSb = (SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SuperBlock));
             handle.Free();
 
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.checksum = {0}", btrfsSb.checksum);
@@ -243,15 +240,17 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Clusters = (long)(btrfsSb.total_bytes / btrfsSb.sectorsize);
-            xmlFSType.ClusterSize = (int)btrfsSb.sectorsize;
-            xmlFSType.FreeClusters = xmlFSType.Clusters - (long)(btrfsSb.bytes_used / btrfsSb.sectorsize);
-            xmlFSType.FreeClustersSpecified = true;
-            xmlFSType.VolumeName = btrfsSb.label;
-            xmlFSType.VolumeSerial = $"{btrfsSb.uuid}";
-            xmlFSType.VolumeSetIdentifier = $"{btrfsSb.dev_item.device_uuid}";
-            xmlFSType.Type = Name;
+            XmlFsType = new FileSystemType
+            {
+                Clusters = (long)(btrfsSb.total_bytes / btrfsSb.sectorsize),
+                ClusterSize = (int)btrfsSb.sectorsize,
+                FreeClustersSpecified = true,
+                VolumeName = btrfsSb.label,
+                VolumeSerial = $"{btrfsSb.uuid}",
+                VolumeSetIdentifier = $"{btrfsSb.dev_item.device_uuid}",
+                Type = Name
+            };
+            XmlFsType.FreeClusters = XmlFsType.Clusters - (long)(btrfsSb.bytes_used / btrfsSb.sectorsize);
         }
 
         public override Errno Mount()

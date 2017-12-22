@@ -47,18 +47,15 @@ namespace DiscImageChef.Filesystems
         /// <summary>Plugin name.</summary>
         public string Name;
         /// <summary>Plugin UUID.</summary>
-        public Guid PluginUUID;
-        internal FileSystemType xmlFSType;
-        public Encoding CurrentEncoding;
+        public Guid PluginUuid;
+        internal FileSystemType XmlFsType;
+        protected Encoding CurrentEncoding;
 
         /// <summary>
         /// Information about the filesystem as expected by CICM Metadata XML
         /// </summary>
         /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
-        public FileSystemType XmlFSType
-        {
-            get { return xmlFSType; }
-        }
+        public FileSystemType XmlFSType => XmlFsType;
 
         protected Filesystem() { }
 

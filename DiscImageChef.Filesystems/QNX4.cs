@@ -108,24 +108,22 @@ namespace DiscImageChef.Filesystems
         public QNX4()
         {
             Name = "QNX4 Plugin";
-            PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
+            PluginUuid = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public QNX4(Encoding encoding)
         {
             Name = "QNX4 Plugin";
-            PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public QNX4(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX4 Plugin";
-            PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -135,10 +133,9 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return false;
 
-            QNX4_Superblock qnxSb;
             IntPtr sbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, sbPtr, 512);
-            qnxSb = (QNX4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(QNX4_Superblock));
+            QNX4_Superblock qnxSb = (QNX4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(QNX4_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
             // Check root directory name
@@ -169,10 +166,9 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return;
 
-            QNX4_Superblock qnxSb;
             IntPtr sbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, sbPtr, 512);
-            qnxSb = (QNX4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(QNX4_Superblock));
+            QNX4_Superblock qnxSb = (QNX4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(QNX4_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
             // Too much useless information
@@ -253,7 +249,7 @@ namespace DiscImageChef.Filesystems
             information =
                 $"QNX4 filesystem\nCreated on {DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime)}\n";
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "QNX4 filesystem",
                 Clusters = (long)partition.Length,
@@ -263,7 +259,7 @@ namespace DiscImageChef.Filesystems
                 ModificationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_mtime),
                 ModificationDateSpecified = true
             };
-            xmlFSType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
+            XmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
         }
 
         public override Errno Mount()

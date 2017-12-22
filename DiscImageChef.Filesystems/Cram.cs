@@ -45,24 +45,22 @@ namespace DiscImageChef.Filesystems
         public Cram()
         {
             Name = "Cram filesystem";
-            PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public Cram(Encoding encoding)
         {
             Name = "Cram filesystem";
-            PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public Cram(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Cram filesystem";
-            PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         enum CramCompression : ushort
@@ -92,8 +90,8 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Identifier for Cram
         /// </summary>
-        const uint Cram_MAGIC = 0x28CD3D45;
-        const uint Cram_CIGAM = 0x453DCD28;
+        const uint CRAM_MAGIC = 0x28CD3D45;
+        const uint CRAM_CIGAM = 0x453DCD28;
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
@@ -103,7 +101,7 @@ namespace DiscImageChef.Filesystems
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
-            return magic == Cram_MAGIC || magic == Cram_CIGAM;
+            return magic == CRAM_MAGIC || magic == CRAM_CIGAM;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -116,13 +114,13 @@ namespace DiscImageChef.Filesystems
             bool littleEndian = true;
 
             switch(magic) {
-                case Cram_MAGIC:
+                case CRAM_MAGIC:
                     IntPtr crSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(crSb));
                     Marshal.Copy(sector, 0, crSbPtr, Marshal.SizeOf(crSb));
                     crSb = (CramSuperBlock)Marshal.PtrToStructure(crSbPtr, typeof(CramSuperBlock));
                     Marshal.FreeHGlobal(crSbPtr);
                     break;
-                case Cram_CIGAM:
+                case CRAM_CIGAM:
                     crSb = BigEndianMarshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
                     littleEndian = false;
                     break;
@@ -131,8 +129,7 @@ namespace DiscImageChef.Filesystems
             StringBuilder sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Cram file system");
-            if(littleEndian) sbInformation.AppendLine("Little-endian");
-            else sbInformation.AppendLine("Big-endian");
+            sbInformation.AppendLine(littleEndian ? "Little-endian" : "Big-endian");
             sbInformation.AppendFormat("Volume edition {0}", crSb.edition).AppendLine();
             sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name, CurrentEncoding))
                          .AppendLine();
@@ -142,14 +139,16 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.VolumeName = StringHandlers.CToString(crSb.name, CurrentEncoding);
-            xmlFSType.Type = "Cram file system";
-            xmlFSType.Clusters = crSb.blocks;
-            xmlFSType.Files = crSb.files;
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.FreeClusters = 0;
-            xmlFSType.FreeClustersSpecified = true;
+            XmlFsType = new FileSystemType
+            {
+                VolumeName = StringHandlers.CToString(crSb.name, CurrentEncoding),
+                Type = "Cram file system",
+                Clusters = crSb.blocks,
+                Files = crSb.files,
+                FilesSpecified = true,
+                FreeClusters = 0,
+                FreeClustersSpecified = true
+            };
         }
 
         public override Errno Mount()

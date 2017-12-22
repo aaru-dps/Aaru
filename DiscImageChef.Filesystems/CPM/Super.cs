@@ -149,8 +149,7 @@ namespace DiscImageChef.Filesystems.CPM
             // For each volume sector
             for(ulong a = 0; a < (ulong)deinterleavedSectors.Count; a++)
             {
-                byte[] sector;
-                deinterleavedSectors.TryGetValue(a, out sector);
+                deinterleavedSectors.TryGetValue(a, out byte[] sector);
 
                 // May it happen? Just in case, CP/M blocks are smaller than physical sectors
                 if(sector.Length > blockSize)
@@ -187,8 +186,7 @@ namespace DiscImageChef.Filesystems.CPM
             MemoryStream dirMs = new MemoryStream();
             for(int d = 0; d < dirSectors; d++)
             {
-                byte[] sector;
-                deinterleavedSectors.TryGetValue((ulong)(d + dirOff), out sector);
+                deinterleavedSectors.TryGetValue((ulong)(d + dirOff), out byte[] sector);
                 dirMs.Write(sector, 0, sector.Length);
             }
 
@@ -219,10 +217,9 @@ namespace DiscImageChef.Filesystems.CPM
                 if((directory[dOff] & 0x7F) < 0x10)
                     if(allocationBlocks.Count > 256)
                     {
-                        DirectoryEntry16 entry;
                         dirPtr = Marshal.AllocHGlobal(32);
                         Marshal.Copy(directory, dOff, dirPtr, 32);
-                        entry = (DirectoryEntry16)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry16));
+                        DirectoryEntry16 entry = (DirectoryEntry16)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry16));
                         Marshal.FreeHGlobal(dirPtr);
 
                         bool hidden = (entry.statusUser & 0x80) == 0x80;
@@ -254,24 +251,18 @@ namespace DiscImageChef.Filesystems.CPM
                         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                         int entryNo = (32 * entry.extentCounter + entry.extentCounterHigh) / (dpb.exm + 1);
-                        List<ushort> blocks;
-                        Dictionary<int, List<ushort>> extentBlocks;
-                        FileEntryInfo fInfo;
 
                         // Do we have a stat for the file already?
-                        if(statCache.TryGetValue(filename, out fInfo)) statCache.Remove(filename);
+                        if(statCache.TryGetValue(filename, out FileEntryInfo fInfo)) statCache.Remove(filename);
                         else
-                        {
-                            fInfo = new FileEntryInfo();
-                            fInfo.Attributes = new FileAttributes();
-                        }
+                        { fInfo = new FileEntryInfo {Attributes = new FileAttributes()}; }
 
                         // And any extent?
-                        if(fileExtents.TryGetValue(filename, out extentBlocks)) fileExtents.Remove(filename);
+                        if(fileExtents.TryGetValue(filename, out Dictionary<int, List<ushort>> extentBlocks)) fileExtents.Remove(filename);
                         else extentBlocks = new Dictionary<int, List<ushort>>();
 
                         // Do we already have this extent? Should never happen
-                        if(extentBlocks.TryGetValue(entryNo, out blocks)) extentBlocks.Remove(entryNo);
+                        if(extentBlocks.TryGetValue(entryNo, out List<ushort> blocks)) extentBlocks.Remove(entryNo);
                         else blocks = new List<ushort>();
 
                         // Attributes
@@ -313,10 +304,9 @@ namespace DiscImageChef.Filesystems.CPM
                     }
                     else
                     {
-                        DirectoryEntry entry;
                         dirPtr = Marshal.AllocHGlobal(32);
                         Marshal.Copy(directory, dOff, dirPtr, 32);
-                        entry = (DirectoryEntry)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry));
+                        DirectoryEntry entry = (DirectoryEntry)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry));
                         Marshal.FreeHGlobal(dirPtr);
 
                         bool hidden = (entry.statusUser & 0x80) == 0x80;
@@ -348,24 +338,18 @@ namespace DiscImageChef.Filesystems.CPM
                         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                         int entryNo = (32 * entry.extentCounterHigh + entry.extentCounter) / (dpb.exm + 1);
-                        List<ushort> blocks;
-                        Dictionary<int, List<ushort>> extentBlocks;
-                        FileEntryInfo fInfo;
 
                         // Do we have a stat for the file already?
-                        if(statCache.TryGetValue(filename, out fInfo)) statCache.Remove(filename);
+                        if(statCache.TryGetValue(filename, out FileEntryInfo fInfo)) statCache.Remove(filename);
                         else
-                        {
-                            fInfo = new FileEntryInfo();
-                            fInfo.Attributes = new FileAttributes();
-                        }
+                        { fInfo = new FileEntryInfo {Attributes = new FileAttributes()}; }
 
                         // And any extent?
-                        if(fileExtents.TryGetValue(filename, out extentBlocks)) fileExtents.Remove(filename);
+                        if(fileExtents.TryGetValue(filename, out Dictionary<int, List<ushort>> extentBlocks)) fileExtents.Remove(filename);
                         else extentBlocks = new Dictionary<int, List<ushort>>();
 
                         // Do we already have this extent? Should never happen
-                        if(extentBlocks.TryGetValue(entryNo, out blocks)) extentBlocks.Remove(entryNo);
+                        if(extentBlocks.TryGetValue(entryNo, out List<ushort> blocks)) extentBlocks.Remove(entryNo);
                         else blocks = new List<ushort>();
 
                         // Attributes
@@ -408,10 +392,9 @@ namespace DiscImageChef.Filesystems.CPM
                 // A password entry (or a file entry in PDOS, but this does not handle that case)
                 else if((directory[dOff] & 0x7F) >= 0x10 && (directory[dOff] & 0x7F) < 0x20)
                 {
-                    PasswordEntry entry;
                     dirPtr = Marshal.AllocHGlobal(32);
                     Marshal.Copy(directory, dOff, dirPtr, 32);
-                    entry = (PasswordEntry)Marshal.PtrToStructure(dirPtr, typeof(PasswordEntry));
+                    PasswordEntry entry = (PasswordEntry)Marshal.PtrToStructure(dirPtr, typeof(PasswordEntry));
                     Marshal.FreeHGlobal(dirPtr);
 
                     int user = entry.userNumber & 0x0F;
@@ -488,10 +471,9 @@ namespace DiscImageChef.Filesystems.CPM
                         if(directory[dOff + 10] == 0x00 && directory[dOff + 20] == 0x00 && directory[dOff + 30] == 0x00 &&
                            directory[dOff + 31] == 0x00)
                         {
-                            DateEntry dateEntry;
                             dirPtr = Marshal.AllocHGlobal(32);
                             Marshal.Copy(directory, dOff, dirPtr, 32);
-                            dateEntry = (DateEntry)Marshal.PtrToStructure(dirPtr, typeof(DateEntry));
+                            DateEntry dateEntry = (DateEntry)Marshal.PtrToStructure(dirPtr, typeof(DateEntry));
                             Marshal.FreeHGlobal(dirPtr);
 
                             FileEntryInfo fInfo;
@@ -544,10 +526,9 @@ namespace DiscImageChef.Filesystems.CPM
                         // However, if this byte is 0, timestamp is in Z80DOS or DOS+ format
                         else if(directory[dOff + 1] == 0x00)
                         {
-                            TrdPartyDateEntry trdPartyDateEntry;
                             dirPtr = Marshal.AllocHGlobal(32);
                             Marshal.Copy(directory, dOff, dirPtr, 32);
-                            trdPartyDateEntry = (TrdPartyDateEntry)Marshal.PtrToStructure(dirPtr, typeof(TrdPartyDateEntry));
+                            TrdPartyDateEntry trdPartyDateEntry = (TrdPartyDateEntry)Marshal.PtrToStructure(dirPtr, typeof(TrdPartyDateEntry));
                             Marshal.FreeHGlobal(dirPtr);
 
                             FileEntryInfo fInfo;
@@ -617,24 +598,19 @@ namespace DiscImageChef.Filesystems.CPM
             foreach(string filename in dirList)
             {
                 MemoryStream fileMs = new MemoryStream();
-                FileEntryInfo fInfo;
 
-                if(statCache.TryGetValue(filename, out fInfo)) statCache.Remove(filename);
+                if(statCache.TryGetValue(filename, out FileEntryInfo fInfo)) statCache.Remove(filename);
 
                 fInfo.Blocks = 0;
 
-                Dictionary<int, List<ushort>> extents;
-                if(fileExtents.TryGetValue(filename, out extents))
+                if(fileExtents.TryGetValue(filename, out Dictionary<int, List<ushort>> extents))
                     for(int ex = 0; ex < extents.Count; ex++)
                     {
-                        List<ushort> alBlks;
-
-                        if(!extents.TryGetValue(ex, out alBlks)) continue;
+                        if(!extents.TryGetValue(ex, out List<ushort> alBlks)) continue;
 
                         foreach(ushort alBlk in alBlks)
                         {
-                            byte[] blk;
-                            allocationBlocks.TryGetValue(alBlk, out blk);
+                            allocationBlocks.TryGetValue(alBlk, out byte[] blk);
                             fileMs.Write(blk, 0, blk.Length);
                             fInfo.Blocks++;
                         }
@@ -668,29 +644,31 @@ namespace DiscImageChef.Filesystems.CPM
             cpmStat.FilenameLength = 11;
             cpmStat.Files = (ulong)fileCache.Count;
             cpmStat.FreeBlocks = cpmStat.Blocks - usedBlocks;
-            cpmStat.PluginId = PluginUUID;
+            cpmStat.PluginId = PluginUuid;
             cpmStat.Type = "CP/M filesystem";
 
             // Generate XML info
-            xmlFSType = new FileSystemType();
-            xmlFSType.Clusters = cpmStat.Blocks;
-            xmlFSType.ClusterSize = blockSize;
+            XmlFsType = new FileSystemType
+            {
+                Clusters = cpmStat.Blocks,
+                ClusterSize = blockSize,
+                Files = fileCache.Count,
+                FilesSpecified = true,
+                FreeClusters = cpmStat.FreeBlocks,
+                FreeClustersSpecified = true,
+                Type = "CP/M filesystem"
+            };
             if(labelCreationDate != null)
             {
-                xmlFSType.CreationDate = DateHandlers.CPMToDateTime(labelCreationDate);
-                xmlFSType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.CPMToDateTime(labelCreationDate);
+                XmlFsType.CreationDateSpecified = true;
             }
             if(labelUpdateDate != null)
             {
-                xmlFSType.ModificationDate = DateHandlers.CPMToDateTime(labelUpdateDate);
-                xmlFSType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.CPMToDateTime(labelUpdateDate);
+                XmlFsType.ModificationDateSpecified = true;
             }
-            xmlFSType.Files = fileCache.Count;
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.FreeClusters = cpmStat.FreeBlocks;
-            xmlFSType.FreeClustersSpecified = true;
-            xmlFSType.Type = "CP/M filesystem";
-            if(!string.IsNullOrEmpty(label)) xmlFSType.VolumeName = label;
+            if(!string.IsNullOrEmpty(label)) XmlFsType.VolumeName = label;
 
             mounted = true;
             return Errno.NoError;

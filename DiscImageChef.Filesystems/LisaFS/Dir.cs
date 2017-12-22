@@ -58,9 +58,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <param name="contents">Directory contents.</param>
         public override Errno ReadDir(string path, ref List<string> contents)
         {
-            short fileId;
-            bool isDir;
-            Errno error = LookupFileId(path, out fileId, out isDir);
+            Errno error = LookupFileId(path, out short fileId, out bool isDir);
             if(error != Errno.NoError) return error;
 
             if(!isDir) return Errno.NotDirectory;
@@ -106,13 +104,10 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             catalogCache = new List<CatalogEntry>();
 
-            Errno error;
-
             // Do differently for V1 and V2
-            if(mddf.fsversion == LisaFSv2 || mddf.fsversion == LisaFSv1)
+            if(mddf.fsversion == LISA_V2 || mddf.fsversion == LISA_V1)
             {
-                byte[] buf;
-                error = ReadFile((short)FILEID_CATALOG, out buf);
+                Errno error = ReadFile((short)FILEID_CATALOG, out byte[] buf);
                 if(error != Errno.NoError) return error;
 
                 int offset = 0;
@@ -142,18 +137,19 @@ namespace DiscImageChef.Filesystems.LisaFS
                 // Convert entries to V3 format
                 foreach(CatalogEntryV2 entV2 in catalogV2)
                 {
-                    ExtentFile ext;
-                    error = ReadExtentsFile(entV2.fileID, out ext);
+                    error = ReadExtentsFile(entV2.fileID, out ExtentFile ext);
                     if(error != Errno.NoError) continue;
 
-                    CatalogEntry entV3 = new CatalogEntry();
-                    entV3.fileID = entV2.fileID;
-                    entV3.filename = new byte[32];
+                    CatalogEntry entV3 = new CatalogEntry
+                    {
+                        fileID = entV2.fileID,
+                        filename = new byte[32],
+                        fileType = entV2.fileType,
+                        length = (int)srecords[entV2.fileID].filesize,
+                        dtc = ext.dtc,
+                        dtm = ext.dtm
+                    };
                     Array.Copy(entV2.filename, 0, entV3.filename, 0, entV2.filenameLen);
-                    entV3.fileType = entV2.fileType;
-                    entV3.length = (int)srecords[entV2.fileID].filesize;
-                    entV3.dtc = ext.dtc;
-                    entV3.dtm = ext.dtm;
 
                     catalogCache.Add(entV3);
                 }
@@ -168,8 +164,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // If root catalog is not pointed in MDDF (unchecked) maybe it's always following S-Records File?
             for(ulong i = 0; i < device.GetSectors(); i++)
             {
-                LisaTag.PriamTag catTag;
-                DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out catTag);
+                DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag catTag);
 
                 if(catTag.FileId != FILEID_CATALOG || catTag.RelPage != 0) continue;
 
@@ -186,9 +181,8 @@ namespace DiscImageChef.Filesystems.LisaFS
             // Traverse double-linked list until first catalog block
             while(prevCatalogPointer != 0xFFFFFFFF)
             {
-                LisaTag.PriamTag prevTag;
                 DecodeTag(device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
-                          out prevTag);
+                          out LisaTag.PriamTag prevTag);
 
                 if(prevTag.FileId != FILEID_CATALOG) return Errno.InvalidArgument;
 
@@ -199,15 +193,13 @@ namespace DiscImageChef.Filesystems.LisaFS
             ulong nextCatalogPointer;
             nextCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7FA);
 
-            List<byte[]> catalogBlocks = new List<byte[]>();
-            catalogBlocks.Add(firstCatalogBlock);
+            List<byte[]> catalogBlocks = new List<byte[]> {firstCatalogBlock};
 
             // Traverse double-linked list to read full catalog
             while(nextCatalogPointer != 0xFFFFFFFF)
             {
-                LisaTag.PriamTag nextTag;
                 DecodeTag(device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
-                          out nextTag);
+                          out LisaTag.PriamTag nextTag);
 
                 if(nextTag.FileId != FILEID_CATALOG) return Errno.InvalidArgument;
 
@@ -232,24 +224,25 @@ namespace DiscImageChef.Filesystems.LisaFS
                     // Normal entry
                     else if(buf[offset + 0x24] == 0x03 && buf[offset] == 0x24)
                     {
-                        CatalogEntry entry = new CatalogEntry();
-                        entry.marker = buf[offset];
-                        entry.parentID = BigEndianBitConverter.ToUInt16(buf, offset + 0x01);
-                        entry.filename = new byte[E_NAME];
+                        CatalogEntry entry = new CatalogEntry
+                        {
+                            marker = buf[offset],
+                            parentID = BigEndianBitConverter.ToUInt16(buf, offset + 0x01),
+                            filename = new byte[E_NAME],
+                            terminator = buf[offset + 0x23],
+                            fileType = buf[offset + 0x24],
+                            unknown = buf[offset + 0x25],
+                            fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26),
+                            dtc = BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
+                            dtm = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
+                            length = BigEndianBitConverter.ToInt32(buf, offset + 0x30),
+                            wasted = BigEndianBitConverter.ToInt32(buf, offset + 0x34),
+                            tail = new byte[8]
+                        };
                         Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
-                        entry.terminator = buf[offset + 0x23];
-                        entry.fileType = buf[offset + 0x24];
-                        entry.unknown = buf[offset + 0x25];
-                        entry.fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26);
-                        entry.dtc = BigEndianBitConverter.ToUInt32(buf, offset + 0x28);
-                        entry.dtm = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C);
-                        entry.length = BigEndianBitConverter.ToInt32(buf, offset + 0x30);
-                        entry.wasted = BigEndianBitConverter.ToInt32(buf, offset + 0x34);
-                        entry.tail = new byte[8];
                         Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
 
-                        ExtentFile ext;
-                        if(ReadExtentsFile(entry.fileID, out ext) == Errno.NoError)
+                        if(ReadExtentsFile(entry.fileID, out _) == Errno.NoError)
                             if(!fileSizeCache.ContainsKey(entry.fileID))
                             {
                                 catalogCache.Add(entry);
@@ -261,23 +254,25 @@ namespace DiscImageChef.Filesystems.LisaFS
                     // Subdirectory entry
                     else if(buf[offset + 0x24] == 0x01 && buf[offset] == 0x24)
                     {
-                        CatalogEntry entry = new CatalogEntry();
-                        entry.marker = buf[offset];
-                        entry.parentID = BigEndianBitConverter.ToUInt16(buf, offset + 0x01);
-                        entry.filename = new byte[E_NAME];
+                        CatalogEntry entry = new CatalogEntry
+                        {
+                            marker = buf[offset],
+                            parentID = BigEndianBitConverter.ToUInt16(buf, offset + 0x01),
+                            filename = new byte[E_NAME],
+                            terminator = buf[offset + 0x23],
+                            fileType = buf[offset + 0x24],
+                            unknown = buf[offset + 0x25],
+                            fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26),
+                            dtc = BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
+                            dtm = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
+                            length = 0,
+                            wasted = 0,
+                            tail = null
+                        };
                         Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
-                        entry.terminator = buf[offset + 0x23];
-                        entry.fileType = buf[offset + 0x24];
-                        entry.unknown = buf[offset + 0x25];
-                        entry.fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26);
-                        entry.dtc = BigEndianBitConverter.ToUInt32(buf, offset + 0x28);
-                        entry.dtm = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C);
-                        entry.length = 0;
-                        entry.wasted = 0;
-                        entry.tail = null;
 
-                        if(!directoryDTCCache.ContainsKey(entry.fileID))
-                            directoryDTCCache.Add(entry.fileID, DateHandlers.LisaToDateTime(entry.dtc));
+                        if(!directoryDtcCache.ContainsKey(entry.fileID))
+                            directoryDtcCache.Add(entry.fileID, DateHandlers.LisaToDateTime(entry.dtc));
 
                         catalogCache.Add(entry);
 
@@ -295,21 +290,22 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(!mounted) return Errno.AccessDenied;
 
-            stat = new FileEntryInfo();
-            stat.Attributes = new FileAttributes();
-            DateTime tmp;
+            stat = new FileEntryInfo
+            {
+                Attributes = new FileAttributes(),
+                Inode = FILEID_CATALOG,
+                Mode = 0x16D,
+                Links = 0,
+                UID = 0,
+                GID = 0,
+                DeviceNo = 0,
+                Length = 0,
+                BlockSize = mddf.datasize,
+                Blocks = 0
+            };
 
-            directoryDTCCache.TryGetValue(dirId, out tmp);
+            directoryDtcCache.TryGetValue(dirId, out DateTime tmp);
             stat.CreationTime = tmp;
-            stat.Inode = FILEID_CATALOG;
-            stat.Mode = 0x16D;
-            stat.Links = 0;
-            stat.UID = 0;
-            stat.GID = 0;
-            stat.DeviceNo = 0;
-            stat.Length = 0;
-            stat.BlockSize = mddf.datasize;
-            stat.Blocks = 0;
 
             return Errno.NoError;
         }

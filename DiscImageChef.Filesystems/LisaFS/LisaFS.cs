@@ -66,20 +66,20 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <summary>Lists Extents Files already printed in debug mode to not repeat them</summary>
         List<short> printedExtents;
         /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
-        Dictionary<short, DateTime> directoryDTCCache;
+        Dictionary<short, DateTime> directoryDtcCache;
         #endregion Caches
 
         public LisaFS()
         {
             Name = "Apple Lisa File System";
-            PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+            PluginUuid = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
             CurrentEncoding = new LisaRoman();
         }
 
         public LisaFS(Encoding encoding)
         {
             Name = "Apple Lisa File System";
-            PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+            PluginUuid = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
             CurrentEncoding = new LisaRoman();
         }
 
@@ -87,7 +87,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             device = imagePlugin;
             Name = "Apple Lisa File System";
-            PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+            PluginUuid = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
             CurrentEncoding = new LisaRoman();
         }
     }

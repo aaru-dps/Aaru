@@ -48,21 +48,21 @@ namespace DiscImageChef.Filesystems
         public AODOS()
         {
             Name = "Alexander Osipov DOS file system";
-            PluginUUID = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+            PluginUuid = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
             CurrentEncoding = Encoding.GetEncoding("koi8-r");
         }
 
         public AODOS(Encoding encoding)
         {
             Name = "Alexander Osipov DOS file system";
-            PluginUUID = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+            PluginUuid = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
             CurrentEncoding = Encoding.GetEncoding("koi8-r");
         }
 
         public AODOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Alexander Osipov DOS file system";
-            PluginUUID = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+            PluginUuid = new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
             CurrentEncoding = Encoding.GetEncoding("koi8-r");
         }
 
@@ -112,9 +112,7 @@ namespace DiscImageChef.Filesystems
             // Does AO-DOS support any other kind of disk?
             if(imagePlugin.ImageInfo.Sectors != 800 && imagePlugin.ImageInfo.Sectors != 1600) return false;
 
-            byte[] sector;
-
-            sector = imagePlugin.ReadSector(0);
+            byte[] sector = imagePlugin.ReadSector(0);
             AODOS_BootBlock bb = new AODOS_BootBlock();
             IntPtr bbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(bb));
             Marshal.Copy(sector, 0, bbPtr, Marshal.SizeOf(bb));
@@ -127,9 +125,7 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
-            byte[] sector;
-
-            sector = imagePlugin.ReadSector(0);
+            byte[] sector = imagePlugin.ReadSector(0);
             AODOS_BootBlock bb = new AODOS_BootBlock();
             IntPtr bbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(bb));
             Marshal.Copy(sector, 0, bbPtr, Marshal.SizeOf(bb));
@@ -140,7 +136,7 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendLine("Alexander Osipov DOS file system");
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Alexander Osipov DOS file system",
                 Clusters = (long)imagePlugin.ImageInfo.Sectors,

@@ -99,7 +99,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             }
 
             // Create XML metadata for mounted filesystem
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Bootable = true,
                 Clusters = (long)device.ImageInfo.Sectors,
@@ -109,7 +109,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 FreeClustersSpecified = true,
                 Type = "Apple DOS"
             };
-            xmlFSType.FreeClusters = xmlFSType.Clusters - usedSectors;
+            XmlFsType.FreeClusters = XmlFsType.Clusters - usedSectors;
 
             this.debug = debug;
             mounted = true;
@@ -141,7 +141,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 Blocks = (long)device.ImageInfo.Sectors,
                 FilenameLength = 30,
                 Files = (ulong)catalogCache.Count,
-                PluginId = PluginUUID,
+                PluginId = PluginUuid,
                 Type = "Apple DOS"
             };
             stat.FreeFiles = totalFileEntries - stat.Files;

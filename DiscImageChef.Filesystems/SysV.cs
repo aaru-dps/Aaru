@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -41,6 +42,7 @@ using Schemas;
 namespace DiscImageChef.Filesystems
 {
     // Information from the Linux kernel
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class SysVfs : Filesystem
     {
         const uint XENIX_MAGIC = 0x002B5544;
@@ -64,54 +66,27 @@ namespace DiscImageChef.Filesystems
         public SysVfs()
         {
             Name = "UNIX System V filesystem";
-            PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+            PluginUuid = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public SysVfs(Encoding encoding)
         {
             Name = "UNIX System V filesystem";
-            PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public SysVfs(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNIX System V filesystem";
-            PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
-
-            uint magic;
-            string s_fname, s_fpack;
-            ushort s_nfree, s_ninode;
-            uint s_fsize;
-
-            /*for(int j = 0; j<=(br.BaseStream.Length/0x200); j++)
-            {
-                br.BaseStream.Seek(offset + j*0x200 + 0x1F8, SeekOrigin.Begin); // System V magic location
-                magic = br.Readuint();
-
-                if(magic == SYSV_MAGIC || magic == SYSV_CIGAM)
-                    Console.WriteLine("0x{0:X8}: 0x{1:X8} FOUND", br.BaseStream.Position-4, magic);
-                else
-                    Console.WriteLine("0x{0:X8}: 0x{1:X8}", br.BaseStream.Position-4, magic);
-            }*/
-
-            /*uint number;
-            br.BaseStream.Seek(offset+0x3A00, SeekOrigin.Begin);
-            while((br.BaseStream.Position) <= (offset+0x3C00))
-            {
-                number = br.Readuint();
-
-                Console.WriteLine("@{0:X8}: 0x{1:X8} ({1})", br.BaseStream.Position-offset-4, number);
-            }*/
 
             byte sb_size_in_sectors;
 
@@ -136,7 +111,7 @@ namespace DiscImageChef.Filesystems
             };
 
             foreach(byte[] sb_sector in locations.TakeWhile(i => i + sb_size_in_sectors < (int)imagePlugin.ImageInfo.Sectors).Select(i => imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors))) {
-                magic = BitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
+                uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
                 if(magic == XENIX_MAGIC || magic == XENIX_CIGAM || magic == SYSV_MAGIC || magic == SYSV_CIGAM)
                     return true;
@@ -151,17 +126,17 @@ namespace DiscImageChef.Filesystems
 
                 byte[] coherent_string = new byte[6];
                 Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
-                s_fname = StringHandlers.CToString(coherent_string, CurrentEncoding);
+                string s_fname = StringHandlers.CToString(coherent_string, CurrentEncoding);
                 Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
-                s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
+                string s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
                 if(s_fname == COH_FNAME && s_fpack == COH_FPACK || s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
                    s_fname == COH_XXXXS && s_fpack == COH_XXXXN) return true;
 
                 // Now try to identify 7th edition
-                s_fsize = BitConverter.ToUInt32(sb_sector, 0x002); // 7th edition's s_fsize
-                s_nfree = BitConverter.ToUInt16(sb_sector, 0x006); // 7th edition's s_nfree
-                s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0); // 7th edition's s_ninode
+                uint s_fsize = BitConverter.ToUInt32(sb_sector, 0x002);
+                ushort s_nfree = BitConverter.ToUInt16(sb_sector, 0x006);
+                ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
                 if(s_fsize <= 0 || s_fsize >= 0xFFFFFFFF || s_nfree <= 0 || s_nfree >= 0xFFFF || s_ninode <= 0 ||
                    s_ninode >= 0xFFFF) continue;
@@ -197,13 +172,8 @@ namespace DiscImageChef.Filesystems
             BigEndianBitConverter.IsLittleEndian =
                 true; // Start in little endian until we know what are we handling here
             int start = 0;
-            uint magic;
-            string s_fname, s_fpack;
-            ushort s_nfree, s_ninode;
-            uint s_fsize;
             bool xenix = false;
             bool sysv = false;
-            bool sysvr4;
             bool sys7th = false;
             bool coherent = false;
             bool xenix3 = false;
@@ -229,7 +199,7 @@ namespace DiscImageChef.Filesystems
             foreach(int i in locations)
             {
                 sb_sector = imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
+                uint magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8);
 
                 if(magic == XENIX_MAGIC || magic == SYSV_MAGIC)
                 {
@@ -295,9 +265,9 @@ namespace DiscImageChef.Filesystems
 
                 byte[] coherent_string = new byte[6];
                 Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
-                s_fname = StringHandlers.CToString(coherent_string, CurrentEncoding);
+                string s_fname = StringHandlers.CToString(coherent_string, CurrentEncoding);
                 Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
-                s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
+                string s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
                 if(s_fname == COH_FNAME && s_fpack == COH_FPACK || s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
                    s_fname == COH_XXXXS && s_fpack == COH_XXXXN)
@@ -309,9 +279,9 @@ namespace DiscImageChef.Filesystems
                 }
 
                 // Now try to identify 7th edition
-                s_fsize = BitConverter.ToUInt32(sb_sector, 0x002); // 7th edition's s_fsize
-                s_nfree = BitConverter.ToUInt16(sb_sector, 0x006); // 7th edition's s_nfree
-                s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0); // 7th edition's s_ninode
+                uint s_fsize = BitConverter.ToUInt32(sb_sector, 0x002);
+                ushort s_nfree = BitConverter.ToUInt16(sb_sector, 0x006);
+                ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
                 if(s_fsize <= 0 || s_fsize >= 0xFFFFFFFF || s_nfree <= 0 || s_nfree >= 0xFFFF || s_ninode <= 0 ||
                    s_ninode >= 0xFFFF) continue;
@@ -341,7 +311,7 @@ namespace DiscImageChef.Filesystems
 
             if(!sys7th && !sysv && !coherent && !xenix && !xenix3) return;
 
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             if(xenix || xenix3)
             {
@@ -402,22 +372,22 @@ namespace DiscImageChef.Filesystems
 
                 uint bs = 512;
                 sb.AppendLine("XENIX filesystem");
-                xmlFSType.Type = "XENIX fs";
+                XmlFsType.Type = "XENIX fs";
                 switch(xnx_sb.s_type)
                 {
                     case 1:
                         sb.AppendLine("512 bytes per block");
-                        xmlFSType.ClusterSize = 512;
+                        XmlFsType.ClusterSize = 512;
                         break;
                     case 2:
                         sb.AppendLine("1024 bytes per block");
                         bs = 1024;
-                        xmlFSType.ClusterSize = 1024;
+                        XmlFsType.ClusterSize = 1024;
                         break;
                     case 3:
                         sb.AppendLine("2048 bytes per block");
                         bs = 2048;
-                        xmlFSType.ClusterSize = 2048;
+                        XmlFsType.ClusterSize = 2048;
                         break;
                     default:
                         sb.AppendFormat("Unknown s_type value: 0x{0:X8}", xnx_sb.s_type).AppendLine();
@@ -458,17 +428,17 @@ namespace DiscImageChef.Filesystems
                   .AppendLine();
                 if(xnx_sb.s_time != 0)
                 {
-                    xmlFSType.ModificationDate = DateHandlers.UNIXToDateTime(xnx_sb.s_time);
-                    xmlFSType.ModificationDateSpecified = true;
+                    XmlFsType.ModificationDate = DateHandlers.UNIXToDateTime(xnx_sb.s_time);
+                    XmlFsType.ModificationDateSpecified = true;
                 }
                 sb.AppendFormat("Volume name: {0}", xnx_sb.s_fname).AppendLine();
-                xmlFSType.VolumeName = xnx_sb.s_fname;
+                XmlFsType.VolumeName = xnx_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", xnx_sb.s_fpack).AppendLine();
                 if(xnx_sb.s_clean == 0x46) sb.AppendLine("Volume is clean");
                 else
                 {
                     sb.AppendLine("Volume is dirty");
-                    xmlFSType.Dirty = true;
+                    XmlFsType.Dirty = true;
                 }
             }
 
@@ -477,21 +447,23 @@ namespace DiscImageChef.Filesystems
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors);
                 byte[] sysv_strings = new byte[6];
 
-                SystemVRelease4SuperBlock sysv_sb = new SystemVRelease4SuperBlock();
-                sysv_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x1FC + offset);
+                SystemVRelease4SuperBlock sysv_sb = new SystemVRelease4SuperBlock
+                {
+                    s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x1FC + offset)
+                };
                 uint bs = 512;
                 switch(sysv_sb.s_type)
                 {
                     case 1:
-                        xmlFSType.ClusterSize = 512;
+                        XmlFsType.ClusterSize = 512;
                         break;
                     case 2:
                         bs = 1024;
-                        xmlFSType.ClusterSize = 1024;
+                        XmlFsType.ClusterSize = 1024;
                         break;
                     case 3:
                         bs = 2048;
-                        xmlFSType.ClusterSize = 2048;
+                        XmlFsType.ClusterSize = 2048;
                         break;
                     default:
                         sb.AppendFormat("Unknown s_type value: 0x{0:X8}", sysv_sb.s_type).AppendLine();
@@ -500,7 +472,7 @@ namespace DiscImageChef.Filesystems
 
                 sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002 + offset);
 
-                sysvr4 = sysv_sb.s_fsize * bs <= 0 || sysv_sb.s_fsize * bs != partition.Size;
+                bool sysvr4 = sysv_sb.s_fsize * bs <= 0 || sysv_sb.s_fsize * bs != partition.Size;
 
                 if(sysvr4)
                 {
@@ -526,7 +498,7 @@ namespace DiscImageChef.Filesystems
                     Array.Copy(sb_sector, 0x1BC + offset, sysv_strings, 0, 6);
                     sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
                     sb.AppendLine("System V Release 4 filesystem");
-                    xmlFSType.Type = "SVR4 fs";
+                    XmlFsType.Type = "SVR4 fs";
                 }
                 else
                 {
@@ -552,11 +524,11 @@ namespace DiscImageChef.Filesystems
                     Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
                     sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
                     sb.AppendLine("System V Release 2 filesystem");
-                    xmlFSType.Type = "SVR2 fs";
+                    XmlFsType.Type = "SVR2 fs";
                 }
                 sb.AppendFormat("{0} bytes per block", bs).AppendLine();
 
-                xmlFSType.Clusters = sysv_sb.s_fsize;
+                XmlFsType.Clusters = sysv_sb.s_fsize;
                 sb.AppendFormat("{0} zones on volume ({1} bytes)", sysv_sb.s_fsize, sysv_sb.s_fsize * bs).AppendLine();
                 sb.AppendFormat("{0} free zones on volume ({1} bytes)", sysv_sb.s_tfree, sysv_sb.s_tfree * bs)
                   .AppendLine();
@@ -577,17 +549,17 @@ namespace DiscImageChef.Filesystems
                   .AppendLine();
                 if(sysv_sb.s_time != 0)
                 {
-                    xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time);
-                    xmlFSType.ModificationDateSpecified = true;
+                    XmlFsType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time);
+                    XmlFsType.ModificationDateSpecified = true;
                 }
                 sb.AppendFormat("Volume name: {0}", sysv_sb.s_fname).AppendLine();
-                xmlFSType.VolumeName = sysv_sb.s_fname;
+                XmlFsType.VolumeName = sysv_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", sysv_sb.s_fpack).AppendLine();
                 if(sysv_sb.s_state == 0x7C269D38 - sysv_sb.s_time) sb.AppendLine("Volume is clean");
                 else
                 {
                     sb.AppendLine("Volume is dirty");
-                    xmlFSType.Dirty = true;
+                    XmlFsType.Dirty = true;
                 }
             }
 
@@ -615,9 +587,9 @@ namespace DiscImageChef.Filesystems
                 Array.Copy(sb_sector, 0x1EA, coh_strings, 0, 6);
                 coh_sb.s_fpack = StringHandlers.CToString(coh_strings, CurrentEncoding);
 
-                xmlFSType.Type = "Coherent fs";
-                xmlFSType.ClusterSize = 512;
-                xmlFSType.Clusters = coh_sb.s_fsize;
+                XmlFsType.Type = "Coherent fs";
+                XmlFsType.ClusterSize = 512;
+                XmlFsType.Clusters = coh_sb.s_fsize;
 
                 sb.AppendLine("Coherent UNIX filesystem");
                 if(imagePlugin.GetSectorSize() != 512)
@@ -640,11 +612,11 @@ namespace DiscImageChef.Filesystems
                   .AppendLine();
                 if(coh_sb.s_time != 0)
                 {
-                    xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time);
-                    xmlFSType.ModificationDateSpecified = true;
+                    XmlFsType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time);
+                    XmlFsType.ModificationDateSpecified = true;
                 }
                 sb.AppendFormat("Volume name: {0}", coh_sb.s_fname).AppendLine();
-                xmlFSType.VolumeName = coh_sb.s_fname;
+                XmlFsType.VolumeName = coh_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", coh_sb.s_fpack).AppendLine();
             }
 
@@ -672,9 +644,9 @@ namespace DiscImageChef.Filesystems
                 Array.Copy(sb_sector, 0x1B2, sys7_strings, 0, 6);
                 v7_sb.s_fpack = StringHandlers.CToString(sys7_strings, CurrentEncoding);
 
-                xmlFSType.Type = "UNIX 7th Edition fs";
-                xmlFSType.ClusterSize = 512;
-                xmlFSType.Clusters = v7_sb.s_fsize;
+                XmlFsType.Type = "UNIX 7th Edition fs";
+                XmlFsType.ClusterSize = 512;
+                XmlFsType.Clusters = v7_sb.s_fsize;
                 sb.AppendLine("UNIX 7th Edition filesystem");
                 if(imagePlugin.GetSectorSize() != 512)
                     sb
@@ -695,11 +667,11 @@ namespace DiscImageChef.Filesystems
                   .AppendLine();
                 if(v7_sb.s_time != 0)
                 {
-                    xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time);
-                    xmlFSType.ModificationDateSpecified = true;
+                    XmlFsType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time);
+                    XmlFsType.ModificationDateSpecified = true;
                 }
                 sb.AppendFormat("Volume name: {0}", v7_sb.s_fname).AppendLine();
-                xmlFSType.VolumeName = v7_sb.s_fname;
+                XmlFsType.VolumeName = v7_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", v7_sb.s_fpack).AppendLine();
             }
 

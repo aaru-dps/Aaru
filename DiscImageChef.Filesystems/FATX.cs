@@ -51,26 +51,26 @@ namespace DiscImageChef.Filesystems
             public uint rootDirectoryCluster;
         }
 
-        const uint FATX_Magic = 0x58544146;
+        const uint FATX_MAGIC = 0x58544146;
 
         public FATX()
         {
             Name = "FATX Filesystem Plugin";
-            PluginUUID = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+            PluginUuid = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public FATX(Encoding encoding)
         {
             Name = "FATX Filesystem Plugin";
-            PluginUUID = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+            PluginUuid = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public FATX(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "FATX Filesystem Plugin";
-            PluginUUID = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+            PluginUuid = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
             CurrentEncoding = Encoding.UTF8;
         }
 
@@ -83,7 +83,7 @@ namespace DiscImageChef.Filesystems
 
             fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
 
-            return fatxSb.magic == FATX_Magic;
+            return fatxSb.magic == FATX_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems
 
             fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
 
-            if(fatxSb.magic != FATX_Magic) return;
+            if(fatxSb.magic != FATX_MAGIC) return;
 
             StringBuilder sb = new StringBuilder();
 
@@ -110,11 +110,13 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "FATX filesystem";
-            xmlFSType.ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.SectorSize);
-            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
-                                        (ulong)xmlFSType.ClusterSize);
+            XmlFsType = new FileSystemType
+            {
+                Type = "FATX filesystem",
+                ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.SectorSize)
+            };
+            XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
+                                        (ulong)XmlFsType.ClusterSize);
         }
 
         public override Errno Mount()

@@ -45,14 +45,14 @@ namespace DiscImageChef.Filesystems
         public OperaFS()
         {
             Name = "Opera Filesystem Plugin";
-            PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+            PluginUuid = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
             CurrentEncoding = Encoding.ASCII;
         }
 
         public OperaFS(Encoding encoding)
         {
             Name = "Opera Filesystem Plugin";
-            PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+            PluginUuid = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
             // TODO: Find correct default encoding
             CurrentEncoding = Encoding.ASCII;
         }
@@ -60,7 +60,7 @@ namespace DiscImageChef.Filesystems
         public OperaFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Opera Filesystem Plugin";
-            PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+            PluginUuid = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
             // TODO: Find correct default encoding
             CurrentEncoding = Encoding.ASCII;
         }
@@ -69,75 +69,72 @@ namespace DiscImageChef.Filesystems
         {
             if(2 + partition.Start >= partition.End) return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
+            byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            byte record_type;
-            byte[] sync_bytes = new byte[5];
-            byte record_version;
+            byte[] syncBytes = new byte[5];
 
-            record_type = sb_sector[0x000];
-            Array.Copy(sb_sector, 0x001, sync_bytes, 0, 5);
-            record_version = sb_sector[0x006];
+            byte recordType = sbSector[0x000];
+            Array.Copy(sbSector, 0x001, syncBytes, 0, 5);
+            byte recordVersion = sbSector[0x006];
 
-            if(record_type != 1 || record_version != 1) return false;
+            if(recordType != 1 || recordVersion != 1) return false;
 
-            return Encoding.ASCII.GetString(sync_bytes) == "ZZZZZ";
+            return Encoding.ASCII.GetString(syncBytes) == "ZZZZZ";
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
-            StringBuilder SuperBlockMetadata = new StringBuilder();
+            StringBuilder superBlockMetadata = new StringBuilder();
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
+            byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            OperaSuperBlock sb = BigEndianMarshal.ByteArrayToStructureBigEndian<OperaSuperBlock>(sb_sector);
-            byte[] cString = new byte[32];
+            OperaSuperBlock sb = BigEndianMarshal.ByteArrayToStructureBigEndian<OperaSuperBlock>(sbSector);
             sb.sync_bytes = new byte[5];
 
             if(sb.record_type != 1 || sb.record_version != 1) return;
             if(Encoding.ASCII.GetString(sb.sync_bytes) != "ZZZZZ") return;
 
-            SuperBlockMetadata.AppendFormat("Opera filesystem disc.").AppendLine();
+            superBlockMetadata.AppendFormat("Opera filesystem disc.").AppendLine();
             if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, CurrentEncoding)))
-                SuperBlockMetadata
+                superBlockMetadata
                     .AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, CurrentEncoding))
                     .AppendLine();
             if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, CurrentEncoding)))
-                SuperBlockMetadata.AppendFormat("Volume comment: {0}",
+                superBlockMetadata.AppendFormat("Volume comment: {0}",
                                                 StringHandlers.CToString(sb.volume_comment, CurrentEncoding))
                                   .AppendLine();
-            SuperBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
-            SuperBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
+            superBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
+            superBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
             if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
                imagePlugin.GetSectorSize() == 2448)
             {
                 if(sb.block_size != 2048)
-                    SuperBlockMetadata
+                    superBlockMetadata
                         .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
                                       sb.block_size, 2048);
             }
             else if(imagePlugin.GetSectorSize() != sb.block_size)
-                SuperBlockMetadata
+                superBlockMetadata
                     .AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block",
                                   sb.block_size, imagePlugin.GetSectorSize());
-            SuperBlockMetadata
+            superBlockMetadata
                 .AppendFormat("Volume size: {0} blocks, {1} bytes", sb.block_count, sb.block_size * sb.block_count)
                 .AppendLine();
             if((ulong)sb.block_count > imagePlugin.GetSectors())
-                SuperBlockMetadata
+                superBlockMetadata
                     .AppendFormat("WARNING: Filesystem indicates {0} blocks while device indicates {1} blocks",
                                   sb.block_count, imagePlugin.GetSectors());
-            SuperBlockMetadata.AppendFormat("Root directory identifier: 0x{0:X8}", sb.root_dirid).AppendLine();
-            SuperBlockMetadata.AppendFormat("Root directory block size: {0} bytes", sb.rootdir_bsize).AppendLine();
-            SuperBlockMetadata.AppendFormat("Root directory size: {0} blocks, {1} bytes", sb.rootdir_blocks,
+            superBlockMetadata.AppendFormat("Root directory identifier: 0x{0:X8}", sb.root_dirid).AppendLine();
+            superBlockMetadata.AppendFormat("Root directory block size: {0} bytes", sb.rootdir_bsize).AppendLine();
+            superBlockMetadata.AppendFormat("Root directory size: {0} blocks, {1} bytes", sb.rootdir_blocks,
                                             sb.rootdir_bsize * sb.rootdir_blocks).AppendLine();
-            SuperBlockMetadata.AppendFormat("Last root directory copy: {0}", sb.last_root_copy).AppendLine();
+            superBlockMetadata.AppendFormat("Last root directory copy: {0}", sb.last_root_copy).AppendLine();
 
-            information = SuperBlockMetadata.ToString();
+            information = superBlockMetadata.ToString();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "Opera",
                 VolumeName = StringHandlers.CToString(sb.volume_label, CurrentEncoding),

@@ -59,21 +59,21 @@ namespace DiscImageChef.Filesystems
         public AppleHFSPlus()
         {
             Name = "Apple HFS+ filesystem";
-            PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
+            PluginUuid = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
             CurrentEncoding = Encoding.BigEndianUnicode;
         }
 
         public AppleHFSPlus(Encoding encoding)
         {
             Name = "Apple HFS+ filesystem";
-            PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
+            PluginUuid = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
             CurrentEncoding = Encoding.BigEndianUnicode;
         }
 
         public AppleHFSPlus(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple HFS+ filesystem";
-            PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
+            PluginUuid = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
             CurrentEncoding = Encoding.BigEndianUnicode;
         }
 
@@ -82,47 +82,41 @@ namespace DiscImageChef.Filesystems
             if(2 + partition.Start >= partition.End) return false;
 
             ushort drSigWord;
-            ushort xdrStABNt;
-            ushort drAlBlSt;
-            uint drAlBlkSiz;
 
-            byte[] vh_sector;
-            ulong hfsp_offset;
+            ulong hfspOffset;
 
             uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.SectorSize;
             if(0x800 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
-            vh_sector = imagePlugin.ReadSectors(partition.Start,
-                                                sectorsToRead); // Read volume header, of HFS Wrapper MDB
+            byte[] vhSector = imagePlugin.ReadSectors(partition.Start,
+                                                      sectorsToRead);
 
-            drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x400); // Check for HFS Wrapper MDB
+            drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400); // Check for HFS Wrapper MDB
 
             if(drSigWord == HFS_MAGIC) // "BD"
             {
-                drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x47C); // Read embedded HFS+ signature
+                drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x47C); // Read embedded HFS+ signature
 
                 if(drSigWord == HFSP_MAGIC) // "H+"
                 {
-                    xdrStABNt = BigEndianBitConverter
-                        .ToUInt16(vh_sector, 0x47E); // Starting block number of embedded HFS+ volume
+                    ushort xdrStABNt = BigEndianBitConverter
+                        .ToUInt16(vhSector, 0x47E);
 
-                    drAlBlkSiz = BigEndianBitConverter.ToUInt32(vh_sector, 0x414); // Block size
+                    uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                    drAlBlSt = BigEndianBitConverter
-                        .ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
+                    ushort drAlBlSt = BigEndianBitConverter
+                        .ToUInt16(vhSector, 0x41C);
 
-                    hfsp_offset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
+                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
                 }
-                else hfsp_offset = 0;
+                else hfspOffset = 0;
             }
-            else hfsp_offset = 0;
+            else hfspOffset = 0;
 
-            vh_sector = imagePlugin.ReadSectors(partition.Start + hfsp_offset, sectorsToRead); // Read volume header
+            vhSector = imagePlugin.ReadSectors(partition.Start + hfspOffset, sectorsToRead); // Read volume header
 
-            drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x400);
-            if(drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC) return true;
-
-            return false;
+            drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
+            return drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -131,55 +125,51 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             ushort drSigWord;
-            ushort xdrStABNt;
-            ushort drAlBlSt;
-            uint drAlBlkSiz;
             HFSPlusVolumeHeader HPVH = new HFSPlusVolumeHeader();
 
-            ulong hfsp_offset;
+            ulong hfspOffset;
             bool wrapped;
-            byte[] vh_sector;
 
             uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.SectorSize;
             if(0x800 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
-            vh_sector = imagePlugin.ReadSectors(partition.Start,
-                                                sectorsToRead); // Read volume header, of HFS Wrapper MDB
+            byte[] vhSector = imagePlugin.ReadSectors(partition.Start,
+                                                       sectorsToRead);
 
-            drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x400); // Check for HFS Wrapper MDB
+            drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400); // Check for HFS Wrapper MDB
 
             if(drSigWord == HFS_MAGIC) // "BD"
             {
-                drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x47C); // Read embedded HFS+ signature
+                drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x47C); // Read embedded HFS+ signature
 
                 if(drSigWord == HFSP_MAGIC) // "H+"
                 {
-                    xdrStABNt = BigEndianBitConverter
-                        .ToUInt16(vh_sector, 0x47E); // Starting block number of embedded HFS+ volume
+                    ushort xdrStABNt = BigEndianBitConverter
+                        .ToUInt16(vhSector, 0x47E);
 
-                    drAlBlkSiz = BigEndianBitConverter.ToUInt32(vh_sector, 0x414); // Block size
+                    uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                    drAlBlSt = BigEndianBitConverter
-                        .ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
+                    ushort drAlBlSt = BigEndianBitConverter
+                        .ToUInt16(vhSector, 0x41C);
 
-                    hfsp_offset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
+                    hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.GetSectorSize());
                     wrapped = true;
                 }
                 else
                 {
-                    hfsp_offset = 0;
+                    hfspOffset = 0;
                     wrapped = false;
                 }
             }
             else
             {
-                hfsp_offset = 0;
+                hfspOffset = 0;
                 wrapped = false;
             }
 
-            vh_sector = imagePlugin.ReadSectors(partition.Start + hfsp_offset, sectorsToRead); // Read volume header
+            vhSector = imagePlugin.ReadSectors(partition.Start + hfspOffset, sectorsToRead); // Read volume header
 
-            HPVH.signature = BigEndianBitConverter.ToUInt16(vh_sector, 0x400);
+            HPVH.signature = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
             if(HPVH.signature == HFSP_MAGIC || HPVH.signature == HFSX_MAGIC)
             {
                 StringBuilder sb = new StringBuilder();
@@ -189,10 +179,10 @@ namespace DiscImageChef.Filesystems
                 if(wrapped) sb.AppendLine("Volume is wrapped inside an HFS volume.");
 
                 byte[] tmp = new byte[0x400];
-                Array.Copy(vh_sector, 0x400, tmp, 0, 0x400);
-                vh_sector = tmp;
+                Array.Copy(vhSector, 0x400, tmp, 0, 0x400);
+                vhSector = tmp;
 
-                HPVH = BigEndianMarshal.ByteArrayToStructureBigEndian<HFSPlusVolumeHeader>(vh_sector);
+                HPVH = BigEndianMarshal.ByteArrayToStructureBigEndian<HFSPlusVolumeHeader>(vhSector);
 
                 if(HPVH.version == 4 || HPVH.version == 5)
                 {
@@ -247,35 +237,35 @@ namespace DiscImageChef.Filesystems
                         sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7)
                           .AppendLine();
 
-                    xmlFSType = new FileSystemType();
+                    XmlFsType = new FileSystemType();
                     if(HPVH.backupDate > 0)
                     {
-                        xmlFSType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
-                        xmlFSType.BackupDateSpecified = true;
+                        XmlFsType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
+                        XmlFsType.BackupDateSpecified = true;
                     }
-                    xmlFSType.Bootable |= HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0;
-                    xmlFSType.Clusters = HPVH.totalBlocks;
-                    xmlFSType.ClusterSize = (int)HPVH.blockSize;
+                    XmlFsType.Bootable |= HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0;
+                    XmlFsType.Clusters = HPVH.totalBlocks;
+                    XmlFsType.ClusterSize = (int)HPVH.blockSize;
                     if(HPVH.createDate > 0)
                     {
-                        xmlFSType.CreationDate = DateHandlers.MacToDateTime(HPVH.createDate);
-                        xmlFSType.CreationDateSpecified = true;
+                        XmlFsType.CreationDate = DateHandlers.MacToDateTime(HPVH.createDate);
+                        XmlFsType.CreationDateSpecified = true;
                     }
-                    xmlFSType.Dirty = (HPVH.attributes & 0x100) != 0x100;
-                    xmlFSType.Files = HPVH.fileCount;
-                    xmlFSType.FilesSpecified = true;
-                    xmlFSType.FreeClusters = HPVH.freeBlocks;
-                    xmlFSType.FreeClustersSpecified = true;
+                    XmlFsType.Dirty = (HPVH.attributes & 0x100) != 0x100;
+                    XmlFsType.Files = HPVH.fileCount;
+                    XmlFsType.FilesSpecified = true;
+                    XmlFsType.FreeClusters = HPVH.freeBlocks;
+                    XmlFsType.FreeClustersSpecified = true;
                     if(HPVH.modifyDate > 0)
                     {
-                        xmlFSType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
-                        xmlFSType.ModificationDateSpecified = true;
+                        XmlFsType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
+                        XmlFsType.ModificationDateSpecified = true;
                     }
-                    if(HPVH.signature == 0x482B) xmlFSType.Type = "HFS+";
-                    if(HPVH.signature == 0x4858) xmlFSType.Type = "HFSX";
+                    if(HPVH.signature == 0x482B) XmlFsType.Type = "HFS+";
+                    if(HPVH.signature == 0x4858) XmlFsType.Type = "HFSX";
                     if(HPVH.drFndrInfo6 != 0 && HPVH.drFndrInfo7 != 0)
-                        xmlFSType.VolumeSerial = $"{HPVH.drFndrInfo6:X8}{HPVH.drFndrInfo7:X8}";
-                    xmlFSType.SystemIdentifier = Encoding.ASCII.GetString(HPVH.lastMountedVersion);
+                        XmlFsType.VolumeSerial = $"{HPVH.drFndrInfo6:X8}{HPVH.drFndrInfo7:X8}";
+                    XmlFsType.SystemIdentifier = Encoding.ASCII.GetString(HPVH.lastMountedVersion);
                 }
                 else
                 {

@@ -44,46 +44,46 @@ namespace DiscImageChef.Filesystems
         public PCEnginePlugin()
         {
             Name = "PC Engine CD Plugin";
-            PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+            PluginUuid = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
             CurrentEncoding = Encoding.GetEncoding("shift_jis");
         }
 
         public PCEnginePlugin(Encoding encoding)
         {
             Name = "PC Engine CD Plugin";
-            PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("shift_jis");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
         }
 
         public PCEnginePlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "PC Engine CD Plugin";
-            PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("shift_jis");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("shift_jis");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
-            byte[] system_descriptor = new byte[23];
+            byte[] systemDescriptor = new byte[23];
             byte[] sector = imagePlugin.ReadSector(1 + partition.Start);
 
-            Array.Copy(sector, 0x20, system_descriptor, 0, 23);
+            Array.Copy(sector, 0x20, systemDescriptor, 0, 23);
 
-            return Encoding.ASCII.GetString(system_descriptor) == "PC Engine CD-ROM SYSTEM";
+            return Encoding.ASCII.GetString(systemDescriptor) == "PC Engine CD-ROM SYSTEM";
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             information = "";
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "PC Engine filesystem";
-            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.GetSectorSize() * 2048);
-            xmlFSType.ClusterSize = 2048;
+            XmlFsType = new FileSystemType
+            {
+                Type = "PC Engine filesystem",
+                Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.GetSectorSize() * 2048),
+                ClusterSize = 2048
+            };
         }
 
         public override Errno Mount()

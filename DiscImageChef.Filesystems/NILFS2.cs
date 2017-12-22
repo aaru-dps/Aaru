@@ -95,37 +95,35 @@ namespace DiscImageChef.Filesystems
             public ulong feature_incompat;
         }
 
-        const ushort NILFS2_Magic = 0x3434;
-        const uint NILFS2_SuperOffset = 1024;
+        const ushort NILFS2_MAGIC = 0x3434;
+        const uint NILFS2_SUPER_OFFSET = 1024;
 
         public NILFS2()
         {
             Name = "NILFS2 Plugin";
-            PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+            PluginUuid = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public NILFS2(Encoding encoding)
         {
             Name = "NILFS2 Plugin";
-            PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
-            if(encoding == null) CurrentEncoding = Encoding.UTF8;
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+            CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
         public NILFS2(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "NILFS2 Plugin";
-            PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
-            if(encoding == null) CurrentEncoding = Encoding.UTF8;
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+            CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512) return false;
 
-            uint sbAddr = NILFS2_SuperOffset / imagePlugin.GetSectorSize();
+            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.GetSectorSize();
             if(sbAddr == 0) sbAddr = 1;
 
             NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
@@ -143,7 +141,7 @@ namespace DiscImageChef.Filesystems
             nilfsSb = (NILFS2_Superblock)Marshal.PtrToStructure(sbPtr, typeof(NILFS2_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            return nilfsSb.magic == NILFS2_Magic;
+            return nilfsSb.magic == NILFS2_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -152,7 +150,7 @@ namespace DiscImageChef.Filesystems
             information = "";
             if(imagePlugin.GetSectorSize() < 512) return;
 
-            uint sbAddr = NILFS2_SuperOffset / imagePlugin.GetSectorSize();
+            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.GetSectorSize();
             if(sbAddr == 0) sbAddr = 1;
 
             NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
@@ -168,7 +166,7 @@ namespace DiscImageChef.Filesystems
             nilfsSb = (NILFS2_Superblock)Marshal.PtrToStructure(sbPtr, typeof(NILFS2_Superblock));
             Marshal.FreeHGlobal(sbPtr);
 
-            if(nilfsSb.magic != NILFS2_Magic) return;
+            if(nilfsSb.magic != NILFS2_MAGIC) return;
 
             StringBuilder sb = new StringBuilder();
 
@@ -192,17 +190,19 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "NILFS2 filesystem";
-            if(nilfsSb.creator_os == 0) xmlFSType.SystemIdentifier = "Linux";
-            xmlFSType.ClusterSize = 1 << (int)(nilfsSb.log_block_size + 10);
-            xmlFSType.Clusters = (long)nilfsSb.dev_size / xmlFSType.ClusterSize;
-            xmlFSType.VolumeName = StringHandlers.CToString(nilfsSb.volume_name, CurrentEncoding);
-            xmlFSType.VolumeSerial = nilfsSb.uuid.ToString();
-            xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(nilfsSb.ctime);
-            xmlFSType.CreationDateSpecified = true;
-            xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(nilfsSb.wtime);
-            xmlFSType.ModificationDateSpecified = true;
+            XmlFsType = new FileSystemType
+            {
+                Type = "NILFS2 filesystem",
+                ClusterSize = 1 << (int)(nilfsSb.log_block_size + 10),
+                VolumeName = StringHandlers.CToString(nilfsSb.volume_name, CurrentEncoding),
+                VolumeSerial = nilfsSb.uuid.ToString(),
+                CreationDate = DateHandlers.UNIXUnsignedToDateTime(nilfsSb.ctime),
+                CreationDateSpecified = true,
+                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(nilfsSb.wtime),
+                ModificationDateSpecified = true
+            };
+            if(nilfsSb.creator_os == 0) XmlFsType.SystemIdentifier = "Linux";
+            XmlFsType.Clusters = (long)nilfsSb.dev_size / XmlFsType.ClusterSize;
         }
 
         public override Errno Mount()

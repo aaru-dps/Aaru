@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -48,6 +49,8 @@ using time_t = System.Int64;
 
 namespace DiscImageChef.Filesystems
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
     public class UNICOS : Filesystem
     {
         const int NC1MAXPART = 64;
@@ -137,24 +140,22 @@ namespace DiscImageChef.Filesystems
         public UNICOS()
         {
             Name = "UNICOS Filesystem Plugin";
-            PluginUUID = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
+            PluginUuid = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public UNICOS(Encoding encoding)
         {
             Name = "UNICOS Filesystem Plugin";
-            PluginUUID = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public UNICOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNICOS Filesystem Plugin";
-            PluginUUID = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -213,7 +214,7 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "UNICOS filesystem",
                 ClusterSize = 4096,
@@ -222,7 +223,7 @@ namespace DiscImageChef.Filesystems
                 ModificationDate = DateHandlers.UNIXToDateTime(unicosSb.s_time),
                 ModificationDateSpecified = true
             };
-            xmlFSType.Dirty |= unicosSb.s_error > 0;
+            XmlFsType.Dirty |= unicosSb.s_error > 0;
         }
 
         public override Errno Mount()

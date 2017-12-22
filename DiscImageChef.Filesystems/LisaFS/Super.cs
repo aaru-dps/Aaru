@@ -82,8 +82,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
                 for(ulong i = 0; i < 100; i++)
                 {
-                    LisaTag.PriamTag searchTag;
-                    DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out searchTag);
+                    DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag searchTag);
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
 
@@ -97,7 +96,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     byte[] sector = device.ReadSector(i);
                     mddf = new MDDF();
                     byte[] pString = new byte[33];
-                    uint lisa_time;
+                    uint lisaTime;
 
                     mddf.fsversion = BigEndianBitConverter.ToUInt16(sector, 0x00);
                     mddf.volid = BigEndianBitConverter.ToUInt64(sector, 0x02);
@@ -107,19 +106,18 @@ namespace DiscImageChef.Filesystems.LisaFS
                     mddf.unknown1 = sector[0x2D];
                     Array.Copy(sector, 0x2E, pString, 0, 33);
                     // Prevent garbage
-                    if(pString[0] <= 32) mddf.password = StringHandlers.PascalToString(pString, CurrentEncoding);
-                    else mddf.password = "";
+                    mddf.password = pString[0] <= 32 ? StringHandlers.PascalToString(pString, CurrentEncoding) : "";
                     mddf.unknown2 = sector[0x4F];
                     mddf.machine_id = BigEndianBitConverter.ToUInt32(sector, 0x50);
                     mddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
-                    lisa_time = BigEndianBitConverter.ToUInt32(sector, 0x58);
-                    mddf.dtvc = DateHandlers.LisaToDateTime(lisa_time);
-                    lisa_time = BigEndianBitConverter.ToUInt32(sector, 0x5C);
-                    mddf.dtcc = DateHandlers.LisaToDateTime(lisa_time);
-                    lisa_time = BigEndianBitConverter.ToUInt32(sector, 0x60);
-                    mddf.dtvb = DateHandlers.LisaToDateTime(lisa_time);
-                    lisa_time = BigEndianBitConverter.ToUInt32(sector, 0x64);
-                    mddf.dtvs = DateHandlers.LisaToDateTime(lisa_time);
+                    lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
+                    mddf.dtvc = DateHandlers.LisaToDateTime(lisaTime);
+                    lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x5C);
+                    mddf.dtcc = DateHandlers.LisaToDateTime(lisaTime);
+                    lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x60);
+                    mddf.dtvb = DateHandlers.LisaToDateTime(lisaTime);
+                    lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x64);
+                    mddf.dtvs = DateHandlers.LisaToDateTime(lisaTime);
                     mddf.unknown3 = BigEndianBitConverter.ToUInt32(sector, 0x68);
                     mddf.mddf_block = BigEndianBitConverter.ToUInt32(sector, 0x6C);
                     mddf.volsize_minus_one = BigEndianBitConverter.ToUInt32(sector, 0x70);
@@ -193,13 +191,13 @@ namespace DiscImageChef.Filesystems.LisaFS
                     // Check MDDF version
                     switch(mddf.fsversion)
                     {
-                        case LisaFSv1:
+                        case LISA_V1:
                             DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v1");
                             break;
-                        case LisaFSv2:
+                        case LISA_V2:
                             DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v2");
                             break;
-                        case LisaFSv3:
+                        case LISA_V3:
                             DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v3");
                             break;
                         default:
@@ -214,23 +212,20 @@ namespace DiscImageChef.Filesystems.LisaFS
                     //catalogCache = new Dictionary<short, List<CatalogEntry>>();
                     fileSizeCache = new Dictionary<short, int>();
 
-                    Errno error;
-
                     mounted = true;
                     this.debug = debug;
 
                     if(debug) printedExtents = new List<short>();
 
                     // Read the S-Records file
-                    error = ReadSRecords();
+                    Errno error = ReadSRecords();
                     if(error != Errno.NoError)
                     {
                         DicConsole.ErrorWriteLine("Error {0} reading S-Records file.", error);
                         return error;
                     }
 
-                    directoryDTCCache = new Dictionary<short, DateTime>();
-                    directoryDTCCache.Add(DIRID_ROOT, mddf.dtcc);
+                    directoryDtcCache = new Dictionary<short, DateTime> {{DIRID_ROOT, mddf.dtcc}};
 
                     // Read the Catalog File
                     error = ReadCatalog();
@@ -246,9 +241,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     // If debug, cache system files
                     if(debug)
                     {
-                        byte[] temp;
-
-                        error = ReadSystemFile(FILEID_BOOT_SIGNED, out temp);
+                        error = ReadSystemFile(FILEID_BOOT_SIGNED, out _);
                         if(error != Errno.NoError)
                         {
                             DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot blocks");
@@ -256,7 +249,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                             return error;
                         }
 
-                        error = ReadSystemFile(FILEID_LOADER_SIGNED, out temp);
+                        error = ReadSystemFile(FILEID_LOADER_SIGNED, out _);
                         if(error != Errno.NoError)
                         {
                             DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot loader");
@@ -264,7 +257,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                             return error;
                         }
 
-                        error = ReadSystemFile((short)FILEID_MDDF, out temp);
+                        error = ReadSystemFile((short)FILEID_MDDF, out _);
                         if(error != Errno.NoError)
                         {
                             DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read MDDF");
@@ -272,7 +265,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                             return error;
                         }
 
-                        error = ReadSystemFile((short)FILEID_BITMAP, out temp);
+                        error = ReadSystemFile((short)FILEID_BITMAP, out _);
                         if(error != Errno.NoError)
                         {
                             DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read volume bitmap");
@@ -280,7 +273,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                             return error;
                         }
 
-                        error = ReadSystemFile((short)FILEID_SRECORD, out temp);
+                        error = ReadSystemFile((short)FILEID_SRECORD, out _);
                         if(error != Errno.NoError)
                         {
                             DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read S-Records file");
@@ -290,27 +283,27 @@ namespace DiscImageChef.Filesystems.LisaFS
                     }
 
                     // Create XML metadata for mounted filesystem
-                    xmlFSType = new FileSystemType();
+                    XmlFsType = new FileSystemType();
                     if(DateTime.Compare(mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
                     {
-                        xmlFSType.BackupDate = mddf.dtvb;
-                        xmlFSType.BackupDateSpecified = true;
+                        XmlFsType.BackupDate = mddf.dtvb;
+                        XmlFsType.BackupDateSpecified = true;
                     }
-                    xmlFSType.Clusters = mddf.vol_size;
-                    xmlFSType.ClusterSize = mddf.clustersize * mddf.datasize;
+                    XmlFsType.Clusters = mddf.vol_size;
+                    XmlFsType.ClusterSize = mddf.clustersize * mddf.datasize;
                     if(DateTime.Compare(mddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
                     {
-                        xmlFSType.CreationDate = mddf.dtvc;
-                        xmlFSType.CreationDateSpecified = true;
+                        XmlFsType.CreationDate = mddf.dtvc;
+                        XmlFsType.CreationDateSpecified = true;
                     }
-                    xmlFSType.Dirty = mddf.vol_left_mounted != 0;
-                    xmlFSType.Files = mddf.filecount;
-                    xmlFSType.FilesSpecified = true;
-                    xmlFSType.FreeClusters = mddf.freecount;
-                    xmlFSType.FreeClustersSpecified = true;
-                    xmlFSType.Type = "LisaFS";
-                    xmlFSType.VolumeName = mddf.volname;
-                    xmlFSType.VolumeSerial = $"{mddf.volid:X16}";
+                    XmlFsType.Dirty = mddf.vol_left_mounted != 0;
+                    XmlFsType.Files = mddf.filecount;
+                    XmlFsType.FilesSpecified = true;
+                    XmlFsType.FreeClusters = mddf.freecount;
+                    XmlFsType.FreeClustersSpecified = true;
+                    XmlFsType.Type = "LisaFS";
+                    XmlFsType.VolumeName = mddf.volname;
+                    XmlFsType.VolumeSerial = $"{mddf.volid:X16}";
 
                     return Errno.NoError;
                 }
@@ -353,24 +346,25 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             if(!mounted) return Errno.AccessDenied;
 
-            stat = new FileSystemInfo();
-            stat.Blocks = mddf.vol_size;
-            stat.FilenameLength = (ushort)E_NAME;
-            stat.Files = mddf.filecount;
-            stat.FreeBlocks = mddf.freecount;
+            stat = new FileSystemInfo
+            {
+                Blocks = mddf.vol_size,
+                FilenameLength = (ushort)E_NAME,
+                Files = mddf.filecount,
+                FreeBlocks = mddf.freecount,
+                Id = {Serial64 = mddf.volid, IsLong = true},
+                PluginId = PluginUuid
+            };
             stat.FreeFiles = FILEID_MAX - stat.Files;
-            stat.Id.Serial64 = mddf.volid;
-            stat.Id.IsLong = true;
-            stat.PluginId = PluginUUID;
             switch(mddf.fsversion)
             {
-                case LisaFSv1:
+                case LISA_V1:
                     stat.Type = "LisaFS v1";
                     break;
-                case LisaFSv2:
+                case LISA_V2:
                     stat.Type = "LisaFS v2";
                     break;
-                case LisaFSv3:
+                case LISA_V3:
                     stat.Type = "LisaFS v3";
                     break;
             }

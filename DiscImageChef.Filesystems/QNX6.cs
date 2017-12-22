@@ -96,43 +96,41 @@ namespace DiscImageChef.Filesystems
             public QNX6_RootNode unknown;
         }
 
-        const uint QNX6_SuperBlockSize = 0x1000;
-        const uint QNX6_BootBlocksSize = 0x2000;
-        const uint QNX6_Magic = 0x68191122;
+        const uint QNX6_SUPER_BLOCK_SIZE = 0x1000;
+        const uint QNX6_BOOT_BLOCKS_SIZE = 0x2000;
+        const uint QNX6_MAGIC = 0x68191122;
 
         public QNX6()
         {
             Name = "QNX6 Plugin";
-            PluginUUID = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+            PluginUuid = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public QNX6(Encoding encoding)
         {
             Name = "QNX6 Plugin";
-            PluginUUID = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public QNX6(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX6 Plugin";
-            PluginUUID = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            uint sectors = QNX6_SuperBlockSize / imagePlugin.GetSectorSize();
-            uint bootSectors = QNX6_BootBlocksSize / imagePlugin.GetSectorSize();
+            uint sectors = QNX6_SUPER_BLOCK_SIZE / imagePlugin.GetSectorSize();
+            uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.GetSectorSize();
 
             if(partition.Start + bootSectors + sectors >= partition.End) return false;
 
             byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
             byte[] sector = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
-            if(sector.Length < QNX6_SuperBlockSize) return false;
+            if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return false;
 
             QNX6_AudiSuperBlock audiSb = new QNX6_AudiSuperBlock();
             IntPtr audiPtr = Marshal.AllocHGlobal(Marshal.SizeOf(audiSb));
@@ -146,7 +144,7 @@ namespace DiscImageChef.Filesystems
             qnxSb = (QNX6_SuperBlock)Marshal.PtrToStructure(sbPtr, typeof(QNX6_SuperBlock));
             Marshal.FreeHGlobal(sbPtr);
 
-            return qnxSb.magic == QNX6_Magic || audiSb.magic == QNX6_Magic;
+            return qnxSb.magic == QNX6_MAGIC || audiSb.magic == QNX6_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -154,12 +152,12 @@ namespace DiscImageChef.Filesystems
         {
             information = "";
             StringBuilder sb = new StringBuilder();
-            uint sectors = QNX6_SuperBlockSize / imagePlugin.GetSectorSize();
-            uint bootSectors = QNX6_BootBlocksSize / imagePlugin.GetSectorSize();
+            uint sectors = QNX6_SUPER_BLOCK_SIZE / imagePlugin.GetSectorSize();
+            uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.GetSectorSize();
 
             byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
             byte[] sector = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
-            if(sector.Length < QNX6_SuperBlockSize) return;
+            if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return;
 
             QNX6_AudiSuperBlock audiSb = new QNX6_AudiSuperBlock();
             IntPtr audiPtr = Marshal.AllocHGlobal(Marshal.SizeOf(audiSb));
@@ -173,7 +171,7 @@ namespace DiscImageChef.Filesystems
             qnxSb = (QNX6_SuperBlock)Marshal.PtrToStructure(sbPtr, typeof(QNX6_SuperBlock));
             Marshal.FreeHGlobal(sbPtr);
 
-            bool audi = false || audiSb.magic == QNX6_Magic;
+            bool audi = audiSb.magic == QNX6_MAGIC;
 
             if(audi)
             {
@@ -186,17 +184,19 @@ namespace DiscImageChef.Filesystems
                                 audiSb.freeBlocks * audiSb.blockSize, audiSb.numBlocks,
                                 audiSb.numBlocks * audiSb.blockSize).AppendLine();
 
-                xmlFSType = new FileSystemType();
-                xmlFSType.Type = "QNX6 (Audi) filesystem";
-                xmlFSType.Clusters = audiSb.numBlocks;
-                xmlFSType.ClusterSize = (int)audiSb.blockSize;
-                xmlFSType.Bootable = true;
-                xmlFSType.Files = audiSb.numInodes - audiSb.freeInodes;
-                xmlFSType.FilesSpecified = true;
-                xmlFSType.FreeClusters = audiSb.freeBlocks;
-                xmlFSType.FreeClustersSpecified = true;
+                XmlFsType = new FileSystemType
+                {
+                    Type = "QNX6 (Audi) filesystem",
+                    Clusters = audiSb.numBlocks,
+                    ClusterSize = (int)audiSb.blockSize,
+                    Bootable = true,
+                    Files = audiSb.numInodes - audiSb.freeInodes,
+                    FilesSpecified = true,
+                    FreeClusters = audiSb.freeBlocks,
+                    FreeClustersSpecified = true,
+                    VolumeSerial = $"{audiSb.serial:X16}"
+                };
                 //xmlFSType.VolumeName = CurrentEncoding.GetString(audiSb.id);
-                xmlFSType.VolumeSerial = $"{audiSb.serial:X16}";
 
                 information = sb.ToString();
                 return;
@@ -217,21 +217,23 @@ namespace DiscImageChef.Filesystems
                             qnxSb.freeBlocks * qnxSb.blockSize, qnxSb.numBlocks, qnxSb.numBlocks * qnxSb.blockSize)
               .AppendLine();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "QNX6 filesystem";
-            xmlFSType.Clusters = qnxSb.numBlocks;
-            xmlFSType.ClusterSize = (int)qnxSb.blockSize;
-            xmlFSType.Bootable = true;
-            xmlFSType.Files = qnxSb.numInodes - qnxSb.freeInodes;
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.FreeClusters = qnxSb.freeBlocks;
-            xmlFSType.FreeClustersSpecified = true;
+            XmlFsType = new FileSystemType
+            {
+                Type = "QNX6 filesystem",
+                Clusters = qnxSb.numBlocks,
+                ClusterSize = (int)qnxSb.blockSize,
+                Bootable = true,
+                Files = qnxSb.numInodes - qnxSb.freeInodes,
+                FilesSpecified = true,
+                FreeClusters = qnxSb.freeBlocks,
+                FreeClustersSpecified = true,
+                VolumeSerial = $"{qnxSb.serial:X16}",
+                CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.ctime),
+                CreationDateSpecified = true,
+                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.atime),
+                ModificationDateSpecified = true
+            };
             //xmlFSType.VolumeName = CurrentEncoding.GetString(qnxSb.volumeid);
-            xmlFSType.VolumeSerial = $"{qnxSb.serial:X16}";
-            xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.ctime);
-            xmlFSType.CreationDateSpecified = true;
-            xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.atime);
-            xmlFSType.ModificationDateSpecified = true;
 
             information = sb.ToString();
         }

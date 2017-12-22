@@ -77,14 +77,14 @@ namespace DiscImageChef.Filesystems.AppleDOS
         public AppleDOS()
         {
             Name = "Apple DOS File System";
-            PluginUUID = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+            PluginUuid = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
             CurrentEncoding = new LisaRoman();
         }
 
         public AppleDOS(Encoding encoding)
         {
             Name = "Apple DOS File System";
-            PluginUUID = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+            PluginUuid = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
             // TODO: Until Apple ][ encoding is implemented
             CurrentEncoding = new LisaRoman();
         }
@@ -94,7 +94,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             device = imagePlugin;
             start = partition.Start;
             Name = "Apple DOS File System";
-            PluginUUID = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+            PluginUuid = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
             // TODO: Until Apple ][ encoding is implemented
             CurrentEncoding = new LisaRoman();
         }

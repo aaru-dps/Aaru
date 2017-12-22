@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -45,42 +46,39 @@ using ufs_daddr_t = System.Int32;
 namespace DiscImageChef.Filesystems
 {
     // Using information from Linux kernel headers
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class FFSPlugin : Filesystem
     {
         public FFSPlugin()
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
-            PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+            PluginUuid = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public FFSPlugin(Encoding encoding)
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
-            PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public FFSPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
-            PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End) return false;
 
-            uint magic;
-            uint sb_size_in_sectors;
-            byte[] ufs_sb_sectors;
+            uint sbSizeInSectors;
 
             if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
-               imagePlugin.GetSectorSize() == 2448) sb_size_in_sectors = block_size / 2048;
-            else sb_size_in_sectors = block_size / imagePlugin.GetSectorSize();
+               imagePlugin.GetSectorSize() == 2448) sbSizeInSectors = block_size / 2048;
+            else sbSizeInSectors = block_size / imagePlugin.GetSectorSize();
 
             ulong[] locations =
             {
@@ -89,16 +87,7 @@ namespace DiscImageChef.Filesystems
                 262144 / imagePlugin.GetSectorSize()
             };
 
-            foreach(ulong loc in locations.Where(loc => partition.End > partition.Start + loc + sb_size_in_sectors)) {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW ||
-                   magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC ||
-                   magic == UFS_BAD_CIGAM) return true;
-            }
-
-            return false;
+            return locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors).Select(loc => imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors)).Select(ufsSbSectors => BitConverter.ToUInt32(ufsSbSectors, 0x055C)).Any(magic => magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM);
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -150,43 +139,43 @@ namespace DiscImageChef.Filesystems
                 return;
             }
 
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             switch(magic)
             {
                 case UFS_MAGIC:
                     sbInformation.AppendLine("UFS filesystem");
-                    xmlFSType.Type = "UFS";
+                    XmlFsType.Type = "UFS";
                     break;
                 case UFS_CIGAM:
                     sbInformation.AppendLine("Big-endian UFS filesystem");
-                    xmlFSType.Type = "UFS";
+                    XmlFsType.Type = "UFS";
                     break;
                 case UFS_MAGIC_BW:
                     sbInformation.AppendLine("BorderWare UFS filesystem");
-                    xmlFSType.Type = "UFS";
+                    XmlFsType.Type = "UFS";
                     break;
                 case UFS_CIGAM_BW:
                     sbInformation.AppendLine("Big-endian BorderWare UFS filesystem");
-                    xmlFSType.Type = "UFS";
+                    XmlFsType.Type = "UFS";
                     break;
                 case UFS2_MAGIC:
                     sbInformation.AppendLine("UFS2 filesystem");
-                    xmlFSType.Type = "UFS2";
+                    XmlFsType.Type = "UFS2";
                     break;
                 case UFS2_CIGAM:
                     sbInformation.AppendLine("Big-endian UFS2 filesystem");
-                    xmlFSType.Type = "UFS2";
+                    XmlFsType.Type = "UFS2";
                     break;
                 case UFS_BAD_MAGIC:
                     sbInformation.AppendLine("Incompletely initialized UFS filesystem");
                     sbInformation.AppendLine("BEWARE!!! Following information may be completely wrong!");
-                    xmlFSType.Type = "UFS";
+                    XmlFsType.Type = "UFS";
                     break;
                 case UFS_BAD_CIGAM:
                     sbInformation.AppendLine("Incompletely initialized big-endian UFS filesystem");
                     sbInformation.AppendLine("BEWARE!!! Following information may be completely wrong!");
-                    xmlFSType.Type = "UFS";
+                    XmlFsType.Type = "UFS";
                     break;
             }
 
@@ -332,12 +321,12 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Cylinder group offset in cylinder: {0}", ufs_sb.fs_old_cgoffset).AppendLine();
             sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_old_time))
                          .AppendLine();
-            xmlFSType.ModificationDate = DateHandlers.UNIXToDateTime(ufs_sb.fs_old_time);
-            xmlFSType.ModificationDateSpecified = true;
+            XmlFsType.ModificationDate = DateHandlers.UNIXToDateTime(ufs_sb.fs_old_time);
+            XmlFsType.ModificationDateSpecified = true;
             sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_old_size,
                                        (long)ufs_sb.fs_old_size * ufs_sb.fs_fsize).AppendLine();
-            xmlFSType.Clusters = ufs_sb.fs_old_size;
-            xmlFSType.ClusterSize = ufs_sb.fs_fsize;
+            XmlFsType.Clusters = ufs_sb.fs_old_size;
+            XmlFsType.ClusterSize = ufs_sb.fs_fsize;
             sbInformation.AppendFormat("{0} data blocks in volume ({1} bytes)", ufs_sb.fs_old_dsize,
                                        (long)ufs_sb.fs_old_dsize * ufs_sb.fs_fsize).AppendLine();
             sbInformation.AppendFormat("{0} cylinder groups in volume", ufs_sb.fs_ncg).AppendLine();
@@ -366,6 +355,7 @@ namespace DiscImageChef.Filesystems
                 default: sbInformation.AppendFormat("Unknown optimization value: 0x{0:X8}", ufs_sb.fs_optim).AppendLine();
                     break;
             }
+
             if(fs_type_sun) sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_old_npsect).AppendLine();
             else if(fs_type_sun86)
                 sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_old_npsect))
@@ -391,14 +381,14 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("{0} directories", ufs_sb.fs_old_cstotal.cs_ndir).AppendLine();
             sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_old_cstotal.cs_nbfree,
                                        (long)ufs_sb.fs_old_cstotal.cs_nbfree * ufs_sb.fs_fsize).AppendLine();
-            xmlFSType.FreeClusters = ufs_sb.fs_old_cstotal.cs_nbfree;
-            xmlFSType.FreeClustersSpecified = true;
+            XmlFsType.FreeClusters = ufs_sb.fs_old_cstotal.cs_nbfree;
+            XmlFsType.FreeClustersSpecified = true;
             sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_old_cstotal.cs_nifree).AppendLine();
             sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_old_cstotal.cs_nffree).AppendLine();
             if(ufs_sb.fs_fmod == 1)
             {
                 sbInformation.AppendLine("Superblock is under modification");
-                xmlFSType.Dirty = true;
+                XmlFsType.Dirty = true;
             }
             if(ufs_sb.fs_clean == 1) sbInformation.AppendLine("Volume is clean");
             if(ufs_sb.fs_ronly == 1) sbInformation.AppendLine("Volume is read-only");
@@ -412,7 +402,7 @@ namespace DiscImageChef.Filesystems
                              .AppendLine();
                 sbInformation.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(ufs_sb.fs_volname))
                              .AppendLine();
-                xmlFSType.VolumeName = StringHandlers.CToString(ufs_sb.fs_volname);
+                XmlFsType.VolumeName = StringHandlers.CToString(ufs_sb.fs_volname);
                 sbInformation.AppendFormat("Volume ID: 0x{0:X16}", ufs_sb.fs_swuid).AppendLine();
                 //xmlFSType.VolumeSerial = string.Format("{0:X16}", ufs_sb.fs_swuid);
                 sbInformation.AppendFormat("Last searched cylinder group: {0}", ufs_sb.fs_cgrotor).AppendLine();
@@ -421,18 +411,18 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("{0} directories", ufs_sb.fs_cstotal.cs_ndir).AppendLine();
                 sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_cstotal.cs_nbfree,
                                            ufs_sb.fs_cstotal.cs_nbfree * ufs_sb.fs_fsize).AppendLine();
-                xmlFSType.FreeClusters = ufs_sb.fs_cstotal.cs_nbfree;
-                xmlFSType.FreeClustersSpecified = true;
+                XmlFsType.FreeClusters = ufs_sb.fs_cstotal.cs_nbfree;
+                XmlFsType.FreeClustersSpecified = true;
                 sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_cstotal.cs_nifree).AppendLine();
                 sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_cstotal.cs_nffree).AppendLine();
                 sbInformation.AppendFormat("{0} free clusters", ufs_sb.fs_cstotal.cs_numclusters).AppendLine();
                 sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_time))
                              .AppendLine();
-                xmlFSType.ModificationDate = DateHandlers.UNIXToDateTime(ufs_sb.fs_time);
-                xmlFSType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.UNIXToDateTime(ufs_sb.fs_time);
+                XmlFsType.ModificationDateSpecified = true;
                 sbInformation.AppendFormat("{0} blocks ({1} bytes)", ufs_sb.fs_size, ufs_sb.fs_size * ufs_sb.fs_fsize)
                              .AppendLine();
-                xmlFSType.Clusters = ufs_sb.fs_size;
+                XmlFsType.Clusters = ufs_sb.fs_size;
                 sbInformation
                     .AppendFormat("{0} data blocks ({1} bytes)", ufs_sb.fs_dsize, ufs_sb.fs_dsize * ufs_sb.fs_fsize)
                     .AppendLine();

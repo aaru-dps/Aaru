@@ -47,11 +47,11 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             if(2 + partition.Start >= partition.End) return false;
 
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] mdbSector = imagePlugin.ReadSector(2 + partition.Start);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
+            drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
 
             return drSigWord == MFS_MAGIC;
         }
@@ -67,63 +67,62 @@ namespace DiscImageChef.Filesystems.AppleMFS
             MFS_BootBlock BB = new MFS_BootBlock();
 
             byte[] pString = new byte[16];
-            byte[] variable_size;
 
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partition.Start);
-            byte[] bb_sector = imagePlugin.ReadSector(0 + partition.Start);
+            byte[] mdbSector = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] bbSector = imagePlugin.ReadSector(0 + partition.Start);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            MDB.drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
+            MDB.drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
             if(MDB.drSigWord != MFS_MAGIC) return;
 
-            MDB.drCrDate = BigEndianBitConverter.ToUInt32(mdb_sector, 0x002);
-            MDB.drLsBkUp = BigEndianBitConverter.ToUInt32(mdb_sector, 0x006);
-            MDB.drAtrb = BigEndianBitConverter.ToUInt16(mdb_sector, 0x00A);
-            MDB.drNmFls = BigEndianBitConverter.ToUInt16(mdb_sector, 0x00C);
-            MDB.drDirSt = BigEndianBitConverter.ToUInt16(mdb_sector, 0x00E);
-            MDB.drBlLen = BigEndianBitConverter.ToUInt16(mdb_sector, 0x010);
-            MDB.drNmAlBlks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x012);
-            MDB.drAlBlkSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x014);
-            MDB.drClpSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x018);
-            MDB.drAlBlSt = BigEndianBitConverter.ToUInt16(mdb_sector, 0x01C);
-            MDB.drNxtFNum = BigEndianBitConverter.ToUInt32(mdb_sector, 0x01E);
-            MDB.drFreeBks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x022);
-            MDB.drVNSiz = mdb_sector[0x024];
-            variable_size = new byte[MDB.drVNSiz + 1];
-            Array.Copy(mdb_sector, 0x024, variable_size, 0, MDB.drVNSiz + 1);
-            MDB.drVN = StringHandlers.PascalToString(variable_size, CurrentEncoding);
+            MDB.drCrDate = BigEndianBitConverter.ToUInt32(mdbSector, 0x002);
+            MDB.drLsBkUp = BigEndianBitConverter.ToUInt32(mdbSector, 0x006);
+            MDB.drAtrb = BigEndianBitConverter.ToUInt16(mdbSector, 0x00A);
+            MDB.drNmFls = BigEndianBitConverter.ToUInt16(mdbSector, 0x00C);
+            MDB.drDirSt = BigEndianBitConverter.ToUInt16(mdbSector, 0x00E);
+            MDB.drBlLen = BigEndianBitConverter.ToUInt16(mdbSector, 0x010);
+            MDB.drNmAlBlks = BigEndianBitConverter.ToUInt16(mdbSector, 0x012);
+            MDB.drAlBlkSiz = BigEndianBitConverter.ToUInt32(mdbSector, 0x014);
+            MDB.drClpSiz = BigEndianBitConverter.ToUInt32(mdbSector, 0x018);
+            MDB.drAlBlSt = BigEndianBitConverter.ToUInt16(mdbSector, 0x01C);
+            MDB.drNxtFNum = BigEndianBitConverter.ToUInt32(mdbSector, 0x01E);
+            MDB.drFreeBks = BigEndianBitConverter.ToUInt16(mdbSector, 0x022);
+            MDB.drVNSiz = mdbSector[0x024];
+            byte[] variableSize = new byte[MDB.drVNSiz + 1];
+            Array.Copy(mdbSector, 0x024, variableSize, 0, MDB.drVNSiz + 1);
+            MDB.drVN = StringHandlers.PascalToString(variableSize, CurrentEncoding);
 
-            BB.signature = BigEndianBitConverter.ToUInt16(bb_sector, 0x000);
+            BB.signature = BigEndianBitConverter.ToUInt16(bbSector, 0x000);
 
             if(BB.signature == MFSBB_MAGIC)
             {
-                BB.branch = BigEndianBitConverter.ToUInt32(bb_sector, 0x002);
-                BB.boot_flags = bb_sector[0x006];
-                BB.boot_version = bb_sector[0x007];
+                BB.branch = BigEndianBitConverter.ToUInt32(bbSector, 0x002);
+                BB.boot_flags = bbSector[0x006];
+                BB.boot_version = bbSector[0x007];
 
-                BB.sec_sv_pages = BigEndianBitConverter.ToInt16(bb_sector, 0x008);
+                BB.sec_sv_pages = BigEndianBitConverter.ToInt16(bbSector, 0x008);
 
-                Array.Copy(mdb_sector, 0x00A, pString, 0, 16);
+                Array.Copy(mdbSector, 0x00A, pString, 0, 16);
                 BB.system_name = StringHandlers.PascalToString(pString, CurrentEncoding);
-                Array.Copy(mdb_sector, 0x01A, pString, 0, 16);
+                Array.Copy(mdbSector, 0x01A, pString, 0, 16);
                 BB.finder_name = StringHandlers.PascalToString(pString, CurrentEncoding);
-                Array.Copy(mdb_sector, 0x02A, pString, 0, 16);
+                Array.Copy(mdbSector, 0x02A, pString, 0, 16);
                 BB.debug_name = StringHandlers.PascalToString(pString, CurrentEncoding);
-                Array.Copy(mdb_sector, 0x03A, pString, 0, 16);
+                Array.Copy(mdbSector, 0x03A, pString, 0, 16);
                 BB.disasm_name = StringHandlers.PascalToString(pString, CurrentEncoding);
-                Array.Copy(mdb_sector, 0x04A, pString, 0, 16);
+                Array.Copy(mdbSector, 0x04A, pString, 0, 16);
                 BB.stupscr_name = StringHandlers.PascalToString(pString, CurrentEncoding);
-                Array.Copy(mdb_sector, 0x05A, pString, 0, 16);
+                Array.Copy(mdbSector, 0x05A, pString, 0, 16);
                 BB.bootup_name = StringHandlers.PascalToString(pString, CurrentEncoding);
-                Array.Copy(mdb_sector, 0x06A, pString, 0, 16);
+                Array.Copy(mdbSector, 0x06A, pString, 0, 16);
                 BB.clipbrd_name = StringHandlers.PascalToString(pString, CurrentEncoding);
 
-                BB.max_files = BigEndianBitConverter.ToUInt16(bb_sector, 0x07A);
-                BB.queue_size = BigEndianBitConverter.ToUInt16(bb_sector, 0x07C);
-                BB.heap_128k = BigEndianBitConverter.ToUInt32(bb_sector, 0x07E);
-                BB.heap_256k = BigEndianBitConverter.ToUInt32(bb_sector, 0x082);
-                BB.heap_512k = BigEndianBitConverter.ToUInt32(bb_sector, 0x086);
+                BB.max_files = BigEndianBitConverter.ToUInt16(bbSector, 0x07A);
+                BB.queue_size = BigEndianBitConverter.ToUInt16(bbSector, 0x07C);
+                BB.heap_128k = BigEndianBitConverter.ToUInt32(bbSector, 0x07E);
+                BB.heap_256k = BigEndianBitConverter.ToUInt32(bbSector, 0x082);
+                BB.heap_512k = BigEndianBitConverter.ToUInt32(bbSector, 0x086);
             }
             else BB.signature = 0x0000;
 
@@ -175,26 +174,26 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             if(MDB.drLsBkUp > 0)
             {
-                xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drLsBkUp);
-                xmlFSType.BackupDateSpecified = true;
+                XmlFsType.BackupDate = DateHandlers.MacToDateTime(MDB.drLsBkUp);
+                XmlFsType.BackupDateSpecified = true;
             }
-            xmlFSType.Bootable = BB.signature == MFSBB_MAGIC;
-            xmlFSType.Clusters = MDB.drNmAlBlks;
-            xmlFSType.ClusterSize = (int)MDB.drAlBlkSiz;
+            XmlFsType.Bootable = BB.signature == MFSBB_MAGIC;
+            XmlFsType.Clusters = MDB.drNmAlBlks;
+            XmlFsType.ClusterSize = (int)MDB.drAlBlkSiz;
             if(MDB.drCrDate > 0)
             {
-                xmlFSType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
-                xmlFSType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+                XmlFsType.CreationDateSpecified = true;
             }
-            xmlFSType.Files = MDB.drNmFls;
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.FreeClusters = MDB.drFreeBks;
-            xmlFSType.FreeClustersSpecified = true;
-            xmlFSType.Type = "MFS";
-            xmlFSType.VolumeName = MDB.drVN;
+            XmlFsType.Files = MDB.drNmFls;
+            XmlFsType.FilesSpecified = true;
+            XmlFsType.FreeClusters = MDB.drFreeBks;
+            XmlFsType.FreeClustersSpecified = true;
+            XmlFsType.Type = "MFS";
+            XmlFsType.VolumeName = MDB.drVN;
         }
     }
 }

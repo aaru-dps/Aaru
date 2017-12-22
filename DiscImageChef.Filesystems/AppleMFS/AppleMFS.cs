@@ -65,26 +65,24 @@ namespace DiscImageChef.Filesystems.AppleMFS
         public AppleMFS()
         {
             Name = "Apple Macintosh File System";
-            PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+            PluginUuid = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
             CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
 
         public AppleMFS(Encoding encoding)
         {
             Name = "Apple Macintosh File System";
-            PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("macintosh");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
         }
 
         public AppleMFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple Macintosh File System";
-            PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+            PluginUuid = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
             device = imagePlugin;
             partitionStart = partition.Start;
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("macintosh");
-            else CurrentEncoding = encoding;
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("macintosh");
         }
     }
 }

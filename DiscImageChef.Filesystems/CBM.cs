@@ -47,21 +47,21 @@ namespace DiscImageChef.Filesystems
         public CBM()
         {
             Name = "Commodore file system";
-            PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+            PluginUuid = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
             CurrentEncoding = new PETSCII();
         }
 
         public CBM(Encoding encoding)
         {
             Name = "Commodore file system";
-            PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+            PluginUuid = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
             CurrentEncoding = new PETSCII();
         }
 
         public CBM(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Commodore file system";
-            PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+            PluginUuid = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
             CurrentEncoding = new PETSCII();
         }
 
@@ -231,10 +231,12 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendLine("Commodore file system");
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "Commodore file system";
-            xmlFSType.Clusters = (long)imagePlugin.ImageInfo.Sectors;
-            xmlFSType.ClusterSize = 256;
+            XmlFsType = new FileSystemType
+            {
+                Type = "Commodore file system",
+                Clusters = (long)imagePlugin.ImageInfo.Sectors,
+                ClusterSize = 256
+            };
 
             if(imagePlugin.ImageInfo.Sectors == 3200)
             {
@@ -258,8 +260,8 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, CurrentEncoding))
                              .AppendLine();
 
-                xmlFSType.VolumeName = StringHandlers.CToString(cbmHdr.name, CurrentEncoding);
-                xmlFSType.VolumeSerial = $"{cbmHdr.diskId}";
+                XmlFsType.VolumeName = StringHandlers.CToString(cbmHdr.name, CurrentEncoding);
+                XmlFsType.VolumeSerial = $"{cbmHdr.diskId}";
             }
             else
             {
@@ -281,8 +283,8 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, CurrentEncoding))
                              .AppendLine();
 
-                xmlFSType.VolumeName = StringHandlers.CToString(cbmBam.name, CurrentEncoding);
-                xmlFSType.VolumeSerial = $"{cbmBam.diskId}";
+                XmlFsType.VolumeName = StringHandlers.CToString(cbmBam.name, CurrentEncoding);
+                XmlFsType.VolumeSerial = $"{cbmBam.diskId}";
             }
 
             information = sbInformation.ToString();

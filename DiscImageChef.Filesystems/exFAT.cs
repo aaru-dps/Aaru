@@ -47,24 +47,22 @@ namespace DiscImageChef.Filesystems
         public exFAT()
         {
             Name = "Microsoft Extended File Allocation Table";
-            PluginUUID = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+            PluginUuid = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public exFAT(Encoding encoding)
         {
             Name = "Microsoft Extended File Allocation Table";
-            PluginUUID = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public exFAT(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Microsoft Extended File Allocation Table";
-            PluginUUID = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -74,10 +72,9 @@ namespace DiscImageChef.Filesystems
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
             if(vbrSector.Length < 512) return false;
 
-            VolumeBootRecord vbr;
             IntPtr vbrPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(vbrSector, 0, vbrPtr, 512);
-            vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
+            VolumeBootRecord vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
             Marshal.FreeHGlobal(vbrPtr);
 
             return Signature.SequenceEqual(vbr.signature);
@@ -88,27 +85,24 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
-            VolumeBootRecord vbr;
             IntPtr vbrPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(vbrSector, 0, vbrPtr, 512);
-            vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
+            VolumeBootRecord vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
             Marshal.FreeHGlobal(vbrPtr);
 
             byte[] parametersSector = imagePlugin.ReadSector(9 + partition.Start);
-            OemParameterTable parametersTable;
             IntPtr parametersPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(parametersSector, 0, parametersPtr, 512);
-            parametersTable = (OemParameterTable)Marshal.PtrToStructure(parametersPtr, typeof(OemParameterTable));
+            OemParameterTable parametersTable = (OemParameterTable)Marshal.PtrToStructure(parametersPtr, typeof(OemParameterTable));
             Marshal.FreeHGlobal(parametersPtr);
 
             byte[] chkSector = imagePlugin.ReadSector(11 + partition.Start);
-            ChecksumSector chksector;
             IntPtr chkPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(chkSector, 0, chkPtr, 512);
-            chksector = (ChecksumSector)Marshal.PtrToStructure(chkPtr, typeof(ChecksumSector));
+            ChecksumSector chksector = (ChecksumSector)Marshal.PtrToStructure(chkPtr, typeof(ChecksumSector));
             Marshal.FreeHGlobal(chkPtr);
 
             sb.AppendLine("Microsoft exFAT");
@@ -152,11 +146,11 @@ namespace DiscImageChef.Filesystems
 
             sb.AppendFormat("Checksum 0x{0:X8}", chksector.checksum[0]).AppendLine();
 
-            xmlFSType.ClusterSize = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
-            xmlFSType.Clusters = vbr.clusterHeapLength;
-            xmlFSType.Dirty = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
-            xmlFSType.Type = "exFAT";
-            xmlFSType.VolumeSerial = $"{vbr.volumeSerial:X8}";
+            XmlFsType.ClusterSize = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
+            XmlFsType.Clusters = vbr.clusterHeapLength;
+            XmlFsType.Dirty = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
+            XmlFsType.Type = "exFAT";
+            XmlFsType.VolumeSerial = $"{vbr.volumeSerial:X8}";
 
             information = sb.ToString();
         }

@@ -40,9 +40,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     {
         public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
-            if(!mounted) return Errno.AccessDenied;
-
-            return Errno.NotImplemented;
+            return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
@@ -52,8 +50,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
             if(pathElements.Length != 1) return Errno.NotSupported;
 
-            PascalFileEntry entry;
-            Errno error = GetFileEntry(path, out entry);
+            Errno error = GetFileEntry(path, out _);
 
             if(error != Errno.NoError) return error;
 
@@ -71,16 +68,13 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             byte[] file;
-            Errno error;
 
             if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0) file = catalogBlocks;
-                else file = bootBlocks;
+                file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? catalogBlocks : bootBlocks;
             else
             {
-                PascalFileEntry entry;
-                error = GetFileEntry(path, out entry);
+                Errno error = GetFileEntry(path, out PascalFileEntry entry);
 
                 if(error != Errno.NoError) return error;
 
@@ -113,16 +107,17 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
                 {
-                    stat = new FileEntryInfo();
-                    stat.Attributes = new FileAttributes();
-                    stat.Attributes = FileAttributes.System;
-                    stat.BlockSize = device.GetSectorSize();
-                    stat.DeviceNo = 0;
-                    stat.GID = 0;
-                    stat.Inode = 0;
-                    stat.Links = 1;
-                    stat.Mode = 0x124;
-                    stat.UID = 0;
+                    stat = new FileEntryInfo
+                    {
+                        Attributes = FileAttributes.System,
+                        BlockSize = device.GetSectorSize(),
+                        DeviceNo = 0,
+                        GID = 0,
+                        Inode = 0,
+                        Links = 1,
+                        Mode = 0x124,
+                        UID = 0
+                    };
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                     {
@@ -138,24 +133,24 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                     return Errno.NoError;
                 }
 
-            PascalFileEntry entry;
-            Errno error = GetFileEntry(path, out entry);
+            Errno error = GetFileEntry(path, out PascalFileEntry entry);
 
             if(error != Errno.NoError) return error;
 
-            stat = new FileEntryInfo();
-            stat.Attributes = new FileAttributes();
-            stat.Attributes = FileAttributes.File;
-            stat.Blocks = entry.lastBlock - entry.firstBlock;
-            stat.BlockSize = device.GetSectorSize();
-            stat.DeviceNo = 0;
-            stat.GID = 0;
-            stat.Inode = 0;
-            stat.LastWriteTimeUtc = DateHandlers.UCSDPascalToDateTime(entry.mtime);
-            stat.Length = (entry.lastBlock - entry.firstBlock) * device.GetSectorSize() + entry.lastBytes;
-            stat.Links = 1;
-            stat.Mode = 0x124;
-            stat.UID = 0;
+            stat = new FileEntryInfo
+            {
+                Attributes = FileAttributes.File,
+                Blocks = entry.lastBlock - entry.firstBlock,
+                BlockSize = device.GetSectorSize(),
+                DeviceNo = 0,
+                GID = 0,
+                Inode = 0,
+                LastWriteTimeUtc = DateHandlers.UCSDPascalToDateTime(entry.mtime),
+                Length = (entry.lastBlock - entry.firstBlock) * device.GetSectorSize() + entry.lastBytes,
+                Links = 1,
+                Mode = 0x124,
+                UID = 0
+            };
 
             return Errno.NoError;
         }

@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -40,9 +41,12 @@ using Schemas;
 using hammer_crc_t = System.UInt32;
 using hammer_off_t = System.UInt64;
 using hammer_tid_t = System.UInt64;
+#pragma warning disable 169
 
 namespace DiscImageChef.Filesystems
 {
+    [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class HAMMER : Filesystem
     {
         const ulong HAMMER_FSBUF_VOLUME = 0xC8414D4DC5523031;
@@ -53,24 +57,22 @@ namespace DiscImageChef.Filesystems
         public HAMMER()
         {
             Name = "HAMMER Filesystem";
-            PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+            PluginUuid = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public HAMMER(Encoding encoding)
         {
             Name = "HAMMER Filesystem";
-            PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public HAMMER(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "HAMMER Filesystem";
-            PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -83,9 +85,9 @@ namespace DiscImageChef.Filesystems
 
             ulong magic;
 
-            byte[] sb_sector = imagePlugin.ReadSectors(partition.Start, run);
+            byte[] sbSector = imagePlugin.ReadSectors(partition.Start, run);
 
-            magic = BitConverter.ToUInt64(sb_sector, 0);
+            magic = BitConverter.ToUInt64(sbSector, 0);
 
             return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
@@ -97,7 +99,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            HammerSuperBlock hammer_sb;
+            HammerSuperBlock hammerSb;
 
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
 
@@ -105,56 +107,56 @@ namespace DiscImageChef.Filesystems
 
             ulong magic;
 
-            byte[] sb_sector = imagePlugin.ReadSectors(partition.Start, run);
+            byte[] sbSector = imagePlugin.ReadSectors(partition.Start, run);
 
-            magic = BitConverter.ToUInt64(sb_sector, 0);
+            magic = BitConverter.ToUInt64(sbSector, 0);
 
             if(magic == HAMMER_FSBUF_VOLUME)
             {
-                GCHandle handle = GCHandle.Alloc(sb_sector, GCHandleType.Pinned);
-                hammer_sb = (HammerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                GCHandle handle = GCHandle.Alloc(sbSector, GCHandleType.Pinned);
+                hammerSb = (HammerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
                                                                      typeof(HammerSuperBlock));
                 handle.Free();
             }
-            else hammer_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sb_sector);
+            else hammerSb = BigEndianMarshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
 
             sb.AppendLine("HAMMER filesystem");
 
-            sb.AppendFormat("Volume version: {0}", hammer_sb.vol_version).AppendLine();
-            sb.AppendFormat("Volume {0} of {1} on this filesystem", hammer_sb.vol_no + 1, hammer_sb.vol_count)
+            sb.AppendFormat("Volume version: {0}", hammerSb.vol_version).AppendLine();
+            sb.AppendFormat("Volume {0} of {1} on this filesystem", hammerSb.vol_no + 1, hammerSb.vol_count)
               .AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammer_sb.vol_label, CurrentEncoding))
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammerSb.vol_label, CurrentEncoding))
               .AppendLine();
-            sb.AppendFormat("Volume serial: {0}", hammer_sb.vol_fsid).AppendLine();
-            sb.AppendFormat("Filesystem type: {0}", hammer_sb.vol_fstype).AppendLine();
-            sb.AppendFormat("Boot area starts at {0}", hammer_sb.vol_bot_beg).AppendLine();
-            sb.AppendFormat("Memory log starts at {0}", hammer_sb.vol_mem_beg).AppendLine();
-            sb.AppendFormat("First volume buffer starts at {0}", hammer_sb.vol_buf_beg).AppendLine();
-            sb.AppendFormat("Volume ends at {0}", hammer_sb.vol_buf_end).AppendLine();
+            sb.AppendFormat("Volume serial: {0}", hammerSb.vol_fsid).AppendLine();
+            sb.AppendFormat("Filesystem type: {0}", hammerSb.vol_fstype).AppendLine();
+            sb.AppendFormat("Boot area starts at {0}", hammerSb.vol_bot_beg).AppendLine();
+            sb.AppendFormat("Memory log starts at {0}", hammerSb.vol_mem_beg).AppendLine();
+            sb.AppendFormat("First volume buffer starts at {0}", hammerSb.vol_buf_beg).AppendLine();
+            sb.AppendFormat("Volume ends at {0}", hammerSb.vol_buf_end).AppendLine();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Clusters = (long)(partition.Size / HAMMER_BIGBLOCK_SIZE),
                 ClusterSize = HAMMER_BIGBLOCK_SIZE,
                 Dirty = false,
                 Type = "HAMMER",
-                VolumeName = StringHandlers.CToString(hammer_sb.vol_label, CurrentEncoding),
-                VolumeSerial = hammer_sb.vol_fsid.ToString()
+                VolumeName = StringHandlers.CToString(hammerSb.vol_label, CurrentEncoding),
+                VolumeSerial = hammerSb.vol_fsid.ToString()
             };
 
-            if(hammer_sb.vol_no == hammer_sb.vol_rootvol)
+            if(hammerSb.vol_no == hammerSb.vol_rootvol)
             {
-                sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", hammer_sb.vol0_stat_bigblocks,
-                                hammer_sb.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
-                sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)", hammer_sb.vol0_stat_freebigblocks,
-                                hammer_sb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
-                sb.AppendFormat("Filesystem has {0} inode used", hammer_sb.vol0_stat_inodes).AppendLine();
+                sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", hammerSb.vol0_stat_bigblocks,
+                                hammerSb.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)", hammerSb.vol0_stat_freebigblocks,
+                                hammerSb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                sb.AppendFormat("Filesystem has {0} inode used", hammerSb.vol0_stat_inodes).AppendLine();
 
-                xmlFSType.Clusters = hammer_sb.vol0_stat_bigblocks;
-                xmlFSType.FreeClusters = hammer_sb.vol0_stat_freebigblocks;
-                xmlFSType.FreeClustersSpecified = true;
-                xmlFSType.Files = hammer_sb.vol0_stat_inodes;
-                xmlFSType.FilesSpecified = true;
+                XmlFsType.Clusters = hammerSb.vol0_stat_bigblocks;
+                XmlFsType.FreeClusters = hammerSb.vol0_stat_freebigblocks;
+                XmlFsType.FreeClustersSpecified = true;
+                XmlFsType.Files = hammerSb.vol0_stat_inodes;
+                XmlFsType.FilesSpecified = true;
             }
             // 0 ?
             //sb.AppendFormat("Volume header CRC: 0x{0:X8}", afs_sb.vol_crc).AppendLine();

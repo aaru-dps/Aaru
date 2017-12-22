@@ -45,24 +45,22 @@ namespace DiscImageChef.Filesystems
         public SFS()
         {
             Name = "SmartFileSystem";
-            PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+            PluginUuid = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         public SFS(Encoding encoding)
         {
             Name = "SmartFileSystem";
-            PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         public SFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "SmartFileSystem";
-            PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         [Flags]
@@ -120,9 +118,8 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
-            byte[] RootBlockSector = imagePlugin.ReadSector(partition.Start);
-            RootBlock rootBlock;
-            rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(RootBlockSector);
+            byte[] rootBlockSector = imagePlugin.ReadSector(partition.Start);
+            RootBlock rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
             StringBuilder sbInformation = new StringBuilder();
 
@@ -151,7 +148,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendLine("Volume moves deleted files to a recycled folder");
             information = sbInformation.ToString();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 CreationDate = DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
                 CreationDateSpecified = true,

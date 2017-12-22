@@ -143,14 +143,16 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             information = sbInformation.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, 2));
-            xmlFSType.Clusters = volEntry.blocks;
-            xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
-            xmlFSType.Files = volEntry.files;
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.Type = "UCSD Pascal";
-            xmlFSType.VolumeName = StringHandlers.PascalToString(volEntry.volumeName, CurrentEncoding);
+            XmlFsType = new FileSystemType
+            {
+                Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, 2)),
+                Clusters = volEntry.blocks,
+                ClusterSize = (int)imagePlugin.GetSectorSize(),
+                Files = volEntry.files,
+                FilesSpecified = true,
+                Type = "UCSD Pascal",
+                VolumeName = StringHandlers.PascalToString(volEntry.volumeName, CurrentEncoding)
+            };
         }
     }
 }

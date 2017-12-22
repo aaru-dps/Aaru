@@ -44,30 +44,28 @@ namespace DiscImageChef.Filesystems
     // Thanks to tarlabnor for translating it
     public class MicroDOS : Filesystem
     {
-        const ushort magic = 0xA72E;
-        const ushort magic2 = 0x530C;
+        const ushort MAGIC = 0xA72E;
+        const ushort MAGIC2 = 0x530C;
 
         public MicroDOS()
         {
             Name = "MicroDOS file system";
-            PluginUUID = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
+            PluginUuid = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
             CurrentEncoding = Encoding.GetEncoding("koi8-r");
         }
 
         public MicroDOS(Encoding encoding)
         {
             Name = "MicroDOS file system";
-            PluginUUID = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("koi8-r");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("koi8-r");
         }
 
         public MicroDOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "MicroDOS file system";
-            PluginUUID = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("koi8-r");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("koi8-r");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -76,15 +74,13 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.GetSectorSize() < 512) return false;
 
-            MicroDOSBlock0 block0;
-
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
             GCHandle handle = GCHandle.Alloc(bk0, GCHandleType.Pinned);
-            block0 = (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
+            MicroDOSBlock0 block0 = (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
             handle.Free();
 
-            return block0.label == magic && block0.mklabel == magic2;
+            return block0.label == MAGIC && block0.mklabel == MAGIC2;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -93,12 +89,11 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            MicroDOSBlock0 block0;
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
             GCHandle handle = GCHandle.Alloc(bk0, GCHandleType.Pinned);
-            block0 = (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
+            MicroDOSBlock0 block0 = (MicroDOSBlock0)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MicroDOSBlock0));
             handle.Free();
 
             sb.AppendLine("MicroDOS filesystem");
@@ -108,7 +103,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume contains {0} files", block0.files).AppendLine();
             sb.AppendFormat("First used block is {0}", block0.firstUsedBlock).AppendLine();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "MicroDOS",
                 ClusterSize = 512,

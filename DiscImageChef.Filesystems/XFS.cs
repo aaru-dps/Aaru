@@ -104,29 +104,27 @@ namespace DiscImageChef.Filesystems
             public Guid meta_uuid;
         }
 
-        const uint XFS_Magic = 0x58465342;
+        const uint XFS_MAGIC = 0x58465342;
 
         public XFS()
         {
             Name = "XFS Filesystem Plugin";
-            PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            PluginUuid = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public XFS(Encoding encoding)
         {
             Name = "XFS Filesystem Plugin";
-            PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public XFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "XFS Filesystem Plugin";
-            PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -153,9 +151,9 @@ namespace DiscImageChef.Filesystems
                     xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
 
                     DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
-                                              location, xfsSb.magicnum, XFS_Magic);
+                                              location, xfsSb.magicnum, XFS_MAGIC);
 
-                    if(xfsSb.magicnum == XFS_Magic) return true;
+                    if(xfsSb.magicnum == XFS_MAGIC) return true;
                 }
             }
             else
@@ -172,9 +170,9 @@ namespace DiscImageChef.Filesystems
                     xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
 
                     DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
-                                              xfsSb.magicnum, XFS_Magic);
+                                              xfsSb.magicnum, XFS_MAGIC);
 
-                    if(xfsSb.magicnum == XFS_Magic) return true;
+                    if(xfsSb.magicnum == XFS_MAGIC) return true;
                 }
 
             return false;
@@ -206,9 +204,9 @@ namespace DiscImageChef.Filesystems
                     xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
 
                     DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
-                                              location, xfsSb.magicnum, XFS_Magic);
+                                              location, xfsSb.magicnum, XFS_MAGIC);
 
-                    if(xfsSb.magicnum == XFS_Magic) break;
+                    if(xfsSb.magicnum == XFS_MAGIC) break;
                 }
             }
             else
@@ -223,12 +221,12 @@ namespace DiscImageChef.Filesystems
                     xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
 
                     DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
-                                              xfsSb.magicnum, XFS_Magic);
+                                              xfsSb.magicnum, XFS_MAGIC);
 
-                    if(xfsSb.magicnum == XFS_Magic) break;
+                    if(xfsSb.magicnum == XFS_MAGIC) break;
                 }
 
-            if(xfsSb.magicnum != XFS_Magic) return;
+            if(xfsSb.magicnum != XFS_MAGIC) return;
 
             StringBuilder sb = new StringBuilder();
 
@@ -247,17 +245,19 @@ namespace DiscImageChef.Filesystems
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "XFS filesystem";
-            xmlFSType.ClusterSize = (int)xfsSb.blocksize;
-            xmlFSType.Clusters = (long)xfsSb.dblocks;
-            xmlFSType.FreeClusters = (long)xfsSb.fdblocks;
-            xmlFSType.FreeClustersSpecified = true;
-            xmlFSType.Files = (long)(xfsSb.icount - xfsSb.ifree);
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.Dirty |= xfsSb.inprogress > 0;
-            xmlFSType.VolumeName = StringHandlers.CToString(xfsSb.fname, CurrentEncoding);
-            xmlFSType.VolumeSerial = xfsSb.uuid.ToString();
+            XmlFsType = new FileSystemType
+            {
+                Type = "XFS filesystem",
+                ClusterSize = (int)xfsSb.blocksize,
+                Clusters = (long)xfsSb.dblocks,
+                FreeClusters = (long)xfsSb.fdblocks,
+                FreeClustersSpecified = true,
+                Files = (long)(xfsSb.icount - xfsSb.ifree),
+                FilesSpecified = true,
+                Dirty = xfsSb.inprogress > 0,
+                VolumeName = StringHandlers.CToString(xfsSb.fname, CurrentEncoding),
+                VolumeSerial = xfsSb.uuid.ToString()
+            };
         }
 
         public override Errno Mount()

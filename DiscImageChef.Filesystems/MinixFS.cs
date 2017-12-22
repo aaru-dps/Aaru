@@ -68,24 +68,22 @@ namespace DiscImageChef.Filesystems
         public MinixFS()
         {
             Name = "Minix Filesystem";
-            PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+            PluginUuid = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public MinixFS(Encoding encoding)
         {
             Name = "Minix Filesystem";
-            PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public MinixFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Minix Filesystem";
-            PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -102,23 +100,23 @@ namespace DiscImageChef.Filesystems
             if(sector + partition.Start >= partition.End) return false;
 
             ushort magic;
-            byte[] minix_sb_sector = imagePlugin.ReadSector(sector + partition.Start);
+            byte[] minixSbSector = imagePlugin.ReadSector(sector + partition.Start);
 
             // Optical media
             if(offset > 0)
             {
                 byte[] tmp = new byte[0x200];
-                Array.Copy(minix_sb_sector, offset, tmp, 0, 0x200);
-                minix_sb_sector = tmp;
+                Array.Copy(minixSbSector, offset, tmp, 0, 0x200);
+                minixSbSector = tmp;
             }
 
-            magic = BitConverter.ToUInt16(minix_sb_sector, 0x010); // Here should reside magic number on Minix v1 & V2
+            magic = BitConverter.ToUInt16(minixSbSector, 0x010); // Here should reside magic number on Minix v1 & V2
 
             if(magic == MINIX_MAGIC || magic == MINIX_MAGIC2 || magic == MINIX2_MAGIC || magic == MINIX2_MAGIC2 ||
                magic == MINIX_CIGAM || magic == MINIX_CIGAM2 || magic == MINIX2_CIGAM ||
                magic == MINIX2_CIGAM2) return true;
 
-            magic = BitConverter.ToUInt16(minix_sb_sector, 0x018); // Here should reside magic number on Minix v3
+            magic = BitConverter.ToUInt16(minixSbSector, 0x018); // Here should reside magic number on Minix v3
 
             if(magic == MINIX_MAGIC || magic == MINIX2_MAGIC || magic == MINIX3_MAGIC || magic == MINIX_CIGAM ||
                magic == MINIX2_CIGAM || magic == MINIX3_CIGAM) return true;
@@ -146,19 +144,19 @@ namespace DiscImageChef.Filesystems
             int filenamesize;
             string minixVersion;
             ushort magic;
-            byte[] minix_sb_sector = imagePlugin.ReadSector(sector + partition.Start);
+            byte[] minixSbSector = imagePlugin.ReadSector(sector + partition.Start);
 
             // Optical media
             if(offset > 0)
             {
                 byte[] tmp = new byte[0x200];
-                Array.Copy(minix_sb_sector, offset, tmp, 0, 0x200);
-                minix_sb_sector = tmp;
+                Array.Copy(minixSbSector, offset, tmp, 0, 0x200);
+                minixSbSector = tmp;
             }
 
-            magic = BitConverter.ToUInt16(minix_sb_sector, 0x018);
+            magic = BitConverter.ToUInt16(minixSbSector, 0x018);
 
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             bool littleEndian;
 
@@ -172,16 +170,16 @@ namespace DiscImageChef.Filesystems
                     case MINIX3_MAGIC:
                     case MINIX3_CIGAM:
                         minixVersion = "Minix v3 filesystem";
-                        xmlFSType.Type = "Minix v3";
+                        XmlFsType.Type = "Minix v3";
                         break;
                     case MINIX2_MAGIC:
                     case MINIX2_CIGAM:
                         minixVersion = "Minix 3 v2 filesystem";
-                        xmlFSType.Type = "Minix 3 v2";
+                        XmlFsType.Type = "Minix 3 v2";
                         break;
                     default:
                         minixVersion = "Minix 3 v1 filesystem";
-                        xmlFSType.Type = "Minix 3 v1";
+                        XmlFsType.Type = "Minix 3 v1";
                         break;
                 }
 
@@ -189,7 +187,7 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                magic = BitConverter.ToUInt16(minix_sb_sector, 0x010);
+                magic = BitConverter.ToUInt16(minixSbSector, 0x010);
 
                 switch(magic)
                 {
@@ -197,49 +195,49 @@ namespace DiscImageChef.Filesystems
                         filenamesize = 14;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = true;
-                        xmlFSType.Type = "Minix v1";
+                        XmlFsType.Type = "Minix v1";
                         break;
                     case MINIX_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = true;
-                        xmlFSType.Type = "Minix v1";
+                        XmlFsType.Type = "Minix v1";
                         break;
                     case MINIX2_MAGIC:
                         filenamesize = 14;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = true;
-                        xmlFSType.Type = "Minix v2";
+                        XmlFsType.Type = "Minix v2";
                         break;
                     case MINIX2_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = true;
-                        xmlFSType.Type = "Minix v2";
+                        XmlFsType.Type = "Minix v2";
                         break;
                     case MINIX_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = false;
-                        xmlFSType.Type = "Minix v1";
+                        XmlFsType.Type = "Minix v1";
                         break;
                     case MINIX_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix v1 filesystem";
                         littleEndian = false;
-                        xmlFSType.Type = "Minix v1";
+                        XmlFsType.Type = "Minix v1";
                         break;
                     case MINIX2_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = false;
-                        xmlFSType.Type = "Minix v2";
+                        XmlFsType.Type = "Minix v2";
                         break;
                     case MINIX2_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix v2 filesystem";
                         littleEndian = false;
-                        xmlFSType.Type = "Minix v2";
+                        XmlFsType.Type = "Minix v2";
                         break;
                     default: return;
                 }
@@ -247,75 +245,73 @@ namespace DiscImageChef.Filesystems
 
             if(minix3)
             {
-                Minix3SuperBlock mnx_sb;
+                Minix3SuperBlock mnxSb;
 
                 if(littleEndian)
                 {
-                    GCHandle handle = GCHandle.Alloc(minix_sb_sector, GCHandleType.Pinned);
-                    mnx_sb = (Minix3SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                    GCHandle handle = GCHandle.Alloc(minixSbSector, GCHandleType.Pinned);
+                    mnxSb = (Minix3SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
                                                                       typeof(Minix3SuperBlock));
                     handle.Free();
                 }
-                else mnx_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minix_sb_sector);
+                else mnxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
 
-                if(magic != MINIX3_MAGIC && magic != MINIX3_CIGAM) mnx_sb.s_blocksize = 1024;
+                if(magic != MINIX3_MAGIC && magic != MINIX3_CIGAM) mnxSb.s_blocksize = 1024;
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
-                if(mnx_sb.s_zones > 0) // On V2
-                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_zones, mnx_sb.s_zones * 1024)
+                if(mnxSb.s_zones > 0) // On V2
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024)
                       .AppendLine();
                 else
-                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_nzones, mnx_sb.s_nzones * 1024)
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024)
                       .AppendLine();
-                sb.AppendFormat("{0} bytes/block", mnx_sb.s_blocksize).AppendLine();
-                sb.AppendFormat("{0} inodes on volume", mnx_sb.s_ninodes).AppendLine();
-                sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnx_sb.s_imap_blocks,
-                                mnx_sb.s_imap_blocks * mnx_sb.s_blocksize).AppendLine();
-                sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnx_sb.s_zmap_blocks,
-                                mnx_sb.s_zmap_blocks * mnx_sb.s_blocksize).AppendLine();
-                sb.AppendFormat("First data zone: {0}", mnx_sb.s_firstdatazone).AppendLine();
+                sb.AppendFormat("{0} bytes/block", mnxSb.s_blocksize).AppendLine();
+                sb.AppendFormat("{0} inodes on volume", mnxSb.s_ninodes).AppendLine();
+                sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnxSb.s_imap_blocks,
+                                mnxSb.s_imap_blocks * mnxSb.s_blocksize).AppendLine();
+                sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnxSb.s_zmap_blocks,
+                                mnxSb.s_zmap_blocks * mnxSb.s_blocksize).AppendLine();
+                sb.AppendFormat("First data zone: {0}", mnxSb.s_firstdatazone).AppendLine();
                 //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
-                sb.AppendFormat("{0} bytes maximum per file", mnx_sb.s_max_size).AppendLine();
-                sb.AppendFormat("On-disk filesystem version: {0}", mnx_sb.s_disk_version).AppendLine();
+                sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
+                sb.AppendFormat("On-disk filesystem version: {0}", mnxSb.s_disk_version).AppendLine();
 
-                xmlFSType.ClusterSize = mnx_sb.s_blocksize;
-                if(mnx_sb.s_zones > 0) xmlFSType.Clusters = mnx_sb.s_zones;
-                else xmlFSType.Clusters = mnx_sb.s_nzones;
+                XmlFsType.ClusterSize = mnxSb.s_blocksize;
+                XmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
             }
             else
             {
-                MinixSuperBlock mnx_sb;
+                MinixSuperBlock mnxSb;
 
                 if(littleEndian)
                 {
-                    GCHandle handle = GCHandle.Alloc(minix_sb_sector, GCHandleType.Pinned);
-                    mnx_sb = (MinixSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                    GCHandle handle = GCHandle.Alloc(minixSbSector, GCHandleType.Pinned);
+                    mnxSb = (MinixSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
                                                                      typeof(MinixSuperBlock));
                     handle.Free();
                 }
-                else mnx_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minix_sb_sector);
+                else mnxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
-                if(mnx_sb.s_zones > 0) // On V2
-                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_zones, mnx_sb.s_zones * 1024)
+                if(mnxSb.s_zones > 0) // On V2
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024)
                       .AppendLine();
                 else
-                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_nzones, mnx_sb.s_nzones * 1024)
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024)
                       .AppendLine();
-                sb.AppendFormat("{0} inodes on volume", mnx_sb.s_ninodes).AppendLine();
-                sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnx_sb.s_imap_blocks,
-                                mnx_sb.s_imap_blocks * 1024).AppendLine();
-                sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnx_sb.s_zmap_blocks, mnx_sb.s_zmap_blocks * 1024)
+                sb.AppendFormat("{0} inodes on volume", mnxSb.s_ninodes).AppendLine();
+                sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnxSb.s_imap_blocks,
+                                mnxSb.s_imap_blocks * 1024).AppendLine();
+                sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnxSb.s_zmap_blocks, mnxSb.s_zmap_blocks * 1024)
                   .AppendLine();
-                sb.AppendFormat("First data zone: {0}", mnx_sb.s_firstdatazone).AppendLine();
+                sb.AppendFormat("First data zone: {0}", mnxSb.s_firstdatazone).AppendLine();
                 //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
-                sb.AppendFormat("{0} bytes maximum per file", mnx_sb.s_max_size).AppendLine();
-                sb.AppendFormat("Filesystem state: {0:X4}", mnx_sb.s_state).AppendLine();
-                xmlFSType.ClusterSize = 1024;
-                if(mnx_sb.s_zones > 0) xmlFSType.Clusters = mnx_sb.s_zones;
-                else xmlFSType.Clusters = mnx_sb.s_nzones;
+                sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
+                sb.AppendFormat("Filesystem state: {0:X4}", mnxSb.s_state).AppendLine();
+                XmlFsType.ClusterSize = 1024;
+                XmlFsType.Clusters = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
             }
             information = sb.ToString();
         }

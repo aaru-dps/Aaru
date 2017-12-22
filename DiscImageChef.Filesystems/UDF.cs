@@ -48,14 +48,14 @@ namespace DiscImageChef.Filesystems
         public UDF()
         {
             Name = "Universal Disk Format";
-            PluginUUID = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+            PluginUuid = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public UDF(Encoding encoding)
         {
             Name = "Universal Disk Format";
-            PluginUUID = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+            PluginUuid = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
             // UDF is always UTF-8
             CurrentEncoding = Encoding.UTF8;
         }
@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems
         public UDF(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Universal Disk Format";
-            PluginUUID = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+            PluginUuid = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
             // UDF is always UTF-8
             CurrentEncoding = Encoding.UTF8;
         }
@@ -416,7 +416,7 @@ namespace DiscImageChef.Filesystems
                 .AppendFormat("Volume name: {0}", StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier))
                 .AppendLine();
             sbInformation.AppendFormat("Volume uses {0} bytes per block", lvd.logicalBlockSize).AppendLine();
-            sbInformation.AppendFormat("Volume was las written in {0}", ECMAToDateTime(lvid.recordingDateTime))
+            sbInformation.AppendFormat("Volume was las written in {0}", EcmaToDateTime(lvid.recordingDateTime))
                          .AppendLine();
             sbInformation.AppendFormat("Volume contains {0} partitions", lvid.numberOfPartitions).AppendLine();
             sbInformation
@@ -445,27 +445,28 @@ namespace DiscImageChef.Filesystems
                                        Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10))
                          .AppendLine();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type =
-                $"UDF v{Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10)}.{Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10):X2}";
-            xmlFSType.ApplicationIdentifier = CurrentEncoding
-                .GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000');
-            xmlFSType.ClusterSize = (int)lvd.logicalBlockSize;
-            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
-                                        (ulong)xmlFSType.ClusterSize);
-            xmlFSType.ModificationDate = ECMAToDateTime(lvid.recordingDateTime);
-            xmlFSType.ModificationDateSpecified = true;
-            xmlFSType.Files = lvidiu.files;
-            xmlFSType.FilesSpecified = true;
-            xmlFSType.VolumeName = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier);
-            xmlFSType.VolumeSetIdentifier = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier);
-            xmlFSType.SystemIdentifier = CurrentEncoding
-                .GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000');
+            XmlFsType = new FileSystemType
+            {
+                Type =
+                    $"UDF v{Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10)}.{Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10):X2}",
+                ApplicationIdentifier =
+                    CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
+                ClusterSize = (int)lvd.logicalBlockSize,
+                ModificationDate = EcmaToDateTime(lvid.recordingDateTime),
+                ModificationDateSpecified = true,
+                Files = lvidiu.files,
+                FilesSpecified = true,
+                VolumeName = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
+                VolumeSetIdentifier = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
+                SystemIdentifier = CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
+            };
+            XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize /
+                                        (ulong)XmlFsType.ClusterSize);
 
             information = sbInformation.ToString();
         }
 
-        static DateTime ECMAToDateTime(Timestamp timestamp)
+        static DateTime EcmaToDateTime(Timestamp timestamp)
         {
             return DateHandlers.ECMAToDateTime(timestamp.typeAndZone, timestamp.year, timestamp.month, timestamp.day,
                                                timestamp.hour, timestamp.minute, timestamp.second,

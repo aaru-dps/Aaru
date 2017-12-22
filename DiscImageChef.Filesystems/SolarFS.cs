@@ -46,24 +46,22 @@ namespace DiscImageChef.Filesystems
         public SolarFS()
         {
             Name = "Solar_OS filesystem";
-            PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+            PluginUuid = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public SolarFS(Encoding encoding)
         {
             Name = "Solar_OS filesystem";
-            PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public SolarFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Solar_OS filesystem";
-            PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -71,19 +69,16 @@ namespace DiscImageChef.Filesystems
             if(2 + partition.Start >= partition.End) return false;
 
             byte signature; // 0x29
-            string fs_type; // "SOL_FS  "
 
             byte[] bpb = imagePlugin.ReadSector(0 + partition.Start);
 
-            byte[] fs_type_b = new byte[8];
+            byte[] fsTypeB = new byte[8];
 
             signature = bpb[0x25];
-            Array.Copy(bpb, 0x35, fs_type_b, 0, 8);
-            fs_type = StringHandlers.CToString(fs_type_b);
+            Array.Copy(bpb, 0x35, fsTypeB, 0, 8);
+            string fsType = StringHandlers.CToString(fsTypeB);
 
-            if(signature == 0x29 && fs_type == "SOL_FS  ") return true;
-
-            return false;
+            return signature == 0x29 && fsType == "SOL_FS  ";
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -92,86 +87,89 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            byte[] bpb_sector = imagePlugin.ReadSector(0 + partition.Start);
-            byte[] bpb_strings;
+            byte[] bpbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            SolarOSParameterBlock BPB = new SolarOSParameterBlock();
 
-            bpb_strings = new byte[8];
-            Array.Copy(bpb_sector, 0x03, bpb_strings, 0, 8);
-            BPB.OEMName = StringHandlers.CToString(bpb_strings);
-            BPB.bps = BitConverter.ToUInt16(bpb_sector, 0x0B);
-            BPB.root_ent = BitConverter.ToUInt16(bpb_sector, 0x10);
-            BPB.sectors = BitConverter.ToUInt16(bpb_sector, 0x12);
-            BPB.media = bpb_sector[0x14];
-            BPB.spfat = BitConverter.ToUInt16(bpb_sector, 0x15);
-            BPB.sptrk = BitConverter.ToUInt16(bpb_sector, 0x17);
-            BPB.heads = BitConverter.ToUInt16(bpb_sector, 0x19);
-            BPB.signature = bpb_sector[0x25];
-            bpb_strings = new byte[8];
-            Array.Copy(bpb_sector, 0x2A, bpb_strings, 0, 11);
-            BPB.vol_name = StringHandlers.CToString(bpb_strings, CurrentEncoding);
-            bpb_strings = new byte[8];
-            Array.Copy(bpb_sector, 0x35, bpb_strings, 0, 8);
-            BPB.fs_type = StringHandlers.CToString(bpb_strings, CurrentEncoding);
+            SolarOSParameterBlock bpb = new SolarOSParameterBlock
+            {
+                bps = BitConverter.ToUInt16(bpbSector, 0x0B),
+                root_ent = BitConverter.ToUInt16(bpbSector, 0x10),
+                sectors = BitConverter.ToUInt16(bpbSector, 0x12),
+                media = bpbSector[0x14],
+                spfat = BitConverter.ToUInt16(bpbSector, 0x15),
+                sptrk = BitConverter.ToUInt16(bpbSector, 0x17),
+                heads = BitConverter.ToUInt16(bpbSector, 0x19),
+                signature = bpbSector[0x25]
+            };
+            byte[] bpbStrings = new byte[8];
+            Array.Copy(bpbSector, 0x03, bpbStrings, 0, 8);
+            bpb.OEMName = StringHandlers.CToString(bpbStrings);
+            bpbStrings = new byte[8];
+            Array.Copy(bpbSector, 0x2A, bpbStrings, 0, 11);
+            bpb.vol_name = StringHandlers.CToString(bpbStrings, CurrentEncoding);
+            bpbStrings = new byte[8];
+            Array.Copy(bpbSector, 0x35, bpbStrings, 0, 8);
+            bpb.fs_type = StringHandlers.CToString(bpbStrings, CurrentEncoding);
 
-            BPB.x86_jump = new byte[3];
-            Array.Copy(bpb_sector, 0x00, BPB.x86_jump, 0, 3);
-            BPB.unk1 = bpb_sector[0x0D];
-            BPB.unk2 = BitConverter.ToUInt16(bpb_sector, 0x0E);
-            BPB.unk3 = new byte[10];
-            Array.Copy(bpb_sector, 0x1B, BPB.unk3, 0, 10);
-            BPB.unk4 = BitConverter.ToUInt32(bpb_sector, 0x26);
+            bpb.x86_jump = new byte[3];
+            Array.Copy(bpbSector, 0x00, bpb.x86_jump, 0, 3);
+            bpb.unk1 = bpbSector[0x0D];
+            bpb.unk2 = BitConverter.ToUInt16(bpbSector, 0x0E);
+            bpb.unk3 = new byte[10];
+            Array.Copy(bpbSector, 0x1B, bpb.unk3, 0, 10);
+            bpb.unk4 = BitConverter.ToUInt32(bpbSector, 0x26);
 
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", BPB.x86_jump[0],
-                                      BPB.x86_jump[1], BPB.x86_jump[2]);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.OEMName: \"{0}\"", BPB.OEMName);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.bps: {0}", BPB.bps);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk1: 0x{0:X2}", BPB.unk1);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk2: 0x{0:X4}", BPB.unk2);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.root_ent: {0}", BPB.root_ent);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.sectors: {0}", BPB.sectors);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.media: 0x{0:X2}", BPB.media);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.spfat: {0}", BPB.spfat);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.sptrk: {0}", BPB.sptrk);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.heads: {0}", BPB.heads);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", bpb.x86_jump[0],
+                                      bpb.x86_jump[1], bpb.x86_jump[2]);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.OEMName: \"{0}\"", bpb.OEMName);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.bps: {0}", bpb.bps);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk1: 0x{0:X2}", bpb.unk1);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk2: 0x{0:X4}", bpb.unk2);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.root_ent: {0}", bpb.root_ent);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.sectors: {0}", bpb.sectors);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.media: 0x{0:X2}", bpb.media);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.spfat: {0}", bpb.spfat);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.sptrk: {0}", bpb.sptrk);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.heads: {0}", bpb.heads);
             DicConsole.DebugWriteLine("SolarFS plugin",
                                       "BPB.unk3: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}",
-                                      BPB.unk3[0], BPB.unk3[1], BPB.unk3[2], BPB.unk3[3], BPB.unk3[4], BPB.unk3[5],
-                                      BPB.unk3[6], BPB.unk3[7], BPB.unk3[8], BPB.unk3[9]);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.signature: 0x{0:X2}", BPB.signature);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk4: 0x{0:X8}", BPB.unk4);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"", BPB.vol_name);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.fs_type: \"{0}\"", BPB.fs_type);
+                                      bpb.unk3[0], bpb.unk3[1], bpb.unk3[2], bpb.unk3[3], bpb.unk3[4], bpb.unk3[5],
+                                      bpb.unk3[6], bpb.unk3[7], bpb.unk3[8], bpb.unk3[9]);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.signature: 0x{0:X2}", bpb.signature);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk4: 0x{0:X8}", bpb.unk4);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"", bpb.vol_name);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.fs_type: \"{0}\"", bpb.fs_type);
 
             sb.AppendLine("Solar_OS filesystem");
-            sb.AppendFormat("Media descriptor: 0x{0:X2}", BPB.media).AppendLine();
-            sb.AppendFormat("{0} bytes per sector", BPB.bps).AppendLine();
+            sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
+            sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
             if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 ||
                imagePlugin.GetSectorSize() == 2448)
             {
-                if(BPB.bps != imagePlugin.GetSectorSize())
+                if(bpb.bps != imagePlugin.GetSectorSize())
                     sb
                         .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
-                                      BPB.bps, 2048).AppendLine();
+                                      bpb.bps, 2048).AppendLine();
             }
-            else if(BPB.bps != imagePlugin.GetSectorSize())
+            else if(bpb.bps != imagePlugin.GetSectorSize())
                 sb
                     .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
-                                  BPB.bps, imagePlugin.GetSectorSize()).AppendLine();
-            sb.AppendFormat("{0} sectors on volume ({1} bytes)", BPB.sectors, BPB.sectors * BPB.bps).AppendLine();
-            if(BPB.sectors > imagePlugin.GetSectors())
+                                  bpb.bps, imagePlugin.GetSectorSize()).AppendLine();
+            sb.AppendFormat("{0} sectors on volume ({1} bytes)", bpb.sectors, bpb.sectors * bpb.bps).AppendLine();
+            if(bpb.sectors > imagePlugin.GetSectors())
                 sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)",
-                                BPB.sectors, imagePlugin.GetSectors());
-            sb.AppendFormat("{0} heads", BPB.heads).AppendLine();
-            sb.AppendFormat("{0} sectors per track", BPB.sptrk).AppendLine();
-            sb.AppendFormat("Volume name: {0}", BPB.vol_name).AppendLine();
+                                bpb.sectors, imagePlugin.GetSectors());
+            sb.AppendFormat("{0} heads", bpb.heads).AppendLine();
+            sb.AppendFormat("{0} sectors per track", bpb.sptrk).AppendLine();
+            sb.AppendFormat("Volume name: {0}", bpb.vol_name).AppendLine();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "SolarFS";
-            xmlFSType.Clusters = BPB.sectors;
-            xmlFSType.ClusterSize = BPB.bps;
-            xmlFSType.VolumeName = BPB.vol_name;
+            XmlFsType = new FileSystemType
+            {
+                Type = "SolarFS",
+                Clusters = bpb.sectors,
+                ClusterSize = bpb.bps,
+                VolumeName = bpb.vol_name
+            };
 
             information = sb.ToString();
         }

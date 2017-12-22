@@ -58,9 +58,7 @@ namespace DiscImageChef.Filesystems.CPM
             if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) != 0)
                 return Errno.NoSuchExtendedAttribute;
 
-            if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return Errno.NoError;
-
-            return Errno.NoSuchExtendedAttribute;
+            return !passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf) ? Errno.NoError : Errno.NoSuchExtendedAttribute;
         }
 
         /// <summary>

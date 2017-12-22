@@ -61,12 +61,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     return Errno.NoError;
                 }
 
-            uint fileID;
-            MFS_FileEntry entry;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
-
-            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
 
             if(entry.flRLgLen > 0)
             {
@@ -130,13 +127,11 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     }
                     else return Errno.NoSuchExtendedAttribute;
 
-            uint fileID;
-            MFS_FileEntry entry;
             Errno error;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out fileID)) return Errno.NoSuchFile;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileID, out entry)) return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
 
             if(entry.flRLgLen > 0 &&
                string.Compare(xattr, "com.apple.ResourceFork", StringComparison.InvariantCulture) == 0)

@@ -42,27 +42,27 @@ namespace DiscImageChef.Filesystems
 {
     public class APFS : Filesystem
     {
-        const uint ApfsContainerMagic = 0x4253584E; // "NXSB"
-        const uint ApfsVolumeMagic = 0x42535041; // "APSB"
+        const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"
+        const uint APFS_VOLUME_MAGIC = 0x42535041; // "APSB"
 
         public APFS()
         {
             Name = "Apple File System";
-            PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+            PluginUuid = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public APFS(Encoding encoding)
         {
             Name = "Apple File System";
-            PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+            PluginUuid = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public APFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple File System";
-            PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+            PluginUuid = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
             CurrentEncoding = Encoding.UTF8;
         }
 
@@ -94,16 +94,14 @@ namespace DiscImageChef.Filesystems
             }
             catch { return false; }
 
-            if(nxSb.magic == ApfsContainerMagic) return true;
-
-            return false;
+            return nxSb.magic == APFS_CONTAINER_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             information = "";
 
             if(partition.Start >= partition.End) return;
@@ -120,7 +118,7 @@ namespace DiscImageChef.Filesystems
             }
             catch { return; }
 
-            if(nxSb.magic != ApfsContainerMagic) return;
+            if(nxSb.magic != APFS_CONTAINER_MAGIC) return;
 
             sbInformation.AppendLine("Apple File System");
             sbInformation.AppendLine();
@@ -130,11 +128,13 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Bootable = false;
-            xmlFSType.Clusters = (long)nxSb.containerBlocks;
-            xmlFSType.ClusterSize = (int)nxSb.blockSize;
-            xmlFSType.Type = "Apple File System";
+            XmlFsType = new FileSystemType
+            {
+                Bootable = false,
+                Clusters = (long)nxSb.containerBlocks,
+                ClusterSize = (int)nxSb.blockSize,
+                Type = "Apple File System"
+            };
         }
 
         public override Errno Mount()

@@ -164,9 +164,7 @@ namespace DiscImageChef.Filesystems.CPM
             try
             {
                 byte[] sector;
-                ulong sectorCount;
                 ulong sectorSize;
-                ulong sides;
                 ulong firstDirectorySector;
                 byte[] directory = null;
                 workingDefinition = null;
@@ -200,8 +198,8 @@ namespace DiscImageChef.Filesystems.CPM
                        amsSb.format == 2 && (amsSb.sidedness & 0x02) == 2)
                     {
                         // Calculate device limits
-                        sides = (ulong)(amsSb.format == 0 ? 1 : 2);
-                        sectorCount = (ulong)(amsSb.tps * amsSb.spt * (byte)sides);
+                        ulong sides = (ulong)(amsSb.format == 0 ? 1 : 2);
+                        ulong sectorCount = (ulong)(amsSb.tps * amsSb.spt * (byte)sides);
                         sectorSize = (ulong)(128 << amsSb.psh);
 
                         // Compare device limits from superblock to real limits
@@ -211,10 +209,12 @@ namespace DiscImageChef.Filesystems.CPM
                             firstDirectorySector = (ulong)(amsSb.off * amsSb.spt);
 
                             // Build a DiscParameterBlock
-                            dpb = new DiscParameterBlock();
-                            dpb.al0 = sectorCount == 1440 ? (byte)0xF0 : (byte)0xC0;
-                            dpb.spt = amsSb.spt;
-                            dpb.bsh = amsSb.bsh;
+                            dpb = new DiscParameterBlock
+                            {
+                                al0 = sectorCount == 1440 ? (byte)0xF0 : (byte)0xC0,
+                                spt = amsSb.spt,
+                                bsh = amsSb.bsh
+                            };
                             for(int i = 0; i < dpb.bsh; i++) dpb.blm += (byte)Math.Pow(2, i);
 
                             if(sectorCount >= 1440)
@@ -239,27 +239,27 @@ namespace DiscImageChef.Filesystems.CPM
                                                                 directoryLength);
 
                             // Build a CP/M disk definition
-                            workingDefinition = new CpmDefinition();
-                            workingDefinition.al0 = dpb.al0;
-                            workingDefinition.al1 = dpb.al1;
-                            workingDefinition.bitrate = "LOW";
-                            workingDefinition.blm = dpb.blm;
-                            workingDefinition.bsh = dpb.bsh;
-                            workingDefinition.bytesPerSector = 512;
-                            workingDefinition.cylinders = amsSb.tps;
-                            workingDefinition.drm = dpb.drm;
-                            workingDefinition.dsm = dpb.dsm;
-                            workingDefinition.encoding = "MFM";
-                            workingDefinition.evenOdd = false;
-                            workingDefinition.exm = dpb.exm;
-                            workingDefinition.label = null;
-                            workingDefinition.comment = "Amstrad PCW superblock";
-                            workingDefinition.ofs = dpb.off;
-                            workingDefinition.sectorsPerTrack = amsSb.spt;
+                            workingDefinition = new CpmDefinition
+                            {
+                                al0 = dpb.al0,
+                                al1 = dpb.al1,
+                                bitrate = "LOW",
+                                blm = dpb.blm,
+                                bsh = dpb.bsh,
+                                bytesPerSector = 512,
+                                cylinders = amsSb.tps,
+                                drm = dpb.drm,
+                                dsm = dpb.dsm,
+                                encoding = "MFM",
+                                evenOdd = false,
+                                exm = dpb.exm,
+                                label = null,
+                                comment = "Amstrad PCW superblock",
+                                ofs = dpb.off,
+                                sectorsPerTrack = amsSb.spt,
+                                side1 = new Side {sideId = 0, sectorIds = new int[amsSb.spt]}
+                            };
 
-                            workingDefinition.side1 = new Side();
-                            workingDefinition.side1.sideId = 0;
-                            workingDefinition.side1.sectorIds = new int[amsSb.spt];
                             for(int si = 0; si < amsSb.spt; si++) workingDefinition.side1.sectorIds[si] = si + 1;
 
                             if(amsSb.format == 2)
@@ -273,9 +273,7 @@ namespace DiscImageChef.Filesystems.CPM
                                         break;
                                 }
 
-                                workingDefinition.side2 = new Side();
-                                workingDefinition.side2.sideId = 1;
-                                workingDefinition.side2.sectorIds = new int[amsSb.spt];
+                                workingDefinition.side2 = new Side {sideId = 1, sectorIds = new int[amsSb.spt]};
                                 for(int si = 0; si < amsSb.spt; si++) workingDefinition.side2.sectorIds[si] = si + 1;
                             }
                             else workingDefinition.order = null;
@@ -323,56 +321,59 @@ namespace DiscImageChef.Filesystems.CPM
                             firstDirectorySector = (ulong)(hddSb.off * hddSb.sectorsPerTrack);
 
                             // Build a DiscParameterBlock
-                            dpb = new DiscParameterBlock();
-                            dpb.al0 = (byte)hddSb.al0;
-                            dpb.al1 = (byte)hddSb.al1;
-                            dpb.blm = hddSb.blm;
-                            dpb.bsh = hddSb.bsh;
-                            dpb.cks = hddSb.cks;
-                            dpb.drm = hddSb.drm;
-                            dpb.dsm = hddSb.dsm;
-                            dpb.exm = hddSb.exm;
-                            dpb.off = hddSb.off;
-                            dpb.phm = 0; // Needed?
-                            dpb.psh = 0; // Needed?
-                            dpb.spt = hddSb.spt;
+                            dpb = new DiscParameterBlock
+                            {
+                                al0 = (byte)hddSb.al0,
+                                al1 = (byte)hddSb.al1,
+                                blm = hddSb.blm,
+                                bsh = hddSb.bsh,
+                                cks = hddSb.cks,
+                                drm = hddSb.drm,
+                                dsm = hddSb.dsm,
+                                exm = hddSb.exm,
+                                off = hddSb.off,
+                                // Needed?
+                                phm = 0,
+                                // Needed?
+                                psh = 0,
+                                spt = hddSb.spt
+                            };
+
                             uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / sectorSize);
                             directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start,
                                                                 directoryLength);
                             DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
 
                             // Build a CP/M disk definition
-                            workingDefinition = new CpmDefinition();
-                            workingDefinition.al0 = dpb.al0;
-                            workingDefinition.al1 = dpb.al1;
-                            workingDefinition.bitrate = "HIGH";
-                            workingDefinition.blm = dpb.blm;
-                            workingDefinition.bsh = dpb.bsh;
-                            workingDefinition.bytesPerSector = 512;
-                            workingDefinition.cylinders = hddSb.cylinders;
-                            workingDefinition.drm = dpb.drm;
-                            workingDefinition.dsm = dpb.dsm;
-                            workingDefinition.encoding = "MFM";
-                            workingDefinition.evenOdd = false;
-                            workingDefinition.exm = dpb.exm;
-                            workingDefinition.label = null;
-                            workingDefinition.comment = "CP/M-86 hard disk superblock";
-                            workingDefinition.ofs = dpb.off;
-                            workingDefinition.sectorsPerTrack = hddSb.sectorsPerTrack;
-                            workingDefinition.side1 = new Side();
-                            workingDefinition.side1.sideId = 0;
-                            workingDefinition.side1.sectorIds = new int[hddSb.sectorsPerTrack];
+                            workingDefinition = new CpmDefinition
+                            {
+                                al0 = dpb.al0,
+                                al1 = dpb.al1,
+                                bitrate = "HIGH",
+                                blm = dpb.blm,
+                                bsh = dpb.bsh,
+                                bytesPerSector = 512,
+                                cylinders = hddSb.cylinders,
+                                drm = dpb.drm,
+                                dsm = dpb.dsm,
+                                encoding = "MFM",
+                                evenOdd = false,
+                                exm = dpb.exm,
+                                label = null,
+                                comment = "CP/M-86 hard disk superblock",
+                                ofs = dpb.off,
+                                sectorsPerTrack = hddSb.sectorsPerTrack,
+                                side1 = new Side {sideId = 0, sectorIds = new int[hddSb.sectorsPerTrack]},
+                                order = "SIDES",
+                                side2 = new Side {sideId = 1, sectorIds = new int[hddSb.sectorsPerTrack]},
+                                skew = 0,
+                                sofs = 0
+                            };
+
                             for(int si = 0; si < hddSb.sectorsPerTrack; si++)
                                 workingDefinition.side1.sectorIds[si] = si + 1;
-
-                            workingDefinition.order = "SIDES";
-                            workingDefinition.side2 = new Side();
-                            workingDefinition.side2.sideId = 1;
-                            workingDefinition.side2.sectorIds = new int[hddSb.sectorsPerTrack];
                             for(int si = 0; si < hddSb.spt; si++) workingDefinition.side2.sectorIds[si] = si + 1;
 
-                            workingDefinition.skew = 0;
-                            workingDefinition.sofs = 0;
                         }
                     }
                 }
@@ -404,44 +405,46 @@ namespace DiscImageChef.Filesystems.CPM
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 8;
-                                dpb = new DiscParameterBlock();
-                                dpb.al0 = 0xC0;
-                                dpb.al1 = 0;
-                                dpb.blm = 7;
-                                dpb.bsh = 3;
-                                dpb.cks = 0x10;
-                                dpb.drm = 0x3F;
-                                dpb.dsm = 0x9B;
-                                dpb.exm = 0;
-                                dpb.off = 1;
-                                dpb.phm = 3;
-                                dpb.psh = 2;
-                                dpb.spt = 8 * 4;
+                                dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0xC0,
+                                    al1 = 0,
+                                    blm = 7,
+                                    bsh = 3,
+                                    cks = 0x10,
+                                    drm = 0x3F,
+                                    dsm = 0x9B,
+                                    exm = 0,
+                                    off = 1,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 8 * 4
+                                };
 
-                                workingDefinition = new CpmDefinition();
-                                workingDefinition.al0 = dpb.al0;
-                                workingDefinition.al1 = dpb.al1;
-                                workingDefinition.bitrate = "LOW";
-                                workingDefinition.blm = dpb.blm;
-                                workingDefinition.bsh = dpb.bsh;
-                                workingDefinition.bytesPerSector = 512;
-                                workingDefinition.cylinders = 40;
-                                workingDefinition.drm = dpb.drm;
-                                workingDefinition.dsm = dpb.dsm;
-                                workingDefinition.encoding = "MFM";
-                                workingDefinition.evenOdd = false;
-                                workingDefinition.exm = dpb.exm;
-                                workingDefinition.label = null;
-                                workingDefinition.comment = "CP/M-86 floppy identifier";
-                                workingDefinition.ofs = dpb.off;
-                                workingDefinition.sectorsPerTrack = 8;
-                                workingDefinition.side1 = new Side();
-                                workingDefinition.side1.sideId = 0;
-                                workingDefinition.side1.sectorIds = new int[8];
+                                workingDefinition = new CpmDefinition
+                                {
+                                    al0 = dpb.al0,
+                                    al1 = dpb.al1,
+                                    bitrate = "LOW",
+                                    blm = dpb.blm,
+                                    bsh = dpb.bsh,
+                                    bytesPerSector = 512,
+                                    cylinders = 40,
+                                    drm = dpb.drm,
+                                    dsm = dpb.dsm,
+                                    encoding = "MFM",
+                                    evenOdd = false,
+                                    exm = dpb.exm,
+                                    label = null,
+                                    comment = "CP/M-86 floppy identifier",
+                                    ofs = dpb.off,
+                                    sectorsPerTrack = 8,
+                                    side1 = new Side {sideId = 0, sectorIds = new int[8]},
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
                                 for(int si = 0; si < 8; si++) workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                workingDefinition.skew = 0;
-                                workingDefinition.sofs = 0;
                             }
 
                             break;
@@ -450,50 +453,49 @@ namespace DiscImageChef.Filesystems.CPM
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 16;
-                                dpb = new DiscParameterBlock();
-                                dpb.al0 = 0x80;
-                                dpb.al1 = 0;
-                                dpb.blm = 0x0F;
-                                dpb.bsh = 4;
-                                dpb.cks = 0x10;
-                                dpb.drm = 0x3F;
-                                dpb.dsm = 0x9D;
-                                dpb.exm = 1;
-                                dpb.off = 2;
-                                dpb.phm = 3;
-                                dpb.psh = 2;
-                                dpb.spt = 8 * 4;
+                                dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0x80,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x10,
+                                    drm = 0x3F,
+                                    dsm = 0x9D,
+                                    exm = 1,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 8 * 4
+                                };
 
-                                workingDefinition = new CpmDefinition();
-                                workingDefinition.al0 = dpb.al0;
-                                workingDefinition.al1 = dpb.al1;
-                                workingDefinition.bitrate = "LOW";
-                                workingDefinition.blm = dpb.blm;
-                                workingDefinition.bsh = dpb.bsh;
-                                workingDefinition.bytesPerSector = 512;
-                                workingDefinition.cylinders = 40;
-                                workingDefinition.drm = dpb.drm;
-                                workingDefinition.dsm = dpb.dsm;
-                                workingDefinition.encoding = "MFM";
-                                workingDefinition.evenOdd = false;
-                                workingDefinition.exm = dpb.exm;
-                                workingDefinition.label = null;
-                                workingDefinition.comment = "CP/M-86 floppy identifier";
-                                workingDefinition.ofs = dpb.off;
-                                workingDefinition.sectorsPerTrack = 8;
-                                workingDefinition.side1 = new Side();
-                                workingDefinition.side1.sideId = 0;
-                                workingDefinition.side1.sectorIds = new int[8];
+                                workingDefinition = new CpmDefinition
+                                {
+                                    al0 = dpb.al0,
+                                    al1 = dpb.al1,
+                                    bitrate = "LOW",
+                                    blm = dpb.blm,
+                                    bsh = dpb.bsh,
+                                    bytesPerSector = 512,
+                                    cylinders = 40,
+                                    drm = dpb.drm,
+                                    dsm = dpb.dsm,
+                                    encoding = "MFM",
+                                    evenOdd = false,
+                                    exm = dpb.exm,
+                                    label = null,
+                                    comment = "CP/M-86 floppy identifier",
+                                    ofs = dpb.off,
+                                    sectorsPerTrack = 8,
+                                    side1 = new Side {sideId = 0, sectorIds = new int[8]},
+                                    order = "SIDES",
+                                    side2 = new Side {sideId = 1, sectorIds = new int[8]},
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
                                 for(int si = 0; si < 8; si++) workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                workingDefinition.order = "SIDES";
-                                workingDefinition.side2 = new Side();
-                                workingDefinition.side2.sideId = 1;
-                                workingDefinition.side2.sectorIds = new int[8];
                                 for(int si = 0; si < 8; si++) workingDefinition.side2.sectorIds[si] = si + 1;
-
-                                workingDefinition.skew = 0;
-                                workingDefinition.sofs = 0;
                             }
 
                             break;
@@ -504,50 +506,49 @@ namespace DiscImageChef.Filesystems.CPM
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 36;
-                                dpb = new DiscParameterBlock();
-                                dpb.al0 = 0x80;
-                                dpb.al1 = 0;
-                                dpb.blm = 0x0F;
-                                dpb.bsh = 4;
-                                dpb.cks = 0x10;
-                                dpb.drm = 0x3F;
-                                dpb.dsm = 0; // Unknown. Needed?
-                                dpb.exm = 1;
-                                dpb.off = 4;
-                                dpb.phm = 3;
-                                dpb.psh = 2;
-                                dpb.spt = 9 * 4;
+                                dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0x80,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x10,
+                                    drm = 0x3F,
+                                    dsm = 0, // Unknown. Needed?
+                                    exm = 1,
+                                    off = 4,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 9 * 4
+                                };
 
-                                workingDefinition = new CpmDefinition();
-                                workingDefinition.al0 = dpb.al0;
-                                workingDefinition.al1 = dpb.al1;
-                                workingDefinition.bitrate = "LOW";
-                                workingDefinition.blm = dpb.blm;
-                                workingDefinition.bsh = dpb.bsh;
-                                workingDefinition.bytesPerSector = 512;
-                                workingDefinition.cylinders = 40;
-                                workingDefinition.drm = dpb.drm;
-                                workingDefinition.dsm = dpb.dsm;
-                                workingDefinition.encoding = "MFM";
-                                workingDefinition.evenOdd = false;
-                                workingDefinition.exm = dpb.exm;
-                                workingDefinition.label = null;
-                                workingDefinition.comment = "CP/M-86 floppy identifier";
-                                workingDefinition.ofs = dpb.off;
-                                workingDefinition.sectorsPerTrack = 9;
-                                workingDefinition.side1 = new Side();
-                                workingDefinition.side1.sideId = 0;
-                                workingDefinition.side1.sectorIds = new int[9];
+                                workingDefinition = new CpmDefinition
+                                {
+                                    al0 = dpb.al0,
+                                    al1 = dpb.al1,
+                                    bitrate = "LOW",
+                                    blm = dpb.blm,
+                                    bsh = dpb.bsh,
+                                    bytesPerSector = 512,
+                                    cylinders = 40,
+                                    drm = dpb.drm,
+                                    dsm = dpb.dsm,
+                                    encoding = "MFM",
+                                    evenOdd = false,
+                                    exm = dpb.exm,
+                                    label = null,
+                                    comment = "CP/M-86 floppy identifier",
+                                    ofs = dpb.off,
+                                    sectorsPerTrack = 9,
+                                    side1 = new Side {sideId = 0, sectorIds = new int[9]},
+                                    order = "SIDES",
+                                    side2 = new Side {sideId = 1, sectorIds = new int[9]},
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
                                 for(int si = 0; si < 9; si++) workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                workingDefinition.order = "SIDES";
-                                workingDefinition.side2 = new Side();
-                                workingDefinition.side2.sideId = 1;
-                                workingDefinition.side2.sectorIds = new int[9];
                                 for(int si = 0; si < 9; si++) workingDefinition.side2.sectorIds[si] = si + 1;
-
-                                workingDefinition.skew = 0;
-                                workingDefinition.sofs = 0;
                             }
 
                             break;
@@ -557,50 +558,49 @@ namespace DiscImageChef.Filesystems.CPM
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 36;
-                                dpb = new DiscParameterBlock();
-                                dpb.al0 = 0xF0;
-                                dpb.al1 = 0;
-                                dpb.blm = 0x0F;
-                                dpb.bsh = 4;
-                                dpb.cks = 0x40;
-                                dpb.drm = 0xFF;
-                                dpb.dsm = 0x15E;
-                                dpb.exm = 0;
-                                dpb.off = 4;
-                                dpb.phm = 3;
-                                dpb.psh = 2;
-                                dpb.spt = 9 * 4;
+                                dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0xF0,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x15E,
+                                    exm = 0,
+                                    off = 4,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 9 * 4
+                                };
 
-                                workingDefinition = new CpmDefinition();
-                                workingDefinition.al0 = dpb.al0;
-                                workingDefinition.al1 = dpb.al1;
-                                workingDefinition.bitrate = "LOW";
-                                workingDefinition.blm = dpb.blm;
-                                workingDefinition.bsh = dpb.bsh;
-                                workingDefinition.bytesPerSector = 512;
-                                workingDefinition.cylinders = 80;
-                                workingDefinition.drm = dpb.drm;
-                                workingDefinition.dsm = dpb.dsm;
-                                workingDefinition.encoding = "MFM";
-                                workingDefinition.evenOdd = false;
-                                workingDefinition.exm = dpb.exm;
-                                workingDefinition.label = null;
-                                workingDefinition.comment = "CP/M-86 floppy identifier";
-                                workingDefinition.ofs = dpb.off;
-                                workingDefinition.sectorsPerTrack = 9;
-                                workingDefinition.side1 = new Side();
-                                workingDefinition.side1.sideId = 0;
-                                workingDefinition.side1.sectorIds = new int[9];
+                                workingDefinition = new CpmDefinition
+                                {
+                                    al0 = dpb.al0,
+                                    al1 = dpb.al1,
+                                    bitrate = "LOW",
+                                    blm = dpb.blm,
+                                    bsh = dpb.bsh,
+                                    bytesPerSector = 512,
+                                    cylinders = 80,
+                                    drm = dpb.drm,
+                                    dsm = dpb.dsm,
+                                    encoding = "MFM",
+                                    evenOdd = false,
+                                    exm = dpb.exm,
+                                    label = null,
+                                    comment = "CP/M-86 floppy identifier",
+                                    ofs = dpb.off,
+                                    sectorsPerTrack = 9,
+                                    side1 = new Side {sideId = 0, sectorIds = new int[9]},
+                                    order = "SIDES",
+                                    side2 = new Side {sideId = 1, sectorIds = new int[9]},
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
                                 for(int si = 0; si < 9; si++) workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                workingDefinition.order = "SIDES";
-                                workingDefinition.side2 = new Side();
-                                workingDefinition.side2.sideId = 1;
-                                workingDefinition.side2.sectorIds = new int[9];
                                 for(int si = 0; si < 9; si++) workingDefinition.side2.sectorIds[si] = si + 1;
-
-                                workingDefinition.skew = 0;
-                                workingDefinition.sofs = 0;
                             }
 
                             break;
@@ -609,50 +609,49 @@ namespace DiscImageChef.Filesystems.CPM
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 18;
-                                dpb = new DiscParameterBlock();
-                                dpb.al0 = 0xF0;
-                                dpb.al1 = 0;
-                                dpb.blm = 0x0F;
-                                dpb.bsh = 4;
-                                dpb.cks = 0x40;
-                                dpb.drm = 0xFF;
-                                dpb.dsm = 0x162;
-                                dpb.exm = 0;
-                                dpb.off = 2;
-                                dpb.phm = 3;
-                                dpb.psh = 2;
-                                dpb.spt = 9 * 4;
+                                dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0xF0,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x162,
+                                    exm = 0,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 9 * 4
+                                };
 
-                                workingDefinition = new CpmDefinition();
-                                workingDefinition.al0 = dpb.al0;
-                                workingDefinition.al1 = dpb.al1;
-                                workingDefinition.bitrate = "LOW";
-                                workingDefinition.blm = dpb.blm;
-                                workingDefinition.bsh = dpb.bsh;
-                                workingDefinition.bytesPerSector = 512;
-                                workingDefinition.cylinders = 80;
-                                workingDefinition.drm = dpb.drm;
-                                workingDefinition.dsm = dpb.dsm;
-                                workingDefinition.encoding = "MFM";
-                                workingDefinition.evenOdd = false;
-                                workingDefinition.exm = dpb.exm;
-                                workingDefinition.label = null;
-                                workingDefinition.comment = "CP/M-86 floppy identifier";
-                                workingDefinition.ofs = dpb.off;
-                                workingDefinition.sectorsPerTrack = 9;
-                                workingDefinition.side1 = new Side();
-                                workingDefinition.side1.sideId = 0;
-                                workingDefinition.side1.sectorIds = new int[9];
+                                workingDefinition = new CpmDefinition
+                                {
+                                    al0 = dpb.al0,
+                                    al1 = dpb.al1,
+                                    bitrate = "LOW",
+                                    blm = dpb.blm,
+                                    bsh = dpb.bsh,
+                                    bytesPerSector = 512,
+                                    cylinders = 80,
+                                    drm = dpb.drm,
+                                    dsm = dpb.dsm,
+                                    encoding = "MFM",
+                                    evenOdd = false,
+                                    exm = dpb.exm,
+                                    label = null,
+                                    comment = "CP/M-86 floppy identifier",
+                                    ofs = dpb.off,
+                                    sectorsPerTrack = 9,
+                                    side1 = new Side {sideId = 0, sectorIds = new int[9]},
+                                    order = "CYLINDERS",
+                                    side2 = new Side {sideId = 1, sectorIds = new int[9]},
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
                                 for(int si = 0; si < 9; si++) workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                workingDefinition.order = "CYLINDERS";
-                                workingDefinition.side2 = new Side();
-                                workingDefinition.side2.sideId = 1;
-                                workingDefinition.side2.sectorIds = new int[9];
                                 for(int si = 0; si < 9; si++) workingDefinition.side2.sectorIds[si] = si + 1;
-
-                                workingDefinition.skew = 0;
-                                workingDefinition.sofs = 0;
                             }
 
                             break;
@@ -661,50 +660,49 @@ namespace DiscImageChef.Filesystems.CPM
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 30;
-                                dpb = new DiscParameterBlock();
-                                dpb.al0 = 0xC0;
-                                dpb.al1 = 0;
-                                dpb.blm = 0x1F;
-                                dpb.bsh = 5;
-                                dpb.cks = 0x40;
-                                dpb.drm = 0xFF;
-                                dpb.dsm = 0x127;
-                                dpb.exm = 1;
-                                dpb.off = 2;
-                                dpb.phm = 3;
-                                dpb.psh = 2;
-                                dpb.spt = 15 * 4;
+                                dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0xC0,
+                                    al1 = 0,
+                                    blm = 0x1F,
+                                    bsh = 5,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x127,
+                                    exm = 1,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 15 * 4
+                                };
 
-                                workingDefinition = new CpmDefinition();
-                                workingDefinition.al0 = dpb.al0;
-                                workingDefinition.al1 = dpb.al1;
-                                workingDefinition.bitrate = "HIGH";
-                                workingDefinition.blm = dpb.blm;
-                                workingDefinition.bsh = dpb.bsh;
-                                workingDefinition.bytesPerSector = 512;
-                                workingDefinition.cylinders = 80;
-                                workingDefinition.drm = dpb.drm;
-                                workingDefinition.dsm = dpb.dsm;
-                                workingDefinition.encoding = "MFM";
-                                workingDefinition.evenOdd = false;
-                                workingDefinition.exm = dpb.exm;
-                                workingDefinition.label = null;
-                                workingDefinition.comment = "CP/M-86 floppy identifier";
-                                workingDefinition.ofs = dpb.off;
-                                workingDefinition.sectorsPerTrack = 15;
-                                workingDefinition.side1 = new Side();
-                                workingDefinition.side1.sideId = 0;
-                                workingDefinition.side1.sectorIds = new int[15];
+                                workingDefinition = new CpmDefinition
+                                {
+                                    al0 = dpb.al0,
+                                    al1 = dpb.al1,
+                                    bitrate = "HIGH",
+                                    blm = dpb.blm,
+                                    bsh = dpb.bsh,
+                                    bytesPerSector = 512,
+                                    cylinders = 80,
+                                    drm = dpb.drm,
+                                    dsm = dpb.dsm,
+                                    encoding = "MFM",
+                                    evenOdd = false,
+                                    exm = dpb.exm,
+                                    label = null,
+                                    comment = "CP/M-86 floppy identifier",
+                                    ofs = dpb.off,
+                                    sectorsPerTrack = 15,
+                                    side1 = new Side {sideId = 0, sectorIds = new int[15]},
+                                    order = "CYLINDERS",
+                                    side2 = new Side {sideId = 1, sectorIds = new int[15]},
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
                                 for(int si = 0; si < 15; si++) workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                workingDefinition.order = "CYLINDERS";
-                                workingDefinition.side2 = new Side();
-                                workingDefinition.side2.sideId = 1;
-                                workingDefinition.side2.sectorIds = new int[15];
                                 for(int si = 0; si < 15; si++) workingDefinition.side2.sectorIds[si] = si + 1;
-
-                                workingDefinition.skew = 0;
-                                workingDefinition.sofs = 0;
                             }
 
                             break;
@@ -713,50 +711,49 @@ namespace DiscImageChef.Filesystems.CPM
                             {
                                 cpmFound = true;
                                 firstDirectorySector86 = 36;
-                                dpb = new DiscParameterBlock();
-                                dpb.al0 = 0xC0;
-                                dpb.al1 = 0;
-                                dpb.blm = 0x1F;
-                                dpb.bsh = 5;
-                                dpb.cks = 0x40;
-                                dpb.drm = 0xFF;
-                                dpb.dsm = 0x162;
-                                dpb.exm = 1;
-                                dpb.off = 2;
-                                dpb.phm = 3;
-                                dpb.psh = 2;
-                                dpb.spt = 18 * 4;
+                                dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0xC0,
+                                    al1 = 0,
+                                    blm = 0x1F,
+                                    bsh = 5,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x162,
+                                    exm = 1,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 18 * 4
+                                };
 
-                                workingDefinition = new CpmDefinition();
-                                workingDefinition.al0 = dpb.al0;
-                                workingDefinition.al1 = dpb.al1;
-                                workingDefinition.bitrate = "LOW";
-                                workingDefinition.blm = dpb.blm;
-                                workingDefinition.bsh = dpb.bsh;
-                                workingDefinition.bytesPerSector = 512;
-                                workingDefinition.cylinders = 80;
-                                workingDefinition.drm = dpb.drm;
-                                workingDefinition.dsm = dpb.dsm;
-                                workingDefinition.encoding = "MFM";
-                                workingDefinition.evenOdd = false;
-                                workingDefinition.exm = dpb.exm;
-                                workingDefinition.label = null;
-                                workingDefinition.comment = "CP/M-86 floppy identifier";
-                                workingDefinition.ofs = dpb.off;
-                                workingDefinition.sectorsPerTrack = 18;
-                                workingDefinition.side1 = new Side();
-                                workingDefinition.side1.sideId = 0;
-                                workingDefinition.side1.sectorIds = new int[18];
+                                workingDefinition = new CpmDefinition
+                                {
+                                    al0 = dpb.al0,
+                                    al1 = dpb.al1,
+                                    bitrate = "LOW",
+                                    blm = dpb.blm,
+                                    bsh = dpb.bsh,
+                                    bytesPerSector = 512,
+                                    cylinders = 80,
+                                    drm = dpb.drm,
+                                    dsm = dpb.dsm,
+                                    encoding = "MFM",
+                                    evenOdd = false,
+                                    exm = dpb.exm,
+                                    label = null,
+                                    comment = "CP/M-86 floppy identifier",
+                                    ofs = dpb.off,
+                                    sectorsPerTrack = 18,
+                                    side1 = new Side {sideId = 0, sectorIds = new int[18]},
+                                    order = "CYLINDERS",
+                                    side2 = new Side {sideId = 1, sectorIds = new int[18]},
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
                                 for(int si = 0; si < 18; si++) workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                workingDefinition.order = "CYLINDERS";
-                                workingDefinition.side2 = new Side();
-                                workingDefinition.side2.sideId = 1;
-                                workingDefinition.side2.sectorIds = new int[18];
                                 for(int si = 0; si < 18; si++) workingDefinition.side2.sectorIds[si] = si + 1;
-
-                                workingDefinition.skew = 0;
-                                workingDefinition.sofs = 0;
                             }
 
                             break;
@@ -787,8 +784,7 @@ namespace DiscImageChef.Filesystems.CPM
                 {
                     // Load all definitions
                     DicConsole.DebugWriteLine("CP/M Plugin", "Trying to load definitions.");
-                    if(LoadDefinitions() && definitions != null && definitions.definitions != null &&
-                       definitions.definitions.Count > 0)
+                    if(LoadDefinitions() && definitions?.definitions != null && definitions.definitions.Count > 0)
                     {
                         DicConsole.DebugWriteLine("CP/M Plugin", "Trying all known definitions.");
                         foreach(CpmDefinition def in from def in definitions.definitions let sectors = (ulong)(def.cylinders * def.sides * def.sectorsPerTrack) where sectors == imagePlugin.GetSectors() && def.bytesPerSector == imagePlugin.GetSectorSize() select def) {
@@ -889,16 +885,20 @@ namespace DiscImageChef.Filesystems.CPM
 
                                 // Build a Disc Parameter Block
                                 workingDefinition = def;
-                                dpb = new DiscParameterBlock();
-                                dpb.al0 = (byte)def.al0;
-                                dpb.al1 = (byte)def.al1;
-                                dpb.blm = (byte)def.blm;
-                                dpb.bsh = (byte)def.bsh;
-                                dpb.cks = 0; // Needed?
-                                dpb.drm = (ushort)def.drm;
-                                dpb.dsm = (ushort)def.dsm;
-                                dpb.exm = (byte)def.exm;
-                                dpb.off = (ushort)def.ofs;
+                                dpb = new DiscParameterBlock
+                                {
+                                    al0 = (byte)def.al0,
+                                    al1 = (byte)def.al1,
+                                    blm = (byte)def.blm,
+                                    bsh = (byte)def.bsh,
+                                    // Needed?
+                                    cks = 0,
+                                    drm = (ushort)def.drm,
+                                    dsm = (ushort)def.dsm,
+                                    exm = (byte)def.exm,
+                                    off = (ushort)def.ofs,
+                                    spt = (ushort)(def.sectorsPerTrack * def.bytesPerSector / 128)
+                                };
                                 switch(def.bytesPerSector)
                                 {
                                     case 128:
@@ -939,7 +939,6 @@ namespace DiscImageChef.Filesystems.CPM
                                         break;
                                 }
 
-                                dpb.spt = (ushort)(def.sectorsPerTrack * def.bytesPerSector / 128);
                                 cpmFound = true;
                                 workingDefinition = def;
 
@@ -991,12 +990,9 @@ namespace DiscImageChef.Filesystems.CPM
                                 workingDefinition.ofs * workingDefinition.sectorsPerTrack, workingDefinition.ofs)
                   .AppendLine();
 
-            int interleaveSide1;
-            int interleaveSide2;
-
             if(workingDefinition.side1.sectorIds.Length >= 2)
             {
-                interleaveSide1 = workingDefinition.side1.sectorIds[1] - workingDefinition.side1.sectorIds[0];
+                int interleaveSide1 = workingDefinition.side1.sectorIds[1] - workingDefinition.side1.sectorIds[0];
                 if(interleaveSide1 > 1)
                     sb.AppendFormat("Side 0 uses {0}:1 software interleaving", interleaveSide1).AppendLine();
             }
@@ -1005,7 +1001,7 @@ namespace DiscImageChef.Filesystems.CPM
             {
                 if(workingDefinition.side2.sectorIds.Length >= 2)
                 {
-                    interleaveSide2 = workingDefinition.side2.sectorIds[1] - workingDefinition.side2.sectorIds[0];
+                    int interleaveSide2 = workingDefinition.side2.sectorIds[1] - workingDefinition.side2.sectorIds[0];
                     if(interleaveSide2 > 1)
                         sb.AppendFormat("Side 1 uses {0}:1 software interleaving", interleaveSide2).AppendLine();
                 }
@@ -1046,23 +1042,23 @@ namespace DiscImageChef.Filesystems.CPM
             if(labelUpdateDate != null)
                 sb.AppendFormat("Volume updated on {0}", DateHandlers.CPMToDateTime(labelUpdateDate)).AppendLine();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Bootable |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
-            xmlFSType.ClusterSize = 128 << dpb.bsh;
-            if(dpb.dsm > 0) xmlFSType.Clusters = dpb.dsm;
-            else xmlFSType.Clusters = (long)(partition.End - partition.Start);
+            XmlFsType = new FileSystemType();
+            XmlFsType.Bootable |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
+            XmlFsType.ClusterSize = 128 << dpb.bsh;
+            if(dpb.dsm > 0) XmlFsType.Clusters = dpb.dsm;
+            else XmlFsType.Clusters = (long)(partition.End - partition.Start);
             if(labelCreationDate != null)
             {
-                xmlFSType.CreationDate = DateHandlers.CPMToDateTime(labelCreationDate);
-                xmlFSType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.CPMToDateTime(labelCreationDate);
+                XmlFsType.CreationDateSpecified = true;
             }
             if(labelUpdateDate != null)
             {
-                xmlFSType.ModificationDate = DateHandlers.CPMToDateTime(labelUpdateDate);
-                xmlFSType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.CPMToDateTime(labelUpdateDate);
+                XmlFsType.ModificationDateSpecified = true;
             }
-            xmlFSType.Type = "CP/M";
-            xmlFSType.VolumeName = label;
+            XmlFsType.Type = "CP/M";
+            XmlFsType.VolumeName = label;
 
             information = sb.ToString();
         }

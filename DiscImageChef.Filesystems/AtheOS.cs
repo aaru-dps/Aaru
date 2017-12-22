@@ -53,24 +53,22 @@ namespace DiscImageChef.Filesystems
         public AtheOS()
         {
             Name = "AtheOS Filesystem";
-            PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+            PluginUuid = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public AtheOS(Encoding encoding)
         {
             Name = "AtheOS Filesystem";
-            PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public AtheOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "AtheOS Filesystem";
-            PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -87,10 +85,10 @@ namespace DiscImageChef.Filesystems
             uint magic;
 
             byte[] tmp = imagePlugin.ReadSectors(sector + partition.Start, run);
-            byte[] sb_sector = new byte[AFS_SUPERBLOCK_SIZE];
-            Array.Copy(tmp, offset, sb_sector, 0, AFS_SUPERBLOCK_SIZE);
+            byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
+            Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
-            magic = BitConverter.ToUInt32(sb_sector, 0x20);
+            magic = BitConverter.ToUInt32(sbSector, 0x20);
 
             return magic == AFS_MAGIC1;
         }
@@ -102,8 +100,6 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            AtheosSuperBlock afs_sb;
-
             ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.GetSectorSize();
             uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.GetSectorSize();
             uint run = 1;
@@ -112,58 +108,58 @@ namespace DiscImageChef.Filesystems
                 run = AFS_SUPERBLOCK_SIZE / imagePlugin.GetSectorSize();
 
             byte[] tmp = imagePlugin.ReadSectors(sector + partition.Start, run);
-            byte[] sb_sector = new byte[AFS_SUPERBLOCK_SIZE];
-            Array.Copy(tmp, offset, sb_sector, 0, AFS_SUPERBLOCK_SIZE);
+            byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
+            Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
-            GCHandle handle = GCHandle.Alloc(sb_sector, GCHandleType.Pinned);
-            afs_sb = (AtheosSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(AtheosSuperBlock));
+            GCHandle handle = GCHandle.Alloc(sbSector, GCHandleType.Pinned);
+            AtheosSuperBlock afsSb = (AtheosSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(AtheosSuperBlock));
             handle.Free();
 
             sb.AppendLine("Atheos filesystem");
 
-            if(afs_sb.flags == 1) sb.AppendLine("Filesystem is read-only");
+            if(afsSb.flags == 1) sb.AppendLine("Filesystem is read-only");
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afs_sb.name, CurrentEncoding)).AppendLine();
-            sb.AppendFormat("{0} bytes per block", afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks in volume ({1} bytes)", afs_sb.num_blocks,
-                            afs_sb.num_blocks * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} used blocks ({1} bytes)", afs_sb.used_blocks, afs_sb.used_blocks * afs_sb.block_size)
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afsSb.name, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("{0} bytes per block", afsSb.block_size).AppendLine();
+            sb.AppendFormat("{0} blocks in volume ({1} bytes)", afsSb.num_blocks,
+                            afsSb.num_blocks * afsSb.block_size).AppendLine();
+            sb.AppendFormat("{0} used blocks ({1} bytes)", afsSb.used_blocks, afsSb.used_blocks * afsSb.block_size)
               .AppendLine();
-            sb.AppendFormat("{0} bytes per i-node", afs_sb.inode_size).AppendLine();
-            sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", afs_sb.blocks_per_ag,
-                            afs_sb.blocks_per_ag * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} allocation groups in volume", afs_sb.num_ags).AppendLine();
+            sb.AppendFormat("{0} bytes per i-node", afsSb.inode_size).AppendLine();
+            sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", afsSb.blocks_per_ag,
+                            afsSb.blocks_per_ag * afsSb.block_size).AppendLine();
+            sb.AppendFormat("{0} allocation groups in volume", afsSb.num_ags).AppendLine();
             sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                            afs_sb.log_blocks_start, afs_sb.log_blocks_ag, afs_sb.log_blocks_len,
-                            afs_sb.log_blocks_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("Journal starts in byte {0} and has {1} bytes in {2} blocks", afs_sb.log_start,
-                            afs_sb.log_size, afs_sb.log_valid_blocks).AppendLine();
+                            afsSb.log_blocks_start, afsSb.log_blocks_ag, afsSb.log_blocks_len,
+                            afsSb.log_blocks_len * afsSb.block_size).AppendLine();
+            sb.AppendFormat("Journal starts in byte {0} and has {1} bytes in {2} blocks", afsSb.log_start,
+                            afsSb.log_size, afsSb.log_valid_blocks).AppendLine();
             sb
                 .AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                              afs_sb.root_dir_start, afs_sb.root_dir_ag, afs_sb.root_dir_len,
-                              afs_sb.root_dir_len * afs_sb.block_size).AppendLine();
+                              afsSb.root_dir_start, afsSb.root_dir_ag, afsSb.root_dir_len,
+                              afsSb.root_dir_len * afsSb.block_size).AppendLine();
             sb
                 .AppendFormat("Directory containing files scheduled for deletion's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                              afs_sb.deleted_start, afs_sb.deleted_ag, afs_sb.deleted_len,
-                              afs_sb.deleted_len * afs_sb.block_size).AppendLine();
+                              afsSb.deleted_start, afsSb.deleted_ag, afsSb.deleted_len,
+                              afsSb.deleted_len * afsSb.block_size).AppendLine();
             sb
                 .AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                              afs_sb.indices_start, afs_sb.indices_ag, afs_sb.indices_len,
-                              afs_sb.indices_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks for bootloader ({1} bytes)", afs_sb.boot_size,
-                            afs_sb.boot_size * afs_sb.block_size).AppendLine();
+                              afsSb.indices_start, afsSb.indices_ag, afsSb.indices_len,
+                              afsSb.indices_len * afsSb.block_size).AppendLine();
+            sb.AppendFormat("{0} blocks for bootloader ({1} bytes)", afsSb.boot_size,
+                            afsSb.boot_size * afsSb.block_size).AppendLine();
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
-                Clusters = afs_sb.num_blocks,
-                ClusterSize = (int)afs_sb.block_size,
+                Clusters = afsSb.num_blocks,
+                ClusterSize = (int)afsSb.block_size,
                 Dirty = false,
-                FreeClusters = afs_sb.num_blocks - afs_sb.used_blocks,
+                FreeClusters = afsSb.num_blocks - afsSb.used_blocks,
                 FreeClustersSpecified = true,
                 Type = "AtheOS filesystem",
-                VolumeName = StringHandlers.CToString(afs_sb.name, CurrentEncoding)
+                VolumeName = StringHandlers.CToString(afsSb.name, CurrentEncoding)
             };
         }
 

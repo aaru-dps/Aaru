@@ -48,24 +48,22 @@ namespace DiscImageChef.Filesystems
         public AmigaDOSPlugin()
         {
             Name = "Amiga DOS filesystem";
-            PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+            PluginUuid = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         public AmigaDOSPlugin(Encoding encoding)
         {
             Name = "Amiga DOS filesystem";
-            PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         public AmigaDOSPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Amiga DOS filesystem";
-            PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         /// <summary>
@@ -206,11 +204,11 @@ namespace DiscImageChef.Filesystems
             public uint sec_type;
         }
 
-        public const uint FFS_Mask = 0x444F5300;
-        public const uint MuFS_Mask = 0x6D754600;
+        const uint FFS_MASK = 0x444F5300;
+        const uint MUFS_MASK = 0x6D754600;
 
-        public const uint TypeHeader = 2;
-        public const uint SubTypeRoot = 1;
+        const uint TYPE_HEADER = 2;
+        const uint SUBTYPE_ROOT = 1;
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
@@ -229,14 +227,14 @@ namespace DiscImageChef.Filesystems
 
             // AROS boot floppies...
             if(sector.Length >= 512 && sector[510] == 0x55 && sector[511] == 0xAA &&
-               (bblk.diskType & FFS_Mask) != FFS_Mask && (bblk.diskType & MuFS_Mask) != MuFS_Mask)
+               (bblk.diskType & FFS_MASK) != FFS_MASK && (bblk.diskType & MUFS_MASK) != MUFS_MASK)
             {
                 sector = imagePlugin.ReadSectors(1 + partition.Start, 2);
                 bblk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
             }
 
             // Not FFS or MuFS?
-            if((bblk.diskType & FFS_Mask) != FFS_Mask && (bblk.diskType & MuFS_Mask) != MuFS_Mask) return false;
+            if((bblk.diskType & FFS_MASK) != FFS_MASK && (bblk.diskType & MUFS_MASK) != MUFS_MASK) return false;
 
             // Clear checksum on sector
             sector[4] = sector[5] = sector[6] = sector[7] = 0;
@@ -245,18 +243,18 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("AmigaDOS plugin", "bblk.checksum = 0x{0:X8}", bblk.checksum);
             DicConsole.DebugWriteLine("AmigaDOS plugin", "bsum = 0x{0:X8}", bsum);
 
-            ulong b_root_ptr = 0;
+            ulong bRootPtr = 0;
 
             // If bootblock is correct, let's take its rootblock pointer
             if(bsum == bblk.checksum)
             {
-                b_root_ptr = bblk.root_ptr + partition.Start;
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", b_root_ptr);
+                bRootPtr = bblk.root_ptr + partition.Start;
+                DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", bRootPtr);
             }
 
-            ulong[] root_ptrs =
+            ulong[] rootPtrs =
             {
-                b_root_ptr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
+                bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
                 (partition.End - partition.Start + 1) / 2 + partition.Start - 1,
                 (partition.End - partition.Start + 1) / 2 + partition.Start,
                 (partition.End - partition.Start + 1) / 2 + partition.Start + 4
@@ -265,14 +263,14 @@ namespace DiscImageChef.Filesystems
             RootBlock rblk = new RootBlock();
 
             // So to handle even number of sectors
-            foreach(ulong root_ptr in root_ptrs.Where(root_ptr => root_ptr < partition.End && root_ptr >= partition.Start)) {
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", root_ptr);
+            foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start)) {
+                DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
 
-                sector = imagePlugin.ReadSector(root_ptr);
+                sector = imagePlugin.ReadSector(rootPtr);
 
                 rblk.type = BigEndianBitConverter.ToUInt32(sector, 0x00);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rblk.type = {0}", rblk.type);
-                if(rblk.type != TypeHeader) continue;
+                if(rblk.type != TYPE_HEADER) continue;
 
                 rblk.hashTableSize = BigEndianBitConverter.ToUInt32(sector, 0x0C);
 
@@ -286,9 +284,9 @@ namespace DiscImageChef.Filesystems
 
                 if(blockSize % sector.Length > 0) sectorsPerBlock++;
 
-                if(root_ptr + sectorsPerBlock >= partition.End) continue;
+                if(rootPtr + sectorsPerBlock >= partition.End) continue;
 
-                sector = imagePlugin.ReadSectors(root_ptr, sectorsPerBlock);
+                sector = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock);
 
                 // Clear checksum on sector
                 rblk.checksum = BigEndianBitConverter.ToUInt32(sector, 20);
@@ -301,7 +299,7 @@ namespace DiscImageChef.Filesystems
                 rblk.sec_type = BigEndianBitConverter.ToUInt32(sector, sector.Length - 4);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rblk.sec_type = {0}", rblk.sec_type);
 
-                if(rblk.sec_type == SubTypeRoot && rblk.checksum == rsum) return true;
+                if(rblk.sec_type == SUBTYPE_ROOT && rblk.checksum == rsum) return true;
             }
 
             return false;
@@ -311,88 +309,88 @@ namespace DiscImageChef.Filesystems
                                             out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
             information = null;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] BootBlockSectors = imagePlugin.ReadSectors(0 + partition.Start, 2);
+            byte[] bootBlockSectors = imagePlugin.ReadSectors(0 + partition.Start, 2);
 
-            BootBlock bootBlk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(BootBlockSectors);
-            bootBlk.bootCode = new byte[BootBlockSectors.Length - 12];
-            Array.Copy(BootBlockSectors, 12, bootBlk.bootCode, 0, bootBlk.bootCode.Length);
-            BootBlockSectors[4] = BootBlockSectors[5] = BootBlockSectors[6] = BootBlockSectors[7] = 0;
-            uint bsum = AmigaBootChecksum(BootBlockSectors);
+            BootBlock bootBlk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(bootBlockSectors);
+            bootBlk.bootCode = new byte[bootBlockSectors.Length - 12];
+            Array.Copy(bootBlockSectors, 12, bootBlk.bootCode, 0, bootBlk.bootCode.Length);
+            bootBlockSectors[4] = bootBlockSectors[5] = bootBlockSectors[6] = bootBlockSectors[7] = 0;
+            uint bsum = AmigaBootChecksum(bootBlockSectors);
 
-            ulong b_root_ptr = 0;
+            ulong bRootPtr = 0;
 
             // If bootblock is correct, let's take its rootblock pointer
             if(bsum == bootBlk.checksum)
             {
-                b_root_ptr = bootBlk.root_ptr + partition.Start;
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", b_root_ptr);
+                bRootPtr = bootBlk.root_ptr + partition.Start;
+                DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", bRootPtr);
             }
 
-            ulong[] root_ptrs =
+            ulong[] rootPtrs =
             {
-                b_root_ptr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
+                bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
                 (partition.End - partition.Start + 1) / 2 + partition.Start - 1,
                 (partition.End - partition.Start + 1) / 2 + partition.Start,
                 (partition.End - partition.Start + 1) / 2 + partition.Start + 4
             };
 
             RootBlock rootBlk = new RootBlock();
-            byte[] RootBlockSector = null;
+            byte[] rootBlockSector = null;
 
-            bool root_found = false;
+            bool rootFound = false;
             uint blockSize = 0;
 
             // So to handle even number of sectors
-            foreach(ulong root_ptr in root_ptrs.Where(root_ptr => root_ptr < partition.End && root_ptr >= partition.Start)) {
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", root_ptr);
+            foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start)) {
+                DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
 
-                RootBlockSector = imagePlugin.ReadSector(root_ptr);
+                rootBlockSector = imagePlugin.ReadSector(rootPtr);
 
-                rootBlk.type = BigEndianBitConverter.ToUInt32(RootBlockSector, 0x00);
+                rootBlk.type = BigEndianBitConverter.ToUInt32(rootBlockSector, 0x00);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.type = {0}", rootBlk.type);
-                if(rootBlk.type != TypeHeader) continue;
+                if(rootBlk.type != TYPE_HEADER) continue;
 
-                rootBlk.hashTableSize = BigEndianBitConverter.ToUInt32(RootBlockSector, 0x0C);
+                rootBlk.hashTableSize = BigEndianBitConverter.ToUInt32(rootBlockSector, 0x0C);
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.hashTableSize = {0}", rootBlk.hashTableSize);
 
                 blockSize = (rootBlk.hashTableSize + 56) * 4;
-                uint sectorsPerBlock = (uint)(blockSize / RootBlockSector.Length);
+                uint sectorsPerBlock = (uint)(blockSize / rootBlockSector.Length);
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "blockSize = {0}", blockSize);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "sectorsPerBlock = {0}", sectorsPerBlock);
 
-                if(blockSize % RootBlockSector.Length > 0) sectorsPerBlock++;
+                if(blockSize % rootBlockSector.Length > 0) sectorsPerBlock++;
 
-                if(root_ptr + sectorsPerBlock >= partition.End) continue;
+                if(rootPtr + sectorsPerBlock >= partition.End) continue;
 
-                RootBlockSector = imagePlugin.ReadSectors(root_ptr, sectorsPerBlock);
+                rootBlockSector = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock);
 
                 // Clear checksum on sector
-                rootBlk.checksum = BigEndianBitConverter.ToUInt32(RootBlockSector, 20);
-                RootBlockSector[20] = RootBlockSector[21] = RootBlockSector[22] = RootBlockSector[23] = 0;
-                uint rsum = AmigaChecksum(RootBlockSector);
+                rootBlk.checksum = BigEndianBitConverter.ToUInt32(rootBlockSector, 20);
+                rootBlockSector[20] = rootBlockSector[21] = rootBlockSector[22] = rootBlockSector[23] = 0;
+                uint rsum = AmigaChecksum(rootBlockSector);
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.checksum = 0x{0:X8}", rootBlk.checksum);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rsum = 0x{0:X8}", rsum);
 
-                rootBlk.sec_type = BigEndianBitConverter.ToUInt32(RootBlockSector, RootBlockSector.Length - 4);
+                rootBlk.sec_type = BigEndianBitConverter.ToUInt32(rootBlockSector, rootBlockSector.Length - 4);
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.sec_type = {0}", rootBlk.sec_type);
 
-                if(rootBlk.sec_type != SubTypeRoot || rootBlk.checksum != rsum) continue;
+                if(rootBlk.sec_type != SUBTYPE_ROOT || rootBlk.checksum != rsum) continue;
 
-                RootBlockSector = imagePlugin.ReadSectors(root_ptr, sectorsPerBlock);
-                root_found = true;
+                rootBlockSector = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock);
+                rootFound = true;
                 break;
             }
 
-            if(!root_found) return;
+            if(!rootFound) return;
 
-            rootBlk = MarshalRootBlock(RootBlockSector);
+            rootBlk = MarshalRootBlock(rootBlockSector);
 
             string diskName = StringHandlers.PascalToString(rootBlk.diskName, CurrentEncoding);
 
@@ -400,35 +398,35 @@ namespace DiscImageChef.Filesystems
             {
                 case 0:
                     sbInformation.Append("Amiga Original File System");
-                    xmlFSType.Type = "Amiga OFS";
+                    XmlFsType.Type = "Amiga OFS";
                     break;
                 case 1:
                     sbInformation.Append("Amiga Fast File System");
-                    xmlFSType.Type = "Amiga FFS";
+                    XmlFsType.Type = "Amiga FFS";
                     break;
                 case 2:
                     sbInformation.Append("Amiga Original File System with international characters");
-                    xmlFSType.Type = "Amiga OFS";
+                    XmlFsType.Type = "Amiga OFS";
                     break;
                 case 3:
                     sbInformation.Append("Amiga Fast File System with international characters");
-                    xmlFSType.Type = "Amiga FFS";
+                    XmlFsType.Type = "Amiga FFS";
                     break;
                 case 4:
                     sbInformation.Append("Amiga Original File System with directory cache");
-                    xmlFSType.Type = "Amiga OFS";
+                    XmlFsType.Type = "Amiga OFS";
                     break;
                 case 5:
                     sbInformation.Append("Amiga Fast File System with directory cache");
-                    xmlFSType.Type = "Amiga FFS";
+                    XmlFsType.Type = "Amiga FFS";
                     break;
                 case 6:
                     sbInformation.Append("Amiga Original File System with long filenames");
-                    xmlFSType.Type = "Amiga OFS2";
+                    XmlFsType.Type = "Amiga OFS2";
                     break;
                 case 7:
                     sbInformation.Append("Amiga Fast File System with long filenames");
-                    xmlFSType.Type = "Amiga FFS2";
+                    XmlFsType.Type = "Amiga FFS2";
                     break;
             }
 
@@ -472,17 +470,17 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Root block checksum is 0x{0:X8}", rootBlk.checksum).AppendLine();
             information = sbInformation.ToString();
 
-            xmlFSType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
-            xmlFSType.CreationDateSpecified = true;
-            xmlFSType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
-            xmlFSType.ModificationDateSpecified = true;
-            xmlFSType.Dirty = rootBlk.bitmapFlag != 0xFFFFFFFF;
-            xmlFSType.Clusters = blocks;
-            xmlFSType.ClusterSize = (int)blockSize;
-            xmlFSType.VolumeName = diskName;
-            xmlFSType.Bootable = bsum == bootBlk.checksum;
+            XmlFsType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
+            XmlFsType.CreationDateSpecified = true;
+            XmlFsType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
+            XmlFsType.ModificationDateSpecified = true;
+            XmlFsType.Dirty = rootBlk.bitmapFlag != 0xFFFFFFFF;
+            XmlFsType.Clusters = blocks;
+            XmlFsType.ClusterSize = (int)blockSize;
+            XmlFsType.VolumeName = diskName;
+            XmlFsType.Bootable = bsum == bootBlk.checksum;
             // Useful as a serial
-            xmlFSType.VolumeSerial = $"{rootBlk.checksum:X8}";
+            XmlFsType.VolumeSerial = $"{rootBlk.checksum:X8}";
         }
 
         static RootBlock MarshalRootBlock(byte[] block)
@@ -511,12 +509,12 @@ namespace DiscImageChef.Filesystems
 
         static uint AmigaBootChecksum(byte[] data)
         {
-            uint sum, psum;
+            uint sum;
 
             sum = 0;
             for(int i = 0; i < data.Length; i += 4)
             {
-                psum = sum;
+                uint psum = sum;
                 if((sum += (uint)((data[i] << 24) + (data[i + 1] << 16) + (data[i + 2] << 8) + data[i + 3])) <
                    psum) sum++;
             }

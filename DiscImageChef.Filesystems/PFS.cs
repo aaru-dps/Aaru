@@ -45,24 +45,22 @@ namespace DiscImageChef.Filesystems
         public PFS()
         {
             Name = "Professional File System";
-            PluginUUID = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+            PluginUuid = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         public PFS(Encoding encoding)
         {
             Name = "Professional File System";
-            PluginUUID = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         public PFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Professional File System";
-            PluginUUID = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         /// <summary>
@@ -204,28 +202,27 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
-            byte[] RootBlockSector = imagePlugin.ReadSector(2 + partition.Start);
-            RootBlock rootBlock;
-            rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(RootBlockSector);
+            byte[] rootBlockSector = imagePlugin.ReadSector(2 + partition.Start);
+            RootBlock rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
             StringBuilder sbInformation = new StringBuilder();
-            xmlFSType = new FileSystemType();
+            XmlFsType = new FileSystemType();
 
             switch(rootBlock.diskType)
             {
                 case AFS_DISK:
                 case MUAF_DISK:
                     sbInformation.Append("Professional File System v1");
-                    xmlFSType.Type = "PFS v1";
+                    XmlFsType.Type = "PFS v1";
                     break;
                 case PFS2_DISK:
                     sbInformation.Append("Professional File System v2");
-                    xmlFSType.Type = "PFS v2";
+                    XmlFsType.Type = "PFS v2";
                     break;
                 case PFS_DISK:
                 case MUPFS_DISK:
                     sbInformation.Append("Professional File System v3");
-                    xmlFSType.Type = "PFS v3";
+                    XmlFsType.Type = "PFS v3";
                     break;
             }
 
@@ -248,14 +245,14 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType.CreationDate =
+            XmlFsType.CreationDate =
                 DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick);
-            xmlFSType.CreationDateSpecified = true;
-            xmlFSType.FreeClusters = rootBlock.blocksfree;
-            xmlFSType.FreeClustersSpecified = true;
-            xmlFSType.Clusters = rootBlock.diskSize;
-            xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
-            xmlFSType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding);
+            XmlFsType.CreationDateSpecified = true;
+            XmlFsType.FreeClusters = rootBlock.blocksfree;
+            XmlFsType.FreeClustersSpecified = true;
+            XmlFsType.Clusters = rootBlock.diskSize;
+            XmlFsType.ClusterSize = (int)imagePlugin.GetSectorSize();
+            XmlFsType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding);
         }
 
         public override Errno Mount()

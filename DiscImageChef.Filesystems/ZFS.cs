@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -59,10 +60,11 @@ namespace DiscImageChef.Filesystems
      * It can also be encoded little or big endian.
      * Because of this variations, ZFS stored a header indicating the used encoding and endianess before the encoded nvlist.
      */
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class ZFS : Filesystem
     {
-        const ulong ZEC_Magic = 0x0210DA7AB10C7A11;
-        const ulong ZEC_Cigam = 0x117A0CB17ADA1002;
+        const ulong ZEC_MAGIC = 0x0210DA7AB10C7A11;
+        const ulong ZEC_CIGAM = 0x117A0CB17ADA1002;
 
         struct ZIO_Checksum
         {
@@ -81,9 +83,9 @@ namespace DiscImageChef.Filesystems
         }
 
         // These parameters define how the nvlist is stored
-        const byte NVS_LittleEndian = 1;
-        const byte NVS_BigEndian = 0;
-        const byte NVS_Native = 0;
+        const byte NVS_LITTLE_ENDIAN = 1;
+        const byte NVS_BIG_ENDIAN = 0;
+        const byte NVS_NATIVE = 0;
         const byte NVS_XDR = 1;
 
         /// <summary>
@@ -173,7 +175,7 @@ namespace DiscImageChef.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct DVA
+        struct DVA
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] public ulong[] word;
         }
@@ -208,7 +210,7 @@ namespace DiscImageChef.Filesystems
             public ZIO_Checksum checksum;
         }
 
-        const ulong Uberblock_Magic = 0x00BAB10C;
+        const ulong UBERBLOCK_MAGIC = 0x00BAB10C;
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ZFS_Uberblock
@@ -222,19 +224,19 @@ namespace DiscImageChef.Filesystems
             public ulong softwareVersion;
         }
 
-        const uint ZFS_Magic = 0x58465342;
+        const uint ZFS_MAGIC = 0x58465342;
 
         public ZFS()
         {
             Name = "ZFS Filesystem Plugin";
-            PluginUUID = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
+            PluginUuid = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public ZFS(Encoding encoding)
         {
             Name = "ZFS Filesystem Plugin";
-            PluginUUID = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
+            PluginUuid = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
             // ZFS is always UTF-8
             CurrentEncoding = Encoding.UTF8;
         }
@@ -242,7 +244,7 @@ namespace DiscImageChef.Filesystems
         public ZFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "ZFS Filesystem Plugin";
-            PluginUUID = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
+            PluginUuid = new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
             // ZFS is always UTF-8
             CurrentEncoding = Encoding.UTF8;
         }
@@ -258,16 +260,14 @@ namespace DiscImageChef.Filesystems
             {
                 sector = imagePlugin.ReadSector(partition.Start + 31);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_Magic || magic == ZEC_Cigam) return true;
+                if(magic == ZEC_MAGIC || magic == ZEC_CIGAM) return true;
             }
 
             if(partition.Start + 16 >= partition.End) return false;
 
             sector = imagePlugin.ReadSector(partition.Start + 16);
             magic = BitConverter.ToUInt64(sector, 0x1D8);
-            if(magic == ZEC_Magic || magic == ZEC_Cigam) return true;
-
-            return false;
+            return magic == ZEC_MAGIC || magic == ZEC_CIGAM;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -281,42 +281,38 @@ namespace DiscImageChef.Filesystems
 
             ulong nvlistOff = 32;
             uint nvlistLen = 114688 / imagePlugin.ImageInfo.SectorSize;
-            byte[] nvlist;
 
             if(partition.Start + 31 < partition.End)
             {
                 sector = imagePlugin.ReadSector(partition.Start + 31);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_Magic || magic == ZEC_Cigam) nvlistOff = 32;
+                if(magic == ZEC_MAGIC || magic == ZEC_CIGAM) nvlistOff = 32;
             }
 
             if(partition.Start + 16 < partition.End)
             {
                 sector = imagePlugin.ReadSector(partition.Start + 16);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_Magic || magic == ZEC_Cigam) nvlistOff = 17;
+                if(magic == ZEC_MAGIC || magic == ZEC_CIGAM) nvlistOff = 17;
             }
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("ZFS filesystem");
 
-            nvlist = imagePlugin.ReadSectors(partition.Start + nvlistOff, nvlistLen);
-            Dictionary<string, NVS_Item> decodedNvList;
+            byte[] nvlist = imagePlugin.ReadSectors(partition.Start + nvlistOff, nvlistLen);
 
-            if(!DecodeNvList(nvlist, out decodedNvList)) sb.AppendLine("Could not decode nvlist");
-            else sb.AppendLine(PrintNvList(decodedNvList));
+            sb.AppendLine(!DecodeNvList(nvlist, out Dictionary<string, NVS_Item> decodedNvList)
+                              ? "Could not decode nvlist"
+                              : PrintNvList(decodedNvList));
 
             information = sb.ToString();
 
-            NVS_Item tmpObj;
-
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "ZFS filesystem";
-            if(decodedNvList.TryGetValue("name", out tmpObj)) xmlFSType.VolumeName = (string)tmpObj.value;
+            XmlFsType = new FileSystemType {Type = "ZFS filesystem"};
+            if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj)) XmlFsType.VolumeName = (string)tmpObj.value;
             if(decodedNvList.TryGetValue("guid", out tmpObj))
-                xmlFSType.VolumeSerial = $"{(ulong)tmpObj.value}";
+                XmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
             if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
-                xmlFSType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
+                XmlFsType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
         }
 
         static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList)
@@ -346,7 +342,6 @@ namespace DiscImageChef.Filesystems
             while(offset < nvlist.Length)
             {
                 uint nameLength;
-                byte[] nameBytes;
                 NVS_Item item = new NVS_Item();
                 int currOff = offset;
 
@@ -361,7 +356,7 @@ namespace DiscImageChef.Filesystems
                 nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
                 offset += 4;
                 if(nameLength % 4 > 0) nameLength += 4 - nameLength % 4;
-                nameBytes = new byte[nameLength];
+                byte[] nameBytes = new byte[nameLength];
                 Array.Copy(nvlist, offset, nameBytes, 0, nameLength);
                 item.name = StringHandlers.CToString(nameBytes);
                 offset += (int)nameLength;
@@ -644,8 +639,7 @@ namespace DiscImageChef.Filesystems
 
                         byte[] subListBytes = new byte[item.encodedSize - (offset - currOff)];
                         Array.Copy(nvlist, offset, subListBytes, 0, subListBytes.Length);
-                        Dictionary<string, NVS_Item> subList;
-                        if(DecodeNvList(subListBytes, out subList, true, littleEndian)) item.value = subList;
+                        if(DecodeNvList(subListBytes, out Dictionary<string, NVS_Item> subList, true, littleEndian)) item.value = subList;
                         else goto default;
                         offset = (int)(currOff + item.encodedSize);
                         break;

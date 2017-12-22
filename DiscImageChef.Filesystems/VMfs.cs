@@ -45,24 +45,22 @@ namespace DiscImageChef.Filesystems
         public VMfs()
         {
             Name = "VMware filesystem";
-            PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+            PluginUuid = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
             CurrentEncoding = Encoding.UTF8;
         }
 
         public VMfs(Encoding encoding)
         {
             Name = "VMware filesystem";
-            PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
-            if(encoding == null) CurrentEncoding = Encoding.UTF8;
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+            CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
         public VMfs(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "VMware filesystem";
-            PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
-            if(encoding == null) CurrentEncoding = Encoding.UTF8;
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+            CurrentEncoding = encoding ?? Encoding.UTF8;
         }
 
         [Flags]
@@ -92,14 +90,14 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Identifier for VMfs
         /// </summary>
-        const uint VMfs_MAGIC = 0xC001D00D;
-        const uint VMfs_Base = 0x00100000;
+        const uint VMFS_MAGIC = 0xC001D00D;
+        const uint VMFS_BASE = 0x00100000;
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End) return false;
 
-            ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.SectorSize;
+            ulong vmfsSuperOff = VMFS_BASE / imagePlugin.ImageInfo.SectorSize;
 
             if(partition.Start + vmfsSuperOff > partition.End) return false;
 
@@ -107,13 +105,13 @@ namespace DiscImageChef.Filesystems
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
-            return magic == VMfs_MAGIC;
+            return magic == VMFS_MAGIC;
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
                                             out string information)
         {
-            ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.SectorSize;
+            ulong vmfsSuperOff = VMFS_BASE / imagePlugin.ImageInfo.SectorSize;
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             VolumeInfo volInfo = new VolumeInfo();
@@ -144,15 +142,17 @@ namespace DiscImageChef.Filesystems
 
             information = sbInformation.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Type = "VMware file system";
-            xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(ctimeSecs, ctimeNanoSecs);
-            xmlFSType.CreationDateSpecified = true;
-            xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(mtimeSecs, mtimeNanoSecs);
-            xmlFSType.ModificationDateSpecified = true;
-            xmlFSType.Clusters = volInfo.size * 256 / imagePlugin.ImageInfo.SectorSize;
-            xmlFSType.ClusterSize = (int)imagePlugin.ImageInfo.SectorSize;
-            xmlFSType.VolumeSerial = volInfo.uuid.ToString();
+            XmlFsType = new FileSystemType
+            {
+                Type = "VMware file system",
+                CreationDate = DateHandlers.UNIXUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),
+                CreationDateSpecified = true,
+                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
+                ModificationDateSpecified = true,
+                Clusters = volInfo.size * 256 / imagePlugin.ImageInfo.SectorSize,
+                ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
+                VolumeSerial = volInfo.uuid.ToString()
+            };
         }
 
         public override Errno Mount()

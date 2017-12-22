@@ -55,24 +55,22 @@ namespace DiscImageChef.Filesystems
         public ODS()
         {
             Name = "Files-11 On-Disk Structure";
-            PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+            PluginUuid = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         public ODS(Encoding encoding)
         {
             Name = "Files-11 On-Disk Structure";
-            PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         public ODS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Files-11 On-Disk Structure";
-            PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
-            if(encoding == null) CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
-            else CurrentEncoding = encoding;
+            PluginUuid = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+            CurrentEncoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         }
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
@@ -81,12 +79,11 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.GetSectorSize() < 512) return false;
 
-            byte[] magic_b = new byte[12];
-            string magic;
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.Start);
+            byte[] magicB = new byte[12];
+            byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            Array.Copy(hb_sector, 0x1F0, magic_b, 0, 12);
-            magic = Encoding.ASCII.GetString(magic_b);
+            Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
+            string magic = Encoding.ASCII.GetString(magicB);
 
             DicConsole.DebugWriteLine("Files-11 plugin", "magic: \"{0}\"", magic);
 
@@ -95,18 +92,16 @@ namespace DiscImageChef.Filesystems
             // Optical disc
             if(imagePlugin.ImageInfo.XmlMediaType != XmlMediaType.OpticalDisc) return false;
 
-            if(hb_sector.Length < 0x400) return false;
+            if(hbSector.Length < 0x400) return false;
 
-            hb_sector = imagePlugin.ReadSector(partition.Start);
+            hbSector = imagePlugin.ReadSector(partition.Start);
 
-            Array.Copy(hb_sector, 0x3F0, magic_b, 0, 12);
-            magic = Encoding.ASCII.GetString(magic_b);
+            Array.Copy(hbSector, 0x3F0, magicB, 0, 12);
+            magic = Encoding.ASCII.GetString(magicB);
 
             DicConsole.DebugWriteLine("Files-11 plugin", "unaligned magic: \"{0}\"", magic);
 
-            if(magic == "DECFILE11A  " || magic == "DECFILE11B  ") return true;
-
-            return false;
+            return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
         }
 
         public override void GetInformation(ImagePlugin imagePlugin, Partition partition,
@@ -115,14 +110,11 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            ODSHomeBlock homeblock;
-            homeblock.min_class = new byte[20];
-            homeblock.max_class = new byte[20];
 
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.Start);
+            byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            GCHandle handle = GCHandle.Alloc(hb_sector, GCHandleType.Pinned);
-            homeblock = (ODSHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ODSHomeBlock));
+            GCHandle handle = GCHandle.Alloc(hbSector, GCHandleType.Pinned);
+            OdsHomeBlock homeblock = (OdsHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(OdsHomeBlock));
             handle.Free();
 
             // Optical disc
@@ -130,14 +122,14 @@ namespace DiscImageChef.Filesystems
                StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
                StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
             {
-                if(hb_sector.Length < 0x400) return;
+                if(hbSector.Length < 0x400) return;
 
                 byte[] tmp = imagePlugin.ReadSector(partition.Start);
-                hb_sector = new byte[0x200];
-                Array.Copy(tmp, 0x200, hb_sector, 0, 0x200);
+                hbSector = new byte[0x200];
+                Array.Copy(tmp, 0x200, hbSector, 0, 0x200);
 
-                handle = GCHandle.Alloc(hb_sector, GCHandleType.Pinned);
-                homeblock = (ODSHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ODSHomeBlock));
+                handle = GCHandle.Alloc(hbSector, GCHandleType.Pinned);
+                homeblock = (OdsHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(OdsHomeBlock));
                 handle.Free();
 
                 if(StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
@@ -200,41 +192,25 @@ namespace DiscImageChef.Filesystems
             sb.AppendLine("Volume permissions (r = read, w = write, c = create, d = delete)");
             sb.AppendLine("System, owner, group, world");
             // System
-            if((homeblock.protect & 0x1000) == 0x1000) sb.Append("-");
-            else sb.Append("r");
-            if((homeblock.protect & 0x2000) == 0x2000) sb.Append("-");
-            else sb.Append("w");
-            if((homeblock.protect & 0x4000) == 0x4000) sb.Append("-");
-            else sb.Append("c");
-            if((homeblock.protect & 0x8000) == 0x8000) sb.Append("-");
-            else sb.Append("d");
+            sb.Append((homeblock.protect & 0x1000) == 0x1000 ? "-" : "r");
+            sb.Append((homeblock.protect & 0x2000) == 0x2000 ? "-" : "w");
+            sb.Append((homeblock.protect & 0x4000) == 0x4000 ? "-" : "c");
+            sb.Append((homeblock.protect & 0x8000) == 0x8000 ? "-" : "d");
             // Owner
-            if((homeblock.protect & 0x100) == 0x100) sb.Append("-");
-            else sb.Append("r");
-            if((homeblock.protect & 0x200) == 0x200) sb.Append("-");
-            else sb.Append("w");
-            if((homeblock.protect & 0x400) == 0x400) sb.Append("-");
-            else sb.Append("c");
-            if((homeblock.protect & 0x800) == 0x800) sb.Append("-");
-            else sb.Append("d");
+            sb.Append((homeblock.protect & 0x100) == 0x100 ? "-" : "r");
+            sb.Append((homeblock.protect & 0x200) == 0x200 ? "-" : "w");
+            sb.Append((homeblock.protect & 0x400) == 0x400 ? "-" : "c");
+            sb.Append((homeblock.protect & 0x800) == 0x800 ? "-" : "d");
             // Group
-            if((homeblock.protect & 0x10) == 0x10) sb.Append("-");
-            else sb.Append("r");
-            if((homeblock.protect & 0x20) == 0x20) sb.Append("-");
-            else sb.Append("w");
-            if((homeblock.protect & 0x40) == 0x40) sb.Append("-");
-            else sb.Append("c");
-            if((homeblock.protect & 0x80) == 0x80) sb.Append("-");
-            else sb.Append("d");
+            sb.Append((homeblock.protect & 0x10) == 0x10 ? "-" : "r");
+            sb.Append((homeblock.protect & 0x20) == 0x20 ? "-" : "w");
+            sb.Append((homeblock.protect & 0x40) == 0x40 ? "-" : "c");
+            sb.Append((homeblock.protect & 0x80) == 0x80 ? "-" : "d");
             // World (other)
-            if((homeblock.protect & 0x1) == 0x1) sb.Append("-");
-            else sb.Append("r");
-            if((homeblock.protect & 0x2) == 0x2) sb.Append("-");
-            else sb.Append("w");
-            if((homeblock.protect & 0x4) == 0x4) sb.Append("-");
-            else sb.Append("c");
-            if((homeblock.protect & 0x8) == 0x8) sb.Append("-");
-            else sb.Append("d");
+            sb.Append((homeblock.protect & 0x1) == 0x1 ? "-" : "r");
+            sb.Append((homeblock.protect & 0x2) == 0x2 ? "-" : "w");
+            sb.Append((homeblock.protect & 0x4) == 0x4 ? "-" : "c");
+            sb.Append((homeblock.protect & 0x8) == 0x8 ? "-" : "d");
 
             sb.AppendLine();
 
@@ -243,7 +219,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("File protection: 0x{0:X4}", homeblock.fileprot).AppendLine();
             sb.AppendFormat("Record protection: 0x{0:X4}", homeblock.recprot).AppendLine();
 
-            xmlFSType = new FileSystemType
+            XmlFsType = new FileSystemType
             {
                 Type = "FILES-11",
                 ClusterSize = homeblock.cluster * 512,
@@ -253,20 +229,20 @@ namespace DiscImageChef.Filesystems
             };
             if(homeblock.credate > 0)
             {
-                xmlFSType.CreationDate = DateHandlers.VMSToDateTime(homeblock.credate);
-                xmlFSType.CreationDateSpecified = true;
+                XmlFsType.CreationDate = DateHandlers.VMSToDateTime(homeblock.credate);
+                XmlFsType.CreationDateSpecified = true;
             }
             if(homeblock.revdate > 0)
             {
-                xmlFSType.ModificationDate = DateHandlers.VMSToDateTime(homeblock.revdate);
-                xmlFSType.ModificationDateSpecified = true;
+                XmlFsType.ModificationDate = DateHandlers.VMSToDateTime(homeblock.revdate);
+                XmlFsType.ModificationDateSpecified = true;
             }
 
             information = sb.ToString();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ODSHomeBlock
+        struct OdsHomeBlock
         {
             /// <summary>0x000, LBN of THIS home block</summary>
             public uint homelbn;
