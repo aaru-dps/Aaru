@@ -157,7 +157,7 @@ namespace DiscImageChef.Filters
         public override void Close()
         {
             bytes = null;
-            if(stream != null) stream.Close();
+            stream?.Close();
             isBytes = false;
             isStream = false;
             isPath = false;
@@ -194,7 +194,7 @@ namespace DiscImageChef.Filters
 
         public override string GetFilename()
         {
-            return basePath != null ? Path.GetFileName(basePath) : null;
+            return Path.GetFileName(basePath);
         }
 
         public override DateTime GetLastWriteTime()

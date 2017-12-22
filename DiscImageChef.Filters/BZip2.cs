@@ -55,7 +55,7 @@ namespace DiscImageChef.Filters
 
         public override void Close()
         {
-            if(dataStream != null) dataStream.Close();
+            dataStream?.Close();
             dataStream = null;
             basePath = null;
             opened = false;
@@ -93,10 +93,7 @@ namespace DiscImageChef.Filters
 
             if(buffer.Length <= 512) return true;
 
-            if(buffer[buffer.Length - 512] == 0x6B && buffer[buffer.Length - 511] == 0x6F &&
-               buffer[buffer.Length - 510] == 0x6C && buffer[buffer.Length - 509] == 0x79) return false;
-
-            return true;
+            return buffer[buffer.Length - 512] != 0x6B || buffer[buffer.Length - 511] != 0x6F || buffer[buffer.Length - 510] != 0x6C || buffer[buffer.Length - 509] != 0x79;
         }
 
         public override bool Identify(Stream stream)
@@ -116,9 +113,7 @@ namespace DiscImageChef.Filters
             stream.Read(buffer, 0, 4);
             stream.Seek(0, SeekOrigin.Begin);
             // Check it is not an UDIF
-            if(buffer[0] == 0x6B && buffer[1] == 0x6F && buffer[2] == 0x6C && buffer[3] == 0x79) return false;
-
-            return true;
+            return buffer[0] != 0x6B || buffer[1] != 0x6F || buffer[2] != 0x6C || buffer[3] != 0x79;
         }
 
         public override bool Identify(string path)

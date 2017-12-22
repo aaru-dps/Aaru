@@ -51,7 +51,7 @@ namespace DiscImageChef.Filters
 
         public override void Close()
         {
-            if(dataStream != null) dataStream.Close();
+            dataStream?.Close();
             dataStream = null;
             basePath = null;
             opened = false;
@@ -153,7 +153,7 @@ namespace DiscImageChef.Filters
 
         public override string GetFilename()
         {
-            return basePath != null ? Path.GetFileName(basePath) : null;
+            return Path.GetFileName(basePath);
         }
 
         public override string GetParentFolder()

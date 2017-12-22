@@ -161,7 +161,7 @@ namespace DiscImageChef.Filters
             public short computerID;
         }
 
-        const uint MacBinaryMagic = 0x6D42494E;
+        const uint MACBINARY_MAGIC = 0x6D42494E;
 
         long dataForkOff;
         long rsrcForkOff;
@@ -183,7 +183,7 @@ namespace DiscImageChef.Filters
         public override void Close()
         {
             bytes = null;
-            if(stream != null) stream.Close();
+            stream?.Close();
             isBytes = false;
             isStream = false;
             isPath = false;
@@ -274,7 +274,7 @@ namespace DiscImageChef.Filters
             Array.Copy(buffer, 0, hdr_b, 0, 128);
             header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
-            return header.magic == MacBinaryMagic || header.version == 0 && header.filename[0] > 0 &&
+            return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0 &&
                    header.filename[0] < 64 && header.zero1 == 0 &&
                    header.zero2 == 0 && header.reserved == 0 &&
                    (header.dataLength > 0 || header.resourceLength > 0);
@@ -289,7 +289,7 @@ namespace DiscImageChef.Filters
             stream.Read(hdr_b, 0, 128);
             header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
-            return header.magic == MacBinaryMagic || header.version == 0 && header.filename[0] > 0 &&
+            return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0 &&
                    header.filename[0] < 64 && header.zero1 == 0 &&
                    header.zero2 == 0 && header.reserved == 0 &&
                    (header.dataLength > 0 || header.resourceLength > 0);
@@ -305,7 +305,7 @@ namespace DiscImageChef.Filters
             header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             fstream.Close();
-            return header.magic == MacBinaryMagic || header.version == 0 && header.filename[0] > 0 &&
+            return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0 &&
                    header.filename[0] < 64 && header.zero1 == 0 &&
                    header.zero2 == 0 && header.reserved == 0 &&
                    (header.dataLength > 0 || header.resourceLength > 0);

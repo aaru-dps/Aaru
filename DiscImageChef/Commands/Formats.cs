@@ -50,7 +50,7 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Supported filters:");
             if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tFilter");
-            foreach(KeyValuePair<string, Filter> kvp in filtersList.filtersList)
+            foreach(KeyValuePair<string, Filter> kvp in filtersList.Filters)
                 if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.UUID, kvp.Value.Name);
                 else DicConsole.WriteLine(kvp.Value.Name);
 

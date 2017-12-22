@@ -180,7 +180,7 @@ namespace DiscImageChef.Filters
 
         public override string GetFilename()
         {
-            return basePath != null ? Path.GetFileName(basePath) : null;
+            return Path.GetFileName(basePath);
         }
 
         public override DateTime GetLastWriteTime()
@@ -380,10 +380,8 @@ namespace DiscImageChef.Filters
             unarStream.Read(unar_b, 0, 26);
             header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unar_b);
             unarStream.Close();
-            if(header.magic == AppleDoubleMagic &&
-               (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
-
-            return false;
+            return header.magic == AppleDoubleMagic &&
+                   (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2);
         }
 
         public override bool IsOpened()
@@ -633,8 +631,7 @@ namespace DiscImageChef.Filters
                         break;
                 }
 
-            dataFork = new AppleDoubleEntry();
-            dataFork.id = (uint)AppleDoubleEntryID.DataFork;
+            dataFork = new AppleDoubleEntry {id = (uint)AppleDoubleEntryID.DataFork};
             if(File.Exists(path))
             {
                 FileStream dataFs = new FileStream(path, FileMode.Open, FileAccess.Read);

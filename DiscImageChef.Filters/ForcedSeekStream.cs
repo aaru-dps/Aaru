@@ -42,9 +42,8 @@ namespace DiscImageChef.Filters
     public class ForcedSeekStream<T> : Stream where T : Stream
     {
         T baseStream;
-        object[] parameters;
         long streamLength;
-        const int bufferLen = 1048576;
+        const int BUFFER_LEN = 1048576;
         FileStream backStream;
         string backFile;
 
@@ -55,9 +54,8 @@ namespace DiscImageChef.Filters
         /// <param name="args">Parameters that are used to create the base stream.</param>
         public ForcedSeekStream(long length, params object[] args)
         {
-            parameters = args;
             streamLength = length;
-            baseStream = (T)Activator.CreateInstance(typeof(T), parameters);
+            baseStream = (T)Activator.CreateInstance(typeof(T), args);
             backFile = Path.GetTempFileName();
             backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             if(length == 0) CalculateLength();
@@ -69,8 +67,7 @@ namespace DiscImageChef.Filters
         /// <param name="args">Parameters that are used to create the base stream.</param>
         public ForcedSeekStream(params object[] args)
         {
-            parameters = args;
-            baseStream = (T)Activator.CreateInstance(typeof(T), parameters);
+            baseStream = (T)Activator.CreateInstance(typeof(T), args);
             backFile = Path.GetTempFileName();
             backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             CalculateLength();
@@ -87,41 +84,29 @@ namespace DiscImageChef.Filters
             int read;
             do
             {
-                byte[] buffer = new byte[bufferLen];
-                read = baseStream.Read(buffer, 0, bufferLen);
+                byte[] buffer = new byte[BUFFER_LEN];
+                read = baseStream.Read(buffer, 0, BUFFER_LEN);
                 backStream.Write(buffer, 0, read);
             }
-            while(read == bufferLen);
+            while(read == BUFFER_LEN);
 
             streamLength = backStream.Length;
             backStream.Position = 0;
         }
 
-        public override bool CanRead
-        {
-            get { return baseStream.CanRead; }
-        }
+        public override bool CanRead => baseStream.CanRead;
 
-        public override bool CanSeek
-        {
-            get { return true; }
-        }
+        public override bool CanSeek => true;
 
-        public override bool CanWrite
-        {
-            get { return false; }
-        }
+        public override bool CanWrite => false;
 
-        public override long Length
-        {
-            get { return streamLength; }
-        }
+        public override long Length => streamLength;
 
         public override long Position
         {
-            get { return backStream.Position; }
+            get => backStream.Position;
 
-            set { SetPosition(value); }
+            set => SetPosition(value);
         }
 
         void SetPosition(long position)
@@ -136,15 +121,15 @@ namespace DiscImageChef.Filters
 
             backStream.Position = backStream.Length;
             long toposition = position - backStream.Position;
-            int fullBufferReads = (int)(toposition / bufferLen);
-            int restToRead = (int)(toposition % bufferLen);
+            int fullBufferReads = (int)(toposition / BUFFER_LEN);
+            int restToRead = (int)(toposition % BUFFER_LEN);
             byte[] buffer;
 
             for(int i = 0; i < fullBufferReads; i++)
             {
-                buffer = new byte[bufferLen];
-                baseStream.Read(buffer, 0, bufferLen);
-                backStream.Write(buffer, 0, bufferLen);
+                buffer = new byte[BUFFER_LEN];
+                baseStream.Read(buffer, 0, BUFFER_LEN);
+                backStream.Write(buffer, 0, BUFFER_LEN);
             }
 
             buffer = new byte[restToRead];
@@ -213,13 +198,13 @@ namespace DiscImageChef.Filters
 
         public override void Close()
         {
-            if(backStream != null) backStream.Close();
+            backStream?.Close();
             File.Delete(backFile);
         }
 
         ~ForcedSeekStream()
         {
-            if(backStream != null) backStream.Close();
+            backStream?.Close();
             File.Delete(backFile);
         }
     }

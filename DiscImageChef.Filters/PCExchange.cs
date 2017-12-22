@@ -41,9 +41,9 @@ namespace DiscImageChef.Filters
 {
     public class PCExchange : Filter
     {
-        const string FileId = "FILEID.DAT";
-        const string FinderInfo = "FINDER.DAT";
-        const string Resources = "RESOURCE.FRK";
+        const string FILE_ID = "FILEID.DAT";
+        const string FINDER_INFO = "FINDER.DAT";
+        const string RESOURCES = "RESOURCE.FRK";
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PCExchangeEntry
@@ -147,7 +147,7 @@ namespace DiscImageChef.Filters
 
         public override string GetFilename()
         {
-            return basePath != null ? Path.GetFileName(basePath) : null;
+            return Path.GetFileName(basePath);
         }
 
         public override DateTime GetLastWriteTime()
@@ -200,9 +200,9 @@ namespace DiscImageChef.Filters
         {
             string parentFolder = Path.GetDirectoryName(path);
 
-            if(!File.Exists(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FinderInfo))) return false;
+            if(!File.Exists(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FINDER_INFO))) return false;
 
-            if(!Directory.Exists(Path.Combine(parentFolder, Resources))) return false;
+            if(!Directory.Exists(Path.Combine(parentFolder, RESOURCES))) return false;
 
             string baseFilename = Path.GetFileName(path);
 
@@ -210,7 +210,7 @@ namespace DiscImageChef.Filters
             bool rsrcFound = false;
 
             FileStream finderDatStream =
-                new FileStream(Path.Combine(parentFolder, FinderInfo), FileMode.Open, FileAccess.Read);
+                new FileStream(Path.Combine(parentFolder, FINDER_INFO), FileMode.Open, FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
@@ -234,8 +234,8 @@ namespace DiscImageChef.Filters
                              File.Exists(Path.Combine(parentFolder, dosName)) ||
                              File.Exists(Path.Combine(parentFolder, dosNameLow));
 
-                rsrcFound |= File.Exists(Path.Combine(parentFolder, Resources, dosName)) ||
-                             File.Exists(Path.Combine(parentFolder, Resources, dosNameLow));
+                rsrcFound |= File.Exists(Path.Combine(parentFolder, RESOURCES, dosName)) ||
+                             File.Exists(Path.Combine(parentFolder, RESOURCES, dosNameLow));
 
                 break;
             }
@@ -266,7 +266,7 @@ namespace DiscImageChef.Filters
             string baseFilename = Path.GetFileName(path);
 
             FileStream finderDatStream =
-                new FileStream(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FinderInfo), FileMode.Open, FileAccess.Read);
+                new FileStream(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FINDER_INFO), FileMode.Open, FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
@@ -292,10 +292,10 @@ namespace DiscImageChef.Filters
                     dataPath = Path.Combine(parentFolder, dosNameLow);
                 else dataPath = null;
 
-                if(File.Exists(Path.Combine(parentFolder, Resources, dosName)))
-                    rsrcPath = Path.Combine(parentFolder, Resources, dosName);
-                else if(File.Exists(Path.Combine(parentFolder, Resources, dosNameLow)))
-                    rsrcPath = Path.Combine(parentFolder, Resources, dosNameLow);
+                if(File.Exists(Path.Combine(parentFolder, RESOURCES, dosName)))
+                    rsrcPath = Path.Combine(parentFolder, RESOURCES, dosName);
+                else if(File.Exists(Path.Combine(parentFolder, RESOURCES, dosNameLow)))
+                    rsrcPath = Path.Combine(parentFolder, RESOURCES, dosNameLow);
                 else rsrcPath = null;
 
                 lastWriteTime = DateHandlers.MacToDateTime(datEntry.modificationDate);

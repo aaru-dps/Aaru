@@ -54,7 +54,7 @@ namespace DiscImageChef.Filters
 
         public override void Close()
         {
-            if(dataStream != null) dataStream.Close();
+            dataStream?.Close();
             dataStream = null;
             basePath = null;
             opened = false;
@@ -153,18 +153,18 @@ namespace DiscImageChef.Filters
             dataStream.Seek(0, SeekOrigin.Begin);
         }
 
-        int Decode(byte[] buf, int size_max, ref ulong num)
+        int Decode(byte[] buf, int sizeMax, ref ulong num)
         {
-            if(size_max == 0) return 0;
+            if(sizeMax == 0) return 0;
 
-            if(size_max > 9) size_max = 9;
+            if(sizeMax > 9) sizeMax = 9;
 
             num = (ulong)(buf[0] & 0x7F);
             int i = 0;
 
             while((buf[i++] & 0x80) == 0x80)
             {
-                if(i >= size_max || buf[i] == 0x00) return 0;
+                if(i >= sizeMax || buf[i] == 0x00) return 0;
 
                 num |= (ulong)(buf[i] & 0x7F) << (i * 7);
             }
@@ -239,10 +239,7 @@ namespace DiscImageChef.Filters
         {
             if(basePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return basePath.Substring(0, basePath.Length - 3);
-            if(basePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true)
-                return basePath.Substring(0, basePath.Length - 5);
-
-            return basePath;
+            return basePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true ? basePath.Substring(0, basePath.Length - 5) : basePath;
         }
 
         public override string GetParentFolder()
