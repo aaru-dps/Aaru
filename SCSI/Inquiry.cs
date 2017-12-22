@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using DiscImageChef.Console;
@@ -48,6 +49,9 @@ namespace DiscImageChef.Decoders.SCSI
     /// RFC 7144
     /// ECMA-111
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Inquiry
     {
         #region Public methods

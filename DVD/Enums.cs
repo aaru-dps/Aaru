@@ -30,9 +30,12 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.DVD
 {
     #region Public enumerations
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum DiskCategory : byte
     {
         /// <summary>
@@ -94,6 +97,7 @@ namespace DiscImageChef.Decoders.DVD
         Nintendo = 15
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum MaximumRateField : byte
     {
         /// <summary>
@@ -119,6 +123,7 @@ namespace DiscImageChef.Decoders.DVD
         Unspecified = 0x0F
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum LayerTypeFieldMask : byte
     {
         Embossed = 0x01,
@@ -127,6 +132,7 @@ namespace DiscImageChef.Decoders.DVD
         Reserved = 0x08
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum LinearDensityField : byte
     {
         /// <summary>
@@ -159,6 +165,7 @@ namespace DiscImageChef.Decoders.DVD
         ThreeFive = 0x08
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum TrackDensityField : byte
     {
         /// <summary>
@@ -183,6 +190,7 @@ namespace DiscImageChef.Decoders.DVD
         Three = 0x04
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum CopyrightType : byte
     {
         /// <summary>
@@ -203,6 +211,7 @@ namespace DiscImageChef.Decoders.DVD
         AACS = 0x10
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum WPDiscTypes : byte
     {
         /// <summary>
@@ -217,6 +226,7 @@ namespace DiscImageChef.Decoders.DVD
         Reserved2 = 0x03
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum DVDSize
     {
         /// <summary>
@@ -229,6 +239,7 @@ namespace DiscImageChef.Decoders.DVD
         Eighty = 1
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum DVDRAMDiscType
     {
         /// <summary>
@@ -241,6 +252,7 @@ namespace DiscImageChef.Decoders.DVD
         Uncased = 1
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum DVDLayerStructure
     {
         Unspecified = 0,
@@ -249,6 +261,7 @@ namespace DiscImageChef.Decoders.DVD
         Reserved = 3
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum DVDRecordingSpeed
     {
         None = 0,

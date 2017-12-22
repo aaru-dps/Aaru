@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
 
@@ -51,6 +52,9 @@ namespace DiscImageChef.Decoders.CD
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class PMA
     {
         public struct CDPMA
@@ -198,24 +202,24 @@ namespace DiscImageChef.Decoders.CD
                         if(descriptor.POINT > 0)
                         {
                             sb.AppendFormat("Track {0}", descriptor.POINT);
-                            switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                            switch((TocControl)(descriptor.CONTROL & 0x0D))
                             {
-                                case TOC_CONTROL.TwoChanNoPreEmph:
+                                case TocControl.TwoChanNoPreEmph:
                                     sb.Append(" (Stereo audio track with no pre-emphasis)");
                                     break;
-                                case TOC_CONTROL.TwoChanPreEmph:
+                                case TocControl.TwoChanPreEmph:
                                     sb.Append(" (Stereo audio track with 50/15 μs pre-emphasis)");
                                     break;
-                                case TOC_CONTROL.FourChanNoPreEmph:
+                                case TocControl.FourChanNoPreEmph:
                                     sb.Append(" (Quadraphonic audio track with no pre-emphasis)");
                                     break;
-                                case TOC_CONTROL.FourChanPreEmph:
+                                case TocControl.FourChanPreEmph:
                                     sb.Append(" (Quadraphonic audio track with 50/15 μs pre-emphasis)");
                                     break;
-                                case TOC_CONTROL.DataTrack:
+                                case TocControl.DataTrack:
                                     sb.Append(" (Data track, recorded uninterrupted)");
                                     break;
-                                case TOC_CONTROL.DataTrackIncremental:
+                                case TocControl.DataTrackIncremental:
                                     sb.Append(" (Data track, recorded incrementally)");
                                     break;
                             }

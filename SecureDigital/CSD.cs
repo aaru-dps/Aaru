@@ -31,10 +31,14 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SecureDigital
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class CSD
     {
         public byte Structure;
@@ -68,18 +72,17 @@ namespace DiscImageChef.Decoders.SecureDigital
         public byte CRC;
     }
 
-    public partial class Decoders
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public static partial class Decoders
     {
         public static CSD DecodeCSD(uint[] response)
         {
-            if(response == null) return null;
-
-            if(response.Length != 4) return null;
+            if(response?.Length != 4) return null;
 
             byte[] data = new byte[16];
-            byte[] tmp;
 
-            tmp = BitConverter.GetBytes(response[0]);
+            byte[] tmp = BitConverter.GetBytes(response[0]);
             Array.Copy(tmp, 0, data, 0, 4);
             tmp = BitConverter.GetBytes(response[1]);
             Array.Copy(tmp, 0, data, 4, 4);
@@ -93,22 +96,35 @@ namespace DiscImageChef.Decoders.SecureDigital
 
         public static CSD DecodeCSD(byte[] response)
         {
-            if(response == null) return null;
+            if(response?.Length != 16) return null;
 
-            if(response.Length != 16) return null;
+            CSD csd = new CSD
+            {
+                Structure = (byte)((response[0] & 0xC0) >> 6),
+                TAAC = response[1],
+                NSAC = response[2],
+                Speed = response[3],
+                Classes = (ushort)((response[4] << 4) + ((response[5] & 0xF0) >> 4)),
+                ReadBlockLength = (byte)(response[5] & 0x0F),
+                ReadsPartialBlocks = (response[6] & 0x80) == 0x80,
+                WriteMisalignment = (response[6] & 0x40) == 0x40,
+                ReadMisalignment = (response[6] & 0x20) == 0x20,
+                DSRImplemented = (response[6] & 0x10) == 0x10,
+                EraseBlockEnable = (response[10] & 0x40) == 0x40,
+                EraseSectorSize = (byte)(((response[10] & 0x3F) << 1) + ((response[11] & 0x80) >> 7)),
+                WriteProtectGroupSize = (byte)(response[11] & 0x7F),
+                WriteProtectGroupEnable = (response[12] & 0x80) == 0x80,
+                WriteSpeedFactor = (byte)((response[12] & 0x1C) >> 2),
+                WriteBlockLength = (byte)(((response[12] & 0x03) << 2) + ((response[13] & 0xC0) >> 6)),
+                WritesPartialBlocks = (response[13] & 0x20) == 0x20,
+                FileFormatGroup = (response[14] & 0x80) == 0x80,
+                Copy = (response[14] & 0x40) == 0x40,
+                PermanentWriteProtect = (response[14] & 0x20) == 0x20,
+                TemporaryWriteProtect = (response[14] & 0x10) == 0x10,
+                FileFormat = (byte)((response[14] & 0x0C) >> 2),
+                CRC = (byte)((response[15] & 0xFE) >> 1)
+            };
 
-            CSD csd = new CSD();
-
-            csd.Structure = (byte)((response[0] & 0xC0) >> 6);
-            csd.TAAC = response[1];
-            csd.NSAC = response[2];
-            csd.Speed = response[3];
-            csd.Classes = (ushort)((response[4] << 4) + ((response[5] & 0xF0) >> 4));
-            csd.ReadBlockLength = (byte)(response[5] & 0x0F);
-            csd.ReadsPartialBlocks = (response[6] & 0x80) == 0x80;
-            csd.WriteMisalignment = (response[6] & 0x40) == 0x40;
-            csd.ReadMisalignment = (response[6] & 0x20) == 0x20;
-            csd.DSRImplemented = (response[6] & 0x10) == 0x10;
             if(csd.Structure == 0)
             {
                 csd.Size = (ushort)(((response[6] & 0x03) << 10) + (response[7] << 2) + ((response[8] & 0xC0) >> 6));
@@ -119,19 +135,6 @@ namespace DiscImageChef.Decoders.SecureDigital
                 csd.SizeMultiplier = (byte)(((response[9] & 0x03) << 1) + ((response[10] & 0x80) >> 7));
             }
             else csd.Size = (uint)(((response[7] & 0x3F) << 16) + (response[8] << 8) + response[9]);
-            csd.EraseBlockEnable = (response[10] & 0x40) == 0x40;
-            csd.EraseSectorSize = (byte)(((response[10] & 0x3F) << 1) + ((response[11] & 0x80) >> 7));
-            csd.WriteProtectGroupSize = (byte)(response[11] & 0x7F);
-            csd.WriteProtectGroupEnable = (response[12] & 0x80) == 0x80;
-            csd.WriteSpeedFactor = (byte)((response[12] & 0x1C) >> 2);
-            csd.WriteBlockLength = (byte)(((response[12] & 0x03) << 2) + ((response[13] & 0xC0) >> 6));
-            csd.WritesPartialBlocks = (response[13] & 0x20) == 0x20;
-            csd.FileFormatGroup = (response[14] & 0x80) == 0x80;
-            csd.Copy = (response[14] & 0x40) == 0x40;
-            csd.PermanentWriteProtect = (response[14] & 0x20) == 0x20;
-            csd.TemporaryWriteProtect = (response[14] & 0x10) == 0x10;
-            csd.FileFormat = (byte)((response[14] & 0x0C) >> 2);
-            csd.CRC = (byte)((response[15] & 0xFE) >> 1);
 
             return csd;
         }

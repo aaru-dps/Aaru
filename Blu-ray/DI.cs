@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
 
@@ -52,6 +53,10 @@ namespace DiscImageChef.Decoders.Bluray
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class DI
     {
         #region Private constants
@@ -93,8 +98,10 @@ namespace DiscImageChef.Decoders.Bluray
             {
                 if(offset >= 100) break;
 
-                DiscInformationUnits unit = new DiscInformationUnits();
-                unit.Signature = BigEndianBitConverter.ToUInt16(DIResponse, 0 + offset);
+                DiscInformationUnits unit = new DiscInformationUnits
+                {
+                    Signature = BigEndianBitConverter.ToUInt16(DIResponse, 0 + offset)
+                };
 
                 if(unit.Signature != DIUIdentifier) break;
 

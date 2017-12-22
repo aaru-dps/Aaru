@@ -31,9 +31,13 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DiscImageChef.Decoders
 {
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class LisaTag
     {
         /// <summary>
@@ -42,48 +46,48 @@ namespace DiscImageChef.Decoders
         public struct ProfileTag
         {
             /// <summary>0x00, Lisa OS version number</summary>
-            public ushort version;
+            public ushort Version;
             /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
-            public byte kind;
+            public byte Kind;
             /// <summary>0x02 bits 5 to 0, reserved</summary>
-            public byte reserved;
+            public byte Reserved;
             /// <summary>0x03, disk volume number</summary>
-            public byte volume;
+            public byte Volume;
             /// <summary>0x04, file ID</summary>
-            public short fileID;
+            public short FileId;
             /// <summary>
             /// 0x06 bit 7, checksum valid?
             /// </summary>
-            public bool validChk;
+            public bool ValidChk;
             /// <summary>
             /// 0x06 bits 6 to 0, used bytes in block
             /// </summary>
-            public ushort usedBytes;
+            public ushort UsedBytes;
             /// <summary>
             /// 0x08, 3 bytes, absolute page number
             /// </summary>
-            public uint absPage;
+            public uint AbsPage;
             /// <summary>
             /// 0x0B, checksum of data
             /// </summary>
-            public byte checksum;
+            public byte Checksum;
             /// <summary>
             /// 0x0C, relative page number
             /// </summary>
-            public ushort relPage;
+            public ushort RelPage;
             /// <summary>
             /// 0x0E, 3 bytes, next block, 0xFFFFFF if it's last block
             /// </summary>
-            public uint nextBlock;
+            public uint NextBlock;
             /// <summary>
             /// 0x11, 3 bytes, previous block, 0xFFFFFF if it's first block
             /// </summary>
-            public uint prevBlock;
+            public uint PrevBlock;
 
             /// <summary>On-memory value for easy first block search.</summary>
-            public bool isFirst;
+            public bool IsFirst;
             /// <summary>On-memory value for easy last block search.</summary>
-            public bool isLast;
+            public bool IsLast;
         }
 
         /// <summary>
@@ -92,52 +96,52 @@ namespace DiscImageChef.Decoders
         public struct PriamTag
         {
             /// <summary>0x00, Lisa OS version number</summary>
-            public ushort version;
+            public ushort Version;
             /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
-            public byte kind;
+            public byte Kind;
             /// <summary>0x02 bits 5 to 0, reserved</summary>
-            public byte reserved;
+            public byte Reserved;
             /// <summary>0x03, disk volume number</summary>
-            public byte volume;
+            public byte Volume;
             /// <summary>0x04, file ID</summary>
-            public short fileID;
+            public short FileId;
             /// <summary>
             /// 0x06 bit 7, checksum valid?
             /// </summary>
-            public bool validChk;
+            public bool ValidChk;
             /// <summary>
             /// 0x06 bits 6 to 0, used bytes in block
             /// </summary>
-            public ushort usedBytes;
+            public ushort UsedBytes;
             /// <summary>
             /// 0x08, 3 bytes, absolute page number
             /// </summary>
-            public uint absPage;
+            public uint AbsPage;
             /// <summary>
             /// 0x0B, checksum of data
             /// </summary>
-            public byte checksum;
+            public byte Checksum;
             /// <summary>
             /// 0x0C, relative page number
             /// </summary>
-            public ushort relPage;
+            public ushort RelPage;
             /// <summary>
             /// 0x0E, 3 bytes, next block, 0xFFFFFF if it's last block
             /// </summary>
-            public uint nextBlock;
+            public uint NextBlock;
             /// <summary>
             /// 0x11, 3 bytes, previous block, 0xFFFFFF if it's first block
             /// </summary>
-            public uint prevBlock;
+            public uint PrevBlock;
             /// <summary>
             /// 0x14, disk size
             /// </summary>
-            public uint diskSize;
+            public uint DiskSize;
 
             /// <summary>On-memory value for easy first block search.</summary>
-            public bool isFirst;
+            public bool IsFirst;
             /// <summary>On-memory value for easy last block search.</summary>
-            public bool isLast;
+            public bool IsLast;
         }
 
         /// <summary>
@@ -146,32 +150,32 @@ namespace DiscImageChef.Decoders
         public struct SonyTag
         {
             /// <summary>0x00, Lisa OS version number</summary>
-            public ushort version;
+            public ushort Version;
             /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
-            public byte kind;
+            public byte Kind;
             /// <summary>0x02 bits 5 to 0, reserved</summary>
-            public byte reserved;
+            public byte Reserved;
             /// <summary>0x03, disk volume number</summary>
-            public byte volume;
+            public byte Volume;
             /// <summary>0x04, file ID</summary>
-            public short fileID;
+            public short FileId;
             /// <summary>
             /// 0x06, relative page number
             /// </summary>
-            public ushort relPage;
+            public ushort RelPage;
             /// <summary>
             /// 0x08, 3 bytes, next block, 0x7FF if it's last block, 0x8000 set if block is valid
             /// </summary>
-            public ushort nextBlock;
+            public ushort NextBlock;
             /// <summary>
             /// 0x0A, 3 bytes, previous block, 0x7FF if it's first block
             /// </summary>
-            public ushort prevBlock;
+            public ushort PrevBlock;
 
             /// <summary>On-memory value for easy first block search.</summary>
-            public bool isFirst;
+            public bool IsFirst;
             /// <summary>On-memory value for easy last block search.</summary>
-            public bool isLast;
+            public bool IsLast;
         }
 
         public static SonyTag? DecodeSonyTag(byte[] tag)
@@ -182,17 +186,17 @@ namespace DiscImageChef.Decoders
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            snTag.version = BigEndianBitConverter.ToUInt16(tag, 0);
-            snTag.kind = (byte)((tag[2] & 0xC0) >> 6);
-            snTag.reserved = (byte)(tag[2] & 0x3F);
-            snTag.volume = tag[3];
-            snTag.fileID = BigEndianBitConverter.ToInt16(tag, 4);
-            snTag.relPage = BigEndianBitConverter.ToUInt16(tag, 6);
-            snTag.nextBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 8) & 0x7FF);
-            snTag.prevBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 10) & 0x7FF);
+            snTag.Version = BigEndianBitConverter.ToUInt16(tag, 0);
+            snTag.Kind = (byte)((tag[2] & 0xC0) >> 6);
+            snTag.Reserved = (byte)(tag[2] & 0x3F);
+            snTag.Volume = tag[3];
+            snTag.FileId = BigEndianBitConverter.ToInt16(tag, 4);
+            snTag.RelPage = BigEndianBitConverter.ToUInt16(tag, 6);
+            snTag.NextBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 8) & 0x7FF);
+            snTag.PrevBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 10) & 0x7FF);
 
-            snTag.isLast = snTag.nextBlock == 0x7FF;
-            snTag.isFirst = snTag.prevBlock == 0x7FF;
+            snTag.IsLast = snTag.NextBlock == 0x7FF;
+            snTag.IsFirst = snTag.PrevBlock == 0x7FF;
 
             return snTag;
         }
@@ -207,37 +211,37 @@ namespace DiscImageChef.Decoders
 
             byte[] tmp = new byte[4];
 
-            phTag.version = BigEndianBitConverter.ToUInt16(tag, 0);
-            phTag.kind = (byte)((tag[2] & 0xC0) >> 6);
-            phTag.reserved = (byte)(tag[2] & 0x3F);
-            phTag.volume = tag[3];
-            phTag.fileID = BigEndianBitConverter.ToInt16(tag, 4);
-            phTag.validChk |= (tag[6] & 0x80) == 0x80;
-            phTag.usedBytes = (ushort)(BigEndianBitConverter.ToUInt16(tag, 6) & 0x7FFF);
+            phTag.Version = BigEndianBitConverter.ToUInt16(tag, 0);
+            phTag.Kind = (byte)((tag[2] & 0xC0) >> 6);
+            phTag.Reserved = (byte)(tag[2] & 0x3F);
+            phTag.Volume = tag[3];
+            phTag.FileId = BigEndianBitConverter.ToInt16(tag, 4);
+            phTag.ValidChk |= (tag[6] & 0x80) == 0x80;
+            phTag.UsedBytes = (ushort)(BigEndianBitConverter.ToUInt16(tag, 6) & 0x7FFF);
 
             tmp[0] = 0x00;
             tmp[1] = tag[8];
             tmp[2] = tag[9];
             tmp[3] = tag[10];
-            phTag.absPage = BigEndianBitConverter.ToUInt32(tmp, 0);
+            phTag.AbsPage = BigEndianBitConverter.ToUInt32(tmp, 0);
 
-            phTag.checksum = tag[11];
-            phTag.relPage = BigEndianBitConverter.ToUInt16(tag, 12);
+            phTag.Checksum = tag[11];
+            phTag.RelPage = BigEndianBitConverter.ToUInt16(tag, 12);
 
             tmp[0] = 0x00;
             tmp[1] = tag[14];
             tmp[2] = tag[15];
             tmp[3] = tag[16];
-            phTag.nextBlock = BigEndianBitConverter.ToUInt32(tmp, 0);
+            phTag.NextBlock = BigEndianBitConverter.ToUInt32(tmp, 0);
 
             tmp[0] = 0x00;
             tmp[1] = tag[17];
             tmp[2] = tag[18];
             tmp[3] = tag[19];
-            phTag.prevBlock = BigEndianBitConverter.ToUInt32(tmp, 0);
+            phTag.PrevBlock = BigEndianBitConverter.ToUInt32(tmp, 0);
 
-            phTag.isLast = phTag.nextBlock == 0xFFFFFF;
-            phTag.isFirst = phTag.prevBlock == 0xFFFFFF;
+            phTag.IsLast = phTag.NextBlock == 0xFFFFFF;
+            phTag.IsFirst = phTag.PrevBlock == 0xFFFFFF;
 
             return phTag;
         }
@@ -252,39 +256,39 @@ namespace DiscImageChef.Decoders
 
             byte[] tmp = new byte[4];
 
-            pmTag.version = BigEndianBitConverter.ToUInt16(tag, 0);
-            pmTag.kind = (byte)((tag[2] & 0xC0) >> 6);
-            pmTag.reserved = (byte)(tag[2] & 0x3F);
-            pmTag.volume = tag[3];
-            pmTag.fileID = BigEndianBitConverter.ToInt16(tag, 4);
-            pmTag.validChk |= (tag[6] & 0x80) == 0x80;
-            pmTag.usedBytes = (ushort)(BigEndianBitConverter.ToUInt16(tag, 6) & 0x7FFF);
+            pmTag.Version = BigEndianBitConverter.ToUInt16(tag, 0);
+            pmTag.Kind = (byte)((tag[2] & 0xC0) >> 6);
+            pmTag.Reserved = (byte)(tag[2] & 0x3F);
+            pmTag.Volume = tag[3];
+            pmTag.FileId = BigEndianBitConverter.ToInt16(tag, 4);
+            pmTag.ValidChk |= (tag[6] & 0x80) == 0x80;
+            pmTag.UsedBytes = (ushort)(BigEndianBitConverter.ToUInt16(tag, 6) & 0x7FFF);
 
             tmp[0] = 0x00;
             tmp[1] = tag[8];
             tmp[2] = tag[9];
             tmp[3] = tag[10];
-            pmTag.absPage = BigEndianBitConverter.ToUInt32(tmp, 0);
+            pmTag.AbsPage = BigEndianBitConverter.ToUInt32(tmp, 0);
 
-            pmTag.checksum = tag[11];
-            pmTag.relPage = BigEndianBitConverter.ToUInt16(tag, 12);
+            pmTag.Checksum = tag[11];
+            pmTag.RelPage = BigEndianBitConverter.ToUInt16(tag, 12);
 
             tmp[0] = 0x00;
             tmp[1] = tag[14];
             tmp[2] = tag[15];
             tmp[3] = tag[16];
-            pmTag.nextBlock = BigEndianBitConverter.ToUInt32(tmp, 0);
+            pmTag.NextBlock = BigEndianBitConverter.ToUInt32(tmp, 0);
 
             tmp[0] = 0x00;
             tmp[1] = tag[17];
             tmp[2] = tag[18];
             tmp[3] = tag[19];
-            pmTag.prevBlock = BigEndianBitConverter.ToUInt32(tmp, 0);
+            pmTag.PrevBlock = BigEndianBitConverter.ToUInt32(tmp, 0);
 
-            pmTag.diskSize = BigEndianBitConverter.ToUInt32(tag, 20);
+            pmTag.DiskSize = BigEndianBitConverter.ToUInt32(tag, 20);
 
-            pmTag.isLast = pmTag.nextBlock == 0xFFFFFF;
-            pmTag.isFirst = pmTag.prevBlock == 0xFFFFFF;
+            pmTag.IsLast = pmTag.NextBlock == 0xFFFFFF;
+            pmTag.IsFirst = pmTag.PrevBlock == 0xFFFFFF;
 
             return pmTag;
         }
@@ -303,21 +307,21 @@ namespace DiscImageChef.Decoders
                     if(snTag == null) return null;
 
                     pmTag = new PriamTag();
-                    pmTag.absPage = 0;
-                    pmTag.checksum = 0;
-                    pmTag.diskSize = 0;
-                    pmTag.fileID = snTag.Value.fileID;
-                    pmTag.kind = snTag.Value.kind;
-                    pmTag.nextBlock = snTag.Value.nextBlock;
-                    pmTag.prevBlock = snTag.Value.prevBlock;
-                    pmTag.relPage = snTag.Value.relPage;
-                    pmTag.reserved = snTag.Value.reserved;
-                    pmTag.usedBytes = 0;
-                    pmTag.validChk = false;
-                    pmTag.version = snTag.Value.version;
-                    pmTag.volume = snTag.Value.volume;
-                    pmTag.isFirst = snTag.Value.isFirst;
-                    pmTag.isLast = snTag.Value.isLast;
+                    pmTag.AbsPage = 0;
+                    pmTag.Checksum = 0;
+                    pmTag.DiskSize = 0;
+                    pmTag.FileId = snTag.Value.FileId;
+                    pmTag.Kind = snTag.Value.Kind;
+                    pmTag.NextBlock = snTag.Value.NextBlock;
+                    pmTag.PrevBlock = snTag.Value.PrevBlock;
+                    pmTag.RelPage = snTag.Value.RelPage;
+                    pmTag.Reserved = snTag.Value.Reserved;
+                    pmTag.UsedBytes = 0;
+                    pmTag.ValidChk = false;
+                    pmTag.Version = snTag.Value.Version;
+                    pmTag.Volume = snTag.Value.Volume;
+                    pmTag.IsFirst = snTag.Value.IsFirst;
+                    pmTag.IsLast = snTag.Value.IsLast;
 
                     return pmTag;
                 case 20:
@@ -326,21 +330,21 @@ namespace DiscImageChef.Decoders
                     if(phTag == null) return null;
 
                     pmTag = new PriamTag();
-                    pmTag.absPage = phTag.Value.absPage;
-                    pmTag.checksum = phTag.Value.checksum;
-                    pmTag.diskSize = 0;
-                    pmTag.fileID = phTag.Value.fileID;
-                    pmTag.kind = phTag.Value.kind;
-                    pmTag.nextBlock = phTag.Value.nextBlock;
-                    pmTag.prevBlock = phTag.Value.prevBlock;
-                    pmTag.relPage = phTag.Value.relPage;
-                    pmTag.reserved = phTag.Value.reserved;
-                    pmTag.usedBytes = phTag.Value.usedBytes;
-                    pmTag.validChk = phTag.Value.validChk;
-                    pmTag.version = phTag.Value.version;
-                    pmTag.volume = phTag.Value.volume;
-                    pmTag.isFirst = phTag.Value.isFirst;
-                    pmTag.isLast = phTag.Value.isLast;
+                    pmTag.AbsPage = phTag.Value.AbsPage;
+                    pmTag.Checksum = phTag.Value.Checksum;
+                    pmTag.DiskSize = 0;
+                    pmTag.FileId = phTag.Value.FileId;
+                    pmTag.Kind = phTag.Value.Kind;
+                    pmTag.NextBlock = phTag.Value.NextBlock;
+                    pmTag.PrevBlock = phTag.Value.PrevBlock;
+                    pmTag.RelPage = phTag.Value.RelPage;
+                    pmTag.Reserved = phTag.Value.Reserved;
+                    pmTag.UsedBytes = phTag.Value.UsedBytes;
+                    pmTag.ValidChk = phTag.Value.ValidChk;
+                    pmTag.Version = phTag.Value.Version;
+                    pmTag.Volume = phTag.Value.Volume;
+                    pmTag.IsFirst = phTag.Value.IsFirst;
+                    pmTag.IsLast = phTag.Value.IsLast;
 
                     return pmTag;
                 case 24: return DecodePriamTag(tag);

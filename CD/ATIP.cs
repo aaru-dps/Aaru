@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
 
@@ -51,6 +52,10 @@ namespace DiscImageChef.Decoders.CD
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class ATIP
     {
         public struct CDATIP
@@ -292,8 +297,7 @@ namespace DiscImageChef.Decoders.CD
             if(response.DDCD)
             {
                 sb.AppendFormat("Indicative Target Writing Power: 0x{0:X2}", response.ITWP).AppendLine();
-                if(response.DiscType) sb.AppendLine("Disc is DDCD-RW");
-                else sb.AppendLine("Disc is DDCD-R");
+                sb.AppendLine(response.DiscType ? "Disc is DDCD-RW" : "Disc is DDCD-R");
                 switch(response.ReferenceSpeed)
                 {
                     case 2:
@@ -398,8 +402,7 @@ namespace DiscImageChef.Decoders.CD
                     }
                 }
 
-                if(response.URU) sb.AppendLine("Disc use is unrestricted");
-                else sb.AppendLine("Disc use is restricted");
+                sb.AppendLine(response.URU ? "Disc use is unrestricted" : "Disc use is restricted");
 
                 sb.AppendFormat("ATIP Start time of Lead-in: {0}:{1:D2}:{2:D2}", response.LeadInStartMin,
                                 response.LeadInStartSec, response.LeadInStartFrame).AppendLine();
@@ -428,16 +431,16 @@ namespace DiscImageChef.Decoders.CD
 
             int type = response.LeadInStartFrame % 10;
             int frm = response.LeadInStartFrame - type;
-            string manufacturer;
 
             if(response.DiscType) sb.AppendLine("Disc uses phase change");
             else
             {
-                if(type < 5) sb.AppendLine("Disc uses long strategy type dye (Cyanine, AZO, etc...)");
-                else sb.AppendLine("Disc uses short strategy type dye (Phthalocyanine, etc...)");
+                sb.AppendLine(type < 5
+                                  ? "Disc uses long strategy type dye (Cyanine, AZO, etc...)"
+                                  : "Disc uses short strategy type dye (Phthalocyanine, etc...)");
             }
 
-            manufacturer = ManufacturerFromATIP(response.LeadInStartSec, frm);
+            string manufacturer = ManufacturerFromATIP(response.LeadInStartSec, frm);
 
             if(manufacturer != "") sb.AppendFormat("Disc manufactured by: {0}", manufacturer).AppendLine();
 

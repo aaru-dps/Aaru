@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.DVD
@@ -52,6 +53,10 @@ namespace DiscImageChef.Decoders.DVD
     /// ECMA 272: 120 mm DVD Rewritable Disk (DVD-RAM)
     /// ECMA 330: 120 mm (4,7 Gbytes per side) and 80 mm (1,46 Gbytes per side) DVD Rewritable Disk (DVD-RAM)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class DDS
     {
         public struct DiscDefinitionStructure
@@ -196,13 +201,10 @@ namespace DiscImageChef.Decoders.DVD
 
         public static DiscDefinitionStructure? Decode(byte[] response)
         {
-            if(response == null) return null;
+            if(response?.Length != 2052) return null;
 
-            if(response.Length != 2052) return null;
-
-            DiscDefinitionStructure dds = new DiscDefinitionStructure();
-
-            dds.Identifier = (ushort)((response[4] << 8) + response[5]);
+            DiscDefinitionStructure dds =
+                new DiscDefinitionStructure {Identifier = (ushort)((response[4] << 8) + response[5])};
 
             if(dds.Identifier != 0x0A0A) return null;
 

@@ -30,11 +30,16 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x2A: CD-ROM capabilities page
@@ -279,11 +284,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             for(int i = 0; i < descriptors; i++)
             {
-                decoded.WriteSpeedPerformanceDescriptors[i] = new ModePage_2A_WriteDescriptor();
-                decoded.WriteSpeedPerformanceDescriptors[i].RotationControl =
-                    (byte)(pageResponse[1 + 32 + i * 4] & 0x07);
-                decoded.WriteSpeedPerformanceDescriptors[i].WriteSpeed =
-                    (ushort)((pageResponse[2 + 32 + i * 4] << 8) + pageResponse[3 + 32 + i * 4]);
+                decoded.WriteSpeedPerformanceDescriptors[i] = new ModePage_2A_WriteDescriptor
+ {
+                    RotationControl = (byte)(pageResponse[1 + 32 + i * 4] & 0x07),
+                    WriteSpeed = (ushort)((pageResponse[2 + 32 + i * 4] << 8) + pageResponse[3 + 32 + i * 4])
+                };
             }
 
             return decoded;
@@ -345,14 +350,15 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.PreventJumper)
             {
                 sb.AppendLine("\tDrive power ups locked");
-                if(page.LockState) sb.AppendLine("\tDrive is locked, media cannot be ejected or inserted");
-                else sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
+                sb.AppendLine(page.LockState
+                                  ? "\tDrive is locked, media cannot be ejected or inserted"
+                                  : "\tDrive is not locked, media can be ejected and inserted");
             }
             else
             {
-                if(page.LockState)
-                    sb.AppendLine("\tDrive is locked, media cannot be ejected, but if empty, can be inserted");
-                else sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
+                sb.AppendLine(page.LockState
+                                  ? "\tDrive is locked, media cannot be ejected, but if empty, can be inserted"
+                                  : "\tDrive is not locked, media can be ejected and inserted");
             }
             if(page.Eject) sb.AppendLine("\tDrive can eject media");
 
@@ -369,23 +375,19 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(page.ReadCDR)
             {
-                if(page.WriteCDR) sb.AppendLine("\tDrive can read and write CD-R");
-                else sb.AppendLine("\tDrive can read CD-R");
+                sb.AppendLine(page.WriteCDR ? "\tDrive can read and write CD-R" : "\tDrive can read CD-R");
 
                 if(page.Method2) sb.AppendLine("\tDrive supports reading CD-R packet media");
             }
 
             if(page.ReadCDRW)
-                if(page.WriteCDRW) sb.AppendLine("\tDrive can read and write CD-RW");
-                else sb.AppendLine("\tDrive can read CD-RW");
+                sb.AppendLine(page.WriteCDRW ? "\tDrive can read and write CD-RW" : "\tDrive can read CD-RW");
 
             if(page.ReadDVDROM) sb.AppendLine("\tDrive can read DVD-ROM");
             if(page.ReadDVDR)
-                if(page.WriteDVDR) sb.AppendLine("\tDrive can read and write DVD-R");
-                else sb.AppendLine("\tDrive can read DVD-R");
+                sb.AppendLine(page.WriteDVDR ? "\tDrive can read and write DVD-R" : "\tDrive can read DVD-R");
             if(page.ReadDVDRAM)
-                if(page.WriteDVDRAM) sb.AppendLine("\tDrive can read and write DVD-RAM");
-                else sb.AppendLine("\tDrive can read DVD-RAM");
+                sb.AppendLine(page.WriteDVDRAM ? "\tDrive can read and write DVD-RAM" : "\tDrive can read DVD-RAM");
 
             if(page.Composite) sb.AppendLine("\tDrive can deliver a composite audio and video data stream");
             if(page.DigitalPort1) sb.AppendLine("\tDrive supports IEC-958 digital output on port 1");

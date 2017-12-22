@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.DVD
@@ -50,6 +51,10 @@ namespace DiscImageChef.Decoders.DVD
     /// T10/1836-D revision 2g
     /// ECMA 365
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class CSS_CPRM
     {
         public struct LeadInCopyright
@@ -117,21 +122,18 @@ namespace DiscImageChef.Decoders.DVD
 
         public static LeadInCopyright? DecodeLeadInCopyright(byte[] response)
         {
-            if(response == null) return null;
+            if(response?.Length != 8) return null;
 
-            if(response.Length != 8) return null;
-
-            LeadInCopyright cmi = new LeadInCopyright();
-
-            cmi.DataLength = (ushort)((response[0] << 8) + response[1]);
-            cmi.Reserved1 = response[2];
-            cmi.Reserved2 = response[3];
-            cmi.CopyrightType = (CopyrightType)response[4];
-            cmi.RegionInformation = response[5];
-            cmi.Reserved3 = response[6];
-            cmi.Reserved4 = response[7];
-
-            return cmi;
+            return new LeadInCopyright
+            {
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1 = response[2],
+                Reserved2 = response[3],
+                CopyrightType = (CopyrightType)response[4],
+                RegionInformation = response[5],
+                Reserved3 = response[6],
+                Reserved4 = response[7]
+            };
         }
 
         public static string PrettifyLeadInCopyright(LeadInCopyright? cmi)

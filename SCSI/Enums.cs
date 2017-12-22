@@ -30,6 +30,8 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.SCSI
 {
     public enum PeripheralQualifiers : byte
@@ -56,6 +58,7 @@ namespace DiscImageChef.Decoders.SCSI
         VendorMask = 0x04
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum PeripheralDeviceTypes : byte
     {
         /// <summary>
@@ -152,6 +155,7 @@ namespace DiscImageChef.Decoders.SCSI
         UnknownDevice = 0x1F
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ANSIVersions : byte
     {
         /// <summary>
@@ -184,6 +188,7 @@ namespace DiscImageChef.Decoders.SCSI
         ANSI2008Version = 0x06
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ECMAVersions : byte
     {
         /// <summary>
@@ -196,6 +201,7 @@ namespace DiscImageChef.Decoders.SCSI
         ECMA111 = 0x01
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ISOVersions : byte
     {
         /// <summary>
@@ -208,6 +214,7 @@ namespace DiscImageChef.Decoders.SCSI
         ISO1995Version = 0x02
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum SPIClocking : byte
     {
         /// <summary>
@@ -228,6 +235,7 @@ namespace DiscImageChef.Decoders.SCSI
         STandDT = 0x03
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum TGPSValues : byte
     {
         /// <summary>
@@ -248,6 +256,7 @@ namespace DiscImageChef.Decoders.SCSI
         Both = 0x03
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ProtocolIdentifiers : byte
     {
         /// <summary>
@@ -304,6 +313,7 @@ namespace DiscImageChef.Decoders.SCSI
         NoProtocol = 15
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ScsiDefinitions : byte
     {
         Current = 0,

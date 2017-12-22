@@ -30,10 +30,14 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x05: Flexible disk page
@@ -263,18 +267,15 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
                 case 1:
                     sb.Append("\tPin 34 indicates drive is ready when active ");
-                    if((page.Pin34 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin34 & 0x08) == 0x08 ? "high" : "low");
                     break;
                 case 2:
                     sb.Append("\tPin 34 indicates disk has changed when active ");
-                    if((page.Pin34 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin34 & 0x08) == 0x08 ? "high" : "low");
                     break;
                 default:
                     sb.AppendFormat("\tPin 34 indicates unknown function {0} when active ", page.Pin34 & 0x07);
-                    if((page.Pin34 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin34 & 0x08) == 0x08 ? "high" : "low");
                     break;
             }
 
@@ -285,23 +286,19 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
                 case 1:
                     sb.Append("\tPin 4 indicates drive is in use when active ");
-                    if((page.Pin4 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin4 & 0x08) == 0x08 ? "high" : "low");
                     break;
                 case 2:
                     sb.Append("\tPin 4 indicates eject when active ");
-                    if((page.Pin4 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin4 & 0x08) == 0x08 ? "high" : "low");
                     break;
                 case 3:
                     sb.Append("\tPin 4 indicates head load when active ");
-                    if((page.Pin4 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin4 & 0x08) == 0x08 ? "high" : "low");
                     break;
                 default:
                     sb.AppendFormat("\tPin 4 indicates unknown function {0} when active ", page.Pin4 & 0x07);
-                    if((page.Pin4 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin4 & 0x08) == 0x08 ? "high" : "low");
                     break;
             }
 
@@ -312,8 +309,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
                 default:
                     sb.AppendFormat("\tPin 2 indicates unknown function {0} when active ", page.Pin2 & 0x07);
-                    if((page.Pin2 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin2 & 0x08) == 0x08 ? "high" : "low");
                     break;
             }
 
@@ -324,13 +320,11 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
                 case 1:
                     sb.Append("\tPin 1 indicates disk change reset when active ");
-                    if((page.Pin1 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin1 & 0x08) == 0x08 ? "high" : "low");
                     break;
                 default:
                     sb.AppendFormat("\tPin 1 indicates unknown function {0} when active ", page.Pin1 & 0x07);
-                    if((page.Pin1 & 0x08) == 0x08) sb.Append("high");
-                    else sb.Append("low");
+                    sb.Append((page.Pin1 & 0x08) == 0x08 ? "high" : "low");
                     break;
             }
 

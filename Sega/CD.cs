@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,6 +39,9 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Decoders.Sega
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class CD
     {
         // TODO: Check if it is big or little endian
@@ -114,10 +118,9 @@ namespace DiscImageChef.Decoders.Sega
 
             if(ipbin_sector.Length < 512) return null;
 
-            IPBin ipbin;
             IntPtr ptr = Marshal.AllocHGlobal(512);
             Marshal.Copy(ipbin_sector, 0, ptr, 512);
-            ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));
+            IPBin ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));
             Marshal.FreeHGlobal(ptr);
 
             DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_name = \"{0}\"",
@@ -186,7 +189,8 @@ namespace DiscImageChef.Decoders.Sega
                                                     provider);
                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch { }
+                catch { // ignored
+ }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 

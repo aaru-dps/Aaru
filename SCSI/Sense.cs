@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Decoders.ATA;
 
@@ -48,6 +49,9 @@ namespace DiscImageChef.Decoders.SCSI
         Unknown
     }
 
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public struct StandardSense
     {
         /// <summary>
@@ -140,6 +144,11 @@ namespace DiscImageChef.Decoders.SCSI
         Completed = 0xF
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnassignedField.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct FixedSense
     {
         /// <summary>
@@ -195,6 +204,9 @@ namespace DiscImageChef.Decoders.SCSI
         public byte[] AdditionalSense;
     }
 
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct DescriptorSense
     {
         /// <summary>
@@ -216,6 +228,9 @@ namespace DiscImageChef.Decoders.SCSI
         public Dictionary<byte, byte[]> Descriptors;
     }
 
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct AnotherProgressIndicationSenseDescriptor
     {
         public SenseKeys SenseKey;
@@ -224,6 +239,7 @@ namespace DiscImageChef.Decoders.SCSI
         public ushort Progress;
     }
 
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Sense
     {
         /// <summary>
@@ -265,8 +281,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static FixedSense? DecodeFixed(byte[] sense)
         {
-            string foo;
-            return DecodeFixed(sense, out foo);
+            return DecodeFixed(sense, out _);
         }
 
         public static FixedSense? DecodeFixed(byte[] sense, out string senseDescription)
@@ -276,16 +291,17 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(sense.Length < 8) return null;
 
-            FixedSense decoded = new FixedSense();
-
-            decoded.InformationValid |= (sense[0] & 0x80) == 0x80;
-            decoded.SegmentNumber = sense[1];
-            decoded.Filemark |= (sense[2] & 0x80) == 0x80;
-            decoded.EOM |= (sense[2] & 0x40) == 0x40;
-            decoded.ILI |= (sense[2] & 0x20) == 0x20;
-            decoded.SenseKey = (SenseKeys)(sense[2] & 0x0F);
-            decoded.Information = (uint)((sense[3] << 24) + (sense[4] << 16) + (sense[5] << 8) + sense[6]);
-            decoded.AdditionalLength = sense[7];
+            FixedSense decoded = new FixedSense
+            {
+                InformationValid = (sense[0] & 0x80) == 0x80,
+                SegmentNumber = sense[1],
+                Filemark = (sense[2] & 0x80) == 0x80,
+                EOM = (sense[2] & 0x40) == 0x40,
+                ILI = (sense[2] & 0x20) == 0x20,
+                SenseKey = (SenseKeys)(sense[2] & 0x0F),
+                Information = (uint)((sense[3] << 24) + (sense[4] << 16) + (sense[5] << 8) + sense[6]),
+                AdditionalLength = sense[7]
+            };
 
             if(sense.Length >= 12)
                 decoded.CommandSpecific = (uint)((sense[8] << 24) + (sense[9] << 16) + (sense[10] << 8) + sense[11]);
@@ -311,8 +327,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static DescriptorSense? DecodeDescriptor(byte[] sense)
         {
-            string foo;
-            return DecodeDescriptor(sense, out foo);
+            return DecodeDescriptor(sense, out _);
         }
 
         public static DescriptorSense? DecodeDescriptor(byte[] sense, out string senseDescription)
@@ -323,13 +338,15 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(sense.Length < 8) return null;
 
-            DescriptorSense decoded = new DescriptorSense();
+            DescriptorSense decoded = new DescriptorSense
+            {
+                SenseKey = (SenseKeys)(sense[1] & 0x0F),
+                ASC = sense[2],
+                ASCQ = sense[3],
+                Overflow = (sense[4] & 0x80) == 0x80,
+                Descriptors = new Dictionary<byte, byte[]>()
+            };
 
-            decoded.SenseKey = (SenseKeys)(sense[1] & 0x0F);
-            decoded.ASC = sense[2];
-            decoded.ASCQ = sense[3];
-            decoded.Overflow |= (sense[4] & 0x80) == 0x80;
-            decoded.Descriptors = new Dictionary<byte, byte[]>();
             senseDescription = GetSenseDescription(decoded.ASC, decoded.ASCQ);
 
             int offset = 8;
@@ -402,8 +419,9 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case SenseKeys.IllegalRequest:
                 {
-                    if((decoded.SenseKeySpecific & 0x400000) == 0x400000) sb.AppendLine("Illegal field in CDB");
-                    else sb.AppendLine("Illegal field in data parameters");
+                    sb.AppendLine((decoded.SenseKeySpecific & 0x400000) == 0x400000
+                                      ? "Illegal field in CDB"
+                                      : "Illegal field in data parameters");
 
                     if((decoded.SenseKeySpecific & 0x200000) == 0x200000)
                         sb.AppendFormat("Invalid value in bit {0} in field {1} of CDB",
@@ -533,14 +551,13 @@ namespace DiscImageChef.Decoders.SCSI
         {
             if(descriptor.Length != 8 || descriptor[0] != 0x0A) return null;
 
-            AnotherProgressIndicationSenseDescriptor decoded = new AnotherProgressIndicationSenseDescriptor();
-
-            decoded.SenseKey = (SenseKeys)descriptor[2];
-            decoded.ASC = descriptor[3];
-            decoded.ASCQ = descriptor[4];
-            decoded.Progress = (ushort)((descriptor[6] << 8) + descriptor[7]);
-
-            return decoded;
+            return new AnotherProgressIndicationSenseDescriptor
+            {
+                SenseKey = (SenseKeys)descriptor[2],
+                ASC = descriptor[3],
+                ASCQ = descriptor[4],
+                Progress = (ushort)((descriptor[6] << 8) + descriptor[7])
+            };
         }
 
         public static void DecodeDescriptor04(byte[] descriptor)
@@ -568,19 +585,18 @@ namespace DiscImageChef.Decoders.SCSI
             throw new NotImplementedException("Check OSD");
         }
 
-        public static AtaErrorRegistersLBA48 DecodeDescriptor09(byte[] descriptor)
+        public static AtaErrorRegistersLba48 DecodeDescriptor09(byte[] descriptor)
         {
-            AtaErrorRegistersLBA48 errorRegisters = new AtaErrorRegistersLBA48();
-
-            errorRegisters.error = descriptor[3];
-            errorRegisters.sectorCount = (ushort)((descriptor[4] << 8) + descriptor[5]);
-            errorRegisters.lbaLow = (ushort)((descriptor[6] << 8) + descriptor[7]);
-            errorRegisters.lbaMid = (ushort)((descriptor[8] << 8) + descriptor[9]);
-            errorRegisters.lbaHigh = (ushort)((descriptor[10] << 8) + descriptor[11]);
-            errorRegisters.deviceHead = descriptor[12];
-            errorRegisters.status = descriptor[13];
-
-            return errorRegisters;
+            return new AtaErrorRegistersLba48
+            {
+                Error = descriptor[3],
+                SectorCount = (ushort)((descriptor[4] << 8) + descriptor[5]),
+                LbaLow = (ushort)((descriptor[6] << 8) + descriptor[7]),
+                LbaMid = (ushort)((descriptor[8] << 8) + descriptor[9]),
+                LbaHigh = (ushort)((descriptor[10] << 8) + descriptor[11]),
+                DeviceHead = descriptor[12],
+                Status = descriptor[13]
+            };
         }
 
         public static void DecodeDescriptor0B(byte[] descriptor)
@@ -626,6 +642,7 @@ namespace DiscImageChef.Decoders.SCSI
             }
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public static string GetSenseDescription(byte ASC, byte ASCQ)
         {
             switch(ASC)

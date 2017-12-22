@@ -30,10 +30,15 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnassignedField.Global")]
     public static partial class Modes
     {
         #region IBM Mode Page 0x2F: Behaviour Configuration Mode page
@@ -66,22 +71,20 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(pageResponse.Length < 8) return null;
 
-            IBM_ModePage_2F decoded = new IBM_ModePage_2F();
-
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.FenceBehaviour = pageResponse[2];
-            decoded.CleanBehaviour = pageResponse[3];
-            decoded.WORMEmulation = pageResponse[4];
-            decoded.SenseDataBehaviour = pageResponse[5];
-            decoded.CCDM |= (pageResponse[6] & 0x04) == 0x04;
-            decoded.DDEOR |= (pageResponse[6] & 0x02) == 0x02;
-            decoded.CLNCHK |= (pageResponse[6] & 0x01) == 0x01;
-            decoded.FirmwareUpdateBehaviour = pageResponse[7];
-            decoded.UOE_C = (byte)((pageResponse[8] & 0x30) >> 4);
-            decoded.UOE_F = (byte)((pageResponse[8] & 0x0C) >> 2);
-            decoded.UOE_F = (byte)(pageResponse[8] & 0x03);
-
-            return decoded;
+            return new IBM_ModePage_2F
+            {
+                PS = (pageResponse[0] & 0x80) == 0x80,
+                FenceBehaviour = pageResponse[2],
+                CleanBehaviour = pageResponse[3],
+                WORMEmulation = pageResponse[4],
+                SenseDataBehaviour = pageResponse[5],
+                CCDM = (pageResponse[6] & 0x04) == 0x04,
+                DDEOR = (pageResponse[6] & 0x02) == 0x02,
+                CLNCHK = (pageResponse[6] & 0x01) == 0x01,
+                FirmwareUpdateBehaviour = pageResponse[7],
+                UOE_C = (byte)((pageResponse[8] & 0x30) >> 4),
+                UOE_F = (byte)((pageResponse[8] & 0x0C) >> 2)
+            };
         }
 
         public static string PrettifyIBMModePage_2F(byte[] pageResponse)

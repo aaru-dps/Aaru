@@ -30,10 +30,14 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
     #region HP Mode Page 0x3E: CD-ROM Emulation/Disaster Recovery Mode page
@@ -82,8 +86,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         if(page.PS) sb.AppendLine("\tParameters can be saved");
 
-        if(page.CDmode) sb.AppendLine("\tDrive is emulating a CD-ROM drive");
-        else sb.AppendLine("\tDrive is not emulating a CD-ROM drive");
+        sb.AppendLine(page.CDmode ? "\tDrive is emulating a CD-ROM drive" : "\tDrive is not emulating a CD-ROM drive");
         if(page.NonAuto) sb.AppendLine("\tDrive will not exit emulation automatically");
 
         return sb.ToString();

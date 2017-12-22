@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI.MMC
@@ -50,6 +51,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class AACS
     {
         public struct AACSVolumeIdentifier
@@ -463,8 +468,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             StringBuilder sb = new StringBuilder();
 
             if(response.MaxLBAExtents == 0)
-                if(response.DataLength > 2) sb.AppendLine("Drive can store 256 LBA Extents");
-                else sb.AppendLine("Drive cannot store LBA Extents");
+                sb.AppendLine(response.DataLength > 2
+                                  ? "Drive can store 256 LBA Extents"
+                                  : "Drive cannot store LBA Extents");
             else sb.AppendFormat("Drive can store {0} LBA Extents", response.MaxLBAExtents).AppendLine();
 
             for(int i = 0; i < response.Extents.Length; i++)

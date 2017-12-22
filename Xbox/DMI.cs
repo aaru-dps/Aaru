@@ -31,16 +31,20 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.Xbox
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class DMI
     {
         public static bool IsXbox(byte[] dmi)
         {
-            if(dmi == null) return false;
-            if(dmi.Length != 2052) return false;
+            if(dmi?.Length != 2052) return false;
 
             // Version is 1
             if(BitConverter.ToUInt32(dmi, 4) != 1) return false;
@@ -54,15 +58,12 @@ namespace DiscImageChef.Decoders.Xbox
             long timestamp = BitConverter.ToInt64(dmi, 20);
 
             // Game cannot exist before the Xbox
-            if(timestamp < 0x1BD164833DFC000) return false;
-
-            return true;
+            return timestamp >= 0x1BD164833DFC000;
         }
 
         public static bool IsXbox360(byte[] dmi)
         {
-            if(dmi == null) return false;
-            if(dmi.Length != 2052) return false;
+            if(dmi?.Length != 2052) return false;
 
             uint signature = BitConverter.ToUInt32(dmi, 0x7EC);
 
@@ -155,14 +156,15 @@ namespace DiscImageChef.Decoders.Xbox
             bool isXbox = IsXbox(response);
             if(!isXbox) return null;
 
-            XboxDMI dmi = new XboxDMI();
+            XboxDMI dmi = new XboxDMI
+            {
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1 = response[2],
+                Reserved2 = response[3],
+                Version = BitConverter.ToUInt32(response, 4),
+                Timestamp = BitConverter.ToInt64(response, 20)
+            };
 
-            dmi.DataLength = (ushort)((response[0] << 8) + response[1]);
-            dmi.Reserved1 = response[2];
-            dmi.Reserved2 = response[3];
-
-            dmi.Version = BitConverter.ToUInt32(response, 4);
-            dmi.Timestamp = BitConverter.ToInt64(response, 20);
             byte[] tmp = new byte[8];
             Array.Copy(response, 12, tmp, 0, 8);
             dmi.CatalogNumber = StringHandlers.CToString(tmp);
@@ -175,23 +177,22 @@ namespace DiscImageChef.Decoders.Xbox
             bool isX360 = IsXbox360(response);
             if(!isX360) return null;
 
-            Xbox360DMI dmi = new Xbox360DMI();
+            Xbox360DMI dmi = new Xbox360DMI
+            {
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1 = response[2],
+                Reserved2 = response[3],
+                Version = BitConverter.ToUInt32(response, 4),
+                Timestamp = BitConverter.ToInt64(response, 20),
+                MediaID = new byte[16]
+            };
 
-            dmi.DataLength = (ushort)((response[0] << 8) + response[1]);
-            dmi.Reserved1 = response[2];
-            dmi.Reserved2 = response[3];
-
-            dmi.Version = BitConverter.ToUInt32(response, 4);
-            dmi.Timestamp = BitConverter.ToInt64(response, 20);
-            dmi.MediaID = new byte[16];
             Array.Copy(response, 36, dmi.MediaID, 0, 16);
             byte[] tmp = new byte[16];
             Array.Copy(response, 68, tmp, 0, 16);
             dmi.CatalogNumber = StringHandlers.CToString(tmp);
 
-            if(dmi.CatalogNumber == null || dmi.CatalogNumber.Length < 13) return null;
-
-            return dmi;
+            return dmi.CatalogNumber == null || dmi.CatalogNumber.Length < 13 ? (Xbox360DMI?)null : dmi;
         }
 
         public static string PrettifyXbox(XboxDMI? dmi)

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
@@ -52,6 +53,9 @@ namespace DiscImageChef.Decoders.ATA
     /// T13-2161D rev. 5 (ACS-3)
     /// CF+ &amp; CF Specification rev. 1.4 (CFA)
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Identify
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
@@ -3151,9 +3155,9 @@ namespace DiscImageChef.Decoders.ATA
             if(ATAID.Capabilities3.HasFlag(CapabilitiesBit3.Sanitize))
             {
                 sb.AppendLine().Append("Sanitize feature set is supported");
-                if(ATAID.Capabilities3.HasFlag(CapabilitiesBit3.SanitizeCommands))
-                    sb.AppendLine().Append("Sanitize commands are specified by ACS-3 or higher");
-                else sb.AppendLine().Append("Sanitize commands are specified by ACS-2");
+                sb.AppendLine().Append(ATAID.Capabilities3.HasFlag(CapabilitiesBit3.SanitizeCommands)
+                                           ? "Sanitize commands are specified by ACS-3 or higher"
+                                           : "Sanitize commands are specified by ACS-2");
 
                 if(ATAID.Capabilities3.HasFlag(CapabilitiesBit3.SanitizeAntifreeze))
                     sb.AppendLine().Append("SANITIZE ANTIFREEZE LOCK EXT is supported");
@@ -3239,19 +3243,21 @@ namespace DiscImageChef.Decoders.ATA
                 if(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Enabled))
                 {
                     sb.AppendLine("Security is enabled");
-                    if(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Locked)) sb.AppendLine("Security is locked");
-                    else sb.AppendLine("Security is not locked");
+                    sb.AppendLine(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Locked)
+                                      ? "Security is locked"
+                                      : "Security is not locked");
 
-                    if(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Frozen)) sb.AppendLine("Security is frozen");
-                    else sb.AppendLine("Security is not frozen");
+                    sb.AppendLine(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Frozen)
+                                      ? "Security is frozen"
+                                      : "Security is not frozen");
 
-                    if(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Expired))
-                        sb.AppendLine("Security count has expired");
-                    else sb.AppendLine("Security count has notexpired");
+                    sb.AppendLine(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Expired)
+                                      ? "Security count has expired"
+                                      : "Security count has notexpired");
 
-                    if(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Maximum))
-                        sb.AppendLine("Security level is maximum");
-                    else sb.AppendLine("Security level is high");
+                    sb.AppendLine(ATAID.SecurityStatus.HasFlag(SecurityStatusBit.Maximum)
+                                      ? "Security level is maximum"
+                                      : "Security level is high");
                 }
                 else sb.AppendLine("Security is not enabled");
 
@@ -3382,8 +3388,7 @@ namespace DiscImageChef.Decoders.ATA
 
         static string DescrambleATAString(byte[] buffer, int offset, int length)
         {
-            byte[] outbuf;
-            outbuf = buffer[offset + length - 1] != 0x00 ? new byte[length + 1] : new byte[length];
+            byte[] outbuf = buffer[offset + length - 1] != 0x00 ? new byte[length + 1] : new byte[length];
 
             for(int i = 0; i < length; i += 2)
             {

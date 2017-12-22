@@ -34,12 +34,12 @@ namespace DiscImageChef.Decoders.MMC
 {
     public static class VendorString
     {
-        public static string Prettify(byte MMCVendorID)
+        public static string Prettify(byte mmcVendorId)
         {
-            switch(MMCVendorID)
+            switch(mmcVendorId)
             {
                 case 0x15: return "Samsung";
-                default: return $"Unknown manufacturer ID 0x{MMCVendorID:X2}";
+                default: return $"Unknown manufacturer ID 0x{mmcVendorId:X2}";
             }
         }
     }

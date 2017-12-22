@@ -30,10 +30,14 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
          #region Mode Page 0x10: Device configuration page
@@ -237,8 +241,9 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.DBR)
             {
                 sb.AppendLine("\tDrive supports recovering data from buffer");
-                if(page.RBO) sb.AppendLine("\tRecovered buffer data comes in LIFO order");
-                else sb.AppendLine("\tRecovered buffer data comes in FIFO order");
+                sb.AppendLine(page.RBO
+                                  ? "\tRecovered buffer data comes in LIFO order"
+                                  : "\tRecovered buffer data comes in FIFO order");
             }
             if(page.BIS) sb.AppendLine("\tMedium supports block IDs");
             if(page.RSmk) sb.AppendLine("\tDrive reports setmarks");
@@ -313,8 +318,9 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.PRMWP) sb.AppendLine("\tPermanent write protect is enabled");
 
             if(page.BAML)
-                if(page.BAM) sb.AppendLine("\tDrive operates using explicit address mode");
-                else sb.AppendLine("\tDrive operates using implicit address mode");
+                sb.AppendLine(page.BAM
+                                  ? "\tDrive operates using explicit address mode"
+                                  : "\tDrive operates using implicit address mode");
 
             switch(page.RewindOnReset)
             {

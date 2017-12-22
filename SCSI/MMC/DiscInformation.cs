@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI.MMC
@@ -50,6 +51,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class DiscInformation
     {
         public struct StandardDiscInformation
@@ -279,8 +284,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if((response[2] & 0xE0) != 0) return null;
 
-            StandardDiscInformation decoded = new StandardDiscInformation();
-            decoded.DataLength = (ushort)((response[0] << 8) + response[1]);
+            StandardDiscInformation decoded =
+                new StandardDiscInformation {DataLength = (ushort)((response[0] << 8) + response[1])};
 
             if(decoded.DataLength + 2 != response.Length) return null;
 
@@ -417,8 +422,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                             (decoded.LastPossibleLeadOutStartLBA & 0xFF00) >> 8,
                             decoded.LastPossibleLeadOutStartLBA & 0xFF).AppendLine();
 
-            if(decoded.URU) sb.AppendLine("Disc is defined for unrestricted use");
-            else sb.AppendLine("Disc is defined for restricted use");
+            sb.AppendLine(decoded.URU ? "Disc is defined for unrestricted use" : "Disc is defined for restricted use");
 
             if(decoded.DID_V) sb.AppendFormat("Disc ID: {0:X6}", decoded.DiscIdentification & 0x00FFFFFF).AppendLine();
             if(decoded.DBC_V) sb.AppendFormat("Disc barcode: {0:X16}", decoded.DiscBarcode).AppendLine();
@@ -440,8 +444,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if((response[2] & 0xE0) != 0x20) return null;
 
-            TrackResourcesInformation decoded = new TrackResourcesInformation();
-            decoded.DataLength = (ushort)((response[0] << 8) + response[1]);
+            TrackResourcesInformation decoded =
+                new TrackResourcesInformation {DataLength = (ushort)((response[0] << 8) + response[1])};
 
             if(decoded.DataLength + 2 != response.Length) return null;
 
@@ -479,8 +483,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if((response[2] & 0xE0) != 0x40) return null;
 
-            POWResourcesInformation decoded = new POWResourcesInformation();
-            decoded.DataLength = (ushort)((response[0] << 8) + response[1]);
+            POWResourcesInformation decoded =
+                new POWResourcesInformation {DataLength = (ushort)((response[0] << 8) + response[1])};
 
             if(decoded.DataLength + 2 != response.Length) return null;
 

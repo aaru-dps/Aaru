@@ -30,8 +30,11 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DiscImageChef.Decoders.PCMCIA
 {
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public static class VendorCode
     {
         public static string Prettify(ushort id)

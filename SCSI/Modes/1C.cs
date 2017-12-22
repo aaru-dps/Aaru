@@ -30,10 +30,14 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x1C: Informational exceptions control page
@@ -247,9 +251,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1C_S01? DecodeModePage_1C_S01(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
-
-            if((pageResponse[0] & 0x40) != 0x40) return null;
+            if((pageResponse?[0] & 0x40) != 0x40) return null;
 
             if((pageResponse[0] & 0x3F) != 0x1C) return null;
 

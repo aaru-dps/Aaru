@@ -31,9 +31,14 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class DiscStructureCapabilities
     {
         public struct Capability
@@ -64,10 +69,12 @@ namespace DiscImageChef.Decoders.SCSI
 
             while(offset < response.Length)
             {
-                Capability cap = new Capability();
-                cap.FormatCode = response[offset];
-                cap.SDS = (response[offset + 1] & 0x80) == 0x80;
-                cap.RDS = (response[offset + 1] & 0x40) == 0x40;
+                Capability cap = new Capability
+                {
+                    FormatCode = response[offset],
+                    SDS = (response[offset + 1] & 0x80) == 0x80,
+                    RDS = (response[offset + 1] & 0x40) == 0x40
+                };
                 caps.Add(cap);
                 offset += 4;
             }

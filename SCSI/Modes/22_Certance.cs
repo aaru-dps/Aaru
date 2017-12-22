@@ -30,10 +30,15 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static partial class Modes
     {
         #region Certance Mode Page 0x22: Interface Control Mode Page
@@ -124,8 +129,9 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if(page.StopBits) sb.AppendLine("Library interface transmits 2 stop bits per byte");
-            else sb.AppendLine("Library interface transmits 1 stop bits per byte");
+            sb.AppendLine(page.StopBits
+                              ? "Library interface transmits 2 stop bits per byte"
+                              : "Library interface transmits 1 stop bits per byte");
 
             switch(page.CmdFwd)
             {
@@ -160,11 +166,11 @@ namespace DiscImageChef.Decoders.SCSI
               .AppendLine();
             sb.AppendFormat("\tDrive jumpers choose SCSI ID {0}", page.JumperedSelectionID).AppendLine();
 
-            if(page.PortAEnabled) sb.AppendLine("\tSCSI port is enabled");
-            else sb.AppendLine("\tSCSI port is disabled");
+            sb.AppendLine(page.PortAEnabled ? "\tSCSI port is enabled" : "\tSCSI port is disabled");
 
-            if(page.PortAEnabledOnPower) sb.AppendLine("\tSCSI port will be enabled on next power up");
-            else sb.AppendLine("\tSCSI port will be disabled on next power up");
+            sb.AppendLine(page.PortAEnabledOnPower
+                              ? "\tSCSI port will be enabled on next power up"
+                              : "\tSCSI port will be disabled on next power up");
 
             return sb.ToString();
         }
