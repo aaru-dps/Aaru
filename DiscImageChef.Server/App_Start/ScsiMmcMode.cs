@@ -81,14 +81,15 @@ namespace DiscImageChef.Server.App_Start
             if(mode.PreventJumperStatus)
             {
                 mmcOneValue.Add("Drive power ups locked");
-                if(mode.LockStatus) mmcOneValue.Add("Drive is locked, media cannot be ejected or inserted");
-                else mmcOneValue.Add("Drive is not locked, media can be ejected and inserted");
+                mmcOneValue.Add(mode.LockStatus
+                                    ? "Drive is locked, media cannot be ejected or inserted"
+                                    : "Drive is not locked, media can be ejected and inserted");
             }
             else
             {
-                if(mode.LockStatus)
-                    mmcOneValue.Add("Drive is locked, media cannot be ejected, but if empty, can be inserted");
-                else mmcOneValue.Add("Drive is not locked, media can be ejected and inserted");
+                mmcOneValue.Add(mode.LockStatus
+                                    ? "Drive is locked, media cannot be ejected, but if empty, can be inserted"
+                                    : "Drive is not locked, media can be ejected and inserted");
             }
             if(mode.CanEject) mmcOneValue.Add("Drive can eject media");
 
@@ -105,23 +106,19 @@ namespace DiscImageChef.Server.App_Start
 
             if(mode.ReadsCDR)
             {
-                if(mode.WritesCDR) mmcOneValue.Add("Drive can read and write CD-R");
-                else mmcOneValue.Add("Drive can read CD-R");
+                mmcOneValue.Add(mode.WritesCDR ? "Drive can read and write CD-R" : "Drive can read CD-R");
 
                 if(mode.ReadsPacketCDR) mmcOneValue.Add("Drive supports reading CD-R packet media");
             }
 
             if(mode.ReadsCDRW)
-                if(mode.WritesCDRW) mmcOneValue.Add("Drive can read and write CD-RW");
-                else mmcOneValue.Add("Drive can read CD-RW");
+                mmcOneValue.Add(mode.WritesCDRW ? "Drive can read and write CD-RW" : "Drive can read CD-RW");
 
             if(mode.ReadsDVDROM) mmcOneValue.Add("Drive can read DVD-ROM");
             if(mode.ReadsDVDR)
-                if(mode.WritesDVDR) mmcOneValue.Add("Drive can read and write DVD-R");
-                else mmcOneValue.Add("Drive can read DVD-R");
+                mmcOneValue.Add(mode.WritesDVDR ? "Drive can read and write DVD-R" : "Drive can read DVD-R");
             if(mode.ReadsDVDRAM)
-                if(mode.WritesDVDRAM) mmcOneValue.Add("Drive can read and write DVD-RAM");
-                else mmcOneValue.Add("Drive can read DVD-RAM");
+                mmcOneValue.Add(mode.WritesDVDRAM ? "Drive can read and write DVD-RAM" : "Drive can read DVD-RAM");
 
             if(mode.CompositeAudioVideo) mmcOneValue.Add("Drive can deliver a composite audio and video data stream");
             if(mode.DigitalPort1) mmcOneValue.Add("Drive supports IEC-958 digital output on port 1");

@@ -43,7 +43,6 @@ namespace DiscImageChef.Server.App_Start
                                   ref List<string> ataOneValue, ref Dictionary<string, string> ataTwoValue,
                                   ref testedMediaType[] testedMedia)
         {
-            string tmpString;
             uint logicalsectorsize = 0;
 
             if(ataReport.ModelSpecified && !string.IsNullOrEmpty(ataReport.Model))
@@ -104,7 +103,7 @@ namespace DiscImageChef.Server.App_Start
 
             int maxatalevel = 0;
             int minatalevel = 255;
-            tmpString = "";
+            string tmpString = "";
             if(ata1)
             {
                 tmpString += "ATA-1 ";
@@ -555,9 +554,9 @@ namespace DiscImageChef.Server.App_Start
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.StandardStanbyTimer))
                     ataOneValue.Add("Standby time values are standard");
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.IORDY))
-                    if(ataReport.Capabilities.HasFlag(CapabilitiesBit.CanDisableIORDY))
-                        ataOneValue.Add("IORDY is supported and can be disabled");
-                    else ataOneValue.Add("IORDY is supported");
+                    ataOneValue.Add(ataReport.Capabilities.HasFlag(CapabilitiesBit.CanDisableIORDY)
+                                        ? "IORDY is supported and can be disabled"
+                                        : "IORDY is supported");
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.DMASupport)) ataOneValue.Add("DMA is supported");
                 if(ataReport.Capabilities.HasFlag(CapabilitiesBit.PhysicalAlignment1) ||
                    ataReport.Capabilities.HasFlag(CapabilitiesBit.PhysicalAlignment0))
@@ -1073,13 +1072,13 @@ namespace DiscImageChef.Server.App_Start
                         ataOneValue.Add("Streaming feature set is supported and enabled");
                     else ataOneValue.Add("Streaming feature set is supported");
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.MCPT) && ataReport.EnabledCommandSet3Specified)
-                    if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.MCPT))
-                        ataOneValue.Add("Media Card Pass Through command set is supported and enabled");
-                    else ataOneValue.Add("Media Card Pass Through command set is supported");
+                    ataOneValue.Add(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.MCPT)
+                                        ? "Media Card Pass Through command set is supported and enabled"
+                                        : "Media Card Pass Through command set is supported");
                 if(ataReport.CommandSet3.HasFlag(CommandSetBit3.MediaSerial) && ataReport.EnabledCommandSet3Specified)
-                    if(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.MediaSerial))
-                        ataOneValue.Add("Media Serial is supported and valid");
-                    else ataOneValue.Add("Media Serial is supported");
+                    ataOneValue.Add(ataReport.EnabledCommandSet3.HasFlag(CommandSetBit3.MediaSerial)
+                                        ? "Media Serial is supported and valid"
+                                        : "Media Serial is supported");
             }
 
             if(ataReport.CommandSet4Specified && ataReport.CommandSet4.HasFlag(CommandSetBit4.MustBeSet) &&
@@ -1178,9 +1177,9 @@ namespace DiscImageChef.Server.App_Start
                 if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.Sanitize))
                 {
                     ataOneValue.Add("Sanitize feature set is supported");
-                    if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.SanitizeCommands))
-                        ataOneValue.Add("Sanitize commands are specified by ACS-3 or higher");
-                    else ataOneValue.Add("Sanitize commands are specified by ACS-2");
+                    ataOneValue.Add(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.SanitizeCommands)
+                                        ? "Sanitize commands are specified by ACS-3 or higher"
+                                        : "Sanitize commands are specified by ACS-2");
 
                     if(ataReport.Capabilities3.HasFlag(CapabilitiesBit3.SanitizeAntifreeze))
                         ataOneValue.Add("SANITIZE ANTIFREEZE LOCK EXT is supported");
@@ -1265,21 +1264,21 @@ namespace DiscImageChef.Server.App_Start
                 if(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Enabled))
                 {
                     ataOneValue.Add("Security is enabled");
-                    if(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Locked))
-                        ataOneValue.Add("Security is locked");
-                    else ataOneValue.Add("Security is not locked");
+                    ataOneValue.Add(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Locked)
+                                        ? "Security is locked"
+                                        : "Security is not locked");
 
-                    if(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Frozen))
-                        ataOneValue.Add("Security is frozen");
-                    else ataOneValue.Add("Security is not frozen");
+                    ataOneValue.Add(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Frozen)
+                                        ? "Security is frozen"
+                                        : "Security is not frozen");
 
-                    if(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Expired))
-                        ataOneValue.Add("Security count has expired");
-                    else ataOneValue.Add("Security count has notexpired");
+                    ataOneValue.Add(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Expired)
+                                        ? "Security count has expired"
+                                        : "Security count has notexpired");
 
-                    if(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Maximum))
-                        ataOneValue.Add("Security level is maximum");
-                    else ataOneValue.Add("Security level is high");
+                    ataOneValue.Add(ataReport.SecurityStatus.HasFlag(SecurityStatusBit.Maximum)
+                                        ? "Security level is maximum"
+                                        : "Security level is high");
                 }
                 else ataOneValue.Add("Security is not enabled");
 
@@ -1327,9 +1326,9 @@ namespace DiscImageChef.Server.App_Start
                 ataOneValue.Add($"Version {(ataReport.NVCacheCaps & 0xF000) >> 12}");
                 if((ataReport.NVCacheCaps & 0x0001) == 0x0001)
                 {
-                    if((ataReport.NVCacheCaps & 0x0002) == 0x0002)
-                        ataOneValue.Add("Power mode feature set is supported and enabled");
-                    else ataOneValue.Add("Power mode feature set is supported");
+                    ataOneValue.Add((ataReport.NVCacheCaps & 0x0002) == 0x0002
+                                        ? "Power mode feature set is supported and enabled"
+                                        : "Power mode feature set is supported");
 
                     ataOneValue.Add($"Version {(ataReport.NVCacheCaps & 0x0F00) >> 8}");
                 }
@@ -1344,10 +1343,9 @@ namespace DiscImageChef.Server.App_Start
                 if(ataReport.ReadCapabilities.NominalRotationRateSpecified &&
                    ataReport.ReadCapabilities.NominalRotationRate != 0x0000 &&
                    ataReport.ReadCapabilities.NominalRotationRate != 0xFFFF)
-                    if(ataReport.ReadCapabilities.NominalRotationRate == 0x0001)
-                        ataOneValue.Add("Device does not rotate.");
-                    else
-                        ataOneValue.Add($"Device rotates at {ataReport.ReadCapabilities.NominalRotationRate} rpm");
+                    ataOneValue.Add(ataReport.ReadCapabilities.NominalRotationRate == 0x0001
+                                        ? "Device does not rotate."
+                                        : $"Device rotates at {ataReport.ReadCapabilities.NominalRotationRate} rpm");
 
                 if(!atapi)
                 {

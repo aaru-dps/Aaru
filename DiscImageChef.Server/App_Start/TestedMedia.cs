@@ -37,7 +37,7 @@ namespace DiscImageChef.Server.App_Start
 {
     public static class TestedMedia
     {
-        public static void Report(testedMediaType[] testedMedias, bool ata, ref List<string> mediaOneValue)
+        public static void Report(IEnumerable<testedMediaType> testedMedias, bool ata, ref List<string> mediaOneValue)
         {
             foreach(testedMediaType testedMedia in testedMedias)
             {
@@ -51,8 +51,9 @@ namespace DiscImageChef.Server.App_Start
                     mediaOneValue.Add($"<i>Information for medium type {testedMedia.MediumType:X2}h</i>");
                 else mediaOneValue.Add("<i>Information for unknown medium type</i>");
 
-                if(testedMedia.MediaIsRecognized) mediaOneValue.Add("Drive recognizes this medium.");
-                else mediaOneValue.Add("Drive does not recognize this medium.");
+                mediaOneValue.Add(testedMedia.MediaIsRecognized
+                                      ? "Drive recognizes this medium."
+                                      : "Drive does not recognize this medium.");
 
                 if(!string.IsNullOrWhiteSpace(testedMedia.Manufacturer))
                     mediaOneValue.Add($"Medium manufactured by: {testedMedia.Manufacturer}");
@@ -126,8 +127,9 @@ namespace DiscImageChef.Server.App_Start
 
                 if(testedMedia.NominalRotationRateSpecified && testedMedia.NominalRotationRate != 0x0000 &&
                    testedMedia.NominalRotationRate != 0xFFFF)
-                    if(testedMedia.NominalRotationRate == 0x0001) mediaOneValue.Add("Medium does not rotate.");
-                    else mediaOneValue.Add($"Medium rotates at {testedMedia.NominalRotationRate} rpm");
+                    mediaOneValue.Add(testedMedia.NominalRotationRate == 0x0001
+                                          ? "Medium does not rotate."
+                                          : $"Medium rotates at {testedMedia.NominalRotationRate} rpm");
 
                 if(testedMedia.BlockSizeSpecified && testedMedia.PhysicalBlockSizeSpecified &&
                    testedMedia.BlockSize != testedMedia.PhysicalBlockSize &&

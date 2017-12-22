@@ -118,9 +118,9 @@ namespace DiscImageChef.Server
                 {
                     versions = new List<NameValueStats>();
                     foreach(NameValueStats nvs in statistics.Versions)
-                        if(nvs.name == "previous")
-                            versions.Add(new NameValueStats {name = "Previous than 3.4.99.0", Value = nvs.Value});
-                        else versions.Add(nvs);
+                        versions.Add(nvs.name == "previous"
+                                         ? new NameValueStats {name = "Previous than 3.4.99.0", Value = nvs.Value}
+                                         : nvs);
 
                     repVersions.DataSource = versions.OrderBy(ver => ver.name).ToList();
                     repVersions.DataBind();
@@ -185,12 +185,9 @@ namespace DiscImageChef.Server
                     virtualMedia = new List<MediaItem>();
                     foreach(MediaStats nvs in statistics.Medias)
                     {
-                        string type;
-                        string subtype;
-
                         MediaType
                             .MediaTypeToString((CommonTypes.MediaType)Enum.Parse(typeof(CommonTypes.MediaType), nvs.type),
-                                               out type, out subtype);
+                                               out string type, out string subtype);
 
                         if(nvs.real) realMedia.Add(new MediaItem {Type = type, SubType = subtype, Count = nvs.Value});
                         else virtualMedia.Add(new MediaItem {Type = type, SubType = subtype, Count = nvs.Value});
@@ -283,7 +280,7 @@ namespace DiscImageChef.Server
             }
         }
 
-        FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)
+        static FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)
         {
             for(int numTries = 0; numTries < 100; numTries++)
             {
@@ -295,7 +292,7 @@ namespace DiscImageChef.Server
                 }
                 catch(IOException)
                 {
-                    if(fs != null) fs.Dispose();
+                    fs?.Dispose();
                     Thread.Sleep(50);
                 }
             }

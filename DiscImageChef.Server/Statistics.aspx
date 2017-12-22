@@ -36,7 +36,7 @@
 <html>
 <meta charset="UTF-8">
 <head runat="server">
-    <link href='dos.css' rel='stylesheet' type='text/css'/>
+    <link href="dos.css" rel="stylesheet" type="text/css"/>
     <title>DiscImageChef Statistics</title>
 </head>
 <body id="body" runat="server">

@@ -262,8 +262,8 @@ namespace DiscImageChef.Server.App_Start
 
             if(inquiry.VersionDescriptors == null) return scsiOneValue;
 
-            foreach(ushort VersionDescriptor in inquiry.VersionDescriptors)
-                switch(VersionDescriptor)
+            foreach(ushort versionDescriptor in inquiry.VersionDescriptors)
+                switch(versionDescriptor)
                 {
                     case 0xFFFF:
                     case 0x0000: break;
@@ -928,7 +928,7 @@ namespace DiscImageChef.Server.App_Start
                     case 0x097D:
                     case 0x097E:
                     case 0x097F:
-                        scsiOneValue.Add($"Device complies with iSCSI revision {VersionDescriptor & 0x1F}");
+                        scsiOneValue.Add($"Device complies with iSCSI revision {versionDescriptor & 0x1F}");
                         break;
                     case 0x0980:
                         scsiOneValue.Add("Device complies with SBP-3 (no version claimed)");
@@ -1688,7 +1688,7 @@ namespace DiscImageChef.Server.App_Start
                         scsiOneValue.Add("Device complies with IEEE 1667-2009");
                         break;
                     default:
-                        scsiOneValue.Add($"Device complies with unknown standard code 0x{VersionDescriptor:X4}");
+                        scsiOneValue.Add($"Device complies with unknown standard code 0x{versionDescriptor:X4}");
                         break;
                 }
 

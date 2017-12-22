@@ -49,8 +49,7 @@ namespace DiscImageChef.Server.Controllers
         [HttpPost]
         public HttpResponseMessage UploadReport()
         {
-            HttpResponseMessage response = new HttpResponseMessage();
-            response.StatusCode = HttpStatusCode.OK;
+            HttpResponseMessage response = new HttpResponseMessage {StatusCode = HttpStatusCode.OK};
 
             try
             {

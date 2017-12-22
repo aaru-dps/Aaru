@@ -37,7 +37,7 @@ namespace DiscImageChef.Server.App_Start
 {
     public static class SscTestedMedia
     {
-        public static void Report(SequentialMedia[] testedMedia, ref List<string> mediaOneValue)
+        public static void Report(IEnumerable<SequentialMedia> testedMedia, ref List<string> mediaOneValue)
         {
             foreach(SequentialMedia media in testedMedia)
             {

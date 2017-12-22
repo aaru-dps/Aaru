@@ -81,25 +81,19 @@ namespace DiscImageChef.Server.App_Start
                                           Modes.PrettifyModePage_00_SFF(page.value));
                         else
                         {
-                            if(page.subpage != 0)
-                                modePages
-                                    .Add($"MODE page {page.page:X2}h subpage {page.subpage:X2}h",
-                                         "Unknown vendor mode page");
-                            else
-                                modePages.Add($"MODE page {page.page:X2}h",
-                                              "Unknown vendor mode page");
+                            modePages
+                                .Add(page.subpage != 0 ? $"MODE page {page.page:X2}h subpage {page.subpage:X2}h" : $"MODE page {page.page:X2}h",
+                                     "Unknown vendor mode page");
                         }
                         break;
                     }
                     case 0x01:
                     {
                         if(page.subpage == 0)
-                            if(deviceType == PeripheralDeviceTypes.MultiMediaDevice)
-                                modePages.Add($"MODE page {page.page:X2}h",
-                                              Modes.PrettifyModePage_01_MMC(page.value));
-                            else
-                                modePages.Add($"MODE page {page.page:X2}h",
-                                              Modes.PrettifyModePage_01(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h",
+                                          deviceType == PeripheralDeviceTypes.MultiMediaDevice
+                                              ? Modes.PrettifyModePage_01_MMC(page.value)
+                                              : Modes.PrettifyModePage_01(page.value));
                         else goto default;
 
                         break;
@@ -152,12 +146,10 @@ namespace DiscImageChef.Server.App_Start
                     case 0x07:
                     {
                         if(page.subpage == 0)
-                            if(deviceType == PeripheralDeviceTypes.MultiMediaDevice)
-                                modePages.Add($"MODE page {page.page:X2}h",
-                                              Modes.PrettifyModePage_07_MMC(page.value));
-                            else
-                                modePages.Add($"MODE page {page.page:X2}h",
-                                              Modes.PrettifyModePage_07(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h",
+                                          deviceType == PeripheralDeviceTypes.MultiMediaDevice
+                                              ? Modes.PrettifyModePage_07_MMC(page.value)
+                                              : Modes.PrettifyModePage_07(page.value));
                         else goto default;
 
                         break;
@@ -222,12 +214,10 @@ namespace DiscImageChef.Server.App_Start
                     case 0x10:
                     {
                         if(page.subpage == 0)
-                            if(deviceType == PeripheralDeviceTypes.SequentialAccess)
-                                modePages.Add($"MODE page {page.page:X2}h",
-                                              Modes.PrettifyModePage_10_SSC(page.value));
-                            else
-                                modePages.Add($"MODE page {page.page:X2}h",
-                                              Modes.PrettifyModePage_10(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h",
+                                          deviceType == PeripheralDeviceTypes.SequentialAccess
+                                              ? Modes.PrettifyModePage_10_SSC(page.value)
+                                              : Modes.PrettifyModePage_10(page.value));
                         else goto default;
 
                         break;
@@ -276,12 +266,10 @@ namespace DiscImageChef.Server.App_Start
                     case 0x1C:
                     {
                         if(page.subpage == 0)
-                            if(deviceType == PeripheralDeviceTypes.MultiMediaDevice)
-                                modePages.Add($"MODE page {page.page:X2}h",
-                                              Modes.PrettifyModePage_1C_SFF(page.value));
-                            else
-                                modePages.Add($"MODE page {page.page:X2}h",
-                                              Modes.PrettifyModePage_1C(page.value));
+                            modePages.Add($"MODE page {page.page:X2}h",
+                                          deviceType == PeripheralDeviceTypes.MultiMediaDevice
+                                              ? Modes.PrettifyModePage_1C_SFF(page.value)
+                                              : Modes.PrettifyModePage_1C(page.value));
                         else if(page.subpage == 1)
                             modePages.Add($"MODE page {page.page:X2}h",
                                           Modes.PrettifyModePage_1C_S01(page.value));
@@ -395,11 +383,8 @@ namespace DiscImageChef.Server.App_Start
                     }
                     default:
                     {
-                        if(page.subpage != 0)
-                            modePages
-                                .Add($"MODE page {page.page:X2}h subpage {page.subpage:X2}h",
-                                     "Unknown mode page");
-                        else modePages.Add($"MODE page {page.page:X2}h", "Unknown mode page");
+                        modePages.Add(page.subpage != 0 ? $"MODE page {page.page:X2}h subpage {page.subpage:X2}h" : $"MODE page {page.page:X2}h",
+                                      "Unknown mode page");
                     }
                         break;
                 }

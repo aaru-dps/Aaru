@@ -102,10 +102,8 @@ namespace DiscImageChef.Server
 
                 if(report.USB != null)
                 {
-                    string usbVendorDescription;
-                    string usbProductDescription;
-                    GetUsbDescriptions(report.USB.VendorID, report.USB.ProductID, out usbVendorDescription,
-                                       out usbProductDescription);
+                    GetUsbDescriptions(report.USB.VendorID, report.USB.ProductID, out string usbVendorDescription,
+                                       out string usbProductDescription);
 
                     lblUsbManufacturer.Text = HttpUtility.HtmlEncode(report.USB.Manufacturer);
                     lblUsbProduct.Text = HttpUtility.HtmlEncode(report.USB.Product);
@@ -149,7 +147,7 @@ namespace DiscImageChef.Server
                                 case TupleCodes.CISTPL_DEVICEGEO_A:
                                     DeviceGeometryTuple geom =
                                         CIS.DecodeDeviceGeometryTuple(tuple.Data);
-                                    if(geom != null && geom.Geometries != null)
+                                    if(geom?.Geometries != null)
                                         foreach(DeviceGeometry geometry in geom.Geometries)
                                         {
                                             decodedTuples.Add("Device width",
@@ -259,11 +257,8 @@ namespace DiscImageChef.Server
                     Dictionary<string, string> modePages = new Dictionary<string, string>();
                     Dictionary<string, string> evpdPages = new Dictionary<string, string>();
 
-                    if(VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification) !=
-                       report.SCSI.Inquiry.VendorIdentification)
-                        lblScsiVendor.Text =
-                            $"{report.SCSI.Inquiry.VendorIdentification} ({VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification)})";
-                    else lblScsiVendor.Text = report.SCSI.Inquiry.VendorIdentification;
+                    lblScsiVendor.Text = VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification) !=
+                                         report.SCSI.Inquiry.VendorIdentification ? $"{report.SCSI.Inquiry.VendorIdentification} ({VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification)})" : report.SCSI.Inquiry.VendorIdentification;
                     lblScsiProduct.Text = report.SCSI.Inquiry.ProductIdentification;
                     lblScsiRevision.Text = report.SCSI.Inquiry.ProductRevisionLevel;
 
@@ -330,17 +325,11 @@ namespace DiscImageChef.Server
                     {
                         divScsiSsc.Visible = true;
 
-                        if(report.SCSI.SequentialDevice.BlockSizeGranularitySpecified)
-                            lblScsiSscGranularity.Text = report.SCSI.SequentialDevice.BlockSizeGranularity.ToString();
-                        else lblScsiSscGranularity.Text = "Unspecified";
+                        lblScsiSscGranularity.Text = report.SCSI.SequentialDevice.BlockSizeGranularitySpecified ? report.SCSI.SequentialDevice.BlockSizeGranularity.ToString() : "Unspecified";
 
-                        if(report.SCSI.SequentialDevice.MaxBlockLengthSpecified)
-                            lblScsiSscMaxBlock.Text = report.SCSI.SequentialDevice.MaxBlockLength.ToString();
-                        else lblScsiSscMaxBlock.Text = "Unspecified";
+                        lblScsiSscMaxBlock.Text = report.SCSI.SequentialDevice.MaxBlockLengthSpecified ? report.SCSI.SequentialDevice.MaxBlockLength.ToString() : "Unspecified";
 
-                        if(report.SCSI.SequentialDevice.MinBlockLengthSpecified)
-                            lblScsiSscMinBlock.Text = report.SCSI.SequentialDevice.MinBlockLength.ToString();
-                        else lblScsiSscMinBlock.Text = "Unspecified";
+                        lblScsiSscMinBlock.Text = report.SCSI.SequentialDevice.MinBlockLengthSpecified ? report.SCSI.SequentialDevice.MinBlockLength.ToString() : "Unspecified";
 
                         if(report.SCSI.SequentialDevice.SupportedDensities != null)
                         {
@@ -530,39 +519,38 @@ namespace DiscImageChef.Server
 
             StreamReader tocStream =
                 new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "usb.ids"));
-            string _line;
             bool inManufacturer = false;
-            ushort number;
 
             while(tocStream.Peek() >= 0)
             {
-                _line = tocStream.ReadLine();
+                string line = tocStream.ReadLine();
 
-                if(_line == null) break;
+                if(line == null) break;
 
-                if(_line.Length == 0 || _line[0] == '#') continue;
+                if(line.Length == 0 || line[0] == '#') continue;
 
+                ushort number;
                 if(inManufacturer)
                 {
                     // Finished with the manufacturer
-                    if(_line[0] != '\t') return;
+                    if(line[0] != '\t') return;
 
-                    number = Convert.ToUInt16(_line.Substring(1, 4), 16);
+                    number = Convert.ToUInt16(line.Substring(1, 4), 16);
 
                     if(number != product) continue;
 
-                    productDescription = _line.Substring(7);
+                    productDescription = line.Substring(7);
                     return;
                 }
                 // Skip products
-                if(_line[0] == '\t') continue;
+                if(line[0] == '\t') continue;
 
-                try { number = Convert.ToUInt16(_line.Substring(0, 4), 16); }
+                try { number = Convert.ToUInt16(line.Substring(0, 4), 16); }
                 catch(FormatException) { continue; }
 
                 if(number != vendor) continue;
 
-                vendorDescription = _line.Substring(6);
+                vendorDescription = line.Substring(6);
                 inManufacturer = true;
             }
         }
