@@ -48,8 +48,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             if(partition.Start > 0 || imagePlugin.ImageInfo.SectorSize != 256) return false;
 
             int spt;
-            if(imagePlugin.ImageInfo.Sectors == 455) spt = 13;
-            else spt = 16;
+            spt = imagePlugin.ImageInfo.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
             vtoc = new Vtoc();
@@ -68,8 +67,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             StringBuilder sb = new StringBuilder();
 
             int spt;
-            if(imagePlugin.ImageInfo.Sectors == 455) spt = 13;
-            else spt = 16;
+            spt = imagePlugin.ImageInfo.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
             vtoc = new Vtoc();
@@ -93,11 +91,13 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             information = sb.ToString();
 
-            xmlFSType = new FileSystemType();
-            xmlFSType.Bootable = true;
-            xmlFSType.Clusters = (long)imagePlugin.ImageInfo.Sectors;
-            xmlFSType.ClusterSize = (int)imagePlugin.ImageInfo.SectorSize;
-            xmlFSType.Type = "Apple DOS";
+            xmlFSType = new FileSystemType
+            {
+                Bootable = true,
+                Clusters = (long)imagePlugin.ImageInfo.Sectors,
+                ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,
+                Type = "Apple DOS"
+            };
         }
     }
 }

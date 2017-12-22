@@ -70,14 +70,13 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 return Errno.InOutError;
             }
 
-            if(device.ImageInfo.Sectors == 455) sectorsPerTrack = 13;
-            else sectorsPerTrack = 16;
+            sectorsPerTrack = device.ImageInfo.Sectors == 455 ? 13 : 16;
 
             // Read the VTOC
-            byte[] vtocB = device.ReadSector((ulong)(17 * sectorsPerTrack));
+            vtocBlocks = device.ReadSector((ulong)(17 * sectorsPerTrack));
             vtoc = new Vtoc();
             IntPtr vtocPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(vtocB, 0, vtocPtr, 256);
+            Marshal.Copy(vtocBlocks, 0, vtocPtr, 256);
             vtoc = (Vtoc)Marshal.PtrToStructure(vtocPtr, typeof(Vtoc));
             Marshal.FreeHGlobal(vtocPtr);
 
@@ -85,9 +84,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             track2UsedByFiles = false;
             usedSectors = 1;
 
-            Errno error;
-
-            error = ReadCatalog();
+            Errno error = ReadCatalog();
             if(error != Errno.NoError)
             {
                 DicConsole.DebugWriteLine("Apple DOS plugin", "Unable to read catalog.");
@@ -102,15 +99,17 @@ namespace DiscImageChef.Filesystems.AppleDOS
             }
 
             // Create XML metadata for mounted filesystem
-            xmlFSType = new FileSystemType();
-            xmlFSType.Bootable = true;
-            xmlFSType.Clusters = (long)device.ImageInfo.Sectors;
-            xmlFSType.ClusterSize = vtoc.bytesPerSector;
-            xmlFSType.Files = catalogCache.Count;
-            xmlFSType.FilesSpecified = true;
+            xmlFSType = new FileSystemType
+            {
+                Bootable = true,
+                Clusters = (long)device.ImageInfo.Sectors,
+                ClusterSize = vtoc.bytesPerSector,
+                Files = catalogCache.Count,
+                FilesSpecified = true,
+                FreeClustersSpecified = true,
+                Type = "Apple DOS"
+            };
             xmlFSType.FreeClusters = xmlFSType.Clusters - usedSectors;
-            xmlFSType.FreeClustersSpecified = true;
-            xmlFSType.Type = "Apple DOS";
 
             this.debug = debug;
             mounted = true;
@@ -137,14 +136,16 @@ namespace DiscImageChef.Filesystems.AppleDOS
         /// <param name="stat">Information about the mounted volume.</param>
         public override Errno StatFs(ref FileSystemInfo stat)
         {
-            stat = new FileSystemInfo();
-            stat.Blocks = (long)device.ImageInfo.Sectors;
-            stat.FilenameLength = 30;
-            stat.Files = (ulong)catalogCache.Count;
-            stat.FreeBlocks = stat.Blocks - usedSectors;
+            stat = new FileSystemInfo
+            {
+                Blocks = (long)device.ImageInfo.Sectors,
+                FilenameLength = 30,
+                Files = (ulong)catalogCache.Count,
+                PluginId = PluginUUID,
+                Type = "Apple DOS"
+            };
             stat.FreeFiles = totalFileEntries - stat.Files;
-            stat.PluginId = PluginUUID;
-            stat.Type = "Apple DOS";
+            stat.FreeBlocks = stat.Blocks - usedSectors;
 
             return Errno.NoError;
         }

@@ -95,8 +95,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(string.Compare(xattr, "com.apple.dos.type", StringComparison.InvariantCulture) == 0)
             {
-                byte type;
-                if(!fileTypeCache.TryGetValue(filename, out type)) return Errno.InvalidArgument;
+                if(!fileTypeCache.TryGetValue(filename, out byte type)) return Errno.InvalidArgument;
 
                 buf = new byte[1];
                 buf[0] = type;
@@ -106,8 +105,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             if(string.Compare(xattr, "com.apple.dos.tracksectorlist", StringComparison.InvariantCulture) != 0 || !debug)
                 return Errno.NoSuchExtendedAttribute;
 
-            byte[] ts;
-            if(!extentCache.TryGetValue(filename, out ts)) return Errno.InvalidArgument;
+            if(!extentCache.TryGetValue(filename, out byte[] ts)) return Errno.InvalidArgument;
 
             buf = new byte[ts.Length];
             Array.Copy(ts, 0, buf, 0, buf.Length);

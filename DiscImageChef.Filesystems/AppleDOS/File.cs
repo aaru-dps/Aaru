@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems.AppleDOS
@@ -70,7 +71,6 @@ namespace DiscImageChef.Filesystems.AppleDOS
             if(pathElements.Length != 1) return Errno.NotSupported;
 
             byte[] file;
-            Errno error;
             string filename = pathElements[0].ToUpperInvariant();
             if(filename.Length > 30) return Errno.NameTooLong;
 
@@ -78,15 +78,18 @@ namespace DiscImageChef.Filesystems.AppleDOS
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             {
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0) file = catalogBlocks;
-                if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0) file = vtocBlocks;
-                else file = bootBlocks;
+                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
+                    file = catalogBlocks;
+                else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)
+                    file = vtocBlocks;
+                else
+                    file = bootBlocks;
             }
             else
             {
                 if(!fileCache.TryGetValue(filename, out file))
                 {
-                    error = CacheFile(filename);
+                    Errno error = CacheFile(filename);
                     if(error != Errno.NoError) return error;
 
                     if(!fileCache.TryGetValue(filename, out file)) return Errno.InvalidArgument;
@@ -116,10 +119,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             if(!fileCache.ContainsKey(filename)) return Errno.NoSuchFile;
 
-            int filesize;
             FileAttributes attrs = new FileAttributes();
 
-            fileSizeCache.TryGetValue(filename, out filesize);
+            fileSizeCache.TryGetValue(filename, out int filesize);
             GetAttributes(path, ref attrs);
 
             stat = new FileEntryInfo();
@@ -152,10 +154,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
         public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
-            if(!mounted) return Errno.AccessDenied;
-
             // TODO: Not really important.
-            return Errno.NotImplemented;
+            return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
         Errno CacheFile(string path)
@@ -166,9 +166,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             string filename = pathElements[0].ToUpperInvariant();
             if(filename.Length > 30) return Errno.NameTooLong;
 
-            ushort ts;
-
-            if(!catalogCache.TryGetValue(filename, out ts)) return Errno.NoSuchFile;
+            if(!catalogCache.TryGetValue(filename, out ushort ts)) return Errno.NoSuchFile;
 
             ulong lba = (ulong)(((ts & 0xFF00) >> 8) * sectorsPerTrack + (ts & 0xFF));
             MemoryStream fileMs = new MemoryStream();
@@ -182,10 +180,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 if(debug) tsListMs.Write(tsSectorB, 0, tsSectorB.Length);
 
                 // Read the track/sector list sector
-                TrackSectorList tsSector;
                 IntPtr tsPtr = Marshal.AllocHGlobal(256);
                 Marshal.Copy(tsSectorB, 0, tsPtr, 256);
-                tsSector = (TrackSectorList)Marshal.PtrToStructure(tsPtr, typeof(TrackSectorList));
+                TrackSectorList tsSector = (TrackSectorList)Marshal.PtrToStructure(tsPtr, typeof(TrackSectorList));
                 Marshal.FreeHGlobal(tsPtr);
 
                 if(tsSector.sectorOffset > expectedBlock)
@@ -225,13 +222,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
         {
             fileCache = new Dictionary<string, byte[]>();
             extentCache = new Dictionary<string, byte[]>();
-            Errno error;
 
-            foreach(string file in catalogCache.Keys)
-            {
-                error = CacheFile(file);
-                if(error != Errno.NoError) return error;
-            }
+            foreach(Errno error in catalogCache.Keys.Select(CacheFile).Where(error => error != Errno.NoError))
+            { return error; }
 
             uint tracksOnBoot = 1;
             if(!track1UsedByFiles) tracksOnBoot++;
