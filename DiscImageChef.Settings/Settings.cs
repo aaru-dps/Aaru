@@ -79,11 +79,11 @@ namespace DiscImageChef.Settings
         public static void LoadSettings()
         {
             Current = new DicSettings();
-            PlatformID ptID = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
             try
             {
-                switch(ptID)
+                switch(ptId)
                 {
                     case PlatformID.MacOSX:
                     case PlatformID.iOS:
@@ -150,7 +150,7 @@ namespace DiscImageChef.Settings
 
             try
             {
-                switch(ptID)
+                switch(ptId)
                 {
                     case PlatformID.MacOSX:
                     case PlatformID.iOS:
@@ -171,56 +171,42 @@ namespace DiscImageChef.Settings
                         NSDictionary parsedPreferences = (NSDictionary)BinaryPropertyListParser.Parse(prefsFs);
                         if(parsedPreferences != null)
                         {
-                            NSObject obj;
+                            Current.SaveReportsGlobally = parsedPreferences.TryGetValue("SaveReportsGlobally", out NSObject obj) && ((NSNumber)obj).ToBool();
 
-                            if(parsedPreferences.TryGetValue("SaveReportsGlobally", out obj)) Current.SaveReportsGlobally = ((NSNumber)obj).ToBool();
-                            else Current.SaveReportsGlobally = false;
+                            Current.ShareReports = parsedPreferences.TryGetValue("ShareReports", out obj) && ((NSNumber)obj).ToBool();
 
-                            if(parsedPreferences.TryGetValue("ShareReports", out obj)) Current.ShareReports = ((NSNumber)obj).ToBool();
-                            else Current.ShareReports = false;
-
-                            NSDictionary stats;
                             if(parsedPreferences.TryGetValue("Stats", out obj))
                             {
-                                stats = (NSDictionary)obj;
+                                NSDictionary stats = (NSDictionary)obj;
 
                                 if(stats != null)
                                 {
-                                    NSObject obj2;
-                                    Current.Stats = new StatsSettings();
-
-                                    if(stats.TryGetValue("ShareStats", out obj2)) Current.Stats.ShareStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.ShareStats = false;
-
-                                    if(stats.TryGetValue("BenchmarkStats", out obj2)) Current.Stats.BenchmarkStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.BenchmarkStats = false;
-
-                                    if(stats.TryGetValue("CommandStats", out obj2)) Current.Stats.CommandStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.CommandStats = false;
-
-                                    if(stats.TryGetValue("DeviceStats", out obj2)) Current.Stats.DeviceStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.DeviceStats = false;
-
-                                    if(stats.TryGetValue("FilesystemStats", out obj2)) Current.Stats.FilesystemStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.FilesystemStats = false;
-
-                                    if(stats.TryGetValue("FilterStats", out obj2)) Current.Stats.FilterStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.FilterStats = false;
-
-                                    if(stats.TryGetValue("MediaImageStats", out obj2)) Current.Stats.MediaImageStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.MediaImageStats = false;
-
-                                    if(stats.TryGetValue("MediaScanStats", out obj2)) Current.Stats.MediaScanStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.MediaScanStats = false;
-
-                                    if(stats.TryGetValue("PartitionStats", out obj2)) Current.Stats.PartitionStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.PartitionStats = false;
-
-                                    if(stats.TryGetValue("MediaStats", out obj2)) Current.Stats.MediaStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.MediaStats = false;
-
-                                    if(stats.TryGetValue("VerifyStats", out obj2)) Current.Stats.VerifyStats = ((NSNumber)obj2).ToBool();
-                                    else Current.Stats.VerifyStats = false;
+                                    Current.Stats = new StatsSettings
+ {
+                                        ShareStats =
+                                            stats.TryGetValue("ShareStats", out NSObject obj2) &&
+                                            ((NSNumber)obj2).ToBool(),
+                                        BenchmarkStats =
+                                            stats.TryGetValue("BenchmarkStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                        CommandStats =
+                                            stats.TryGetValue("CommandStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                        DeviceStats =
+                                            stats.TryGetValue("DeviceStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                        FilesystemStats =
+                                            stats.TryGetValue("FilesystemStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                        FilterStats =
+                                            stats.TryGetValue("FilterStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                        MediaImageStats =
+                                            stats.TryGetValue("MediaImageStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                        MediaScanStats =
+                                            stats.TryGetValue("MediaScanStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                        PartitionStats =
+                                            stats.TryGetValue("PartitionStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                        MediaStats =
+                                            stats.TryGetValue("MediaStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                        VerifyStats =
+                                            stats.TryGetValue("VerifyStats", out obj2) && ((NSNumber)obj2).ToBool()
+                                    };
                                 }
                             }
                             else Current.Stats = null;
@@ -264,18 +250,20 @@ namespace DiscImageChef.Settings
                         bool stats = Convert.ToBoolean(key.GetValue("Statistics"));
                         if(stats)
                         {
-                            Current.Stats = new StatsSettings();
-                            Current.Stats.ShareStats = Convert.ToBoolean(key.GetValue("ShareStats"));
-                            Current.Stats.BenchmarkStats = Convert.ToBoolean(key.GetValue("BenchmarkStats"));
-                            Current.Stats.CommandStats = Convert.ToBoolean(key.GetValue("CommandStats"));
-                            Current.Stats.DeviceStats = Convert.ToBoolean(key.GetValue("DeviceStats"));
-                            Current.Stats.FilesystemStats = Convert.ToBoolean(key.GetValue("FilesystemStats"));
-                            Current.Stats.FilterStats = Convert.ToBoolean(key.GetValue("FilterStats"));
-                            Current.Stats.MediaImageStats = Convert.ToBoolean(key.GetValue("MediaImageStats"));
-                            Current.Stats.MediaScanStats = Convert.ToBoolean(key.GetValue("MediaScanStats"));
-                            Current.Stats.PartitionStats = Convert.ToBoolean(key.GetValue("PartitionStats"));
-                            Current.Stats.MediaStats = Convert.ToBoolean(key.GetValue("MediaStats"));
-                            Current.Stats.VerifyStats = Convert.ToBoolean(key.GetValue("VerifyStats"));
+                            Current.Stats = new StatsSettings
+ {
+                                ShareStats = Convert.ToBoolean(key.GetValue("ShareStats")),
+                                BenchmarkStats = Convert.ToBoolean(key.GetValue("BenchmarkStats")),
+                                CommandStats = Convert.ToBoolean(key.GetValue("CommandStats")),
+                                DeviceStats = Convert.ToBoolean(key.GetValue("DeviceStats")),
+                                FilesystemStats = Convert.ToBoolean(key.GetValue("FilesystemStats")),
+                                FilterStats = Convert.ToBoolean(key.GetValue("FilterStats")),
+                                MediaImageStats = Convert.ToBoolean(key.GetValue("MediaImageStats")),
+                                MediaScanStats = Convert.ToBoolean(key.GetValue("MediaScanStats")),
+                                PartitionStats = Convert.ToBoolean(key.GetValue("PartitionStats")),
+                                MediaStats = Convert.ToBoolean(key.GetValue("MediaStats")),
+                                VerifyStats = Convert.ToBoolean(key.GetValue("VerifyStats"))
+                            };
                         }
                     }
 
@@ -303,8 +291,8 @@ namespace DiscImageChef.Settings
             }
             catch
             {
-                if(prefsFs != null) prefsFs.Close();
-                if(prefsSr != null) prefsSr.Close();
+                prefsFs?.Close();
+                prefsSr?.Close();
                 SetDefaultSettings();
                 SaveSettings();
             }
@@ -314,30 +302,34 @@ namespace DiscImageChef.Settings
         {
             try
             {
-                PlatformID ptID = DetectOS.GetRealPlatformID();
+                PlatformID ptId = DetectOS.GetRealPlatformID();
 
-                switch(ptID)
+                switch(ptId)
                 {
                     case PlatformID.MacOSX:
                     case PlatformID.iOS:
                     {
-                        NSDictionary root = new NSDictionary();
-                        root.Add("SaveReportsGlobally", Current.SaveReportsGlobally);
-                        root.Add("ShareReports", Current.ShareReports);
+                        NSDictionary root = new NSDictionary
+                        {
+                            {"SaveReportsGlobally", Current.SaveReportsGlobally},
+                            {"ShareReports", Current.ShareReports}
+                        };
                         if(Current.Stats != null)
                         {
-                            NSDictionary stats = new NSDictionary();
-                            stats.Add("ShareStats", Current.Stats.ShareStats);
-                            stats.Add("BenchmarkStats", Current.Stats.BenchmarkStats);
-                            stats.Add("CommandStats", Current.Stats.CommandStats);
-                            stats.Add("DeviceStats", Current.Stats.DeviceStats);
-                            stats.Add("FilesystemStats", Current.Stats.FilesystemStats);
-                            stats.Add("FilterStats", Current.Stats.FilterStats);
-                            stats.Add("MediaImageStats", Current.Stats.MediaImageStats);
-                            stats.Add("MediaScanStats", Current.Stats.MediaScanStats);
-                            stats.Add("PartitionStats", Current.Stats.PartitionStats);
-                            stats.Add("MediaStats", Current.Stats.MediaStats);
-                            stats.Add("VerifyStats", Current.Stats.VerifyStats);
+                            NSDictionary stats = new NSDictionary
+                            {
+                                {"ShareStats", Current.Stats.ShareStats},
+                                {"BenchmarkStats", Current.Stats.BenchmarkStats},
+                                {"CommandStats", Current.Stats.CommandStats},
+                                {"DeviceStats", Current.Stats.DeviceStats},
+                                {"FilesystemStats", Current.Stats.FilesystemStats},
+                                {"FilterStats", Current.Stats.FilterStats},
+                                {"MediaImageStats", Current.Stats.MediaImageStats},
+                                {"MediaScanStats", Current.Stats.MediaScanStats},
+                                {"PartitionStats", Current.Stats.PartitionStats},
+                                {"MediaStats", Current.Stats.MediaStats},
+                                {"VerifyStats", Current.Stats.VerifyStats}
+                            };
                             root.Add("Stats", stats);
                         }
 
@@ -415,27 +407,32 @@ namespace DiscImageChef.Settings
                 }
             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-            catch { }
+            catch { // ignored
+ }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
         }
 
-        public static void SetDefaultSettings()
+        static void SetDefaultSettings()
         {
-            Current = new DicSettings();
-            Current.SaveReportsGlobally = true;
-            Current.ShareReports = true;
-            Current.Stats = new StatsSettings();
-            Current.Stats.BenchmarkStats = true;
-            Current.Stats.CommandStats = true;
-            Current.Stats.DeviceStats = true;
-            Current.Stats.FilesystemStats = true;
-            Current.Stats.MediaImageStats = true;
-            Current.Stats.MediaScanStats = true;
-            Current.Stats.FilterStats = true;
-            Current.Stats.MediaStats = true;
-            Current.Stats.PartitionStats = true;
-            Current.Stats.ShareStats = true;
-            Current.Stats.VerifyStats = true;
+            Current = new DicSettings
+            {
+                SaveReportsGlobally = true,
+                ShareReports = true,
+                Stats = new StatsSettings
+                {
+                    BenchmarkStats = true,
+                    CommandStats = true,
+                    DeviceStats = true,
+                    FilesystemStats = true,
+                    MediaImageStats = true,
+                    MediaScanStats = true,
+                    FilterStats = true,
+                    MediaStats = true,
+                    PartitionStats = true,
+                    ShareStats = true,
+                    VerifyStats = true
+                }
+            };
         }
     }
 }
