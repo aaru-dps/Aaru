@@ -32,13 +32,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.DiscImages;
+#pragma warning disable 169
+#pragma warning disable 649
 
 namespace DiscImageChef.Partitions
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class SGI : PartitionPlugin
     {
         const int SGI_MAGIC = 0x0BE5A941;

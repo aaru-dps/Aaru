@@ -59,10 +59,9 @@ namespace DiscImageChef.Partitions
             byte[] sector = imagePlugin.ReadSector(31 + sectorOffset);
             if(sector.Length < 512) return false;
 
-            DECLabel table;
             IntPtr tablePtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, tablePtr, 512);
-            table = (DECLabel)Marshal.PtrToStructure(tablePtr, typeof(DECLabel));
+            DECLabel table = (DECLabel)Marshal.PtrToStructure(tablePtr, typeof(DECLabel));
             Marshal.FreeHGlobal(tablePtr);
 
             if(table.pt_magic != PT_MAGIC || table.pt_valid != PT_VALID) return false;

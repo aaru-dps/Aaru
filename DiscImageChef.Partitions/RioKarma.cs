@@ -57,10 +57,9 @@ namespace DiscImageChef.Partitions
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
             if(sector.Length < 512) return false;
 
-            RioKarmaTable table;
             IntPtr tablePtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, tablePtr, 512);
-            table = (RioKarmaTable)Marshal.PtrToStructure(tablePtr, typeof(RioKarmaTable));
+            RioKarmaTable table = (RioKarmaTable)Marshal.PtrToStructure(tablePtr, typeof(RioKarmaTable));
             Marshal.FreeHGlobal(tablePtr);
 
             if(table.magic != KARMA_MAGIC) return false;

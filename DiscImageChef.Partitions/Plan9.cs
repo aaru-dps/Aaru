@@ -65,7 +65,7 @@ namespace DiscImageChef.Partitions
             foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part.Substring(0, 5) == "part ").Select(part => part.Split(' ')).TakeWhile(tokens => tokens.Length == 4)) {
                 if(!ulong.TryParse(tokens[2], out ulong start) || !ulong.TryParse(tokens[3], out ulong end)) break;
 
-                Partition _part = new Partition
+                Partition part = new Partition
                 {
                     Length = end - start + 1,
                     Offset = (start + sectorOffset) * imagePlugin.GetSectorSize(),
@@ -76,7 +76,7 @@ namespace DiscImageChef.Partitions
                     Type = tokens[1]
                 };
 
-                partitions.Add(_part);
+                partitions.Add(part);
             }
 
             return partitions.Count > 0;

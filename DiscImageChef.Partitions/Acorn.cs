@@ -72,10 +72,9 @@ namespace DiscImageChef.Partitions
 
             if(sector.Length < 512) return false;
 
-            AcornBootBlock bootBlock;
             IntPtr bbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, bbPtr, 512);
-            bootBlock = (AcornBootBlock)Marshal.PtrToStructure(bbPtr, typeof(AcornBootBlock));
+            AcornBootBlock bootBlock = (AcornBootBlock)Marshal.PtrToStructure(bbPtr, typeof(AcornBootBlock));
             Marshal.FreeHGlobal(bbPtr);
 
             int checksum = 0;
@@ -112,10 +111,9 @@ namespace DiscImageChef.Partitions
             switch(bootBlock.flags & TYPE_MASK) {
                 case TYPE_LINUX:
                 {
-                    LinuxTable table;
                     IntPtr tablePtr = Marshal.AllocHGlobal(512);
                     Marshal.Copy(map, 0, tablePtr, 512);
-                    table = (LinuxTable)Marshal.PtrToStructure(tablePtr, typeof(LinuxTable));
+                    LinuxTable table = (LinuxTable)Marshal.PtrToStructure(tablePtr, typeof(LinuxTable));
                     Marshal.FreeHGlobal(tablePtr);
 
                     foreach(LinuxEntry entry in table.entries)
@@ -140,10 +138,9 @@ namespace DiscImageChef.Partitions
                 case TYPE_RISCIX_MFM:
                 case TYPE_RISCIX_SCSI:
                 {
-                    RiscIxTable table;
                     IntPtr tablePtr = Marshal.AllocHGlobal(512);
                     Marshal.Copy(map, 0, tablePtr, 512);
-                    table = (RiscIxTable)Marshal.PtrToStructure(tablePtr, typeof(RiscIxTable));
+                    RiscIxTable table = (RiscIxTable)Marshal.PtrToStructure(tablePtr, typeof(RiscIxTable));
                     Marshal.FreeHGlobal(tablePtr);
 
                     if(table.magic == RISCIX_MAGIC)
@@ -169,7 +166,7 @@ namespace DiscImageChef.Partitions
                 }
             }
 
-            return !(partitions.Count == 0);
+            return partitions.Count != 0;
         }
 
         [StructLayout(LayoutKind.Sequential)]

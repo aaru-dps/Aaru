@@ -49,7 +49,7 @@ namespace DiscImageChef.Partitions
         /// <summary>Known byte offsets for BSD disklabel</summary>
         readonly uint[] labelOffsets = {0, 9, 64, 128, 516};
         /// <summary>Maximum size of a disklabel with 22 partitions</summary>
-        const uint maxLabelSize = 500;
+        const uint MAX_LABEL_SIZE = 500;
 
         public BSD()
         {
@@ -60,10 +60,9 @@ namespace DiscImageChef.Partitions
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
-            uint run = (maxLabelSize + labelOffsets.Last()) / imagePlugin.GetSectorSize();
-            if((maxLabelSize + labelOffsets.Last()) % imagePlugin.GetSectorSize() > 0) run++;
+            uint run = (MAX_LABEL_SIZE + labelOffsets.Last()) / imagePlugin.GetSectorSize();
+            if((MAX_LABEL_SIZE + labelOffsets.Last()) % imagePlugin.GetSectorSize() > 0) run++;
 
-            byte[] sector;
             DiskLabel dl = new DiskLabel();
             bool found = false;
 
@@ -74,8 +73,8 @@ namespace DiscImageChef.Partitions
                 byte[] tmp = imagePlugin.ReadSectors(location + sectorOffset, run);
                 foreach(uint offset in labelOffsets)
                 {
-                    sector = new byte[maxLabelSize];
-                    Array.Copy(tmp, offset, sector, 0, maxLabelSize);
+                    byte[] sector = new byte[MAX_LABEL_SIZE];
+                    Array.Copy(tmp, offset, sector, 0, MAX_LABEL_SIZE);
                     dl = GetDiskLabel(sector);
                     DicConsole.DebugWriteLine("BSD plugin",
                                               "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",

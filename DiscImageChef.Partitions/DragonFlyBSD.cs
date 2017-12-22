@@ -59,10 +59,9 @@ namespace DiscImageChef.Partitions
             byte[] sectors = imagePlugin.ReadSectors(sectorOffset, nSectors);
             if(sectors.Length < 2048) return false;
 
-            Disklabel64 disklabel;
             IntPtr labelPtr = Marshal.AllocHGlobal(2048);
             Marshal.Copy(sectors, 0, labelPtr, 2048);
-            disklabel = (Disklabel64)Marshal.PtrToStructure(labelPtr, typeof(Disklabel64));
+            Disklabel64 disklabel = (Disklabel64)Marshal.PtrToStructure(labelPtr, typeof(Disklabel64));
             Marshal.FreeHGlobal(labelPtr);
 
             if(disklabel.d_magic != 0xC4464C59) return false;
@@ -79,13 +78,14 @@ namespace DiscImageChef.Partitions
                     Length = entry.p_bsize / imagePlugin.GetSectorSize(),
                     Name = entry.p_stor_uuid.ToString(),
                     Sequence = counter,
-                    Scheme = Name
+                    Scheme = Name,
+                    Type = (BSD.fsType) entry.p_fstype == BSD.fsType.Other
+                               ? entry.p_type_uuid.ToString()
+                               : BSD.fsTypeToString((BSD.fsType) entry.p_fstype)
                 };
 
                 if(entry.p_bsize % imagePlugin.GetSectorSize() > 0) part.Length++;
 
-                if((BSD.fsType)entry.p_fstype == BSD.fsType.Other) part.Type = entry.p_type_uuid.ToString();
-                else part.Type = BSD.fsTypeToString((BSD.fsType)entry.p_fstype);
                 if(entry.p_bsize <= 0 || entry.p_boffset <= 0) continue;
 
                 partitions.Add(part);

@@ -50,9 +50,9 @@ namespace DiscImageChef.Partitions
         // "dlV2"
         const uint NEXT_MAGIC3 = 0x646C5633;
         // "dlV3"
-        const ushort disktabStart = 0xB4;
+        const ushort DISKTAB_START = 0xB4;
         // 180
-        const ushort disktabEntrySize = 0x2C;
+        const ushort DISKTAB_ENTRY_SIZE = 0x2C;
 
         // 44
         public NeXTDisklabel()
@@ -61,45 +61,44 @@ namespace DiscImageChef.Partitions
             PluginUuid = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin,
-                                            out List<Partition> partitions, ulong sectorOffset)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
-            bool magic_found = false;
-            byte[] label_sector;
+            bool magicFound = false;
+            byte[] labelSector;
 
-            uint magic;
-            uint sector_size;
+            uint sectorSize;
 
-            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448) sector_size = 2048;
-            else sector_size = imagePlugin.GetSectorSize();
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448) sectorSize = 2048;
+            else sectorSize = imagePlugin.GetSectorSize();
 
             partitions = new List<Partition>();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            ulong label_position = 0;
+            ulong labelPosition = 0;
 
-            foreach(ulong i in new ulong[] {0, 4, 15, 16}.TakeWhile(i => i + sectorOffset < imagePlugin.GetSectors())) {
-                label_sector = imagePlugin.ReadSector(i + sectorOffset);
-                magic = BigEndianBitConverter.ToUInt32(label_sector, 0x00);
+            foreach(ulong i in new ulong[] {0, 4, 15, 16}.TakeWhile(i => i + sectorOffset < imagePlugin.GetSectors()))
+            {
+                labelSector = imagePlugin.ReadSector(i + sectorOffset);
+                uint magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
                 if(magic != NEXT_MAGIC1 && magic != NEXT_MAGIC2 && magic != NEXT_MAGIC3) continue;
 
-                magic_found = true;
-                label_position = i + sectorOffset;
+                magicFound = true;
+                labelPosition = i + sectorOffset;
                 break;
             }
 
-            if(!magic_found) return false;
+            if(!magicFound) return false;
 
-            uint sectors_to_read = 7680 / imagePlugin.ImageInfo.SectorSize;
-            if(7680 % imagePlugin.ImageInfo.SectorSize > 0) sectors_to_read++;
+            uint sectorsToRead = 7680 / imagePlugin.ImageInfo.SectorSize;
+            if(7680 % imagePlugin.ImageInfo.SectorSize > 0) sectorsToRead++;
 
-            label_sector = imagePlugin.ReadSectors(label_position, sectors_to_read);
+            labelSector = imagePlugin.ReadSectors(labelPosition, sectorsToRead);
 
-            NeXTLabel label = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTLabel>(label_sector);
-            byte[] disktab_b = new byte[498];
-            Array.Copy(label_sector, 44, disktab_b, 0, 498);
-            label.dl_dt = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTDiskTab>(disktab_b);
+            NeXTLabel label = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTLabel>(labelSector);
+            byte[] disktabB = new byte[498];
+            Array.Copy(labelSector, 44, disktabB, 0, 498);
+            label.dl_dt = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTDiskTab>(disktabB);
             label.dl_dt.d_partitions = new NeXTEntry[8];
 
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_version = 0x{0:X8}", label.dl_version);
@@ -137,9 +136,9 @@ namespace DiscImageChef.Partitions
 
             for(int i = 0; i < 8; i++)
             {
-                byte[] part_b = new byte[44];
-                Array.Copy(label_sector, 44 + 146 + 44 * i, part_b, 0, 44);
-                label.dl_dt.d_partitions[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTEntry>(part_b);
+                byte[] partB = new byte[44];
+                Array.Copy(labelSector, 44 + 146 + 44 * i, partB, 0, 44);
+                label.dl_dt.d_partitions[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTEntry>(partB);
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_base = {1}", i,
                                           label.dl_dt.d_partitions[i].p_base);
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
@@ -178,9 +177,9 @@ namespace DiscImageChef.Partitions
                     Type = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
                     Sequence = (ulong)i,
                     Name = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
-                    Length = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sector_size),
-                    Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) *
-                                    label.dl_dt.d_secsize / sector_size),
+                    Length = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sectorSize),
+                    Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize /
+                                    sectorSize),
                     Scheme = Name
                 };
 
@@ -188,7 +187,7 @@ namespace DiscImageChef.Partitions
                 {
                     DicConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
                     part.Length = imagePlugin.ImageInfo.Sectors - part.Start;
-                    part.Size = part.Length * sector_size;
+                    part.Size = part.Length * sectorSize;
                     DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
                                               part.Length);
                 }
@@ -202,8 +201,7 @@ namespace DiscImageChef.Partitions
                 sb.AppendFormat("{0} bytes per inode", label.dl_dt.d_partitions[i].p_density).AppendLine();
                 sb.AppendFormat("{0}% of space must be free at minimum", label.dl_dt.d_partitions[i].p_minfree)
                   .AppendLine();
-                if(label.dl_dt.d_partitions[i].p_newfs != 1)
-                    sb.AppendLine("Filesystem should be formatted at start");
+                if(label.dl_dt.d_partitions[i].p_newfs != 1) sb.AppendLine("Filesystem should be formatted at start");
                 if(label.dl_dt.d_partitions[i].p_automnt == 1)
                     sb.AppendLine("Filesystem should be automatically mounted");
 
@@ -216,7 +214,7 @@ namespace DiscImageChef.Partitions
         }
 
         /// <summary>
-        /// NeXT v3 disklabel, 544 bytes
+        ///     NeXT v3 disklabel, 544 bytes
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NeXTLabel
@@ -240,7 +238,7 @@ namespace DiscImageChef.Partitions
         }
 
         /// <summary>
-        /// NeXT v1 and v2 disklabel, 7224 bytes
+        ///     NeXT v1 and v2 disklabel, 7224 bytes
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NeXTLabelOld
@@ -266,7 +264,7 @@ namespace DiscImageChef.Partitions
         }
 
         /// <summary>
-        /// NeXT disktab and partitions, 498 bytes
+        ///     NeXT disktab and partitions, 498 bytes
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NeXTDiskTab
@@ -312,7 +310,7 @@ namespace DiscImageChef.Partitions
         }
 
         /// <summary>
-        /// Partition entries, 44 bytes each
+        ///     Partition entries, 44 bytes each
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
         struct NeXTEntry

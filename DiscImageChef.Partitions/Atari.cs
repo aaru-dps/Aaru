@@ -72,11 +72,13 @@ namespace DiscImageChef.Partitions
 
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
 
-            AtariTable table = new AtariTable();
-            table.boot = new byte[342];
-            table.icdEntries = new AtariEntry[8];
-            table.unused = new byte[12];
-            table.entries = new AtariEntry[4];
+            AtariTable table = new AtariTable
+            {
+                boot = new byte[342],
+                icdEntries = new AtariEntry[8],
+                unused = new byte[12],
+                entries = new AtariEntry[4]
+            };
 
             Array.Copy(sector, 0, table.boot, 0, 342);
 

@@ -42,7 +42,7 @@ namespace DiscImageChef.Partitions
 {
     public class Human68K : PartitionPlugin
     {
-        const uint X68kMagic = 0x5836384B;
+        const uint X68K_MAGIC = 0x5836384B;
 
         public Human68K()
         {
@@ -82,7 +82,7 @@ namespace DiscImageChef.Partitions
 
             DicConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
 
-            if(table.magic != X68kMagic) return false;
+            if(table.magic != X68K_MAGIC) return false;
 
             for(int i = 0; i < table.entries.Length; i++)
                 table.entries[i] = BigEndianMarshal.SwapStructureMembersEndian(table.entries[i]);

@@ -62,7 +62,7 @@ namespace DiscImageChef.Partitions
             uint magic = 0;
             ulong pdloc = 0;
             byte[] pdsector = null;
-            bool magic_found = false;
+            bool magicFound = false;
             bool absolute = false;
 
             foreach(ulong i in new ulong[] {0, 1, 8, 29}.TakeWhile(i => i + sectorOffset < imagePlugin.GetSectors())) {
@@ -72,12 +72,12 @@ namespace DiscImageChef.Partitions
                                           i + sectorOffset, magic, PD_MAGIC, PD_CIGAM);
                 if(magic != PD_MAGIC && magic != PD_CIGAM) continue;
 
-                magic_found = true;
+                magicFound = true;
                 pdloc = i;
                 break;
             }
 
-            if(!magic_found) return false;
+            if(!magicFound) return false;
 
             PDInfo pd;
             PDInfoOld pdold;
@@ -139,7 +139,7 @@ namespace DiscImageChef.Partitions
             DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[6] = {0}", pd.pad[6]);
             DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[7] = {0}", pd.pad[7]);
 
-            magic_found = false;
+            magicFound = false;
             bool useOld = false;
             byte[] vtocsector = imagePlugin.ReadSector(pdloc + sectorOffset + 1);
             vtoc vtoc = new vtoc();
@@ -148,7 +148,7 @@ namespace DiscImageChef.Partitions
 
             if(magic == VTOC_SANE || magic == VTOC_ENAS)
             {
-                magic_found = true;
+                magicFound = true;
                 DicConsole.DebugWriteLine("VTOC plugin", "New VTOC found at {0}", pdloc + sectorOffset + 1);
                 if(magic == VTOC_SANE)
                 {
@@ -170,13 +170,13 @@ namespace DiscImageChef.Partitions
                 }
             }
 
-            if(!magic_found && pd.version < XPDVERS)
+            if(!magicFound && pd.version < XPDVERS)
             {
                 magic = BitConverter.ToUInt32(vtocsector, 12);
 
                 if(magic == VTOC_SANE || magic == VTOC_ENAS)
                 {
-                    magic_found = true;
+                    magicFound = true;
                     useOld = true;
                     DicConsole.DebugWriteLine("VTOC plugin", "Old VTOC found at {0}", pdloc + sectorOffset + 1);
                     if(magic == VTOC_SANE)
@@ -200,30 +200,30 @@ namespace DiscImageChef.Partitions
                 }
             }
 
-            if(!magic_found)
+            if(!magicFound)
             {
                 DicConsole.DebugWriteLine("VTOC plugin", "Searching for VTOC on relative byte {0}", pd.vtoc_ptr);
-                ulong rel_sec_ptr = pd.vtoc_ptr / imagePlugin.GetSectorSize();
-                uint rel_sec_off = pd.vtoc_ptr % imagePlugin.GetSectorSize();
-                uint sec_count = (rel_sec_off + pd.vtoc_len) / imagePlugin.GetSectorSize();
-                if((rel_sec_off + pd.vtoc_len) % imagePlugin.GetSectorSize() > 0) sec_count++;
+                ulong relSecPtr = pd.vtoc_ptr / imagePlugin.GetSectorSize();
+                uint relSecOff = pd.vtoc_ptr % imagePlugin.GetSectorSize();
+                uint secCount = (relSecOff + pd.vtoc_len) / imagePlugin.GetSectorSize();
+                if((relSecOff + pd.vtoc_len) % imagePlugin.GetSectorSize() > 0) secCount++;
                 DicConsole.DebugWriteLine("VTOC plugin",
                                           "Going to read {0} sectors from sector {1}, getting VTOC from byte {2}",
-                                          sec_count, rel_sec_ptr + sectorOffset, rel_sec_off);
-                if(rel_sec_ptr + sectorOffset + sec_count >= imagePlugin.GetSectors())
+                                          secCount, relSecPtr + sectorOffset, relSecOff);
+                if(relSecPtr + sectorOffset + secCount >= imagePlugin.GetSectors())
                 {
                     DicConsole.DebugWriteLine("VTOC plugin", "Going to read past device size, aborting...");
                     return false;
                 }
 
-                byte[] tmp = imagePlugin.ReadSectors(rel_sec_ptr + sectorOffset, sec_count);
+                byte[] tmp = imagePlugin.ReadSectors(relSecPtr + sectorOffset, secCount);
                 vtocsector = new byte[pd.vtoc_len];
-                Array.Copy(tmp, rel_sec_off, vtocsector, 0, pd.vtoc_len);
+                Array.Copy(tmp, relSecOff, vtocsector, 0, pd.vtoc_len);
                 magic = BitConverter.ToUInt32(vtocsector, 0);
 
                 if(magic == VTOC_SANE || magic == VTOC_ENAS)
                 {
-                    magic_found = true;
+                    magicFound = true;
                     DicConsole.DebugWriteLine("VTOC plugin", "New VTOC found.");
                     if(magic == VTOC_SANE)
                     {
@@ -246,7 +246,7 @@ namespace DiscImageChef.Partitions
                 }
             }
 
-            if(!magic_found)
+            if(!magicFound)
             {
                 DicConsole.DebugWriteLine("VTOC plugin", "Cannot find VTOC.");
                 return false;

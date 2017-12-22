@@ -62,30 +62,29 @@ namespace DiscImageChef.Partitions
         public override bool GetInformation(ImagePlugin imagePlugin,
                                             out List<Partition> partitions, ulong sectorOffset)
         {
-            uint sector_size;
+            uint sectorSize;
 
-            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448) sector_size = 2048;
-            else sector_size = imagePlugin.GetSectorSize();
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448) sectorSize = 2048;
+            else sectorSize = imagePlugin.GetSectorSize();
 
             partitions = new List<Partition>();
 
             if(sectorOffset + 2 >= imagePlugin.GetSectors()) return false;
 
-            byte[] ddm_sector = imagePlugin.ReadSector(sectorOffset);
-            AppleDriverDescriptorMap ddm;
+            byte[] ddmSector = imagePlugin.ReadSector(sectorOffset);
 
-            ushort max_drivers = 61;
+            ushort maxDrivers = 61;
 
-            if(sector_size == 256)
+            if(sectorSize == 256)
             {
                 byte[] tmp = new byte[512];
-                Array.Copy(ddm_sector, 0, tmp, 0, 256);
-                ddm_sector = tmp;
-                max_drivers = 29;
+                Array.Copy(ddmSector, 0, tmp, 0, 256);
+                ddmSector = tmp;
+                maxDrivers = 29;
             }
-            else if(sector_size < 256) return false;
+            else if(sectorSize < 256) return false;
 
-            ddm = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddm_sector);
+            AppleDriverDescriptorMap ddm = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddmSector);
 
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbSig = 0x{0:X4}", ddm.sbSig);
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlockSize = {0}", ddm.sbBlockSize);
@@ -98,13 +97,13 @@ namespace DiscImageChef.Partitions
             uint sequence = 0;
 
             if(ddm.sbSig == DDM_MAGIC)
-                if(ddm.sbDrvrCount < max_drivers)
+                if(ddm.sbDrvrCount < maxDrivers)
                 {
                     ddm.sbMap = new AppleDriverEntry[ddm.sbDrvrCount];
                     for(int i = 0; i < ddm.sbDrvrCount; i++)
                     {
                         byte[] tmp = new byte[8];
-                        Array.Copy(ddm_sector, 18 + i * 8, tmp, 0, 8);
+                        Array.Copy(ddmSector, 18 + i * 8, tmp, 0, 8);
                         ddm.sbMap[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
                         DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}",
                                                   ddm.sbMap[i].ddBlock, i);
@@ -118,14 +117,14 @@ namespace DiscImageChef.Partitions
                         Partition part = new Partition
                         {
                             Size = (ulong)(ddm.sbMap[i].ddSize * 512),
-                            Length = (ulong)(ddm.sbMap[i].ddSize * 512 / sector_size),
+                            Length = (ulong)(ddm.sbMap[i].ddSize * 512 / sectorSize),
                             Sequence = sequence,
-                            Offset = ddm.sbMap[i].ddBlock * sector_size,
+                            Offset = ddm.sbMap[i].ddBlock * sectorSize,
                             Start = ddm.sbMap[i].ddBlock + sectorOffset,
                             Type = "Apple_Driver"
                         };
 
-                        if(ddm.sbMap[i].ddSize * 512 % sector_size > 0) part.Length++;
+                        if(ddm.sbMap[i].ddSize * 512 % sectorSize > 0) part.Length++;
 
                         partitions.Add(part);
 
@@ -133,45 +132,44 @@ namespace DiscImageChef.Partitions
                     }
                 }
 
-            byte[] part_sector = imagePlugin.ReadSector(1 + sectorOffset);
-            AppleOldDevicePartitionMap old_map =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleOldDevicePartitionMap>(part_sector);
+            byte[] partSector = imagePlugin.ReadSector(1 + sectorOffset);
+            AppleOldDevicePartitionMap oldMap =
+                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleOldDevicePartitionMap>(partSector);
 
             // This is the easy one, no sector size mixing
-            if(old_map.pdSig == APM_MAGIC_OLD)
+            if(oldMap.pdSig == APM_MAGIC_OLD)
             {
-                for(int i = 2; i < part_sector.Length; i += 12)
+                for(int i = 2; i < partSector.Length; i += 12)
                 {
                     byte[] tmp = new byte[12];
-                    Array.Copy(part_sector, i, tmp, 0, 12);
-                    AppleMapOldPartitionEntry old_entry =
+                    Array.Copy(partSector, i, tmp, 0, 12);
+                    AppleMapOldPartitionEntry oldEntry =
                         BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapOldPartitionEntry>(tmp);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdStart = {0}", old_entry.pdStart,
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdStart = {0}", oldEntry.pdStart,
                                               (i - 2) / 12);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdSize = {0}", old_entry.pdSize,
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdSize = {0}", oldEntry.pdSize,
                                               (i - 2) / 12);
                     DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdFSID = 0x{0:X8}",
-                                              old_entry.pdFSID, (i - 2) / 12);
+                                              oldEntry.pdFSID, (i - 2) / 12);
 
-                    if(old_entry.pdSize == 0 && old_entry.pdFSID == 0)
+                    if(oldEntry.pdSize == 0 && oldEntry.pdFSID == 0)
                     {
-                        if(old_entry.pdStart == 0) break;
+                        if(oldEntry.pdStart == 0) break;
 
                         continue;
                     }
 
                     Partition part = new Partition
                     {
-                        Size = old_entry.pdStart * ddm.sbBlockSize,
-                        Length = old_entry.pdStart * ddm.sbBlockSize / sector_size,
+                        Size = oldEntry.pdStart * ddm.sbBlockSize,
+                        Length = oldEntry.pdStart * ddm.sbBlockSize / sectorSize,
                         Sequence = sequence,
-                        Offset = old_entry.pdSize * ddm.sbBlockSize,
-                        Start = old_entry.pdSize * ddm.sbBlockSize / sector_size,
-                        Scheme = Name
+                        Offset = oldEntry.pdSize * ddm.sbBlockSize,
+                        Start = oldEntry.pdSize * ddm.sbBlockSize / sectorSize,
+                        Scheme = Name,
+                        Type = oldEntry.pdFSID == HFS_MAGIC_OLD ? "Apple_HFS" : $"0x{oldEntry.pdFSID:X8}"
                     };
 
-                    if(old_entry.pdFSID == HFS_MAGIC_OLD) part.Type = "Apple_HFS";
-                    else part.Type = $"0x{old_entry.pdFSID:X8}";
 
                     partitions.Add(part);
 
@@ -182,68 +180,68 @@ namespace DiscImageChef.Partitions
             }
 
             AppleMapPartitionEntry entry;
-            uint entry_size;
-            uint entry_count;
-            uint sectors_to_read;
-            uint skip_ddm;
+            uint entrySize;
+            uint entryCount;
+            uint sectorsToRead;
+            uint skipDdm;
 
             // If sector is bigger than 512
-            if(sector_size > 512)
+            if(sectorSize > 512)
             {
                 byte[] tmp = new byte[512];
-                Array.Copy(ddm_sector, 512, tmp, 0, 512);
+                Array.Copy(ddmSector, 512, tmp, 0, 512);
                 entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
                 // Check for a partition entry that's 512-byte aligned
                 if(entry.signature == APM_MAGIC)
                 {
                     DicConsole.DebugWriteLine("AppleMap Plugin", "Found misaligned entry.");
-                    entry_size = 512;
-                    entry_count = entry.entries;
-                    skip_ddm = 512;
-                    sectors_to_read = (entry_count + 1) * 512 / sector_size + 1;
+                    entrySize = 512;
+                    entryCount = entry.entries;
+                    skipDdm = 512;
+                    sectorsToRead = (entryCount + 1) * 512 / sectorSize + 1;
                 }
                 else
                 {
-                    entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(part_sector);
+                    entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(partSector);
                     if(entry.signature == APM_MAGIC)
                     {
                         DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
-                        entry_size = sector_size;
-                        entry_count = entry.entries;
-                        skip_ddm = sector_size;
-                        sectors_to_read = entry_count + 2;
+                        entrySize = sectorSize;
+                        entryCount = entry.entries;
+                        skipDdm = sectorSize;
+                        sectorsToRead = entryCount + 2;
                     }
                     else return partitions.Count > 0;
                 }
             }
             else
             {
-                entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(part_sector);
+                entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(partSector);
                 if(entry.signature == APM_MAGIC)
                 {
                     DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
-                    entry_size = sector_size;
-                    entry_count = entry.entries;
-                    skip_ddm = sector_size;
-                    sectors_to_read = entry_count + 2;
+                    entrySize = sectorSize;
+                    entryCount = entry.entries;
+                    skipDdm = sectorSize;
+                    sectorsToRead = entryCount + 2;
                 }
                 else return partitions.Count > 0;
             }
 
-            byte[] entries = imagePlugin.ReadSectors(sectorOffset, sectors_to_read);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}", entry_size);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}", entry_count);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}", skip_ddm);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "sectors_to_read = {0}", sectors_to_read);
+            byte[] entries = imagePlugin.ReadSectors(sectorOffset, sectorsToRead);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}", entrySize);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}", entryCount);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}", skipDdm);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "sectors_to_read = {0}", sectorsToRead);
 
-            byte[] copy = new byte[entries.Length - skip_ddm];
-            Array.Copy(entries, skip_ddm, copy, 0, copy.Length);
+            byte[] copy = new byte[entries.Length - skipDdm];
+            Array.Copy(entries, skipDdm, copy, 0, copy.Length);
             entries = copy;
 
-            for(int i = 0; i < entry_count; i++)
+            for(int i = 0; i < entryCount; i++)
             {
-                byte[] tmp = new byte[entry_size];
-                Array.Copy(entries, i * entry_size, tmp, 0, entry_size);
+                byte[] tmp = new byte[entrySize];
+                Array.Copy(entries, i * entrySize, tmp, 0, entrySize);
                 entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
                 if(entry.signature != APM_MAGIC) continue;
 
@@ -289,10 +287,10 @@ namespace DiscImageChef.Partitions
                     Sequence = sequence,
                     Type = StringHandlers.CToString(entry.type),
                     Name = StringHandlers.CToString(entry.name),
-                    Offset = entry.start * entry_size,
-                    Size = entry.sectors * entry_size,
-                    Start = entry.start * entry_size / sector_size + sectorOffset,
-                    Length = entry.sectors * entry_size / sector_size,
+                    Offset = entry.start * entrySize,
+                    Size = entry.sectors * entrySize,
+                    Start = entry.start * entrySize / sectorSize + sectorOffset,
+                    Length = entry.sectors * entrySize / sectorSize,
                     Scheme = Name
                 };
                 sb.AppendLine("Partition flags:");
@@ -306,7 +304,7 @@ namespace DiscImageChef.Partitions
                 if(flags.HasFlag(AppleMapFlags.Bootable))
                 {
                     sb.AppendFormat("First boot sector: {0}",
-                                    entry.first_boot_block * entry_size / sector_size).AppendLine();
+                                    entry.first_boot_block * entrySize / sectorSize).AppendLine();
                     sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();
                     sb.AppendFormat("Boot load address: 0x{0:X8}", entry.load_address).AppendLine();
                     sb.AppendFormat("Boot entry point: 0x{0:X8}", entry.entry_point).AppendLine();

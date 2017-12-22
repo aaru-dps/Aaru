@@ -43,12 +43,10 @@ namespace DiscImageChef.Partitions
 {
     public class PC98 : PartitionPlugin
     {
-        const ushort IntelMagic = 0xAA55;
-
         public PC98()
         {
             Name = "NEC PC-9800 partition table";
-            PluginUuid = new Guid("27333401-C7C2-447D-961C-22AD0641A09A\n");
+            PluginUuid = new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
         }
 
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -61,10 +59,9 @@ namespace DiscImageChef.Partitions
             byte[] sector = imagePlugin.ReadSector(1);
             if(bootSector[bootSector.Length - 2] != 0x55 || bootSector[bootSector.Length - 1] != 0xAA) return false;
 
-            PC98Table table;
             IntPtr tablePtr = Marshal.AllocHGlobal(256);
             Marshal.Copy(sector, 0, tablePtr, 256);
-            table = (PC98Table)Marshal.PtrToStructure(tablePtr, typeof(PC98Table));
+            PC98Table table = (PC98Table)Marshal.PtrToStructure(tablePtr, typeof(PC98Table));
             Marshal.FreeHGlobal(tablePtr);
 
             ulong counter = 0;

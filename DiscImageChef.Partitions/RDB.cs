@@ -103,11 +103,11 @@ namespace DiscImageChef.Partitions
         /// <summary>
         /// Type ID for Amiga UNIX System V filesystem
         /// </summary>
-        const uint TypeID_AMIXSysV = 0x554E4901;
+        const uint TYPEID_AMIX_SYSV = 0x554E4901;
         /// <summary>
         /// Type ID for Amiga UNIX BSD filesystem
         /// </summary>
-        const uint TYPEID_AMIXFFS = 0x554E4902;
+        const uint TYPEID_AMIX_FFS = 0x554E4902;
         /// <summary>
         /// Type ID for Amiga UNIX Reserved partition (swap)
         /// </summary>
@@ -928,12 +928,9 @@ namespace DiscImageChef.Partitions
 
             rdbBlock += sectorOffset;
 
-            byte[] sector;
-            byte[] tmpString;
-
             RigidDiskBlock rdb = new RigidDiskBlock();
 
-            sector = imagePlugin.ReadSector(rdbBlock);
+            byte[] sector = imagePlugin.ReadSector(rdbBlock);
 
             rdb.Magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
             rdb.Size = BigEndianBitConverter.ToUInt32(sector, 0x04);
@@ -976,7 +973,7 @@ namespace DiscImageChef.Partitions
             rdb.HighCylinder = BigEndianBitConverter.ToUInt32(sector, 0x98);
             rdb.Reserved15 = BigEndianBitConverter.ToUInt32(sector, 0x9C);
 
-            tmpString = new byte[8];
+            byte[] tmpString = new byte[8];
             Array.Copy(sector, 0xA0, tmpString, 0, 8);
             rdb.DiskVendor = StringHandlers.SpacePaddedToString(tmpString);
             tmpString = new byte[16];
@@ -1340,12 +1337,14 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "Found LoadSegment block");
 
                     thereAreLoadSegments = true;
-                    LoadSegment loadSeg = new LoadSegment();
-                    loadSeg.Magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
-                    loadSeg.Size = BigEndianBitConverter.ToUInt32(sector, 0x04);
-                    loadSeg.Checksum = BigEndianBitConverter.ToInt32(sector, 0x08);
-                    loadSeg.TargetId = BigEndianBitConverter.ToUInt32(sector, 0x0C);
-                    loadSeg.NextPtr = BigEndianBitConverter.ToUInt32(sector, 0x10);
+                    LoadSegment loadSeg = new LoadSegment
+                    {
+                        Magic = BigEndianBitConverter.ToUInt32(sector, 0x00),
+                        Size = BigEndianBitConverter.ToUInt32(sector, 0x04),
+                        Checksum = BigEndianBitConverter.ToInt32(sector, 0x08),
+                        TargetId = BigEndianBitConverter.ToUInt32(sector, 0x0C),
+                        NextPtr = BigEndianBitConverter.ToUInt32(sector, 0x10)
+                    };
                     loadSeg.LoadData = new byte[(loadSeg.Size - 5) * 4];
                     Array.Copy(sector, 0x14, loadSeg.LoadData, 0, (loadSeg.Size - 5) * 4);
 
@@ -1410,9 +1409,9 @@ namespace DiscImageChef.Partitions
                 case TYPEID_FFS_CACHE: return "Amiga Fast File System with directory cache";
                 case TYPEID_OFS2: return "Amiga Original File System with long filenames";
                 case TYPEID_FFS2: return "Amiga Fast File System with long filenames";
-                case TypeID_AMIXSysV: return "Amiga UNIX System V filesystem";
+                case TYPEID_AMIX_SYSV: return "Amiga UNIX System V filesystem";
                 case TYPEID_AMIX_BOOT: return "Amiga UNIX boot filesystem";
-                case TYPEID_AMIXFFS: return "Amiga UNIX BSD filesystem";
+                case TYPEID_AMIX_FFS: return "Amiga UNIX BSD filesystem";
                 case TYPEID_AMIX_RESERVED: return "Amiga UNIX Reserved partition (swap)";
                 case TYPEID_PFS:
                 case TYPEID_PFS2:
@@ -1455,7 +1454,7 @@ namespace DiscImageChef.Partitions
                     if((amigaDosType & TYPEID_OFS) == TYPEID_OFS)
                         return $"Unknown Amiga DOS filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
-                    if((amigaDosType & TypeID_AMIXSysV) == TypeID_AMIXSysV)
+                    if((amigaDosType & TYPEID_AMIX_SYSV) == TYPEID_AMIX_SYSV)
                         return $"Unknown Amiga UNIX filesystem type {AmigaDosTypeToString(amigaDosType)}";
 
                     if((amigaDosType & 0x50465300) == 0x50465300 || (amigaDosType & 0x41465300) == 0x41465300)
@@ -1488,21 +1487,15 @@ namespace DiscImageChef.Partitions
             }
         }
 
-        static string AmigaDosTypeToString(uint amigaDosType)
-        {
-            return AmigaDosTypeToString(amigaDosType, true);
-        }
-
-        static string AmigaDosTypeToString(uint amigaDosType, bool quoted)
+        static string AmigaDosTypeToString(uint amigaDosType, bool quoted = true)
         {
             byte[] textPart = new byte[3];
-            string textPartString;
 
             textPart[0] = (byte)((amigaDosType & 0xFF000000) >> 24);
             textPart[1] = (byte)((amigaDosType & 0x00FF0000) >> 16);
             textPart[2] = (byte)((amigaDosType & 0x0000FF00) >> 8);
 
-            textPartString = Encoding.ASCII.GetString(textPart);
+            string textPartString = Encoding.ASCII.GetString(textPart);
 
             return quoted
                        ? $"\"{textPartString}\\{amigaDosType & 0xFF}\""

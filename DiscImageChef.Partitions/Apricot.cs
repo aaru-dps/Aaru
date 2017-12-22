@@ -73,10 +73,9 @@ namespace DiscImageChef.Partitions
 
             if(sector.Length < 512) return false;
 
-                                  ApricotLabel label;
-            IntPtr lblPtr = Marshal.AllocHGlobal(512);
+                                  IntPtr lblPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sector, 0, lblPtr, 512);
-            label = (ApricotLabel)Marshal.PtrToStructure(lblPtr, typeof(ApricotLabel));
+            ApricotLabel label = (ApricotLabel)Marshal.PtrToStructure(lblPtr, typeof(ApricotLabel));
             Marshal.FreeHGlobal(lblPtr);
 
             // Not much to check but...

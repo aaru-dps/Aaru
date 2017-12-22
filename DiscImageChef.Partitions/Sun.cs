@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -40,6 +41,7 @@ using DiscImageChef.DiscImages;
 
 namespace DiscImageChef.Partitions
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class SunDisklabel : PartitionPlugin
     {
         /// <summary>Sun disklabel magic number</summary>
@@ -68,7 +70,7 @@ namespace DiscImageChef.Partitions
         const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456 + // sizeof(dk_vtoc16)
                                                    4 * 4 + 12 * 2 + 2 * 2);
 
-        public enum SunTag : ushort
+        enum SunTag : ushort
         {
             SunEmpty = 0x0000,
             SunBoot = 0x0001,
@@ -97,7 +99,7 @@ namespace DiscImageChef.Partitions
         }
 
         [Flags]
-        public enum SunFlags : ushort
+        enum SunFlags : ushort
         {
             NoMount = 0x0001,
             ReadOnly = 0x0010
@@ -405,7 +407,7 @@ namespace DiscImageChef.Partitions
             return lebal;
         }
 
-        public static string SunFlagsToString(SunFlags flags)
+        static string SunFlagsToString(SunFlags flags)
         {
             StringBuilder sb = new StringBuilder();
             if(flags.HasFlag(SunFlags.NoMount)) sb.AppendLine("Unmountable");
@@ -413,7 +415,7 @@ namespace DiscImageChef.Partitions
             return sb.ToString();
         }
 
-        public static string SunIdToString(SunTag id)
+        static string SunIdToString(SunTag id)
         {
             switch(id)
             {

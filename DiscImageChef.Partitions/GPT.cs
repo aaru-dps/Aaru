@@ -42,8 +42,8 @@ namespace DiscImageChef.Partitions
 {
     public class GuidPartitionTable : PartitionPlugin
     {
-        const ulong GptMagic = 0x5452415020494645;
-        const uint GptRevision1 = 0x00010000;
+        const ulong GPT_MAGIC = 0x5452415020494645;
+        const uint GPT_REVISION1 = 0x00010000;
 
         public GuidPartitionTable()
         {
@@ -66,13 +66,13 @@ namespace DiscImageChef.Partitions
 
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
 
-            if(signature != GptMagic)
+            if(signature != GPT_MAGIC)
                 if(imagePlugin.ImageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
                     hdrBytes = imagePlugin.ReadSector(sectorOffset);
                     signature = BitConverter.ToUInt64(hdrBytes, 512);
                     DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature @ 0x200 = 0x{0:X16}", signature);
-                    if(signature == GptMagic)
+                    if(signature == GPT_MAGIC)
                     {
                         DicConsole.DebugWriteLine("GPT Plugin", "Found unaligned signature", signature);
                         byte[] real = new byte[512];
@@ -106,7 +106,7 @@ namespace DiscImageChef.Partitions
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.entriesSize = {0}", hdr.entriesSize);
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.entriesCrc = 0x{0:X8}", hdr.entriesCrc);
 
-            if(hdr.signature != GptMagic) return false;
+            if(hdr.signature != GPT_MAGIC) return false;
 
             if(hdr.myLBA != 1 + sectorOffset) return false;
 
@@ -145,7 +145,8 @@ namespace DiscImageChef.Partitions
                     entries.Add(entry);
                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch { }
+                catch { // ignored
+ }
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body 
             }
 
@@ -183,7 +184,7 @@ namespace DiscImageChef.Partitions
             return true;
         }
 
-        public string GetGuidTypeName(Guid type)
+        static string GetGuidTypeName(Guid type)
         {
             string strType = type.ToString().ToUpperInvariant();
             switch(strType)

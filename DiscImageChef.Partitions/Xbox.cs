@@ -69,7 +69,7 @@ namespace DiscImageChef.Partitions
             public uint dashboardLen;
         }
 
-        const uint Xbox360DevKitMagic = 0x00020000;
+        const uint XBOX360_DEVKIT_MAGIC = 0x00020000;
 
         public Xbox()
         {
@@ -90,7 +90,7 @@ namespace DiscImageChef.Partitions
             Xbox360DevKitPartitionTable table =
                 BigEndianMarshal.ByteArrayToStructureBigEndian<Xbox360DevKitPartitionTable>(sector);
 
-            if(table.magic == Xbox360DevKitMagic &&
+            if(table.magic == XBOX360_DEVKIT_MAGIC &&
                table.contentOff + table.contentLen <= imagePlugin.ImageInfo.Sectors &&
                table.dashboardOff + table.dashboardLen <= imagePlugin.ImageInfo.Sectors)
             {
