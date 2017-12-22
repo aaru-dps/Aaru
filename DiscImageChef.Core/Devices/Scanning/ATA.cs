@@ -157,8 +157,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                             ibgLog.Write(i, 0);
                         }
 
-                        currentSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
-                        GC.Collect();
+                        double newSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
+                        if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                     }
 
                     end = DateTime.UtcNow;
@@ -237,8 +237,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                                     ibgLog.Write(currentBlock, 0);
                                 }
 
-                                currentSpeed = blockSize / (double)1048576 / (duration / 1000);
-                                GC.Collect();
+                                double newSpeed = blockSize / (double)1048576 / (duration / 1000);
+                                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
 
                                 currentBlock++;
                             }

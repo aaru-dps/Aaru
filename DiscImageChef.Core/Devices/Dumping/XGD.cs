@@ -430,7 +430,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         foreach(string senseLine in senseLines) dumpLog.WriteLine(senseLine);
                     }
 
-                    currentSpeed = (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
+                    double newSpeed = (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
+                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                     blocksToRead = saveBlocksToRead;
                     currentSector = i + 1;
                     resume.NextBlock = currentSector;
@@ -558,7 +559,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     foreach(string senseLine in senseLines) dumpLog.WriteLine(senseLine);
                 }
 
-                currentSpeed = (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
+                double newSpeed = (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                 currentSector += blocksToRead;
                 resume.NextBlock = currentSector;
             }
@@ -765,7 +767,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                 totalChkDuration += chkDuration;
 
-                currentSpeed = (double)BLOCK_SIZE * blocksToRead / 1048576 / (chkDuration / 1000);
+                double newSpeed = (double)BLOCK_SIZE * blocksToRead / 1048576 / (chkDuration / 1000);
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
             }
 
             DicConsole.WriteLine();

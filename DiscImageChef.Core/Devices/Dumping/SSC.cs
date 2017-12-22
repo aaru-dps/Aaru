@@ -604,7 +604,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 totalChkDuration += chkDuration;
 
                 if(currentBlock % 10 == 0)
-                    currentSpeed = blockSize / (double)1048576 / (duration / 1000);
+                {
+                    double newSpeed = blockSize / (double)1048576 / (duration / 1000);
+                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
+                }
                 currentBlock++;
                 currentSize += blockSize;
                 currentFileSize += blockSize;

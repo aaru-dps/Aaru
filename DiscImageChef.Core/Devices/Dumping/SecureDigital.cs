@@ -330,8 +330,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Error reading {0} blocks from block {1}.", blocksToRead, i);
                 }
 
-                currentSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
-                GC.Collect();
+                double newSpeed = (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                 resume.NextBlock = i + blocksToRead;
             }
 
@@ -422,7 +422,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                 totalChkDuration += chkDuration;
 
-                currentSpeed = (double)blockSize * blocksToRead / 1048576 / (chkDuration / 1000);
+                double newSpeed = (double)blockSize * blocksToRead / 1048576 / (chkDuration / 1000);
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
             }
 
             DicConsole.WriteLine();

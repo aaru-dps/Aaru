@@ -428,7 +428,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
 
-                    currentSpeed = blockSize / (double)1048576 / (cmdDuration / 1000);
+                    double newSpeed = blockSize / (double)1048576 / (cmdDuration / 1000);
+                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                 }
 
                 dumpFile.Close();
@@ -616,7 +617,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             }
                     }
 
-                    currentSpeed = (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
+                    double newSpeed = (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
+                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                     resume.NextBlock = i + blocksToRead;
                 }
 
@@ -828,7 +830,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                     totalChkDuration += chkDuration;
 
-                    currentSpeed = (double)blockSize * blocksToRead / 1048576 / (chkDuration / 1000);
+                    double newSpeed = (double)blockSize * blocksToRead / 1048576 / (chkDuration / 1000);
+                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                 }
 
                 tracks[t].Checksums = trkChk.End().ToArray();
