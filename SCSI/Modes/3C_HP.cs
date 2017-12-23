@@ -121,7 +121,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(page.WT)
             {
-                sb.AppendFormat("\tDrive's date/time is: {0}", DateHandlers.UNIXUnsignedToDateTime(page.WorldTime))
+                sb.AppendFormat("\tDrive's date/time is: {0}", DateHandlers.UnixUnsignedToDateTime(page.WorldTime))
                   .AppendLine();
                 if(page.UTC) sb.AppendLine("\tDrive's time is UTC");
                 if(page.NTP) sb.AppendLine("\tDrive's time is synchronized with a NTP source");
