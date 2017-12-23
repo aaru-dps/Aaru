@@ -590,8 +590,8 @@ namespace DiscImageChef.Filters
                         fs.Read(dates_b, 0, 16);
                         AppleDoubleFileDates dates =
                             BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleFileDates>(dates_b);
-                        creationTime = DateHandlers.AppleDoubleToDateTime(dates.creationDate);
-                        lastWriteTime = DateHandlers.AppleDoubleToDateTime(dates.modificationDate);
+                        creationTime = DateHandlers.UNIXUnsignedToDateTime(dates.creationDate);
+                        lastWriteTime = DateHandlers.UNIXUnsignedToDateTime(dates.modificationDate);
                         break;
                     case AppleDoubleEntryID.FileInfo:
                         fs.Seek(entry.offset, SeekOrigin.Begin);

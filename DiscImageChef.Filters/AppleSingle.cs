@@ -315,8 +315,8 @@ namespace DiscImageChef.Filters
                         ms.Read(dates_b, 0, 16);
                         AppleSingleFileDates dates =
                             BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
-                        creationTime = DateHandlers.AppleDoubleToDateTime(dates.creationDate);
-                        lastWriteTime = DateHandlers.AppleDoubleToDateTime(dates.modificationDate);
+                        creationTime = DateHandlers.UNIXUnsignedToDateTime(dates.creationDate);
+                        lastWriteTime = DateHandlers.UNIXUnsignedToDateTime(dates.modificationDate);
                         break;
                     case AppleSingleEntryID.FileInfo:
                         ms.Seek(entry.offset, SeekOrigin.Begin);
