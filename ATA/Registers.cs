@@ -74,7 +74,6 @@ namespace DiscImageChef.Decoders.ATA
         public byte CylinderLow;
         public byte CylinderHigh;
         public byte DeviceHead;
-        public byte Command;
     }
 
     public struct AtaErrorRegistersLba28
@@ -86,7 +85,6 @@ namespace DiscImageChef.Decoders.ATA
         public byte LbaMid;
         public byte LbaHigh;
         public byte DeviceHead;
-        public byte Command;
     }
 
     public struct AtaErrorRegistersLba48
@@ -98,6 +96,5 @@ namespace DiscImageChef.Decoders.ATA
         public ushort LbaMid;
         public ushort LbaHigh;
         public byte DeviceHead;
-        public byte Command;
     }
 }
