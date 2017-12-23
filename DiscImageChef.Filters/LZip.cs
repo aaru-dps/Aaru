@@ -37,6 +37,9 @@ using SharpCompress.Compressors.LZMA;
 
 namespace DiscImageChef.Filters
 {
+    /// <summary>
+    /// Decompress lzip files while reading
+    /// </summary>
     public class LZip : Filter
     {
         Stream dataStream;

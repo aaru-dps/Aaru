@@ -36,6 +36,9 @@ using System.IO.Compression;
 
 namespace DiscImageChef.Filters
 {
+    /// <summary>
+    /// Decompress gzip files while reading
+    /// </summary>
     public class GZip : Filter
     {
         Stream dataStream;

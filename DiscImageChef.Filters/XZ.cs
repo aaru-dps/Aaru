@@ -36,6 +36,9 @@ using SharpCompress.Compressors.Xz;
 
 namespace DiscImageChef.Filters
 {
+    /// <summary>
+    /// Decompress xz files while reading
+    /// </summary>
     public class XZ : Filter
     {
         Stream dataStream;

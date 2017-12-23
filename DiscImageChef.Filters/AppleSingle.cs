@@ -37,6 +37,9 @@ using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filters
 {
+    /// <summary>
+    /// Decodes AppleSingle files
+    /// </summary>
     public class AppleSingle : Filter
     {
         enum AppleSingleEntryID : uint

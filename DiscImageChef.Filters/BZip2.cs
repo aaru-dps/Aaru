@@ -37,6 +37,9 @@ using SharpCompress.Compressors.BZip2;
 
 namespace DiscImageChef.Filters
 {
+    /// <summary>
+    /// Decompress bz2 files while reading
+    /// </summary>
     public class BZip2 : Filter
     {
         Stream dataStream;

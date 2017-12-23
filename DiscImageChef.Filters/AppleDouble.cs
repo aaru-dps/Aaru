@@ -37,6 +37,9 @@ using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filters
 {
+    /// <summary>
+    /// Decodes AppleDouble files
+    /// </summary>
     public class AppleDouble : Filter
     {
         enum AppleDoubleEntryID : uint

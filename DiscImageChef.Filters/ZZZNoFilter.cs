@@ -35,6 +35,9 @@ using System.IO;
 
 namespace DiscImageChef.Filters
 {
+    /// <summary>
+    /// No filter for reading files not recognized by any filter
+    /// </summary>
     public class ZZZNoFilter : Filter
     {
         Stream dataStream;

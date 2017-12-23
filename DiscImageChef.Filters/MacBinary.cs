@@ -38,6 +38,9 @@ using System.Text;
 namespace DiscImageChef.Filters
 {
     // TODO: Interpret fdScript
+    /// <summary>
+    /// Decodes MacBinary files
+    /// </summary>
     public class MacBinary : Filter
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

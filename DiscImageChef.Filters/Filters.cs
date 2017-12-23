@@ -41,6 +41,9 @@ namespace DiscImageChef.Filters
     {
         public SortedDictionary<string, Filter> Filters;
 
+        /// <summary>
+        /// Fills the list of all known filters
+        /// </summary>
         public FiltersList()
         {
             Assembly assembly = Assembly.GetAssembly(typeof(Filter));
@@ -57,6 +60,11 @@ namespace DiscImageChef.Filters
                 catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
         }
 
+        /// <summary>
+        /// Gets the filter that allows to read the specified path
+        /// </summary>
+        /// <param name="path">Path</param>
+        /// <returns>The filter that allows reading the specified path</returns>
         public Filter GetFilter(string path)
         {
             Filter noFilter = null;
@@ -82,6 +90,10 @@ namespace DiscImageChef.Filters
             return noFilter;
         }
 
+        /// <summary>
+        /// Gets all known filters
+        /// </summary>
+        /// <returns>Known filters</returns>
         public SortedDictionary<string, Filter> GetFiltersList()
         {
             return Filters;

@@ -39,6 +39,9 @@ using System.Text;
 
 namespace DiscImageChef.Filters
 {
+    /// <summary>
+    /// Decodes PCExchange files
+    /// </summary>
     public class PCExchange : Filter
     {
         const string FILE_ID = "FILEID.DAT";
