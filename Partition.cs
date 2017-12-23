@@ -56,13 +56,15 @@ namespace DiscImageChef.CommonTypes
         /// <summary>Information that does not find space in this struct</summary>
         public string Description;
         /// <summary>LBA of last partition sector</summary>
-        public ulong End
-        {
-            get => Start + Length - 1;
-        }
+        public ulong End => Start + Length - 1;
         /// <summary>Name of partition scheme that contains this partition</summary>
         public string Scheme;
 
+        /// <summary>
+        /// Compares two partitions
+        /// </summary>
+        /// <param name="other">Partition to compare with</param>
+        /// <returns>0 if both partitions start and end at the same sector</returns>
         public bool Equals(Partition other)
         {
             return Start == other.Start && Length == other.Length;
@@ -80,6 +82,11 @@ namespace DiscImageChef.CommonTypes
             return Start.GetHashCode() + End.GetHashCode();
         }
 
+        /// <summary>
+        /// Compares this partition with another and returns an integer that indicates whether the current partition precedes, follows, or is in the same place as the other partition.
+        /// </summary>
+        /// <param name="other">Partition to compare with</param>
+        /// <returns>A value that indicates the relative equality of the partitions being compared.</returns>
         public int CompareTo(Partition other)
         {
             if(Start == other.Start && End == other.End) return 0;

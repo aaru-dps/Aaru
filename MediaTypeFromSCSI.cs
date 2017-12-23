@@ -37,6 +37,17 @@ namespace DiscImageChef.CommonTypes
 #pragma warning disable RECS0063 // Warns when a culture-aware 'StartsWith' call is used by default.
     public static class MediaTypeFromScsi
     {
+        /// <summary>
+        /// Tries to guess, from SCSI information, the media type of a device and/or its inserted media 
+        /// </summary>
+        /// <param name="scsiPeripheralType">The SCSI Peripheral Type as indicated in the INQUIRY response</param>
+        /// <param name="vendor">The vendor string of the device</param>
+        /// <param name="model">The model string of the device</param>
+        /// <param name="mediumType">The medium type byte from MODE SENSE</param>
+        /// <param name="densityCode">The density type byte from MODE SENSE</param>
+        /// <param name="blocks">How many blocks are on the media</param>
+        /// <param name="blockSize">Size in bytes of each block</param>
+        /// <returns></returns>
         public static MediaType Get(byte scsiPeripheralType, string vendor, string model, byte mediumType,
                                     byte densityCode, ulong blocks, uint blockSize)
         {
