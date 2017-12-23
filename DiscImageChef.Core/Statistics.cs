@@ -44,13 +44,27 @@ using MediaType = DiscImageChef.CommonTypes.MediaType;
 
 namespace DiscImageChef.Core
 {
+    /// <summary>
+    /// Handles anonymous usage statistics
+    /// </summary>
     public static class Statistics
     {
+        /// <summary>
+        /// Contains all known statistics
+        /// </summary>
         public static Stats AllStats;
+        /// <summary>
+        /// Contains statistics of current execution
+        /// </summary>
         public static Stats CurrentStats;
-
+        /// <summary>
+        /// Statistics file semaphore
+        /// </summary>
         static bool submitStatsLock;
 
+        /// <summary>
+        /// Loads saved statistics from disk
+        /// </summary>
         public static void LoadStats()
         {
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
@@ -100,6 +114,9 @@ namespace DiscImageChef.Core
             }
         }
 
+        /// <summary>
+        /// Saves statistics to disk
+        /// </summary>
         public static void SaveStats()
         {
             if(AllStats == null) return;
@@ -165,6 +182,9 @@ namespace DiscImageChef.Core
             if(Settings.Settings.Current.Stats.ShareStats) SubmitStats();
         }
 
+        /// <summary>
+        /// Submits statistics to DiscImageChef.Server
+        /// </summary>
         public static void SubmitStats()
         {
             Thread submitThread = new Thread(() =>
@@ -187,7 +207,7 @@ namespace DiscImageChef.Core
 #if DEBUG
                         System.Console.WriteLine("Uploading partial statistics file {0}", statsFile);
 #else
-                    DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
+                    DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
 #endif
 
                         FileStream fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
@@ -237,6 +257,10 @@ namespace DiscImageChef.Core
             submitThread.Start();
         }
 
+        /// <summary>
+        /// Adds the execution of a command to statistics
+        /// </summary>
+        /// <param name="command">Command</param>
         public static void AddCommand(string command)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.DeviceStats) return;
@@ -326,6 +350,10 @@ namespace DiscImageChef.Core
             }
         }
 
+        /// <summary>
+        /// Adds a new filesystem to statistics
+        /// </summary>
+        /// <param name="filesystem">Filesystem name</param>
         public static void AddFilesystem(string filesystem)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilesystemStats) return;
@@ -366,6 +394,10 @@ namespace DiscImageChef.Core
             CurrentStats.Filesystems.Add(nw);
         }
 
+        /// <summary>
+        /// Adds a new partition scheme to statistics
+        /// </summary>
+        /// <param name="partition">Partition scheme name</param>
         internal static void AddPartition(string partition)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.PartitionStats) return;
@@ -406,6 +438,10 @@ namespace DiscImageChef.Core
             CurrentStats.Partitions.Add(nw);
         }
 
+        /// <summary>
+        /// Adds a new filter to statistics
+        /// </summary>
+        /// <param name="format">Filter name</param>
         public static void AddFilter(string format)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilterStats) return;
@@ -446,6 +482,10 @@ namespace DiscImageChef.Core
             CurrentStats.Filters.Add(nw);
         }
 
+        /// <summary>
+        /// Ads a new media image to statistics
+        /// </summary>
+        /// <param name="format">Media image name</param>
         public static void AddMediaFormat(string format)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaImageStats) return;
@@ -486,6 +526,10 @@ namespace DiscImageChef.Core
             CurrentStats.MediaImages.Add(nw);
         }
 
+        /// <summary>
+        /// Adds a new device to statistics
+        /// </summary>
+        /// <param name="dev">Device</param>
         public static void AddDevice(Device dev)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.DeviceStats) return;
@@ -527,6 +571,11 @@ namespace DiscImageChef.Core
             CurrentStats.Devices.Add(nw);
         }
 
+        /// <summary>
+        /// Adds a new media type to statistics
+        /// </summary>
+        /// <param name="type">Media type</param>
+        /// <param name="real">Set if media was found on a real device, otherwise found on a media image</param>
         public static void AddMedia(MediaType type, bool real)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaStats) return;
@@ -571,6 +620,15 @@ namespace DiscImageChef.Core
             CurrentStats.Medias.Add(nw);
         }
 
+        /// <summary>
+        /// Adds benchmark results to statistics
+        /// </summary>
+        /// <param name="checksums">Checksum times</param>
+        /// <param name="entropy">Entropy times</param>
+        /// <param name="all">Time for all running togheter</param>
+        /// <param name="sequential">Time for sequential running</param>
+        /// <param name="maxMemory">Maximum used memory</param>
+        /// <param name="minMemory">Minimum used memory</param>
         public static void AddBenchmark(Dictionary<string, double> checksums, double entropy, double all,
                                         double sequential, long maxMemory, long minMemory)
         {
@@ -597,6 +655,14 @@ namespace DiscImageChef.Core
             AllStats.Benchmark.Sequential = sequential;
         }
 
+        /// <summary>
+        /// Adds a new media image verification to statistics
+        /// </summary>
+        /// <param name="mediaVerified">Set if media was correctly verified</param>
+        /// <param name="correct">How many sectors where verified correctly</param>
+        /// <param name="failed">How many sectors failed verification</param>
+        /// <param name="unknown">How many sectors could not be verified</param>
+        /// <param name="total">Total sectors verified</param>
         public static void AddVerify(bool? mediaVerified, long correct, long failed, long unknown, long total)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.VerifyStats) return;
@@ -633,6 +699,18 @@ namespace DiscImageChef.Core
             AllStats.Verify.Sectors.Total += total;
         }
 
+        /// <summary>
+        /// Adds a new media scan to statistics
+        /// </summary>
+        /// <param name="lessThan3ms">Sectors &lt;3ms</param>
+        /// <param name="lessThan10ms">Sectors &gt;3ms and &lt;10ms</param>
+        /// <param name="lessThan50ms">Sectors &gt;10ms and &lt;50ms</param>
+        /// <param name="lessThan150ms">Sectors &gt;50ms and &lt;150ms</param>
+        /// <param name="lessThan500ms">Sectors &gt;150ms and &lt;500ms</param>
+        /// <param name="moreThan500ms">Sectors &gt;500ms</param>
+        /// <param name="total">Total sectors</param>
+        /// <param name="error">Errored sectors</param>
+        /// <param name="correct">Correct sectors</param>
         public static void AddMediaScan(long lessThan3ms, long lessThan10ms, long lessThan50ms, long lessThan150ms,
                                         long lessThan500ms, long moreThan500ms, long total, long error, long correct)
         {

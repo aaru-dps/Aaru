@@ -37,8 +37,17 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
+    /// <summary>
+    /// Implements creating a report for a FireWire device
+    /// </summary>
     static class FireWire
-    {
+    {        
+        /// <summary>
+        /// Fills a device report with parameters specific to a FireWire device
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="report">Device report</param>
+        /// <param name="removable">If device is removable</param>
         internal static void Report(Device dev, ref DeviceReport report, ref bool removable)
         {
             if(report == null) return;

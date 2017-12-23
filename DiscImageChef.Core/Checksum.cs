@@ -55,6 +55,9 @@ namespace DiscImageChef.Core
         All = Adler32 | Crc16 | Crc32 | Crc64 | Md5 | Ripemd160 | Sha1 | Sha256 | Sha384 | Sha512 | SpamSum
     }
 
+    /// <summary>
+    /// Checksums and hashes data, with different algorithms multithreaded 
+    /// </summary>
     public class Checksum
     {
         Adler32Context adler32Ctx;

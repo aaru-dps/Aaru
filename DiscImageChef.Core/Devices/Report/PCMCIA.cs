@@ -36,8 +36,16 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
+    /// <summary>
+    /// Implements creating a report for a PCMCIA device
+    /// </summary>
     static class Pcmcia
     {
+        /// <summary>
+        /// Fills a device report with parameters specific to a PCMCIA device
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="report">Device report</param>
         internal static void Report(Device dev, ref DeviceReport report)
         {
             report.PCMCIA = new pcmciaType {CIS = dev.Cis};

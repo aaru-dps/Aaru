@@ -53,8 +53,30 @@ using TrackType = DiscImageChef.DiscImages.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    /// <summary>
+    /// Implements dumping SCSI Block Commands and Reduced Block Commands devices
+    /// </summary>
     static class Sbc
     {
+        /// <summary>
+        /// Dumps a SCSI Block Commands device or a Reduced Block Commands devices
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="devicePath">Path to the device</param>
+        /// <param name="outputPrefix">Prefix for output data files</param>
+        /// <param name="retryPasses">How many times to retry</param>
+        /// <param name="force">Force to continue dump whenever possible</param>
+        /// <param name="dumpRaw">Dump long or scrambled sectors</param>
+        /// <param name="persistent">Store whatever data the drive returned on error</param>
+        /// <param name="stopOnError">Stop dump on first error</param>
+        /// <param name="resume">Information for dump resuming</param>
+        /// <param name="dumpLog">Dump logger</param>
+        /// <param name="encoding">Encoding to use when analyzing dump</param>
+        /// <param name="opticalDisc">If device contains an optical disc (e.g. DVD or BD)</param>
+        /// <param name="sidecar">Partially filled initialized sidecar</param>
+        /// <param name="dskType">Disc type as detected in SCSI or MMC layer</param>
+        /// <param name="alcohol">Alcohol disc image already initialized for optical discs, null otherwise</param>
+        /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
                                   ref MediaType dskType, bool opticalDisc, ref Resume resume,
@@ -336,7 +358,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
                                   dev.PlatformId, ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
-                throw new Exception("Could not process resume file, not continuing...");
+                throw new InvalidOperationException("Could not process resume file, not continuing...");
 
             dumpFile.Seek(resume.NextBlock, blockSize);
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);

@@ -39,8 +39,15 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core
 {
+    /// <summary>
+    /// Handles connections to DiscImageChef.Server
+    /// </summary>
     public static class Remote
     {
+        /// <summary>
+        /// Submits a device report
+        /// </summary>
+        /// <param name="report">Device report</param>
         public static void SubmitReport(DeviceReport report)
         {
             Thread submitThread = new Thread(() =>
@@ -50,7 +57,7 @@ namespace DiscImageChef.Core
 #if DEBUG
                     System.Console.WriteLine("Uploading device report");
 #else
-                    DicConsole.DebugWriteLine("Submit stats", "Uploading device report");
+                    DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading device report");
 #endif
 
                     MemoryStream xmlStream = new MemoryStream();

@@ -38,6 +38,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Logging
 {
+    /// <summary>
+    /// Implements a log in the format used by IMGBurn
+    /// </summary>
     class IbgLog
     {
         StringBuilder ibgSb;
@@ -54,6 +57,11 @@ namespace DiscImageChef.Core.Logging
         int ibgSampleRate;
         string logFile;
 
+        /// <summary>
+        /// Initializes the IMGBurn log
+        /// </summary>
+        /// <param name="outputFile">Log file</param>
+        /// <param name="currentProfile">Profile as defined by SCSI MultiMedia Commands specification</param>
         internal IbgLog(string outputFile, ushort currentProfile)
         {
             if(string.IsNullOrEmpty(outputFile)) return;
@@ -192,6 +200,11 @@ namespace DiscImageChef.Core.Logging
             }
         }
 
+        /// <summary>
+        /// Adds a new speed snapshot to the log
+        /// </summary>
+        /// <param name="sector">Sector for the snapshot</param>
+        /// <param name="currentSpeed">Current speed at the snapshot</param>
         internal void Write(ulong sector, double currentSpeed)
         {
             if(logFile == null) return;
@@ -219,6 +232,16 @@ namespace DiscImageChef.Core.Logging
             ibgIntSector = sector;
         }
 
+        /// <summary>
+        /// Closes the IMGBurn log
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="blocks">Media blocks</param>
+        /// <param name="blockSize">Bytes per block</param>
+        /// <param name="totalSeconds">Total seconds spent dumping</param>
+        /// <param name="currentSpeed">Speed at the end</param>
+        /// <param name="averageSpeed">Average speed</param>
+        /// <param name="devicePath">Device path</param>
         internal void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed,
                           double averageSpeed, string devicePath)
         {

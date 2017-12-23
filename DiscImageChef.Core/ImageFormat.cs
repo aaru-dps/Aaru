@@ -40,6 +40,11 @@ namespace DiscImageChef.Core
 {
     public static class ImageFormat
     {
+        /// <summary>
+        /// Detects the image plugin that recognizes the data inside a filter
+        /// </summary>
+        /// <param name="imageFilter">Filter</param>
+        /// <returns>Detected image plugin</returns>
         public static ImagePlugin Detect(Filter imageFilter)
         {
             try

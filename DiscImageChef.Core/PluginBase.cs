@@ -41,12 +41,27 @@ using DiscImageChef.Partitions;
 
 namespace DiscImageChef.Core
 {
+    /// <summary>
+    /// Contain all plugins (filesystem, partition and image)
+    /// </summary>
     public class PluginBase
     {
+        /// <summary>
+        /// List of all filesystem plugins
+        /// </summary>
         public SortedDictionary<string, Filesystem> PluginsList;
+        /// <summary>
+        /// List of all partition plugins
+        /// </summary>
         public SortedDictionary<string, PartitionPlugin> PartPluginsList;
+        /// <summary>
+        /// List of all media image plugins
+        /// </summary>
         public SortedDictionary<string, ImagePlugin> ImagePluginsList;
 
+        /// <summary>
+        /// Initializes the plugins lists
+        /// </summary>
         public PluginBase()
         {
             PluginsList = new SortedDictionary<string, Filesystem>();
@@ -54,6 +69,10 @@ namespace DiscImageChef.Core
             ImagePluginsList = new SortedDictionary<string, ImagePlugin>();
         }
 
+        /// <summary>
+        /// Fills the plugins lists
+        /// </summary>
+        /// <param name="encoding">Which encoding to pass to plugins</param>
         public void RegisterAllPlugins(Encoding encoding = null)
         {
             Assembly assembly = Assembly.GetAssembly(typeof(ImagePlugin));

@@ -37,6 +37,9 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Checksums
 {
+    /// <summary>
+    /// Implements ReedSolomon and CRC32 algorithms as used by CD-ROM 
+    /// </summary>
     public static class CdChecksums
     {
         static byte[] eccFTable;

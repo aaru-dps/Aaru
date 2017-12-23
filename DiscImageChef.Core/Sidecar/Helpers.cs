@@ -34,6 +34,11 @@ namespace DiscImageChef.Core
 {
     public static partial class Sidecar
     {
+        /// <summary>
+        /// Converts a LBA to MM:SS:FF string for CDs
+        /// </summary>
+        /// <param name="lba">LBA</param>
+        /// <returns>MM:SS:FF</returns>
         static string LbaToMsf(long lba)
         {
             long m, s, f;
@@ -57,6 +62,11 @@ namespace DiscImageChef.Core
             return $"{m}:{s:D2}:{f:D2}";
         }
 
+        /// <summary>
+        /// Converts a LBA to MM:SS:FF string for DDCDs
+        /// </summary>
+        /// <param name="lba">LBA</param>
+        /// <returns>MM:SS:FF</returns>
         static string DdcdLbaToMsf(long lba)
         {
             long h, m, s, f;

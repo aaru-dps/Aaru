@@ -37,7 +37,7 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Provides a UNIX similar API to .NET SHA512.
+    /// Wraps up .NET SHA512 implementation to a Init(), Update(), Final() context.
     /// </summary>
     public class Sha512Context
     {

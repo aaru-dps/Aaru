@@ -37,8 +37,14 @@ namespace DiscImageChef.Core
 {
     static class Version
     {
+        /// <summary>
+        /// Gets XML software type for the running version
+        /// </summary>
+        /// <param name="platform">Platform we are running in</param>
+        /// <returns>XML software type</returns>
         internal static SoftwareType GetSoftwareType(PlatformID platform)
         {
+            // TODO: Platform should be get automatically
             return new SoftwareType
             {
                 Name = "DiscImageChef",
@@ -47,6 +53,10 @@ namespace DiscImageChef.Core
             };
         }
 
+        /// <summary>
+        /// Gets version string
+        /// </summary>
+        /// <returns>Version</returns>
         internal static string GetVersion()
         {
             return typeof(Version).Assembly.GetName().Version.ToString();

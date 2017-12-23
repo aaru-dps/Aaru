@@ -61,6 +61,9 @@ namespace DiscImageChef.Core
         public double Speed;
     }
 
+    /// <summary>
+    /// Benchmarks the speed at which we can do checksums
+    /// </summary>
     public static class Benchmark
     {
         public static event InitProgressHandler InitProgressEvent;

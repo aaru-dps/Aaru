@@ -37,8 +37,18 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
+    /// <summary>
+    /// Implements creating a report for a USB device
+    /// </summary>
     static class Usb
     {
+        /// <summary>
+        /// Fills a device report with parameters specific to a USB device
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="report">Device report</param>
+        /// <param name="removable">If device is removable</param>
+        /// <param name="debug">If debug is enabled</param>
         internal static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
         {
             if(report == null) return;

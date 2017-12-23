@@ -45,7 +45,7 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Provides a UNIX similar API to calculate Fuzzy Hash (SpamSum).
+    /// Implements the SpamSum fuzzy hashing algorithm.
     /// </summary>
     public class SpamSumContext
     {

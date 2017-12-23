@@ -43,16 +43,26 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report.SCSI
 {
+    /// <summary>
+    /// Implements creating a report for a SCSI MultiMedia device
+    /// </summary>
     static class Mmc
     {
-        internal static void Report(Device dev, ref DeviceReport report, bool debug,
-                                    ref Modes.ModePage_2A? cdromMode, ref List<string> mediaTypes)
+        /// <summary>
+        /// Fills a SCSI device report with parameters and media tests specific to a MultiMedia device
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="report">Device report</param>
+        /// <param name="debug">If debug is enabled</param>
+        /// <param name="cdromMode">Decoded MODE PAGE 2Ah</param>
+        internal static void Report(Device dev, ref DeviceReport report, bool debug, ref Modes.ModePage_2A? cdromMode)
         {
             if(report == null) return;
 
             bool sense;
             const uint TIMEOUT = 5;
 
+            List<string> mediaTypes = new List<string>();
             report.SCSI.MultiMediaDevice = new mmcType();
 
             if(cdromMode.HasValue)

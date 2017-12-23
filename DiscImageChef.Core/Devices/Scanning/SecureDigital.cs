@@ -39,6 +39,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Scanning
 {
+    /// <summary>
+    /// Implements scanning a SecureDigital or MultiMediaCard flash card
+    /// </summary>
     public static class SecureDigital
     {
         public static ScanResults Scan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev)

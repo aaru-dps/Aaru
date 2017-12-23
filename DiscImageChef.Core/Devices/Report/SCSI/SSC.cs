@@ -41,8 +41,17 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report.SCSI
 {
+    /// <summary>
+    /// Implements creating a report for a SCSI Streaming device
+    /// </summary>
     static class Ssc
     {
+        /// <summary>
+        /// Fills a SCSI device report with parameters and media tests specific to a Streaming device
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="report">Device report</param>
+        /// <param name="debug">If debug is enabled</param>
         internal static void Report(Device dev, ref DeviceReport report, bool debug)
         {
             if(report == null) return;

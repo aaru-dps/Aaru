@@ -42,6 +42,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Scanning
 {
+    /// <summary>
+    /// Implements scanning the media from an SCSI device
+    /// </summary>
     public static class Scsi
     {
         public static ScanResults Scan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev)

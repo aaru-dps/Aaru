@@ -38,11 +38,22 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Logging
 {
+    /// <summary>
+    /// Implements a log in the format used by MHDD
+    /// </summary>
     class MhddLog
     {
         MemoryStream mhddFs;
         string logFile;
 
+        /// <summary>
+        /// Initializes the MHDD log
+        /// </summary>
+        /// <param name="outputFile">Log file</param>
+        /// <param name="dev">Device</param>
+        /// <param name="blocks">Blocks in media</param>
+        /// <param name="blockSize">Bytes per block</param>
+        /// <param name="blocksToRead">How many blocks read at once</param>
         internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
         {
             if(dev == null || string.IsNullOrEmpty(outputFile)) return;
@@ -123,6 +134,11 @@ namespace DiscImageChef.Core.Logging
             mhddFs.Write(newLine, 0, 2);
         }
 
+        /// <summary>
+        /// Logs a new read
+        /// </summary>
+        /// <param name="sector">Starting sector</param>
+        /// <param name="duration">Duration in milliseconds</param>
         internal void Write(ulong sector, double duration)
         {
             if(logFile == null) return;
@@ -134,6 +150,9 @@ namespace DiscImageChef.Core.Logging
             mhddFs.Write(durationBytes, 0, 8);
         }
 
+        /// <summary>
+        /// Closes and writes to file the MHDD log
+        /// </summary>
         internal void Close()
         {
             if(logFile == null) return;

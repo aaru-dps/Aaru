@@ -37,7 +37,7 @@ using System.Text;
 namespace DiscImageChef.Checksums
 {
     /// <summary>
-    /// Provides a UNIX similar API to .NET MD5.
+    /// Wraps up .NET MD5 implementation to a Init(), Update(), Final() context.
     /// </summary>
     public class Md5Context
     {

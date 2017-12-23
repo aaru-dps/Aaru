@@ -52,8 +52,32 @@ using TrackType = Schemas.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    /// <summary>
+    /// Implement dumping Compact Discs
+    /// </summary>
     class CompactDisc
     {
+        /// <summary>
+        /// Dumps a compact disc
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="devicePath">Path to the device</param>
+        /// <param name="outputPrefix">Prefix for output data files</param>
+        /// <param name="retryPasses">How many times to retry</param>
+        /// <param name="force">Force to continue dump whenever possible</param>
+        /// <param name="dumpRaw">Dump scrambled sectors</param>
+        /// <param name="persistent">Store whatever data the drive returned on error</param>
+        /// <param name="stopOnError">Stop dump on first error</param>
+        /// <param name="resume">Information for dump resuming</param>
+        /// <param name="dumpLog">Dump logger</param>
+        /// <param name="sidecar">Partially filled initialized sidecar</param>
+        /// <param name="dskType">Disc type as detected in MMC layer</param>
+        /// <param name="separateSubchannel">Write subchannel separate from main channel</param>
+        /// <param name="alcohol">Alcohol disc image already initialized</param>
+        /// <param name="dumpLeadIn">Try to read and dump as much Lead-in as possible</param>
+        /// <exception cref="NotImplementedException">If trying to dump scrambled sectors</exception>
+        /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If the track type is unknown (never)</exception>
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
                                   ref MediaType dskType, bool separateSubchannel, ref Resume resume,
@@ -367,7 +391,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             ResumeSupport.Process(true, true, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
                                   ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
-                throw new Exception("Could not process resume file, not continuing...");
+                throw new InvalidOperationException("Could not process resume file, not continuing...");
 
             if(dumpLeadIn)
             {

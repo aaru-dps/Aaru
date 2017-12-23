@@ -52,8 +52,26 @@ using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    /// <summary>
+    /// Implements dumping ATA devices
+    /// </summary>
     public class Ata
     {
+        /// <summary>
+        /// Dumps an ATA device
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="devicePath">Path to the device</param>
+        /// <param name="outputPrefix">Prefix for output data files</param>
+        /// <param name="retryPasses">How many times to retry</param>
+        /// <param name="force">Force to continue dump whenever possible</param>
+        /// <param name="dumpRaw">Dump long sectors</param>
+        /// <param name="persistent">Store whatever data the drive returned on error</param>
+        /// <param name="stopOnError">Stop dump on first error</param>
+        /// <param name="resume">Information for dump resuming</param>
+        /// <param name="dumpLog">Dump logger</param>
+        /// <param name="encoding">Encoding to use when analyzing dump</param>
+        /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                 bool dumpRaw, bool persistent, bool stopOnError, ref Resume resume,
                                 ref DumpLog dumpLog, Encoding encoding)
@@ -222,7 +240,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     ResumeSupport.Process(ataReader.IsLba, removable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
                                           dev.PlatformId, ref resume, ref currentTry, ref extents);
                     if(currentTry == null || extents == null)
-                        throw new Exception("Could not process resume file, not continuing...");
+                        throw new InvalidOperationException("Could not process resume file, not continuing...");
 
                     MhddLog mhddLog;
                     IbgLog ibgLog;

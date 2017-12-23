@@ -42,8 +42,18 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report.SCSI
 {
+    /// <summary>
+    /// Implements creating a report of SCSI and ATAPI devices
+    /// </summary>
     public static class General
     {
+        /// <summary>
+        /// Creates a report of SCSI and ATAPI devices, and if appropiate calls the report creators for MultiMedia and Streaming devices
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="report">Device report</param>
+        /// <param name="debug">If debug is enabled</param>
+        /// <param name="removable">If device is removable</param>
         public static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
         {
             if(report == null) return;
@@ -71,7 +81,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 removable = pressedKey.Key == ConsoleKey.Y;
             }
 
-            if(dev.Type == DeviceType.ATAPI) Atapi.Report(dev, ref report, debug, ref removable);
+            if(dev.Type == DeviceType.ATAPI) Atapi.Report(dev, ref report, debug);
 
             DicConsole.WriteLine("Querying SCSI INQUIRY...");
             sense = dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer);
@@ -307,10 +317,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 }
             }
 
-            List<string> mediaTypes = new List<string>();
-
             switch(dev.ScsiType) {
-                case PeripheralDeviceTypes.MultiMediaDevice: Mmc.Report(dev, ref report, debug, ref cdromMode, ref mediaTypes);
+                case PeripheralDeviceTypes.MultiMediaDevice: Mmc.Report(dev, ref report, debug, ref cdromMode);
                     break;
                 case PeripheralDeviceTypes.SequentialAccess: Ssc.Report(dev, ref report, debug);
                     break;

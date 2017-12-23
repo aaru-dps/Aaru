@@ -37,9 +37,18 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
+    /// <summary>
+    /// Implements creating a report for an ATAPI device
+    /// </summary>
     static class Atapi
     {
-        internal static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
+        /// <summary>
+        /// Fills a SCSI device report with parameters specific to an ATAPI device
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="report">Device report</param>
+        /// <param name="debug">If debug is enabled</param>
+        internal static void Report(Device dev, ref DeviceReport report, bool debug)
         {
             if(report == null) return;
 

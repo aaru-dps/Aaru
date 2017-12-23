@@ -39,8 +39,26 @@ using PlatformID = DiscImageChef.Interop.PlatformID;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    /// <summary>
+    /// Implements resume support
+    /// </summary>
     static class ResumeSupport
     {
+        /// <summary>
+        /// Process resume
+        /// </summary>
+        /// <param name="isLba">If drive is LBA</param>
+        /// <param name="removable">If media is removable from device</param>
+        /// <param name="blocks">Media blocks</param>
+        /// <param name="manufacturer">Device manufacturer</param>
+        /// <param name="model">Device model</param>
+        /// <param name="serial">Device serial</param>
+        /// <param name="platform">Platform where the dump is made</param>
+        /// <param name="resume">Previous resume, or null</param>
+        /// <param name="currentTry">Current dumping hardware</param>
+        /// <param name="extents">Dumped extents</param>
+        /// <exception cref="NotImplementedException">If device uses CHS addressing</exception>
+        /// <exception cref="InvalidOperationException">If the provided resume does not correspond with the current in progress dump</exception>
         internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
                                    string serial, PlatformID platform, ref Resume resume,
                                    ref DumpHardwareType currentTry, ref ExtentsULong extents)
@@ -51,27 +69,30 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(resume.Removable != removable)
                     throw new
-                        Exception($"Resume file specifies a {(resume.Removable ? "removable" : "non removable")} device but you're requesting to dump a {(removable ? "removable" : "non removable")} device, not continuing...");
+                        InvalidOperationException($"Resume file specifies a {(resume.Removable ? "removable" : "non removable")} device but you're requesting to dump a {(removable ? "removable" : "non removable")} device, not continuing...");
 
                 if(resume.LastBlock != blocks - 1)
                     throw new
-                        Exception($"Resume file specifies a device with {resume.LastBlock + 1} blocks but you're requesting to dump one with {blocks} blocks, not continuing...");
+                        InvalidOperationException($"Resume file specifies a device with {resume.LastBlock + 1} blocks but you're requesting to dump one with {blocks} blocks, not continuing...");
 
                 foreach(DumpHardwareType oldtry in resume.Tries)
                 {
-                    if(oldtry.Manufacturer != manufacturer && !removable)
-                        throw new
-                            Exception($"Resume file specifies a device manufactured by {oldtry.Manufacturer} but you're requesting to dump one by {manufacturer}, not continuing...");
+                    if(!removable)
+                    {
+                        if(oldtry.Manufacturer != manufacturer)
+                            throw new
+                                InvalidOperationException($"Resume file specifies a device manufactured by {oldtry.Manufacturer} but you're requesting to dump one by {manufacturer}, not continuing...");
 
-                    if(oldtry.Model != model && !removable)
-                        throw new
-                            Exception($"Resume file specifies a device model {oldtry.Model} but you're requesting to dump model {model}, not continuing...");
+                        if(oldtry.Model != model)
+                            throw new
+                                InvalidOperationException($"Resume file specifies a device model {oldtry.Model} but you're requesting to dump model {model}, not continuing...");
 
-                    if(oldtry.Serial != serial && !removable)
-                        throw new
-                            Exception($"Resume file specifies a device with serial {oldtry.Serial} but you're requesting to dump one with serial {serial}, not continuing...");
+                        if(oldtry.Serial != serial)
+                            throw new
+                                InvalidOperationException($"Resume file specifies a device with serial {oldtry.Serial} but you're requesting to dump one with serial {serial}, not continuing...");
+                    }
 
-                    if(oldtry.Software == null) throw new Exception("Found corrupt resume file, cannot continue...");
+                    if(oldtry.Software == null) throw new InvalidOperationException("Found corrupt resume file, cannot continue...");
 
                     if(oldtry.Software.Name != "DiscImageChef" ||
                        oldtry.Software.OperatingSystem != platform.ToString() ||

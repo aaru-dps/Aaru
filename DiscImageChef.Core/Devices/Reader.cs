@@ -36,6 +36,9 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices
 {
+    /// <summary>
+    /// Reduces common code used for scanning and dumping
+    /// </summary>
     partial class Reader
     {
         Device dev;
@@ -48,14 +51,8 @@ namespace DiscImageChef.Core.Devices
         internal uint PhysicalBlockSize { get; private set; }
         internal uint LongBlockSize { get; private set; }
         internal bool CanReadRaw { get; private set; }
-        internal bool CanSeek
-        {
-            get => ataSeek || seek6 || seek10;
-        }
-        internal bool CanSeekLba
-        {
-            get => ataSeekLba || seek6 || seek10;
-        }
+        internal bool CanSeek => ataSeek || seek6 || seek10;
+        internal bool CanSeekLba => ataSeekLba || seek6 || seek10;
 
         internal Reader(Device dev, uint timeout, byte[] identification, bool raw = false)
         {

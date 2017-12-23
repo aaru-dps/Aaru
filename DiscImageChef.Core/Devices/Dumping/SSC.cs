@@ -48,6 +48,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     static class Ssc
     {
+        /// <summary>
+        /// Dumps the tape from a SCSI Streaming device
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="devicePath">Path to the device</param>
+        /// <param name="outputPrefix">Prefix for output data files</param>
+        /// <param name="resume">Information for dump resuming</param>
+        /// <param name="dumpLog">Dump logger</param>
+        /// <param name="sidecar">Partially filled initialized sidecar</param>
         internal static void Dump(Device dev, string outputPrefix, string devicePath, ref CICMMetadataType sidecar,
                                   ref Resume resume, ref DumpLog dumpLog)
         {

@@ -39,6 +39,12 @@ namespace DiscImageChef.Core
 {
     public static class Filesystems
     {
+        /// <summary>
+        /// Traverses all known filesystems and outputs a list of all that recognized what is in the specified image and partition
+        /// </summary>
+        /// <param name="imagePlugin">Media image</param>
+        /// <param name="idPlugins">List of plugins recognizing the filesystem</param>
+        /// <param name="partition">Partition</param>
         public static void Identify(ImagePlugin imagePlugin, out List<string> idPlugins, Partition partition)
         {
             PluginBase plugins = new PluginBase();

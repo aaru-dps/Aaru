@@ -39,8 +39,16 @@ using DiscImageChef.Partitions;
 
 namespace DiscImageChef.Core
 {
+    /// <summary>
+    /// Implements methods for handling partitions
+    /// </summary>
     public static class Partitions
     {
+        /// <summary>
+        /// Gets a list of all partitions present in the specified image
+        /// </summary>
+        /// <param name="image">Image</param>
+        /// <returns>List of found partitions</returns>
         public static List<Partition> GetAll(ImagePlugin image)
         {
             PluginBase plugins = new PluginBase();
@@ -136,6 +144,10 @@ namespace DiscImageChef.Core
             return childArray.ToList();
         }
 
+        /// <summary>
+        /// Adds all partition schemes from the specified list of partitions to statistics
+        /// </summary>
+        /// <param name="partitions">List of partitions</param>
         public static void AddSchemesToStats(List<Partition> partitions)
         {
             if(partitions == null || partitions.Count == 0) return;

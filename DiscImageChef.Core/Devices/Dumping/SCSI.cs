@@ -43,9 +43,29 @@ using MediaType = DiscImageChef.CommonTypes.MediaType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    /// <summary>
+    /// Implements dumping SCSI and ATAPI devices
+    /// </summary>
     public class Scsi
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
+        /// <summary>
+        /// Dumps a SCSI Block Commands device or a Reduced Block Commands devices
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="devicePath">Path to the device</param>
+        /// <param name="outputPrefix">Prefix for output data files</param>
+        /// <param name="retryPasses">How many times to retry</param>
+        /// <param name="force">Force to continue dump whenever possible</param>
+        /// <param name="dumpRaw">Dump long or scrambled sectors</param>
+        /// <param name="persistent">Store whatever data the drive returned on error</param>
+        /// <param name="stopOnError">Stop dump on first error</param>
+        /// <param name="resume">Information for dump resuming</param>
+        /// <param name="dumpLog">Dump logger</param>
+        /// <param name="encoding">Encoding to use when analyzing dump</param>
+        /// <param name="separateSubchannel">Write subchannel separate from main channel</param>
+        /// <param name="dumpLeadIn">Try to read and dump as much Lead-in as possible</param>
+        /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
         public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                 bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel,
                                 ref Resume resume, ref DumpLog dumpLog, bool dumpLeadIn, Encoding encoding)

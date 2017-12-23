@@ -34,7 +34,9 @@
 // TODO: Rename contents
 namespace DiscImageChef.CommonTypes
 {
-    // Media (disk, cartridge, tape, cassette, etc) types
+    /// <summary>
+    /// Contains an enumeration of all known types of media.
+    /// </summary>
     public enum MediaType
     {
         /// <summary>Unknown disk type</summary>

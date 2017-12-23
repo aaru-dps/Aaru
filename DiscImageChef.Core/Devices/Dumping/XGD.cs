@@ -53,8 +53,28 @@ using TrackType = Schemas.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    /// <summary>
+    /// Implements dumping an Xbox Game Disc using a Kreon drive 
+    /// </summary>
     static class Xgd
     {
+        /// <summary>
+        /// Dumps an Xbox Game Disc using a Kreon drive 
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="devicePath">Path to the device</param>
+        /// <param name="outputPrefix">Prefix for output data files</param>
+        /// <param name="retryPasses">How many times to retry</param>
+        /// <param name="force">Force to continue dump whenever possible</param>
+        /// <param name="dumpRaw">Dump raw/long sectors</param>
+        /// <param name="persistent">Store whatever data the drive returned on error</param>
+        /// <param name="stopOnError">Stop dump on first error</param>
+        /// <param name="resume">Information for dump resuming</param>
+        /// <param name="dumpLog">Dump logger</param>
+        /// <param name="encoding">Encoding to use when analyzing dump</param>
+        /// <param name="sidecar">Partially filled initialized sidecar</param>
+        /// <param name="dskType">Disc type as detected in MMC layer</param>
+        /// <exception cref="InvalidOperationException">If the provided resume does not correspond with the current in progress dump</exception>
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force,
                                   bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar,
                                   ref MediaType dskType, ref Resume resume, ref DumpLog dumpLog,
@@ -334,7 +354,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             ResumeSupport.Process(true, true, totalSize, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
                                   ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
-                throw new Exception("Could not process resume file, not continuing...");
+                throw new NotImplementedException("Could not process resume file, not continuing...");
 
             ulong currentSector = resume.NextBlock;
             dumpFile.Seek(resume.NextBlock, BLOCK_SIZE);

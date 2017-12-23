@@ -36,8 +36,16 @@ using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
+    /// <summary>
+    /// Implements creating a device report for a SecureDigital or MultiMediaCard flash card
+    /// </summary>
     public static class SecureDigital
     {
+        /// <summary>
+        /// Creates a device report for a SecureDigital or MultiMediaCard flash card
+        /// </summary>
+        /// <param name="dev">Device</param>
+        /// <param name="report">Device report</param>
         public static void Report(Device dev, ref DeviceReport report)
         {
             if(report == null) return;
