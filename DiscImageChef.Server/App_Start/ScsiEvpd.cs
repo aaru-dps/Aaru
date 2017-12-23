@@ -38,6 +38,12 @@ namespace DiscImageChef.Server.App_Start
 {
     public static class ScsiEvpd
     {
+        /// <summary>
+        /// Takes the SCSI EVPD part of a device report and prints it as a list key=value pairs to be sequenced by ASP.NET in the rendering
+        /// </summary>
+        /// <param name="pages">EVPD pages</param>
+        /// <param name="vendor">SCSI vendor string</param>
+        /// <param name="evpdPages">List to put the key=value pairs on</param>
         public static void Report(pageType[] pages, string vendor, ref Dictionary<string, string> evpdPages)
         {
             foreach(pageType evpd in pages)

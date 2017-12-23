@@ -39,6 +39,9 @@ using Velyo.AspNet.Markdown;
 
 namespace DiscImageChef.Server
 {
+    /// <summary>
+    /// Renders the README.md file
+    /// </summary>
     public partial class Default : Page
     {
         protected void Page_Load(object sender, EventArgs e)

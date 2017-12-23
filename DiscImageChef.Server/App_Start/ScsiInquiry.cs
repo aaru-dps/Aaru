@@ -38,6 +38,11 @@ namespace DiscImageChef.Server.App_Start
 {
     static class ScsiInquiry
     {
+        /// <summary>
+        /// Takes the SCSI INQUIRY part of a device report and prints it as a list of values to be sequenced by ASP.NET in the rendering
+        /// </summary>
+        /// <param name="inquiry">INQUIRY part of the report</param>
+        /// <returns>List of values</returns>
         internal static List<string> Report(scsiInquiryType inquiry)
         {
             List<string> scsiOneValue = new List<string>();

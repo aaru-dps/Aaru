@@ -39,6 +39,16 @@ namespace DiscImageChef.Server.App_Start
 {
     public static class Ata
     {
+        /// <summary>
+        /// Takes the ATA part of a device report and prints it as a list of values and another list of key=value pairs to be sequenced by ASP.NET in the rendering
+        /// </summary>
+        /// <param name="ataReport">ATA part of a device report</param>
+        /// <param name="cfa"><c>true</c> if compact flash device</param>
+        /// <param name="atapi"><c>true</c> if atapi device</param>
+        /// <param name="removable"><c>true</c> if removabledevice</param>
+        /// <param name="ataOneValue">List to put values on</param>
+        /// <param name="ataTwoValue">List to put key=value pairs on</param>
+        /// <param name="testedMedia">List of tested media</param>
         public static void Report(ataType ataReport, bool cfa, bool atapi, ref bool removable,
                                   ref List<string> ataOneValue, ref Dictionary<string, string> ataTwoValue,
                                   ref testedMediaType[] testedMedia)

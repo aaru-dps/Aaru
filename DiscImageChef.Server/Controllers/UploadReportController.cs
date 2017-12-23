@@ -45,6 +45,10 @@ namespace DiscImageChef.Server.Controllers
 {
     public class UploadReportController : ApiController
     {
+        /// <summary>
+        /// Receives a report from DiscImageChef.Core, verifies it's in the correct format and stores it on the server
+        /// </summary>
+        /// <returns>HTTP response</returns>
         [Route("api/uploadreport")]
         [HttpPost]
         public HttpResponseMessage UploadReport()

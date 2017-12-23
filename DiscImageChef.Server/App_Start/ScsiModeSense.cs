@@ -38,6 +38,14 @@ namespace DiscImageChef.Server.App_Start
 {
     public static class ScsiModeSense
     {
+        /// <summary>
+        /// Takes the MODE PAGEs part of a device report and prints it as a list of values and another list of key=value pairs to be sequenced by ASP.NET in the rendering
+        /// </summary>
+        /// <param name="modeSense">MODE PAGEs part of a device report</param>
+        /// <param name="vendor">SCSI vendor string</param>
+        /// <param name="deviceType">SCSI peripheral device type</param>
+        /// <param name="scsiOneValue">List to put values on</param>
+        /// <param name="modePages">List to put key=value pairs on</param>
         public static void Report(modeType modeSense, string vendor, PeripheralDeviceTypes deviceType,
                                   ref List<string> scsiOneValue, ref Dictionary<string, string> modePages)
         {

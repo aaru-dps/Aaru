@@ -48,6 +48,10 @@ namespace DiscImageChef.Server.Controllers
 {
     public class UploadStatsController : ApiController
     {
+        /// <summary>
+        /// Receives statistics from DiscImageChef.Core, processes them and adds them to a server-side global statistics XML
+        /// </summary>
+        /// <returns>HTTP response</returns>
         [Route("api/uploadstats")]
         [HttpPost]
         public HttpResponseMessage UploadStats()

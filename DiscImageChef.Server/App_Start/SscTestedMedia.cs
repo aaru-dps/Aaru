@@ -37,6 +37,11 @@ namespace DiscImageChef.Server.App_Start
 {
     public static class SscTestedMedia
     {
+        /// <summary>
+        /// Takes the tested media from SCSI Streaming devices of a device report and prints it as a list of values
+        /// </summary>
+        /// <param name="mediaOneValue">List to put values on</param>
+        /// <param name="testedMedia">List of tested media</param>
         public static void Report(IEnumerable<SequentialMedia> testedMedia, ref List<string> mediaOneValue)
         {
             foreach(SequentialMedia media in testedMedia)

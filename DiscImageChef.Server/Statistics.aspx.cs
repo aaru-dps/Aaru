@@ -46,6 +46,9 @@ using PlatformID = DiscImageChef.Interop.PlatformID;
 
 namespace DiscImageChef.Server
 {
+    /// <summary>
+    /// Renders a page with statistics, list of media type, devices, etc
+    /// </summary>
     public partial class Statistics : Page
     {
         class MediaItem

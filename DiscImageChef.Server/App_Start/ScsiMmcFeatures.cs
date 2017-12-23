@@ -38,6 +38,11 @@ namespace DiscImageChef.Server.App_Start
 {
     public static class ScsiMmcFeatures
     {
+        /// <summary>
+        /// Takes the MMC FEATURES part of a device report and prints it as a list of values to be sequenced by ASP.NET in the rendering
+        /// </summary>
+        /// <param name="ftr">FEATURES part of the report</param>
+        /// <param name="mmcOneValue">List to put the values on</param>
         public static void Report(mmcFeaturesType ftr, ref List<string> mmcOneValue)
         {
             if(ftr.SupportsAACS && ftr.AACSVersionSpecified)

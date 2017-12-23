@@ -46,6 +46,9 @@ using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Server
 {
+    /// <summary>
+    /// Renders the specified report from the server
+    /// </summary>
     public partial class ViewReport : Page
     {
         protected void Page_Load(object sender, EventArgs e)

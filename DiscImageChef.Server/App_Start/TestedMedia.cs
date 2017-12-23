@@ -37,6 +37,12 @@ namespace DiscImageChef.Server.App_Start
 {
     public static class TestedMedia
     {
+        /// <summary>
+        /// Takes the tested media from a device report and prints it as a list of values
+        /// </summary>
+        /// <param name="ata"><c>true</c> if device report is from an ATA device</param>
+        /// <param name="mediaOneValue">List to put values on</param>
+        /// <param name="testedMedias">List of tested media</param>
         public static void Report(IEnumerable<testedMediaType> testedMedias, bool ata, ref List<string> mediaOneValue)
         {
             foreach(testedMediaType testedMedia in testedMedias)

@@ -39,6 +39,11 @@ namespace DiscImageChef.Server.App_Start
 {
     public static class ScsiMmcMode
     {
+        /// <summary>
+        /// Takes the MODE PAGE 2Ah part of a device report and prints it as a list of values to be sequenced by ASP.NET in the rendering
+        /// </summary>
+        /// <param name="mode">MODE PAGE 2Ah part of the report</param>
+        /// <param name="mmcOneValue">List to put the values on</param>
         public static void Report(mmcModeType mode, ref List<string> mmcOneValue)
         {
             if(mode.PlaysAudio) mmcOneValue.Add("Drive can play audio");
