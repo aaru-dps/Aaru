@@ -38,6 +38,9 @@
 
 namespace DiscImageChef.Interop
 {
+    /// <summary>
+    /// Contains an arbitrary list of OSes, even if .NET does not run on them
+    /// </summary>
     public enum PlatformID
     {
         /// <summary>

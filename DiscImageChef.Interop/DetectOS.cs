@@ -79,12 +79,16 @@ namespace DiscImageChef.Interop
         [DllImport("libc", SetLastError = true, EntryPoint = "sysctlbyname", CharSet = CharSet.Ansi)]
         static extern int OSX_sysctlbyname(string name, IntPtr oldp, IntPtr oldlenp, IntPtr newp, uint newlen);
 
+        /// <summary>
+        /// Gets the real platform ID, not the incomplete .NET framework one
+        /// </summary>
+        /// <returns>Platform ID</returns>
+        /// <exception cref="Exception">Unhandled exception</exception>
         public static PlatformID GetRealPlatformID()
         {
             if((int)Environment.OSVersion.Platform < 4 || (int)Environment.OSVersion.Platform == 5) return (PlatformID)(int)Environment.OSVersion.Platform;
 
-            utsname unixname;
-            int error = uname(out unixname);
+            int error = uname(out utsname unixname);
             if(error != 0)
                 throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
 
@@ -101,11 +105,11 @@ namespace DiscImageChef.Interop
                 }
                 case "Darwin":
                 {
-                    int osx_error;
+                    int osxError;
 
                     IntPtr pLen = Marshal.AllocHGlobal(sizeof(int));
-                    osx_error = OSX_sysctlbyname("hw.machine", IntPtr.Zero, pLen, IntPtr.Zero, 0);
-                    if(osx_error != 0)
+                    osxError = OSX_sysctlbyname("hw.machine", IntPtr.Zero, pLen, IntPtr.Zero, 0);
+                    if(osxError != 0)
                     {
                         Marshal.FreeHGlobal(pLen);
 
@@ -114,8 +118,8 @@ namespace DiscImageChef.Interop
 
                     int length = Marshal.ReadInt32(pLen);
                     IntPtr pStr = Marshal.AllocHGlobal(length);
-                    osx_error = OSX_sysctlbyname("hw.machine", pStr, pLen, IntPtr.Zero, 0);
-                    if(osx_error != 0)
+                    osxError = OSX_sysctlbyname("hw.machine", pStr, pLen, IntPtr.Zero, 0);
+                    if(osxError != 0)
                     {
                         Marshal.FreeHGlobal(pStr);
                         Marshal.FreeHGlobal(pLen);
@@ -185,6 +189,10 @@ namespace DiscImageChef.Interop
             return IntPtr.Size == 4;
         }
 
+        /// <summary>
+        /// Gets a string for the current operating system REAL version (handles Darwin 1.4 and Windows 10 falsifying)
+        /// </summary>
+        /// <returns>Current operating system version</returns>
         public static string GetVersion()
         {
             string environ = Environment.OSVersion.Version.ToString();
@@ -214,6 +222,12 @@ namespace DiscImageChef.Interop
             }
         }
 
+        /// <summary>
+        /// From a platform ID and version returns a human-readable version
+        /// </summary>
+        /// <param name="id">Platform ID</param>
+        /// <param name="version">Version number</param>
+        /// <returns>Operating system name</returns>
         public static string GetPlatformName(PlatformID id, string version = null)
         {
             switch(id)
