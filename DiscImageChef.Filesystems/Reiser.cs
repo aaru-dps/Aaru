@@ -172,7 +172,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} bytes per block", reiserSb.blocksize).AppendLine();
             sb.AppendFormat("Root directory resides on block {0}", reiserSb.root_block).AppendLine();
             if(reiserSb.umount_state == 2) sb.AppendLine("Volume has not been cleanly umounted");
-            sb.AppendFormat("Volume last checked on {0}", DateHandlers.UNIXUnsignedToDateTime(reiserSb.last_check))
+            sb.AppendFormat("Volume last checked on {0}", DateHandlers.UnixUnsignedToDateTime(reiserSb.last_check))
               .AppendLine();
             if(reiserSb.version >= 2)
             {

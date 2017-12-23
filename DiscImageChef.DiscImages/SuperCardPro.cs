@@ -369,9 +369,9 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageComments = \"{0}\"",
                                                   ImageInfo.ImageComments);
 
-                        ImageInfo.ImageCreationTime = footer.creationTime != 0 ? DateHandlers.UNIXToDateTime(footer.creationTime) : imageFilter.GetCreationTime();
+                        ImageInfo.ImageCreationTime = footer.creationTime != 0 ? DateHandlers.UnixToDateTime(footer.creationTime) : imageFilter.GetCreationTime();
 
-                        ImageInfo.ImageLastModificationTime = footer.modificationTime != 0 ? DateHandlers.UNIXToDateTime(footer.modificationTime) : imageFilter.GetLastWriteTime();
+                        ImageInfo.ImageLastModificationTime = footer.modificationTime != 0 ? DateHandlers.UnixToDateTime(footer.modificationTime) : imageFilter.GetLastWriteTime();
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}",
                                                   ImageInfo.ImageCreationTime);

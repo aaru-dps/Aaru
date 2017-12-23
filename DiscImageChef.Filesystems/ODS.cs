@@ -173,12 +173,12 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume label: \"{0}\"",
                             StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding)).AppendLine();
             sb.AppendFormat("Drive serial number: 0x{0:X8}", homeblock.serialnum).AppendLine();
-            sb.AppendFormat("Volume was created on {0}", DateHandlers.VMSToDateTime(homeblock.credate)).AppendLine();
+            sb.AppendFormat("Volume was created on {0}", DateHandlers.VmsToDateTime(homeblock.credate)).AppendLine();
             if(homeblock.revdate > 0)
-                sb.AppendFormat("Volume was last modified on {0}", DateHandlers.VMSToDateTime(homeblock.revdate))
+                sb.AppendFormat("Volume was last modified on {0}", DateHandlers.VmsToDateTime(homeblock.revdate))
                   .AppendLine();
             if(homeblock.copydate > 0)
-                sb.AppendFormat("Volume copied on {0}", DateHandlers.VMSToDateTime(homeblock.copydate)).AppendLine();
+                sb.AppendFormat("Volume copied on {0}", DateHandlers.VmsToDateTime(homeblock.copydate)).AppendLine();
             sb.AppendFormat("Checksums: 0x{0:X4} and 0x{1:X4}", homeblock.checksum1, homeblock.checksum2).AppendLine();
             sb.AppendLine("Flags:");
             sb.AppendFormat("Window: {0}", homeblock.window).AppendLine();
@@ -229,12 +229,12 @@ namespace DiscImageChef.Filesystems
             };
             if(homeblock.credate > 0)
             {
-                XmlFsType.CreationDate = DateHandlers.VMSToDateTime(homeblock.credate);
+                XmlFsType.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
                 XmlFsType.CreationDateSpecified = true;
             }
             if(homeblock.revdate > 0)
             {
-                XmlFsType.ModificationDate = DateHandlers.VMSToDateTime(homeblock.revdate);
+                XmlFsType.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
                 XmlFsType.ModificationDateSpecified = true;
             }
 

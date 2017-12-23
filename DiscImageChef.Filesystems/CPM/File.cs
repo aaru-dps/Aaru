@@ -105,8 +105,8 @@ namespace DiscImageChef.Filesystems.CPM
 
             if(string.IsNullOrEmpty(path) || string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                if(labelCreationDate != null) stat.CreationTime = DateHandlers.CPMToDateTime(labelCreationDate);
-                if(labelUpdateDate != null) stat.StatusChangeTime = DateHandlers.CPMToDateTime(labelUpdateDate);
+                if(labelCreationDate != null) stat.CreationTime = DateHandlers.CpmToDateTime(labelCreationDate);
+                if(labelUpdateDate != null) stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
                 stat.Attributes = FileAttributes.Directory;
                 stat.BlockSize = XmlFsType.ClusterSize;
                 return Errno.NoError;

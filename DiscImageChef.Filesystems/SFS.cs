@@ -132,7 +132,7 @@ namespace DiscImageChef.Filesystems
                 .AppendFormat("Volume has {0} blocks of {1} bytes each", rootBlock.totalblocks, rootBlock.blocksize)
                 .AppendLine();
             sbInformation.AppendFormat("Volume created on {0}",
-                                       DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8))
+                                       DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8))
                          .AppendLine();
             sbInformation.AppendFormat("Bitmap starts in block {0}", rootBlock.bitmapbase).AppendLine();
             sbInformation.AppendFormat("Admin space container starts in block {0}", rootBlock.adminspacecontainer)
@@ -150,7 +150,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                CreationDate = DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
+                CreationDate = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
                 CreationDateSpecified = true,
                 Clusters = rootBlock.totalblocks,
                 ClusterSize = (int)rootBlock.blocksize,

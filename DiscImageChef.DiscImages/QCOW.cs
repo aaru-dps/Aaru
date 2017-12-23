@@ -281,7 +281,7 @@ namespace DiscImageChef.DiscImages
             clusterCache = new Dictionary<ulong, byte[]>();
 
             ImageInfo.ImageCreationTime = imageFilter.GetCreationTime();
-            ImageInfo.ImageLastModificationTime = qHdr.mtime > 0 ? DateHandlers.UNIXUnsignedToDateTime(qHdr.mtime) : imageFilter.GetLastWriteTime();
+            ImageInfo.ImageLastModificationTime = qHdr.mtime > 0 ? DateHandlers.UnixUnsignedToDateTime(qHdr.mtime) : imageFilter.GetLastWriteTime();
             ImageInfo.ImageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.Sectors = qHdr.size / 512;
             ImageInfo.SectorSize = 512;

@@ -246,7 +246,7 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_part[{0}].p_flag = {1} ({2})", i,
                                               dkl8.dkl_vtoc.v_part[i].p_flag, (ushort)dkl8.dkl_vtoc.v_part[i].p_flag);
                     DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_timestamp[{0}] = {1}", i,
-                                              DateHandlers.UNIXToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
+                                              DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
                 }
 
                 DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_magic = 0x{0:X4}", dkl8.dkl_magic);
@@ -275,7 +275,7 @@ namespace DiscImageChef.Partitions
                         };
                         if(dkl8.dkl_vtoc.v_timestamp[i] != 0)
                             part.Description +=
-                                $"\nPartition timestamped on {DateHandlers.UNIXToDateTime(dkl8.dkl_vtoc.v_timestamp[i])}";
+                                $"\nPartition timestamped on {DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i])}";
 
                         if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
                             partitions.Add(part);
@@ -314,7 +314,7 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_part[{0}].p_flag = {1} ({2})", i,
                                               dkl16.dkl_vtoc.v_part[i].p_flag, (ushort)dkl16.dkl_vtoc.v_part[i].p_flag);
                     DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_timestamp[{0}] = {1}", i,
-                                              DateHandlers.UNIXToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
+                                              DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
                 }
 
                 DicConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_magic = 0x{0:X4}", dkl16.dkl_magic);
@@ -344,7 +344,7 @@ namespace DiscImageChef.Partitions
                         };
                         if(dkl16.dkl_vtoc.v_timestamp[i] != 0)
                             part.Description +=
-                                $"\nPartition timestamped on {DateHandlers.UNIXToDateTime(dkl16.dkl_vtoc.v_timestamp[i])}";
+                                $"\nPartition timestamped on {DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i])}";
                         if(part.Start < imagePlugin.GetSectors() && part.End <= imagePlugin.GetSectors())
                             partitions.Add(part);
                     }

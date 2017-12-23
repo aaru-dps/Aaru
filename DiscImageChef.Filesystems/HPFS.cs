@@ -142,8 +142,8 @@ namespace DiscImageChef.Filesystems
               .AppendLine();
             //          sb.AppendFormat("Filesystem type: \"{0}\"", hpfs_bpb.fs_type).AppendLine();
 
-            DateTime lastChk = DateHandlers.UNIXToDateTime(hpfsSb.last_chkdsk);
-            DateTime lastOptim = DateHandlers.UNIXToDateTime(hpfsSb.last_optim);
+            DateTime lastChk = DateHandlers.UnixToDateTime(hpfsSb.last_chkdsk);
+            DateTime lastOptim = DateHandlers.UnixToDateTime(hpfsSb.last_optim);
 
             sb.AppendFormat("HPFS version: {0}", hpfsSb.version).AppendLine();
             sb.AppendFormat("Functional version: {0}", hpfsSb.func_version).AppendLine();

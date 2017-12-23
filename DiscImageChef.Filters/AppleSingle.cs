@@ -315,8 +315,8 @@ namespace DiscImageChef.Filters
                         ms.Read(dates_b, 0, 16);
                         AppleSingleFileDates dates =
                             BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
-                        creationTime = DateHandlers.UNIXUnsignedToDateTime(dates.creationDate);
-                        lastWriteTime = DateHandlers.UNIXUnsignedToDateTime(dates.modificationDate);
+                        creationTime = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
+                        lastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
                         break;
                     case AppleSingleEntryID.FileInfo:
                         ms.Seek(entry.offset, SeekOrigin.Begin);
@@ -340,15 +340,15 @@ namespace DiscImageChef.Filters
                         {
                             AppleSingleUNIXFileInfo unixinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
-                            creationTime = DateHandlers.UNIXUnsignedToDateTime(unixinfo.creationDate);
-                            lastWriteTime = DateHandlers.UNIXUnsignedToDateTime(unixinfo.modificationDate);
+                            creationTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleDOSFileInfo dosinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
                             lastWriteTime =
-                                DateHandlers.DOSToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
+                                DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
                         break;
                     case AppleSingleEntryID.ResourceFork:
@@ -417,15 +417,15 @@ namespace DiscImageChef.Filters
                         {
                             AppleSingleUNIXFileInfo unixinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
-                            creationTime = DateHandlers.UNIXUnsignedToDateTime(unixinfo.creationDate);
-                            lastWriteTime = DateHandlers.UNIXUnsignedToDateTime(unixinfo.modificationDate);
+                            creationTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleDOSFileInfo dosinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
                             lastWriteTime =
-                                DateHandlers.DOSToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
+                                DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
                         break;
                     case AppleSingleEntryID.ResourceFork:
@@ -495,15 +495,15 @@ namespace DiscImageChef.Filters
                         {
                             AppleSingleUNIXFileInfo unixinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
-                            creationTime = DateHandlers.UNIXUnsignedToDateTime(unixinfo.creationDate);
-                            lastWriteTime = DateHandlers.UNIXUnsignedToDateTime(unixinfo.modificationDate);
+                            creationTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleDOSFileInfo dosinfo =
                                 BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
                             lastWriteTime =
-                                DateHandlers.DOSToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
+                                DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
                         break;
                     case AppleSingleEntryID.ResourceFork:

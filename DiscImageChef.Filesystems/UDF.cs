@@ -468,7 +468,7 @@ namespace DiscImageChef.Filesystems
 
         static DateTime EcmaToDateTime(Timestamp timestamp)
         {
-            return DateHandlers.ECMAToDateTime(timestamp.typeAndZone, timestamp.year, timestamp.month, timestamp.day,
+            return DateHandlers.EcmaToDateTime(timestamp.typeAndZone, timestamp.year, timestamp.month, timestamp.day,
                                                timestamp.hour, timestamp.minute, timestamp.second,
                                                timestamp.centiseconds, timestamp.hundredsMicroseconds,
                                                timestamp.microseconds);

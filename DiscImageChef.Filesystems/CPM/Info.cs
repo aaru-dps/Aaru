@@ -1038,9 +1038,9 @@ namespace DiscImageChef.Filesystems.CPM
             if(thirdPartyTimestamps) sb.AppendLine("Volume uses third party timestamps");
 
             if(labelCreationDate != null)
-                sb.AppendFormat("Volume created on {0}", DateHandlers.CPMToDateTime(labelCreationDate)).AppendLine();
+                sb.AppendFormat("Volume created on {0}", DateHandlers.CpmToDateTime(labelCreationDate)).AppendLine();
             if(labelUpdateDate != null)
-                sb.AppendFormat("Volume updated on {0}", DateHandlers.CPMToDateTime(labelUpdateDate)).AppendLine();
+                sb.AppendFormat("Volume updated on {0}", DateHandlers.CpmToDateTime(labelUpdateDate)).AppendLine();
 
             XmlFsType = new FileSystemType();
             XmlFsType.Bootable |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
@@ -1049,12 +1049,12 @@ namespace DiscImageChef.Filesystems.CPM
             else XmlFsType.Clusters = (long)(partition.End - partition.Start);
             if(labelCreationDate != null)
             {
-                XmlFsType.CreationDate = DateHandlers.CPMToDateTime(labelCreationDate);
+                XmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
                 XmlFsType.CreationDateSpecified = true;
             }
             if(labelUpdateDate != null)
             {
-                XmlFsType.ModificationDate = DateHandlers.CPMToDateTime(labelUpdateDate);
+                XmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
                 XmlFsType.ModificationDateSpecified = true;
             }
             XmlFsType.Type = "CP/M";

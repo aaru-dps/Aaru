@@ -135,19 +135,19 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume size {0} bytes", volInfo.size * 256).AppendLine();
             sbInformation.AppendFormat("Volume UUID {0}", volInfo.uuid).AppendLine();
             sbInformation
-                .AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(ctimeSecs, ctimeNanoSecs))
+                .AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs))
                 .AppendLine();
             sbInformation.AppendFormat("Volume last modified on {0}",
-                                       DateHandlers.UNIXUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).AppendLine();
+                                       DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).AppendLine();
 
             information = sbInformation.ToString();
 
             XmlFsType = new FileSystemType
             {
                 Type = "VMware file system",
-                CreationDate = DateHandlers.UNIXUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),
+                CreationDate = DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),
                 CreationDateSpecified = true,
-                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
+                ModificationDate = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
                 ModificationDateSpecified = true,
                 Clusters = volInfo.size * 256 / imagePlugin.ImageInfo.SectorSize,
                 ClusterSize = (int)imagePlugin.ImageInfo.SectorSize,

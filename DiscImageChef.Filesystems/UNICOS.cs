@@ -206,7 +206,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} data blocks in volume", unicosSb.s_fsize).AppendLine();
             sb.AppendFormat("Root resides on inode {0}", unicosSb.s_root).AppendLine();
             sb.AppendFormat("{0} inodes in volume", unicosSb.s_isize).AppendLine();
-            sb.AppendFormat("Volume last updated on {0}", DateHandlers.UNIXToDateTime(unicosSb.s_time)).AppendLine();
+            sb.AppendFormat("Volume last updated on {0}", DateHandlers.UnixToDateTime(unicosSb.s_time)).AppendLine();
             if(unicosSb.s_error > 0)
                 sb.AppendFormat("Volume is dirty, error code = 0x{0:X16}", unicosSb.s_error).AppendLine();
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(unicosSb.s_fname, CurrentEncoding))
@@ -220,7 +220,7 @@ namespace DiscImageChef.Filesystems
                 ClusterSize = 4096,
                 Clusters = unicosSb.s_fsize,
                 VolumeName = StringHandlers.CToString(unicosSb.s_fname, CurrentEncoding),
-                ModificationDate = DateHandlers.UNIXToDateTime(unicosSb.s_time),
+                ModificationDate = DateHandlers.UnixToDateTime(unicosSb.s_time),
                 ModificationDateSpecified = true
             };
             XmlFsType.Dirty |= unicosSb.s_error > 0;

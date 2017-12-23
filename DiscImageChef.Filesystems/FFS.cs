@@ -265,7 +265,7 @@ namespace DiscImageChef.Filesystems
                 }
 
                 if((ufs_sb.fs_maxfilesize & 0xFFFFFFFF) > SunOSEpoch &&
-                   DateHandlers.UNIXUnsignedToDateTime(ufs_sb.fs_maxfilesize & 0xFFFFFFFF) < DateTime.Now)
+                   DateHandlers.UnixUnsignedToDateTime(ufs_sb.fs_maxfilesize & 0xFFFFFFFF) < DateTime.Now)
                 {
                     fs_type_42bsd = false;
                     fs_type_sun = true;
@@ -273,7 +273,7 @@ namespace DiscImageChef.Filesystems
                 }
 
                 // This is for sure, as it is shared with a sectors/track with non-x86 SunOS, Epoch is absurdly high for that
-                if(ufs_sb.fs_old_npsect > SunOSEpoch && DateHandlers.UNIXToDateTime(ufs_sb.fs_old_npsect) < DateTime.Now
+                if(ufs_sb.fs_old_npsect > SunOSEpoch && DateHandlers.UnixToDateTime(ufs_sb.fs_old_npsect) < DateTime.Now
                 )
                 {
                     fs_type_42bsd = false;
@@ -319,9 +319,9 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("inode-block LBA: {0}", ufs_sb.fs_iblkno).AppendLine();
             sbInformation.AppendFormat("First data block LBA: {0}", ufs_sb.fs_dblkno).AppendLine();
             sbInformation.AppendFormat("Cylinder group offset in cylinder: {0}", ufs_sb.fs_old_cgoffset).AppendLine();
-            sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_old_time))
+            sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_old_time))
                          .AppendLine();
-            XmlFsType.ModificationDate = DateHandlers.UNIXToDateTime(ufs_sb.fs_old_time);
+            XmlFsType.ModificationDate = DateHandlers.UnixToDateTime(ufs_sb.fs_old_time);
             XmlFsType.ModificationDateSpecified = true;
             sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_old_size,
                                        (long)ufs_sb.fs_old_size * ufs_sb.fs_fsize).AppendLine();
@@ -358,7 +358,7 @@ namespace DiscImageChef.Filesystems
 
             if(fs_type_sun) sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_old_npsect).AppendLine();
             else if(fs_type_sun86)
-                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_old_npsect))
+                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_old_npsect))
                              .AppendLine();
             sbInformation.AppendFormat("Hardware sector interleave: {0}", ufs_sb.fs_old_interleave).AppendLine();
             sbInformation.AppendFormat("Sector 0 skew: {0}/track", ufs_sb.fs_old_trackskew).AppendLine();
@@ -416,9 +416,9 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_cstotal.cs_nifree).AppendLine();
                 sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_cstotal.cs_nffree).AppendLine();
                 sbInformation.AppendFormat("{0} free clusters", ufs_sb.fs_cstotal.cs_numclusters).AppendLine();
-                sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_time))
+                sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_time))
                              .AppendLine();
-                XmlFsType.ModificationDate = DateHandlers.UNIXToDateTime(ufs_sb.fs_time);
+                XmlFsType.ModificationDate = DateHandlers.UnixToDateTime(ufs_sb.fs_time);
                 XmlFsType.ModificationDateSpecified = true;
                 sbInformation.AppendFormat("{0} blocks ({1} bytes)", ufs_sb.fs_size, ufs_sb.fs_size * ufs_sb.fs_fsize)
                              .AppendLine();
@@ -431,7 +431,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("{0} inodes pending of being freed", ufs_sb.fs_pendinginodes).AppendLine();
             }
             if(fs_type_sun)
-                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_old_npsect))
+                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_old_npsect))
                              .AppendLine();
             else if(fs_type_sun86) sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_state).AppendLine();
             else if(fs_type_44bsd)
@@ -440,7 +440,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Maximum length of a symbolic link: {0}", ufs_sb.fs_maxsymlinklen)
                              .AppendLine();
                 sbInformation.AppendFormat("A file can be {0} bytes at max", ufs_sb.fs_maxfilesize).AppendLine();
-                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_state))
+                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_state))
                              .AppendLine();
             }
             if(ufs_sb.fs_old_nrpos > 0)

@@ -219,7 +219,7 @@ namespace DiscImageChef.Filesystems
             if(jfsSb.s_flags.HasFlag(JFS_Flags.AIX)) sb.AppendLine("Volume supports AIX");
             if(jfsSb.s_state != 0) sb.AppendLine("Volume is dirty");
             sb.AppendFormat("Volume was last updated on {0}",
-                            DateHandlers.UNIXUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec))
+                            DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec))
               .AppendLine();
             if(jfsSb.s_version == 1)
                 sb.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(jfsSb.s_fpack)).AppendLine();
@@ -234,7 +234,7 @@ namespace DiscImageChef.Filesystems
                 Bootable = true,
                 VolumeName = CurrentEncoding.GetString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label),
                 VolumeSerial = $"{jfsSb.s_uuid}",
-                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec),
+                ModificationDate = DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec),
                 ModificationDateSpecified = true
             };
             if(jfsSb.s_state != 0) XmlFsType.Dirty = true;

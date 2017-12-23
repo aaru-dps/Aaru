@@ -325,7 +325,7 @@ namespace DiscImageChef.DiscImages
                                       calculatedDataCrc == header.crc);
 
             ImageInfo.ImageApplication = "CopyQM";
-            ImageInfo.ImageCreationTime = DateHandlers.DOSToDateTime(header.date, header.time);
+            ImageInfo.ImageCreationTime = DateHandlers.DosToDateTime(header.date, header.time);
             ImageInfo.ImageLastModificationTime = ImageInfo.ImageCreationTime;
             ImageInfo.ImageName = header.volumeLabel;
             ImageInfo.ImageSize = (ulong)(stream.Length - 133 - header.commentLength);

@@ -441,7 +441,7 @@ namespace DiscImageChef.Filesystems
                             for(int i = 0; i < item.elements; i++)
                             {
                                 DateTime temp =
-                                    DateHandlers.UNIXHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
+                                    DateHandlers.UnixHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
                                 hrtimeArray[i] = temp;
                                 offset += 8;
                             }
@@ -451,7 +451,7 @@ namespace DiscImageChef.Filesystems
                         else
                         {
                             item.value =
-                                DateHandlers.UNIXHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
+                                DateHandlers.UnixHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
                             offset += 8;
                         }
 

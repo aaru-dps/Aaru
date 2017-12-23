@@ -135,7 +135,7 @@ namespace DiscImageChef.Filters
             isize = BitConverter.ToUInt32(isize_b, 0);
 
             decompressedSize = isize;
-            creationTime = DateHandlers.UNIXUnsignedToDateTime(mtime);
+            creationTime = DateHandlers.UnixUnsignedToDateTime(mtime);
             lastWriteTime = creationTime;
             zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
             opened = true;
@@ -161,7 +161,7 @@ namespace DiscImageChef.Filters
             isize = BitConverter.ToUInt32(isize_b, 0);
 
             decompressedSize = isize;
-            creationTime = DateHandlers.UNIXUnsignedToDateTime(mtime);
+            creationTime = DateHandlers.UnixUnsignedToDateTime(mtime);
             lastWriteTime = creationTime;
             zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
             opened = true;
@@ -189,7 +189,7 @@ namespace DiscImageChef.Filters
             decompressedSize = isize;
             FileInfo fi = new FileInfo(path);
             creationTime = fi.CreationTimeUtc;
-            lastWriteTime = DateHandlers.UNIXUnsignedToDateTime(mtime);
+            lastWriteTime = DateHandlers.UnixUnsignedToDateTime(mtime);
             zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
             opened = true;
         }

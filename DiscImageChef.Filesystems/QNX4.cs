@@ -247,16 +247,16 @@ namespace DiscImageChef.Filesystems
             */
 
             information =
-                $"QNX4 filesystem\nCreated on {DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime)}\n";
+                $"QNX4 filesystem\nCreated on {DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime)}\n";
 
             XmlFsType = new FileSystemType
             {
                 Type = "QNX4 filesystem",
                 Clusters = (long)partition.Length,
                 ClusterSize = 512,
-                CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime),
+                CreationDate = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime),
                 CreationDateSpecified = true,
-                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_mtime),
+                ModificationDate = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_mtime),
                 ModificationDateSpecified = true
             };
             XmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;

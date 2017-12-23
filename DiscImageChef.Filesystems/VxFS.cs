@@ -250,9 +250,9 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume has {0} free inodes", vxSb.vs_ifree).AppendLine();
             sbInformation.AppendFormat("Volume has {0} free blocks", vxSb.vs_free).AppendLine();
             sbInformation.AppendFormat("Volume created on {0}",
-                                       DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
+                                       DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
             sbInformation.AppendFormat("Volume last modified on {0}",
-                                       DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).AppendLine();
+                                       DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).AppendLine();
             if(vxSb.vs_clean != 0) sbInformation.AppendLine("Volume is dirty");
 
             information = sbInformation.ToString();
@@ -260,9 +260,9 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type = "Veritas file system",
-                CreationDate = DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
+                CreationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
                 CreationDateSpecified = true,
-                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
+                ModificationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
                 ModificationDateSpecified = true,
                 Clusters = vxSb.vs_size,
                 ClusterSize = vxSb.vs_bsize,

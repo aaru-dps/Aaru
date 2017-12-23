@@ -216,7 +216,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} sectors per track", efsSb.sb_sectors).AppendLine();
             sb.AppendFormat("{0} heads per cylinder", efsSb.sb_heads).AppendLine();
             sb.AppendFormat("{0} cylinder groups", efsSb.sb_ncg).AppendLine();
-            sb.AppendFormat("Volume created on {0}", DateHandlers.UNIXToDateTime(efsSb.sb_time)).AppendLine();
+            sb.AppendFormat("Volume created on {0}", DateHandlers.UnixToDateTime(efsSb.sb_time)).AppendLine();
             sb.AppendFormat("{0} bytes on bitmap", efsSb.sb_bmsize).AppendLine();
             sb.AppendFormat("{0} free blocks", efsSb.sb_tfree).AppendLine();
             sb.AppendFormat("{0} free inodes", efsSb.sb_tinode).AppendLine();
@@ -241,7 +241,7 @@ namespace DiscImageChef.Filesystems
                 Dirty = efsSb.sb_dirty > 0,
                 VolumeName = StringHandlers.CToString(efsSb.sb_fname, CurrentEncoding),
                 VolumeSerial = $"{efsSb.sb_checksum:X8}",
-                CreationDate = DateHandlers.UNIXToDateTime(efsSb.sb_time),
+                CreationDate = DateHandlers.UnixToDateTime(efsSb.sb_time),
                 CreationDateSpecified = true
             };
         }

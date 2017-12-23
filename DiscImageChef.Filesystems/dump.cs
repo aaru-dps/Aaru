@@ -345,13 +345,13 @@ namespace DiscImageChef.Filesystems
                 sb.AppendLine(XmlFsType.Type);
                 if(oldHdr.c_date > 0)
                 {
-                    XmlFsType.CreationDate = DateHandlers.UNIXToDateTime(oldHdr.c_date);
+                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(oldHdr.c_date);
                     XmlFsType.CreationDateSpecified = true;
                     sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
                 }
                 if(oldHdr.c_ddate > 0)
                 {
-                    XmlFsType.BackupDate = DateHandlers.UNIXToDateTime(oldHdr.c_ddate);
+                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(oldHdr.c_ddate);
                     XmlFsType.BackupDateSpecified = true;
                     sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
                 }
@@ -363,13 +363,13 @@ namespace DiscImageChef.Filesystems
                 sb.AppendLine(XmlFsType.Type);
                 if(aixHdr.c_date > 0)
                 {
-                    XmlFsType.CreationDate = DateHandlers.UNIXToDateTime(aixHdr.c_date);
+                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(aixHdr.c_date);
                     XmlFsType.CreationDateSpecified = true;
                     sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
                 }
                 if(aixHdr.c_ddate > 0)
                 {
-                    XmlFsType.BackupDate = DateHandlers.UNIXToDateTime(aixHdr.c_ddate);
+                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(aixHdr.c_ddate);
                     XmlFsType.BackupDateSpecified = true;
                     sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
                 }
@@ -381,25 +381,25 @@ namespace DiscImageChef.Filesystems
                 sb.AppendLine(XmlFsType.Type);
                 if(newHdr.c_ndate > 0)
                 {
-                    XmlFsType.CreationDate = DateHandlers.UNIXToDateTime(newHdr.c_ndate);
+                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_ndate);
                     XmlFsType.CreationDateSpecified = true;
                     sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
                 }
                 else if(newHdr.c_date > 0)
                 {
-                    XmlFsType.CreationDate = DateHandlers.UNIXToDateTime(newHdr.c_date);
+                    XmlFsType.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_date);
                     XmlFsType.CreationDateSpecified = true;
                     sb.AppendFormat("Dump created on {0}", XmlFsType.CreationDate).AppendLine();
                 }
                 if(newHdr.c_nddate > 0)
                 {
-                    XmlFsType.BackupDate = DateHandlers.UNIXToDateTime(newHdr.c_nddate);
+                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_nddate);
                     XmlFsType.BackupDateSpecified = true;
                     sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
                 }
                 else if(newHdr.c_ddate > 0)
                 {
-                    XmlFsType.BackupDate = DateHandlers.UNIXToDateTime(newHdr.c_ddate);
+                    XmlFsType.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_ddate);
                     XmlFsType.BackupDateSpecified = true;
                     sb.AppendFormat("Previous dump created on {0}", XmlFsType.BackupDate).AppendLine();
                 }

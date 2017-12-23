@@ -180,27 +180,27 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00)
                 decodedVD.CreationTime = DateTime.MinValue;
-            else decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(pvd.creation_date);
+            else decodedVD.CreationTime = DateHandlers.Iso9660ToDateTime(pvd.creation_date);
 
             if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00) decodedVD.HasModificationTime = false;
             else
             {
                 decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(pvd.modification_date);
+                decodedVD.ModificationTime = DateHandlers.Iso9660ToDateTime(pvd.modification_date);
             }
 
             if(pvd.expiration_date[0] == '0' || pvd.expiration_date[0] == 0x00) decodedVD.HasExpirationTime = false;
             else
             {
                 decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(pvd.expiration_date);
+                decodedVD.ExpirationTime = DateHandlers.Iso9660ToDateTime(pvd.expiration_date);
             }
 
             if(pvd.effective_date[0] == '0' || pvd.effective_date[0] == 0x00) decodedVD.HasEffectiveTime = false;
             else
             {
                 decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(pvd.effective_date);
+                decodedVD.EffectiveTime = DateHandlers.Iso9660ToDateTime(pvd.effective_date);
             }
 
             decodedVD.Blocks = pvd.volume_space_size;

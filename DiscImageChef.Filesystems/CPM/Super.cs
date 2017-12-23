@@ -484,10 +484,10 @@ namespace DiscImageChef.Filesystems.CPM
                                 if(statCache.TryGetValue(file1, out fInfo)) statCache.Remove(file1);
                                 else fInfo = new FileEntryInfo();
 
-                                if(atime) fInfo.AccessTime = DateHandlers.CPMToDateTime(dateEntry.date1);
-                                else fInfo.CreationTime = DateHandlers.CPMToDateTime(dateEntry.date1);
+                                if(atime) fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date1);
+                                else fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date1);
 
-                                fInfo.LastWriteTime = DateHandlers.CPMToDateTime(dateEntry.date2);
+                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date2);
 
                                 statCache.Add(file1, fInfo);
                             }
@@ -497,10 +497,10 @@ namespace DiscImageChef.Filesystems.CPM
                                 if(statCache.TryGetValue(file2, out fInfo)) statCache.Remove(file2);
                                 else fInfo = new FileEntryInfo();
 
-                                if(atime) fInfo.AccessTime = DateHandlers.CPMToDateTime(dateEntry.date3);
-                                else fInfo.CreationTime = DateHandlers.CPMToDateTime(dateEntry.date3);
+                                if(atime) fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date3);
+                                else fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date3);
 
-                                fInfo.LastWriteTime = DateHandlers.CPMToDateTime(dateEntry.date4);
+                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date4);
 
                                 statCache.Add(file2, fInfo);
                             }
@@ -510,10 +510,10 @@ namespace DiscImageChef.Filesystems.CPM
                                 if(statCache.TryGetValue(file3, out fInfo)) statCache.Remove(file3);
                                 else fInfo = new FileEntryInfo();
 
-                                if(atime) fInfo.AccessTime = DateHandlers.CPMToDateTime(dateEntry.date5);
-                                else fInfo.CreationTime = DateHandlers.CPMToDateTime(dateEntry.date5);
+                                if(atime) fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date5);
+                                else fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date5);
 
-                                fInfo.LastWriteTime = DateHandlers.CPMToDateTime(dateEntry.date6);
+                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date6);
 
                                 statCache.Add(file3, fInfo);
                             }
@@ -543,9 +543,9 @@ namespace DiscImageChef.Filesystems.CPM
                                 ctime[0] = trdPartyDateEntry.create1[0];
                                 ctime[1] = trdPartyDateEntry.create1[1];
 
-                                fInfo.AccessTime = DateHandlers.CPMToDateTime(trdPartyDateEntry.access1);
-                                fInfo.CreationTime = DateHandlers.CPMToDateTime(ctime);
-                                fInfo.LastWriteTime = DateHandlers.CPMToDateTime(trdPartyDateEntry.modify1);
+                                fInfo.AccessTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.access1);
+                                fInfo.CreationTime = DateHandlers.CpmToDateTime(ctime);
+                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify1);
 
                                 statCache.Add(file1, fInfo);
                             }
@@ -559,9 +559,9 @@ namespace DiscImageChef.Filesystems.CPM
                                 ctime[0] = trdPartyDateEntry.create2[0];
                                 ctime[1] = trdPartyDateEntry.create2[1];
 
-                                fInfo.AccessTime = DateHandlers.CPMToDateTime(trdPartyDateEntry.access2);
-                                fInfo.CreationTime = DateHandlers.CPMToDateTime(ctime);
-                                fInfo.LastWriteTime = DateHandlers.CPMToDateTime(trdPartyDateEntry.modify2);
+                                fInfo.AccessTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.access2);
+                                fInfo.CreationTime = DateHandlers.CpmToDateTime(ctime);
+                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify2);
 
                                 statCache.Add(file2, fInfo);
                             }
@@ -575,9 +575,9 @@ namespace DiscImageChef.Filesystems.CPM
                                 ctime[0] = trdPartyDateEntry.create3[0];
                                 ctime[1] = trdPartyDateEntry.create3[1];
 
-                                fInfo.AccessTime = DateHandlers.CPMToDateTime(trdPartyDateEntry.access3);
-                                fInfo.CreationTime = DateHandlers.CPMToDateTime(ctime);
-                                fInfo.LastWriteTime = DateHandlers.CPMToDateTime(trdPartyDateEntry.modify3);
+                                fInfo.AccessTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.access3);
+                                fInfo.CreationTime = DateHandlers.CpmToDateTime(ctime);
+                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify3);
 
                                 statCache.Add(file3, fInfo);
                             }
@@ -660,12 +660,12 @@ namespace DiscImageChef.Filesystems.CPM
             };
             if(labelCreationDate != null)
             {
-                XmlFsType.CreationDate = DateHandlers.CPMToDateTime(labelCreationDate);
+                XmlFsType.CreationDate = DateHandlers.CpmToDateTime(labelCreationDate);
                 XmlFsType.CreationDateSpecified = true;
             }
             if(labelUpdateDate != null)
             {
-                XmlFsType.ModificationDate = DateHandlers.CPMToDateTime(labelUpdateDate);
+                XmlFsType.ModificationDate = DateHandlers.CpmToDateTime(labelUpdateDate);
                 XmlFsType.ModificationDateSpecified = true;
             }
             if(!string.IsNullOrEmpty(label)) XmlFsType.VolumeName = label;

@@ -143,7 +143,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume version {0}.{1}", sqSb.s_major, sqSb.s_minor).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes", sqSb.bytes_used).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes per block", sqSb.block_size).AppendLine();
-            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time))
+            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time))
                          .AppendLine();
             sbInformation.AppendFormat("Volume has {0} inodes", sqSb.inodes).AppendLine();
             switch(sqSb.compression)
@@ -177,7 +177,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type = "Squash file system",
-                CreationDate = DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time),
+                CreationDate = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
                 CreationDateSpecified = true,
                 Clusters =
                     (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.SectorSize / sqSb.block_size),

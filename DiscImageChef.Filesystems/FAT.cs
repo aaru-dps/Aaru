@@ -1333,7 +1333,7 @@ namespace DiscImageChef.Filesystems
 
                     if(entry.ctime > 0 && entry.cdate > 0)
                     {
-                        XmlFsType.CreationDate = DateHandlers.DOSToDateTime(entry.cdate, entry.ctime);
+                        XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
                         if(entry.ctime_ms > 0) XmlFsType.CreationDate = XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
                         XmlFsType.CreationDateSpecified = true;
                         sb.AppendFormat("Volume created on {0}", XmlFsType.CreationDate).AppendLine();
@@ -1341,13 +1341,13 @@ namespace DiscImageChef.Filesystems
 
                     if(entry.mtime > 0 && entry.mdate > 0)
                     {
-                        XmlFsType.ModificationDate = DateHandlers.DOSToDateTime(entry.mdate, entry.mtime);
+                        XmlFsType.ModificationDate = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
                         XmlFsType.ModificationDateSpecified = true;
                         sb.AppendFormat("Volume last modified on {0}", XmlFsType.ModificationDate).AppendLine();
                     }
 
                     if(entry.adate > 0)
-                        sb.AppendFormat("Volume last accessed on {0:d}", DateHandlers.DOSToDateTime(entry.adate, 0))
+                        sb.AppendFormat("Volume last accessed on {0:d}", DateHandlers.DosToDateTime(entry.adate, 0))
                           .AppendLine();
 
                     break;

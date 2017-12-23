@@ -314,7 +314,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("Locus plugin", "LocusSb.s_fmod = {0}", LocusSb.s_fmod);
             DicConsole.DebugWriteLine("Locus plugin", "LocusSb.s_version = {0}", LocusSb.s_version);
 
-            sb.AppendFormat("Superblock last modified on {0}", DateHandlers.UNIXToDateTime(LocusSb.s_time))
+            sb.AppendFormat("Superblock last modified on {0}", DateHandlers.UnixToDateTime(LocusSb.s_time))
               .AppendLine();
             sb.AppendFormat("Volume has {0} blocks of {1} bytes each (total {2} bytes)", LocusSb.s_fsize, blockSize,
                             LocusSb.s_fsize * blockSize).AppendLine();
@@ -350,7 +350,7 @@ namespace DiscImageChef.Filesystems
                 Clusters = LocusSb.s_fsize,
                 // Sometimes it uses one, or the other. Use the bigger
                 VolumeName = string.IsNullOrEmpty(s_fsmnt) ? s_fpack : s_fsmnt,
-                ModificationDate = DateHandlers.UNIXToDateTime(LocusSb.s_time),
+                ModificationDate = DateHandlers.UnixToDateTime(LocusSb.s_time),
                 ModificationDateSpecified = true,
                 Dirty = !LocusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN) || LocusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY),
                 FreeClusters = LocusSb.s_tfree,

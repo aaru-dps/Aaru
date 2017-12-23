@@ -272,7 +272,7 @@ namespace DiscImageChef.Partitions
                     DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_size = {1}", i,
                                               vtocOld.v_part[i].p_size);
                     DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.timestamp[{0}] = {1}", i,
-                                              DateHandlers.UNIXToDateTime(vtocOld.timestamp[i]));
+                                              DateHandlers.UnixToDateTime(vtocOld.timestamp[i]));
                 }
             }
             else
@@ -294,7 +294,7 @@ namespace DiscImageChef.Partitions
                                               vtoc.v_part[i].p_start);
                     DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_size = {1}", i, vtoc.v_part[i].p_size);
                     DicConsole.DebugWriteLine("VTOC plugin", "vtoc.timestamp[{0}] = {1}", i,
-                                              DateHandlers.UNIXToDateTime(vtoc.timestamp[i]));
+                                              DateHandlers.UnixToDateTime(vtoc.timestamp[i]));
                 }
             }
 
@@ -352,7 +352,7 @@ namespace DiscImageChef.Partitions
                     if(parts[i].p_flag.HasFlag(pFlag.V_REMAP)) info += " (alternate sector mapping)";
                     if(parts[i].p_flag.HasFlag(pFlag.V_RONLY)) info += " (read-only)";
                     if(timestamps[i] != 0)
-                        info += $" created on {DateHandlers.UNIXToDateTime(timestamps[i])}";
+                        info += $" created on {DateHandlers.UnixToDateTime(timestamps[i])}";
 
                     part.Description = "UNIX slice" + info + ".";
 

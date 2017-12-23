@@ -138,7 +138,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             sbInformation.AppendFormat("Volume has {0} blocks", volEntry.blocks).AppendLine();
             sbInformation.AppendFormat("Volume has {0} files", volEntry.files).AppendLine();
             sbInformation
-                .AppendFormat("Volume last booted at {0}", DateHandlers.UCSDPascalToDateTime(volEntry.lastBoot))
+                .AppendFormat("Volume last booted at {0}", DateHandlers.UcsdPascalToDateTime(volEntry.lastBoot))
                 .AppendLine();
 
             information = sbInformation.ToString();

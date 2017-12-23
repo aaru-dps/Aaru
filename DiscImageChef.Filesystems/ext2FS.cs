@@ -189,9 +189,9 @@ namespace DiscImageChef.Filesystems
 
             if(supblk.mkfs_t > 0)
             {
-                sb.AppendFormat("Volume was created on {0} for {1}", DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t),
+                sb.AppendFormat("Volume was created on {0} for {1}", DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t),
                                 extOs).AppendLine();
-                XmlFsType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t);
+                XmlFsType.CreationDate = DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t);
                 XmlFsType.CreationDateSpecified = true;
             }
             else sb.AppendFormat("Volume was created for {0}", extOs).AppendLine();
@@ -255,7 +255,7 @@ namespace DiscImageChef.Filesystems
             if(supblk.mount_t > 0 || supblk.mount_c > 0)
             {
                 if(supblk.mount_t > 0)
-                    sb.AppendFormat("Last mounted on {0}", DateHandlers.UNIXUnsignedToDateTime(supblk.mount_t))
+                    sb.AppendFormat("Last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(supblk.mount_t))
                       .AppendLine();
                 if(supblk.max_mount_c != -1)
                     sb.AppendFormat("Volume has been mounted {0} times of a maximum of {1} mounts before checking",
@@ -281,9 +281,9 @@ namespace DiscImageChef.Filesystems
             if(supblk.check_t > 0)
                 if(supblk.check_inv > 0)
                     sb.AppendFormat("Last checked on {0} (should check every {1} seconds)",
-                                    DateHandlers.UNIXUnsignedToDateTime(supblk.check_t), supblk.check_inv).AppendLine();
+                                    DateHandlers.UnixUnsignedToDateTime(supblk.check_t), supblk.check_inv).AppendLine();
                 else
-                    sb.AppendFormat("Last checked on {0}", DateHandlers.UNIXUnsignedToDateTime(supblk.check_t))
+                    sb.AppendFormat("Last checked on {0}", DateHandlers.UnixUnsignedToDateTime(supblk.check_t))
                       .AppendLine();
             else
             {
@@ -295,9 +295,9 @@ namespace DiscImageChef.Filesystems
 
             if(supblk.write_t > 0)
             {
-                sb.AppendFormat("Last written on {0}", DateHandlers.UNIXUnsignedToDateTime(supblk.write_t))
+                sb.AppendFormat("Last written on {0}", DateHandlers.UnixUnsignedToDateTime(supblk.write_t))
                   .AppendLine();
-                XmlFsType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.write_t);
+                XmlFsType.ModificationDate = DateHandlers.UnixUnsignedToDateTime(supblk.write_t);
                 XmlFsType.ModificationDateSpecified = true;
             }
             else sb.AppendLine("Volume has never been written");
@@ -415,8 +415,8 @@ namespace DiscImageChef.Filesystems
                 {
                     sb.AppendFormat("{0} errors registered", supblk.error_count).AppendLine();
                     sb.AppendFormat("First error occurred on {0}, last on {1}",
-                                    DateHandlers.UNIXUnsignedToDateTime(supblk.first_error_t),
-                                    DateHandlers.UNIXUnsignedToDateTime(supblk.last_error_t)).AppendLine();
+                                    DateHandlers.UnixUnsignedToDateTime(supblk.first_error_t),
+                                    DateHandlers.UnixUnsignedToDateTime(supblk.last_error_t)).AppendLine();
                     sb.AppendFormat("First error inode is {0}, last is {1}", supblk.first_error_inode,
                                     supblk.last_error_inode).AppendLine();
                     sb.AppendFormat("First error block is {0}, last is {1}", supblk.first_error_block,

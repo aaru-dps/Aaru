@@ -205,8 +205,8 @@ namespace DiscImageChef.Filesystems
             sb.AppendLine("QNX6 filesystem");
             sb.AppendFormat("Checksum: 0x{0:X8}", qnxSb.checksum).AppendLine();
             sb.AppendFormat("Serial: 0x{0:X16}", qnxSb.checksum).AppendLine();
-            sb.AppendFormat("Created on {0}", DateHandlers.UNIXUnsignedToDateTime(qnxSb.ctime)).AppendLine();
-            sb.AppendFormat("Last mounted on {0}", DateHandlers.UNIXUnsignedToDateTime(qnxSb.atime)).AppendLine();
+            sb.AppendFormat("Created on {0}", DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime)).AppendLine();
+            sb.AppendFormat("Last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(qnxSb.atime)).AppendLine();
             sb.AppendFormat("Flags: 0x{0:X8}", qnxSb.flags).AppendLine();
             sb.AppendFormat("Version1: 0x{0:X4}", qnxSb.version1).AppendLine();
             sb.AppendFormat("Version2: 0x{0:X4}", qnxSb.version2).AppendLine();
@@ -228,9 +228,9 @@ namespace DiscImageChef.Filesystems
                 FreeClusters = qnxSb.freeBlocks,
                 FreeClustersSpecified = true,
                 VolumeSerial = $"{qnxSb.serial:X16}",
-                CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.ctime),
+                CreationDate = DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime),
                 CreationDateSpecified = true,
-                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.atime),
+                ModificationDate = DateHandlers.UnixUnsignedToDateTime(qnxSb.atime),
                 ModificationDateSpecified = true
             };
             //xmlFSType.VolumeName = CurrentEncoding.GetString(qnxSb.volumeid);

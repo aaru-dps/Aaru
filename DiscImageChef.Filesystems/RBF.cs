@@ -268,10 +268,10 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Root directory descriptor starts at block {0}", rbf9000Sb.rid_rootdir).AppendLine();
                 sb.AppendFormat("Disk is owned by group {0} user {1}", rbf9000Sb.rid_group, rbf9000Sb.rid_owner)
                   .AppendLine();
-                sb.AppendFormat("Volume was created on {0}", DateHandlers.UNIXToDateTime(rbf9000Sb.rid_ctime))
+                sb.AppendFormat("Volume was created on {0}", DateHandlers.UnixToDateTime(rbf9000Sb.rid_ctime))
                   .AppendLine();
                 sb.AppendFormat("Volume's identification block was last written on {0}",
-                                DateHandlers.UNIXToDateTime(rbf9000Sb.rid_mtime)).AppendLine();
+                                DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime)).AppendLine();
                 sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbf9000Sb.rid_name, CurrentEncoding))
                   .AppendLine();
 
@@ -281,9 +281,9 @@ namespace DiscImageChef.Filesystems
                     Bootable = rbf9000Sb.rid_bootfile > 0,
                     ClusterSize = rbf9000Sb.rid_blocksize,
                     Clusters = rbf9000Sb.rid_totblocks,
-                    CreationDate = DateHandlers.UNIXToDateTime(rbf9000Sb.rid_ctime),
+                    CreationDate = DateHandlers.UnixToDateTime(rbf9000Sb.rid_ctime),
                     CreationDateSpecified = true,
-                    ModificationDate = DateHandlers.UNIXToDateTime(rbf9000Sb.rid_mtime),
+                    ModificationDate = DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime),
                     ModificationDateSpecified = true,
                     VolumeName = StringHandlers.CToString(rbf9000Sb.rid_name, CurrentEncoding),
                     VolumeSerial = $"{rbf9000Sb.rid_diskid:X8}"
@@ -314,7 +314,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Root directory descriptor starts at block {0}", LSNToUInt32(rbfSb.dd_dir))
                   .AppendLine();
                 sb.AppendFormat("Disk is owned by user {0}", rbfSb.dd_own).AppendLine();
-                sb.AppendFormat("Volume was created on {0}", DateHandlers.OS9ToDateTime(rbfSb.dd_dat)).AppendLine();
+                sb.AppendFormat("Volume was created on {0}", DateHandlers.Os9ToDateTime(rbfSb.dd_dat)).AppendLine();
                 sb.AppendFormat("Volume attributes: {0:X2}", rbfSb.dd_att).AppendLine();
                 sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbfSb.dd_nam, CurrentEncoding))
                   .AppendLine();
@@ -327,7 +327,7 @@ namespace DiscImageChef.Filesystems
                     Bootable = LSNToUInt32(rbfSb.dd_bt) > 0 && rbfSb.dd_bsz > 0,
                     ClusterSize = rbfSb.dd_bit * (256 << rbfSb.dd_lsnsize),
                     Clusters = LSNToUInt32(rbfSb.dd_tot),
-                    CreationDate = DateHandlers.OS9ToDateTime(rbfSb.dd_dat),
+                    CreationDate = DateHandlers.Os9ToDateTime(rbfSb.dd_dat),
                     CreationDateSpecified = true,
                     VolumeName = StringHandlers.CToString(rbfSb.dd_nam, CurrentEncoding),
                     VolumeSerial = $"{rbfSb.dd_dsk:X4}"

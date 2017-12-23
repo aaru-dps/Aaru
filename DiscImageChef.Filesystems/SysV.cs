@@ -424,11 +424,11 @@ namespace DiscImageChef.Filesystems
                 if(xnx_sb.s_ilock > 0) sb.AppendLine("inode cache is locked");
                 if(xnx_sb.s_fmod > 0) sb.AppendLine("Superblock is being modified");
                 if(xnx_sb.s_ronly > 0) sb.AppendLine("Volume is mounted read-only");
-                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXToDateTime(xnx_sb.s_time))
+                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixToDateTime(xnx_sb.s_time))
                   .AppendLine();
                 if(xnx_sb.s_time != 0)
                 {
-                    XmlFsType.ModificationDate = DateHandlers.UNIXToDateTime(xnx_sb.s_time);
+                    XmlFsType.ModificationDate = DateHandlers.UnixToDateTime(xnx_sb.s_time);
                     XmlFsType.ModificationDateSpecified = true;
                 }
                 sb.AppendFormat("Volume name: {0}", xnx_sb.s_fname).AppendLine();
@@ -545,11 +545,11 @@ namespace DiscImageChef.Filesystems
                 if(sysv_sb.s_ilock > 0) sb.AppendLine("inode cache is locked");
                 if(sysv_sb.s_fmod > 0) sb.AppendLine("Superblock is being modified");
                 if(sysv_sb.s_ronly > 0) sb.AppendLine("Volume is mounted read-only");
-                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time))
+                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time))
                   .AppendLine();
                 if(sysv_sb.s_time != 0)
                 {
-                    XmlFsType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time);
+                    XmlFsType.ModificationDate = DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time);
                     XmlFsType.ModificationDateSpecified = true;
                 }
                 sb.AppendFormat("Volume name: {0}", sysv_sb.s_fname).AppendLine();
@@ -608,11 +608,11 @@ namespace DiscImageChef.Filesystems
                 if(coh_sb.s_ilock > 0) sb.AppendLine("inode cache is locked");
                 if(coh_sb.s_fmod > 0) sb.AppendLine("Superblock is being modified");
                 if(coh_sb.s_ronly > 0) sb.AppendLine("Volume is mounted read-only");
-                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time))
+                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time))
                   .AppendLine();
                 if(coh_sb.s_time != 0)
                 {
-                    XmlFsType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time);
+                    XmlFsType.ModificationDate = DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time);
                     XmlFsType.ModificationDateSpecified = true;
                 }
                 sb.AppendFormat("Volume name: {0}", coh_sb.s_fname).AppendLine();
@@ -663,11 +663,11 @@ namespace DiscImageChef.Filesystems
                 if(v7_sb.s_ilock > 0) sb.AppendLine("inode cache is locked");
                 if(v7_sb.s_fmod > 0) sb.AppendLine("Superblock is being modified");
                 if(v7_sb.s_ronly > 0) sb.AppendLine("Volume is mounted read-only");
-                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time))
+                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time))
                   .AppendLine();
                 if(v7_sb.s_time != 0)
                 {
-                    XmlFsType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time);
+                    XmlFsType.ModificationDate = DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time);
                     XmlFsType.ModificationDateSpecified = true;
                 }
                 sb.AppendFormat("Volume name: {0}", v7_sb.s_fname).AppendLine();
